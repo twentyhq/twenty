@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
 
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
   justify-content: center;

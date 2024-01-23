@@ -7,9 +7,14 @@ import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
+  maxWidth?: number;
 };
 
-export const RecordChip = ({ objectNameSingular, record }: RecordChipProps) => {
+export const RecordChip = ({
+  objectNameSingular,
+  record,
+  maxWidth,
+}: RecordChipProps) => {
   const { mapToObjectRecordIdentifier } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -23,6 +28,7 @@ export const RecordChip = ({ objectNameSingular, record }: RecordChipProps) => {
       avatarType={objectRecordIdentifier.avatarType}
       avatarUrl={objectRecordIdentifier.avatarUrl}
       linkToEntity={objectRecordIdentifier.linkToShowPage}
+      maxWidth={maxWidth}
     />
   );
 };

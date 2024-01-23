@@ -30,6 +30,19 @@ export class GmailFullSyncService {
       throw new Error('No refresh token found');
     }
 
+    const gmailMessageChannel = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
+      [connectedAccountId],
+    );
+
+    if (!gmailMessageChannel.length) {
+      throw new Error(
+        `No gmail message channel found for connected account ${connectedAccountId}`,
+      );
+    }
+
+    const gmailMessageChannelId = gmailMessageChannel[0].id;
+
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
@@ -48,20 +61,8 @@ export class GmailFullSyncService {
       return;
     }
 
-    const { savedMessageIds, savedThreadIds } =
-      await this.utils.getSavedMessageIdsAndThreadIds(
-        messageExternalIds,
-        connectedAccountId,
-        dataSourceMetadata,
-        workspaceDataSource,
-      );
-
-    const messageIdsToSave = messageExternalIds.filter(
-      (messageId) => !savedMessageIds.includes(messageId),
-    );
-
     const messageQueries =
-      this.utils.createQueriesFromMessageIds(messageIdsToSave);
+      this.utils.createQueriesFromMessageIds(messageExternalIds);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -69,31 +70,19 @@ export class GmailFullSyncService {
         accessToken,
       );
 
-    const threads = this.utils.getThreadsFromMessages(messagesToSave);
-
-    const threadsToSave = threads.filter(
-      (threadId) => !savedThreadIds.includes(threadId.id),
-    );
-
-    await this.utils.saveMessageThreads(
-      threadsToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount.id,
-    );
+    if (messagesToSave.length === 0) {
+      return;
+    }
 
     await this.utils.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccount,
+      gmailMessageChannelId,
     );
 
     if (errors.length) throw new Error('Error fetching messages');
-
-    if (messagesToSave.length === 0) {
-      return;
-    }
 
     const lastModifiedMessageId = messagesData[0].id;
 

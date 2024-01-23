@@ -1,3 +1,5 @@
+import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
+
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type TextDisplayProps = {
@@ -6,5 +8,7 @@ type TextDisplayProps = {
 };
 
 export const TextDisplay = ({ text, maxWidth }: TextDisplayProps) => (
-  <EllipsisDisplay maxWidth={maxWidth}>{text}</EllipsisDisplay>
+  <EllipsisDisplay maxWidth={maxWidth}>
+    <OverflowingTextWithTooltip text={text} />
+  </EllipsisDisplay>
 );

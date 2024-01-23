@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TimelineThread } from 'src/core/messaging/timeline-messaging.resolver';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
@@ -10,7 +11,10 @@ export class TimelineMessagingService {
     private readonly typeORMService: TypeORMService,
   ) {}
 
-  async getMessagesFromPersonIds(workspaceId: string, personIds: string[]) {
+  async getMessagesFromPersonIds(
+    workspaceId: string,
+    personIds: string[],
+  ): Promise<TimelineThread[]> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,

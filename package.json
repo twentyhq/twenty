@@ -240,6 +240,7 @@
     "http-server": "^14.1.1",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
+    "jest-fetch-mock": "^3.0.3",
     "msw": "^2.0.11",
     "msw-storybook-addon": "2.0.0--canary.122.b3ed3b1.0",
     "nx": "^17.2.8",
@@ -260,6 +261,9 @@
     "vite-plugin-checker": "^0.6.2",
     "vite-plugin-svgr": "^4.2.0"
   },
+  "scripts": {
+    "postinstall": "yarn nx run twenty-emails:build"
+  },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
@@ -277,6 +281,7 @@
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
+      "packages/twenty-emails",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",

@@ -55,7 +55,7 @@ export const useObjectRecordBoard = () => {
 
   useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.PipelineStep,
-    filter: {},
+    filter,
     onCompleted: useCallback(
       (data: ObjectRecordConnection<PipelineStep>) => {
         setSavedPipelineSteps(data.edges.map((edge) => edge.node));

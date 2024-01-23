@@ -26,7 +26,7 @@ describe('useMapToObjectRecordIdentifier', () => {
     expect(result.current).toEqual({
       id: 'id',
       name: 'Sheldon Cooper',
-      avatarUrl: null,
+      avatarUrl: '',
       avatarType: 'rounded',
       linkToShowPage: '/object/person/id',
     });
