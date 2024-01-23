@@ -42367,6 +42367,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
+  version: 0.0.0-use.local
+  resolution: "twenty-emails@workspace:packages/twenty-emails"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
@@ -42381,6 +42387,7 @@ __metadata:
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
+    twenty-emails: "workspace:*"
   languageName: unknown
   linkType: soft
 
