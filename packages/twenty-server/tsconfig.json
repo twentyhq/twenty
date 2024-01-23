@@ -22,7 +22,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "types": ["jest", "node"],
-    "jsx": "react-jsx"
+    "types": ["jest", "node"]
   }
 }

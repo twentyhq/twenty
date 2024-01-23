@@ -1,7 +1,6 @@
-import { Text } from '@react-email/text';
 import * as React from 'react';
-
-import { emailTheme } from 'src/emails/common-style';
+import { Text } from '@react-email/text';
+import { emailTheme } from 'src/common-style';
 
 const mainTextStyle = {
   fontSize: emailTheme.font.size.md,

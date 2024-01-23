@@ -41,14 +41,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
 
-  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_RELATION_FIELD_TYPE_ENABLED',
-  );
-
-  const isSelectFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_SELECT_FIELD_TYPE_ENABLED',
-  );
-
   const isRatingFieldTypeEnabled = useIsFeatureEnabled(
     'IS_RATING_FIELD_TYPE_ENABLED',
   );
@@ -272,14 +264,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
-
-  if (!isRelationFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Relation);
-  }
-
-  if (!isSelectFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Select);
-  }
 
   if (!isRatingFieldTypeEnabled) {
     excludedFieldTypes.push(FieldMetadataType.Rating);
