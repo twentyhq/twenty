@@ -50,7 +50,7 @@ export class TimelineMessagingService {
     const threadMessagesFromActiveParticipants =
       await workspaceDataSource?.query(
         `
-      SELECT "messageThread".id AS "messageThreadId",
+      SELECT "messageThread".id,
         message.id AS "messageId",
         message."receivedAt",
         message.body,
@@ -104,17 +104,16 @@ export class TimelineMessagingService {
       {},
     );
 
-    const timelineThreads = messageThreads.map((messageThread) => {
-      const threadParticipants = threadParticipantsByThreadId[messageThread.id];
+    const timelineThreads = messageThreadIds.map((messageThreadId) => {
+      const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
-      const timelineThread = {
-        id: messageThread.id,
+      return {
+        id: messageThreadId,
+        read: true,
         firtstParticipant: threadParticipants[0],
         lastTwoParticipants: threadParticipants.slice(-2),
         participantCount: threadParticipants.length,
       };
-
-      return timelineThread;
     });
 
     return timelineThreads;
