@@ -7,11 +7,15 @@ COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
-COPY ./packages/twenty-server /app/packages/twenty-server
+COPY ./packages/twenty-server/package.json /app/packages/twenty-server/package.json
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 
 WORKDIR /app/packages/twenty-server
 RUN yarn workspaces focus
+
+WORKDIR /app
+
+COPY ./packages/twenty-server /app/packages/twenty-server
 
 RUN yarn build
 
