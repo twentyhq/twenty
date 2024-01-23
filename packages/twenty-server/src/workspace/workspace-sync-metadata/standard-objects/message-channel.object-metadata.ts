@@ -56,7 +56,6 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Type',
     icon: 'IconMessage',
   })
-  @IsNullable()
   type: string;
 
   @FieldMetadata({
