@@ -2,25 +2,22 @@ import { ReactNode } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
+import {
+  fieldMetadataId,
+  textfieldDefinition,
+} from '@/object-record/field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { entityFieldInitialValueFamilyState } from '@/object-record/field/states/entityFieldInitialValueFamilyState';
 
 import { useFieldInitialValue } from '../useFieldInitialValue';
 
-const fieldMetadataId = 'fieldMetadataId';
 const entityId = 'entityId';
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <FieldContext.Provider
       value={{
-        fieldDefinition: {
-          fieldMetadataId,
-          label: 'User Name',
-          iconName: 'User',
-          type: 'TEXT',
-          metadata: { placeHolder: 'John Doe', fieldName: 'userName' },
-        },
+        fieldDefinition: textfieldDefinition,
         entityId,
         hotkeyScope: 'hotkeyScope',
         isLabelIdentifier: false,

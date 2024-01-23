@@ -6,6 +6,10 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
+  phoneFieldDefinition,
+  relationFieldDefinition,
+} from '@/object-record/field/__mocks__/fieldDefinitions';
+import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
@@ -13,11 +17,7 @@ import {
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import {
-  FieldMetadata,
-  FieldPhoneMetadata,
-  FieldRelationMetadata,
-} from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
@@ -69,32 +69,6 @@ const mocks: MockedResponse[] = [
 
 const entityId = 'entityId';
 const fieldName = 'phone';
-const fieldMetadataId = 'fieldMetadataId';
-
-const textFieldDefinition: FieldDefinition<FieldPhoneMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'TEXT',
-  metadata: {
-    objectMetadataNameSingular: 'person',
-    placeHolder: '(+256)-712-345-6789',
-    fieldName: 'phone',
-  },
-};
-
-const relationFieldDefinition: FieldDefinition<FieldRelationMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'RELATION',
-  metadata: {
-    fieldName: 'contact',
-    relationFieldMetadataId: 'relationFieldMetadataId',
-    relationObjectMetadataNamePlural: 'users',
-    relationObjectMetadataNameSingular: 'user',
-  },
-};
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>
@@ -131,7 +105,7 @@ const getWrapper =
     );
   };
 
-const TextWrapper = getWrapper(textFieldDefinition);
+const PhoneWrapper = getWrapper(phoneFieldDefinition);
 const RelationWrapper = getWrapper(relationFieldDefinition);
 
 describe('usePersistField', () => {
@@ -147,7 +121,7 @@ describe('usePersistField', () => {
           entityFields,
         };
       },
-      { wrapper: TextWrapper },
+      { wrapper: PhoneWrapper },
     );
 
     act(() => {

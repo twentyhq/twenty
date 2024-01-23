@@ -2,31 +2,17 @@ import { ReactNode } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
+import { phoneFieldDefinition } from '@/object-record/field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
 import { entityFieldsEditModeValueFamilyState } from '@/object-record/field/states/entityFieldsEditModeValueFamilyState';
-import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import { FieldPhoneMetadata } from '@/object-record/field/types/FieldMetadata';
 
-const fieldMetadataId = 'fieldMetadataId';
 const entityId = 'entityId';
-
-const fieldDefinition: FieldDefinition<FieldPhoneMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'TEXT',
-  metadata: {
-    objectMetadataNameSingular: 'person',
-    placeHolder: '(+256)-712-345-6789',
-    fieldName: 'phone',
-  },
-};
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <FieldContext.Provider
     value={{
-      fieldDefinition,
+      fieldDefinition: phoneFieldDefinition,
       entityId,
       hotkeyScope: 'hotkeyScope',
       isLabelIdentifier: false,

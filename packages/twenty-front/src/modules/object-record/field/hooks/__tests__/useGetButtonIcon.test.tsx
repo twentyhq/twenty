@@ -2,43 +2,17 @@ import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
+import {
+  phoneFieldDefinition,
+  relationFieldDefinition,
+} from '@/object-record/field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useGetButtonIcon } from '@/object-record/field/hooks/useGetButtonIcon';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import {
-  FieldMetadata,
-  FieldPhoneMetadata,
-  FieldRelationMetadata,
-} from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { IconPencil } from '@/ui/display/icon';
 
-const fieldMetadataId = 'fieldMetadataId';
 const entityId = 'entityId';
-
-const phoneFieldDefinition: FieldDefinition<FieldPhoneMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'TEXT',
-  metadata: {
-    objectMetadataNameSingular: 'person',
-    placeHolder: '(+256)-712-345-6789',
-    fieldName: 'phone',
-  },
-};
-
-const relationFieldDefinition: FieldDefinition<FieldRelationMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'RELATION',
-  metadata: {
-    fieldName: 'contact',
-    relationFieldMetadataId: 'relationFieldMetadataId',
-    relationObjectMetadataNamePlural: 'users',
-    relationObjectMetadataNameSingular: 'user',
-  },
-};
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>

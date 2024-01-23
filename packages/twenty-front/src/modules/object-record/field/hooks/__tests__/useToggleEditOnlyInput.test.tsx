@@ -5,14 +5,13 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { booleanFieldDefinition } from '@/object-record/field/__mocks__/fieldDefinitions';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/field/hooks/useToggleEditOnlyInput';
-import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import { FieldBooleanMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
@@ -20,18 +19,6 @@ jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
 }));
 
 const entityId = 'entityId';
-const fieldMetadataId = 'fieldMetadataId';
-
-const fieldDefinition: FieldDefinition<FieldBooleanMetadata> = {
-  fieldMetadataId,
-  label: 'Is Active?',
-  iconName: 'iconName',
-  type: 'BOOLEAN',
-  metadata: {
-    objectMetadataNameSingular: 'person',
-    fieldName: 'isActive',
-  },
-};
 
 const mocks: MockedResponse[] = [
   {
@@ -75,7 +62,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     <MockedProvider mocks={mocks} addTypename={false}>
       <FieldContext.Provider
         value={{
-          fieldDefinition,
+          fieldDefinition: booleanFieldDefinition,
           entityId,
           hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
