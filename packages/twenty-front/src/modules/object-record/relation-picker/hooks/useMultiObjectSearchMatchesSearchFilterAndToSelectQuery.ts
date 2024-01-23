@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -58,12 +57,13 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
             .map(({ id }) => id);
 
           const excludedIdsUnion = [...selectedIds, ...excludedIds];
+          const excludedIdsFilter = excludedIdsUnion.length
+            ? { not: { id: { in: excludedIdsUnion } } }
+            : undefined;
 
           const searchFilters = [
             searchFilterPerMetadataItemNameSingular[nameSingular],
-            isNonEmptyArray(excludedIdsUnion)
-              ? { not: { id: { in: [...selectedIds, ...excludedIds] } } }
-              : undefined,
+            excludedIdsFilter,
           ].filter(isDefined);
 
           return [
