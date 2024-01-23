@@ -6,8 +6,9 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
+import { orFilterVariables } from '@/object-record/utils/orFilterVariables';
 import { assertNotNull } from '~/utils/assert';
-import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
@@ -40,66 +41,63 @@ export const useFilteredSearchEntityQuery = ({
     ...mapToObjectRecordIdentifier(record),
     record,
   });
+  const selectedIdsFilter = { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, records: selectedRecords } =
     useFindManyRecords({
       objectNameSingular,
-      filter: { id: { in: selectedIds } },
+      filter: selectedIdsFilter,
       orderBy: { [orderByField]: sortOrder },
+      skip: !selectedIds.length,
     });
 
-  const searchFilters = filters
-    .map(({ fieldNames, filter }) => {
-      if (!isNonEmptyString(filter)) {
-        return undefined;
-      }
+  const searchFilters = filters.map(({ fieldNames, filter }) => {
+    if (!isNonEmptyString(filter)) {
+      return undefined;
+    }
 
-      return {
-        or: fieldNames.map((fieldName) => {
-          const fieldNameParts = fieldName.split('.');
+    return orFilterVariables(
+      fieldNames.map((fieldName) => {
+        const [parentFieldName, subFieldName] = fieldName.split('.');
 
-          if (fieldNameParts.length > 1) {
-            // Composite field
-
-            return {
-              [fieldNameParts[0]]: {
-                [fieldNameParts[1]]: {
-                  ilike: `%${filter}%`,
-                },
-              },
-            };
-          }
+        if (subFieldName) {
+          // Composite field
           return {
-            [fieldName]: {
-              ilike: `%${filter}%`,
+            [parentFieldName]: {
+              [subFieldName]: {
+                ilike: `%${filter}%`,
+              },
             },
           };
-        }),
-      };
-    })
-    .filter(isDefined);
+        }
 
-  const filteredSelectedRecordsFilter = { id: { in: selectedIds } };
+        return {
+          [fieldName]: {
+            ilike: `%${filter}%`,
+          },
+        };
+      }),
+    );
+  });
+
   const {
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecords,
   } = useFindManyRecords({
     objectNameSingular,
-    filter: searchFilters.length
-      ? { and: [...searchFilters, filteredSelectedRecordsFilter] }
-      : filteredSelectedRecordsFilter,
+    filter: andFilterVariables([...searchFilters, selectedIdsFilter]),
     orderBy: { [orderByField]: sortOrder },
+    skip: !selectedIds.length,
   });
 
-  const recordsToSelectFilter = {
-    not: { id: { in: [...selectedIds, ...excludeEntityIds] } },
-  };
+  const notFilterIds = [...selectedIds, ...excludeEntityIds];
+  const notFilter = notFilterIds.length
+    ? { not: { id: { in: notFilterIds } } }
+    : undefined;
   const { loading: recordsToSelectLoading, records: recordsToSelect } =
     useFindManyRecords({
       objectNameSingular,
-      filter: searchFilters.length
-        ? { and: [...searchFilters, recordsToSelectFilter] }
-        : recordsToSelectFilter,
+      filter: andFilterVariables([...searchFilters, notFilter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: { [orderByField]: sortOrder },
     });

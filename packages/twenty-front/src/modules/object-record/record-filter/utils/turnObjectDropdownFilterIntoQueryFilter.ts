@@ -10,6 +10,7 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
@@ -134,13 +135,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               });
               break;
             case ViewFilterOperand.IsNot:
-              objectRecordFilters.push({
-                not: {
-                  [correspondingField.name + 'Id']: {
-                    in: parsedRecordIds,
-                  } as UUIDFilter,
-                },
-              });
+              if (parsedRecordIds.length) {
+                objectRecordFilters.push({
+                  not: {
+                    [correspondingField.name + 'Id']: {
+                      in: parsedRecordIds,
+                    } as UUIDFilter,
+                  },
+                });
+              }
               break;
             default:
               throw new Error(
@@ -257,9 +260,5 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return objectRecordFilters.length === 1
-    ? objectRecordFilters[0]
-    : objectRecordFilters.length
-      ? { and: objectRecordFilters }
-      : undefined;
+  return andFilterVariables(objectRecordFilters);
 };
