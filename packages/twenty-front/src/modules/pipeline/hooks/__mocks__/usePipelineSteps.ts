@@ -40,12 +40,7 @@ const data = {
 };
 
 export const variables = {
-  input: {
-    id: mockId,
-    variables: {
-      data,
-    },
-  },
+  input: data,
 };
 
 export const deleteVariables = { idToDelete: 'columnId' };
