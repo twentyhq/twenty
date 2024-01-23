@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "./scripts/run-integration.sh",
-    "typeorm": "ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
+    "typeorm": "npx ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
     "typeorm:migrate": "yarn typeorm migration:run -d ./src/database/typeorm/metadata/metadata.datasource.ts && yarn typeorm migration:run -d ./src/database/typeorm/core/core.datasource.ts",
     "database:init": "yarn database:setup && yarn database:seed:dev",
     "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
