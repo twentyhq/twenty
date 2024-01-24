@@ -134,7 +134,7 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     switch (true) {
-      case isMatchingLocation(AppPath.RecordTablePage): {
+      case isMatchingLocation(AppPath.RecordIndexPage): {
         setHotkeyScope(TableHotkeyScope.Table, {
           goto: true,
           keyboardShortcutMenu: true,

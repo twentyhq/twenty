@@ -6,6 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordTableEffect } from '@/object-record/record-index/components/RecordTableEffect';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -17,8 +18,6 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
-import { RecordTableEffect } from './RecordTableEffect';
-
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -27,7 +26,7 @@ const StyledContainer = styled.div`
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
-export const RecordTableContainer = ({
+export const RecordIndexContainer = ({
   recordTableId,
   objectNamePlural,
   createRecord,

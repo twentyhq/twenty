@@ -8,6 +8,7 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
@@ -20,15 +21,13 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { RecordTableContainer } from './RecordTableContainer';
-
 const StyledTableContainer = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
 `;
 
-export const RecordTablePage = () => {
+export const RecordIndexPage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -87,7 +86,7 @@ export const RecordTablePage = () => {
       </PageHeader>
       <PageBody>
         <StyledTableContainer>
-          <RecordTableContainer
+          <RecordIndexContainer
             recordTableId={recordTableId}
             objectNamePlural={objectNamePlural}
             createRecord={handleAddButtonClick}
