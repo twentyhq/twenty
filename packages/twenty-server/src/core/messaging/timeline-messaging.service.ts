@@ -61,8 +61,6 @@ export class TimelineMessagingService {
       [personIds, offset],
     );
 
-    console.log(messageThreads);
-
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
     );
@@ -85,6 +83,8 @@ export class TimelineMessagingService {
         message.body,
         message."subject",
         "messageParticipant".id AS "messageParticipantId",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
         "messageParticipant".handle
         FROM
             ${dataSourceMetadata.schema}."message" message 
@@ -115,8 +115,8 @@ export class TimelineMessagingService {
             const threadParticipant = threadMessageAcc[threadMessage.handle];
 
             if (!threadParticipant) {
-              threadMessageAcc[threadMessage.handle] = {
-                id: threadMessage.personId,
+              threadMessageAcc[threadMessage.id] = {
+                id: threadMessage.id,
                 handle: threadMessage.handle,
               };
             }
@@ -137,8 +137,6 @@ export class TimelineMessagingService {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
-
-      console.log(threadParticipants);
 
       return {
         id: messageThreadId,
