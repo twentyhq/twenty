@@ -27,6 +27,11 @@ import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/cron/clean-
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
+type WorkspaceToDeleteData = {
+  workspaceId: string;
+  daysSinceInactive: number;
+};
+
 @Injectable()
 export class CleanInactiveWorkspaceJob
   implements MessageQueueJob<CleanInactiveWorkspacesCommandOptions>
@@ -34,6 +39,7 @@ export class CleanInactiveWorkspaceJob
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
   private readonly inactiveDaysBeforeDelete;
   private readonly inactiveDaysBeforeEmail;
+  private workspacesToDelete: WorkspaceToDeleteData[] = [];
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -159,23 +165,11 @@ export class CleanInactiveWorkspaceJob
     }
 
     const emailData = {
-      daysSinceDead: daysSinceInactive - this.inactiveDaysBeforeDelete,
+      daysSinceInactive: daysSinceInactive,
       workspaceId: `${dataSource.workspaceId}`,
     };
-    const emailTemplate = DeleteInactiveWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
 
-    const text = `Workspace '${dataSource.workspaceId}' should be deleted as inactive since ${daysSinceInactive} days`;
-
-    await this.emailService.send({
-      to: this.environmentService.getEmailSystemAddress(),
-      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
-      subject: 'Action Needed to Delete Workspace',
-      html,
-      text,
-    });
+    this.workspacesToDelete.push(emailData);
   }
 
   async processWorkspace(
@@ -229,6 +223,27 @@ export class CleanInactiveWorkspaceJob
     return chunkedArray;
   }
 
+  async sendDeleteWorkspaceEmail(isDryRun: boolean): Promise<void> {
+    if (isDryRun || this.workspacesToDelete.length === 0) {
+      return;
+    }
+    const emailTemplate = DeleteInactiveWorkspaceEmail(this.workspacesToDelete);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    await this.emailService.send({
+      to: this.environmentService.getEmailSystemAddress(),
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      subject: 'Action Needed to Delete Workspaces',
+      html,
+      text,
+    });
+  }
+
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 
@@ -277,6 +292,8 @@ export class CleanInactiveWorkspaceJob
         await this.processWorkspace(dataSource, objectsMetadata, isDryRun);
       }
     }
+
+    await this.sendDeleteWorkspaceEmail(isDryRun);
 
     this.logger.log(`${this.getDryRunLog(isDryRun)}job done!`);
   }
