@@ -24,12 +24,6 @@ export const useActivityTargetObjectRecords = ({
       },
     });
 
-  // console.log('objectRecords', {
-  //   activityId,
-  //   activityTargets,
-  //   objectMetadataItems,
-  // });
-
   const activityTargetObjectRecords = activityTargets
     .map<Nullable<ActivityTargetObjectRecord>>((activityTarget) => {
       const correspondingObjectMetadataItem = objectMetadataItems.find(
@@ -37,11 +31,6 @@ export const useActivityTargetObjectRecords = ({
           isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
           !objectMetadataItem.isSystem,
       );
-
-      // console.log({
-      //   activityTarget,
-      //   correspondingObjectMetadataItem,
-      // });
 
       if (!correspondingObjectMetadataItem) {
         return null;
@@ -56,12 +45,6 @@ export const useActivityTargetObjectRecords = ({
       };
     })
     .filter(isDefined);
-
-  // console.log({
-  //   activityId,
-  //   activityTargetObjectRecords,
-  //   loadingActivityTargets,
-  // });
 
   return {
     activityTargetObjectRecords,
