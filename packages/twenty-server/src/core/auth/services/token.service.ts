@@ -396,7 +396,6 @@ export class TokenService {
 
     const emailData = {
       link: resetLink,
-      userName: `${user.firstName} ${user.lastName}`,
       duration: ms(
         differenceInMilliseconds(
           resetToken.passwordResetTokenExpiresAt,

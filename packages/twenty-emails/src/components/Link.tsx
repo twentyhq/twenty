@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { emailTheme } from 'src/common-style';
 import { Link as EmailLink } from '@react-email/components';
+import { emailTheme } from 'src/common-style';
 
 const linkStyle = {
-    color: emailTheme.font.colors.primary,
+  color: emailTheme.font.colors.tertiary,
+  textDecoration: 'underline',
 };
 
 export const Link = ({ value, href }) => {
