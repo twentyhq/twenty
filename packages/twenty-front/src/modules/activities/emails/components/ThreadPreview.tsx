@@ -93,20 +93,23 @@ export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => {
     >
       <StyledHeading unread={!thread.read}>
         <StyledAvatar
-          avatarUrl={thread.senderPictureUrl}
-          placeholder={thread.senderName}
+          avatarUrl={''}
+          placeholder={thread.firstParticipant.handle}
           type="rounded"
         />
-        <StyledSenderName>{thread.senderName}</StyledSenderName>
+        {/* TODO: Update this */}
+        <StyledSenderName>{thread.firstParticipant.handle}</StyledSenderName>
         <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
-        <StyledBody>{thread.body}</StyledBody>
+        <StyledSubject unread={!thread.read}>
+          {thread.lastMessageSubject}
+        </StyledSubject>
+        <StyledBody>{thread.lastMessageBody}</StyledBody>
       </StyledSubjectAndBody>
       <StyledReceivedAt>
-        {formatToHumanReadableDate(thread.receivedAt)}
+        {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
       </StyledReceivedAt>
     </StyledCardContent>
   );

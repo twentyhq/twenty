@@ -50,7 +50,7 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
 
   const timelineThreads: TimelineThread[] =
     threads.data[
-      entity.targetObjectNameSingular === 'Person'
+      entity.targetObjectNameSingular === 'person'
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];
@@ -62,13 +62,13 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads.length}</StyledEmailCount>
+              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads.map((thread: TimelineThread, index: number) => (
+          {timelineThreads?.map((thread: TimelineThread, index: number) => (
             <ThreadPreview
               key={index}
               divider={index < timelineThreads.length - 1}
