@@ -1,23 +1,20 @@
 import { Args, Query, Field, Resolver, ObjectType } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
-import { Column, Entity } from 'typeorm';
+import { Entity } from 'typeorm';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
-import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 
 @Entity({ name: 'timelineThreadParticipant', schema: 'core' })
 @ObjectType('TimelineThreadParticipant')
 class TimelineThreadParticipant {
-  @Field()
-  @IsNullable()
+  @Field({ nullable: true })
   personId: string;
 
-  @Field()
-  @IsNullable()
+  @Field({ nullable: true })
   workspaceMemberId: string;
 
   @Field()
@@ -37,11 +34,9 @@ class TimelineThreadParticipant {
 @ObjectType('TimelineThread')
 export class TimelineThread {
   @Field()
-  @Column()
   id: boolean;
 
   @Field()
-  @Column()
   read: boolean;
 
   @Field()

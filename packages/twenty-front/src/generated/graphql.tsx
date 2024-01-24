@@ -482,8 +482,8 @@ export type TimelineThreadParticipant = {
   firstName: Scalars['String'];
   handle: Scalars['String'];
   lastName: Scalars['String'];
-  personId: Scalars['String'];
-  workspaceMemberId: Scalars['String'];
+  personId?: Maybe<Scalars['String']>;
+  workspaceMemberId?: Maybe<Scalars['String']>;
 };
 
 export type TransientToken = {
@@ -677,14 +677,14 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];

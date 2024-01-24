@@ -218,12 +218,10 @@ export class TimelineMessagingService {
 
       const lastTwoParticipants = threadParticipants
         .filter(
-          (threadParticipant) => threadParticipant.id !== firstParticipant.id,
+          (threadParticipant) =>
+            threadParticipant.handle !== firstParticipant.handle,
         )
         .slice(-2);
-
-      console.log('threadParticipants', threadParticipants);
-      console.log('lastTwoParticipants', lastTwoParticipants);
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
