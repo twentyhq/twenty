@@ -34,7 +34,7 @@ class TimelineThreadParticipant {
 @ObjectType('TimelineThread')
 export class TimelineThread {
   @Field()
-  id: boolean;
+  id: string;
 
   @Field()
   read: boolean;
