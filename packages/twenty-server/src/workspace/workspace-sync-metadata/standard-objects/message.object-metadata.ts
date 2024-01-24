@@ -12,7 +12,7 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'message',
+  namePlural: 'messages',
   labelSingular: 'Message',
   labelPlural: 'Messages',
   description: 'Message',

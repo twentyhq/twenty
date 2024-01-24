@@ -9,10 +9,10 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
-import { useCurrentRecordBoardCardSelectedInternal } from '@/object-record/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
-import { isRecordBoardCardInCompactViewFamilyState } from '@/object-record/record-board/states/isRecordBoardCardInCompactViewFamilyState';
+import { BoardCardIdContext } from '@/object-record/record-board-deprecated/contexts/BoardCardIdContext';
+import { useCurrentRecordBoardDeprecatedCardSelectedInternal } from '@/object-record/record-board-deprecated/hooks/internal/useCurrentRecordBoardDeprecatedCardSelectedInternal';
+import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
+import { isRecordBoardDeprecatedCardInCompactViewFamilyState } from '@/object-record/record-board-deprecated/states/isRecordBoardDeprecatedCardInCompactViewFamilyState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
@@ -128,7 +128,7 @@ const StyledCompactIconContainer = styled.div`
 
 export const CompanyBoardCard = () => {
   const { isCurrentCardSelected, setCurrentCardSelected } =
-    useCurrentRecordBoardCardSelectedInternal();
+    useCurrentRecordBoardDeprecatedCardSelectedInternal();
   const boardCardId = useContext(BoardCardIdContext);
 
   const [companyProgress] = useRecoilState(
@@ -136,12 +136,12 @@ export const CompanyBoardCard = () => {
   );
 
   const { isCompactViewEnabledState, visibleBoardCardFieldsSelector } =
-    useRecordBoardScopedStates();
+    useRecordBoardDeprecatedScopedStates();
 
   const [isCompactViewEnabled] = useRecoilState(isCompactViewEnabledState);
 
   const [isCardInCompactView, setIsCardInCompactView] = useRecoilState(
-    isRecordBoardCardInCompactViewFamilyState(boardCardId ?? ''),
+    isRecordBoardDeprecatedCardInCompactViewFamilyState(boardCardId ?? ''),
   );
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;
