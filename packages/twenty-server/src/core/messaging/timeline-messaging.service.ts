@@ -35,11 +35,11 @@ export class TimelineMessagingService {
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       LEFT JOIN
-          ${dataSourceMetadata.schema}."person" person ON person."id" = "messageParticipant"."personId"
+          ${dataSourceMetadata.schema}."person" person ON person.id = "messageParticipant"."personId"
       LEFT JOIN
           ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
       WHERE
-          person."id" IN ANY($1)
+          person.id = ANY($1)
       GROUP BY
           "messageThread".id,
           message.id
@@ -64,9 +64,9 @@ export class TimelineMessagingService {
         message.body,
         message."subject",
         "messageParticipant".id AS "messageParticipantId",
-        "messageParticipant".handle,
+        "messageParticipant".handle
         FROM
-        ${dataSourceMetadata.schema}."message" message 
+            ${dataSourceMetadata.schema}."message" message 
         LEFT JOIN
             ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
         LEFT JOIN
@@ -76,7 +76,7 @@ export class TimelineMessagingService {
         LEFT JOIN
             ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
         WHERE
-            "messageThread".id IN ANY($1)
+            "messageThread".id = ANY($1)
         ORDER BY
             message."receivedAt" DESC
         `,
@@ -86,21 +86,19 @@ export class TimelineMessagingService {
     const threadParticipantsByThreadId = messageThreadIds.reduce(
       (messageThreadIdAcc, messageThreadId) => {
         const threadMessages = threadMessagesFromActiveParticipants.filter(
-          (threadMessage) => threadMessage.messageThreadId === messageThreadId,
+          (threadMessage) => threadMessage.id === messageThreadId,
         );
 
         const threadParticipants = threadMessages.reduce(
           (threadMessageAcc, threadMessage) => {
             const threadParticipant = threadMessageAcc[threadMessage.handle];
 
-            if (threadParticipant) {
-              return threadMessageAcc;
+            if (!threadParticipant) {
+              threadMessageAcc[threadMessage.handle] = {
+                id: threadMessage.personId,
+                handle: threadMessage.handle,
+              };
             }
-
-            threadMessageAcc[threadMessage.handle] = {
-              id: threadMessage.personId,
-              handle: threadMessage.handle,
-            };
 
             return threadMessageAcc;
           },
@@ -108,6 +106,8 @@ export class TimelineMessagingService {
         );
 
         messageThreadIdAcc[messageThreadId] = Object.values(threadParticipants);
+
+        return messageThreadIdAcc;
       },
       {},
     );
