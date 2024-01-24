@@ -91,7 +91,22 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
-    console.log('threadSubjects', threadSubjects);
+    const numberOfMessagesInThread = await workspaceDataSource?.query(
+      `
+      SELECT
+          "messageThread".id,
+          COUNT(message.id) AS "numberOfMessagesInThread"
+      FROM
+          ${dataSourceMetadata.schema}."message" message
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+      WHERE
+          "messageThread".id = ANY($1)
+      GROUP BY
+          "messageThread".id
+      `,
+      [messageThreadIds],
+    );
 
     const messageThreadsByMessageThreadId = messageThreads.reduce(
       (messageThreadAcc, messageThread) => {
@@ -102,11 +117,20 @@ export class TimelineMessagingService {
       {},
     );
 
-    const messageThreadSubjectsByMessageThreadId = threadSubjects.reduce(
+    const subjectsByMessageThreadId = threadSubjects.reduce(
       (threadSubjectAcc, threadSubject) => {
         threadSubjectAcc[threadSubject.id] = threadSubject;
 
         return threadSubjectAcc;
+      },
+      {},
+    );
+
+    const numberOfMessagesByMessageThreadId = numberOfMessagesInThread.reduce(
+      (numberOfMessagesAcc, numberOfMessages) => {
+        numberOfMessagesAcc[numberOfMessages.id] = numberOfMessages;
+
+        return numberOfMessagesAcc;
       },
       {},
     );
@@ -175,8 +199,11 @@ export class TimelineMessagingService {
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
-      const threadSubject =
-        messageThreadSubjectsByMessageThreadId[messageThreadId].subject;
+      const threadSubject = subjectsByMessageThreadId[messageThreadId].subject;
+
+      const numberOfMessages =
+        numberOfMessagesByMessageThreadId[messageThreadId]
+          .numberOfMessagesInThread;
 
       return {
         id: messageThreadId,
@@ -186,8 +213,7 @@ export class TimelineMessagingService {
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
         subject: threadSubject,
-        // TODO: Implement this
-        numberOfMessagesInThread: 1,
+        numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,
       };
     });
