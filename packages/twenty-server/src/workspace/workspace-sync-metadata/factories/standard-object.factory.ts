@@ -29,8 +29,8 @@ export class StandardObjectFactory {
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata | undefined {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
-    const fieldMetadataCollection =
-      TypedReflect.getMetadata('fieldMetadataCollection', metadata) ?? [];
+    const fieldMetadataMap =
+      TypedReflect.getMetadata('fieldMetadataMap', metadata) ?? [];
 
     if (!objectMetadata) {
       throw new Error(
@@ -42,7 +42,7 @@ export class StandardObjectFactory {
       return undefined;
     }
 
-    const fields = fieldMetadataCollection.reduce(
+    const fields = Object.values(fieldMetadataMap).reduce(
       // Omit gate as we don't want to store it in the DB
       (acc, { gate, ...fieldMetadata }) => {
         if (isGatedAndNotEnabled(gate, workspaceFeatureFlagsMap)) {

@@ -29,7 +29,6 @@ export class WorkspaceMetadataUpdaterService {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
 
-    console.log('1');
     /**
      * Create object metadata
      */
@@ -53,8 +52,6 @@ export class WorkspaceMetadataUpdaterService {
         relations: ['dataSource', 'fields'],
       },
     );
-
-    console.log('2');
 
     /**
      * Update object metadata

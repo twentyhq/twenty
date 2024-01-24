@@ -17,18 +17,20 @@ export interface FieldMetadataDecoratorParams<
   options?: FieldMetadataOptions<T>;
 }
 
-export type ReflectFieldMetadata = Omit<
-  FieldMetadataDecoratorParams<'default'>,
-  'defaultValue' | 'type' | 'options'
-> & {
-  name: string;
-  type: FieldMetadataType;
-  targetColumnMap: FieldMetadataTargetColumnMap<'default'>;
-  isNullable: boolean;
-  isSystem: boolean;
-  isCustom: boolean;
-  description?: string;
-  defaultValue: FieldMetadataDefaultValue<'default'> | null;
-  gate?: GateDecoratorParams;
-  options?: FieldMetadataOptions<'default'> | null;
-};
+export interface ReflectFieldMetadata {
+  [key: string]: Omit<
+    FieldMetadataDecoratorParams<'default'>,
+    'defaultValue' | 'type' | 'options'
+  > & {
+    name: string;
+    type: FieldMetadataType;
+    targetColumnMap: FieldMetadataTargetColumnMap<'default'>;
+    isNullable: boolean;
+    isSystem: boolean;
+    isCustom: boolean;
+    description?: string;
+    defaultValue: FieldMetadataDefaultValue<'default'> | null;
+    gate?: GateDecoratorParams;
+    options?: FieldMetadataOptions<'default'> | null;
+  };
+}

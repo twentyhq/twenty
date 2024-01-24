@@ -13,9 +13,8 @@ export function FieldMetadata<T extends FieldMetadataType>(
   params: FieldMetadataDecoratorParams<T>,
 ): PropertyDecorator {
   return (target: object, fieldKey: string) => {
-    const fieldMetadataCollection =
-      TypedReflect.getMetadata('fieldMetadataCollection', target.constructor) ??
-      [];
+    const existingFieldMetadata =
+      TypedReflect.getMetadata('fieldMetadataMap', target.constructor) ?? {};
     const isNullable =
       TypedReflect.getMetadata('isNullable', target, fieldKey) ?? false;
     const isSystem =
@@ -23,38 +22,36 @@ export function FieldMetadata<T extends FieldMetadataType>(
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
     const { joinColumn, ...restParams } = params;
 
-    fieldMetadataCollection.push(
-      generateFieldMetadata<T>(
-        restParams,
-        fieldKey,
-        isNullable,
-        isSystem,
-        gate,
-      ),
-    );
-
-    if (joinColumn && restParams.type === FieldMetadataType.RELATION) {
-      fieldMetadataCollection.push(
-        generateFieldMetadata<FieldMetadataType.UUID>(
-          {
-            ...restParams,
-            type: FieldMetadataType.UUID,
-            label: `${restParams.label} id (foreign key)`,
-            description: `${restParams.description} id foreign key`,
-            defaultValue: null,
-            options: undefined,
-          },
-          joinColumn,
+    TypedReflect.defineMetadata(
+      'fieldMetadataMap',
+      {
+        ...existingFieldMetadata,
+        [fieldKey]: generateFieldMetadata<T>(
+          restParams,
+          fieldKey,
           isNullable,
-          true,
+          isSystem,
           gate,
         ),
-      );
-    }
-
-    TypedReflect.defineMetadata(
-      'fieldMetadataCollection',
-      fieldMetadataCollection,
+        ...(joinColumn && restParams.type === FieldMetadataType.RELATION
+          ? {
+              [joinColumn]: generateFieldMetadata<FieldMetadataType.UUID>(
+                {
+                  ...restParams,
+                  type: FieldMetadataType.UUID,
+                  label: `${restParams.label} id (foreign key)`,
+                  description: `${restParams.description} id foreign key`,
+                  defaultValue: null,
+                  options: undefined,
+                },
+                joinColumn,
+                isNullable,
+                true,
+                gate,
+              ),
+            }
+          : {}),
+      },
       target.constructor,
     );
   };
@@ -66,7 +63,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
   isNullable: boolean,
   isSystem: boolean,
   gate: GateDecoratorParams | undefined = undefined,
-): ReflectFieldMetadata {
+): ReflectFieldMetadata[string] {
   const targetColumnMap = generateTargetColumnMap(params.type, false, fieldKey);
   const defaultValue = params.defaultValue
     ? generateDefaultValue(params.type)

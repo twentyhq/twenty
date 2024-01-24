@@ -9,8 +9,8 @@ import {
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { transformFieldMetadataForComparison } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const fieldPropertiesToIgnore = [
   'id',
@@ -39,22 +39,25 @@ export class WorkspaceFieldComparator {
       string,
       Partial<PartialFieldMetadata>
     > = {};
-    const originalFieldMetadataMap = transformFieldMetadataForComparison(
+    const originalFieldMetadataMap = transformMetadataForComparison(
       originalObjectMetadata.fields,
       {
-        fieldPropertiesToIgnore,
-        fieldPropertiesToStringify,
+        propertiesToIgnore: fieldPropertiesToIgnore,
+        propertiesToStringify: fieldPropertiesToStringify,
+        keyFactory(datum) {
+          return datum.name;
+        },
       },
     );
-    const standardFieldMetadataMap = transformFieldMetadataForComparison(
+    const standardFieldMetadataMap = transformMetadataForComparison(
       standardObjectMetadata.fields,
       {
-        fieldPropertiesToStringify,
+        propertiesToIgnore: fieldPropertiesToStringify,
+        keyFactory(datum) {
+          return datum.name;
+        },
       },
     );
-
-    // console.log('originalFieldMetadataMap: ', originalFieldMetadataMap);
-    // console.log('standardFieldMetadataMap: ', standardFieldMetadataMap);
 
     // Compare fields
     const fieldMetadataDifference = diff(
@@ -62,32 +65,40 @@ export class WorkspaceFieldComparator {
       standardFieldMetadataMap,
     );
 
-    console.log('fieldMetadataDifference: ', fieldMetadataDifference);
-
     for (const difference of fieldMetadataDifference) {
       const fieldName = difference.path[0];
+      // Object shouldn't have thousands of fields, so we can use find here
+      const standardFieldMetadata = standardObjectMetadata.fields.find(
+        (field) => field.name === fieldName,
+      );
       const originalFieldMetadata = originalObjectMetadata.fields.find(
         (field) => field.name === fieldName,
       );
 
-      if (!originalFieldMetadata) {
-        throw new Error(
-          `Field ${fieldName} not found in originalObjectMetadata`,
-        );
-      }
-
       switch (difference.type) {
         case 'CREATE': {
+          if (!standardFieldMetadata) {
+            throw new Error(
+              `Field ${fieldName} not found in standardObjectMetadata`,
+            );
+          }
+
           result.push({
             action: ComparatorAction.CREATE,
             object: {
-              ...originalFieldMetadata,
+              ...standardFieldMetadata,
               objectMetadataId: originalObjectMetadata.id,
             },
           });
           break;
         }
         case 'CHANGE': {
+          if (!originalFieldMetadata) {
+            throw new Error(
+              `Field ${fieldName} not found in originalObjectMetadata`,
+            );
+          }
+
           const id = originalFieldMetadata.id;
           const property = difference.path[difference.path.length - 1];
 
@@ -121,6 +132,12 @@ export class WorkspaceFieldComparator {
           break;
         }
         case 'REMOVE': {
+          if (!originalFieldMetadata) {
+            throw new Error(
+              `Field ${fieldName} not found in originalObjectMetadata`,
+            );
+          }
+
           if (difference.path.length === 1) {
             result.push({
               action: ComparatorAction.DELETE,

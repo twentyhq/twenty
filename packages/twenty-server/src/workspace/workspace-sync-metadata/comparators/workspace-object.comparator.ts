@@ -9,7 +9,7 @@ import {
 } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
+import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 const objectPropertiesToIgnore = [
@@ -19,7 +19,8 @@ const objectPropertiesToIgnore = [
   'labelIdentifierFieldMetadataId',
   'imageIdentifierFieldMetadataId',
   'isActive',
-];
+  'fields',
+] as const;
 
 @Injectable()
 export class WorkspaceObjectComparator {
@@ -40,9 +41,11 @@ export class WorkspaceObjectComparator {
     const objectPropertiesToUpdate: Partial<PartialObjectMetadata> = {};
 
     // Only compare properties that are not ignored
-    const partialOriginalObjectMetadata = filterIgnoredProperties(
-      omit(originalObjectMetadata, 'fields'),
-      objectPropertiesToIgnore,
+    const partialOriginalObjectMetadata = transformMetadataForComparison(
+      originalObjectMetadata,
+      {
+        propertiesToIgnore: objectPropertiesToIgnore,
+      },
     );
 
     // Compare objects
