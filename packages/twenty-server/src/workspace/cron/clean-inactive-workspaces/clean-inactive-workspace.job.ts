@@ -134,6 +134,7 @@ export class CleanInactiveWorkspaceJob
 
       this.emailService.send({
         to: workspaceMember.email,
+        bcc: this.environmentService.getEmailSystemAddress(),
         from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
         subject: 'Action Needed to Prevent Workspace Deletion',
         html,
