@@ -31,7 +31,6 @@ export class TimelineMessagingService {
       FROM
       (SELECT "messageThread".id,
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
-      COUNT(message.id) AS "numberOfMessagesInThread",
       message.id AS "lastMessageId",
       message.body AS "lastMessageBody",
       message.subject AS "lastMessageSubject",
@@ -53,11 +52,11 @@ export class TimelineMessagingService {
           message.id
       ORDER BY
           message."receivedAt" DESC
-      LIMIT 10
-      OFFSET $2
       ) AS "messageThreads"
       WHERE
       "rowNumber" = 1
+      LIMIT 10
+      OFFSET $2
         `,
       [personIds, offset],
     );
@@ -66,6 +65,15 @@ export class TimelineMessagingService {
 
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
+    );
+
+    const messageThreadsByMessageThreadId = messageThreads.reduce(
+      (messageThreadAcc, messageThread) => {
+        messageThreadAcc[messageThread.id] = messageThread;
+
+        return messageThreadAcc;
+      },
+      {},
     );
 
     const threadMessagesFromActiveParticipants =
@@ -128,17 +136,18 @@ export class TimelineMessagingService {
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
-      const lastMessage = threadMessagesFromActiveParticipants.slice(-1)[0];
+      const thread = messageThreadsByMessageThreadId[messageThreadId];
 
       return {
         id: messageThreadId,
         read: true,
         firtstParticipant: threadParticipants[0],
         lastTwoParticipants: threadParticipants.slice(-2),
-        lastMessageReceivedAt: lastMessage.receivedAt,
-        lastMessageBody: lastMessage.body,
-        lastMessageSubject: lastMessage.subject,
-        numberOfMessagesInThread: threadMessagesFromActiveParticipants.length,
+        lastMessageReceivedAt: thread.lastMessageReceivedAt,
+        lastMessageBody: thread.lastMessageBody,
+        lastMessageSubject: thread.lastMessageSubject,
+        // TODO: Implement this
+        numberOfMessagesInThread: 1,
         participantCount: threadParticipants.length,
       };
     });

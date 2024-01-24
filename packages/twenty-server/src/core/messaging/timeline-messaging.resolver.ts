@@ -8,6 +8,16 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
 
+@Entity({ name: 'timelineThreadParticipant', schema: 'core' })
+@ObjectType('TimelineThreadParticipant')
+class TimelineThreadParticipant {
+  @Field()
+  id: string;
+
+  @Field()
+  handle: string;
+}
+
 @Entity({ name: 'timelineThread', schema: 'core' })
 @ObjectType('TimelineThread')
 class TimelineThread {
@@ -16,28 +26,25 @@ class TimelineThread {
   read: boolean;
 
   @Field()
-  @Column()
-  senderName: string;
+  firstParticipant: TimelineThreadParticipant;
+
+  @Field(() => [TimelineThreadParticipant])
+  lastTwoParticipants: TimelineThreadParticipant[];
 
   @Field()
-  @Column()
-  senderPictureUrl: string;
+  lastMessageReceivedAt: Date;
 
   @Field()
-  @Column()
+  lastMessageBody: string;
+
+  @Field()
+  lastMessageSubject: string;
+
+  @Field()
   numberOfMessagesInThread: number;
 
   @Field()
-  @Column()
-  subject: string;
-
-  @Field()
-  @Column()
-  body: string;
-
-  @Field()
-  @Column()
-  receivedAt: Date;
+  participantCount: number;
 }
 
 @UseGuards(JwtAuthGuard)
