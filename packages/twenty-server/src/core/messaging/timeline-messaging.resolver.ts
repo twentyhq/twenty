@@ -20,7 +20,7 @@ class TimelineThreadParticipant {
 
 @Entity({ name: 'timelineThread', schema: 'core' })
 @ObjectType('TimelineThread')
-class TimelineThread {
+export class TimelineThread {
   @Field()
   @Column()
   read: boolean;

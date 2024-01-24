@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TimelineThread } from 'src/core/messaging/timeline-messaging.resolver';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
@@ -14,7 +15,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     personIds: string[],
     page: number = 1,
-  ) {
+  ): Promise<TimelineThread[]> {
     const offset = (page - 1) * 10;
 
     const dataSourceMetadata =

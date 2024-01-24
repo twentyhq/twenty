@@ -80,7 +80,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   ) => {
     const newApiKey = await createOneApiKey?.({
       name: name,
-      expiresAt: newExpiresAt,
+      expiresAt: newExpiresAt ?? '',
     });
 
     if (!newApiKey) {

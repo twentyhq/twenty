@@ -37,17 +37,10 @@ const data = {
   id: 'columnId',
   position: 1,
   name: 'Column Title',
-  pipeline: { connect: { id: currentPipelineId } },
-  type: 'ongoing',
 };
 
 export const variables = {
-  input: {
-    id: mockId,
-    variables: {
-      data,
-    },
-  },
+  input: data,
 };
 
 export const deleteVariables = { idToDelete: 'columnId' };

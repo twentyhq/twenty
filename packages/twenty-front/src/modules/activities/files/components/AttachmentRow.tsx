@@ -62,10 +62,9 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
-  const { deleteOneRecord: deleteOneAttachment } =
-    useDeleteOneRecord<Attachment>({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
-    });
+  const { deleteOneRecord: deleteOneAttachment } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
 
   const handleDelete = () => {
     deleteOneAttachment(attachment.id);

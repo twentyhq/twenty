@@ -1,27 +1,38 @@
 import * as React from 'react';
+import { Column, Row, Section } from '@react-email/components';
 import { BaseEmail } from 'src/components/BaseEmail';
-import { CallToAction } from 'src/components/CallToAction';
-import { HighlightedText } from 'src/components/HighlightedText';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 
 type DeleteInactiveWorkspaceEmailData = {
-  daysSinceDead: number;
+  daysSinceInactive: number;
   workspaceId: string;
 };
 
-export const DeleteInactiveWorkspaceEmail = ({
-  daysSinceDead,
-  workspaceId,
-}: DeleteInactiveWorkspaceEmailData) => {
+export const DeleteInactiveWorkspaceEmail = (
+  workspacesToDelete: DeleteInactiveWorkspaceEmailData[],
+) => {
+  const minDaysSinceInactive = Math.min(
+    ...workspacesToDelete.map(
+      (workspaceToDelete) => workspaceToDelete.daysSinceInactive,
+    ),
+  );
   return (
-    <BaseEmail>
-      <Title value="Dead Workspace 😵" />
-      <HighlightedText value={`Inactive since ${daysSinceDead} day(s)`} />
+    <BaseEmail width={350}>
+      <Title value="Dead Workspaces 😵 that should be deleted" />
       <MainText>
-        Workspace <b>{workspaceId}</b> should be deleted.
+        List of <b>workspaceIds</b> inactive since at least{' '}
+        <b>{minDaysSinceInactive} days</b>:
+        <Section>
+          {workspacesToDelete.map((workspaceToDelete) => {
+            return (
+              <Row key={workspaceToDelete.workspaceId}>
+                <Column>{workspaceToDelete.workspaceId}</Column>
+              </Row>
+            );
+          })}
+        </Section>
       </MainText>
-      <CallToAction href="https://app.twenty.com" value="Connect to Twenty" />
     </BaseEmail>
   );
 };

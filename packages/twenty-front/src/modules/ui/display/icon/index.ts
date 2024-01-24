@@ -57,6 +57,7 @@ export {
   IconFileText,
   IconFileUpload,
   IconFileZip,
+  IconFilterOff,
   IconForbid,
   IconGripVertical,
   IconHeadphones,
