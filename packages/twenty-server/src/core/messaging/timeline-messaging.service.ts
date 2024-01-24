@@ -10,7 +10,13 @@ export class TimelineMessagingService {
     private readonly typeORMService: TypeORMService,
   ) {}
 
-  async getMessagesFromPersonIds(workspaceId: string, personIds: string[]) {
+  async getMessagesFromPersonIds(
+    workspaceId: string,
+    personIds: string[],
+    page: number = 1,
+  ) {
+    const offset = (page - 1) * 10;
+
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -21,7 +27,7 @@ export class TimelineMessagingService {
 
     const messageThreads = await workspaceDataSource?.query(
       `
-      SELECT "messageThread".id
+      SELECT "messageThread".id, MAX(message."receivedAt") AS "lastMessageReceivedAt"
       FROM
           ${dataSourceMetadata.schema}."message" message 
       LEFT JOIN
@@ -39,8 +45,10 @@ export class TimelineMessagingService {
           message.id
       ORDER BY
           message."receivedAt" DESC
+      LIMIT 10
+      OFFSET $2
         `,
-      [personIds],
+      [personIds, offset],
     );
 
     const messageThreadIds = messageThreads.map(
