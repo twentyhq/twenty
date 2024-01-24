@@ -11,8 +11,10 @@ import {
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockDefaultWorkspace } from '~/testing/mock-data/users';
@@ -60,7 +62,8 @@ const RelationFieldInputWithContext = ({
           metadata: {
             fieldName: 'Relation',
             relationObjectMetadataNamePlural: 'workspaceMembers',
-            relationObjectMetadataNameSingular: 'workspaceMember',
+            relationObjectMetadataNameSingular:
+              CoreObjectNameSingular.WorkspaceMember,
           },
         }}
         entityId={entityId}
@@ -96,7 +99,11 @@ const meta: Meta = {
     onSubmit: { control: false },
     onCancel: { control: false },
   },
-  decorators: [SnackBarDecorator, clearMocksDecorator],
+  decorators: [
+    clearMocksDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+  ],
   parameters: {
     clearMocks: true,
     msw: graphqlMocks,

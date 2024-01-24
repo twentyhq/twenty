@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { IconUserCircle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
@@ -26,7 +30,13 @@ const meta: Meta<typeof SingleEntitySelect> = {
     ComponentDecorator,
     ComponentWithRecoilScopeDecorator,
     RelationPickerDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
   ],
+  args: {
+    relationObjectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    selectedRelationRecordIds: [],
+  },
   argTypes: {
     selectedEntity: {
       options: entities.map(({ name }) => name),
@@ -36,35 +46,9 @@ const meta: Meta<typeof SingleEntitySelect> = {
       ),
     },
   },
-  render: ({
-    EmptyIcon,
-    disableBackgroundBlur = false,
-    emptyLabel,
-    onCancel,
-    onCreate,
-    onEntitySelected,
-    selectedEntity,
-    width,
-    relationObjectNameSingular,
-    selectedRelationRecordIds,
-    excludedRelationRecordIds,
-  }) => (
-    <SingleEntitySelect
-      {...{
-        EmptyIcon,
-        disableBackgroundBlur,
-        emptyLabel,
-        onCancel,
-        onCreate,
-        onEntitySelected,
-        selectedEntity,
-        width,
-        relationObjectNameSingular,
-        selectedRelationRecordIds,
-        excludedRelationRecordIds,
-      }}
-    />
-  ),
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
