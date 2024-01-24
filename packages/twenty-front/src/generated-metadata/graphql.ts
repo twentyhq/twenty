@@ -443,6 +443,12 @@ export type Telemetry = {
   enabled: Scalars['Boolean']['output'];
 };
 
+export type TimelineThreadParticipant = {
+  __typename?: 'TimelineThreadParticipant';
+  handle: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;

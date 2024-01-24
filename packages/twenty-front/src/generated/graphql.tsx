@@ -465,13 +465,20 @@ export type Telemetry = {
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
-  body: Scalars['String'];
+  firstParticipant: TimelineThreadParticipant;
+  lastMessageBody: Scalars['String'];
+  lastMessageReceivedAt: Scalars['DateTime'];
+  lastMessageSubject: Scalars['String'];
+  lastTwoParticipants: Array<TimelineThreadParticipant>;
   numberOfMessagesInThread: Scalars['Float'];
+  participantCount: Scalars['Float'];
   read: Scalars['Boolean'];
-  receivedAt: Scalars['DateTime'];
-  senderName: Scalars['String'];
-  senderPictureUrl: Scalars['String'];
-  subject: Scalars['String'];
+};
+
+export type TimelineThreadParticipant = {
+  __typename?: 'TimelineThreadParticipant';
+  handle: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export type TransientToken = {
@@ -665,14 +672,14 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, lastMessageSubject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, lastMessageSubject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -859,13 +866,20 @@ export const UserQueryFragmentFragmentDoc = gql`
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
     query GetTimelineThreadsFromCompanyId($companyId: String!) {
   getTimelineThreadsFromCompanyId(companyId: $companyId) {
-    body
-    numberOfMessagesInThread
     read
-    receivedAt
-    senderName
-    senderPictureUrl
-    subject
+    firstParticipant {
+      id
+      handle
+    }
+    lastTwoParticipants {
+      id
+      handle
+    }
+    lastMessageReceivedAt
+    lastMessageBody
+    lastMessageSubject
+    numberOfMessagesInThread
+    participantCount
   }
 }
     `;
@@ -900,13 +914,20 @@ export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetT
 export const GetTimelineThreadsFromPersonIdDocument = gql`
     query GetTimelineThreadsFromPersonId($personId: String!) {
   getTimelineThreadsFromPersonId(personId: $personId) {
-    body
-    numberOfMessagesInThread
     read
-    receivedAt
-    senderName
-    senderPictureUrl
-    subject
+    firstParticipant {
+      id
+      handle
+    }
+    lastTwoParticipants {
+      id
+      handle
+    }
+    lastMessageReceivedAt
+    lastMessageBody
+    lastMessageSubject
+    numberOfMessagesInThread
+    participantCount
   }
 }
     `;

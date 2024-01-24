@@ -138,10 +138,12 @@ export class TimelineMessagingService {
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
+      console.log(threadParticipants);
+
       return {
         id: messageThreadId,
         read: true,
-        firtstParticipant: threadParticipants[0],
+        firstParticipant: threadParticipants[0],
         lastTwoParticipants: threadParticipants.slice(-2),
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
