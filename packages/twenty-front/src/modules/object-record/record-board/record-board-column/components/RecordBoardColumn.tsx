@@ -1,20 +1,10 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
+import { Droppable } from '@hello-pangea/dnd';
 
 import { RecordBoardColumnContext } from '@/object-record/record-board/contexts/RecordBoardColumnContext';
+import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { BoardCardIdContext } from '@/object-record/record-board-deprecated/contexts/BoardCardIdContext';
 import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
-
-const StyledPlaceholder = styled.div`
-  min-height: 1px;
-`;
-
-const StyledColumnCardsContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-`;
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -30,30 +20,9 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   position: relative;
 `;
 
-type BoardColumnCardsContainerProps = {
-  children: React.ReactNode;
-  droppableProvided: DroppableProvided;
-};
-
 type RecordBoardColumnProps = {
   recordBoardColumnId: string;
   columnDefinition: BoardColumnDefinition;
-};
-
-const BoardColumnCardsContainer = ({
-  children,
-  droppableProvided,
-}: BoardColumnCardsContainerProps) => {
-  return (
-    <StyledColumnCardsContainer
-      ref={droppableProvided?.innerRef}
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...droppableProvided?.droppableProps}
-    >
-      {children}
-      <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
-    </StyledColumnCardsContainer>
-  );
 };
 
 export const RecordBoardColumn = ({
@@ -72,14 +41,16 @@ export const RecordBoardColumn = ({
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
           <StyledColumn isFirstColumn={isFirstColumn}>
-            <BoardColumnCardsContainer droppableProvided={droppableProvided}>
+            <RecordBoardColumnCardsContainer
+              droppableProvided={droppableProvided}
+            >
               {[].map((cardId, _index) => (
                 <BoardCardIdContext.Provider
                   value={cardId}
                   key={cardId}
                 ></BoardCardIdContext.Provider>
               ))}
-            </BoardColumnCardsContainer>
+            </RecordBoardColumnCardsContainer>
           </StyledColumn>
         )}
       </Droppable>

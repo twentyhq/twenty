@@ -3,15 +3,12 @@ import styled from '@emotion/styled';
 import { DragDropContext } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
-import { RecordBoardDeprecatedInternalEffect } from '@/object-record/record-board-deprecated/components/RecordBoardDeprecatedInternalEffect';
-import { RecordBoardDeprecatedScope } from '@/object-record/record-board-deprecated/scopes/RecordBoardDeprecatedScope';
-import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
+import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 export type RecordBoardProps = {
   recordBoardId: string;
-  onColumnsChange?: (boardColumn: BoardColumnDefinition) => void;
 };
 
 const StyledContainer = styled.div`
@@ -41,9 +38,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const boardRef = useRef<HTMLDivElement>(null);
 
   return (
-    <RecordBoardDeprecatedScope recordBoardScopeId={recordBoardId}>
-      <RecordBoardDeprecatedInternalEffect />
-
+    <RecordBoardScope
+      recordBoardScopeId={recordBoardId}
+      onColumnsChange={() => {}}
+      onFieldsChange={() => {}}
+    >
       <StyledWrapper>
         <StyledBoardHeader />
         <ScrollWrapper>
@@ -64,6 +63,6 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
           onDragSelectionChange={() => {}}
         />
       </StyledWrapper>
-    </RecordBoardDeprecatedScope>
+    </RecordBoardScope>
   );
 };
