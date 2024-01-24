@@ -70,7 +70,7 @@ export const WithEmptyOption: Story = {
 export const WithSearchFilter: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const searchInput = canvas.getByRole('textbox');
+    const searchInput = await canvas.findByRole('textbox');
 
     await step('Enter search text', async () => {
       await sleep(50);
