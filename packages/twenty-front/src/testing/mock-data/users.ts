@@ -29,15 +29,7 @@ export const mockDefaultWorkspace: Workspace = {
   logo: workspaceLogoUrl,
   allowImpersonation: true,
   subscriptionStatus: 'active',
-  featureFlags: [
-    {
-      id: '0eada9a3-ccf4-4fcc-b25c-0c5d746e0fac',
-      key: 'IS_RELATION_FIELD_TYPE_ENABLED',
-      value: true,
-      workspaceId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      __typename: 'FeatureFlag',
-    },
-  ],
+  featureFlags: [],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
 };

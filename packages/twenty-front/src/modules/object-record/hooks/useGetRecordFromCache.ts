@@ -1,8 +1,8 @@
 import { gql, useApolloClient } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGetRecordFromCache = ({
@@ -13,9 +13,11 @@ export const useGetRecordFromCache = ({
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
 
-  return (recordId: string) => {
+  return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
+    recordId: string,
+  ) => {
     if (!objectMetadataItem) {
-      return EMPTY_MUTATION;
+      return null;
     }
 
     const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
@@ -35,7 +37,7 @@ export const useGetRecordFromCache = ({
       id: recordId,
     });
 
-    return cache.readFragment({
+    return cache.readFragment<CachedObjectRecord>({
       id: cachedRecordId,
       fragment: cacheReadFragment,
     });

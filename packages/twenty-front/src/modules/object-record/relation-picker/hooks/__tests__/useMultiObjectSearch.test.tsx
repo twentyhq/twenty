@@ -46,19 +46,6 @@ const mocks = [
     request: {
       query,
       variables: {
-        filterNameSingular: { and: [{}, { id: { in: ['1'] } }] },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
-        limitNameSingular: 60,
-      },
-    },
-    result: jest.fn(() => ({
-      data: response,
-    })),
-  },
-  {
-    request: {
-      query,
-      variables: {
         filterNameSingular: { id: { in: ['1'] } },
         orderByNameSingular: { createdAt: 'DescNullsLast' },
         limitNameSingular: 60,
@@ -72,8 +59,20 @@ const mocks = [
     request: {
       query,
       variables: {
+        orderByNameSingular: { createdAt: 'DescNullsLast' },
         limitNameSingular: 60,
-        filterNameSingular: { and: [{}, { not: { id: { in: ['1'] } } }] },
+      },
+    },
+    result: jest.fn(() => ({
+      data: response,
+    })),
+  },
+  {
+    request: {
+      query,
+      variables: {
+        limitNameSingular: 60,
+        filterNameSingular: { not: { id: { in: ['1'] } } },
         orderByNameSingular: { createdAt: 'DescNullsLast' },
       },
     },

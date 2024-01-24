@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 
@@ -56,17 +56,22 @@ export class GraphQLConfigService
       },
       conditionalSchema: async (context) => {
         try {
-          let workspace: Workspace;
-
-          // If token is not valid, it will return an empty schema
-          try {
-            workspace = await this.tokenService.validateToken(context.req);
-          } catch (err) {
+          if (!this.tokenService.isTokenPresent(context.req)) {
             return new GraphQLSchema({});
           }
 
+          const workspace = await this.tokenService.validateToken(context.req);
+
           return await this.createSchema(context, workspace);
         } catch (error) {
+          if (error instanceof UnauthorizedException) {
+            throw new GraphQLError('Unauthenticated', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
+          }
+
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
             throw new GraphQLError('Unauthenticated', {

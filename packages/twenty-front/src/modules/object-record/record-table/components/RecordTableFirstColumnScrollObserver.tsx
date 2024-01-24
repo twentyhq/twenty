@@ -1,22 +1,20 @@
-import { useContext } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useContext, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { RecordTableRefContext } from '@/object-record/record-table/contexts/RecordTableRefContext';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 
-export const RecordTableFirstColumnScrollObserver = () => {
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+export const RecordTableFirstColumnScrollEffect = () => {
   const recordTableRef = useContext(RecordTableRefContext);
 
-  const { ref: elementRef } = useInView({
-    root: scrollWrapperRef.current,
-    onChange: (inView) => {
-      recordTableRef.current?.classList.toggle(
-        'freeze-first-columns-shadow',
-        !inView,
-      );
-    },
-  });
+  const scrollLeft = useRecoilValue(scrollLeftState);
 
-  return <div ref={elementRef}></div>;
+  useEffect(() => {
+    recordTableRef.current?.classList.toggle(
+      'freeze-first-columns-shadow',
+      scrollLeft > 0,
+    );
+  }, [scrollLeft, recordTableRef]);
+
+  return <></>;
 };

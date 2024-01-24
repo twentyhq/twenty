@@ -4,16 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
-import { availableRecordBoardCardFieldsScopedState } from '@/object-record/record-board/states/availableRecordBoardCardFieldsScopedState';
-import { recordBoardCardFieldsScopedState } from '@/object-record/record-board/states/recordBoardCardFieldsScopedState';
-import { recordBoardFiltersScopedState } from '@/object-record/record-board/states/recordBoardFiltersScopedState';
-import { recordBoardSortsScopedState } from '@/object-record/record-board/states/recordBoardSortsScopedState';
+import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
+import { availableRecordBoardDeprecatedCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/availableRecordBoardDeprecatedCardFieldsScopedState';
+import { recordBoardCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedCardFieldsScopedState';
+import { recordBoardFiltersScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedFiltersScopedState';
+import { recordBoardSortsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedSortsScopedState';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 
 type HooksCompanyBoardEffectProps = {
@@ -30,7 +29,6 @@ export const HooksCompanyBoardEffect = ({
     setAvailableSortDefinitions,
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
-    setViewType,
   } = useViewBar({ viewBarId });
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -41,7 +39,7 @@ export const HooksCompanyBoardEffect = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
-    availableRecordBoardCardFieldsScopedState,
+    availableRecordBoardDeprecatedCardFieldsScopedState,
     'company-board',
   );
 
@@ -75,8 +73,7 @@ export const HooksCompanyBoardEffect = ({
       return;
     }
     setViewObjectMetadataId?.(objectMetadataItem.id);
-    setViewType?.(ViewType.Kanban);
-  }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
+  }, [objectMetadataItem, setViewObjectMetadataId]);
 
   const {
     currentViewFieldsState,
@@ -128,7 +125,7 @@ export const HooksCompanyBoardEffect = ({
 
   const { setEntityCountInCurrentView } = useViewBar({ viewBarId });
 
-  const { savedOpportunitiesState } = useRecordBoardScopedStates({
+  const { savedOpportunitiesState } = useRecordBoardDeprecatedScopedStates({
     recordBoardScopeId: recordBoardId,
   });
 

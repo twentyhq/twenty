@@ -278,6 +278,7 @@
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
+      "packages/twenty-emails",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",

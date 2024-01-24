@@ -8,8 +8,8 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Section } from '@/ui/layout/section/components/Section';
 
 export enum InboxSettingsVisibilityValue {
-  Everything = 'everything',
-  SubjectMetadata = 'subject-metadata',
+  Everything = 'share_everything',
+  SubjectMetadata = 'subject',
   Metadata = 'metadata',
 }
 
@@ -108,7 +108,7 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
           index,
         ) => (
           <StyledCardContent
-            key={value}
+            key={optionValue}
             divider={index < inboxSettingsVisibilityOptions.length - 1}
           >
             <StyledCardMedia>

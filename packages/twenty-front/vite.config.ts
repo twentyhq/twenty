@@ -21,6 +21,7 @@ export default defineConfig(({ command, mode }) => {
     typescript: {
       tsconfigPath: 'tsconfig.app.json',
     },
+    overlay: false,
   };
 
   if (!isBuildCommand) {

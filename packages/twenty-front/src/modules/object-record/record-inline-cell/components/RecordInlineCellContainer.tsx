@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import kebabCase from 'lodash.kebabcase';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
@@ -69,6 +71,17 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
+const StyledTooltip = styled(Tooltip)`
+  background-color: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+
+  color: ${({ theme }) => theme.font.color.primary};
+
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 type RecordInlineCellContainerProps = {
   IconLabel?: IconComponent;
   label?: string;
@@ -127,7 +140,7 @@ export const RecordInlineCellContainer = ({
       onMouseLeave={handleContainerMouseLeave}
     >
       {(!!IconLabel || !!label) && (
-        <StyledLabelAndIconContainer>
+        <StyledLabelAndIconContainer id={kebabCase(label)}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
@@ -137,6 +150,16 @@ export const RecordInlineCellContainer = ({
             <StyledLabelContainer width={labelWidth}>
               <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
             </StyledLabelContainer>
+          )}
+          {!showLabel && (
+            <StyledTooltip
+              anchorSelect={`#${kebabCase(label)}`}
+              content={label}
+              clickable
+              noArrow
+              place="left"
+              positionStrategy="fixed"
+            />
           )}
         </StyledLabelAndIconContainer>
       )}
