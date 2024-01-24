@@ -4,12 +4,12 @@ import styled from '@emotion/styled';
 import { Avatar } from '@/users/components/Avatar';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-const StyledMessageThreadSender = styled.div`
+const StyledEmailThreadMessageSender = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-const StyledMessageThreadSenderUser = styled.div`
+const StyledEmailThreadMessageSenderUser = styled.div`
   align-items: flex-start;
   display: flex;
 `;
@@ -24,27 +24,27 @@ const StyledSenderName = styled.span`
   text-overflow: ellipsis;
 `;
 
-const StyledMessageThreadSentAt = styled.div`
+const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
   display: flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-type MessageThreadSenderProps = {
+type EmailThreadMessageSenderProps = {
   displayName: string;
   avatarUrl: string;
   sentAt: string;
 };
 
-export const MessageThreadSender = ({
+export const EmailThreadMessageSender = ({
   displayName,
   avatarUrl,
   sentAt,
-}: MessageThreadSenderProps) => {
+}: EmailThreadMessageSenderProps) => {
   return (
-    <StyledMessageThreadSender>
-      <StyledMessageThreadSenderUser>
+    <StyledEmailThreadMessageSender>
+      <StyledEmailThreadMessageSenderUser>
         <StyledAvatar
           avatarUrl={avatarUrl}
           type="rounded"
@@ -52,10 +52,10 @@ export const MessageThreadSender = ({
           size="sm"
         />
         <StyledSenderName>{displayName}</StyledSenderName>
-      </StyledMessageThreadSenderUser>
-      <StyledMessageThreadSentAt>
+      </StyledEmailThreadMessageSenderUser>
+      <StyledThreadMessageSentAt>
         {beautifyPastDateRelativeToNow(sentAt)}
-      </StyledMessageThreadSentAt>
-    </StyledMessageThreadSender>
+      </StyledThreadMessageSentAt>
+    </StyledEmailThreadMessageSender>
   );
 };

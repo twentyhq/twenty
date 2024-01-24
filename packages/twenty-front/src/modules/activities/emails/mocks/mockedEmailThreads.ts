@@ -22,7 +22,7 @@ export type MockedMessage = {
   sentAt: string;
 };
 
-export const mockedThreads: MockedThread[] = [
+export const mockedEmailThreads: MockedThread[] = [
   {
     __typename: 'TimelineThread',
     id: '1',

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const StyledMessageThreadBody = styled.div`
+const StyledThreadMessageBody = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: column;
@@ -9,10 +9,12 @@ const StyledMessageThreadBody = styled.div`
   white-space: pre-line;
 `;
 
-type MessageThreadBodyProps = {
+type EmailThreadMessageBodyProps = {
   body: string;
 };
 
-export const MessageThreadBody = ({ body }: MessageThreadBodyProps) => {
-  return <StyledMessageThreadBody>{body}</StyledMessageThreadBody>;
+export const EmailThreadMessageBody = ({
+  body,
+}: EmailThreadMessageBodyProps) => {
+  return <StyledThreadMessageBody>{body}</StyledThreadMessageBody>;
 };

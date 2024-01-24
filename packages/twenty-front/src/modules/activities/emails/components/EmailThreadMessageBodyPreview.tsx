@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const StyledMessageThreadBodyPreview = styled.span`
+const StyledThreadMessageBodyPreview = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   min-width: 0;
   overflow: hidden;
@@ -10,14 +10,14 @@ const StyledMessageThreadBodyPreview = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-type MessageThreadBodyPreviewProps = {
+type EmailThreadMessageBodyPreviewProps = {
   body: string;
 };
 
-export const MessageThreadBodyPreview = ({
+export const EmailThreadMessageBodyPreview = ({
   body,
-}: MessageThreadBodyPreviewProps) => {
+}: EmailThreadMessageBodyPreviewProps) => {
   return (
-    <StyledMessageThreadBodyPreview>{body}</StyledMessageThreadBodyPreview>
+    <StyledThreadMessageBodyPreview>{body}</StyledThreadMessageBodyPreview>
   );
 };

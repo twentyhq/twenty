@@ -1,12 +1,12 @@
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
-import { ThreadPreview } from '@/activities/emails/components/ThreadPreview';
-import { useThread } from '@/activities/emails/hooks/useThread';
+import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import {
+  mockedEmailThreads,
   MockedThread,
-  mockedThreads,
-} from '@/activities/emails/mocks/mockedThreads';
+} from '@/activities/emails/mocks/mockedEmailThreads';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -34,8 +34,12 @@ const StyledEmailCount = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
-  const { openThread } = useThread();
+export const EmailThreads = ({
+  entity,
+}: {
+  entity: ActivityTargetableObject;
+}) => {
+  const { openEmailThread } = useEmailThread();
 
   const threadQuery =
     entity.targetObjectNameSingular === CoreObjectNameSingular.Person
@@ -64,7 +68,7 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
   //       : 'getTimelineThreadsFromCompanyId'
   //   ];
 
-  const timelineThreads = mockedThreads;
+  const timelineThreads = mockedEmailThreads;
 
   return (
     <StyledContainer>
@@ -83,11 +87,11 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
         <Card>
           {timelineThreads &&
             timelineThreads.map((thread: MockedThread, index: number) => (
-              <ThreadPreview
+              <EmailThreadPreview
                 key={index}
                 divider={index < timelineThreads.length - 1}
                 thread={thread}
-                onClick={() => openThread(thread)}
+                onClick={() => openEmailThread(thread)}
               />
             ))}
         </Card>

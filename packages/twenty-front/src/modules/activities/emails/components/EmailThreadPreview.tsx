@@ -77,17 +77,17 @@ const StyledReceivedAt = styled.div`
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
-type ThreadPreviewProps = {
+type EmailThreadPreviewProps = {
   divider?: boolean;
   thread: TimelineThread;
   onClick: () => void;
 };
 
-export const ThreadPreview = ({
+export const EmailThreadPreview = ({
   divider,
   thread,
   onClick,
-}: ThreadPreviewProps) => {
+}: EmailThreadPreviewProps) => {
   return (
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>

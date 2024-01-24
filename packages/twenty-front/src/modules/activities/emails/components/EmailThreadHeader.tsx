@@ -4,7 +4,7 @@ import { IconMail } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
-type ThreadHeaderProps = {
+type EmailThreadHeaderProps = {
   subject: string;
   lastMessageSentAt: string;
 };
@@ -37,10 +37,10 @@ const StyledContent = styled.span`
   width: 100%;
 `;
 
-export const ThreadHeader = ({
+export const EmailThreadHeader = ({
   subject,
   lastMessageSentAt,
-}: ThreadHeaderProps) => {
+}: EmailThreadHeaderProps) => {
   return (
     <StyledContainer>
       <Tag Icon={IconMail} color="gray" text="Email" onClick={() => {}} />
