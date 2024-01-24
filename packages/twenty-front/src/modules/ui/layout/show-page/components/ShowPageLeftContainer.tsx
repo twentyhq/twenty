@@ -20,10 +20,9 @@ const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  width: ${({ theme }) =>
-    useIsMobile() ? `calc(100% - ${theme.spacing(5)})` : '348px'};
+  padding: ${({ theme }) => (useIsMobile() ? '12px 0' : theme.spacing(3))};
+  padding-right: ${({ theme }) => (useIsMobile() ? 0 : theme.spacing(2))};
+  width: ${() => (useIsMobile() ? `100%` : '348px')};
 `;
 
 const StyledIntermediateContainer = styled.div`
