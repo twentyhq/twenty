@@ -113,7 +113,7 @@ export class CleanInactiveWorkspaceJob
     )?.[0].displayName;
 
     this.logger.log(
-      `${this.getDryRunLog(isDryRun)}Sending workspace ${
+      `${this.getDryRunLogHeader(isDryRun)}Sending workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.email)
@@ -155,7 +155,7 @@ export class CleanInactiveWorkspaceJob
     isDryRun: boolean,
   ): Promise<void> {
     this.logger.log(
-      `${this.getDryRunLog(isDryRun)}Sending email to delete workspace ${
+      `${this.getDryRunLogHeader(isDryRun)}Sending email to delete workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days`,
     );
@@ -207,7 +207,7 @@ export class CleanInactiveWorkspaceJob
     );
   }
 
-  getDryRunLog(isDryRun: boolean): string {
+  getDryRunLogHeader(isDryRun: boolean): string {
     return isDryRun ? 'Dry-run mode: ' : '';
   }
 
@@ -247,7 +247,7 @@ export class CleanInactiveWorkspaceJob
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 
-    this.logger.log(`${this.getDryRunLog(isDryRun)}Job running...`);
+    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
         `'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION' and 'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
@@ -262,7 +262,7 @@ export class CleanInactiveWorkspaceJob
     const dataSourcesChunks = this.chunkArray(dataSources);
 
     this.logger.log(
-      `${this.getDryRunLog(isDryRun)}On ${
+      `${this.getDryRunLogHeader(isDryRun)}On ${
         dataSources.length
       } workspaces divided in ${dataSourcesChunks.length} chunks...`,
     );
@@ -277,7 +277,7 @@ export class CleanInactiveWorkspaceJob
       for (const dataSource of dataSourcesChunk) {
         if (!(await this.isWorkspaceCleanable(dataSource))) {
           this.logger.log(
-            `${this.getDryRunLog(isDryRun)}Workspace ${
+            `${this.getDryRunLogHeader(isDryRun)}Workspace ${
               dataSource.workspaceId
             } not cleanable`,
           );
@@ -285,7 +285,7 @@ export class CleanInactiveWorkspaceJob
         }
 
         this.logger.log(
-          `${this.getDryRunLog(isDryRun)}Cleaning Workspace ${
+          `${this.getDryRunLogHeader(isDryRun)}Cleaning Workspace ${
             dataSource.workspaceId
           }`,
         );
@@ -295,6 +295,6 @@ export class CleanInactiveWorkspaceJob
 
     await this.sendDeleteWorkspaceEmail(isDryRun);
 
-    this.logger.log(`${this.getDryRunLog(isDryRun)}job done!`);
+    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}job done!`);
   }
 }
