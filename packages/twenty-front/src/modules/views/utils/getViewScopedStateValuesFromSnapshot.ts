@@ -41,6 +41,7 @@ export const getViewScopedStateValuesFromSnapshot = ({
     onViewFieldsChangeState,
     onViewFiltersChangeState,
     onViewSortsChangeState,
+    onViewTypeChangeState,
     savedViewFieldsByKeySelector,
     savedViewFieldsState,
     savedViewFiltersByKeySelector,
@@ -85,6 +86,7 @@ export const getViewScopedStateValuesFromSnapshot = ({
     onViewFieldsChange: getSnapshotValue(snapshot, onViewFieldsChangeState),
     onViewFiltersChange: getSnapshotValue(snapshot, onViewFiltersChangeState),
     onViewSortsChange: getSnapshotValue(snapshot, onViewSortsChangeState),
+    onViewTypeChange: getSnapshotValue(snapshot, onViewTypeChangeState),
     savedViewFieldsByKey: getSnapshotValue(
       snapshot,
       savedViewFieldsByKeySelector,

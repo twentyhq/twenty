@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,16 +17,18 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     currentWorkspaceMemberState,
   );
 
-  const { data: userData, loading: userLoading } = useGetCurrentUserQuery({});
+  const { loading: queryLoading, data: queryData } = useQuery(
+    GET_CURRENT_USER_AND_VIEWS,
+  );
 
   useEffect(() => {
-    if (!userLoading) {
+    if (!queryLoading) {
       setIsLoading(false);
     }
-    if (userData?.currentUser?.workspaceMember) {
-      setCurrentUser(userData.currentUser);
-      setCurrentWorkspace(userData.currentUser.defaultWorkspace);
-      const workspaceMember = userData.currentUser.workspaceMember;
+    if (queryData?.currentUser?.workspaceMember) {
+      setCurrentUser(queryData.currentUser);
+      setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
+      const workspaceMember = queryData.currentUser.workspaceMember;
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
@@ -34,10 +37,10 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   }, [
     setCurrentUser,
     isLoading,
-    userLoading,
+    queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
-    userData?.currentUser,
+    queryData?.currentUser,
   ]);
 
   return isLoading ? <></> : <>{children}</>;

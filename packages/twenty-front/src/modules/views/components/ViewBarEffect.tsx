@@ -22,15 +22,10 @@ export const ViewBarEffect = () => {
   const [searchParams] = useSearchParams();
   const currentViewIdFromUrl = searchParams.get('view');
 
-  const {
-    viewTypeState,
-    viewObjectMetadataIdState,
-    viewsState,
-    currentViewIdState,
-  } = useViewScopedStates();
+  const { viewObjectMetadataIdState, viewsState, currentViewIdState } =
+    useViewScopedStates();
 
   const [views, setViews] = useRecoilState(viewsState);
-  const viewType = useRecoilValue(viewTypeState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
 
@@ -38,7 +33,6 @@ export const ViewBarEffect = () => {
     skip: !viewObjectMetadataId,
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
-      type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },
     },
     useRecordsWithoutConnection: true,
@@ -80,10 +74,10 @@ export const ViewBarEffect = () => {
   ]);
 
   useEffect(() => {
-    if (!currentViewIdFromUrl) return;
+    if (!currentViewIdFromUrl || !newViews.length) return;
 
     loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView]);
+  }, [currentViewIdFromUrl, loadView, newViews]);
 
   return <></>;
 };

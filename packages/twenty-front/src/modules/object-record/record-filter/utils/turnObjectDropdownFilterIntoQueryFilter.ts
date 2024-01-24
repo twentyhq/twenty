@@ -10,6 +10,7 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
@@ -24,7 +25,7 @@ export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordQueryFilter => {
+): ObjectRecordQueryFilter | undefined => {
   const objectRecordFilters: ObjectRecordQueryFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
@@ -134,13 +135,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               });
               break;
             case ViewFilterOperand.IsNot:
-              objectRecordFilters.push({
-                not: {
-                  [correspondingField.name + 'Id']: {
-                    in: parsedRecordIds,
-                  } as UUIDFilter,
-                },
-              });
+              if (parsedRecordIds.length) {
+                objectRecordFilters.push({
+                  not: {
+                    [correspondingField.name + 'Id']: {
+                      in: parsedRecordIds,
+                    } as UUIDFilter,
+                  },
+                });
+              }
               break;
             default:
               throw new Error(
@@ -257,5 +260,5 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return { and: objectRecordFilters };
+  return andFilterVariables(objectRecordFilters);
 };
