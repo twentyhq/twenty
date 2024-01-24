@@ -115,11 +115,16 @@ export class TimelineMessagingService {
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
+      const lastMessage = threadMessagesFromActiveParticipants.slice(-1)[0];
+
       return {
         id: messageThreadId,
         read: true,
         firtstParticipant: threadParticipants[0],
         lastTwoParticipants: threadParticipants.slice(-2),
+        lastMessageReceivedAt: lastMessage.receivedAt,
+        lastMessageBody: lastMessage.body,
+        lastMessageSubject: lastMessage.subject,
         participantCount: threadParticipants.length,
       };
     });
