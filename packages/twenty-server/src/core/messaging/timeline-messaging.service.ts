@@ -15,6 +15,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     personIds: string[],
     page: number = 1,
+    pageSize: number = 10,
   ): Promise<TimelineThread[]> {
     const offset = (page - 1) * 10;
 
@@ -55,10 +56,10 @@ export class TimelineMessagingService {
       ) AS "messageThreads"
       WHERE
       "rowNumber" = 1
-      LIMIT 10
-      OFFSET $2
+      LIMIT $2
+      OFFSET $3
         `,
-      [personIds, offset],
+      [personIds, pageSize, offset],
     );
 
     const messageThreadIds = messageThreads.map(
@@ -176,8 +177,6 @@ export class TimelineMessagingService {
           (threadMessage) => threadMessage.id === messageThreadId,
         );
 
-        console.log('threadMessages', threadMessages);
-
         const threadParticipants = threadMessages.reduce(
           (threadMessageAcc, threadMessage) => {
             const threadParticipant = threadMessageAcc[threadMessage.handle];
@@ -247,7 +246,12 @@ export class TimelineMessagingService {
     return timelineThreads;
   }
 
-  async getMessagesFromCompanyId(workspaceId: string, companyId: string) {
+  async getMessagesFromCompanyId(
+    workspaceId: string,
+    companyId: string,
+    page: number = 1,
+    pageSize: number = 10,
+  ) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -272,11 +276,15 @@ export class TimelineMessagingService {
       return [];
     }
 
-    const formattedPersonIds = personIds.map((personId) => personId.id);
+    const formattedPersonIds = personIds.map(
+      (personId: { id: string }) => personId.id,
+    );
 
     const messageThreads = await this.getMessagesFromPersonIds(
       workspaceId,
       formattedPersonIds,
+      page,
+      pageSize,
     );
 
     return messageThreads;
