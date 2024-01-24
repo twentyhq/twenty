@@ -34,7 +34,6 @@ export class TimelineMessagingService {
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
       message.id AS "lastMessageId",
       message.body AS "lastMessageBody",
-      message.subject AS "subject",
       ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message 
@@ -66,11 +65,48 @@ export class TimelineMessagingService {
       (messageThread) => messageThread.id,
     );
 
+    const threadSubjects = await workspaceDataSource?.query(
+      `
+      SELECT *
+      FROM
+      (SELECT
+        "messageThread".id,
+        message.subject,
+        ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") ASC) AS "rowNumber"
+      FROM
+          ${dataSourceMetadata.schema}."message" message
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+      WHERE
+          "messageThread".id = ANY($1)
+      GROUP BY
+          "messageThread".id,
+          message.id
+      ORDER BY
+          message."receivedAt" DESC
+      ) AS "messageThreads"
+      WHERE
+      "rowNumber" = 1
+      `,
+      [messageThreadIds],
+    );
+
+    console.log('threadSubjects', threadSubjects);
+
     const messageThreadsByMessageThreadId = messageThreads.reduce(
       (messageThreadAcc, messageThread) => {
         messageThreadAcc[messageThread.id] = messageThread;
 
         return messageThreadAcc;
+      },
+      {},
+    );
+
+    const messageThreadSubjectsByMessageThreadId = threadSubjects.reduce(
+      (threadSubjectAcc, threadSubject) => {
+        threadSubjectAcc[threadSubject.id] = threadSubject;
+
+        return threadSubjectAcc;
       },
       {},
     );
@@ -139,6 +175,9 @@ export class TimelineMessagingService {
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
+      const threadSubject =
+        messageThreadSubjectsByMessageThreadId[messageThreadId].subject;
+
       return {
         id: messageThreadId,
         read: true,
@@ -146,7 +185,7 @@ export class TimelineMessagingService {
         lastTwoParticipants: threadParticipants.slice(-2),
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        subject: thread.subject,
+        subject: threadSubject,
         // TODO: Implement this
         numberOfMessagesInThread: 1,
         participantCount: threadParticipants.length,
