@@ -4,7 +4,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -61,8 +61,6 @@ export const Timeline = ({
     targetableObject,
   });
 
-  console.log('Timeline', { activityTargets });
-
   const [initialized, setInitialized] = useState(false);
   const [activitiesForDisplay, setActivitiesForDisplay] = useState<
     ObjectRecord[]
@@ -83,7 +81,6 @@ export const Timeline = ({
         createdAt: 'AscNullsFirst',
       },
       onCompleted: (data: ObjectRecordConnection) => {
-        console.log({ data });
         setActivitiesForDisplay(data?.edges.map((edge) => edge.node) ?? []);
         setInitialized(true);
       },
@@ -95,24 +92,16 @@ export const Timeline = ({
     }
   }, [activities, loadingActivities]);
 
-  console.log({ loadingActivities });
-
-  const openCreateActivity = useOpenCreateActivityDrawerV2({
-    targetableObject,
-  });
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const showEmptyState =
     !loadingActivities && activitiesForDisplay.length === 0;
 
   const showLoadingState = !initialized;
 
-  console.log({
-    activities,
-    showEmptyState,
-  });
-
   if (showLoadingState) {
-    return <>Loading ...</>;
+    // TODO: Display a beautiful loading page
+    return <></>;
   }
 
   if (showEmptyState) {

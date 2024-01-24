@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityType } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -23,9 +23,7 @@ export const ShowPageAddButton = ({
   entity: ActivityTargetableObject;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
-  const openCreateActivity = useOpenCreateActivityDrawerV2({
-    targetableObject: entity,
-  });
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleSelect = (type: ActivityType) => {
     openCreateActivity({ type, targetableObjects: [entity] });
