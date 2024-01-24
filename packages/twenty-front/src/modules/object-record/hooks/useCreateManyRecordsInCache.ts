@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useAddRecordInCache } from '@/object-record/hooks/useAddRecordInCache';
-import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
+import { useGenerateCachedObjectRecord } from '@/object-record/hooks/useGenerateCachedObjectRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
@@ -13,7 +13,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectNameSingular,
   });
 
-  const { generateEmptyRecord } = useGenerateEmptyRecord({
+  const { generateCachedObjectRecord } = useGenerateCachedObjectRecord({
     objectMetadataItem,
   });
 
@@ -30,15 +30,14 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     const createdRecordsInCache = [] as Partial<T>[];
 
     for (const record of recordsWithId) {
-      const generatedEmptyRecord = generateEmptyRecord({
-        createdAt: new Date().toISOString(),
+      const generatedCachedObjectRecord = generateCachedObjectRecord<T>({
         ...record,
       });
 
-      if (generatedEmptyRecord) {
-        addRecordInCache(generatedEmptyRecord);
+      if (generatedCachedObjectRecord) {
+        addRecordInCache(generatedCachedObjectRecord);
 
-        createdRecordsInCache.push(generatedEmptyRecord);
+        createdRecordsInCache.push(generatedCachedObjectRecord);
       }
     }
 

@@ -2,7 +2,6 @@ import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecoilCallback } from 'recoil';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
@@ -17,10 +16,6 @@ export const useAddRecordInCache = ({
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
-
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
 

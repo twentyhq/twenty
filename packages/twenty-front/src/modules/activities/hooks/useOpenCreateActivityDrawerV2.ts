@@ -9,7 +9,6 @@ import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -78,9 +77,9 @@ export const useOpenCreateActivityDrawerV2 = ({
     objectRecordId: currentWorkspaceMember?.id,
   });
 
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-  });
+  // const { triggerOptimisticEffects } = useOptimisticEffect({
+  //   objectNameSingular: CoreObjectNameSingular.Activity,
+  // });
 
   const modifyActivityFromCache = useModifyRecordFromCache({
     objectMetadataItem: objectMetadataItemActivity,
@@ -495,7 +494,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       setViewableActivityId,
       createOneActivityInCache,
       modifyActivityFromCache,
-      triggerOptimisticEffects,
+      // triggerOptimisticEffects,
       workspaceMemberRecord,
       apolloClient,
       findManyActivityTargetsQuery,

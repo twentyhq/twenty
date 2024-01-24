@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddRecordInCache } from '@/object-record/hooks/useAddRecordInCache';
-import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
+import { useGenerateCachedObjectRecord } from '@/object-record/hooks/useGenerateCachedObjectRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type useCreateOneRecordInCacheProps = {
@@ -14,7 +14,7 @@ export const useCreateOneRecordInCache = <T>({
     objectNameSingular,
   });
 
-  const { generateEmptyRecord } = useGenerateEmptyRecord({
+  const { generateCachedObjectRecord } = useGenerateCachedObjectRecord({
     objectMetadataItem,
   });
 
@@ -23,7 +23,7 @@ export const useCreateOneRecordInCache = <T>({
   });
 
   const createOneRecordInCache = async (input: ObjectRecord) => {
-    const generatedEmptyRecord = generateEmptyRecord({
+    const generatedEmptyRecord = generateCachedObjectRecord({
       createdAt: new Date().toISOString(),
       ...input,
     });

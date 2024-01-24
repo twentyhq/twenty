@@ -241,6 +241,7 @@ export const RecordShowContainer = ({
           targetableObject={{
             id: record?.id ?? '',
             targetObjectNameSingular: objectMetadataItem?.nameSingular,
+            targetObjectRecord: record ?? null,
           }}
           timeline
           tasks
