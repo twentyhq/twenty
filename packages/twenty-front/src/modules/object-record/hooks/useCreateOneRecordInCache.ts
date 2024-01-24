@@ -23,14 +23,14 @@ export const useCreateOneRecordInCache = <T>({
   });
 
   const createOneRecordInCache = async (input: ObjectRecord) => {
-    const generatedEmptyRecord = generateCachedObjectRecord({
+    const generatedCachedObjectRecord = generateCachedObjectRecord({
       createdAt: new Date().toISOString(),
       ...input,
     });
 
-    addRecordInCache(generatedEmptyRecord);
+    addRecordInCache(generatedCachedObjectRecord);
 
-    return generatedEmptyRecord as T;
+    return generatedCachedObjectRecord as T;
   };
 
   return {
