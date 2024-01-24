@@ -27,7 +27,15 @@ export class TimelineMessagingService {
 
     const messageThreads = await workspaceDataSource?.query(
       `
-      SELECT "messageThread".id, MAX(message."receivedAt") AS "lastMessageReceivedAt"
+      SELECT *
+      FROM
+      (SELECT "messageThread".id,
+      MAX(message."receivedAt") AS "lastMessageReceivedAt",
+      COUNT(message.id) AS "numberOfMessagesInThread",
+      message.id AS "lastMessageId",
+      message.body AS "lastMessageBody",
+      message.subject AS "lastMessageSubject",
+      ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message 
       LEFT JOIN
@@ -47,9 +55,14 @@ export class TimelineMessagingService {
           message."receivedAt" DESC
       LIMIT 10
       OFFSET $2
+      ) AS "messageThreads"
+      WHERE
+      "rowNumber" = 1
         `,
       [personIds, offset],
     );
+
+    console.log(messageThreads);
 
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
@@ -125,6 +138,7 @@ export class TimelineMessagingService {
         lastMessageReceivedAt: lastMessage.receivedAt,
         lastMessageBody: lastMessage.body,
         lastMessageSubject: lastMessage.subject,
+        numberOfMessagesInThread: threadMessagesFromActiveParticipants.length,
         participantCount: threadParticipants.length,
       };
     });
