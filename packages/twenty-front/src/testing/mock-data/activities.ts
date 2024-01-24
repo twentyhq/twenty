@@ -4,7 +4,6 @@ import { Comment } from '@/activities/types/Comment';
 import { Company } from '@/companies/types/Company';
 import { Person } from '@/people/types/Person';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { TimelineThread } from '~/generated/graphql';
 
 type MockedActivity = Pick<
   Activity,
@@ -212,19 +211,19 @@ export const mockedActivities: Array<MockedActivity> = [
   },
 ];
 
-export const mockedEmailThreads: TimelineThread[] = [
-  {
-    lastMessageBody:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim nisi eu tellus dapibus, egestas placerat risus placerat. Praesent eget arcu consectetur, efficitur felis.',
-    numberOfMessagesInThread: 3,
-    read: true,
-    lastMessageReceivedAt: new Date('11/04/2023').toISOString(),
-    firstParticipant: {
-      id: '1',
-      handle: 'steve@gmail.com',
-    },
-    subject: 'Next step',
-    lastTwoParticipants: [],
-    participantCount: 2,
-  },
-];
+// export const mockedEmailThreads: TimelineThread[] = [
+//   {
+//     lastMessageBody:
+//       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim nisi eu tellus dapibus, egestas placerat risus placerat. Praesent eget arcu consectetur, efficitur felis.',
+//     numberOfMessagesInThread: 3,
+//     read: true,
+//     lastMessageReceivedAt: new Date('11/04/2023').toISOString(),
+//     firstParticipant: {
+//       id: '1',
+//       handle: 'steve@gmail.com',
+//     },
+//     subject: 'Next step',
+//     lastTwoParticipants: [],
+//     participantCount: 2,
+//   },
+// ];

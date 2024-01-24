@@ -72,11 +72,15 @@ export class TimelineMessagingResolver {
   async getTimelineThreadsFromPersonId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('personId') personId: string,
+    @Args('page') page: number,
+    @Args('pageSize') pageSize: number,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromPersonIds(
         workspaceId,
         [personId],
+        page,
+        pageSize,
       );
 
     return timelineThreads;
@@ -86,11 +90,15 @@ export class TimelineMessagingResolver {
   async getTimelineThreadsFromCompanyId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('companyId') companyId: string,
+    @Args('page') page: number,
+    @Args('pageSize') pageSize: number,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromCompanyId(
         workspaceId,
         companyId,
+        page,
+        pageSize,
       );
 
     return timelineThreads;

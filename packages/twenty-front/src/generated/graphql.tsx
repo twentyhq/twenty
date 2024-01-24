@@ -382,10 +382,14 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['String'];
+  page: Scalars['Float'];
+  pageSize: Scalars['Float'];
 };
 
 
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
+  page: Scalars['Float'];
+  pageSize: Scalars['Float'];
   personId: Scalars['String'];
 };
 
@@ -674,6 +678,8 @@ export type RelationEdge = {
 
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['String'];
+  page: Scalars['Float'];
+  pageSize: Scalars['Float'];
 }>;
 
 
@@ -681,6 +687,8 @@ export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTi
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
+  page: Scalars['Float'];
+  pageSize: Scalars['Float'];
 }>;
 
 
@@ -869,8 +877,12 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     `;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: String!) {
-  getTimelineThreadsFromCompanyId(companyId: $companyId) {
+    query GetTimelineThreadsFromCompanyId($companyId: String!, $page: Float!, $pageSize: Float!) {
+  getTimelineThreadsFromCompanyId(
+    companyId: $companyId
+    page: $page
+    pageSize: $pageSize
+  ) {
     id
     read
     firstParticipant {
@@ -911,6 +923,8 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
  * const { data, loading, error } = useGetTimelineThreadsFromCompanyIdQuery({
  *   variables: {
  *      companyId: // value for 'companyId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
@@ -926,8 +940,12 @@ export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof u
 export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
 export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
 export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: String!) {
-  getTimelineThreadsFromPersonId(personId: $personId) {
+    query GetTimelineThreadsFromPersonId($personId: String!, $page: Float!, $pageSize: Float!) {
+  getTimelineThreadsFromPersonId(
+    personId: $personId
+    page: $page
+    pageSize: $pageSize
+  ) {
     id
     read
     firstParticipant {
@@ -968,6 +986,8 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
  * const { data, loading, error } = useGetTimelineThreadsFromPersonIdQuery({
  *   variables: {
  *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
