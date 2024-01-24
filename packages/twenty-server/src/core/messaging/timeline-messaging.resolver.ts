@@ -23,6 +23,10 @@ class TimelineThreadParticipant {
 export class TimelineThread {
   @Field()
   @Column()
+  id: boolean;
+
+  @Field()
+  @Column()
   read: boolean;
 
   @Field()
@@ -38,7 +42,7 @@ export class TimelineThread {
   lastMessageBody: string;
 
   @Field()
-  lastMessageSubject: string;
+  subject: string;
 
   @Field()
   numberOfMessagesInThread: number;

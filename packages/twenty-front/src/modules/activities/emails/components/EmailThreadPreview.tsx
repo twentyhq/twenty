@@ -102,9 +102,7 @@ export const EmailThreadPreview = ({
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        <StyledSubject unread={!thread.read}>
-          {thread.lastMessageSubject}
-        </StyledSubject>
+        <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
         <StyledBody>{thread.lastMessageBody}</StyledBody>
       </StyledSubjectAndBody>
       <StyledReceivedAt>

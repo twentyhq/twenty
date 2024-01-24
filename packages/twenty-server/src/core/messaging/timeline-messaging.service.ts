@@ -34,7 +34,7 @@ export class TimelineMessagingService {
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
       message.id AS "lastMessageId",
       message.body AS "lastMessageBody",
-      message.subject AS "lastMessageSubject",
+      message.subject AS "subject",
       ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message 
@@ -146,7 +146,7 @@ export class TimelineMessagingService {
         lastTwoParticipants: threadParticipants.slice(-2),
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        lastMessageSubject: thread.lastMessageSubject,
+        subject: thread.subject,
         // TODO: Implement this
         numberOfMessagesInThread: 1,
         participantCount: threadParticipants.length,

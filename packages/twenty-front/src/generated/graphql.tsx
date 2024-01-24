@@ -466,13 +466,14 @@ export type Telemetry = {
 export type TimelineThread = {
   __typename?: 'TimelineThread';
   firstParticipant: TimelineThreadParticipant;
+  id: Scalars['Boolean'];
   lastMessageBody: Scalars['String'];
   lastMessageReceivedAt: Scalars['DateTime'];
-  lastMessageSubject: Scalars['String'];
   lastTwoParticipants: Array<TimelineThreadParticipant>;
   numberOfMessagesInThread: Scalars['Float'];
   participantCount: Scalars['Float'];
   read: Scalars['Boolean'];
+  subject: Scalars['String'];
 };
 
 export type TimelineThreadParticipant = {
@@ -672,14 +673,14 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, lastMessageSubject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, lastMessageSubject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -877,7 +878,7 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
     }
     lastMessageReceivedAt
     lastMessageBody
-    lastMessageSubject
+    subject
     numberOfMessagesInThread
     participantCount
   }
@@ -925,7 +926,7 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
     }
     lastMessageReceivedAt
     lastMessageBody
-    lastMessageSubject
+    subject
     numberOfMessagesInThread
     participantCount
   }

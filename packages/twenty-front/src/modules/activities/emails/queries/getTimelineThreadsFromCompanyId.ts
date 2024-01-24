@@ -14,7 +14,7 @@ export const getTimelineThreadsFromCompanyId = gql`
       }
       lastMessageReceivedAt
       lastMessageBody
-      lastMessageSubject
+      subject
       numberOfMessagesInThread
       participantCount
     }

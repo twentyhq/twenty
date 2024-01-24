@@ -31,7 +31,7 @@ export const RightDrawerEmailThread = () => {
     <StyledContainer>
       <EmailThreadHeader
         subject={viewableEmailThread.subject}
-        lastMessageSentAt={viewableEmailThread.receivedAt}
+        lastMessageSentAt={viewableEmailThread.lastMessageReceivedAt}
       />
       {mockedMessages.map((message) => (
         <EmailThreadMessage
