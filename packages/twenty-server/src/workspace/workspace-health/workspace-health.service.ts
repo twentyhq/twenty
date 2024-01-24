@@ -12,6 +12,8 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataHealthService } from 'src/workspace/workspace-health/services/object-metadata-health.service';
 import { FieldMetadataHealthService } from 'src/workspace/workspace-health/services/field-metadata-health.service';
+import { RelationMetadataHealthService } from 'src/workspace/workspace-health/services/relation-metadata.health.service';
+import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
@@ -20,9 +22,11 @@ export class WorkspaceHealthService {
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly databaseStructureService: DatabaseStructureService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
+    private readonly relationMetadataHealthService: RelationMetadataHealthService,
   ) {}
 
   async healthCheck(
@@ -41,7 +45,7 @@ export class WorkspaceHealthService {
     // Check if a data source exists for this workspace
     if (!dataSourceMetadata) {
       throw new NotFoundException(
-        `Datasource for workspace id ${workspaceId} not found`,
+        `DataSource for workspace id ${workspaceId} not found`,
       );
     }
 
@@ -57,6 +61,19 @@ export class WorkspaceHealthService {
     }
 
     for (const objectMetadata of objectMetadataCollection) {
+      const tableName = computeObjectTargetTable(objectMetadata);
+      const workspaceTableColumns =
+        await this.databaseStructureService.getWorkspaceTableColumns(
+          schemaName,
+          tableName,
+        );
+
+      if (!workspaceTableColumns || workspaceTableColumns.length === 0) {
+        throw new NotFoundException(
+          `Table ${tableName} not found in schema ${schemaName}`,
+        );
+      }
+
       // Check object metadata health
       const objectIssues = await this.objectMetadataHealthService.healthCheck(
         schemaName,
@@ -68,13 +85,23 @@ export class WorkspaceHealthService {
 
       // Check fields metadata health
       const fieldIssues = await this.fieldMetadataHealthService.healthCheck(
-        schemaName,
         computeObjectTargetTable(objectMetadata),
+        workspaceTableColumns,
         objectMetadata.fields,
         options,
       );
 
       issues.push(...fieldIssues);
+
+      // Check relation metadata health
+      const relationIssues = this.relationMetadataHealthService.healthCheck(
+        workspaceTableColumns,
+        objectMetadataCollection,
+        objectMetadata,
+        options,
+      );
+
+      issues.push(...relationIssues);
     }
 
     return issues;

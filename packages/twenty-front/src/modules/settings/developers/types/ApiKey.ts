@@ -5,4 +5,5 @@ export type ApiKey = {
   deletedAt: string | null;
   name: string;
   expiresAt: string;
+  revokedAt: string | null;
 };

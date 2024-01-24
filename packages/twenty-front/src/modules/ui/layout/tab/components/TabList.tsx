@@ -29,6 +29,7 @@ const StyledContainer = styled.div`
   height: 40px;
   padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+  overflow: auto;
 `;
 
 export const TabList = ({ tabs, tabListId }: TabListProps) => {

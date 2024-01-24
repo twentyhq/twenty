@@ -1,5 +1,7 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
@@ -30,12 +32,18 @@ const StyledContent = styled.span`
   white-space: nowrap;
 `;
 
+const StyledIconContainer = styled.div`
+  display: flex;
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 type TagWeight = 'regular' | 'medium';
 
 type TagProps = {
   className?: string;
   color: ThemeColor;
   text: string;
+  Icon?: IconComponent;
   onClick?: () => void;
   weight?: TagWeight;
 };
@@ -44,15 +52,24 @@ export const Tag = ({
   className,
   color,
   text,
+  Icon,
   onClick,
   weight = 'regular',
-}: TagProps) => (
-  <StyledTag
-    className={className}
-    color={themeColorSchema.catch('gray').parse(color)}
-    onClick={onClick}
-    weight={weight}
-  >
-    <StyledContent>{text}</StyledContent>
-  </StyledTag>
-);
+}: TagProps) => {
+  const theme = useTheme();
+  return (
+    <StyledTag
+      className={className}
+      color={themeColorSchema.catch('gray').parse(color)}
+      onClick={onClick}
+      weight={weight}
+    >
+      {!!Icon && (
+        <StyledIconContainer>
+          <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+        </StyledIconContainer>
+      )}
+      <StyledContent>{text}</StyledContent>
+    </StyledTag>
+  );
+};

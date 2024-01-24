@@ -1,30 +1,19 @@
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { RecordChip } from '@/object-record/components/RecordChip';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useRelationField();
+  const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
 
-  const { identifiersMapper } = useRelationPicker({
-    relationPickerScopeId: 'relation-picker',
-  });
-
-  if (!fieldValue || !fieldDefinition || !identifiersMapper) {
-    return <></>;
-  }
-
-  const objectIdentifiers = identifiersMapper(
-    fieldValue,
-    fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  );
+  if (!fieldValue || !fieldDefinition) return null;
 
   return (
-    <EntityChip
-      entityId={fieldValue.id}
-      name={objectIdentifiers?.name ?? ''}
-      avatarUrl={objectIdentifiers?.avatarUrl}
-      avatarType={objectIdentifiers?.avatarType}
+    <RecordChip
+      objectNameSingular={
+        fieldDefinition.metadata.relationObjectMetadataNameSingular
+      }
+      record={fieldValue}
+      maxWidth={maxWidth}
     />
   );
 };

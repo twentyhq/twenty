@@ -29,6 +29,7 @@ export const variables = {
   updatePayload: {
     description: 'newDescription',
     icon: undefined,
+    labelIdentifierFieldMetadataId: null,
     labelPlural: 'labelPlural',
     labelSingular: 'labelSingular',
     namePlural: 'labelPlural',

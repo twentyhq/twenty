@@ -117,17 +117,13 @@ export const RecordTable = ({
       recordTableScopeId={scopeId}
       onColumnsChange={onColumnsChange}
     >
-      <>
-        {objectNamePlural ? (
-          <StyledTable ref={recordTableRef} className="entity-table-cell">
-            <RecordTableHeader createRecord={createRecord} />
-            <RecordTableBodyEffect objectNamePlural={objectNamePlural} />
-            <RecordTableBody objectNamePlural={objectNamePlural} />
-          </StyledTable>
-        ) : (
-          <></>
-        )}
-      </>
+      {!!objectNamePlural && (
+        <StyledTable ref={recordTableRef} className="entity-table-cell">
+          <RecordTableHeader createRecord={createRecord} />
+          <RecordTableBodyEffect objectNamePlural={objectNamePlural} />
+          <RecordTableBody objectNamePlural={objectNamePlural} />
+        </StyledTable>
+      )}
     </RecordTableScope>
   );
 };

@@ -8,8 +8,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
-import '@blocknote/core/style.css';
-
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
