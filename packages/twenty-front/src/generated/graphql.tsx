@@ -478,8 +478,12 @@ export type TimelineThread = {
 
 export type TimelineThreadParticipant = {
   __typename?: 'TimelineThreadParticipant';
+  avatarUrl: Scalars['String'];
+  firstName: Scalars['String'];
   handle: Scalars['String'];
-  id: Scalars['String'];
+  lastName: Scalars['String'];
+  personId: Scalars['String'];
+  workspaceMemberId: Scalars['String'];
 };
 
 export type TransientToken = {
@@ -673,14 +677,14 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', id: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', id: string, handle: string }> }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', id: boolean, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId: string, workspaceMemberId: string, firstName: string, lastName: string, avatarUrl: string, handle: string }> }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -867,13 +871,22 @@ export const UserQueryFragmentFragmentDoc = gql`
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
     query GetTimelineThreadsFromCompanyId($companyId: String!) {
   getTimelineThreadsFromCompanyId(companyId: $companyId) {
+    id
     read
     firstParticipant {
-      id
+      personId
+      workspaceMemberId
+      firstName
+      lastName
+      avatarUrl
       handle
     }
     lastTwoParticipants {
-      id
+      personId
+      workspaceMemberId
+      firstName
+      lastName
+      avatarUrl
       handle
     }
     lastMessageReceivedAt
@@ -915,13 +928,22 @@ export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetT
 export const GetTimelineThreadsFromPersonIdDocument = gql`
     query GetTimelineThreadsFromPersonId($personId: String!) {
   getTimelineThreadsFromPersonId(personId: $personId) {
+    id
     read
     firstParticipant {
-      id
+      personId
+      workspaceMemberId
+      firstName
+      lastName
+      avatarUrl
       handle
     }
     lastTwoParticipants {
-      id
+      personId
+      workspaceMemberId
+      firstName
+      lastName
+      avatarUrl
       handle
     }
     lastMessageReceivedAt

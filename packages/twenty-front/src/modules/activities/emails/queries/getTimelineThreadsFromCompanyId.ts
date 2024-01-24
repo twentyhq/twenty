@@ -3,13 +3,22 @@ import { gql } from '@apollo/client';
 export const getTimelineThreadsFromCompanyId = gql`
   query GetTimelineThreadsFromCompanyId($companyId: String!) {
     getTimelineThreadsFromCompanyId(companyId: $companyId) {
+      id
       read
       firstParticipant {
-        id
+        personId
+        workspaceMemberId
+        firstName
+        lastName
+        avatarUrl
         handle
       }
       lastTwoParticipants {
-        id
+        personId
+        workspaceMemberId
+        firstName
+        lastName
+        avatarUrl
         handle
       }
       lastMessageReceivedAt

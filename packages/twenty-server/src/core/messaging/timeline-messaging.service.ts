@@ -138,15 +138,20 @@ export class TimelineMessagingService {
     const threadMessagesFromActiveParticipants =
       await workspaceDataSource?.query(
         `
-      SELECT "messageThread".id,
+      SELECT DISTINCT "messageThread".id,
         message.id AS "messageId",
         message."receivedAt",
         message.body,
         message."subject",
-        "messageParticipant".id AS "messageParticipantId",
         "messageParticipant"."personId",
         "messageParticipant"."workspaceMemberId",
-        "messageParticipant".handle
+        "messageParticipant".handle,
+        "person"."nameFirstName" as "personFirstName",
+        "person"."nameLastName" as "personLastName",
+        "person"."avatarUrl" as "personAvatarUrl",
+        "workspaceMember"."nameFirstName" as "workspaceMemberFirstName",
+        "workspaceMember"."nameLastName" as "workspaceMemberLastName",
+        "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl"
         FROM
             ${dataSourceMetadata.schema}."message" message 
         LEFT JOIN
@@ -171,13 +176,25 @@ export class TimelineMessagingService {
           (threadMessage) => threadMessage.id === messageThreadId,
         );
 
+        console.log('threadMessages', threadMessages);
+
         const threadParticipants = threadMessages.reduce(
           (threadMessageAcc, threadMessage) => {
             const threadParticipant = threadMessageAcc[threadMessage.handle];
 
             if (!threadParticipant) {
-              threadMessageAcc[threadMessage.id] = {
-                id: threadMessage.id,
+              threadMessageAcc[threadMessage.handle] = {
+                personId: threadMessage.personId,
+                workspaceMemberId: threadMessage.workspaceMemberId,
+                firstName:
+                  threadMessage.personFirstName ??
+                  threadMessage.workspaceMemberFirstName,
+                lastName:
+                  threadMessage.personLastName ??
+                  threadMessage.workspaceMemberLastName,
+                avatarUrl:
+                  threadMessage.personAvatarUrl ??
+                  threadMessage.workspaceMemberAvatarUrl,
                 handle: threadMessage.handle,
               };
             }
@@ -197,6 +214,17 @@ export class TimelineMessagingService {
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
+      const firstParticipant = threadParticipants[0];
+
+      const lastTwoParticipants = threadParticipants
+        .filter(
+          (threadParticipant) => threadParticipant.id !== firstParticipant.id,
+        )
+        .slice(-2);
+
+      console.log('threadParticipants', threadParticipants);
+      console.log('lastTwoParticipants', lastTwoParticipants);
+
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
       const threadSubject = subjectsByMessageThreadId[messageThreadId].subject;
@@ -208,8 +236,8 @@ export class TimelineMessagingService {
       return {
         id: messageThreadId,
         read: true,
-        firstParticipant: threadParticipants[0],
-        lastTwoParticipants: threadParticipants.slice(-2),
+        firstParticipant,
+        lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
         subject: threadSubject,
