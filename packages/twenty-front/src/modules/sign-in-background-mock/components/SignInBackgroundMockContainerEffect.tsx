@@ -12,7 +12,6 @@ import {
 } from '@/sign-in-background-mock/constants/signInBackgroundMockDefinitions';
 import { signInBackgroundMockViewFields } from '@/sign-in-background-mock/constants/signInBackgroundMockViewFields';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
 type SignInBackgroundMockContainerEffectProps = {
@@ -48,14 +47,12 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-    setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
   } = useViewBar({ viewBarId: viewId });
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
-    setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(signInBackgroundMockSortDefinitions);
     setAvailableFilterDefinitions?.(signInBackgroundMockFilterDefinitions);
@@ -75,7 +72,6 @@ export const SignInBackgroundMockContainerEffect = ({
     );
   }, [
     setViewObjectMetadataId,
-    setViewType,
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,

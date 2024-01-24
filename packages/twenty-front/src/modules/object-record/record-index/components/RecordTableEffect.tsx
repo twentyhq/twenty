@@ -7,7 +7,6 @@ import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecor
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableEffect = ({
   objectNamePlural,
@@ -39,14 +38,9 @@ export const RecordTableEffect = ({
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const {
-    setAvailableSortDefinitions,
-    setAvailableFilterDefinitions,
-    setAvailableFieldDefinitions,
-    setViewType,
-    setViewObjectMetadataId,
-    setEntityCountInCurrentView,
-  } = useViewBar({ viewBarId });
+  const { setEntityCountInCurrentView } = useViewBar({
+    viewBarId,
+  });
 
   useEffect(() => {
     if (basePathToShowPage && labelIdentifierFieldMetadata) {
@@ -63,28 +57,13 @@ export const RecordTableEffect = ({
   ]);
 
   useEffect(() => {
-    if (!objectMetadataItem) {
-      return;
-    }
-    setViewObjectMetadataId?.(objectMetadataItem.id);
-    setViewType?.(ViewType.Table);
-
-    setAvailableSortDefinitions?.(sortDefinitions);
-    setAvailableFilterDefinitions?.(filterDefinitions);
-    setAvailableFieldDefinitions?.(columnDefinitions);
-
     const availableTableColumns = columnDefinitions.filter(
       filterAvailableTableColumns,
     );
 
     setAvailableTableColumns(availableTableColumns);
   }, [
-    setViewObjectMetadataId,
-    setViewType,
     columnDefinitions,
-    setAvailableSortDefinitions,
-    setAvailableFilterDefinitions,
-    setAvailableFieldDefinitions,
     objectMetadataItem,
     sortDefinitions,
     filterDefinitions,

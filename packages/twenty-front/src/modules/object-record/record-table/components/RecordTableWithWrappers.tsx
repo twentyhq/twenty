@@ -70,7 +70,7 @@ type RecordTableWithWrappersProps = {
   recordTableId: string;
   viewBarId: string;
   updateRecordMutation: (params: any) => void;
-  createRecord: () => void;
+  createRecord: () => Promise<void>;
 };
 
 export const RecordTableWithWrappers = ({
