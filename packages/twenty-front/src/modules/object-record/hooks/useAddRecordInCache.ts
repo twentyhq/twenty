@@ -58,17 +58,11 @@ export const useAddRecordInCache = ({
           },
         });
 
-        // triggerOptimisticEffects({
-        //   typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        //   createdRecords: [record],
-        // });
-
         // TODO: remove this once we get rid of entityFieldsFamilyState
         set(entityFieldsFamilyState(record.id), record);
       },
     [
       objectMetadataItem,
-      // triggerOptimisticEffects,
       apolloClient,
       mapFieldMetadataToGraphQLQuery,
       findOneRecordQuery,
