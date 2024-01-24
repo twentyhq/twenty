@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/components/RightDrawerThreadTopBar';
+import { RightDrawerEmailThreadTopBar } from '@/activities/emails/right-drawer/components/RightDrawerEmailThreadTopBar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const meta: Meta<typeof RightDrawerThreadTopBar> = {
-  title: 'Modules/Activities/Emails/RightDrawer/RightDrawerThreadTopBar',
-  component: RightDrawerThreadTopBar,
+const meta: Meta<typeof RightDrawerEmailThreadTopBar> = {
+  title: 'Modules/Activities/Emails/RightDrawer/RightDrawerEmailThreadTopBar',
+  component: RightDrawerEmailThreadTopBar,
   decorators: [
     (Story) => (
       <div style={{ width: '500px' }}>
@@ -21,6 +21,6 @@ const meta: Meta<typeof RightDrawerThreadTopBar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RightDrawerThreadTopBar>;
+type Story = StoryObj<typeof RightDrawerEmailThreadTopBar>;
 
 export const Default: Story = {};

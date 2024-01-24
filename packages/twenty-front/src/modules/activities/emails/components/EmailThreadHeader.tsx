@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import { IconMail } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-interface ThreadHeaderProps {
+
+type EmailThreadHeaderProps = {
   subject: string;
-  lastMessageSentAt: Date;
-}
+  lastMessageSentAt: string;
+};
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -36,10 +37,10 @@ const StyledContent = styled.span`
   width: 100%;
 `;
 
-export const ThreadHeader = ({
+export const EmailThreadHeader = ({
   subject,
   lastMessageSentAt,
-}: ThreadHeaderProps) => {
+}: EmailThreadHeaderProps) => {
   return (
     <StyledContainer>
       <Tag Icon={IconMail} color="gray" text="Email" onClick={() => {}} />

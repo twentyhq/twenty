@@ -10,7 +10,7 @@ const StyledTopBarWrapper = styled.div`
   display: flex;
 `;
 
-export const RightDrawerThreadTopBar = () => {
+export const RightDrawerEmailThreadTopBar = () => {
   const isMobile = useIsMobile();
 
   return (

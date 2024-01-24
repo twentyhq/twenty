@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useOpenThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenThreadRightDrawer';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
@@ -78,19 +77,19 @@ const StyledReceivedAt = styled.div`
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
-type ThreadPreviewProps = {
+type EmailThreadPreviewProps = {
   divider?: boolean;
   thread: TimelineThread;
+  onClick: () => void;
 };
 
-export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => {
-  const openMessageThreadRightDrawer = useOpenThreadRightDrawer();
-
+export const EmailThreadPreview = ({
+  divider,
+  thread,
+  onClick,
+}: EmailThreadPreviewProps) => {
   return (
-    <StyledCardContent
-      onClick={() => openMessageThreadRightDrawer()}
-      divider={divider}
-    >
+    <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
         <StyledAvatar
           avatarUrl={thread.senderPictureUrl}
