@@ -142,17 +142,6 @@ export const useOpenCreateActivityDrawerV2 = ({
         activityTargetsToCreate,
       );
 
-      const newActivityTargetsForOptimisticEffect = createdActivityTargets.map(
-        (createdActivityTarget) => {
-          return {
-            __typename: capitalize(CoreObjectNameSingular.ActivityTarget),
-            ...createdActivityTarget,
-          };
-        },
-      );
-
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-
       modifyActivityFromCache(createdActivityInCache.id, {
         activityTargets: (activityTargetsRef, { toReference }) => {
           const newActivityTargetsForCacheModify = createdActivityTargets.map(
@@ -208,14 +197,6 @@ export const useOpenCreateActivityDrawerV2 = ({
         } as ObjectRecordConnection,
       };
 
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      // console.log({
-      //   dataToUpdate,
-      // });
-
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-
       apolloClient.writeQuery({
         query: findManyActivityTargetsQuery,
         variables: {
@@ -229,8 +210,6 @@ export const useOpenCreateActivityDrawerV2 = ({
         data: dataToUpdate,
       });
 
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-
       apolloClient.writeQuery({
         query: findManyActivityTargetsQuery,
         variables: {
@@ -241,35 +220,6 @@ export const useOpenCreateActivityDrawerV2 = ({
           },
         },
         data: dataToUpdate,
-      });
-
-      const activityIds = activityTargets
-        ?.map((activityTarget) => activityTarget.activityId)
-        .filter(isNonEmptyString);
-
-      // const exitistingActivitiesConnection = apolloClient.readQuery({
-      //   query: findManyActivitiesQuery,
-      //   variables: {
-      //     filter: {
-      //       id: {
-      //         in: activityIds,
-      //       },
-      //     },
-      //     limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-      //     orderBy: {
-      //       createdAt: 'AscNullsFirst',
-      //     },
-      //   },
-      // });
-
-      // console.log({ exitistingActivitiesConnection });
-
-      console.log({
-        apolloClient: apolloClient.cache.extract(),
-      });
-
-      console.log({
-        dataToUpdate,
       });
 
       // Read current cache state
@@ -301,55 +251,6 @@ export const useOpenCreateActivityDrawerV2 = ({
       newActivities.unshift({
         ...createdActivityInCache,
         __typename: 'Activity',
-      });
-
-      console.log({
-        newActivities,
-        dataToUpdateActivities: {
-          [objectMetadataItemActivity.namePlural]: {
-            __typename: `${capitalize(
-              CoreObjectNameSingular.Activity,
-            )}Connection`,
-            edges: newActivities.map((activity) => ({
-              __typename: `${capitalize(CoreObjectNameSingular.Activity)}Edge`,
-              node: activity,
-              cursor: '',
-            })),
-            pageInfo: {
-              endCursor: '',
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-            },
-          } as ObjectRecordConnection<Activity>,
-        },
-        variables: {
-          filter: {
-            id: {
-              in: newActivities.map((activity) => activity.id),
-            },
-          },
-          limit: 60,
-          orderBy: {
-            createdAt: 'AscNullsFirst',
-          },
-        },
-      });
-
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      console.log({
-        variables: {
-          filter: {
-            id: {
-              in: newActivities.map((activity) => activity.id),
-            },
-          },
-          limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-          orderBy: {
-            createdAt: 'AscNullsFirst',
-          },
-        },
       });
 
       // Inject query for timeline findManyActivities
@@ -405,10 +306,6 @@ export const useOpenCreateActivityDrawerV2 = ({
         },
       );
 
-      console.log({
-        existingActivityTargetsForTargetableObject,
-      });
-
       const newActivityTargetsForTargetableObject = createdActivityTargets
         .map((createdActivityTarget) => {
           return {
@@ -456,35 +353,10 @@ export const useOpenCreateActivityDrawerV2 = ({
         },
       });
 
-      // await new Promise((resolve) => setTimeout(resolve, 15000));
-
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableActivityId(activityId);
       setActivityTargetableEntityArray(targetableObjects ?? []);
       openRightDrawer(RightDrawerPages.CreateActivity);
-
-      // const test = await apolloClient.query({
-      //   query: findManyActivityTargetsQuery,
-      //   variables: {
-      //     filter: {
-      //       activityId: {
-      //         eq: activityId,
-      //       },
-      //     },
-      //   },
-      // });
-
-      // await new Promise((resolve) => setTimeout(resolve, 10000));
-
-      // triggerOptimisticEffects({
-      //   typename: `${capitalize(CoreObjectNameSingular.Activity)}Edge`,
-      //   createdRecords: [createdActivityInCache],
-      // });
-
-      // triggerOptimisticEffects({
-      //   typename: `${capitalize(CoreObjectNameSingular.ActivityTarget)}Edge`,
-      //   createdRecords: newActivityTargetsForOptimisticEffect,
-      // });
     },
     [
       openRightDrawer,
@@ -494,7 +366,6 @@ export const useOpenCreateActivityDrawerV2 = ({
       setViewableActivityId,
       createOneActivityInCache,
       modifyActivityFromCache,
-      // triggerOptimisticEffects,
       workspaceMemberRecord,
       apolloClient,
       findManyActivityTargetsQuery,
@@ -502,6 +373,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       activityTargets,
       findManyActivitiesQuery,
       objectMetadataItemActivity,
+      targetableObject,
     ],
   );
 };
