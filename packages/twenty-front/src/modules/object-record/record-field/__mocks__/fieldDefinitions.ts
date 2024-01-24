@@ -1,16 +1,21 @@
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
-  FieldPhoneMetadata,
   FieldRatingMetadata,
-  FieldRelationMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { mockedPeopleMetadata } from '~/testing/mock-data/metadata';
 
 export const fieldMetadataId = 'fieldMetadataId';
+
+const mockedPersonObjectMetadataItem = {
+  ...mockedPeopleMetadata.node,
+  fields: mockedPeopleMetadata.node.fields.edges.map(({ node }) => node),
+};
 
 export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   fieldMetadataId,
@@ -31,18 +36,15 @@ export const booleanFieldDefinition: FieldDefinition<FieldBooleanMetadata> = {
   },
 };
 
-export const relationFieldDefinition: FieldDefinition<FieldRelationMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'RELATION',
-  metadata: {
-    fieldName: 'contact',
-    relationFieldMetadataId: 'relationFieldMetadataId',
-    relationObjectMetadataNamePlural: 'users',
-    relationObjectMetadataNameSingular: 'user',
-  },
-};
+const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+  ({ name }) => name === 'company',
+);
+export const relationFieldDefinition = relationFieldMetadataItem
+  ? formatFieldMetadataItemAsFieldDefinition({
+      field: relationFieldMetadataItem,
+      objectMetadataItem: mockedPersonObjectMetadataItem,
+    })
+  : undefined;
 
 export const selectFieldDefinition: FieldDefinition<FieldSelectMetadata> = {
   fieldMetadataId,
@@ -77,17 +79,15 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   },
 };
 
-export const phoneFieldDefinition: FieldDefinition<FieldPhoneMetadata> = {
-  fieldMetadataId,
-  label: 'Contact',
-  iconName: 'Phone',
-  type: 'TEXT',
-  metadata: {
-    objectMetadataNameSingular: 'person',
-    placeHolder: '(+256)-712-345-6789',
-    fieldName: 'phone',
-  },
-};
+const phoneFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+  ({ name }) => name === 'phone',
+);
+export const phoneFieldDefinition = phoneFieldMetadataItem
+  ? formatFieldMetadataItemAsFieldDefinition({
+      field: phoneFieldMetadataItem,
+      objectMetadataItem: mockedPersonObjectMetadataItem,
+    })
+  : undefined;
 
 export const ratingfieldDefinition: FieldDefinition<FieldRatingMetadata> = {
   fieldMetadataId,

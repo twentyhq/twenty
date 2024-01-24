@@ -25,11 +25,8 @@ jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
 }));
 
 const query = gql`
-  mutation UpdateOneWorkspaceMember(
-    $idToUpdate: ID!
-    $input: WorkspaceMemberUpdateInput!
-  ) {
-    updateWorkspaceMember(id: $idToUpdate, data: $input) {
+  mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
+    updatePerson(id: $idToUpdate, data: $input) {
       id
     }
   }
@@ -43,7 +40,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        updateWorkspaceMember: {
+        updatePerson: {
           id: 'entityId',
         },
       },
@@ -54,12 +51,12 @@ const mocks: MockedResponse[] = [
       query,
       variables: {
         idToUpdate: 'entityId',
-        input: { contactId: null, contact: { foo: 'bar' } },
+        input: { companyId: 'companyId' },
       },
     },
     result: jest.fn(() => ({
       data: {
-        updateWorkspaceMember: {
+        updatePerson: {
           id: 'entityId',
         },
       },
@@ -68,14 +65,13 @@ const mocks: MockedResponse[] = [
 ];
 
 const entityId = 'entityId';
-const fieldName = 'phone';
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>
   ({ children }: { children: ReactNode }) => {
     const useUpdateOneRecordMutation: RecordUpdateHook = () => {
       const { updateOneRecord } = useUpdateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+        objectNameSingular: CoreObjectNameSingular.Person,
       });
 
       const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -105,15 +101,19 @@ const getWrapper =
     );
   };
 
-const PhoneWrapper = getWrapper(phoneFieldDefinition);
-const RelationWrapper = getWrapper(relationFieldDefinition);
+const PhoneWrapper = phoneFieldDefinition
+  ? getWrapper(phoneFieldDefinition)
+  : undefined;
+const RelationWrapper = relationFieldDefinition
+  ? getWrapper(relationFieldDefinition)
+  : undefined;
 
 describe('usePersistField', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          recordStoreFamilySelector({ recordId: entityId, fieldName }),
+          recordStoreFamilySelector({ recordId: entityId, fieldName: 'phone' }),
         );
 
         return {
@@ -137,7 +137,10 @@ describe('usePersistField', () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          recordStoreFamilySelector({ recordId: entityId, fieldName }),
+          recordStoreFamilySelector({
+            recordId: entityId,
+            fieldName: 'company',
+          }),
         );
 
         return {
@@ -149,7 +152,7 @@ describe('usePersistField', () => {
     );
 
     act(() => {
-      result.current.persistField({ foo: 'bar' });
+      result.current.persistField({ id: 'companyId' });
     });
 
     await waitFor(() => {

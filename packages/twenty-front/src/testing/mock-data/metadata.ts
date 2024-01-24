@@ -1,3 +1,8 @@
+import {
+  FieldMetadataType,
+  RelationMetadataType,
+} from '~/generated-metadata/graphql';
+
 export const mockedPeopleMetadata = {
   __typename: 'objectEdge',
   node: {
@@ -22,10 +27,11 @@ export const mockedPeopleMetadata = {
       edges: [
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '273867e0-1bc7-499f-92d6-a4ec49425138',
-            type: 'LINK',
+            type: FieldMetadataType.Link,
             name: 'linkedinLink',
             label: 'Linkedin',
             description: 'Contact’s Linkedin account',
@@ -39,7 +45,6 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -47,7 +52,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: 'dbdd6cad-20a9-4caa-8965-d1e02d7ab380',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'favorites',
             label: 'Favorites',
             description: 'Favorites linked to the contact',
@@ -61,19 +66,19 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'b3d452bc-e683-4dc6-86ec-37766ea8b30c',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '59683254-31b8-4d3c-82ab-d936a56beb48',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'favorite',
                 namePlural: 'favorites',
+                isSystem: false,
               },
               toFieldMetadataId: 'a0e7e269-d28c-49c6-8fe3-e89acef1cbf3',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -81,7 +86,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: 'c606dfb1-a24c-4f9b-b626-0df1c845e6e8',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageParticipants',
             label: 'Message Participants',
             description: 'Message Participants',
@@ -95,19 +100,19 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'fcc9ed16-2fa4-4809-8a1d-01ce0c481130',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'dd41deae-84d5-4a66-8947-260b0c72677c',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'messageParticipant',
                 namePlural: 'messageParticipants',
+                isSystem: false,
               },
               toFieldMetadataId: '88ab56e5-828e-4fb2-a37c-314b8803f361',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -115,7 +120,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: '586d0acc-f68b-4f08-aea9-410d88f351aa',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'opportunities',
             label: 'Opportunities',
             description: 'Opportunities linked to the contact.',
@@ -129,27 +134,28 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'e63587c4-c565-4f77-9b8c-a639ae366dea',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '941ad274-2d26-4e90-94d9-5e446aa5b91e',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'opportunity',
                 namePlural: 'opportunities',
+                isSystem: false,
               },
               toFieldMetadataId: '48067b53-f99f-4700-bf3a-6569d1646b21',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '8f830af2-bac2-4c97-95bf-bc2336523200',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'jobTitle',
             label: 'Job Title',
             description: 'Contact’s job title',
@@ -165,15 +171,15 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '669ac2ca-a16e-4b82-8d86-0fe2f55ab01b',
-            type: 'FULL_NAME',
+            type: FieldMetadataType.FullName,
             name: 'name',
             label: 'Name',
             description: 'Contact’s name',
@@ -190,15 +196,15 @@ export const mockedPeopleMetadata = {
               lastName: '',
               firstName: '',
             },
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '92ee0bc9-5010-4153-ab93-6c269ff370c4',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'avatarUrl',
             label: 'Avatar',
             description: 'Contact’s avatar',
@@ -214,7 +220,6 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -222,7 +227,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: '2766f41a-1f8f-413f-88a3-1e3fec0e1821',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'pointOfContactForOpportunities',
             label: 'POC for Opportunities',
             description: 'Point of Contact for Opportunities',
@@ -236,27 +241,28 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '5b6296d8-8557-4a3c-a963-109a5888b3b3',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '941ad274-2d26-4e90-94d9-5e446aa5b91e',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'opportunity',
                 namePlural: 'opportunities',
+                isSystem: false,
               },
               toFieldMetadataId: '6510e80d-546a-4a27-9346-06590c81f068',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '7861e85d-826d-413e-8bd4-da3493a79898',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -272,15 +278,15 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '10dda10c-8797-4a7b-a8ee-6123eadc4423',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'companyId',
             label: 'Company id (foreign key)',
             description: 'Contact’s company id foreign key',
@@ -294,15 +300,15 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '2f1238a1-de77-40a7-a698-0912f8daf4e8',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'phone',
             label: 'Phone',
             description: 'Contact’s phone number',
@@ -318,7 +324,6 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -326,7 +331,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: 'ee0ce363-c3b4-4638-ab88-660566e3016f',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'company',
             label: 'Company',
             description: 'Contact’s company',
@@ -341,26 +346,27 @@ export const mockedPeopleMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'ccf90524-24b0-4b9a-bb01-b904c4f1328e',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'company',
                 namePlural: 'companies',
+                isSystem: false,
               },
               fromFieldMetadataId: 'd991026f-54af-4411-a913-28b39403c24f',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '7db4da02-bcea-4f0e-bb5d-cf702e9529cc',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'city',
             label: 'City',
             description: 'Contact’s city',
@@ -376,15 +382,15 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '5a751ba4-5097-4fa8-acd1-5fe164368233',
-            type: 'LINK',
+            type: FieldMetadataType.Link,
             name: 'xLink',
             label: 'X',
             description: 'Contact’s X/Twitter account',
@@ -398,15 +404,15 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '8f0adf02-281a-42db-ad73-37d0d62416e0',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -420,9 +426,8 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -430,7 +435,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: '0eb1a396-06a5-4b6a-8003-82e6839a2afb',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'attachments',
             label: 'Attachments',
             description: 'Attachments linked to the contact.',
@@ -444,19 +449,19 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'a65ae523-9786-4064-8f42-346ce8055345',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'e25b094b-c6a9-4f56-856b-3c3072c33adf',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'attachment',
                 namePlural: 'attachments',
+                isSystem: false,
               },
               toFieldMetadataId: 'cb2bac7e-0db7-4f10-95f2-d8d122cad29c',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -464,7 +469,7 @@ export const mockedPeopleMetadata = {
           node: {
             __typename: 'field',
             id: '17692850-3850-4e3a-824a-03aa199847f6',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activityTargets',
             label: 'Activities',
             description: 'Activities tied to the contact',
@@ -478,27 +483,28 @@ export const mockedPeopleMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '6100b5ae-72b3-4a02-94e9-d923c7a78d92',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'b0327d82-d8a3-4e1d-9b4b-dfbff04d951a',
                 dataSourceId: 'cabbcaa6-05d6-41f4-920f-9144172a4f08',
                 nameSingular: 'activityTarget',
                 namePlural: 'activityTargets',
+                isSystem: false,
               },
               toFieldMetadataId: 'e6508bb6-0dfd-417a-b0f4-d84bc1f44883',
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '5ecd8da2-7578-4ca9-9f59-45889ac608fa',
-            type: 'EMAIL',
+            type: FieldMetadataType.Email,
             name: 'email',
             label: 'Email',
             description: 'Contact’s Email',
@@ -514,15 +520,15 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '63d42400-5bf0-4978-811a-f161f72c834c',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -538,7 +544,6 @@ export const mockedPeopleMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
       ],
@@ -581,7 +586,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'c03b0e35-b095-42b6-b10f-3e04ef9adf8e',
-            type: 'LINK',
+            type: FieldMetadataType.Link,
             name: 'linkedinLink',
             label: 'Linkedin',
             description: 'The company Linkedin account',
@@ -595,7 +600,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -617,7 +621,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -625,7 +628,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'ea8a043d-58c8-4b13-a041-74fb31c79e42',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'domainName',
             label: 'Domain Name',
             description:
@@ -642,7 +645,6 @@ export const mockedCompaniesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -650,7 +652,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '775870d6-16c1-4c94-9b58-c88bdca489e8',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'favorites',
             label: 'Favorites',
             description: 'Favorites linked to the company',
@@ -664,7 +666,7 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '4df88275-6b23-4bd4-b7a7-0893d366d8e0',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '59683254-31b8-4d3c-82ab-d936a56beb48',
@@ -676,7 +678,6 @@ export const mockedCompaniesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -684,7 +685,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '1987f9fb-1f75-42a6-93e2-652811855f5b',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'name',
             label: 'Name',
             description: 'The company name',
@@ -700,7 +701,6 @@ export const mockedCompaniesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -708,7 +708,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '4ab25246-cf21-4265-9241-885111814e25',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -724,7 +724,6 @@ export const mockedCompaniesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -732,7 +731,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '72268a05-1ac6-4b4c-b0f1-91dc82aa1f57',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'accountOwnerId',
             label: 'Account Owner id (foreign key)',
             description:
@@ -747,7 +746,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -755,7 +753,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'e51b0291-33e5-401e-b595-3940a28bc5ce',
-            type: 'LINK',
+            type: FieldMetadataType.Link,
             name: 'xLink',
             label: 'X',
             description: 'The company Twitter/X account',
@@ -769,7 +767,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -777,7 +774,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'de0dace0-f7f8-4317-95e8-f80f6f72c7e4',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'accountOwner',
             label: 'Account Owner',
             description:
@@ -793,7 +790,7 @@ export const mockedCompaniesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'b6d74797-0a27-449e-8f7b-26f94de4f707',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -804,7 +801,6 @@ export const mockedCompaniesMetadata = {
               fromFieldMetadataId: 'f1c10310-ab4f-484b-bd03-f5f3890e964e',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -827,7 +823,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -835,7 +830,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '67500175-d2d8-4b84-a6c6-4b0a0a5cca23',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'attachments',
             label: 'Attachments',
             description: 'Attachments linked to the company.',
@@ -849,7 +844,7 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '857f84a7-9934-4b3c-a7c6-3d1db427df73',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'e25b094b-c6a9-4f56-856b-3c3072c33adf',
@@ -861,7 +856,6 @@ export const mockedCompaniesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -869,7 +863,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'ed7fb62c-5e1a-4f35-82ff-5c59efc28edb',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -885,7 +879,6 @@ export const mockedCompaniesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -893,7 +886,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'a5109540-d918-4f33-b80c-235a5816d44b',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -907,9 +900,8 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -932,7 +924,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -940,7 +931,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '00b695d6-e0c6-4029-9932-817b19ae0380',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'opportunities',
             label: 'Opportunities',
             description: 'Opportunities linked to the company.',
@@ -954,7 +945,7 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'afe2078f-6c52-45ef-bb2e-f43b0ee28ecc',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '941ad274-2d26-4e90-94d9-5e446aa5b91e',
@@ -966,7 +957,6 @@ export const mockedCompaniesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -974,7 +964,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'aec12544-a9e8-464f-b7f7-b6f1ce3faebe',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'address',
             label: 'Address',
             description: 'The company address',
@@ -990,7 +980,6 @@ export const mockedCompaniesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -998,7 +987,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: 'd991026f-54af-4411-a913-28b39403c24f',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'people',
             label: 'People',
             description: 'People linked to the company.',
@@ -1012,7 +1001,7 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'ccf90524-24b0-4b9a-bb01-b904c4f1328e',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -1024,7 +1013,6 @@ export const mockedCompaniesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1032,7 +1020,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '9a1a00ee-1595-4b00-8a33-fefb02e25c98',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activityTargets',
             label: 'Activities',
             description: 'Activities tied to the company',
@@ -1046,7 +1034,7 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '49028648-0380-481d-b6ba-004193f83e97',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'b0327d82-d8a3-4e1d-9b4b-dfbff04d951a',
@@ -1058,7 +1046,6 @@ export const mockedCompaniesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1066,7 +1053,7 @@ export const mockedCompaniesMetadata = {
           node: {
             __typename: 'field',
             id: '726f398f-7007-49f9-8b03-f71813c9fcf2',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'industry',
             label: 'Industry',
             description: 'The industry the company is involved in',
@@ -1080,7 +1067,6 @@ export const mockedCompaniesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -1123,7 +1109,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: '202efca6-9820-4e4a-9a27-f362dc5b46ed',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -1137,9 +1123,8 @@ export const mockedPipelineStepsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -1147,7 +1132,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: 'c9b9d516-10d2-4eca-94ce-a872547f429f',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'color',
             label: 'Color',
             description: 'Pipeline Step color',
@@ -1163,7 +1148,6 @@ export const mockedPipelineStepsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -1171,7 +1155,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: '7928241f-6fe9-4ab2-84c6-7e84c5bea05f',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -1187,7 +1171,6 @@ export const mockedPipelineStepsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1195,7 +1178,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: 'ad3e919f-4258-4e21-8caf-bf122f17ca5c',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'opportunities',
             label: 'Opportunities',
             description: 'Opportunities linked to the step.',
@@ -1209,7 +1192,7 @@ export const mockedPipelineStepsMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '7b0474c4-d82d-4c1d-96de-c6728b53339a',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '941ad274-2d26-4e90-94d9-5e446aa5b91e',
@@ -1221,7 +1204,6 @@ export const mockedPipelineStepsMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1229,7 +1211,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: 'c26ba58c-5629-4a6b-ae7f-5c06d3045a9b',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -1245,7 +1227,6 @@ export const mockedPipelineStepsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1253,7 +1234,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: '4f383c05-3f9b-433a-8617-20ed3861e490',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'name',
             label: 'Name',
             description: 'Pipeline Step name',
@@ -1269,7 +1250,6 @@ export const mockedPipelineStepsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -1293,7 +1273,6 @@ export const mockedPipelineStepsMetadata = {
             defaultValue: {
               value: 0,
             },
-            options: null,
           },
         },
       ],
@@ -1336,7 +1315,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: '55d3c728-fd31-4012-a7f1-f90571f9f7eb',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'activityId',
             label: 'Activity id (foreign key)',
             description: 'ActivityTarget activity id foreign key',
@@ -1350,7 +1329,6 @@ export const mockedActivityTargetsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1358,7 +1336,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: '1d8071b7-06bd-4c34-94cc-05cd7d672945',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'personId',
             label: 'Person id (foreign key)',
             description: 'ActivityTarget person id foreign key',
@@ -1372,7 +1350,6 @@ export const mockedActivityTargetsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1380,7 +1357,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: 'd9ea410b-2441-44ef-85da-03650aad5818',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'company',
             label: 'Company',
             description: 'ActivityTarget company',
@@ -1395,7 +1372,7 @@ export const mockedActivityTargetsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '49028648-0380-481d-b6ba-004193f83e97',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -1406,7 +1383,6 @@ export const mockedActivityTargetsMetadata = {
               fromFieldMetadataId: '9a1a00ee-1595-4b00-8a33-fefb02e25c98',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1414,7 +1390,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: '9de09afd-3a18-46dc-8be8-01c6972738c6',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'companyId',
             label: 'Company id (foreign key)',
             description: 'ActivityTarget company id foreign key',
@@ -1428,7 +1404,6 @@ export const mockedActivityTargetsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1436,7 +1411,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: 'd9c9707b-17c3-4bfd-a786-f7f4289b977a',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -1452,7 +1427,6 @@ export const mockedActivityTargetsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1460,7 +1434,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: '2aded974-bfa4-4ba4-b4c9-91346ac2762b',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activity',
             label: 'Activity',
             description: 'ActivityTarget activity',
@@ -1475,7 +1449,7 @@ export const mockedActivityTargetsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'a47ced1e-6070-4b11-b5ab-1a3d2268d8a2',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'c8682a80-0b92-4d0e-9405-53ab7e8b225f',
@@ -1486,7 +1460,6 @@ export const mockedActivityTargetsMetadata = {
               fromFieldMetadataId: '63bf5a31-2b3c-47ca-bb75-f1efb053ec58',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1494,7 +1467,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: 'e6508bb6-0dfd-417a-b0f4-d84bc1f44883',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'person',
             label: 'Person',
             description: 'ActivityTarget person',
@@ -1509,7 +1482,7 @@ export const mockedActivityTargetsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '6100b5ae-72b3-4a02-94e9-d923c7a78d92',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -1520,7 +1493,6 @@ export const mockedActivityTargetsMetadata = {
               fromFieldMetadataId: '17692850-3850-4e3a-824a-03aa199847f6',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1528,7 +1500,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: 'dc80d52d-31ea-4a72-bb9a-482ed86b6bc5',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -1544,7 +1516,6 @@ export const mockedActivityTargetsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1552,7 +1523,7 @@ export const mockedActivityTargetsMetadata = {
           node: {
             __typename: 'field',
             id: '5e8876b8-4492-4a35-ae57-da3bc725e9f1',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -1566,9 +1537,8 @@ export const mockedActivityTargetsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
       ],
@@ -1611,7 +1581,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: 'a63cbf75-68a5-4e80-8dff-b26982070afe',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -1627,7 +1597,6 @@ export const mockedFavoritesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1651,7 +1620,6 @@ export const mockedFavoritesMetadata = {
             defaultValue: {
               value: 0,
             },
-            options: null,
           },
         },
         {
@@ -1659,7 +1627,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: '818f4137-f4eb-4899-aed9-c59f7924a0ad',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -1675,7 +1643,6 @@ export const mockedFavoritesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -1683,7 +1650,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: 'e9bab8b3-7a1b-4184-b66b-4a9d744b285f',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -1697,9 +1664,8 @@ export const mockedFavoritesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -1707,7 +1673,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: 'a0e7e269-d28c-49c6-8fe3-e89acef1cbf3',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'person',
             label: 'Person',
             description: 'Favorite person',
@@ -1722,7 +1688,7 @@ export const mockedFavoritesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'b3d452bc-e683-4dc6-86ec-37766ea8b30c',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -1733,7 +1699,6 @@ export const mockedFavoritesMetadata = {
               fromFieldMetadataId: 'dbdd6cad-20a9-4caa-8965-d1e02d7ab380',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1741,7 +1706,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: '39655326-9472-4552-a96c-934192e7b6b1',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'workspaceMemberId',
             label: 'Workspace Member id (foreign key)',
             description: 'Favorite workspace member id foreign key',
@@ -1755,7 +1720,6 @@ export const mockedFavoritesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1763,7 +1727,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: 'dcd5343e-98db-4cf7-aded-2c9c0da0a220',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'company',
             label: 'Company',
             description: 'Favorite company',
@@ -1778,7 +1742,7 @@ export const mockedFavoritesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '4df88275-6b23-4bd4-b7a7-0893d366d8e0',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -1789,7 +1753,6 @@ export const mockedFavoritesMetadata = {
               fromFieldMetadataId: '775870d6-16c1-4c94-9b58-c88bdca489e8',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1797,7 +1760,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: '46f6b12a-b720-4f64-9637-85e9b3b660ac',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'companyId',
             label: 'Company id (foreign key)',
             description: 'Favorite company id foreign key',
@@ -1811,7 +1774,6 @@ export const mockedFavoritesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1819,7 +1781,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: '9b9b9be4-34ee-4ed2-9ecf-772a619584ef',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'personId',
             label: 'Person id (foreign key)',
             description: 'Favorite person id foreign key',
@@ -1833,7 +1795,6 @@ export const mockedFavoritesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1841,7 +1802,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: 'efc8bec2-de4a-4d67-9187-31394bb35119',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'workspaceMember',
             label: 'Workspace Member',
             description: 'Favorite workspace member',
@@ -1856,7 +1817,7 @@ export const mockedFavoritesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '4e7e4ec6-2543-47c0-87cc-0c394e98271e',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -1867,7 +1828,6 @@ export const mockedFavoritesMetadata = {
               fromFieldMetadataId: 'da7c9f08-5de0-4807-96d4-018ff7072d15',
             },
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -1910,7 +1870,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '37369429-26fb-4521-963c-1aa17d1a65f2',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'personId',
             label: 'Person id (foreign key)',
             description: 'Person id foreign key',
@@ -1924,7 +1884,6 @@ export const mockedMessageParticipantsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1932,7 +1891,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '22883ca2-34e2-40ab-9e7b-fde5836cb5d2',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'workspaceMember',
             label: 'Workspace Member',
             description: 'Workspace member',
@@ -1947,7 +1906,7 @@ export const mockedMessageParticipantsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'ffcedbc0-adb7-4f74-83bb-ff7e3c270183',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -1958,7 +1917,6 @@ export const mockedMessageParticipantsMetadata = {
               fromFieldMetadataId: 'f13cce91-5f98-4eb0-8c6e-c1cf41ad168f',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -1966,7 +1924,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '5791f58e-b4f9-4415-a604-88155073a24a',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'displayName',
             label: 'Display Name',
             description: 'Display Name',
@@ -1982,7 +1940,6 @@ export const mockedMessageParticipantsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -1990,7 +1947,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '0f5d742d-103c-46fb-845e-26320ec57391',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -2004,9 +1961,8 @@ export const mockedMessageParticipantsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -2014,7 +1970,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '5ac3d613-474d-4cc3-b01b-f0ff4772004f',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'messageId',
             label: 'Message id (foreign key)',
             description: 'Message id foreign key',
@@ -2028,7 +1984,6 @@ export const mockedMessageParticipantsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2036,7 +1991,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '88ab56e5-828e-4fb2-a37c-314b8803f361',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'person',
             label: 'Person',
             description: 'Person',
@@ -2051,7 +2006,7 @@ export const mockedMessageParticipantsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'fcc9ed16-2fa4-4809-8a1d-01ce0c481130',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -2062,7 +2017,6 @@ export const mockedMessageParticipantsMetadata = {
               fromFieldMetadataId: 'c606dfb1-a24c-4f9b-b626-0df1c845e6e8',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2070,7 +2024,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '663612f4-7eb8-4b21-886e-730f3b047ee7',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'message',
             label: 'Message',
             description: 'Message',
@@ -2085,7 +2039,7 @@ export const mockedMessageParticipantsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '020d2fe4-33c3-4fe1-a2cc-35a23d73d046',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '6f4cd2fa-2e6f-41be-a2cc-98e497a1d2f5',
@@ -2096,7 +2050,6 @@ export const mockedMessageParticipantsMetadata = {
               fromFieldMetadataId: '9c58971b-4e40-4f49-b125-ff014f909744',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2104,7 +2057,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '501a7d34-f158-4b13-b26d-f04d966a2012',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'role',
             label: 'Role',
             description: 'Role',
@@ -2120,7 +2073,6 @@ export const mockedMessageParticipantsMetadata = {
             defaultValue: {
               value: 'from',
             },
-            options: null,
           },
         },
         {
@@ -2128,7 +2080,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: 'f6c7f0fd-77a7-4d64-8b6a-e495a3cad2db',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -2144,7 +2096,6 @@ export const mockedMessageParticipantsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -2152,7 +2103,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: 'fbdb9c94-d18f-43f8-a214-d6e87782c177',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'workspaceMemberId',
             label: 'Workspace Member id (foreign key)',
             description: 'Workspace member id foreign key',
@@ -2166,7 +2117,6 @@ export const mockedMessageParticipantsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2174,7 +2124,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '1f3c5781-fdd0-4c75-9b90-7486583830f8',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'handle',
             label: 'Handle',
             description: 'Handle',
@@ -2190,7 +2140,6 @@ export const mockedMessageParticipantsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -2198,7 +2147,7 @@ export const mockedMessageParticipantsMetadata = {
           node: {
             __typename: 'field',
             id: '9df1cbaf-1b9f-462a-a341-cefbb8a05fcd',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -2214,7 +2163,6 @@ export const mockedMessageParticipantsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
       ],
@@ -2257,7 +2205,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '64744680-c85f-45ca-ba74-55986558d58f',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'reminderAt',
             label: 'Reminder Date',
             description: 'Activity reminder date',
@@ -2271,7 +2219,6 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2279,7 +2226,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'ee8f3269-ad40-4ee8-9989-4b6978ddb487',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'title',
             label: 'Title',
             description: 'Activity title',
@@ -2295,7 +2242,6 @@ export const mockedActivitiesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -2303,7 +2249,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'ce7bdaf6-445c-472a-b069-34fe73ac849c',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -2319,7 +2265,6 @@ export const mockedActivitiesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -2327,7 +2272,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'f47a1319-bdec-4d9e-8179-17cb9df81dd6',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'comments',
             label: 'Comments',
             description: 'Activity comments',
@@ -2341,7 +2286,7 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'f4a1e4f4-8a26-4c7d-8973-6fdbc816fc6d',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '5f5658c9-a4c8-4463-b8ba-66fb3a1efacc',
@@ -2353,7 +2298,6 @@ export const mockedActivitiesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2361,7 +2305,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'a6bd62f1-3e4c-4be0-ab64-0e7248d7d9eb',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'assignee',
             label: 'Assignee',
             description: 'Acitivity assignee',
@@ -2376,7 +2320,7 @@ export const mockedActivitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '0de81eae-1ffb-4cb5-b081-ab18d5641d50',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -2387,7 +2331,6 @@ export const mockedActivitiesMetadata = {
               fromFieldMetadataId: '9a722ce5-1721-4406-a695-4a207f6f50c7',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2395,7 +2338,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '5ba12c78-4e7d-422d-821a-a647b959689b',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -2409,9 +2352,8 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -2419,7 +2361,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '763c2a4a-e7ba-445f-9ecd-6d1d20c8b408',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'attachments',
             label: 'Attachments',
             description: 'Activity attachments',
@@ -2433,7 +2375,7 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'a45591f3-8a30-49d0-92b3-59c4110dfee7',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'e25b094b-c6a9-4f56-856b-3c3072c33adf',
@@ -2445,7 +2387,6 @@ export const mockedActivitiesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2453,7 +2394,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '87b74ce7-8029-4b36-8b2f-6e565b65429a',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'type',
             label: 'Type',
             description: 'Activity type',
@@ -2469,7 +2410,6 @@ export const mockedActivitiesMetadata = {
             defaultValue: {
               value: 'Note',
             },
-            options: null,
           },
         },
         {
@@ -2477,7 +2417,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '3cea79b3-4419-4872-b1e3-6ab7623fb918',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'body',
             label: 'Body',
             description: 'Activity body',
@@ -2493,7 +2433,6 @@ export const mockedActivitiesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -2501,7 +2440,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '4c652e71-ec1d-418f-b102-26e56d1d0c03',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'assigneeId',
             label: 'Assignee id (foreign key)',
             description: 'Acitivity assignee id foreign key',
@@ -2515,7 +2454,6 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2523,7 +2461,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '3cdd5fbe-8e16-493d-9638-425af94f313e',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'completedAt',
             label: 'Completion Date',
             description: 'Activity completion date',
@@ -2537,7 +2475,6 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2545,7 +2482,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'c40dd76b-da9d-48aa-af28-4d42f2ac1dea',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'dueAt',
             label: 'Due Date',
             description: 'Activity due date',
@@ -2559,7 +2496,6 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2567,7 +2503,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '63bf5a31-2b3c-47ca-bb75-f1efb053ec58',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activityTargets',
             label: 'Targets',
             description: 'Activity targets',
@@ -2581,7 +2517,7 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'a47ced1e-6070-4b11-b5ab-1a3d2268d8a2',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'b0327d82-d8a3-4e1d-9b4b-dfbff04d951a',
@@ -2593,7 +2529,6 @@ export const mockedActivitiesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2601,7 +2536,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: '46782ee3-181c-484b-9aa9-27e57b61cc81',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'author',
             label: 'Author',
             description: 'Activity author',
@@ -2616,7 +2551,7 @@ export const mockedActivitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '519a92c5-8b0a-4a85-b0bc-be8d1607da5a',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -2627,7 +2562,6 @@ export const mockedActivitiesMetadata = {
               fromFieldMetadataId: '4d91396b-99ff-486f-aa23-aa90bfca4aff',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2635,7 +2569,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'fa996207-da7a-43e0-ba7d-406e5146e03f',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'authorId',
             label: 'Author id (foreign key)',
             description: 'Activity author id foreign key',
@@ -2649,7 +2583,6 @@ export const mockedActivitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2657,7 +2590,7 @@ export const mockedActivitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'dd65a576-a91b-4865-aae8-287e64d6a192',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -2673,7 +2606,6 @@ export const mockedActivitiesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
       ],
@@ -2716,7 +2648,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'c0d56fea-22a3-42e6-b715-f0bc07dafe4c',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'authorId',
             label: 'Author id (foreign key)',
             description: 'Attachment author id foreign key',
@@ -2730,7 +2662,6 @@ export const mockedAttachmentsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2738,7 +2669,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: '78bcb420-9281-4eeb-8eb6-b2f3047acc09',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'author',
             label: 'Author',
             description: 'Attachment author',
@@ -2753,7 +2684,7 @@ export const mockedAttachmentsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '2d64b1ba-c7c2-4d96-bba3-ae2f7c2be7bc',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -2764,7 +2695,6 @@ export const mockedAttachmentsMetadata = {
               fromFieldMetadataId: 'dbd81b2e-f282-4846-970a-d9fbf1ab0f67',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2772,7 +2702,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: '1ce97b92-8efa-4260-bd96-efe207182424',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -2788,7 +2718,6 @@ export const mockedAttachmentsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -2796,7 +2725,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'a121231f-4264-49b4-afff-04db4021d484',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'name',
             label: 'Name',
             description: 'Attachment name',
@@ -2812,7 +2741,6 @@ export const mockedAttachmentsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -2820,7 +2748,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'f6edc5fd-601d-4576-8828-d749ed6e0dde',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -2834,9 +2762,8 @@ export const mockedAttachmentsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -2844,7 +2771,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: '26fda4b8-c242-429c-9139-1ced619244d1',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'personId',
             label: 'Person id (foreign key)',
             description: 'Attachment person id foreign key',
@@ -2858,7 +2785,6 @@ export const mockedAttachmentsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2866,7 +2792,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: '6e103463-aee5-4be3-af12-52cacd566c3a',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'company',
             label: 'Company',
             description: 'Attachment company',
@@ -2881,7 +2807,7 @@ export const mockedAttachmentsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '857f84a7-9934-4b3c-a7c6-3d1db427df73',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -2892,7 +2818,6 @@ export const mockedAttachmentsMetadata = {
               fromFieldMetadataId: '67500175-d2d8-4b84-a6c6-4b0a0a5cca23',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2900,7 +2825,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'e4a17720-25f2-42ca-8f26-2557e1d2d31c',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -2916,7 +2841,6 @@ export const mockedAttachmentsMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -2924,7 +2848,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'ae6f3e07-7858-4999-93a0-557fe2ee5f0e',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'companyId',
             label: 'Company id (foreign key)',
             description: 'Attachment company id foreign key',
@@ -2938,7 +2862,6 @@ export const mockedAttachmentsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2946,7 +2869,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'f550d5cb-7e06-47b0-9e50-c5ad68beb0f6',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'activityId',
             label: 'Activity id (foreign key)',
             description: 'Attachment activity id foreign key',
@@ -2960,7 +2883,6 @@ export const mockedAttachmentsMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -2968,7 +2890,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'ba8f371a-238f-4bb1-9099-275f60281d22',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'fullPath',
             label: 'Full path',
             description: 'Attachment full path',
@@ -2984,7 +2906,6 @@ export const mockedAttachmentsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -2992,7 +2913,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'cb2bac7e-0db7-4f10-95f2-d8d122cad29c',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'person',
             label: 'Person',
             description: 'Attachment person',
@@ -3007,7 +2928,7 @@ export const mockedAttachmentsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'a65ae523-9786-4064-8f42-346ce8055345',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -3018,7 +2939,6 @@ export const mockedAttachmentsMetadata = {
               fromFieldMetadataId: '0eb1a396-06a5-4b6a-8003-82e6839a2afb',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3026,7 +2946,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'ab9ec58a-d20c-48e0-b5ca-7050810fdb2d',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'type',
             label: 'Type',
             description: 'Attachment type',
@@ -3042,7 +2962,6 @@ export const mockedAttachmentsMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3050,7 +2969,7 @@ export const mockedAttachmentsMetadata = {
           node: {
             __typename: 'field',
             id: 'd8ce8a44-872e-482e-ac9d-87f6637f5776',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activity',
             label: 'Activity',
             description: 'Attachment activity',
@@ -3065,7 +2984,7 @@ export const mockedAttachmentsMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'a45591f3-8a30-49d0-92b3-59c4110dfee7',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'c8682a80-0b92-4d0e-9405-53ab7e8b225f',
@@ -3076,7 +2995,6 @@ export const mockedAttachmentsMetadata = {
               fromFieldMetadataId: '763c2a4a-e7ba-445f-9ecd-6d1d20c8b408',
             },
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -3119,7 +3037,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '2f6a7242-efd0-4cb8-8d54-d298df37690d',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'locale',
             label: 'Language',
             description: 'Preferred language',
@@ -3135,7 +3053,6 @@ export const mockedWorkspaceMembersMetadata = {
             defaultValue: {
               value: 'en',
             },
-            options: null,
           },
         },
         {
@@ -3143,7 +3060,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'f13cce91-5f98-4eb0-8c6e-c1cf41ad168f',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageParticipants',
             label: 'Message Participants',
             description: 'Message Participants',
@@ -3157,7 +3074,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'ffcedbc0-adb7-4f74-83bb-ff7e3c270183',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'dd41deae-84d5-4a66-8947-260b0c72677c',
@@ -3169,7 +3086,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3177,7 +3093,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'dcfbc338-ef39-42f6-9712-128d5efe2c04',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -3193,7 +3109,6 @@ export const mockedWorkspaceMembersMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3201,7 +3116,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '4d91396b-99ff-486f-aa23-aa90bfca4aff',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'authoredActivities',
             label: 'Authored activities',
             description: 'Activities created by the workspace member',
@@ -3215,7 +3130,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '519a92c5-8b0a-4a85-b0bc-be8d1607da5a',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'c8682a80-0b92-4d0e-9405-53ab7e8b225f',
@@ -3227,7 +3142,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3235,7 +3149,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'ccb7f96a-fd64-49a4-b5c3-e9cceb436dbd',
-            type: 'FULL_NAME',
+            type: FieldMetadataType.FullName,
             name: 'name',
             label: 'Name',
             description: 'Workspace member name',
@@ -3252,7 +3166,6 @@ export const mockedWorkspaceMembersMetadata = {
               lastName: '',
               firstName: '',
             },
-            options: null,
           },
         },
         {
@@ -3260,7 +3173,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'da7c9f08-5de0-4807-96d4-018ff7072d15',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'favorites',
             label: 'Favorites',
             description: 'Favorites linked to the workspace member',
@@ -3274,7 +3187,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '4e7e4ec6-2543-47c0-87cc-0c394e98271e',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '59683254-31b8-4d3c-82ab-d936a56beb48',
@@ -3286,7 +3199,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3294,7 +3206,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'ed36d8bc-dcbd-4d4a-8b18-02e04b13fbf7',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'colorScheme',
             label: 'Color Scheme',
             description: 'Preferred color scheme',
@@ -3310,7 +3222,6 @@ export const mockedWorkspaceMembersMetadata = {
             defaultValue: {
               value: 'Light',
             },
-            options: null,
           },
         },
         {
@@ -3318,7 +3229,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '099a5f31-0b9a-4d1a-81dc-811f0f1f0b33',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'authoredComments',
             label: 'Authored comments',
             description: 'Authored comments',
@@ -3332,7 +3243,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '8e2a5be9-ff83-4106-bfe0-0877423559d0',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '5f5658c9-a4c8-4463-b8ba-66fb3a1efacc',
@@ -3344,7 +3255,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3352,7 +3262,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '016b24b5-cd59-48fa-81ce-ba13670ce7d2',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -3368,7 +3278,6 @@ export const mockedWorkspaceMembersMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3376,7 +3285,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '2c8bb89a-c60c-49bf-81ce-7074ac41caf5',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'connectedAccounts',
             label: 'Connected accounts',
             description: 'Connected accounts',
@@ -3390,7 +3299,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '7fd3bdb5-e043-495d-82b1-d75c22b70bac',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '539d1682-9999-43dc-94c1-7ad52640ac7d',
@@ -3402,7 +3311,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3410,7 +3318,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'f1c10310-ab4f-484b-bd03-f5f3890e964e',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'accountOwnerForCompanies',
             label: 'Account Owner For Companies',
             description: 'Account owner for companies',
@@ -3424,7 +3332,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: 'b6d74797-0a27-449e-8f7b-26f94de4f707',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -3436,7 +3344,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3444,7 +3351,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '318a3e81-5b82-4c2d-8487-f3b8d5be9096',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -3458,9 +3365,8 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -3468,7 +3374,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '14b83650-bfd2-4810-be57-4d532697051a',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'userId',
             label: 'User Id',
             description: 'Associated User Id',
@@ -3482,7 +3388,6 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3490,7 +3395,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'e208d831-5ab7-4382-971a-2314ab2ef139',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'avatarUrl',
             label: 'Avatar Url',
             description: 'Workspace member avatar',
@@ -3506,7 +3411,6 @@ export const mockedWorkspaceMembersMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3514,7 +3418,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: 'dbd81b2e-f282-4846-970a-d9fbf1ab0f67',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'authoredAttachments',
             label: 'Authored attachments',
             description: 'Attachments created by the workspace member',
@@ -3528,7 +3432,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '2d64b1ba-c7c2-4d96-bba3-ae2f7c2be7bc',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'e25b094b-c6a9-4f56-856b-3c3072c33adf',
@@ -3540,7 +3444,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3548,7 +3451,7 @@ export const mockedWorkspaceMembersMetadata = {
           node: {
             __typename: 'field',
             id: '9a722ce5-1721-4406-a695-4a207f6f50c7',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'assignedActivities',
             label: 'Assigned activities',
             description: 'Activities assigned to the workspace member',
@@ -3562,7 +3465,7 @@ export const mockedWorkspaceMembersMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '0de81eae-1ffb-4cb5-b081-ab18d5641d50',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'c8682a80-0b92-4d0e-9405-53ab7e8b225f',
@@ -3574,7 +3477,6 @@ export const mockedWorkspaceMembersMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -3617,7 +3519,7 @@ export const mockedWebhooksMetadata = {
           node: {
             __typename: 'field',
             id: 'ed41012d-df17-4752-8e79-04adaa513164',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -3633,7 +3535,6 @@ export const mockedWebhooksMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3641,7 +3542,7 @@ export const mockedWebhooksMetadata = {
           node: {
             __typename: 'field',
             id: 'bff23b96-0a20-42ba-bdce-fbc72c97f31f',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'targetUrl',
             label: 'Target Url',
             description: 'Webhook target url',
@@ -3657,7 +3558,6 @@ export const mockedWebhooksMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3665,7 +3565,7 @@ export const mockedWebhooksMetadata = {
           node: {
             __typename: 'field',
             id: 'db25a5ad-8149-4d27-9e02-01f374c8d1b4',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -3679,9 +3579,8 @@ export const mockedWebhooksMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -3689,7 +3588,7 @@ export const mockedWebhooksMetadata = {
           node: {
             __typename: 'field',
             id: 'efcdbbd3-fd10-4b1e-88df-92d3c6dc50da',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -3705,7 +3604,6 @@ export const mockedWebhooksMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3713,7 +3611,7 @@ export const mockedWebhooksMetadata = {
           node: {
             __typename: 'field',
             id: 'bb357656-272c-413c-bdd9-9aff9c7a17bf',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'operation',
             label: 'Operation',
             description: 'Webhook operation',
@@ -3729,7 +3627,6 @@ export const mockedWebhooksMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
       ],
@@ -3772,7 +3669,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '2ea89a33-045e-4231-9c25-0eef7ff419c0',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -3786,9 +3683,8 @@ export const mockedMessagesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -3796,7 +3692,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '4a57cd16-1b56-4d0a-a09e-7ce2840c0412',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'headerMessageId',
             label: 'Header message Id',
             description: 'Message id from the message header',
@@ -3812,7 +3708,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3820,7 +3715,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '9699f1af-50a2-43f7-9b72-32a64ca5496a',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'body',
             label: 'Body',
             description: 'Body',
@@ -3836,7 +3731,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3844,7 +3738,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: 'ed57984a-2d5f-4e1a-a61f-18cbbc75cbd0',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -3860,7 +3754,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3868,7 +3761,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '0c98eb7f-6db3-43d3-84d8-3c46a384ac5e',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageThread',
             label: 'Message Thread Id',
             description: 'Message Thread Id',
@@ -3883,7 +3776,7 @@ export const mockedMessagesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '5ea18f96-cfb4-45af-b716-d09bfb4bb282',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'a8162839-fbd1-4a37-998b-f4a2714020d1',
@@ -3894,7 +3787,6 @@ export const mockedMessagesMetadata = {
               fromFieldMetadataId: '0d3c8828-2edb-4658-bd95-d01e4d102696',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3902,7 +3794,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '86e6e65a-2d43-47a3-8d39-e88ed6b5aad8',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -3918,7 +3810,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -3926,7 +3817,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '9c58971b-4e40-4f49-b125-ff014f909744',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageParticipants',
             label: 'Message Participants',
             description: 'Message Participants',
@@ -3940,7 +3831,7 @@ export const mockedMessagesMetadata = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '020d2fe4-33c3-4fe1-a2cc-35a23d73d046',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'dd41deae-84d5-4a66-8947-260b0c72677c',
@@ -3952,7 +3843,6 @@ export const mockedMessagesMetadata = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -3960,7 +3850,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: 'dbed6e60-ca97-488d-bb02-2f65f3ff73dd',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'externalId',
             label: 'External Id',
             description: 'Message id from the messaging provider',
@@ -3976,7 +3866,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -3984,7 +3873,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: 'c15dc3af-1cbd-488a-a207-3715ab28c9e3',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'direction',
             label: 'Direction',
             description: 'Direction',
@@ -4000,7 +3889,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               value: 'incoming',
             },
-            options: null,
           },
         },
         {
@@ -4008,7 +3896,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: '3ef72ad1-5292-4c23-83bf-7db622b59d19',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'messageThreadId',
             label: 'Message Thread Id id (foreign key)',
             description: 'Message Thread Id id foreign key',
@@ -4022,7 +3910,6 @@ export const mockedMessagesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4030,7 +3917,7 @@ export const mockedMessagesMetadata = {
           node: {
             __typename: 'field',
             id: 'b167f44d-07b0-4750-8878-1fdbe9b4bec9',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'subject',
             label: 'Subject',
             description: 'Subject',
@@ -4046,7 +3933,6 @@ export const mockedMessagesMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
       ],
@@ -4089,7 +3975,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '6510e80d-546a-4a27-9346-06590c81f068',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'pointOfContact',
             label: 'Point of Contact',
             description: 'Opportunity point of contact',
@@ -4104,7 +3990,7 @@ export const mockedOpportunitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '5b6296d8-8557-4a3c-a963-109a5888b3b3',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -4115,7 +4001,6 @@ export const mockedOpportunitiesMetadata = {
               fromFieldMetadataId: '2766f41a-1f8f-413f-88a3-1e3fec0e1821',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4123,7 +4008,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '48067b53-f99f-4700-bf3a-6569d1646b21',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'person',
             label: 'Person',
             description: 'Opportunity person',
@@ -4138,7 +4023,7 @@ export const mockedOpportunitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'e63587c4-c565-4f77-9b8c-a639ae366dea',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '251787a4-9e47-4251-aaea-ea83f74cee80',
@@ -4149,7 +4034,6 @@ export const mockedOpportunitiesMetadata = {
               fromFieldMetadataId: '586d0acc-f68b-4f08-aea9-410d88f351aa',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4157,7 +4041,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '2bb053ec-1abf-4bf8-af01-acfbc0f78953',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'companyId',
             label: 'Company id (foreign key)',
             description: 'Opportunity company id foreign key',
@@ -4171,7 +4055,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4193,7 +4076,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4201,7 +4083,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'ba1df486-c07e-460a-92bc-5aa7e72dbbf1',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -4215,9 +4097,8 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -4225,7 +4106,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '2dc6e877-d4d5-4ab2-9368-4e0a9bab6157',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'pointOfContactId',
             label: 'Point of Contact id (foreign key)',
             description: 'Opportunity point of contact id foreign key',
@@ -4239,7 +4120,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4247,7 +4127,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '480e430d-ec7b-4297-93fd-0c6463b9fad3',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'pipelineStepId',
             label: 'Pipeline Step id (foreign key)',
             description: 'Opportunity pipeline step id foreign key',
@@ -4261,7 +4141,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4269,7 +4148,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '4756a816-8a18-433a-9414-c756db4727e8',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'pipelineStep',
             label: 'Pipeline Step',
             description: 'Opportunity pipeline step',
@@ -4284,7 +4163,7 @@ export const mockedOpportunitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '7b0474c4-d82d-4c1d-96de-c6728b53339a',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'afa12866-0de4-4f97-97fa-cd8a7c953037',
@@ -4295,7 +4174,6 @@ export const mockedOpportunitiesMetadata = {
               fromFieldMetadataId: 'ad3e919f-4258-4e21-8caf-bf122f17ca5c',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4303,7 +4181,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'b8226269-3631-4ca2-a2f3-50bd1046d7d2',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'probability',
             label: 'Probability',
             description: 'Opportunity probability',
@@ -4319,7 +4197,6 @@ export const mockedOpportunitiesMetadata = {
             defaultValue: {
               value: '0',
             },
-            options: null,
           },
         },
         {
@@ -4327,7 +4204,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '085b69d5-6dd5-445d-871f-7f963f82d949',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -4343,7 +4220,6 @@ export const mockedOpportunitiesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4351,7 +4227,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '306da353-c580-451c-bf6f-8b80c230c545',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -4367,7 +4243,6 @@ export const mockedOpportunitiesMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4375,7 +4250,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '70b02b3a-8077-4ce1-ab8b-c5e854c31b13',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'company',
             label: 'Company',
             description: 'Opportunity company',
@@ -4390,7 +4265,7 @@ export const mockedOpportunitiesMetadata = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'afe2078f-6c52-45ef-bb2e-f43b0ee28ecc',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -4401,7 +4276,6 @@ export const mockedOpportunitiesMetadata = {
               fromFieldMetadataId: '00b695d6-e0c6-4029-9932-817b19ae0380',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4409,7 +4283,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '22ce66e0-35fa-48a4-ae8a-4fefdde9500d',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'personId',
             label: 'Person id (foreign key)',
             description: 'Opportunity person id foreign key',
@@ -4423,7 +4297,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4431,7 +4304,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: 'd1db261a-73ca-4546-a0d0-c2110826c030',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'closeDate',
             label: 'Close date',
             description: 'Opportunity close date',
@@ -4445,7 +4318,6 @@ export const mockedOpportunitiesMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -4488,7 +4360,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: 'bdda452a-c123-4fa3-8543-d04c2c43836f',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'revokedAt',
             label: 'Revocation date',
             description: 'ApiKey revocation date',
@@ -4502,7 +4374,6 @@ export const mockedAPIKeysMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4510,7 +4381,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: 'dd217f48-d1bf-4451-9b8d-e06feb7365f9',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -4526,7 +4397,6 @@ export const mockedAPIKeysMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4534,7 +4404,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: '3fd655ef-3dc6-4edf-84cf-3f398150412b',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'expiresAt',
             label: 'Expiration date',
             description: 'ApiKey expiration date',
@@ -4548,7 +4418,6 @@ export const mockedAPIKeysMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4556,7 +4425,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: '5f404704-d084-420e-a2bf-ab3108da12ae',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'name',
             label: 'Name',
             description: 'ApiKey name',
@@ -4572,7 +4441,6 @@ export const mockedAPIKeysMetadata = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -4580,7 +4448,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: '948db156-f5de-4ddf-ad95-34fabc7cb273',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -4596,7 +4464,6 @@ export const mockedAPIKeysMetadata = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4604,7 +4471,7 @@ export const mockedAPIKeysMetadata = {
           node: {
             __typename: 'field',
             id: '2204f9d1-274d-4bd5-be9c-3598da520df0',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -4618,9 +4485,8 @@ export const mockedAPIKeysMetadata = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
       ],
@@ -4663,7 +4529,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '041ee9d8-f3b7-418d-b9b6-b295817515a6',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -4677,9 +4543,8 @@ export const mockedComments = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -4687,7 +4552,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '1309d13f-9945-4f8b-99e8-371fbb51b99d',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'activity',
             label: 'Activity',
             description: 'Comment activity',
@@ -4702,7 +4567,7 @@ export const mockedComments = {
             toRelationMetadata: {
               __typename: 'relation',
               id: 'f4a1e4f4-8a26-4c7d-8973-6fdbc816fc6d',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'c8682a80-0b92-4d0e-9405-53ab7e8b225f',
@@ -4713,7 +4578,6 @@ export const mockedComments = {
               fromFieldMetadataId: 'f47a1319-bdec-4d9e-8179-17cb9df81dd6',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4721,7 +4585,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '56a98ada-9a34-48d2-abb4-67c8eb1af7ab',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'body',
             label: 'Body',
             description: 'Comment body',
@@ -4737,7 +4601,6 @@ export const mockedComments = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -4745,7 +4608,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '18f0a3c3-60f2-44ed-8338-9f1a36fcec63',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -4761,7 +4624,6 @@ export const mockedComments = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4769,7 +4631,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '0cba4da0-9dc9-43e1-964e-813c0c96f396',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'authorId',
             label: 'Author id (foreign key)',
             description: 'Comment author id foreign key',
@@ -4783,7 +4645,6 @@ export const mockedComments = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4791,7 +4652,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '539d818a-1d68-4e5d-94c3-439a17a8a25e',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'activityId',
             label: 'Activity id (foreign key)',
             description: 'Comment activity id foreign key',
@@ -4805,7 +4666,6 @@ export const mockedComments = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4813,7 +4673,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: '31828911-06a3-48d3-9f96-95d403c282f0',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -4829,7 +4689,6 @@ export const mockedComments = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4837,7 +4696,7 @@ export const mockedComments = {
           node: {
             __typename: 'field',
             id: 'e2c01385-7707-49e0-835c-facbf8a6e4a9',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'author',
             label: 'Author',
             description: 'Comment author',
@@ -4852,7 +4711,7 @@ export const mockedComments = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '8e2a5be9-ff83-4106-bfe0-0877423559d0',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -4863,7 +4722,6 @@ export const mockedComments = {
               fromFieldMetadataId: '099a5f31-0b9a-4d1a-81dc-811f0f1f0b33',
             },
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -4906,7 +4764,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '1a56aa47-2549-4548-8ed3-cdcb06766430',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'externalId',
             label: 'External Id',
             description: 'Thread id from the messaging provider',
@@ -4922,7 +4780,6 @@ export const mockedMessageThreads = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -4930,7 +4787,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '8aaf7a27-88d4-4ad3-98ce-cb2c14b1f17f',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -4946,7 +4803,6 @@ export const mockedMessageThreads = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -4954,7 +4810,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: 'bd65743c-8d13-4e99-82cd-b1d3f365d0c4',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageChannel',
             label: 'Message Channel Id',
             description: 'Message Channel Id',
@@ -4969,7 +4825,7 @@ export const mockedMessageThreads = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '179ef8b5-41f8-4d0f-98b6-30d487431354',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'a7088839-1354-45c5-93db-d1dc0a17a4b0',
@@ -4980,7 +4836,6 @@ export const mockedMessageThreads = {
               fromFieldMetadataId: 'db09596c-c968-41de-95ba-ae8d3c36fc00',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -4988,7 +4843,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '0d3c8828-2edb-4658-bd95-d01e4d102696',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messages',
             label: 'Messages',
             description: 'Messages from the thread.',
@@ -5002,7 +4857,7 @@ export const mockedMessageThreads = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '5ea18f96-cfb4-45af-b716-d09bfb4bb282',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: '6f4cd2fa-2e6f-41be-a2cc-98e497a1d2f5',
@@ -5014,7 +4869,6 @@ export const mockedMessageThreads = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -5022,7 +4876,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '68ed1fad-af5f-414b-8e51-1e82f3862edd',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'subject',
             label: 'Subject',
             description: 'Subject',
@@ -5038,7 +4892,6 @@ export const mockedMessageThreads = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5046,7 +4899,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '6d69c800-9750-424a-ab1c-3501fd13f9e8',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -5060,9 +4913,8 @@ export const mockedMessageThreads = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -5070,7 +4922,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: 'dcf4ec4a-7d64-456e-b682-42903604d56f',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -5086,7 +4938,6 @@ export const mockedMessageThreads = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -5094,7 +4945,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: '1cf2b8d8-23fa-4f99-b0ee-f02ef6df5aa3',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'visibility',
             label: 'Visibility',
             description: 'Visibility',
@@ -5110,7 +4961,6 @@ export const mockedMessageThreads = {
             defaultValue: {
               value: 'default',
             },
-            options: null,
           },
         },
         {
@@ -5118,7 +4968,7 @@ export const mockedMessageThreads = {
           node: {
             __typename: 'field',
             id: 'cf4b8230-1b00-4fe8-ac1a-7786e950d00c',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'messageChannelId',
             label: 'Message Channel Id id (foreign key)',
             description: 'Message Channel Id id foreign key',
@@ -5132,7 +4982,6 @@ export const mockedMessageThreads = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -5175,7 +5024,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: '44744cbd-2066-496c-8bb8-e3dd29cfe42c',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'visibility',
             label: 'Visibility',
             description: 'Visibility',
@@ -5191,7 +5040,6 @@ export const mockedMessageChannels = {
             defaultValue: {
               value: 'metadata',
             },
-            options: null,
           },
         },
         {
@@ -5199,7 +5047,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: 'db09596c-c968-41de-95ba-ae8d3c36fc00',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageThreads',
             label: 'Message Threads',
             description: 'Threads from the channel.',
@@ -5213,7 +5061,7 @@ export const mockedMessageChannels = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '179ef8b5-41f8-4d0f-98b6-30d487431354',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'a8162839-fbd1-4a37-998b-f4a2714020d1',
@@ -5225,7 +5073,6 @@ export const mockedMessageChannels = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -5233,7 +5080,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: '68fee565-c541-4356-bcaa-b85791e2ad76',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -5249,7 +5096,6 @@ export const mockedMessageChannels = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -5257,7 +5103,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: 'afd3e543-00de-4fa4-9451-fd94dde9885b',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'type',
             label: 'Type',
             description: 'Type',
@@ -5273,7 +5119,6 @@ export const mockedMessageChannels = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5281,7 +5126,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: 'd9e6b266-a1fa-4da9-b73f-c5432863a4c9',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -5297,7 +5142,6 @@ export const mockedMessageChannels = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -5305,7 +5149,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: 'de960b13-1353-4201-b577-e684141cdb01',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -5319,9 +5163,8 @@ export const mockedMessageChannels = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -5329,7 +5172,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: '1ee38bde-c912-44aa-b5d5-de2b49b8fd85',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'connectedAccountId',
             label: 'Connected Account id (foreign key)',
             description: 'Connected Account id foreign key',
@@ -5343,7 +5186,6 @@ export const mockedMessageChannels = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -5351,7 +5193,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: '504eac1b-5186-48dd-8136-3bb236455b13',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'handle',
             label: 'Handle',
             description: 'Handle',
@@ -5367,7 +5209,6 @@ export const mockedMessageChannels = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5375,7 +5216,7 @@ export const mockedMessageChannels = {
           node: {
             __typename: 'field',
             id: '14fcf47f-b60e-4dc8-80a0-df6e16f513ac',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'connectedAccount',
             label: 'Connected Account',
             description: 'Connected Account',
@@ -5390,7 +5231,7 @@ export const mockedMessageChannels = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '4a2d8c75-3d39-4860-9373-2bc7faf35feb',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: '539d1682-9999-43dc-94c1-7ad52640ac7d',
@@ -5401,7 +5242,6 @@ export const mockedMessageChannels = {
               fromFieldMetadataId: '6cb6a33d-6eb1-4bba-b1f8-a1d3f40c9158',
             },
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -5444,7 +5284,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'f3a558db-f935-44ee-9cf6-70d55d72d45f',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'handle',
             label: 'handle',
             description:
@@ -5461,7 +5301,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5469,7 +5308,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'f8e1de81-a11b-4346-a964-599fb49ee3bc',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'updatedAt',
             label: 'Update date',
             description: null,
@@ -5485,7 +5324,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -5493,7 +5331,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'c60d4c3f-0cd7-4e92-9a7f-ae3a77f4a0ad',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'accessToken',
             label: 'Access Token',
             description: 'Messaging provider access token',
@@ -5509,7 +5347,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5517,7 +5354,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: '6cb6a33d-6eb1-4bba-b1f8-a1d3f40c9158',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'messageChannels',
             label: 'Message Channel',
             description: 'Message Channel',
@@ -5531,7 +5368,7 @@ export const mockedConnectedAccounts = {
             fromRelationMetadata: {
               __typename: 'relation',
               id: '4a2d8c75-3d39-4860-9373-2bc7faf35feb',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               toObjectMetadata: {
                 __typename: 'object',
                 id: 'a7088839-1354-45c5-93db-d1dc0a17a4b0',
@@ -5543,7 +5380,6 @@ export const mockedConnectedAccounts = {
             },
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -5551,7 +5387,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'd50a4e5e-555d-4a2d-9609-1f1e502c92fe',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'refreshToken',
             label: 'Refresh Token',
             description: 'Messaging provider refresh token',
@@ -5567,7 +5403,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5575,7 +5410,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: '912a9a56-4e00-4cd2-8908-b0d113c9f615',
-            type: 'RELATION',
+            type: FieldMetadataType.Relation,
             name: 'accountOwner',
             label: 'Account Owner',
             description: 'Account Owner',
@@ -5590,7 +5425,7 @@ export const mockedConnectedAccounts = {
             toRelationMetadata: {
               __typename: 'relation',
               id: '7fd3bdb5-e043-495d-82b1-d75c22b70bac',
-              relationType: 'ONE_TO_MANY',
+              relationType: RelationMetadataType.OneToMany,
               fromObjectMetadata: {
                 __typename: 'object',
                 id: 'bdc465d2-f9a8-4ec2-8f3d-50dd2ad4021e',
@@ -5601,7 +5436,6 @@ export const mockedConnectedAccounts = {
               fromFieldMetadataId: '2c8bb89a-c60c-49bf-81ce-7074ac41caf5',
             },
             defaultValue: null,
-            options: null,
           },
         },
         {
@@ -5609,7 +5443,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: '74d6f4ec-b8a6-467d-b212-28821cd67591',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'provider',
             label: 'provider',
             description: 'The account provider',
@@ -5625,7 +5459,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               value: '',
             },
-            options: null,
           },
         },
         {
@@ -5633,7 +5466,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: '0facb6d5-6e9e-4a3a-96f0-5343707bfdb3',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'id',
             label: 'Id',
             description: null,
@@ -5647,9 +5480,8 @@ export const mockedConnectedAccounts = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: {
-              type: 'uuid',
+              type: FieldMetadataType.Uuid,
             },
-            options: null,
           },
         },
         {
@@ -5657,7 +5489,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'c05cd42e-e6b9-41ac-bd09-253e6036c964',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             name: 'createdAt',
             label: 'Creation date',
             description: null,
@@ -5673,7 +5505,6 @@ export const mockedConnectedAccounts = {
             defaultValue: {
               type: 'now',
             },
-            options: null,
           },
         },
         {
@@ -5681,7 +5512,7 @@ export const mockedConnectedAccounts = {
           node: {
             __typename: 'field',
             id: 'af5be9ca-6f69-45f8-ad6f-787beea6bb05',
-            type: 'UUID',
+            type: FieldMetadataType.Uuid,
             name: 'accountOwnerId',
             label: 'Account Owner id (foreign key)',
             description: 'Account Owner id foreign key',
@@ -5695,7 +5526,6 @@ export const mockedConnectedAccounts = {
             fromRelationMetadata: null,
             toRelationMetadata: null,
             defaultValue: null,
-            options: null,
           },
         },
       ],
@@ -5740,7 +5570,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'e99cb806-f707-454b-99a3-b1521337f891',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'createdAt',
                 label: 'Creation date',
                 description: null,
@@ -5756,7 +5586,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -5764,7 +5593,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'd90df531-be28-4ca3-92d4-d660bbad1b12',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'updatedAt',
                 label: 'Update date',
                 description: null,
@@ -5780,7 +5609,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -5788,7 +5616,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '5c24c599-34c5-4efe-adc6-e066be7ad20e',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'view',
                 label: 'View',
                 description: 'View Filter related view',
@@ -5803,7 +5631,7 @@ export const mockedObjectMetadataItems = {
                 toRelationMetadata: {
                   __typename: 'relation',
                   id: '1ac6a89a-7a45-441f-b9a6-848f9aaa0833',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   fromObjectMetadata: {
                     __typename: 'object',
                     id: '98ee2e85-7510-49f9-848e-c1a21acdc664',
@@ -5814,7 +5642,6 @@ export const mockedObjectMetadataItems = {
                   fromFieldMetadataId: '5c1342d5-199c-4746-8d3a-60d17a09d187',
                 },
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -5822,7 +5649,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '83b506e3-e211-4d8e-bc00-3d1ca5fc9acf',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'operand',
                 label: 'Operand',
                 description: 'View Filter operand',
@@ -5838,7 +5665,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: 'Contains',
                 },
-                options: null,
               },
             },
             {
@@ -5846,7 +5672,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '028f1b4c-f127-4141-bf57-c47f685e7553',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'id',
                 label: 'Id',
                 description: null,
@@ -5860,9 +5686,8 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: {
-                  type: 'uuid',
+                  type: FieldMetadataType.Uuid,
                 },
-                options: null,
               },
             },
             {
@@ -5870,7 +5695,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'fb48b84b-62cb-4846-ab5e-e48fa034f848',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'viewId',
                 label: 'View id (foreign key)',
                 description: 'View Filter related view id foreign key',
@@ -5884,7 +5709,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -5892,7 +5716,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '32a978a4-8ce5-491f-acc8-c3f4612c810e',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'displayValue',
                 label: 'Display Value',
                 description: 'View Filter Display Value',
@@ -5908,7 +5732,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: '',
                 },
-                options: null,
               },
             },
             {
@@ -5916,7 +5739,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '2fd8dbd6-6378-4905-bd22-6ec12b387e1c',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'value',
                 label: 'Value',
                 description: 'View Filter value',
@@ -5932,7 +5755,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: '',
                 },
-                options: null,
               },
             },
             {
@@ -5940,7 +5762,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '2d467958-3869-400e-a65b-63ab0232dd2b',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'fieldMetadataId',
                 label: 'Field Metadata Id',
                 description: 'View Filter target field',
@@ -5954,7 +5776,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
           ],
@@ -5996,7 +5817,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '4ee74e9c-9c7a-4d18-81a2-83f007dd4614',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'id',
                 label: 'Id',
                 description: null,
@@ -6010,9 +5831,8 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: {
-                  type: 'uuid',
+                  type: FieldMetadataType.Uuid,
                 },
-                options: null,
               },
             },
             {
@@ -6020,7 +5840,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '58aa8432-7109-42b2-8b85-7745fef42b9e',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'viewFields',
                 label: 'View Fields',
                 description: 'View Fields',
@@ -6034,7 +5854,7 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: {
                   __typename: 'relation',
                   id: '1ba54f4e-6e09-40a8-bc02-65b5ece7dafc',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   toObjectMetadata: {
                     __typename: 'object',
                     id: '07c68965-1479-4e44-91ca-3e45784e9337',
@@ -6046,7 +5866,6 @@ export const mockedObjectMetadataItems = {
                 },
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6054,7 +5873,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '1fc13345-82fd-4e70-934b-4fa4b03ffd64',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'name',
                 label: 'Name',
                 description: 'View name',
@@ -6070,7 +5889,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: '',
                 },
-                options: null,
               },
             },
             {
@@ -6078,7 +5896,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '803e8f8b-1e14-4d8d-b449-87bfdc3807ca',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'objectMetadataId',
                 label: 'Object Metadata Id',
                 description: 'View target object',
@@ -6092,7 +5910,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6100,7 +5917,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'caa56736-cc74-4922-9ac1-eb99ca31d9d6',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'createdAt',
                 label: 'Creation date',
                 description: null,
@@ -6116,7 +5933,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -6124,7 +5940,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '5c1342d5-199c-4746-8d3a-60d17a09d187',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'viewFilters',
                 label: 'View Filters',
                 description: 'View Filters',
@@ -6138,7 +5954,7 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: {
                   __typename: 'relation',
                   id: '1ac6a89a-7a45-441f-b9a6-848f9aaa0833',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   toObjectMetadata: {
                     __typename: 'object',
                     id: 'eda22943-ffd5-4524-a8c4-ffc65edbf152',
@@ -6150,7 +5966,6 @@ export const mockedObjectMetadataItems = {
                 },
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6158,7 +5973,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '8b930e70-e1f0-4656-93ba-8e720cd45062',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'updatedAt',
                 label: 'Update date',
                 description: null,
@@ -6174,7 +5989,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -6182,7 +5996,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'bdbecafb-972e-43f4-9296-c5a59bad449d',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'viewSorts',
                 label: 'View Sorts',
                 description: 'View Sorts',
@@ -6196,7 +6010,7 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: {
                   __typename: 'relation',
                   id: '22a37761-f528-4a9b-8194-1fed1df69019',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   toObjectMetadata: {
                     __typename: 'object',
                     id: '0591699b-2304-4f81-8c32-543693c5ae4e',
@@ -6208,7 +6022,6 @@ export const mockedObjectMetadataItems = {
                 },
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6216,7 +6029,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '3546f837-5b46-449a-a127-e73d3849352d',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'type',
                 label: 'Type',
                 description: 'View type',
@@ -6232,7 +6045,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: 'table',
                 },
-                options: null,
               },
             },
           ],
@@ -6290,7 +6102,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: 0,
                 },
-                options: null,
               },
             },
             {
@@ -6298,7 +6109,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '9e066f59-5fbb-451b-9788-0f8560f224c9',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'fieldMetadataId',
                 label: 'Field Metadata Id',
                 description: 'View Field target field',
@@ -6312,7 +6123,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6320,7 +6130,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '1034c249-d94a-40d8-a28c-966fd3c1a2fc',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'createdAt',
                 label: 'Creation date',
                 description: null,
@@ -6336,7 +6146,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -6360,7 +6169,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: 0,
                 },
-                options: null,
               },
             },
             {
@@ -6384,7 +6192,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: true,
                 },
-                options: null,
               },
             },
             {
@@ -6392,7 +6199,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '7c7866c9-4bf0-4f3b-89b6-5b889858a895',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'view',
                 label: 'View',
                 description: 'View Field related view',
@@ -6407,7 +6214,7 @@ export const mockedObjectMetadataItems = {
                 toRelationMetadata: {
                   __typename: 'relation',
                   id: '1ba54f4e-6e09-40a8-bc02-65b5ece7dafc',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   fromObjectMetadata: {
                     __typename: 'object',
                     id: '98ee2e85-7510-49f9-848e-c1a21acdc664',
@@ -6418,7 +6225,6 @@ export const mockedObjectMetadataItems = {
                   fromFieldMetadataId: '58aa8432-7109-42b2-8b85-7745fef42b9e',
                 },
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6426,7 +6232,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'f033cd69-d43f-42d0-bdd8-7000dd97fb86',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'viewId',
                 label: 'View id (foreign key)',
                 description: 'View Field related view id foreign key',
@@ -6440,7 +6246,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6448,7 +6253,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '590769a6-fd78-4b38-99b7-317ee231e002',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'id',
                 label: 'Id',
                 description: null,
@@ -6462,9 +6267,8 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: {
-                  type: 'uuid',
+                  type: FieldMetadataType.Uuid,
                 },
-                options: null,
               },
             },
             {
@@ -6472,7 +6276,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '4ecfdfa2-14bb-44f0-9557-052b3a350c33',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'updatedAt',
                 label: 'Update date',
                 description: null,
@@ -6488,7 +6292,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
           ],
@@ -6530,7 +6333,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'a6e7a588-4f86-4d68-ab71-2c7bf1833c40',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'createdAt',
                 label: 'Creation date',
                 description: null,
@@ -6546,7 +6349,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -6554,7 +6356,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '281526dd-aa6a-4419-8ee9-ae643f481bf5',
-                type: 'TEXT',
+                type: FieldMetadataType.Text,
                 name: 'direction',
                 label: 'Direction',
                 description: 'View Sort direction',
@@ -6570,7 +6372,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   value: 'asc',
                 },
-                options: null,
               },
             },
             {
@@ -6578,7 +6379,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '08ff332d-72d6-4dc8-a466-bdc396a948cd',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'viewId',
                 label: 'View id (foreign key)',
                 description: 'View Sort related view id foreign key',
@@ -6592,7 +6393,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6600,7 +6400,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'a823ec90-fbc1-4be7-803b-5d79937e2278',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'fieldMetadataId',
                 label: 'Field Metadata Id',
                 description: 'View Sort target field',
@@ -6614,7 +6414,6 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: null,
-                options: null,
               },
             },
             {
@@ -6622,7 +6421,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '22f8022c-809a-4e7e-8e15-155e5ae5a40c',
-                type: 'DATE_TIME',
+                type: FieldMetadataType.DateTime,
                 name: 'updatedAt',
                 label: 'Update date',
                 description: null,
@@ -6638,7 +6437,6 @@ export const mockedObjectMetadataItems = {
                 defaultValue: {
                   type: 'now',
                 },
-                options: null,
               },
             },
             {
@@ -6646,7 +6444,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '481db089-dd64-4acd-b514-e627f134c8ee',
-                type: 'UUID',
+                type: FieldMetadataType.Uuid,
                 name: 'id',
                 label: 'Id',
                 description: null,
@@ -6660,9 +6458,8 @@ export const mockedObjectMetadataItems = {
                 fromRelationMetadata: null,
                 toRelationMetadata: null,
                 defaultValue: {
-                  type: 'uuid',
+                  type: FieldMetadataType.Uuid,
                 },
-                options: null,
               },
             },
             {
@@ -6670,7 +6467,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'bff11820-ffa2-4283-80b3-3777583f6f97',
-                type: 'RELATION',
+                type: FieldMetadataType.Relation,
                 name: 'view',
                 label: 'View',
                 description: 'View Sort related view',
@@ -6685,7 +6482,7 @@ export const mockedObjectMetadataItems = {
                 toRelationMetadata: {
                   __typename: 'relation',
                   id: '22a37761-f528-4a9b-8194-1fed1df69019',
-                  relationType: 'ONE_TO_MANY',
+                  relationType: RelationMetadataType.OneToMany,
                   fromObjectMetadata: {
                     __typename: 'object',
                     id: '98ee2e85-7510-49f9-848e-c1a21acdc664',
@@ -6696,7 +6493,6 @@ export const mockedObjectMetadataItems = {
                   fromFieldMetadataId: 'bdbecafb-972e-43f4-9296-c5a59bad449d',
                 },
                 defaultValue: null,
-                options: null,
               },
             },
           ],
