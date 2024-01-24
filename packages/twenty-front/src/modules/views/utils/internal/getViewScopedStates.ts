@@ -3,6 +3,7 @@ import { getScopedSelectorDeprecated } from '@/ui/utilities/recoil-scope/utils/g
 import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { isPersistingViewScopedState } from '@/views/states/isPersistingViewScopedState';
+import { onViewTypeChangeScopedState } from '@/views/states/onViewTypeChangeScopedState';
 import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
 
 import { availableFieldDefinitionsScopedState } from '../../states/availableFieldDefinitionsScopedState';
@@ -164,6 +165,11 @@ export const getViewScopedStates = ({
     viewScopeId,
   );
 
+  const onViewTypeChangeState = getScopedStateDeprecated(
+    onViewTypeChangeScopedState,
+    viewScopeId,
+  );
+
   const currentViewIdState = getScopedStateDeprecated(
     currentViewIdScopedState,
     viewScopeId,
@@ -207,5 +213,6 @@ export const getViewScopedStates = ({
     onViewSortsChangeState,
     onViewFiltersChangeState,
     onViewFieldsChangeState,
+    onViewTypeChangeState,
   };
 };

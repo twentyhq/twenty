@@ -9,8 +9,6 @@ import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObj
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
-import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
-import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useTableCell';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -21,7 +19,7 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-const StyledTableContainer = styled.div`
+const StyledIndexContainer = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
@@ -59,12 +57,13 @@ export const RecordIndexPage = () => {
     objectNameSingular,
   });
 
-  const recordTableId = objectNamePlural ?? '';
+  const recordIndexId = objectNamePlural ?? '';
+
+  const setHotkeyScope = useSetHotkeyScope();
 
   const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode({
-    scopeId: recordTableId,
+    scopeId: recordIndexId,
   });
-  const setHotkeyScope = useSetHotkeyScope();
 
   const handleAddButtonClick = async () => {
     await createOneObject?.({});
@@ -85,15 +84,13 @@ export const RecordIndexPage = () => {
         <PageAddButton onClick={handleAddButtonClick} />
       </PageHeader>
       <PageBody>
-        <StyledTableContainer>
+        <StyledIndexContainer>
           <RecordIndexContainer
-            recordTableId={recordTableId}
+            recordIndexId={recordIndexId}
             objectNamePlural={objectNamePlural}
             createRecord={handleAddButtonClick}
           />
-        </StyledTableContainer>
-        <RecordTableActionBar recordTableId={recordTableId} />
-        <RecordTableContextMenu recordTableId={recordTableId} />
+        </StyledIndexContainer>
       </PageBody>
     </PageContainer>
   );

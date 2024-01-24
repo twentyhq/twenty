@@ -13,7 +13,6 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 
 type HooksCompanyBoardEffectProps = {
@@ -30,7 +29,6 @@ export const HooksCompanyBoardEffect = ({
     setAvailableSortDefinitions,
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
-    setViewType,
   } = useViewBar({ viewBarId });
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -75,8 +73,7 @@ export const HooksCompanyBoardEffect = ({
       return;
     }
     setViewObjectMetadataId?.(objectMetadataItem.id);
-    setViewType?.(ViewType.Kanban);
-  }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
+  }, [objectMetadataItem, setViewObjectMetadataId]);
 
   const {
     currentViewFieldsState,
