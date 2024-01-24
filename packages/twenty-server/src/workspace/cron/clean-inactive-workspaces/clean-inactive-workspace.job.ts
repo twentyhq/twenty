@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
 import { In, Repository } from 'typeorm';
-import { CleanInactiveWorkspaceEmail } from 'twenty-emails';
+import {
+  CleanInactiveWorkspaceEmail,
+  DeleteInactiveWorkspaceEmail,
+} from 'twenty-emails';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -224,21 +227,21 @@ export class CleanInactiveWorkspaceJob
     if (isDryRun || this.workspacesToDelete.length === 0) {
       return;
     }
-    // const emailTemplate = DeleteInactiveWorkspaceEmail(this.workspacesToDelete);
-    // const html = render(emailTemplate, {
-    //   pretty: true,
-    // });
-    // const text = render(emailTemplate, {
-    //   plainText: true,
-    // });
+    const emailTemplate = DeleteInactiveWorkspaceEmail(this.workspacesToDelete);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
 
-    // await this.emailService.send({
-    //   to: this.environmentService.getEmailSystemAddress(),
-    //   from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
-    //   subject: 'Action Needed to Delete Workspaces',
-    //   html,
-    //   text,
-    // });
+    await this.emailService.send({
+      to: this.environmentService.getEmailSystemAddress(),
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      subject: 'Action Needed to Delete Workspaces',
+      html,
+      text,
+    });
   }
 
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
