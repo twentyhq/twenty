@@ -5,8 +5,10 @@ import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCom
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
-import { RecordIndexViewInitEffect } from '@/object-record/record-index/components/RecordIndexViewInitEffect';
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
+import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
@@ -22,6 +24,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   overflow: auto;
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
@@ -98,19 +101,41 @@ export const RecordIndexContainer = ({
             setRecordIndexViewType(viewType);
           }}
         />
+        <RecordIndexViewBarEffect
+          objectNamePlural={objectNamePlural}
+          viewBarId={recordIndexId}
+        />
       </SpreadsheetImportProvider>
       {recordIndexViewType === ViewType.Table && (
-        <RecordIndexTableContainer
-          recordTableId={recordIndexId}
-          viewBarId={recordIndexId}
-          objectNamePlural={objectNamePlural}
-          createRecord={createRecord}
-        />
+        <>
+          <RecordIndexTableContainer
+            recordTableId={recordIndexId}
+            viewBarId={recordIndexId}
+            objectNamePlural={objectNamePlural}
+            createRecord={createRecord}
+          />
+          <RecordIndexTableContainerEffect
+            objectNamePlural={objectNamePlural}
+            recordTableId={recordIndexId}
+            viewBarId={recordIndexId}
+          />
+        </>
       )}
-      <RecordIndexViewInitEffect
-        objectNamePlural={objectNamePlural}
-        viewBarId={recordIndexId}
-      />
+      {recordIndexViewType === ViewType.Kanban && (
+        <>
+          <RecordIndexBoardContainer
+            recordBoardId={recordIndexId}
+            viewBarId={recordIndexId}
+            objectNamePlural={objectNamePlural}
+            createRecord={createRecord}
+          />
+          <RecordIndexTableContainerEffect
+            objectNamePlural={objectNamePlural}
+            recordTableId={recordIndexId}
+            viewBarId={recordIndexId}
+          />
+        </>
+      )}
     </StyledContainer>
   );
 };

@@ -5,13 +5,15 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-export const RecordIndexViewInitEffect = ({
-  objectNamePlural,
-  viewBarId,
-}: {
+type RecordIndexViewBarEffectProps = {
   objectNamePlural: string;
   viewBarId: string;
-}) => {
+};
+
+export const RecordIndexViewBarEffect = ({
+  objectNamePlural,
+  viewBarId,
+}: RecordIndexViewBarEffectProps) => {
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });

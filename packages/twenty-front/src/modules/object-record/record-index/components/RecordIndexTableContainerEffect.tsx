@@ -8,15 +8,17 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-export const RecordTableEffect = ({
-  objectNamePlural,
-  recordTableId,
-  viewBarId,
-}: {
+type RecordIndexTableContainerEffectProps = {
   objectNamePlural: string;
   recordTableId: string;
   viewBarId: string;
-}) => {
+};
+
+export const RecordIndexTableContainerEffect = ({
+  objectNamePlural,
+  recordTableId,
+  viewBarId,
+}: RecordIndexTableContainerEffectProps) => {
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
