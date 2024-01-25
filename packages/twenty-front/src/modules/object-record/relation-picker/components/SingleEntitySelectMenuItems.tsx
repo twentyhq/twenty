@@ -19,14 +19,6 @@ import { assertNotNull } from '~/utils/assert';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-const StyledDropdownMenuContainer = styled.div`
-  display: flex;
-  gap: 2px;
-  flex-direction: column;
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
 export type SingleEntitySelectMenuItemsProps = {
   EmptyIcon?: IconComponent;
   emptyLabel?: string;
@@ -95,7 +87,7 @@ export const SingleEntitySelectMenuItems = ({
           }
         }}
       >
-        <StyledDropdownMenuContainer>
+        <>
           <DropdownMenuItemsContainer hasMaxHeight>
             {loading ? (
               <DropdownMenuSkeletonItem />
@@ -125,8 +117,6 @@ export const SingleEntitySelectMenuItems = ({
                 )}
               </>
             )}
-          </DropdownMenuItemsContainer>
-          <DropdownMenuItemsContainer hasMaxHeight>
             {entitiesInDropdown?.map((entity) => (
               <SelectableMenuItemSelect
                 key={entity.id}
@@ -136,7 +126,7 @@ export const SingleEntitySelectMenuItems = ({
               />
             ))}
           </DropdownMenuItemsContainer>
-        </StyledDropdownMenuContainer>
+        </>
         {showCreateButton && !loading && (
           <DropdownMenuItemsContainer hasMaxHeight>
             {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
