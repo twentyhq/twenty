@@ -5,9 +5,8 @@ import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThre
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
 import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
+import { EmailParticipantRole } from '@/activities/emails/types/EmailParticipantRole';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-
-const PARTICIPANT_FROM_ROLE = 'from';
 
 const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -38,10 +37,10 @@ export const EmailThreadMessage = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const from = participants.find(
-    (participant) => participant.role === PARTICIPANT_FROM_ROLE,
+    (participant) => participant.role === EmailParticipantRole.FROM,
   );
   const to = participants.filter(
-    (participant) => participant.role !== PARTICIPANT_FROM_ROLE,
+    (participant) => participant.role !== EmailParticipantRole.FROM,
   );
 
   if (!from || to.length === 0) {
