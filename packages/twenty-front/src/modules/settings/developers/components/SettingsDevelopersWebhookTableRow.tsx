@@ -1,8 +1,10 @@
+import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { WebhookFieldItem } from '@/settings/developers/types/WebhookFieldItem';
 import { IconChevronRight } from '@/ui/display/icon';
+import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -34,14 +36,18 @@ export const SettingsDevelopersWebhookTableRow = ({
 }) => {
   const theme = useTheme();
 
+  const soon = true; // Temporarily disabled while awaiting the development of the feature.
+  const onClickAction = !soon ? () => onClick() : undefined;
+
   return (
-    <StyledApisFieldTableRow onClick={() => onClick()}>
+    <StyledApisFieldTableRow onClick={onClickAction}>
       <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
+        {soon && <SoonPill />}
       </StyledIconTableCell>
     </StyledApisFieldTableRow>
   );
