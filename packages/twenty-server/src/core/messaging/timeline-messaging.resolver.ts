@@ -5,7 +5,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
-import { TimelineThread } from 'src/core/messaging/timeline-thread.entity';
+import { TimelineThread } from 'src/core/messaging/timeline-thread.dto';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => [TimelineThread])

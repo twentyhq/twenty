@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 
 import { Entity } from 'typeorm';
 
-import { TimelineThreadParticipant } from 'src/core/messaging/timeline-thread-participant.entity';
+import { TimelineThreadParticipant } from 'src/core/messaging/timeline-thread-participant.dto';
 
 @Entity({ name: 'timelineThread', schema: 'core' })
 @ObjectType('TimelineThread')
