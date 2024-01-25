@@ -1,2 +1,4 @@
+import { getScopeIdFromComponentIdStrict } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentIdStrict';
+
 export const getScopeIdFromComponentId = (componentId?: string) =>
-  componentId ? `${componentId}-scope` : undefined;
+  componentId ? getScopeIdFromComponentIdStrict(componentId) : undefined;
