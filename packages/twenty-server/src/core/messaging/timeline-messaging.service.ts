@@ -9,6 +9,7 @@ type TimelineThreadParticipant = {
   workspaceMemberId: string;
   firstName: string;
   lastName: string;
+  displayName: string;
   avatarUrl: string;
   handle: string;
 };
@@ -200,6 +201,7 @@ export class TimelineMessagingService {
           workspaceMemberFirstName: string;
           workspaceMemberLastName: string;
           workspaceMemberAvatarUrl: string;
+          messageDisplayName: string;
         }[]
       | undefined = await workspaceDataSource?.query(
       `
@@ -216,7 +218,8 @@ export class TimelineMessagingService {
         "person"."avatarUrl" as "personAvatarUrl",
         "workspaceMember"."nameFirstName" as "workspaceMemberFirstName",
         "workspaceMember"."nameLastName" as "workspaceMemberLastName",
-        "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl"
+        "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl",
+        "messageParticipant"."displayName" as "messageDisplayName"
         FROM
             ${dataSourceMetadata.schema}."message" message 
         LEFT JOIN
@@ -251,18 +254,28 @@ export class TimelineMessagingService {
         } => {
           const threadParticipant = threadMessageAcc[threadMessage.handle];
 
+          const firstName =
+            threadMessage.personFirstName ||
+            threadMessage.workspaceMemberFirstName ||
+            '';
+
+          const lastName =
+            threadMessage.personLastName ||
+            threadMessage.workspaceMemberLastName ||
+            '';
+
+          const displayName =
+            firstName ||
+            threadMessage.messageDisplayName ||
+            threadMessage.handle;
+
           if (!threadParticipant) {
             threadMessageAcc[threadMessage.handle] = {
               personId: threadMessage.personId,
               workspaceMemberId: threadMessage.workspaceMemberId,
-              firstName:
-                threadMessage.personFirstName ??
-                threadMessage.workspaceMemberFirstName ??
-                '',
-              lastName:
-                threadMessage.personLastName ??
-                threadMessage.workspaceMemberLastName ??
-                '',
+              firstName,
+              lastName,
+              displayName,
               avatarUrl:
                 threadMessage.personAvatarUrl ??
                 threadMessage.workspaceMemberAvatarUrl ??

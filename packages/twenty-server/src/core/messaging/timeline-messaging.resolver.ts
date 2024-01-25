@@ -24,6 +24,9 @@ class TimelineThreadParticipant {
   lastName: string;
 
   @Field()
+  displayName: string;
+
+  @Field()
   avatarUrl: string;
 
   @Field()

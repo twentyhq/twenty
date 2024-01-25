@@ -18,6 +18,7 @@ export const getTimelineThreadsFromCompanyId = gql`
         workspaceMemberId
         firstName
         lastName
+        displayName
         avatarUrl
         handle
       }
@@ -26,6 +27,7 @@ export const getTimelineThreadsFromCompanyId = gql`
         workspaceMemberId
         firstName
         lastName
+        displayName
         avatarUrl
         handle
       }
