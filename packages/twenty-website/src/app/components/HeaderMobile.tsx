@@ -174,6 +174,9 @@ const NavOpen = styled.div`
   gap: 33px;
   padding-top: 32px;
   z-index: 100;
+  transition: transform 0.2s ease-in;
+  display: flex;
+  transform-origin: top;
 `;
 
 const MobileMenu = styled.div`
@@ -208,7 +211,11 @@ export const HeaderMobile = () => {
           <HamburgerLine2 id="line2" />
         </HamburgerContainer>
       </Nav>
-      <NavOpen style={{ display: menuOpen ? 'flex' : 'none' }}>
+      <NavOpen
+        style={{
+          transform: `scaleY(${menuOpen ? '1' : '0'})`,
+        }}
+      >
         <LinkList>
           <ListItem href="/pricing">Pricing</ListItem>
           <ListItem href="/story">Story</ListItem>
