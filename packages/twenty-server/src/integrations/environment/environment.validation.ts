@@ -172,6 +172,10 @@ export class EnvironmentVariables {
   @IsString()
   SENTRY_DSN?: string;
 
+  @IsDuration()
+  @IsOptional()
+  PASSWORD_RESET_TOKEN_EXPIRES_IN?: number;
+
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
