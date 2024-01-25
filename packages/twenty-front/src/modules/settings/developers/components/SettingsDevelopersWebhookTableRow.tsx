@@ -1,18 +1,15 @@
+import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
+import { WebhookFieldItem } from '@/settings/developers/types/WebhookFieldItem';
 import { IconChevronRight } from '@/ui/display/icon';
+import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  grid-template-columns: 444px 68px;
 `;
 
 const StyledIconTableCell = styled(TableCell)`
@@ -20,36 +17,37 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledUrlTableCell = styled(TableCell)`
+  color: ${({ theme }) => theme.font.color.primary};
+  overflow-x: scroll;
+  white-space: nowrap;
+`;
+
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export const SettingsApiKeysFieldItemTableRow = ({
+export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
   onClick,
 }: {
-  fieldItem: ApiFieldItem;
+  fieldItem: WebhookFieldItem;
   onClick: () => void;
 }) => {
   const theme = useTheme();
 
+  const soon = true; // Temporarily disabled while awaiting the development of the feature.
+  const onClickAction = !soon ? () => onClick() : undefined;
+
   return (
-    <StyledApisFieldTableRow onClick={() => onClick()}>
-      <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
-      <TableCell
-        color={
-          fieldItem.expiration === 'Expired'
-            ? theme.font.color.danger
-            : theme.font.color.tertiary
-        }
-      >
-        {fieldItem.expiration}
-      </TableCell>
+    <StyledApisFieldTableRow onClick={onClickAction}>
+      <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
+        {soon && <SoonPill />}
       </StyledIconTableCell>
     </StyledApisFieldTableRow>
   );

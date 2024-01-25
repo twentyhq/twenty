@@ -128,11 +128,11 @@ export const SettingsNavigationDrawerItems = () => {
         />
         <NavigationDrawerItem
           label="Developers"
-          to="/settings/developers/api-keys"
+          to="/settings/developers"
           Icon={IconRobot}
           active={
             !!useMatch({
-              path: useResolvedPath('/settings/developers/api-keys').pathname,
+              path: useResolvedPath('/settings/developers').pathname,
               end: true,
             })
           }

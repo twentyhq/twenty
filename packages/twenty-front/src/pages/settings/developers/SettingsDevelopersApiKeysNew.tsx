@@ -66,14 +66,14 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/developers/api-keys' },
+              { children: 'APIs', href: '/settings/developers' },
               { children: 'New' },
             ]}
           />
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() => {
-              navigate('/settings/developers/api-keys');
+              navigate('/settings/developers');
             }}
             onSave={onSave}
           />
