@@ -1,11 +1,14 @@
 import { createContext } from 'react';
 
-import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
+import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 
 type RecordBoardColumnContextProps = {
-  id: string;
-  columnDefinition: BoardColumnDefinition;
+  columnDefinition: RecordBoardColumnDefinition;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
 };
 
 export const RecordBoardColumnContext =
-  createContext<RecordBoardColumnContextProps | null>(null);
+  createContext<RecordBoardColumnContextProps>(
+    {} as RecordBoardColumnContextProps,
+  );

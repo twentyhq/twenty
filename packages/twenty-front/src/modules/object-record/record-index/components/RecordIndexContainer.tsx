@@ -6,6 +6,7 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
+import { RecordIndexBoardContainerEffect } from '@/object-record/record-index/components/RecordIndexBoardContainerEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
@@ -129,9 +130,9 @@ export const RecordIndexContainer = ({
             objectNamePlural={objectNamePlural}
             createRecord={createRecord}
           />
-          <RecordIndexTableContainerEffect
+          <RecordIndexBoardContainerEffect
             objectNamePlural={objectNamePlural}
-            recordTableId={recordIndexId}
+            recordBoardId={recordIndexId}
             viewBarId={recordIndexId}
           />
         </>

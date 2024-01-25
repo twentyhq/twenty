@@ -22,7 +22,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     <RecoilRoot>
       <ObjectNamePluralSetter>
         <RecordTableScope
-          recordTableScopeId={getScopeIdFromComponentId(recordTableId) ?? ''}
+          recordTableScopeId={getScopeIdFromComponentId(recordTableId)}
           onColumnsChange={onColumnsChange}
         >
           <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">

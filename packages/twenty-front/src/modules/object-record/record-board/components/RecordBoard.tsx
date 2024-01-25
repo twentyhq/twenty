@@ -1,10 +1,13 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { DragDropContext } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import { useRecoilValue } from 'recoil';
 
+import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 export type RecordBoardProps = {
@@ -37,9 +40,13 @@ const StyledBoardHeader = styled.div`
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const boardRef = useRef<HTMLDivElement>(null);
 
+  const { getColumnIdsState } = useRecordBoard(recordBoardId);
+
+  const columnIds = useRecoilValue(getColumnIdsState());
+
   return (
     <RecordBoardScope
-      recordBoardScopeId={recordBoardId}
+      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
@@ -48,11 +55,10 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
         <ScrollWrapper>
           <StyledContainer ref={boardRef}>
             <DragDropContext onDragEnd={() => {}}>
-              {[].map((column) => (
+              {columnIds.map((columnId) => (
                 <RecordBoardColumn
-                  key={'a'}
-                  recordBoardColumnId={'a'}
-                  columnDefinition={column}
+                  key={columnId}
+                  recordBoardColumnId={columnId}
                 />
               ))}
             </DragDropContext>
