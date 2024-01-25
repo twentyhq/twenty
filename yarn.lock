@@ -36032,6 +36032,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"planer@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "planer@npm:1.2.0"
+  checksum: d2515294e772bbba1b26c0fa611590369f1ff510b11855eb55cb30e093286c888868020b9a62e41a46a4c5686def03f5c34fd91801fc9104404ffeb01ad46b78
+  languageName: node
+  linkType: hard
+
 "playwright-core@npm:1.40.1, playwright-core@npm:>=1.2.0":
   version: 1.40.1
   resolution: "playwright-core@npm:1.40.1"
@@ -42451,6 +42458,7 @@ __metadata:
     passport-local: "npm:^1.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
+    planer: "npm:^1.2.0"
     react: "npm:^18.2.0"
     rimraf: "npm:^3.0.2"
     sharp: "npm:^0.32.1"
