@@ -58,7 +58,7 @@ export const EmailThreads = ({
 
   const timelineThreads: TimelineThread[] =
     threads.data[
-      entity.targetObjectNameSingular === 'person'
+      entity.targetObjectNameSingular === CoreObjectNameSingular.Person
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];
