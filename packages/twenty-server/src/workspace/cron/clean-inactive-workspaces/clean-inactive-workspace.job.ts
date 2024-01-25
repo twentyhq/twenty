@@ -247,6 +247,8 @@ export class CleanInactiveWorkspaceJob
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 
+    this.workspacesToDelete = [];
+
     this.logger.log(`${this.getDryRunLogHeader(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
