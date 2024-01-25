@@ -1,11 +1,48 @@
-import { Args, Query, Resolver, Int } from '@nestjs/graphql';
+import {
+  Args,
+  Query,
+  Resolver,
+  Int,
+  ArgsType,
+  Field,
+  ID,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { Max } from 'class-validator';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
 import { TimelineThread } from 'src/core/messaging/timeline-thread.dto';
+import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/core/messaging/messaging.constants';
+
+@ArgsType()
+class GetTimelineThreadsFromPersonIdArgs {
+  @Field(() => ID)
+  personId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
+
+@ArgsType()
+class GetTimelineThreadsFromCompanyIdArgs {
+  @Field(() => ID)
+  companyId: string;
+
+  @Field(() => Int)
+  page: number;
+
+  @Field(() => Int)
+  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
+  pageSize: number;
+}
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => [TimelineThread])
@@ -17,9 +54,7 @@ export class TimelineMessagingResolver {
   @Query(() => [TimelineThread])
   async getTimelineThreadsFromPersonId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('personId') personId: string,
-    @Args('page', { type: () => Int }) page: number,
-    @Args('pageSize', { type: () => Int }) pageSize: number,
+    @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromPersonIds(
@@ -35,9 +70,7 @@ export class TimelineMessagingResolver {
   @Query(() => [TimelineThread])
   async getTimelineThreadsFromCompanyId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('companyId') companyId: string,
-    @Args('page', { type: () => Int }) page: number,
-    @Args('pageSize', { type: () => Int }) pageSize: number,
+    @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromCompanyId(
