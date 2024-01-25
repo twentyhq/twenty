@@ -45,8 +45,8 @@ export const EmailThreads = ({
 
   const threadQueryVariables =
     entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? { personId: entity.id }
-      : { companyId: entity.id };
+      ? { personId: entity.id, page: 1, pageSize: 10 }
+      : { companyId: entity.id, page: 1, pageSize: 10 };
 
   const threads = useQuery(threadQuery, {
     variables: threadQueryVariables,
