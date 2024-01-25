@@ -1,11 +1,11 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType('TimelineThreadParticipant')
 export class TimelineThreadParticipant {
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   personId: string;
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   workspaceMemberId: string;
 
   @Field()
