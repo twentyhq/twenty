@@ -1,11 +1,7 @@
-export const sanitizeRecordLinks = (
-  recordObject: Record<string, any>,
-): Record<string, any> => {
-  return { ...recordObject, domainName: sanitizeLink(recordObject.domainName) };
+export const sanitizeLink = (url: string) => {
+  const hostname = getUrlHostName(url) || getUrlHostName(`https://${url}`);
+  return hostname.replace(/\/+$/, '').replace(/\?.*$/, '');
 };
-const sanitizeLink = (link: string): string => {
-  let cleanedLink = link.replace(/^(ftp|http|https):\/\//, '');
-  cleanedLink = cleanedLink.replace(/\/+$/, '');
-  cleanedLink = cleanedLink.replace(/\/[^/]*$/, '');
-  return cleanedLink;
-};
+
+const getUrlHostName = (url: string) =>
+  URL.canParse(url) ? new URL(url).hostname.replace(/^www\./i, '') : '';

@@ -1,5 +1,8 @@
+import { isString } from '@sniptt/guards';
+
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { sanitizeRecordLinks } from '@/object-record/utils/sanitizeLinkRecordInput';
+import { sanitizeLink } from '@/object-record/utils/sanitizeLinkRecordInput';
 import { FieldMetadataType } from '~/generated/graphql';
 
 export const sanitizeRecordInput = ({
@@ -17,10 +20,14 @@ export const sanitizeRecordInput = ({
       return fieldDefinition?.type !== FieldMetadataType.Relation;
     }),
   );
-  switch (Object.keys(filteredResultRecord)[0]) {
-    case 'domainName':
-      return sanitizeRecordLinks(filteredResultRecord);
-    default:
-      return filteredResultRecord;
-  }
+  if (
+    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Company ||
+    !isString(filteredResultRecord.domainName)
+  )
+    return filteredResultRecord;
+
+  return {
+    ...filteredResultRecord,
+    domainName: sanitizeLink(filteredResultRecord.domainName),
+  };
 };
