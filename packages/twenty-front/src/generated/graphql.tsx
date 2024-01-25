@@ -382,14 +382,14 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['String'];
-  page: Scalars['Float'];
-  pageSize: Scalars['Float'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
-  page: Scalars['Float'];
-  pageSize: Scalars['Float'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
   personId: Scalars['String'];
 };
 
@@ -678,8 +678,8 @@ export type RelationEdge = {
 
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['String'];
-  page: Scalars['Float'];
-  pageSize: Scalars['Float'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
@@ -687,8 +687,8 @@ export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTi
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
-  page: Scalars['Float'];
-  pageSize: Scalars['Float'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
@@ -877,7 +877,7 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     `;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: String!, $page: Float!, $pageSize: Float!) {
+    query GetTimelineThreadsFromCompanyId($companyId: String!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromCompanyId(
     companyId: $companyId
     page: $page
@@ -940,7 +940,7 @@ export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof u
 export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
 export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
 export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: String!, $page: Float!, $pageSize: Float!) {
+    query GetTimelineThreadsFromPersonId($personId: String!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromPersonId(
     personId: $personId
     page: $page

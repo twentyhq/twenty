@@ -1,4 +1,4 @@
-import { Args, Query, Field, Resolver, ObjectType } from '@nestjs/graphql';
+import { Args, Query, Field, Resolver, ObjectType, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { Entity } from 'typeorm';
@@ -72,8 +72,8 @@ export class TimelineMessagingResolver {
   async getTimelineThreadsFromPersonId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('personId') personId: string,
-    @Args('page') page: number,
-    @Args('pageSize') pageSize: number,
+    @Args('page', { type: () => Int }) page: number,
+    @Args('pageSize', { type: () => Int }) pageSize: number,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromPersonIds(
@@ -90,8 +90,8 @@ export class TimelineMessagingResolver {
   async getTimelineThreadsFromCompanyId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('companyId') companyId: string,
-    @Args('page') page: number,
-    @Args('pageSize') pageSize: number,
+    @Args('page', { type: () => Int }) page: number,
+    @Args('pageSize', { type: () => Int }) pageSize: number,
   ) {
     const timelineThreads =
       await this.timelineMessagingService.getMessagesFromCompanyId(

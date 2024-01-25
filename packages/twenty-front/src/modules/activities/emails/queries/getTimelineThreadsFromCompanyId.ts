@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 export const getTimelineThreadsFromCompanyId = gql`
   query GetTimelineThreadsFromCompanyId(
     $companyId: String!
-    $page: Float!
-    $pageSize: Float!
+    $page: Int!
+    $pageSize: Int!
   ) {
     getTimelineThreadsFromCompanyId(
       companyId: $companyId
