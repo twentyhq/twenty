@@ -198,11 +198,11 @@ export class FetchMessagesByBatchesService {
             ...this.formatAddressObjectAsParticipants(bcc, 'bcc'),
           ];
 
-          let textWithoutReplyQuotation = text;
+          let textWithoutReplyQuotations = text;
 
           if (text)
             try {
-              textWithoutReplyQuotation = planer.extractFrom(
+              textWithoutReplyQuotations = planer.extractFrom(
                 text,
                 'text/plain',
               );
@@ -223,7 +223,7 @@ export class FetchMessagesByBatchesService {
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
             participants,
-            text: textWithoutReplyQuotation || '',
+            text: textWithoutReplyQuotations || '',
             html: html || '',
             attachments,
           };
