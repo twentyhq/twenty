@@ -63,6 +63,8 @@ export const EmailThreads = ({
         : 'getTimelineThreadsFromCompanyId'
     ];
 
+  console.log(timelineThreads);
+
   return (
     <StyledContainer>
       <Section>

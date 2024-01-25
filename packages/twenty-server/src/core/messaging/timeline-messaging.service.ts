@@ -51,7 +51,7 @@ export class TimelineMessagingService {
       (SELECT "messageThread".id,
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
       message.id AS "lastMessageId",
-      message.body AS "lastMessageBody",
+      message.text AS "lastMessageBody",
       ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message 
@@ -206,7 +206,7 @@ export class TimelineMessagingService {
       SELECT DISTINCT "messageThread".id,
         message.id AS "messageId",
         message."receivedAt",
-        message.body,
+        message.text,
         message."subject",
         "messageParticipant"."personId",
         "messageParticipant"."workspaceMemberId",
@@ -257,13 +257,16 @@ export class TimelineMessagingService {
               workspaceMemberId: threadMessage.workspaceMemberId,
               firstName:
                 threadMessage.personFirstName ??
-                threadMessage.workspaceMemberFirstName,
+                threadMessage.workspaceMemberFirstName ??
+                '',
               lastName:
                 threadMessage.personLastName ??
-                threadMessage.workspaceMemberLastName,
+                threadMessage.workspaceMemberLastName ??
+                '',
               avatarUrl:
                 threadMessage.personAvatarUrl ??
-                threadMessage.workspaceMemberAvatarUrl,
+                threadMessage.workspaceMemberAvatarUrl ??
+                '',
               handle: threadMessage.handle,
             };
           }
@@ -332,6 +335,8 @@ export class TimelineMessagingService {
         participantCount: threadParticipants.length,
       };
     });
+
+    console.log(timelineThreads);
 
     return timelineThreads;
   }
