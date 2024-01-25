@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser, AddressObject } from 'mailparser';
+import planer from 'planer';
 
 import {
   GmailMessage,
@@ -197,6 +198,21 @@ export class FetchMessagesByBatchesService {
             ...this.formatAddressObjectAsParticipants(bcc, 'bcc'),
           ];
 
+          let textWithoutReplyQuotations = text;
+
+          if (text)
+            try {
+              textWithoutReplyQuotations = planer.extractFrom(
+                text,
+                'text/plain',
+              );
+            } catch (error) {
+              console.log(
+                'Error while trying to remove reply quotations',
+                error,
+              );
+            }
+
           const messageFromGmail: GmailMessage = {
             historyId,
             externalId: id,
@@ -207,7 +223,7 @@ export class FetchMessagesByBatchesService {
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
             participants,
-            text: text || '',
+            text: textWithoutReplyQuotations || '',
             html: html || '',
             attachments,
           };
