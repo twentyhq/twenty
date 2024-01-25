@@ -144,7 +144,7 @@ export class GmailPartialSyncService {
       gmailMessageChannelId,
     );
 
-    await this.utils.deleteMessageChannelMessages(
+    await this.utils.deleteMessageChannelMessageAssociations(
       messagesDeleted,
       gmailMessageChannelId,
       dataSourceMetadata,

@@ -10,9 +10,9 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'messageChannelMessages',
-  labelSingular: 'Message Channel Message',
-  labelPlural: 'Message Channel Messages',
+  namePlural: 'messageChannelMessageAssociations',
+  labelSingular: 'Message Channel Message Association',
+  labelPlural: 'Message Channel Message Associations',
   description: 'Message Synced with a Message Channel',
   icon: 'IconMessage',
 })
@@ -20,7 +20,7 @@ import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
   featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
-export class MessageChannelMessageObjectMetadata extends BaseObjectMetadata {
+export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Id',

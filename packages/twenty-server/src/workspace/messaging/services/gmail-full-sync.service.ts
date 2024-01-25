@@ -61,22 +61,25 @@ export class GmailFullSyncService {
       return;
     }
 
-    const existingMessageChannelMessages =
-      await this.utils.getMessageChannelMessages(
+    const existingMessageChannelMessageAssociations =
+      await this.utils.getMessageChannelMessageAssociations(
         messageExternalIds,
         gmailMessageChannelId,
         dataSourceMetadata,
         workspaceDataSource,
       );
 
-    const existingMessageChannelMessagesExternalIds =
-      existingMessageChannelMessages.map(
-        (messageChannelMessage) => messageChannelMessage.messageExternalId,
+    const existingMessageChannelMessageAssociationsExternalIds =
+      existingMessageChannelMessageAssociations.map(
+        (messageChannelMessageAssociation) =>
+          messageChannelMessageAssociation.messageExternalId,
       );
 
     const messagesToFetch = messageExternalIds.filter(
       (messageExternalId) =>
-        !existingMessageChannelMessagesExternalIds.includes(messageExternalId),
+        !existingMessageChannelMessageAssociationsExternalIds.includes(
+          messageExternalId,
+        ),
     );
 
     const messageQueries =
