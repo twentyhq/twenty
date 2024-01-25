@@ -1,0 +1,55 @@
+import { gql } from '@apollo/client';
+
+export const query = gql`
+  mutation UpdateOneObjectMetadataItem(
+    $idToUpdate: ID!
+    $updatePayload: UpdateObjectInput!
+  ) {
+    updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {
+      id
+      dataSourceId
+      nameSingular
+      namePlural
+      labelSingular
+      labelPlural
+      description
+      icon
+      isCustom
+      isActive
+      createdAt
+      updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
+    }
+  }
+`;
+
+export const variables = {
+  idToUpdate: 'idToUpdate',
+  updatePayload: {
+    description: 'newDescription',
+    icon: undefined,
+    labelIdentifierFieldMetadataId: null,
+    labelPlural: 'labelPlural',
+    labelSingular: 'labelSingular',
+    namePlural: 'labelPlural',
+    nameSingular: 'labelSingular',
+  },
+};
+
+export const responseData = {
+  id: 'idToUpdate',
+  dataSourceId: 'dataSourceId',
+  nameSingular: 'nameSingular',
+  namePlural: 'namePlural',
+  labelSingular: 'labelSingular',
+  labelPlural: 'labelPlural',
+  description: 'newDescription',
+  icon: '',
+  isCustom: false,
+  isActive: true,
+  createdAt: '',
+  updatedAt: '',
+  labelIdentifierFieldMetadataId: '',
+  imageIdentifierFieldMetadataId: '',
+};

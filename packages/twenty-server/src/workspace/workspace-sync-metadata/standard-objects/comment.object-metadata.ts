@@ -20,7 +20,6 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     label: 'Body',
     description: 'Comment body',
     icon: 'IconLink',
-    defaultValue: { value: '' },
   })
   body: string;
 

@@ -22,5 +22,14 @@
   "private": true,
   "zapier": {
     "convertedByCLIVersion": "15.4.1"
+  },
+  "dependencies": {
+    "zapier-platform-core": "15.5.1"
+  },
+  "devDependencies": {
+    "zapier-platform-cli": "^15.4.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "dependencies"
   }
 }

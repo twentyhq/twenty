@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 import { Modifiers } from '@apollo/client/cache';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useModifyRecordFromCache = ({
@@ -10,20 +10,20 @@ export const useModifyRecordFromCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const apolloClient = useApolloClient();
+  const { cache } = useApolloClient();
 
-  return (recordId: string, fieldModifiers: Modifiers) => {
-    if (!objectMetadataItem) {
-      return EMPTY_MUTATION;
-    }
+  return <CachedObjectRecord extends ObjectRecord>(
+    recordId: string,
+    fieldModifiers: Modifiers<CachedObjectRecord>,
+  ) => {
+    if (!objectMetadataItem) return;
 
-    const cache = apolloClient.cache;
     const cachedRecordId = cache.identify({
       __typename: capitalize(objectMetadataItem.nameSingular),
       id: recordId,
     });
 
-    cache.modify({
+    cache.modify<CachedObjectRecord>({
       id: cachedRecordId,
       fields: fieldModifiers,
     });

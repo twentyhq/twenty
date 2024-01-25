@@ -7,6 +7,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/workspace/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/workspace/workspace-health/services/object-metadata-health.service';
+import { RelationMetadataHealthService } from 'src/workspace/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace
     DatabaseStructureService,
     ObjectMetadataHealthService,
     FieldMetadataHealthService,
+    RelationMetadataHealthService,
   ],
   exports: [WorkspaceHealthService],
 })

@@ -4,6 +4,7 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -15,7 +16,7 @@ export const getObjectRecordIdentifier = ({
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity:
+    case CoreObjectNameSingular.Opportunity: {
       return {
         id: record.id,
         name: record?.company?.name,
@@ -23,25 +24,29 @@ export const getObjectRecordIdentifier = ({
         avatarType: 'rounded',
         linkToShowPage: `/opportunities/${record.id}`,
       };
+    }
+    case CoreObjectNameSingular.WorkspaceMember: {
+      const workspaceMember = record as WorkspaceMember;
+
+      return {
+        id: workspaceMember.id,
+        name:
+          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
+        avatarUrl: workspaceMember.avatarUrl ?? undefined,
+        avatarType: 'rounded',
+      };
+    }
   }
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  let labelIdentifierFieldValue = '';
-
-  switch (labelIdentifierFieldMetadataItem?.type) {
-    case FieldMetadataType.FullName: {
-      labelIdentifierFieldValue = `${record.name?.firstName ?? ''} ${
-        record.name?.lastName ?? ''
-      }`;
-      break;
-    }
-    default:
-      labelIdentifierFieldValue = labelIdentifierFieldMetadataItem
-        ? record[labelIdentifierFieldMetadataItem.name]
+  const labelIdentifierFieldValue =
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
+      ? `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`
+      : labelIdentifierFieldMetadataItem?.name
+        ? (record[labelIdentifierFieldMetadataItem.name] as string | number)
         : '';
-  }
 
   const imageIdentifierFieldMetadata = objectMetadataItem.fields.find(
     (field) => field.id === objectMetadataItem.imageIdentifierFieldMetadataId,
@@ -57,19 +62,24 @@ export const getObjectRecordIdentifier = ({
       : 'rounded';
 
   const avatarUrl =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
+    (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
       ? getLogoUrlFromDomainName(record['domainName'] ?? '')
-      : imageIdentifierFieldValue ?? null;
+      : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,
   });
 
-  const linkToShowPage = `${basePathToShowPage}${record.id}`;
+  const isWorkspaceMemberObjectMetadata =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
+
+  const linkToShowPage = isWorkspaceMemberObjectMetadata
+    ? ''
+    : `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,
-    name: labelIdentifierFieldValue,
+    name: `${labelIdentifierFieldValue}`,
     avatarUrl,
     avatarType,
     linkToShowPage,

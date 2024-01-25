@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
-import { RecordTableFirstColumnScrollObserver } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
+import { RecordTableFirstColumnScrollEffect } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
 import { RecordTableRefContextWrapper } from '@/object-record/record-table/components/RecordTableRefContext';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -48,7 +48,7 @@ type RecordTableWithWrappersProps = {
   recordTableId: string;
   viewBarId: string;
   updateRecordMutation: (params: any) => void;
-  createRecord: () => void;
+  createRecord: () => Promise<void>;
 };
 
 export const RecordTableWithWrappers = ({
@@ -60,13 +60,13 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
+  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
 
   const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState(),
+    getIsRecordTableInitialLoadingState(),
   );
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
@@ -91,7 +91,7 @@ export const RecordTableWithWrappers = ({
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper>
         <RecordTableRefContextWrapper>
-          <RecordTableFirstColumnScrollObserver />
+          <RecordTableFirstColumnScrollEffect />
           <RecordUpdateContext.Provider value={updateRecordMutation}>
             <StyledTableWithHeader>
               <StyledTableContainer>

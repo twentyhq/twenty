@@ -9,6 +9,7 @@ import { entityFieldInitialValueFamilyState } from '@/object-record/field/states
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -26,10 +27,12 @@ export const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  const { objectMetadataConfigState, tableRowIdsState } =
+  const { getObjectMetadataConfigState, getTableRowIdsState } =
     useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
+  const { leaveTableFocus } = useRecordTable();
+
+  const objectMetadataConfig = useRecoilValue(getObjectMetadataConfigState());
 
   const basePathToShowPage = objectMetadataConfig?.basePathToShowPage;
 
@@ -60,13 +63,14 @@ export const useTableCell = () => {
   );
 
   const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
-    const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
+    const tableRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
 
     await deleteOneRecord(tableRowIds[0]);
   });
 
   const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
     if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
+      leaveTableFocus();
       navigate(`${basePathToShowPage}${entityId}`);
       return;
     }

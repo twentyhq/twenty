@@ -7,6 +7,7 @@ import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/c
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEffect';
+import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -14,12 +15,12 @@ import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
+import { ViewType } from '@/views/types/ViewType';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
-import { ViewBarEffect } from './ViewBarEffect';
 import { ViewsDropdownButton } from './ViewsDropdownButton';
 
 export type ViewBarProps = {
@@ -30,6 +31,7 @@ export type ViewBarProps = {
   onViewSortsChange?: (sorts: ViewSort[]) => void | Promise<void>;
   onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
   onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
+  onViewTypeChange?: (viewType: ViewType) => void | Promise<void>;
 };
 
 export const ViewBar = ({
@@ -40,12 +42,13 @@ export const ViewBar = ({
   onViewFieldsChange,
   onViewFiltersChange,
   onViewSortsChange,
+  onViewTypeChange,
 }: ViewBarProps) => {
   const { openDropdown: openOptionsDropdownButton } = useDropdown(
     optionsDropdownScopeId,
   );
   const { upsertViewSort, upsertViewFilter } = useViewBar({
-    viewBarId: viewBarId,
+    viewBarId,
   });
   const { objectNamePlural } = useParams();
 
@@ -58,6 +61,7 @@ export const ViewBar = ({
       onViewFieldsChange={onViewFieldsChange}
       onViewFiltersChange={onViewFiltersChange}
       onViewSortsChange={onViewSortsChange}
+      onViewTypeChange={onViewTypeChange}
     >
       <ViewBarEffect />
       <ViewBarFilterEffect

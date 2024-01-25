@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Reference } from '@apollo/client';
 
+import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -38,14 +40,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
-
-  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_RELATION_FIELD_TYPE_ENABLED',
-  );
-
-  const isSelectFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_SELECT_FIELD_TYPE_ENABLED',
-  );
 
   const isRatingFieldTypeEnabled = useIsFeatureEnabled(
     'IS_RATING_FIELD_TYPE_ENABLED',
@@ -162,16 +156,17 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (viewFieldsRef, { readField }) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                viewFieldsRef,
+              );
+
+              if (!edges) return viewFieldsRef;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...viewFieldsRef,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });
@@ -188,16 +183,17 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (viewFieldsRef, { readField }) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                viewFieldsRef,
+              );
+
+              if (!edges) return viewFieldsRef;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...viewFieldsRef,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });
@@ -232,16 +228,17 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (cachedViewFieldsConnection, { readField }) => {
+              const edges = readField<CachedObjectRecordEdge[]>(
+                'edges',
+                cachedViewFieldsConnection,
+              );
+
+              if (!edges) return cachedViewFieldsConnection;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...cachedViewFieldsConnection,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });
@@ -267,14 +264,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
-
-  if (!isRelationFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Relation);
-  }
-
-  if (!isSelectFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Select);
-  }
 
   if (!isRatingFieldTypeEnabled) {
     excludedFieldTypes.push(FieldMetadataType.Rating);
