@@ -59,17 +59,19 @@ export const SettingsDevelopersWebhooks = () => {
           <TableHeader>Url</TableHeader>
           <TableHeader></TableHeader>
         </StyledTableRow>
-        <StyledTableBody>
-          {webhooks.map((fieldItem) => (
-            <SettingsDevelopersWebhookTableRow
-              key={fieldItem.id}
-              fieldItem={fieldItem}
-              onClick={() => {
-                navigate(`/settings/developers/webhooks/${fieldItem.id}`);
-              }}
-            />
-          ))}
-        </StyledTableBody>
+        {!!webhooks.length && (
+          <StyledTableBody>
+            {webhooks.map((fieldItem) => (
+              <SettingsDevelopersWebhookTableRow
+                key={fieldItem.id}
+                fieldItem={fieldItem}
+                onClick={() => {
+                  navigate(`/settings/developers/webhooks/${fieldItem.id}`);
+                }}
+              />
+            ))}
+          </StyledTableBody>
+        )}
       </Table>
       <StyledDiv>
         <Button

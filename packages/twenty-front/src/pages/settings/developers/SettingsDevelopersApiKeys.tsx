@@ -64,17 +64,19 @@ export const SettingsDevelopersApiKeys = () => {
           <TableHeader>Expiration</TableHeader>
           <TableHeader></TableHeader>
         </StyledTableRow>
-        <StyledTableBody>
-          {apiKeys.map((fieldItem) => (
-            <SettingsApiKeysFieldItemTableRow
-              key={fieldItem.id}
-              fieldItem={fieldItem}
-              onClick={() => {
-                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
-              }}
-            />
-          ))}
-        </StyledTableBody>
+        {!!apiKeys.length && (
+          <StyledTableBody>
+            {apiKeys.map((fieldItem) => (
+              <SettingsApiKeysFieldItemTableRow
+                key={fieldItem.id}
+                fieldItem={fieldItem}
+                onClick={() => {
+                  navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+                }}
+              />
+            ))}
+          </StyledTableBody>
+        )}
       </Table>
       <StyledDiv>
         <Button
