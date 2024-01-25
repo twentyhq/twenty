@@ -8,9 +8,10 @@ import {
 } from '@/ui/layout/animated-placeholder/constants/AnimatedImages';
 
 const StyledContainer = styled.div`
-  align-items: center;
   display: flex;
+  align-items: center;
   justify-content: center;
+  position: relative;
 `;
 
 interface StyledImageProps {
@@ -45,15 +46,22 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   const translateY = useTransform(y, [0, window.innerHeight], [-2, 2]);
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      x.set(event.clientX);
-      y.set(event.clientY);
+    const handleMove = (event: MouseEvent | TouchEvent) => {
+      const clientX =
+        'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY =
+        'touches' in event ? event.touches[0].clientY : event.clientY;
+
+      x.set(clientX);
+      y.set(clientY);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('touchmove', handleMove);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('touchmove', handleMove);
     };
   }, [x, y]);
 
@@ -67,10 +75,7 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
       <StyledMovingImage
         src={MovingImage[type]}
         alt="Moving"
-        style={{
-          translateX,
-          translateY,
-        }}
+        style={{ translateX, translateY }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
         type={type}
       />

@@ -15,7 +15,7 @@ import {
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';

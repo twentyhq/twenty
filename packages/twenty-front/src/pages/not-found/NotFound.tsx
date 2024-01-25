@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
   StyledErrorContainer,
   StyledErrorSubTitle,

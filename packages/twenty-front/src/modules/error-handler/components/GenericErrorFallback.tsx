@@ -8,7 +8,7 @@ import {
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 type GenericErrorFallbackProps = FallbackProps;
 

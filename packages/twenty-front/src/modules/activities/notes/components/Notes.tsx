@@ -12,7 +12,7 @@ import {
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledNotesContainer = styled.div`
   display: flex;

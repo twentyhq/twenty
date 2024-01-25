@@ -13,7 +13,7 @@ import {
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';

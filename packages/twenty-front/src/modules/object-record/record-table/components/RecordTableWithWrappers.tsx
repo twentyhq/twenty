@@ -18,7 +18,7 @@ import {
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
