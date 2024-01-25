@@ -711,6 +711,10 @@ export type RelationEdge = {
   node: Relation;
 };
 
+export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+
+export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
   page: Scalars['Int'];
@@ -880,6 +884,34 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const ParticipantFragmentFragmentDoc = gql`
+    fragment ParticipantFragment on TimelineThreadParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineThreadFragmentFragmentDoc = gql`
+    fragment TimelineThreadFragment on TimelineThread {
+  id
+  read
+  firstParticipant {
+    ...ParticipantFragment
+  }
+  lastTwoParticipants {
+    ...ParticipantFragment
+  }
+  lastMessageReceivedAt
+  lastMessageBody
+  subject
+  numberOfMessagesInThread
+  participantCount
+}
+    ${ParticipantFragmentFragmentDoc}`;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -938,34 +970,10 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
     page: $page
     pageSize: $pageSize
   ) {
-    id
-    read
-    firstParticipant {
-      personId
-      workspaceMemberId
-      firstName
-      lastName
-      displayName
-      avatarUrl
-      handle
-    }
-    lastTwoParticipants {
-      personId
-      workspaceMemberId
-      firstName
-      lastName
-      displayName
-      avatarUrl
-      handle
-    }
-    lastMessageReceivedAt
-    lastMessageBody
-    subject
-    numberOfMessagesInThread
-    participantCount
+    ...TimelineThreadFragment
   }
 }
-    `;
+    ${TimelineThreadFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromCompanyIdQuery__
@@ -1003,34 +1011,10 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
     page: $page
     pageSize: $pageSize
   ) {
-    id
-    read
-    firstParticipant {
-      personId
-      workspaceMemberId
-      firstName
-      lastName
-      displayName
-      avatarUrl
-      handle
-    }
-    lastTwoParticipants {
-      personId
-      workspaceMemberId
-      firstName
-      lastName
-      displayName
-      avatarUrl
-      handle
-    }
-    lastMessageReceivedAt
-    lastMessageBody
-    subject
-    numberOfMessagesInThread
-    participantCount
+    ...TimelineThreadFragment
   }
 }
-    `;
+    ${TimelineThreadFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromPersonIdQuery__
