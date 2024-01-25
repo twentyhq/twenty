@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
@@ -6,6 +5,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
+import { ApiKey } from '@/settings/developers/types/ApiKey';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -33,23 +33,10 @@ const StyledTableBody = styled(TableBody)`
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
 
-  const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
-
-  useFindManyRecords({
+  const { records: apiKeys } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
     filter: { revokedAt: { is: 'NULL' } },
     orderBy: {},
-    onCompleted: (data) => {
-      setApiKeys(
-        formatExpirations(
-          data.edges.map((apiKey) => ({
-            id: apiKey.node.id,
-            name: apiKey.node.name,
-            expiresAt: apiKey.node.expiresAt,
-          })),
-        ),
-      );
-    },
   });
 
   return (
@@ -66,10 +53,10 @@ export const SettingsDevelopersApiKeys = () => {
         </StyledTableRow>
         {!!apiKeys.length && (
           <StyledTableBody>
-            {apiKeys.map((fieldItem) => (
+            {formatExpirations(apiKeys as ApiKey[]).map((fieldItem) => (
               <SettingsApiKeysFieldItemTableRow
                 key={fieldItem.id}
-                fieldItem={fieldItem}
+                fieldItem={fieldItem as ApiFieldItem}
                 onClick={() => {
                   navigate(`/settings/developers/api-keys/${fieldItem.id}`);
                 }}

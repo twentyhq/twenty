@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
@@ -32,20 +31,9 @@ const StyledTableBody = styled(TableBody)`
 export const SettingsDevelopersWebhooks = () => {
   const navigate = useNavigate();
 
-  const [webhooks, setWebhooks] = useState<Array<WebhookFieldItem>>([]);
-
-  useFindManyRecords({
+  const { records: webhooks } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Webhook,
     orderBy: {},
-    onCompleted: (data) => {
-      setWebhooks(
-        data.edges.map((edge) => ({
-          id: edge.node.id,
-          targetUrl: edge.node.targetUrl,
-          operation: edge.node.operation,
-        })),
-      );
-    },
   });
 
   return (
@@ -64,7 +52,7 @@ export const SettingsDevelopersWebhooks = () => {
             {webhooks.map((fieldItem) => (
               <SettingsDevelopersWebhookTableRow
                 key={fieldItem.id}
-                fieldItem={fieldItem}
+                fieldItem={fieldItem as WebhookFieldItem}
                 onClick={() => {
                   navigate(`/settings/developers/webhooks/${fieldItem.id}`);
                 }}
