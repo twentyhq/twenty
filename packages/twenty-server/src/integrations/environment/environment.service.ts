@@ -266,6 +266,12 @@ export class EnvironmentService {
     return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
 
+  getPasswordResetTokenExpiresIn(): string {
+    return (
+      this.configService.get<string>('PASSWORD_RESET_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
+
   getInactiveDaysBeforeEmail(): number | undefined {
     return this.configService.get<number | undefined>(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',

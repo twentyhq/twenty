@@ -6,6 +6,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { User } from 'src/core/user/user.entity';
 import { JwtAuthStrategy } from 'src/core/auth/strategies/jwt.auth.strategy';
+import { EmailService } from 'src/integrations/email/email.service';
 
 import { TokenService } from './token.service';
 
@@ -26,6 +27,10 @@ describe('TokenService', () => {
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: EmailService,
           useValue: {},
         },
         {

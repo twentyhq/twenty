@@ -4,8 +4,11 @@ import { useRecoilValue } from 'recoil';
 
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { mockedMessagesByThread } from '@/activities/emails/mocks/mockedEmailThreads';
+import { RightDrawerEmailThreadFetchMoreLoader } from '@/activities/emails/right-drawer/components/RightDrawerEmailThreadFetchMoreLoader';
 import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
+import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -20,12 +23,28 @@ const StyledContainer = styled.div`
 export const RightDrawerEmailThread = () => {
   const viewableEmailThread = useRecoilValue(viewableEmailThreadState);
 
+  const {
+    records: messages,
+    loading,
+    fetchMoreRecords: fetchMoreMessages,
+  } = useFindManyRecords<EmailThreadMessageType>({
+    depth: 3,
+    filter: {
+      messageThreadId: {
+        eq: viewableEmailThread?.id,
+      },
+    },
+    objectNameSingular: CoreObjectNameSingular.Message,
+    orderBy: {
+      receivedAt: 'DescNullsLast',
+    },
+    skip: !viewableEmailThread,
+    useRecordsWithoutConnection: true,
+  });
+
   if (!viewableEmailThread) {
     return null;
   }
-
-  const mockedMessages =
-    mockedMessagesByThread.get(viewableEmailThread.id) ?? [];
 
   return (
     <StyledContainer>
@@ -33,16 +52,18 @@ export const RightDrawerEmailThread = () => {
         subject={viewableEmailThread.subject}
         lastMessageSentAt={viewableEmailThread.receivedAt}
       />
-      {mockedMessages.map((message) => (
+      {messages.map((message) => (
         <EmailThreadMessage
           key={message.id}
-          id={message.id}
-          from={message.from}
-          to={message.to}
-          body={message.body}
-          sentAt={message.sentAt}
+          participants={message.messageParticipants}
+          body={message.text}
+          sentAt={message.receivedAt}
         />
       ))}
+      <RightDrawerEmailThreadFetchMoreLoader
+        loading={loading}
+        fetchMoreMessages={fetchMoreMessages}
+      />
     </StyledContainer>
   );
 };
