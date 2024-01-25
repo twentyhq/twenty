@@ -39,7 +39,6 @@ export class CleanInactiveWorkspaceJob
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
   private readonly inactiveDaysBeforeDelete;
   private readonly inactiveDaysBeforeEmail;
-  private workspacesToDelete: WorkspaceToDeleteData[] = [];
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -149,39 +148,6 @@ export class CleanInactiveWorkspaceJob
     });
   }
 
-  async persistWorkspaceToDeleteInfo(
-    dataSource: DataSourceEntity,
-    daysSinceInactive: number,
-  ): Promise<void> {
-    const emailData = {
-      daysSinceInactive: daysSinceInactive,
-      workspaceId: `${dataSource.workspaceId}`,
-    };
-
-    this.workspacesToDelete.push(emailData);
-  }
-
-  async processWorkspace(
-    dataSource: DataSourceEntity,
-    objectsMetadata: ObjectMetadataEntity[],
-    isDryRun: boolean,
-  ): Promise<void> {
-    const mostRecentUpdatedAt = await this.getMostRecentUpdatedAt(
-      dataSource,
-      objectsMetadata,
-    );
-    const daysSinceInactive = Math.floor(
-      (new Date().getTime() - mostRecentUpdatedAt.getTime()) /
-        MILLISECONDS_IN_ONE_DAY,
-    );
-
-    if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
-      await this.persistWorkspaceToDeleteInfo(dataSource, daysSinceInactive);
-    } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
-      await this.warnWorkspaceUsers(dataSource, daysSinceInactive, isDryRun);
-    }
-  }
-
   async isWorkspaceCleanable(dataSource: DataSourceEntity): Promise<boolean> {
     const workspaceFeatureFlags = await this.featureFlagRepository.find({
       where: { workspaceId: dataSource.workspaceId },
@@ -212,20 +178,23 @@ export class CleanInactiveWorkspaceJob
     return chunkedArray;
   }
 
-  async sendDeleteWorkspaceEmail(isDryRun: boolean): Promise<void> {
+  async sendDeleteWorkspaceEmail(
+    workspacesToDelete: WorkspaceToDeleteData[],
+    isDryRun: boolean,
+  ): Promise<void> {
     this.logger.log(
       `${this.getDryRunLogHeader(
         isDryRun,
-      )}Sending email to delete workspaces "${this.workspacesToDelete
+      )}Sending email to delete workspaces "${workspacesToDelete
         .map((workspaceToDelete) => workspaceToDelete.workspaceId)
         .join('", "')}"`,
     );
 
-    if (isDryRun || this.workspacesToDelete.length === 0) {
+    if (isDryRun || workspacesToDelete.length === 0) {
       return;
     }
 
-    const emailTemplate = DeleteInactiveWorkspaceEmail(this.workspacesToDelete);
+    const emailTemplate = DeleteInactiveWorkspaceEmail(workspacesToDelete);
     const html = render(emailTemplate, {
       pretty: true,
     });
@@ -245,7 +214,7 @@ export class CleanInactiveWorkspaceJob
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 
-    this.workspacesToDelete = [];
+    const workspacesToDelete: WorkspaceToDeleteData[] = [];
 
     this.logger.log(`${this.getDryRunLogHeader(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
@@ -289,11 +258,32 @@ export class CleanInactiveWorkspaceJob
             dataSource.workspaceId
           }`,
         );
-        await this.processWorkspace(dataSource, objectsMetadata, isDryRun);
+
+        const mostRecentUpdatedAt = await this.getMostRecentUpdatedAt(
+          dataSource,
+          objectsMetadata,
+        );
+        const daysSinceInactive = Math.floor(
+          (new Date().getTime() - mostRecentUpdatedAt.getTime()) /
+            MILLISECONDS_IN_ONE_DAY,
+        );
+
+        if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
+          workspacesToDelete.push({
+            daysSinceInactive: daysSinceInactive,
+            workspaceId: `${dataSource.workspaceId}`,
+          });
+        } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
+          await this.warnWorkspaceUsers(
+            dataSource,
+            daysSinceInactive,
+            isDryRun,
+          );
+        }
       }
     }
 
-    await this.sendDeleteWorkspaceEmail(isDryRun);
+    await this.sendDeleteWorkspaceEmail(workspacesToDelete, isDryRun);
 
     this.logger.log(`${this.getDryRunLogHeader(isDryRun)}job done!`);
   }
