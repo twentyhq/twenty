@@ -1,7 +1,7 @@
 import { useRef } from 'react';
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
-import styled from '@emotion/styled';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { IconPlus } from '@/ui/display/icon';
