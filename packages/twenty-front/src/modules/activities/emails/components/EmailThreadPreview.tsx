@@ -92,7 +92,7 @@ export const EmailThreadPreview = ({
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
         <StyledAvatar
-          avatarUrl={''}
+          avatarUrl={thread.firstParticipant.avatarUrl}
           placeholder={thread.firstParticipant.displayName}
           type="rounded"
         />
