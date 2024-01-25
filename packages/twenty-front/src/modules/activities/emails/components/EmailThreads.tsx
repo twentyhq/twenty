@@ -61,8 +61,6 @@ export const EmailThreads = ({
     variables: threadQueryVariables,
   });
 
-  console.log('threads', threads);
-
   if (threads.loading) {
     return;
   }
