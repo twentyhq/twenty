@@ -57,12 +57,33 @@ export class GmailFullSyncService {
       ? messagesData.map((message) => message.id || '')
       : [];
 
-    if (!messagesData || messagesData?.length === 0) {
+    if (!messageExternalIds || messageExternalIds?.length === 0) {
       return;
     }
 
+    const existingMessageChannelMessageAssociations =
+      await this.utils.getMessageChannelMessageAssociations(
+        messageExternalIds,
+        gmailMessageChannelId,
+        dataSourceMetadata,
+        workspaceDataSource,
+      );
+
+    const existingMessageChannelMessageAssociationsExternalIds =
+      existingMessageChannelMessageAssociations.map(
+        (messageChannelMessageAssociation) =>
+          messageChannelMessageAssociation.messageExternalId,
+      );
+
+    const messagesToFetch = messageExternalIds.filter(
+      (messageExternalId) =>
+        !existingMessageChannelMessageAssociationsExternalIds.includes(
+          messageExternalId,
+        ),
+    );
+
     const messageQueries =
-      this.utils.createQueriesFromMessageIds(messageExternalIds);
+      this.utils.createQueriesFromMessageIds(messagesToFetch);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -84,7 +105,7 @@ export class GmailFullSyncService {
 
     if (errors.length) throw new Error('Error fetching messages');
 
-    const lastModifiedMessageId = messagesData[0].id;
+    const lastModifiedMessageId = messagesToFetch[0];
 
     const historyId = messagesToSave.find(
       (message) => message.externalId === lastModifiedMessageId,

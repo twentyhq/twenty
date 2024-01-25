@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { RightDrawerEmailThreadFetchMoreLoader } from '@/activities/emails/right-drawer/components/RightDrawerEmailThreadFetchMoreLoader';
 import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,7 +23,11 @@ const StyledContainer = styled.div`
 export const RightDrawerEmailThread = () => {
   const viewableEmailThread = useRecoilValue(viewableEmailThreadState);
 
-  const { records: messages } = useFindManyRecords<EmailThreadMessageType>({
+  const {
+    records: messages,
+    loading,
+    fetchMoreRecords: fetchMoreMessages,
+  } = useFindManyRecords<EmailThreadMessageType>({
     depth: 3,
     filter: {
       messageThreadId: {
@@ -55,6 +60,10 @@ export const RightDrawerEmailThread = () => {
           sentAt={message.receivedAt}
         />
       ))}
+      <RightDrawerEmailThreadFetchMoreLoader
+        loading={loading}
+        fetchMoreMessages={fetchMoreMessages}
+      />
     </StyledContainer>
   );
 };

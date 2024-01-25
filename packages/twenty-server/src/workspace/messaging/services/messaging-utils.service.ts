@@ -36,6 +36,16 @@ export class MessagingUtilsService {
   ) {
     for (const message of messages) {
       await workspaceDataSource?.transaction(async (manager) => {
+        const existingMessageChannelMessageAssociations = await manager.query(
+          `SELECT COUNT(*) FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+          WHERE "messageExternalId" = $1 AND "messageChannelId" = $2`,
+          [message.externalId, gmailMessageChannelId],
+        );
+
+        if (existingMessageChannelMessageAssociations[0]?.count > 0) {
+          return;
+        }
+
         const savedOrExistingMessageThreadId =
           await this.saveMessageThreadOrReturnExistingMessageThread(
             message.messageThreadExternalId,
@@ -53,7 +63,7 @@ export class MessagingUtilsService {
           );
 
         await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessage" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
           [
             gmailMessageChannelId,
             savedOrExistingMessageId,
@@ -120,7 +130,7 @@ export class MessagingUtilsService {
     workspaceDataSource: DataSource,
   ) {
     const existingMessageThreads = await workspaceDataSource?.query(
-      `SELECT "messageChannelMessage"."messageThreadId" FROM ${dataSourceMetadata.schema}."messageChannelMessage" WHERE "messageThreadExternalId" = $1 LIMIT 1`,
+      `SELECT "messageChannelMessageAssociation"."messageThreadId" FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageThreadExternalId" = $1 LIMIT 1`,
       [messageThreadExternalId],
     );
 
@@ -180,14 +190,14 @@ export class MessagingUtilsService {
     }
   }
 
-  public async deleteMessageChannelMessages(
+  public async deleteMessageChannelMessageAssociations(
     messageExternalIds: string[],
     connectedAccountId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
   ) {
     await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessage" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+      `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
       [messageExternalIds, connectedAccountId],
     );
   }
@@ -264,5 +274,21 @@ export class MessagingUtilsService {
       `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "lastSyncHistoryId" = $1 WHERE "id" = $2`,
       [historyId, connectedAccountId],
     );
+  }
+
+  public async getMessageChannelMessageAssociations(
+    messageExternalIds: string[],
+    gmailMessageChannelId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    const existingMessageChannelMessageAssociation =
+      await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+      WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+        [messageExternalIds, gmailMessageChannelId],
+      );
+
+    return existingMessageChannelMessageAssociation;
   }
 }
