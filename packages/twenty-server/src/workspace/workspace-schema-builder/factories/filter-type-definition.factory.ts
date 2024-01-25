@@ -70,7 +70,7 @@ export class FilterTypeDefinitionFactory {
     for (const fieldMetadata of objectMetadata.fields) {
       // Relation types are generated during extension of object type definition
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        //continue;
+        continue;
       }
 
       const type = this.filterTypeFactory.create(fieldMetadata, options, {
