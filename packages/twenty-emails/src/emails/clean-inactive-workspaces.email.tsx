@@ -1,9 +1,8 @@
-import * as React from 'react';
-import { BaseEmail } from 'src/components/BaseEmail';
-import { CallToAction } from 'src/components/CallToAction';
-import { HighlightedText } from 'src/components/HighlightedText';
-import { MainText } from 'src/components/MainText';
-import { Title } from 'src/components/Title';
+import { BaseEmail } from '../components/BaseEmail';
+import { CallToAction } from '../components/CallToAction';
+import { HighlightedText } from '../components/HighlightedText';
+import { MainText } from '../components/MainText';
+import { Title } from '../components/Title';
 
 type CleanInactiveWorkspaceEmailData = {
   daysLeft: number;

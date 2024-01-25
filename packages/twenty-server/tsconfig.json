@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -11,7 +12,6 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,

@@ -25,6 +25,10 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
     }
   },
   "installation": {
@@ -32,5 +36,15 @@
   },
   "affected": {
     "defaultBase": "main"
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "babel": true
+      },
+      "library": {
+        "unitTestRunner": "none"
+      }
+    }
   }
 }

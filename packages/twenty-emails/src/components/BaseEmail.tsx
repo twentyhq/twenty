@@ -1,9 +1,14 @@
-import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import { Container, Html } from '@react-email/components';
-import { BaseHead } from 'src/components/BaseHead';
-import { Logo } from 'src/components/Logo';
 
-export const BaseEmail = ({ children, width = 290 }) => {
+import { BaseHead } from './BaseHead';
+import { Logo } from './Logo';
+
+type BaseEmailProps = PropsWithChildren<{
+  width?: number;
+}>;
+
+export const BaseEmail = ({ children, width = 290 }: BaseEmailProps) => {
   return (
     <Html lang="en">
       <BaseHead />
