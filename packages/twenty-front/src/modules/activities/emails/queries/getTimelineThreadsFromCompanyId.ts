@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+import { timelineThreadFragment } from '@/activities/emails/queries/fragments/timelineThreadFragment';
+
 export const getTimelineThreadsFromCompanyId = gql`
   query GetTimelineThreadsFromCompanyId(
     $companyId: ID!
@@ -11,31 +13,8 @@ export const getTimelineThreadsFromCompanyId = gql`
       page: $page
       pageSize: $pageSize
     ) {
-      id
-      read
-      firstParticipant {
-        personId
-        workspaceMemberId
-        firstName
-        lastName
-        displayName
-        avatarUrl
-        handle
-      }
-      lastTwoParticipants {
-        personId
-        workspaceMemberId
-        firstName
-        lastName
-        displayName
-        avatarUrl
-        handle
-      }
-      lastMessageReceivedAt
-      lastMessageBody
-      subject
-      numberOfMessagesInThread
-      participantCount
+      ...TimelineThreadFragment
     }
   }
+  ${timelineThreadFragment}
 `;
