@@ -1,7 +1,7 @@
 import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
-export const isRecordBoardColumnLastFamilyStateScopeMap =
+export const isLastRecordBoardColumnFamilyStateScopeMap =
   createFamilyStateScopeMap<boolean, string>({
-    key: 'isRecordBoardColumnLastFamilyStateScopeMap',
+    key: 'isLastRecordBoardColumnFamilyStateScopeMap',
     defaultValue: false,
   });

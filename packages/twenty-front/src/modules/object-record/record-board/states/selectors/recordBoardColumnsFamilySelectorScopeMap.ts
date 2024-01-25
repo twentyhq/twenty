@@ -1,5 +1,5 @@
-import { isRecordBoardColumnFirstFamilyStateScopeMap } from '@/object-record/record-board/states/isRecordBoardColumnFirstFamilyStateScopeMap';
-import { isRecordBoardColumnLastFamilyStateScopeMap } from '@/object-record/record-board/states/isRecordBoardColumnLastFamilyStateScopeMap';
+import { isFirstRecordBoardColumnFamilyStateScopeMap } from '@/object-record/record-board/states/isFirstRecordBoardColumnFamilyStateScopeMap';
+import { isLastRecordBoardColumnFamilyStateScopeMap } from '@/object-record/record-board/states/isLastRecordBoardColumnFamilyStateScopeMap';
 import { recordBoardColumnIdsStateScopeMap } from '@/object-record/record-board/states/recordBoardColumnIdsStateScopeMap';
 import { recordBoardColumnsFamilyStateScopeMap } from '@/object-record/record-board/states/recordBoardColumnsFamilyStateScopeMap';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
@@ -73,7 +73,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
 
           if (!lastColumn || newColumn.position > lastColumn.position) {
             set(
-              isRecordBoardColumnLastFamilyStateScopeMap({
+              isLastRecordBoardColumnFamilyStateScopeMap({
                 scopeId,
                 familyKey: columnId,
               }),
@@ -82,7 +82,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
 
             if (lastColumn) {
               set(
-                isRecordBoardColumnLastFamilyStateScopeMap({
+                isFirstRecordBoardColumnFamilyStateScopeMap({
                   scopeId,
                   familyKey: lastColumn.id,
                 }),
@@ -93,7 +93,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
 
           if (!firstColumn || newColumn.position < firstColumn.position) {
             set(
-              isRecordBoardColumnFirstFamilyStateScopeMap({
+              isLastRecordBoardColumnFamilyStateScopeMap({
                 scopeId,
                 familyKey: columnId,
               }),
@@ -102,7 +102,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
 
             if (firstColumn) {
               set(
-                isRecordBoardColumnFirstFamilyStateScopeMap({
+                isFirstRecordBoardColumnFamilyStateScopeMap({
                   scopeId,
                   familyKey: firstColumn.id,
                 }),

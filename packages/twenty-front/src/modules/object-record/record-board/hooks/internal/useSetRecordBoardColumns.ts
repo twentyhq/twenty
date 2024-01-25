@@ -11,19 +11,19 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
   const setRecordBoardColumns = useRecoilCallback(
     ({ set, snapshot }) =>
       (columns: RecordBoardColumnDefinition[]) => {
-        const currentColumns = snapshot
+        const currentColumnsIds = snapshot
           .getLoadable(getColumnIdsState())
           .getValue();
 
         const columnIds = columns.map(({ id }) => id);
 
-        if (isDeeplyEqual(currentColumns, columnIds)) {
+        if (isDeeplyEqual(currentColumnsIds, columnIds)) {
           return;
         }
 
         set(
           getColumnIdsState(),
-          columns.map(({ id }) => id),
+          columns.map((column) => column.id),
         );
 
         columns.forEach((column) => {

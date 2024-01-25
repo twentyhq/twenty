@@ -4,8 +4,8 @@ import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/
 
 type RecordBoardColumnContextProps = {
   columnDefinition: RecordBoardColumnDefinition;
-  isColumnFirst: boolean;
-  isColumnLast: boolean;
+  isFirstColumn: boolean;
+  isLastColumn: boolean;
 };
 
 export const RecordBoardColumnContext =

@@ -7,7 +7,7 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { getScopeIdFromComponentIdStrict } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentIdStrict';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 export type RecordBoardProps = {
@@ -46,7 +46,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
 
   return (
     <RecordBoardScope
-      recordBoardScopeId={getScopeIdFromComponentIdStrict(recordBoardId)}
+      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >

@@ -30,20 +30,20 @@ export const RecordBoardColumn = ({
   recordBoardColumnId,
 }: RecordBoardColumnProps) => {
   const {
-    isColumnFirstFamilyState,
-    isColumnLastFamilyState,
+    isFirstColumnFamilyState,
+    isLastColumnFamilyState,
     columnsFamilySelector,
   } = useRecordBoardStates();
   const columnDefinition = useRecoilValue(
     columnsFamilySelector(recordBoardColumnId),
   );
 
-  const isColumnFirst = useRecoilValue(
-    isColumnFirstFamilyState(recordBoardColumnId),
+  const isFirstColumn = useRecoilValue(
+    isFirstColumnFamilyState(recordBoardColumnId),
   );
 
-  const isColumnLast = useRecoilValue(
-    isColumnLastFamilyState(recordBoardColumnId),
+  const isLastColumn = useRecoilValue(
+    isLastColumnFamilyState(recordBoardColumnId),
   );
 
   if (!columnDefinition) {
@@ -54,13 +54,13 @@ export const RecordBoardColumn = ({
     <RecordBoardColumnContext.Provider
       value={{
         columnDefinition: columnDefinition,
-        isColumnFirst: isColumnFirst,
-        isColumnLast: isColumnLast,
+        isFirstColumn: isFirstColumn,
+        isLastColumn: isLastColumn,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
-          <StyledColumn isFirstColumn={isColumnFirst}>
+          <StyledColumn isFirstColumn={isFirstColumn}>
             <RecordBoardColumnHeader />
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
