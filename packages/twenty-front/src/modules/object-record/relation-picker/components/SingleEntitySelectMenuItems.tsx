@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
