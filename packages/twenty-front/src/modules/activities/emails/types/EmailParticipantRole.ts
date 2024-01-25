@@ -1,4 +1,1 @@
-export enum EmailParticipantRole {
-  FROM = 'from',
-  TO = 'to',
-}
+export type EmailParticipantRole = 'from' | 'to' | 'cc' | 'bcc';

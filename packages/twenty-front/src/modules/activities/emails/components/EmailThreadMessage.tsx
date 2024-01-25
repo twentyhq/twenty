@@ -5,7 +5,6 @@ import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThre
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
 import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
-import { EmailParticipantRole } from '@/activities/emails/types/EmailParticipantRole';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
 const StyledThreadMessage = styled.div`
@@ -36,14 +35,12 @@ export const EmailThreadMessage = ({
 }: EmailThreadMessageProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const from = participants.find(
-    (participant) => participant.role === EmailParticipantRole.FROM,
-  );
-  const to = participants.filter(
-    (participant) => participant.role !== EmailParticipantRole.FROM,
+  const from = participants.find((participant) => participant.role === 'from');
+  const receivers = participants.filter(
+    (participant) => participant.role !== 'from',
   );
 
-  if (!from || to.length === 0) {
+  if (!from || receivers.length === 0) {
     return null;
   }
 
@@ -51,7 +48,7 @@ export const EmailThreadMessage = ({
     <StyledThreadMessage onClick={() => setIsOpen(!isOpen)}>
       <StyledThreadMessageHeader>
         <EmailThreadMessageSender sender={from} sentAt={sentAt} />
-        {isOpen && <EmailThreadMessageReceivers receivers={to} />}
+        {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
       {isOpen ? (
         <EmailThreadMessageBody body={body} />
