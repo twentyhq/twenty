@@ -44,18 +44,13 @@ export const EmailThreads = ({
       ? getTimelineThreadsFromPersonId
       : getTimelineThreadsFromCompanyId;
 
-  const threadQueryVariables =
-    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? {
-          personId: entity.id,
-          page: 1,
-          pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-        }
-      : {
-          companyId: entity.id,
-          page: 1,
-          pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-        };
+  const threadQueryVariables = {
+    ...(entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+      ? { personId: entity.id }
+      : { companyId: entity.id }),
+    page: 1,
+    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  };
 
   const threads = useQuery(threadQuery, {
     variables: threadQueryVariables,
