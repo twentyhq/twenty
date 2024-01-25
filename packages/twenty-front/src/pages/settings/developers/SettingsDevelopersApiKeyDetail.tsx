@@ -70,7 +70,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     });
     performOptimisticEvict('ApiKey', 'id', apiKeyId);
     if (redirect) {
-      navigate('/settings/developers/api-keys');
+      navigate('/settings/developers');
     }
   };
 
@@ -131,7 +131,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'APIs', href: '/settings/developers/api-keys' },
+                  { children: 'APIs', href: '/settings/developers' },
                   { children: apiKeyData.name },
                 ]}
               />
