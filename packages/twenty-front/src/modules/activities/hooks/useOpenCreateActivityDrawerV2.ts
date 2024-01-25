@@ -12,13 +12,15 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTarget
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { createRecordConnectionFromEdges } from '@/object-record/utils/createRecordConnectionFromEdges';
+import { createRecordConnectionFromRecords } from '@/object-record/utils/createRecordConnectionFromRecords';
+import { createRecordEdgeFromRecord } from '@/object-record/utils/createRecordEdgeFromRecord';
+import { getRecordsFromRecordConnection } from '@/object-record/utils/getRecordsFromRecordConnection';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -134,14 +136,158 @@ export const useOpenCreateActivityDrawerV2 = ({
         },
       );
 
-      const createdActivityTargets = await createManyActivityTargetsInCache(
-        activityTargetsToCreate,
+      const createdActivityTargetsInCache =
+        await createManyActivityTargetsInCache(activityTargetsToCreate);
+
+      const newActivityTargetEdgesForCache = createdActivityTargetsInCache.map(
+        (createdActivityTarget) => {
+          return createRecordEdgeFromRecord({
+            objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+            record: createdActivityTarget,
+          });
+        },
       );
 
+      const newActivityTargetConnectionInCache =
+        createRecordConnectionFromEdges({
+          objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+          edges: newActivityTargetEdgesForCache,
+        });
+
+      // Those requests are not mounted yet, so triggering optimistic effect here would be useless
+      apolloClient.writeQuery({
+        query: findManyActivityTargetsQuery,
+        variables: {
+          filter: {
+            activityId: {
+              eq: activityId,
+            },
+          },
+        },
+        data: {
+          [objectMetadataItemActivityTarget.namePlural]:
+            newActivityTargetConnectionInCache,
+        },
+      });
+
+      // Try to trigger optimistic effect here
+      // It doesn't work because the requests are not mounted yet
+
+      // This read/write could be replaced by a trigger optimistic effect create on activities
+      // Read current cache state
+      const { data: exitistingActivitiesQueryResult } =
+        await apolloClient.query({
+          query: findManyActivitiesQuery,
+          variables: {
+            filter: {
+              id: {
+                in: activityTargets
+                  ?.map((activityTarget) => activityTarget.activityId)
+                  .filter(isNonEmptyString),
+              },
+            },
+            orderBy: {
+              createdAt: 'AscNullsFirst',
+            },
+          },
+        });
+
+      const newActivities = getRecordsFromRecordConnection({
+        recordConnection: exitistingActivitiesQueryResult[
+          objectMetadataItemActivity.namePlural
+        ] as ObjectRecordConnection<Activity>,
+      });
+
+      newActivities.unshift({
+        ...createdActivityInCache,
+        __typename: 'Activity',
+      });
+
+      const newActivityIds = newActivities.map((activity) => activity.id);
+
+      const newActivityConnectionForCache = createRecordConnectionFromRecords({
+        objectNameSingular: CoreObjectNameSingular.Activity,
+        records: newActivities,
+      });
+
+      // Inject query for timeline findManyActivities before it gets mounted
+      apolloClient.writeQuery({
+        query: findManyActivitiesQuery,
+        variables: {
+          filter: {
+            id: {
+              in: newActivityIds,
+            },
+          },
+          orderBy: {
+            createdAt: 'AscNullsFirst',
+          },
+        },
+        data: {
+          [objectMetadataItemActivity.namePlural]:
+            newActivityConnectionForCache,
+        },
+      });
+
+      const targetObjectFieldName = getActivityTargetObjectFieldIdName({
+        nameSingular: targetableObject.targetObjectNameSingular,
+      });
+
+      // This read/write too ?
+      // This could be replaced by a trigger optimistic effect create on activityTargets
+      // Inject query for useActivityTargets on targetableObject in Timeline
+      const existingActivityTargetsForTargetableObjectQueryResult =
+        apolloClient.readQuery({
+          query: findManyActivityTargetsQuery,
+          variables: {
+            filter: {
+              [targetObjectFieldName]: {
+                eq: targetableObject.id,
+              },
+            },
+          },
+        });
+
+      const existingActivityTargetsForTargetableObject =
+        getRecordsFromRecordConnection({
+          recordConnection:
+            existingActivityTargetsForTargetableObjectQueryResult[
+              objectMetadataItemActivityTarget.namePlural
+            ] as ObjectRecordConnection<ActivityTarget>,
+        });
+
+      const newActivityTargetsForTargetableObject = [
+        ...existingActivityTargetsForTargetableObject,
+        ...createdActivityTargetsInCache,
+      ];
+
+      const newActivityTargetsConnection = createRecordConnectionFromRecords({
+        objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+        records: newActivityTargetsForTargetableObject,
+      });
+
+      apolloClient.writeQuery({
+        query: findManyActivityTargetsQuery,
+        variables: {
+          filter: {
+            [targetObjectFieldName]: {
+              eq: targetableObject.id,
+            },
+          },
+        },
+        data: {
+          [objectMetadataItemActivityTarget.namePlural]:
+            newActivityTargetsConnection,
+        },
+      });
+
+      // This could be replaced by a trigger optimistic effect on relations of activity
+      // Can this be replaced by a trigger optimistic effect ?
+      // This has no effect right now
       modifyActivityFromCache(createdActivityInCache.id, {
         activityTargets: (activityTargetsRef, { toReference }) => {
-          const newActivityTargetsForCacheModify = createdActivityTargets.map(
-            (createdActivityTarget) => {
+          const newActivityTargetsForCacheModify =
+            createdActivityTargetsInCache.map((createdActivityTarget) => {
               const activityTargetRef = toReference({
                 __typename: capitalize(CoreObjectNameSingular.ActivityTarget),
                 id: createdActivityTarget.id,
@@ -153,199 +299,21 @@ export const useOpenCreateActivityDrawerV2 = ({
                 )}Edge`,
                 node: activityTargetRef,
               };
+            });
+
+          console.log({
+            activityTargetsRef,
+            newActivityTargetsForCacheModify,
+            newState: {
+              ...activityTargetsRef,
+              edges: newActivityTargetsForCacheModify,
             },
-          );
+          });
 
           return {
             ...activityTargetsRef,
             edges: newActivityTargetsForCacheModify,
           };
-        },
-      });
-
-      const newActivityTargetsForWriteQuery = createdActivityTargets.map(
-        (createdActivityTarget) => {
-          return {
-            __typename: `${capitalize(
-              CoreObjectNameSingular.ActivityTarget,
-            )}Edge`,
-            node: {
-              __typename: capitalize(CoreObjectNameSingular.ActivityTarget),
-              ...createdActivityTarget,
-            },
-            cursor: '',
-          };
-        },
-      );
-
-      const dataToUpdate = {
-        [objectMetadataItemActivityTarget.namePlural]: {
-          __typename: `${capitalize(
-            CoreObjectNameSingular.ActivityTarget,
-          )}Connection`,
-          edges: newActivityTargetsForWriteQuery,
-          pageInfo: {
-            endCursor: '',
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: '',
-          },
-        } as ObjectRecordConnection,
-      };
-
-      apolloClient.writeQuery({
-        query: findManyActivityTargetsQuery,
-        variables: {
-          filter: {
-            activityId: {
-              eq: activityId,
-            },
-          },
-          limit: 60,
-        },
-        data: dataToUpdate,
-      });
-
-      apolloClient.writeQuery({
-        query: findManyActivityTargetsQuery,
-        variables: {
-          filter: {
-            activityId: {
-              eq: activityId,
-            },
-          },
-        },
-        data: dataToUpdate,
-      });
-
-      // Read current cache state
-      const { data: exitistingActivitiesConnection } = await apolloClient.query(
-        {
-          query: findManyActivitiesQuery,
-          variables: {
-            filter: {
-              id: {
-                in: activityTargets
-                  ?.map((activityTarget) => activityTarget.activityId)
-                  .filter(isNonEmptyString),
-              },
-            },
-            limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-            orderBy: {
-              createdAt: 'AscNullsFirst',
-            },
-          },
-        },
-      );
-
-      const newActivities = (
-        exitistingActivitiesConnection[
-          objectMetadataItemActivity.namePlural
-        ] as ObjectRecordConnection<Activity>
-      ).edges.map((edge) => edge.node);
-
-      newActivities.unshift({
-        ...createdActivityInCache,
-        __typename: 'Activity',
-      });
-
-      // Inject query for timeline findManyActivities
-      apolloClient.writeQuery({
-        query: findManyActivitiesQuery,
-        variables: {
-          filter: {
-            id: {
-              in: newActivities.map((activity) => activity.id),
-            },
-          },
-          limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-          orderBy: {
-            createdAt: 'AscNullsFirst',
-          },
-        },
-        data: {
-          [objectMetadataItemActivity.namePlural]: {
-            __typename: `${capitalize(
-              CoreObjectNameSingular.Activity,
-            )}Connection`,
-            edges: newActivities.map((activity) => ({
-              __typename: `${capitalize(CoreObjectNameSingular.Activity)}Edge`,
-              node: activity,
-              cursor: '',
-            })),
-            pageInfo: {
-              endCursor: '',
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-            },
-          } as ObjectRecordConnection<Activity>,
-        },
-      });
-
-      const targetObjectFieldName = getActivityTargetObjectFieldIdName({
-        nameSingular: targetableObject.targetObjectNameSingular,
-      });
-
-      // Inject query for useActivityTargets on targetableObject in Timeline
-      const existingActivityTargetsForTargetableObject = apolloClient.readQuery(
-        {
-          query: findManyActivityTargetsQuery,
-          variables: {
-            filter: {
-              [targetObjectFieldName]: {
-                eq: targetableObject.id,
-              },
-            },
-            limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-          },
-        },
-      );
-
-      const newActivityTargetsForTargetableObject = createdActivityTargets
-        .map((createdActivityTarget) => {
-          return {
-            __typename: `${capitalize(
-              CoreObjectNameSingular.ActivityTarget,
-            )}Edge`,
-            node: {
-              __typename: capitalize(CoreObjectNameSingular.ActivityTarget),
-              ...createdActivityTarget,
-            },
-            cursor: '',
-          } as ObjectRecordEdge<ActivityTarget>;
-        })
-        .concat(
-          (
-            existingActivityTargetsForTargetableObject[
-              objectMetadataItemActivityTarget.namePlural
-            ] as ObjectRecordConnection<ActivityTarget>
-          ).edges,
-        );
-
-      apolloClient.writeQuery({
-        query: findManyActivityTargetsQuery,
-        variables: {
-          filter: {
-            [targetObjectFieldName]: {
-              eq: targetableObject.id,
-            },
-          },
-          limit: DEFAULT_SEARCH_REQUEST_LIMIT,
-        },
-        data: {
-          [objectMetadataItemActivityTarget.namePlural]: {
-            __typename: `${capitalize(
-              CoreObjectNameSingular.ActivityTarget,
-            )}Connection`,
-            edges: newActivityTargetsForTargetableObject,
-            pageInfo: {
-              endCursor: '',
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-            },
-          } as ObjectRecordConnection<ActivityTarget>,
         },
       });
 

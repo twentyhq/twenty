@@ -1,7 +1,7 @@
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { isDefined } from '~/utils/isDefined';
 
-export const orFilterVariables = (
+export const makeAndFilterVariables = (
   filters: (ObjectRecordQueryFilter | undefined)[],
 ): ObjectRecordQueryFilter | undefined => {
   const definedFilters = filters.filter(isDefined);
@@ -10,5 +10,5 @@ export const orFilterVariables = (
 
   return definedFilters.length === 1
     ? definedFilters[0]
-    : { or: definedFilters };
+    : { and: definedFilters };
 };

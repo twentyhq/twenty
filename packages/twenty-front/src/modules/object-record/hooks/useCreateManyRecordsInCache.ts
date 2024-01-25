@@ -27,7 +27,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
       id: (record.id as string) ?? v4(),
     }));
 
-    const createdRecordsInCache = [] as Partial<T>[];
+    const createdRecordsInCache = [] as T[];
 
     for (const record of recordsWithId) {
       const generatedCachedObjectRecord = generateCachedObjectRecord<T>({
