@@ -68,6 +68,14 @@ export class User {
   })
   defaultWorkspace: Workspace;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passwordResetToken: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passwordResetTokenExpiresAt: Date;
+
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
   })
