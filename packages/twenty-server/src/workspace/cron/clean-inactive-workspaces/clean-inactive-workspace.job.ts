@@ -149,21 +149,10 @@ export class CleanInactiveWorkspaceJob
     });
   }
 
-  async deleteWorkspace(
+  async persistWorkspaceToDeleteInfo(
     dataSource: DataSourceEntity,
     daysSinceInactive: number,
-    isDryRun: boolean,
   ): Promise<void> {
-    this.logger.log(
-      `${this.getDryRunLogHeader(isDryRun)}Sending email to delete workspace ${
-        dataSource.workspaceId
-      } inactive since ${daysSinceInactive} days`,
-    );
-
-    if (isDryRun) {
-      return;
-    }
-
     const emailData = {
       daysSinceInactive: daysSinceInactive,
       workspaceId: `${dataSource.workspaceId}`,
@@ -187,7 +176,7 @@ export class CleanInactiveWorkspaceJob
     );
 
     if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
-      await this.deleteWorkspace(dataSource, daysSinceInactive, isDryRun);
+      await this.persistWorkspaceToDeleteInfo(dataSource, daysSinceInactive);
     } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
       await this.warnWorkspaceUsers(dataSource, daysSinceInactive, isDryRun);
     }
@@ -224,9 +213,18 @@ export class CleanInactiveWorkspaceJob
   }
 
   async sendDeleteWorkspaceEmail(isDryRun: boolean): Promise<void> {
+    this.logger.log(
+      `${this.getDryRunLogHeader(
+        isDryRun,
+      )}Sending email to delete workspaces "${this.workspacesToDelete
+        .map((workspaceToDelete) => workspaceToDelete.workspaceId)
+        .join('", "')}"`,
+    );
+
     if (isDryRun || this.workspacesToDelete.length === 0) {
       return;
     }
+
     const emailTemplate = DeleteInactiveWorkspaceEmail(this.workspacesToDelete);
     const html = render(emailTemplate, {
       pretty: true,
