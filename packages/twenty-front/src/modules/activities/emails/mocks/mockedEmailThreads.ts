@@ -7,7 +7,7 @@ export type MockedThread = {
 export const mockedEmailThreads: MockedThread[] = [
   {
     __typename: 'TimelineThread',
-    id: '4e88ec1f-a386-4235-bd82-98f25f6d557e',
+    id: 'ec7e12b9-4063-410f-ae9a-30e32452b9c0',
     body: 'This is a test email' as Scalars['String'],
     numberOfMessagesInThread: 5 as Scalars['Float'],
     read: true as Scalars['Boolean'],
@@ -18,7 +18,7 @@ export const mockedEmailThreads: MockedThread[] = [
   },
   {
     __typename: 'TimelineThread',
-    id: '4e88ec1f-a386-4235-bd82-98f25f6d557e',
+    id: 'ec7e12b9-4063-410f-ae9a-30e32452b9c0',
     body: 'This is a second test email' as Scalars['String'],
     numberOfMessagesInThread: 5 as Scalars['Float'],
     read: true as Scalars['Boolean'],
