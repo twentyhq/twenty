@@ -15,8 +15,8 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
-import { TimelineThread } from 'src/core/messaging/timeline-thread.dto';
-import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/core/messaging/messaging.constants';
+import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
+import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {

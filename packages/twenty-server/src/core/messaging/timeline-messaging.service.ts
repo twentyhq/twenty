@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { TimelineThread } from 'src/core/messaging/timeline-thread.dto';
+import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
