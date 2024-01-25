@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
+import styled from '@emotion/styled';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { IconPlus } from '@/ui/display/icon';
@@ -17,6 +18,14 @@ import { assertNotNull } from '~/utils/assert';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
+
+const StyledDropdownMenuContainer = styled.div`
+  display: flex;
+  gap: 2px;
+  flex-direction: column;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+`;
 
 export type SingleEntitySelectMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -86,7 +95,7 @@ export const SingleEntitySelectMenuItems = ({
           }
         }}
       >
-        <>
+        <StyledDropdownMenuContainer>
           <DropdownMenuItemsContainer hasMaxHeight>
             {loading ? (
               <DropdownMenuSkeletonItem />
@@ -127,7 +136,7 @@ export const SingleEntitySelectMenuItems = ({
               />
             ))}
           </DropdownMenuItemsContainer>
-        </>
+        </StyledDropdownMenuContainer>
         {showCreateButton && !loading && (
           <DropdownMenuItemsContainer hasMaxHeight>
             {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
