@@ -52,9 +52,9 @@ export const convertHttpExceptionToGraphql = (exception: HttpException) => {
   let error: BaseGraphQLError;
 
   if (status in graphQLPredefinedExceptions) {
-    error = new graphQLPredefinedExceptions[exception.getStatus()](
-      exception.message,
-    );
+    const message = exception.getResponse()['message'] ?? exception.message;
+
+    error = new graphQLPredefinedExceptions[exception.getStatus()](message);
   } else {
     error = new BaseGraphQLError(
       'Internal Server Error',
