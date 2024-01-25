@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
+import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
@@ -27,28 +28,6 @@ type EmailThreadMessageProps = {
   participants: EmailThreadMessageParticipant[];
 };
 
-const getDisplayNameFromParticipant = (
-  participant: EmailThreadMessageParticipant,
-) => {
-  if (participant.person) {
-    return `${participant.person?.name?.firstName} ${participant.person?.name?.lastName}`;
-  }
-
-  if (participant.workspaceMember) {
-    return `${participant.workspaceMember?.name?.firstName} ${participant.workspaceMember?.name?.lastName}`;
-  }
-
-  if (participant.displayName) {
-    return participant.displayName;
-  }
-
-  if (participant.handle) {
-    return participant.handle;
-  }
-
-  return 'Unknown';
-};
-
 export const EmailThreadMessage = ({
   body,
   sentAt,
@@ -57,25 +36,19 @@ export const EmailThreadMessage = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const from = participants.find((participant) => participant.role === 'from');
-  const to = participants.filter((participant) => participant.role === 'to');
+  const receivers = participants.filter(
+    (participant) => participant.role !== 'from',
+  );
 
-  if (!from || to.length === 0) {
+  if (!from || receivers.length === 0) {
     return null;
   }
-
-  const displayName = getDisplayNameFromParticipant(from);
-
-  const avatarUrl =
-    from.person?.avatarUrl ?? from.workspaceMember?.avatarUrl ?? '';
 
   return (
     <StyledThreadMessage onClick={() => setIsOpen(!isOpen)}>
       <StyledThreadMessageHeader>
-        <EmailThreadMessageSender
-          displayName={displayName}
-          avatarUrl={avatarUrl}
-          sentAt={sentAt}
-        />
+        <EmailThreadMessageSender sender={from} sentAt={sentAt} />
+        {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
       {isOpen ? (
         <EmailThreadMessageBody body={body} />
