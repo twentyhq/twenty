@@ -8,11 +8,11 @@ type BaseEmailProps = PropsWithChildren<{
   width?: number;
 }>;
 
-export const BaseEmail = ({ children, width = 290 }: BaseEmailProps) => {
+export const BaseEmail = ({ children, width }: BaseEmailProps) => {
   return (
     <Html lang="en">
       <BaseHead />
-      <Container width={width}>
+      <Container width={width || 290}>
         <Logo />
         {children}
       </Container>
