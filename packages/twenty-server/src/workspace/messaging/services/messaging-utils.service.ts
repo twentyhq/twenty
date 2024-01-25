@@ -36,6 +36,16 @@ export class MessagingUtilsService {
   ) {
     for (const message of messages) {
       await workspaceDataSource?.transaction(async (manager) => {
+        const existingMessageChannelMessage = await manager.query(
+          `SELECT COUNT(*) FROM ${dataSourceMetadata.schema}."messageChannelMessage"
+          WHERE "messageExternalId" = $1 AND "messageChannelId" = $2`,
+          [message.externalId, gmailMessageChannelId],
+        );
+
+        if (existingMessageChannelMessage[0]?.count > 0) {
+          return;
+        }
+
         const savedOrExistingMessageThreadId =
           await this.saveMessageThreadOrReturnExistingMessageThread(
             message.messageThreadExternalId,
