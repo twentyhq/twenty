@@ -18,6 +18,7 @@ export type EntityChipProps = {
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
+  maxWidth?: number;
 };
 
 export enum EntityChipVariant {
@@ -34,6 +35,7 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
+  maxWidth,
 }: EntityChipProps) => {
   const navigate = useNavigate();
 
@@ -74,6 +76,7 @@ export const EntityChip = ({
         clickable={!!linkToEntity}
         onClick={handleLinkClick}
         className={className}
+        maxWidth={maxWidth}
       />
     )
   );

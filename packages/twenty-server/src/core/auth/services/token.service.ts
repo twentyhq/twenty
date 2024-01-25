@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -9,23 +10,35 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { addMilliseconds } from 'date-fns';
+import crypto from 'crypto';
+
+import { addMilliseconds, differenceInMilliseconds, isFuture } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
+import { render } from '@react-email/render';
+import { PasswordResetLinkEmail } from 'twenty-emails';
 
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
-import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
+import {
+  ApiKeyToken,
+  AuthToken,
+  PasswordResetToken,
+} from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
+import { EmailService } from 'src/integrations/email/email.service';
+import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
+import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 
 @Injectable()
 export class TokenService {
@@ -37,6 +50,7 @@ export class TokenService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken, 'core')
     private readonly refreshTokenRepository: Repository<RefreshToken>,
+    private readonly emailService: EmailService,
   ) {}
 
   async generateAccessToken(userId: string): Promise<AuthToken> {
@@ -172,6 +186,12 @@ export class TokenService {
     return { token };
   }
 
+  isTokenPresent(request: Request): boolean {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+    return !!token;
+  }
+
   async validateToken(request: Request): Promise<Workspace> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
@@ -305,5 +325,150 @@ export class TokenService {
         throw new UnprocessableEntityException();
       }
     }
+  }
+
+  async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
+    const user = await this.userRepository.findOneBy({
+      email,
+    });
+
+    assert(user, 'User not found', NotFoundException);
+
+    const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
+
+    assert(
+      expiresIn,
+      'PASSWORD_RESET_TOKEN_EXPIRES_IN constant value not found',
+      InternalServerErrorException,
+    );
+
+    if (
+      user.passwordResetToken &&
+      user.passwordResetTokenExpiresAt &&
+      isFuture(user.passwordResetTokenExpiresAt)
+    ) {
+      assert(
+        false,
+        `Token has been already generated. Please wait for ${ms(
+          differenceInMilliseconds(
+            user.passwordResetTokenExpiresAt,
+            new Date(),
+          ),
+          {
+            long: true,
+          },
+        )} to generate again.`,
+        BadRequestException,
+      );
+    }
+
+    const plainResetToken = crypto.randomBytes(32).toString('hex');
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(plainResetToken)
+      .digest('hex');
+
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
+    await this.userRepository.update(user.id, {
+      passwordResetToken: hashedResetToken,
+      passwordResetTokenExpiresAt: expiresAt,
+    });
+
+    return {
+      passwordResetToken: plainResetToken,
+      passwordResetTokenExpiresAt: expiresAt,
+    };
+  }
+
+  async sendEmailPasswordResetLink(
+    resetToken: PasswordResetToken,
+    email: string,
+  ): Promise<EmailPasswordResetLink> {
+    const user = await this.userRepository.findOneBy({
+      email,
+    });
+
+    assert(user, 'User not found', NotFoundException);
+
+    const frontBaseURL = this.environmentService.getFrontBaseUrl();
+    const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
+
+    const emailData = {
+      link: resetLink,
+      duration: ms(
+        differenceInMilliseconds(
+          resetToken.passwordResetTokenExpiresAt,
+          new Date(),
+        ),
+        {
+          long: true,
+        },
+      ),
+    };
+
+    const emailTemplate = PasswordResetLinkEmail(emailData);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    this.emailService.send({
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      to: email,
+      subject: 'Action Needed to Reset Password',
+      text,
+      html,
+    });
+
+    return { success: true };
+  }
+
+  async validatePasswordResetToken(
+    resetToken: string,
+  ): Promise<ValidatePasswordResetToken> {
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    const user = await this.userRepository.findOneBy({
+      passwordResetToken: hashedResetToken,
+    });
+
+    assert(user, 'Token is invalid', NotFoundException);
+
+    const tokenExpiresAt = user.passwordResetTokenExpiresAt;
+
+    assert(
+      tokenExpiresAt && isFuture(tokenExpiresAt),
+      'Token has expired. Please regenerate',
+      NotFoundException,
+    );
+
+    return {
+      id: user.id,
+      email: user.email,
+    };
+  }
+
+  async invalidatePasswordResetToken(
+    userId: string,
+  ): Promise<InvalidatePassword> {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    assert(user, 'User not found', NotFoundException);
+
+    await this.userRepository.update(user.id, {
+      passwordResetToken: '',
+      passwordResetTokenExpiresAt: undefined,
+    });
+
+    return { success: true };
   }
 }

@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
+import { useSetRecoilState } from 'recoil';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
+import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';
 
@@ -9,15 +12,33 @@ import { CommentHeader } from '../CommentHeader';
 
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
+const CommentHeaderSetterEffect = () => {
+  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+
+  useEffect(() => {
+    setViewableActivity('test-id');
+  }, [setViewableActivity]);
+
+  return null;
+};
+
 const meta: Meta<typeof CommentHeader> = {
   title: 'Modules/Activity/Comment/CommentHeader',
   component: CommentHeader,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <>
+        <CommentHeaderSetterEffect />
+        <Story />
+      </>
+    ),
+    ComponentDecorator,
+  ],
   argTypes: {
     actionBar: {
       type: 'boolean',
       mapping: {
-        true: <ActivityActionBar activityId="test-id" />,
+        true: <ActivityActionBar />,
         false: undefined,
       },
     },

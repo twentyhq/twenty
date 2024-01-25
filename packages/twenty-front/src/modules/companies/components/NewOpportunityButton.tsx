@@ -1,9 +1,9 @@
 import { useCallback, useContext, useState } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { NewButton } from '@/object-record/record-board/components/NewButton';
-import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardColumnContext';
-import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
+import { NewButton } from '@/object-record/record-board-deprecated/components/NewButton';
+import { BoardColumnContext } from '@/object-record/record-board-deprecated/contexts/BoardColumnContext';
+import { useCreateOpportunity } from '@/object-record/record-board-deprecated/hooks/internal/useCreateOpportunity';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';

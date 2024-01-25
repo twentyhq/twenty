@@ -4,13 +4,13 @@ import styled from '@emotion/styled';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import {
-  RecordBoard,
-  RecordBoardProps,
-} from '@/object-record/record-board/components/RecordBoard';
-import { RecordBoardEffect } from '@/object-record/record-board/components/RecordBoardEffect';
-import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
-import { RecordBoardOptionsDropdown } from '@/object-record/record-board/options/components/RecordBoardOptionsDropdown';
-import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
+  RecordBoardDeprecated,
+  RecordBoardDeprecatedProps,
+} from '@/object-record/record-board-deprecated/components/RecordBoardDeprecated';
+import { RecordBoardDeprecatedEffect } from '@/object-record/record-board-deprecated/components/RecordBoardDeprecatedEffect';
+import { BoardOptionsDropdownId } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
+import { RecordBoardDeprecatedOptionsDropdown } from '@/object-record/record-board-deprecated/options/components/RecordBoardDeprecatedOptionsDropdown';
+import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 `;
 
 type CompanyBoardProps = Pick<
-  RecordBoardProps,
+  RecordBoardDeprecatedProps,
   'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
 >;
 
@@ -61,7 +61,7 @@ export const CompanyBoard = ({
       <ViewBar
         viewBarId={viewBarId}
         optionsDropdownButton={
-          <RecordBoardOptionsDropdown
+          <RecordBoardDeprecatedOptionsDropdown
             recordBoardId={recordBoardId}
             onStageAdd={onStageAdd}
           />
@@ -73,14 +73,14 @@ export const CompanyBoard = ({
         viewBarId={viewBarId}
         recordBoardId={recordBoardId}
       />
-      <RecordBoardEffect
+      <RecordBoardDeprecatedEffect
         recordBoardId={recordBoardId}
         onFieldsChange={(fields) => {
           persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
         }}
       />
 
-      <RecordBoard
+      <RecordBoardDeprecated
         recordBoardId={recordBoardId}
         boardOptions={opportunitiesBoardOptions}
         onColumnAdd={onColumnAdd}

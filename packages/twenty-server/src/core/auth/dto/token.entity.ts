@@ -29,3 +29,12 @@ export class AuthTokens {
   @Field(() => AuthTokenPair)
   tokens: AuthTokenPair;
 }
+
+@ObjectType()
+export class PasswordResetToken {
+  @Field(() => String)
+  passwordResetToken: string;
+
+  @Field(() => Date)
+  passwordResetTokenExpiresAt: Date;
+}

@@ -1,10 +1,10 @@
 import { useContext, useEffect } from 'react';
-import { Reference } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
+import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
@@ -13,7 +13,6 @@ import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
@@ -71,12 +70,8 @@ export const RecordRelationFieldCardContent = ({
     objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { modifyRecordFromCache } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular ?? '',
-  });
-
-  const modifyRecordFromCache = useModifyRecordFromCache({
-    objectMetadataItem,
   });
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
@@ -104,13 +99,13 @@ export const RecordRelationFieldCardContent = ({
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
   // TODO: temporary as ChipDisplay expect to find the entity in the entityFieldsFamilyState
-  const setEntityFields = useSetRecoilState(
+  const setRelationEntityFields = useSetRecoilState(
     entityFieldsFamilyState(relationRecord.id),
   );
 
   useEffect(() => {
-    setEntityFields(relationRecord);
-  }, [relationRecord, setEntityFields]);
+    setRelationEntityFields(relationRecord);
+  }, [relationRecord, setRelationEntityFields]);
 
   if (!FieldContextProvider) return null;
 
@@ -137,15 +132,18 @@ export const RecordRelationFieldCardContent = ({
     });
 
     modifyRecordFromCache(entityId, {
-      [fieldName]: (relationRef, { readField }) => {
-        const edges = readField<{ node: Reference }[]>('edges', relationRef);
+      [fieldName]: (cachedRelationConnection, { readField }) => {
+        const edges = readField<CachedObjectRecordEdge[]>(
+          'edges',
+          cachedRelationConnection,
+        );
 
         if (!edges) {
-          return relationRef;
+          return cachedRelationConnection;
         }
 
         return {
-          ...relationRef,
+          ...cachedRelationConnection,
           edges: edges.filter(({ node }) => {
             const id = readField('id', node);
             return id !== relationRecord.id;
