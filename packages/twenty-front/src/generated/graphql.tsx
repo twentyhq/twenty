@@ -402,7 +402,7 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
-  companyId: Scalars['String'];
+  companyId: Scalars['ID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 };
@@ -411,7 +411,7 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
-  personId: Scalars['String'];
+  personId: Scalars['ID'];
 };
 
 
@@ -496,7 +496,7 @@ export type Telemetry = {
 export type TimelineThread = {
   __typename?: 'TimelineThread';
   firstParticipant: TimelineThreadParticipant;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   lastMessageBody: Scalars['String'];
   lastMessageReceivedAt: Scalars['DateTime'];
   lastTwoParticipants: Array<TimelineThreadParticipant>;
@@ -712,7 +712,7 @@ export type RelationEdge = {
 };
 
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['String'];
+  companyId: Scalars['ID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 }>;
@@ -721,7 +721,7 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['String'];
+  personId: Scalars['ID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 }>;
@@ -932,7 +932,7 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     `;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: String!, $page: Int!, $pageSize: Int!) {
+    query GetTimelineThreadsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromCompanyId(
     companyId: $companyId
     page: $page
@@ -997,7 +997,7 @@ export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof u
 export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
 export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
 export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: String!, $page: Int!, $pageSize: Int!) {
+    query GetTimelineThreadsFromPersonId($personId: ID!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromPersonId(
     personId: $personId
     page: $page
