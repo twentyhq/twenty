@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
-import { MockedEmailUser } from '@/activities/emails/mocks/mockedEmailThreads';
+import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
 const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -22,20 +22,51 @@ const StyledThreadMessageHeader = styled.div`
 `;
 
 type EmailThreadMessageProps = {
-  id: string;
   body: string;
   sentAt: string;
-  from: MockedEmailUser;
-  to: MockedEmailUser[];
+  participants: EmailThreadMessageParticipant[];
+};
+
+const getDisplayNameFromParticipant = (
+  participant: EmailThreadMessageParticipant,
+) => {
+  if (participant.person) {
+    return `${participant.person?.name?.firstName} ${participant.person?.name?.lastName}`;
+  }
+
+  if (participant.workspaceMember) {
+    return `${participant.workspaceMember?.name?.firstName} ${participant.workspaceMember?.name?.lastName}`;
+  }
+
+  if (participant.displayName) {
+    return participant.displayName;
+  }
+
+  if (participant.handle) {
+    return participant.handle;
+  }
+
+  return 'Unknown';
 };
 
 export const EmailThreadMessage = ({
   body,
   sentAt,
-  from,
+  participants,
 }: EmailThreadMessageProps) => {
-  const { displayName, avatarUrl } = from;
   const [isOpen, setIsOpen] = useState(false);
+
+  const from = participants.find((participant) => participant.role === 'from');
+  const to = participants.filter((participant) => participant.role === 'to');
+
+  if (!from || to.length === 0) {
+    return null;
+  }
+
+  const displayName = getDisplayNameFromParticipant(from);
+
+  const avatarUrl =
+    from.person?.avatarUrl ?? from.workspaceMember?.avatarUrl ?? '';
 
   return (
     <StyledThreadMessage onClick={() => setIsOpen(!isOpen)}>
