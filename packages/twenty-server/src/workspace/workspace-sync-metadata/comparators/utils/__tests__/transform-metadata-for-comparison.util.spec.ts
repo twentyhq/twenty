@@ -26,8 +26,6 @@ describe('transformMetadataForComparison', () => {
       keyFactory: (datum) => datum.name,
     });
 
-    console.log('result: ', result);
-
     expect(result).toEqual({
       Test1: { name: 'Test1', value: '{"a":1}' },
       Test2: { name: 'Test2', value: '{"c":3}', extra: 'keepMe' },

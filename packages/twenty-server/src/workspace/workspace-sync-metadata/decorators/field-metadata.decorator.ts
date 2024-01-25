@@ -8,6 +8,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { generateDefaultValue } from 'src/metadata/field-metadata/utils/generate-default-value';
 import { TypedReflect } from 'src/utils/typed-reflect';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 export function FieldMetadata<T extends FieldMetadataType>(
   params: FieldMetadataDecoratorParams<T>,
@@ -65,9 +66,10 @@ function generateFieldMetadata<T extends FieldMetadataType>(
   gate: GateDecoratorParams | undefined = undefined,
 ): ReflectFieldMetadata[string] {
   const targetColumnMap = generateTargetColumnMap(params.type, false, fieldKey);
-  const defaultValue = params.defaultValue
-    ? generateDefaultValue(params.type)
-    : null;
+  const defaultValue = (params.defaultValue ??
+    generateDefaultValue(
+      params.type,
+    )) as FieldMetadataDefaultValue<'default'> | null;
 
   return {
     name: fieldKey,

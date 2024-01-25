@@ -30,18 +30,18 @@ describe('mapObjectMetadataByUniqueIdentifier', () => {
     expect(mappedObject).toEqual({
       user: {
         nameSingular: 'user',
-        fields: {
-          id: { name: 'id', type: FieldMetadataType.UUID },
-          name: { name: 'name', type: FieldMetadataType.TEXT },
-        },
+        fields: [
+          { name: 'id', type: FieldMetadataType.UUID },
+          { name: 'name', type: FieldMetadataType.TEXT },
+        ],
       },
       product: {
         nameSingular: 'product',
-        fields: {
-          id: { name: 'id', type: FieldMetadataType.UUID },
-          name: { name: 'name', type: FieldMetadataType.TEXT },
-          price: { name: 'price', type: FieldMetadataType.UUID },
-        },
+        fields: [
+          { name: 'id', type: FieldMetadataType.UUID },
+          { name: 'name', type: FieldMetadataType.TEXT },
+          { name: 'price', type: FieldMetadataType.UUID },
+        ],
       },
     });
   });

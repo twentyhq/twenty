@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import fs from 'fs/promises';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
@@ -90,6 +91,11 @@ export class WorkspaceSyncRelationMetadataService {
         manager,
         storage,
       );
+
+    fs.writeFile(
+      './relationMetadataDeleteCollection.json',
+      JSON.stringify(storage.relationMetadataDeleteCollection, null, 2),
+    );
 
     // Create migrations
     const workspaceRelationMigrations =

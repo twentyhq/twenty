@@ -1,3 +1,5 @@
+import { orderObjectProperties } from './order-object-properties.util';
+
 type TransformToString<T, Keys extends keyof T> = {
   [P in keyof T]: P extends Keys ? string : T[P];
 };
@@ -46,9 +48,7 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
         datum[property] !== null &&
         typeof datum[property] === 'object'
       ) {
-        const orderedValue = Object.fromEntries(
-          Object.entries(datum[property] as Record<string, unknown>).sort(),
-        );
+        const orderedValue = orderObjectProperties(datum[property] as object);
 
         transformedField[property as string] = JSON.stringify(
           orderedValue,

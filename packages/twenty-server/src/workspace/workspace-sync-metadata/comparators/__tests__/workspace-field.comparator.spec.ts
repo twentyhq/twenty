@@ -27,11 +27,9 @@ describe('WorkspaceFieldComparator', () => {
   }
 
   it('should generate CREATE action for new fields', () => {
-    const original = { fields: {} } as any;
+    const original = { fields: [] } as any;
     const standard = {
-      fields: {
-        newField: createMockFieldMetadata({ name: 'New Field' }),
-      },
+      fields: [createMockFieldMetadata({ name: 'New Field' })],
     } as any;
 
     const result = comparator.compare(original, standard);
@@ -39,26 +37,26 @@ describe('WorkspaceFieldComparator', () => {
     expect(result).toEqual([
       {
         action: ComparatorAction.CREATE,
-        object: expect.objectContaining(standard.fields.newField),
+        object: expect.objectContaining(standard.fields[0]),
       },
     ]);
   });
 
   it('should generate UPDATE action for modified fields', () => {
     const original = {
-      fields: {
-        existingField: createMockFieldMetadata({
+      fields: [
+        createMockFieldMetadata({
           id: '1',
-          isActive: true,
+          isNullable: true,
         }),
-      },
+      ],
     } as any;
     const standard = {
-      fields: {
-        existingField: createMockFieldMetadata({
-          name: 'Existing Field',
+      fields: [
+        createMockFieldMetadata({
+          isNullable: false,
         }),
-      },
+      ],
     } as any;
 
     const result = comparator.compare(original, standard);
@@ -66,22 +64,22 @@ describe('WorkspaceFieldComparator', () => {
     expect(result).toEqual([
       {
         action: ComparatorAction.UPDATE,
-        object: expect.objectContaining({ id: '1', name: 'Existing Field' }),
+        object: expect.objectContaining({ id: '1', isNullable: false }),
       },
     ]);
   });
 
   it('should generate DELETE action for removed fields', () => {
     const original = {
-      fields: {
-        removedField: createMockFieldMetadata({
+      fields: [
+        createMockFieldMetadata({
           id: '1',
           name: 'Removed Field',
           isActive: true,
         }),
-      },
+      ],
     } as any;
-    const standard = { fields: {} } as any;
+    const standard = { fields: [] } as any;
 
     const result = comparator.compare(original, standard);
 
@@ -95,12 +93,10 @@ describe('WorkspaceFieldComparator', () => {
 
   it('should not generate any action for identical fields', () => {
     const original = {
-      fields: {
-        sameField: createMockFieldMetadata({ id: '1', isActive: true }),
-      },
+      fields: [createMockFieldMetadata({ id: '1', isActive: true })],
     } as any;
     const standard = {
-      fields: { sameField: createMockFieldMetadata({}) },
+      fields: [createMockFieldMetadata({})],
     } as any;
 
     const result = comparator.compare(original, standard);
