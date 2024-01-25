@@ -92,20 +92,22 @@ export const EmailThreadPreview = ({
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
         <StyledAvatar
-          avatarUrl={thread.senderPictureUrl}
-          placeholder={thread.senderName}
+          avatarUrl={thread.firstParticipant.avatarUrl}
+          placeholder={thread.firstParticipant.displayName}
           type="rounded"
         />
-        <StyledSenderName>{thread.senderName}</StyledSenderName>
+        <StyledSenderName>
+          {thread.firstParticipant.displayName}
+        </StyledSenderName>
         <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
       </StyledHeading>
 
       <StyledSubjectAndBody>
         <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
-        <StyledBody>{thread.body}</StyledBody>
+        <StyledBody>{thread.lastMessageBody}</StyledBody>
       </StyledSubjectAndBody>
       <StyledReceivedAt>
-        {formatToHumanReadableDate(thread.receivedAt)}
+        {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
       </StyledReceivedAt>
     </StyledCardContent>
   );

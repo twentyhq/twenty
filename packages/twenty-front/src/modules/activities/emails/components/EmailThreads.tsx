@@ -2,11 +2,8 @@ import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import {
-  mockedEmailThreads,
-  MockedThread,
-} from '@/activities/emails/mocks/mockedEmailThreads';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -17,6 +14,7 @@ import {
 } from '@/ui/display/typography/components/H1Title';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
+import { TimelineThread } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -46,10 +44,13 @@ export const EmailThreads = ({
       ? getTimelineThreadsFromPersonId
       : getTimelineThreadsFromCompanyId;
 
-  const threadQueryVariables =
-    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+  const threadQueryVariables = {
+    ...(entity.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? { personId: entity.id }
-      : { companyId: entity.id };
+      : { companyId: entity.id }),
+    page: 1,
+    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  };
 
   const threads = useQuery(threadQuery, {
     variables: threadQueryVariables,
@@ -59,16 +60,12 @@ export const EmailThreads = ({
     return;
   }
 
-  // To use once the id is returned by the query
-
-  // const fetchedTimelineThreads: TimelineThread[] =
-  //   threads.data[
-  //     entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-  //       ? 'getTimelineThreadsFromPersonId'
-  //       : 'getTimelineThreadsFromCompanyId'
-  //   ];
-
-  const timelineThreads = mockedEmailThreads;
+  const timelineThreads: TimelineThread[] =
+    threads.data[
+      entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+        ? 'getTimelineThreadsFromPersonId'
+        : 'getTimelineThreadsFromCompanyId'
+    ];
 
   return (
     <StyledContainer>
@@ -77,16 +74,14 @@ export const EmailThreads = ({
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>
-                {timelineThreads && timelineThreads.length}
-              </StyledEmailCount>
+              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
           {timelineThreads &&
-            timelineThreads.map((thread: MockedThread, index: number) => (
+            timelineThreads.map((thread: TimelineThread, index: number) => (
               <EmailThreadPreview
                 key={index}
                 divider={index < timelineThreads.length - 1}
