@@ -43102,7 +43102,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
+"twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
   languageName: unknown
@@ -43185,7 +43185,6 @@ __metadata:
     react: "npm:^18.2.0"
     rimraf: "npm:^3.0.2"
     sharp: "npm:^0.32.1"
-    twenty-emails: "workspace:*"
     type-fest: "npm:^4.1.0"
     typeorm: "npm:^0.3.17"
   languageName: unknown
