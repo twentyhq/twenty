@@ -77,10 +77,6 @@ export const useOpenCreateActivityDrawerV2 = ({
     objectRecordId: currentWorkspaceMember?.id,
   });
 
-  // const { triggerOptimisticEffects } = useOptimisticEffect({
-  //   objectNameSingular: CoreObjectNameSingular.Activity,
-  // });
-
   const modifyActivityFromCache = useModifyRecordFromCache({
     objectMetadataItem: objectMetadataItemActivity,
   });
