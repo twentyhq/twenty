@@ -16,7 +16,9 @@ const StyledIconTableCell = styled(TableCell)`
 `;
 
 const StyledUrlTableCell = styled(TableCell)`
-  word-break: break-all;
+  color: ${({ theme }) => theme.font.color.primary};
+  overflow-x: scroll;
+  white-space: nowrap;
 `;
 
 const StyledIconChevronRight = styled(IconChevronRight)`
