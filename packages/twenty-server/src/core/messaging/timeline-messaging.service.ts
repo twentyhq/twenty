@@ -27,7 +27,15 @@ export class TimelineMessagingService {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    const messageThreads = await workspaceDataSource?.query(
+    const messageThreads:
+      | {
+          id: string;
+          lastMessageReceivedAt: Date;
+          lastMessageId: string;
+          lastMessageBody: string;
+          rowNumber: number;
+        }[]
+      | undefined = await workspaceDataSource?.query(
       `
       SELECT *
       FROM
@@ -62,11 +70,20 @@ export class TimelineMessagingService {
       [personIds, pageSize, offset],
     );
 
+    if (!messageThreads) {
+      return [];
+    }
+
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
     );
 
-    const threadSubjects = await workspaceDataSource?.query(
+    const threadSubjects:
+      | {
+          id: string;
+          subject: string;
+        }[]
+      | undefined = await workspaceDataSource?.query(
       `
       SELECT *
       FROM
@@ -92,7 +109,12 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
-    const numberOfMessagesInThread = await workspaceDataSource?.query(
+    const numberOfMessagesInThread:
+      | {
+          id: string;
+          numberOfMessagesInThread: number;
+        }[]
+      | undefined = await workspaceDataSource?.query(
       `
       SELECT
           "messageThread".id,
@@ -109,16 +131,26 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
-    const messageThreadsByMessageThreadId = messageThreads.reduce(
-      (messageThreadAcc, messageThread) => {
-        messageThreadAcc[messageThread.id] = messageThread;
+    const messageThreadsByMessageThreadId: {
+      [key: string]: {
+        id: string;
+        lastMessageReceivedAt: Date;
+        lastMessageBody: string;
+      };
+    } = messageThreads.reduce((messageThreadAcc, messageThread) => {
+      messageThreadAcc[messageThread.id] = messageThread;
 
-        return messageThreadAcc;
-      },
-      {},
-    );
+      return messageThreadAcc;
+    }, {});
 
-    const subjectsByMessageThreadId = threadSubjects.reduce(
+    const subjectsByMessageThreadId:
+      | {
+          [key: string]: {
+            id: string;
+            subject: string;
+          };
+        }
+      | undefined = threadSubjects?.reduce(
       (threadSubjectAcc, threadSubject) => {
         threadSubjectAcc[threadSubject.id] = threadSubject;
 
@@ -127,7 +159,14 @@ export class TimelineMessagingService {
       {},
     );
 
-    const numberOfMessagesByMessageThreadId = numberOfMessagesInThread.reduce(
+    const numberOfMessagesByMessageThreadId:
+      | {
+          [key: string]: {
+            id: string;
+            numberOfMessagesInThread: number;
+          };
+        }
+      | undefined = numberOfMessagesInThread?.reduce(
       (numberOfMessagesAcc, numberOfMessages) => {
         numberOfMessagesAcc[numberOfMessages.id] = numberOfMessages;
 
@@ -136,9 +175,25 @@ export class TimelineMessagingService {
       {},
     );
 
-    const threadMessagesFromActiveParticipants =
-      await workspaceDataSource?.query(
-        `
+    const threadMessagesFromActiveParticipants:
+      | {
+          id: string;
+          messageId: string;
+          receivedAt: Date;
+          body: string;
+          subject: string;
+          personId: string;
+          workspaceMemberId: string;
+          handle: string;
+          personFirstName: string;
+          personLastName: string;
+          personAvatarUrl: string;
+          workspaceMemberFirstName: string;
+          workspaceMemberLastName: string;
+          workspaceMemberAvatarUrl: string;
+        }[]
+      | undefined = await workspaceDataSource?.query(
+      `
       SELECT DISTINCT "messageThread".id,
         message.id AS "messageId",
         message."receivedAt",
@@ -168,17 +223,29 @@ export class TimelineMessagingService {
         ORDER BY
             message."receivedAt" DESC
         `,
-        [messageThreadIds],
-      );
+      [messageThreadIds],
+    );
 
     const threadParticipantsByThreadId = messageThreadIds.reduce(
       (messageThreadIdAcc, messageThreadId) => {
-        const threadMessages = threadMessagesFromActiveParticipants.filter(
+        const threadMessages = threadMessagesFromActiveParticipants?.filter(
           (threadMessage) => threadMessage.id === messageThreadId,
         );
 
-        const threadParticipants = threadMessages.reduce(
-          (threadMessageAcc, threadMessage) => {
+        const threadParticipants = threadMessages?.reduce(
+          (
+            threadMessageAcc,
+            threadMessage,
+          ): {
+            [key: string]: {
+              personId: string;
+              workspaceMemberId: string;
+              firstName: string;
+              lastName: string;
+              avatarUrl: string;
+              handle: string;
+            };
+          } => {
             const threadParticipant = threadMessageAcc[threadMessage.handle];
 
             if (!threadParticipant) {
@@ -203,7 +270,9 @@ export class TimelineMessagingService {
           {},
         );
 
-        messageThreadIdAcc[messageThreadId] = Object.values(threadParticipants);
+        messageThreadIdAcc[messageThreadId] = threadParticipants
+          ? Object.values(threadParticipants)
+          : [];
 
         return messageThreadIdAcc;
       },
@@ -224,11 +293,12 @@ export class TimelineMessagingService {
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
-      const threadSubject = subjectsByMessageThreadId[messageThreadId].subject;
+      const threadSubject =
+        subjectsByMessageThreadId?.[messageThreadId].subject ?? '';
 
       const numberOfMessages =
-        numberOfMessagesByMessageThreadId[messageThreadId]
-          .numberOfMessagesInThread;
+        numberOfMessagesByMessageThreadId?.[messageThreadId]
+          .numberOfMessagesInThread ?? 1;
 
       return {
         id: messageThreadId,
