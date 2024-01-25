@@ -513,8 +513,8 @@ export type TimelineThreadParticipant = {
   firstName: Scalars['String'];
   handle: Scalars['String'];
   lastName: Scalars['String'];
-  personId?: Maybe<Scalars['String']>;
-  workspaceMemberId?: Maybe<Scalars['String']>;
+  personId?: Maybe<Scalars['ID']>;
+  workspaceMemberId?: Maybe<Scalars['ID']>;
 };
 
 export type TransientToken = {
