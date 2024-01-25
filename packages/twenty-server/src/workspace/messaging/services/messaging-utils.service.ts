@@ -275,4 +275,19 @@ export class MessagingUtilsService {
       [historyId, connectedAccountId],
     );
   }
+
+  public async getMessageChannelMessages(
+    messageExternalIds: string[],
+    gmailMessageChannelId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    const existingMessageChannelMessage = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessage"
+      WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+      [messageExternalIds, gmailMessageChannelId],
+    );
+
+    return existingMessageChannelMessage;
+  }
 }
