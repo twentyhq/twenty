@@ -10,14 +10,14 @@
     "prebuild": "rimraf dist",
     "build": "yarn prebuild && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "set NODE_ENV=development && nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
+    "start": "NODE_ENV=development && nest start",
+    "start:dev": "nx start --watch",
+    "start:debug": "nx start:dev --debug",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:watch": "nx test --watch",
+    "test:cov": "nx test --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "./scripts/run-integration.sh",
     "typeorm": "npx ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
@@ -111,5 +111,14 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
+  },
+  "nx": {
+    "targets": {
+      "test:debug": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }
