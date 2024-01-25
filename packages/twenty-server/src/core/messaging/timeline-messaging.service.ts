@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
 import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
@@ -25,7 +26,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     personIds: string[],
     page: number = 1,
-    pageSize: number = 10,
+    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThread[]> {
     const offset = (page - 1) * 10;
 
@@ -356,7 +357,7 @@ export class TimelineMessagingService {
     workspaceId: string,
     companyId: string,
     page: number = 1,
-    pageSize: number = 10,
+    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
