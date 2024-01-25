@@ -4,6 +4,15 @@ import { TimelineThread } from 'src/core/messaging/timeline-messaging.resolver';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
+type TimelineThreadParticipant = {
+  personId: string;
+  workspaceMemberId: string;
+  firstName: string;
+  lastName: string;
+  avatarUrl: string;
+  handle: string;
+};
+
 @Injectable()
 export class TimelineMessagingService {
   constructor(
@@ -226,70 +235,81 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
-    const threadParticipantsByThreadId = messageThreadIds.reduce(
-      (messageThreadIdAcc, messageThreadId) => {
-        const threadMessages = threadMessagesFromActiveParticipants?.filter(
-          (threadMessage) => threadMessage.id === messageThreadId,
-        );
+    const threadParticipantsByThreadId: {
+      [key: string]: TimelineThreadParticipant[];
+    } = messageThreadIds.reduce((messageThreadIdAcc, messageThreadId) => {
+      const threadMessages = threadMessagesFromActiveParticipants?.filter(
+        (threadMessage) => threadMessage.id === messageThreadId,
+      );
 
-        const threadParticipants = threadMessages?.reduce(
-          (
-            threadMessageAcc,
-            threadMessage,
-          ): {
-            [key: string]: {
-              personId: string;
-              workspaceMemberId: string;
-              firstName: string;
-              lastName: string;
-              avatarUrl: string;
-              handle: string;
+      const threadParticipants = threadMessages?.reduce(
+        (
+          threadMessageAcc,
+          threadMessage,
+        ): {
+          [key: string]: TimelineThreadParticipant;
+        } => {
+          const threadParticipant = threadMessageAcc[threadMessage.handle];
+
+          if (!threadParticipant) {
+            threadMessageAcc[threadMessage.handle] = {
+              personId: threadMessage.personId,
+              workspaceMemberId: threadMessage.workspaceMemberId,
+              firstName:
+                threadMessage.personFirstName ??
+                threadMessage.workspaceMemberFirstName,
+              lastName:
+                threadMessage.personLastName ??
+                threadMessage.workspaceMemberLastName,
+              avatarUrl:
+                threadMessage.personAvatarUrl ??
+                threadMessage.workspaceMemberAvatarUrl,
+              handle: threadMessage.handle,
             };
-          } => {
-            const threadParticipant = threadMessageAcc[threadMessage.handle];
+          }
 
-            if (!threadParticipant) {
-              threadMessageAcc[threadMessage.handle] = {
-                personId: threadMessage.personId,
-                workspaceMemberId: threadMessage.workspaceMemberId,
-                firstName:
-                  threadMessage.personFirstName ??
-                  threadMessage.workspaceMemberFirstName,
-                lastName:
-                  threadMessage.personLastName ??
-                  threadMessage.workspaceMemberLastName,
-                avatarUrl:
-                  threadMessage.personAvatarUrl ??
-                  threadMessage.workspaceMemberAvatarUrl,
-                handle: threadMessage.handle,
-              };
-            }
+          return threadMessageAcc;
+        },
+        {},
+      );
 
-            return threadMessageAcc;
-          },
-          {},
-        );
+      messageThreadIdAcc[messageThreadId] = threadParticipants
+        ? Object.values(threadParticipants)
+        : [];
 
-        messageThreadIdAcc[messageThreadId] = threadParticipants
-          ? Object.values(threadParticipants)
-          : [];
-
-        return messageThreadIdAcc;
-      },
-      {},
-    );
+      return messageThreadIdAcc;
+    }, {});
 
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
       const firstParticipant = threadParticipants[0];
 
-      const lastTwoParticipants = threadParticipants
-        .filter(
+      const threadParticipantsWithoutFirstParticipant =
+        threadParticipants.filter(
           (threadParticipant) =>
             threadParticipant.handle !== firstParticipant.handle,
-        )
-        .slice(-2);
+        );
+
+      const lastTwoParticipants: TimelineThreadParticipant[] = [];
+
+      const lastParticipant =
+        threadParticipantsWithoutFirstParticipant.slice(-1)[0];
+
+      if (lastParticipant) {
+        lastTwoParticipants.push(lastParticipant);
+
+        const threadParticipantsWithoutFirstAndLastParticipants =
+          threadParticipantsWithoutFirstParticipant.filter(
+            (threadParticipant) =>
+              threadParticipant.handle !== lastParticipant.handle,
+          );
+
+        if (threadParticipantsWithoutFirstAndLastParticipants.length > 0)
+          lastTwoParticipants.push(
+            threadParticipantsWithoutFirstAndLastParticipants.slice(-1)[0],
+          );
+      }
 
       const thread = messageThreadsByMessageThreadId[messageThreadId];
 
