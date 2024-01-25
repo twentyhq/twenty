@@ -88,13 +88,17 @@ export const EmailThreadPreview = ({
   thread,
   onClick,
 }: EmailThreadPreviewProps) => {
-  const displayName =
-    thread.firstParticipant.firstName || thread.firstParticipant.handle;
   return (
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
-        <StyledAvatar avatarUrl={''} placeholder={displayName} type="rounded" />
-        <StyledSenderName>{displayName}</StyledSenderName>
+        <StyledAvatar
+          avatarUrl={''}
+          placeholder={thread.firstParticipant.displayName}
+          type="rounded"
+        />
+        <StyledSenderName>
+          {thread.firstParticipant.displayName}
+        </StyledSenderName>
         <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
       </StyledHeading>
 
