@@ -29,6 +29,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -40,6 +41,7 @@ const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
   align-items: center;
   display: flex;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${() => (useIsMobile() ? '0 12px' : 'unset')};
 
   ${({ isDropdownOpen, theme }) =>
     isDropdownOpen
@@ -139,7 +141,6 @@ export const RecordRelationFieldCardSection = () => {
     ],
     orderByField: 'createdAt',
     selectedIds: relationRecordIds,
-    excludeEntityIds: relationRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 

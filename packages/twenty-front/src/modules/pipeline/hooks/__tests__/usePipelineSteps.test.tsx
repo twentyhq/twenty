@@ -4,7 +4,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
-import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 
 import {

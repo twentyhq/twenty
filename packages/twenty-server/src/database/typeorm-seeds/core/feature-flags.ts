@@ -16,17 +16,7 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsRelationFieldTypeEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsMessagingEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsSelectFieldTypeEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -37,11 +27,6 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKeys.IsWorkspaceCleanable,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: 'IS_RELATION_FIELD_CARD_ENABLED',
         workspaceId: workspaceId,
         value: true,
       },

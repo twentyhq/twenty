@@ -57,12 +57,13 @@ import TabItem from '@theme/TabItem';
     ['AUTH_GOOGLE_CALLBACK_URL', '', 'Google auth callback'],
     ['FRONT_AUTH_CALLBACK_URL', 'http://localhost:3001/verify ', 'Callback used for Login page'],
     ['IS_SIGN_UP_DISABLED', 'false', 'Disable sign-up'],
+    ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
     ]}></OptionTable>
 
 ### Email
 
 <OptionTable options={[
-    ['EMAIL_FROM_ADDRESS', 'noreply@yourdomain.com', 'Global email From: header used to send emails'],
+    ['EMAIL_FROM_ADDRESS', 'contact@yourdomain.com', 'Global email From: header used to send emails'],
     ['EMAIL_FROM_NAME', 'John from YourDomain', 'Global name From: header used to send emails'],
     ['EMAIL_SYSTEM_ADDRESS', 'system@yourdomain.com', 'Email address used as a destination to send internal system notification'],
     ['EMAIL_DRIVER', 'logger', "Email driver: 'logger' (to log emails in console) or 'smtp'"],

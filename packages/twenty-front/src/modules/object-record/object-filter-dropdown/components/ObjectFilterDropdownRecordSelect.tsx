@@ -3,7 +3,7 @@ import { MultipleRecordSelectDropdown } from '@/object-record/select/components/
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 
-export const EMPTY_FILTER_VALUE = '';
+export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
 export const ObjectFilterDropdownRecordSelect = () => {
@@ -14,6 +14,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIds,
     selectFilter,
+    emptyFilterButKeepDefinition,
   } = useFilterDropdown();
 
   const objectNameSingular =
@@ -40,6 +41,11 @@ export const ObjectFilterDropdownRecordSelect = () => {
       : objectFilterDropdownSelectedRecordIds.filter(
           (id) => id !== recordToSelect.id,
         );
+
+    if (newSelectedRecordIds.length === 0) {
+      emptyFilterButKeepDefinition();
+      return;
+    }
 
     setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
 

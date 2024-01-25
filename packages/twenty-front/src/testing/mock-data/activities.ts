@@ -212,7 +212,7 @@ export const mockedActivities: Array<MockedActivity> = [
   },
 ];
 
-export const mockedThreads: TimelineThread[] = [
+export const mockedEmailThreads: TimelineThread[] = [
   {
     body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim nisi eu tellus dapibus, egestas placerat risus placerat. Praesent eget arcu consectetur, efficitur felis.',
     numberOfMessagesInThread: 4,
