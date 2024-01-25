@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { Avatar } from '@/users/components/Avatar';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -32,26 +36,42 @@ const StyledThreadMessageSentAt = styled.div`
 `;
 
 type EmailThreadMessageSenderProps = {
-  displayName: string;
-  avatarUrl: string;
+  sender: EmailThreadMessageParticipant;
   sentAt: string;
 };
 
 export const EmailThreadMessageSender = ({
-  displayName,
-  avatarUrl,
+  sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
+  const { person, workspaceMember } = sender;
+
+  const displayName = getDisplayNameFromParticipant({
+    participant: sender,
+    shouldUseFullName: true,
+  });
+
+  const avatarUrl = person?.avatarUrl ?? workspaceMember?.avatarUrl ?? '';
+
   return (
     <StyledEmailThreadMessageSender>
       <StyledEmailThreadMessageSenderUser>
-        <StyledAvatar
-          avatarUrl={avatarUrl}
-          type="rounded"
-          placeholder={displayName}
-          size="sm"
-        />
-        <StyledSenderName>{displayName}</StyledSenderName>
+        {person ? (
+          <RecordChip
+            objectNameSingular={CoreObjectNameSingular.Person}
+            record={person}
+          />
+        ) : (
+          <>
+            <StyledAvatar
+              avatarUrl={avatarUrl}
+              type="rounded"
+              placeholder={displayName}
+              size="sm"
+            />
+            <StyledSenderName>{displayName}</StyledSenderName>
+          </>
+        )}
       </StyledEmailThreadMessageSenderUser>
       <StyledThreadMessageSentAt>
         {beautifyPastDateRelativeToNow(sentAt)}
