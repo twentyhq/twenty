@@ -79,6 +79,7 @@
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
     "lodash.kebabcase": "^4.1.1",
+    "lodash.omit": "^4.5.0",
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
     "mailparser": "^3.6.5",
@@ -102,6 +103,7 @@
   "devDependencies": {
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isobject": "^3.0.7",
+    "@types/lodash.omit": "^4.5.9",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
@@ -111,8 +113,5 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
-  },
-  "devDependencies": {
-    "@types/lodash.omit": "^4.5.9"
   }
 }
