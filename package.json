@@ -222,7 +222,6 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@typescript-eslint/utils": "^6.9.1",
-    "@vitejs/plugin-react": "^4.2.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.0.1",
