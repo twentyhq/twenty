@@ -30,16 +30,16 @@ type EmailThreadMessageProps = {
 const getDisplayNameFromParticipant = (
   participant: EmailThreadMessageParticipant,
 ) => {
-  if (participant.displayName) {
-    return participant.displayName;
-  }
-
   if (participant.person) {
     return `${participant.person?.name?.firstName} ${participant.person?.name?.lastName}`;
   }
 
   if (participant.workspaceMember) {
     return `${participant.workspaceMember?.name?.firstName} ${participant.workspaceMember?.name?.lastName}`;
+  }
+
+  if (participant.displayName) {
+    return participant.displayName;
   }
 
   if (participant.handle) {
