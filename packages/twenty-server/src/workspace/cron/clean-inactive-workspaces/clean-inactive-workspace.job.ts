@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
 import { In, Repository } from 'typeorm';
-import { CleanInactiveWorkspaceEmail } from 'twenty-emails';
+import {
+  CleanInactiveWorkspaceEmail,
+  DeleteInactiveWorkspaceEmail,
+} from 'twenty-emails';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
