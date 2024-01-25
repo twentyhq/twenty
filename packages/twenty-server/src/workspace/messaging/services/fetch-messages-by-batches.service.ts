@@ -200,15 +200,18 @@ export class FetchMessagesByBatchesService {
 
           let textWithoutReplyQuotation = text;
 
-          try {
-            if (text)
+          if (text)
+            try {
               textWithoutReplyQuotation = planer.extractFrom(
                 text,
                 'text/plain',
               );
-          } catch (error) {
-            console.log('Error while trying to remove reply quotations', error);
-          }
+            } catch (error) {
+              console.log(
+                'Error while trying to remove reply quotations',
+                error,
+              );
+            }
 
           const messageFromGmail: GmailMessage = {
             historyId,
