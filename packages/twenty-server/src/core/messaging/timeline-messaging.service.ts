@@ -349,8 +349,6 @@ export class TimelineMessagingService {
       };
     });
 
-    console.log(timelineThreads);
-
     return timelineThreads;
   }
 
