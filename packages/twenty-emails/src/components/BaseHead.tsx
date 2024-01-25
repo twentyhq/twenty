@@ -1,6 +1,5 @@
 import { Font, Head } from '@react-email/components';
-
-import { emailTheme } from '../common-style';
+import { emailTheme } from 'src/common-style';
 
 export const BaseHead = () => {
   return (

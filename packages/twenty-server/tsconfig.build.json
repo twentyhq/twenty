@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "twenty-emails": ["../twenty-emails/dist/index.js"]
+    }
+  },
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

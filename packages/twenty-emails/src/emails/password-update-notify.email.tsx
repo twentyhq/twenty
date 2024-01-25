@@ -1,9 +1,8 @@
 import { format } from 'date-fns';
-
-import { BaseEmail } from '../components/BaseEmail';
-import { CallToAction } from '../components/CallToAction';
-import { MainText } from '../components/MainText';
-import { Title } from '../components/Title';
+import { BaseEmail } from 'src/components/BaseEmail';
+import { CallToAction } from 'src/components/CallToAction';
+import { MainText } from 'src/components/MainText';
+import { Title } from 'src/components/Title';
 
 type PasswordUpdateNotifyEmailProps = {
   userName: string;

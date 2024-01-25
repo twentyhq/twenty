@@ -1,8 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { Container, Html } from '@react-email/components';
-
-import { BaseHead } from './BaseHead';
-import { Logo } from './Logo';
+import { BaseHead } from 'src/components/BaseHead';
+import { Logo } from 'src/components/Logo';
 
 type BaseEmailProps = PropsWithChildren<{
   width?: number;

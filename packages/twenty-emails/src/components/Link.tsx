@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Link as EmailLink } from '@react-email/components';
-
-import { emailTheme } from '../common-style';
+import { emailTheme } from 'src/common-style';
 
 const linkStyle = {
   color: emailTheme.font.colors.tertiary,

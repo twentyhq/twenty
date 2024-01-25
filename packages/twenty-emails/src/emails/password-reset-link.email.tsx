@@ -1,8 +1,8 @@
-import { BaseEmail } from '../components/BaseEmail';
-import { CallToAction } from '../components/CallToAction';
-import { Link } from '../components/Link';
-import { MainText } from '../components/MainText';
-import { Title } from '../components/Title';
+import { BaseEmail } from 'src/components/BaseEmail';
+import { CallToAction } from 'src/components/CallToAction';
+import { Link } from 'src/components/Link';
+import { MainText } from 'src/components/MainText';
+import { Title } from 'src/components/Title';
 
 type PasswordResetLinkEmailProps = {
   duration: string;

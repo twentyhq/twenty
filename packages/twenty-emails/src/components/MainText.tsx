@@ -1,7 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { Text } from '@react-email/text';
-
-import { emailTheme } from '../common-style';
+import { emailTheme } from 'src/common-style';
 
 const mainTextStyle = {
   fontSize: emailTheme.font.size.md,

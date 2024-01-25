@@ -8,7 +8,7 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "prebuild": "rimraf dist",
-    "build": "yarn prebuild && nest build",
+    "build": "yarn prebuild && nest build --path ./tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_ENV=development && nest start",
     "start:dev": "nx start --watch",

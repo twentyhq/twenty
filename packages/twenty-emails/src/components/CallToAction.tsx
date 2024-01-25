@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Button } from '@react-email/button';
-
-import { emailTheme } from '../common-style';
+import { emailTheme } from 'src/common-style';
 
 const callToActionStyle = {
   display: 'flex',
