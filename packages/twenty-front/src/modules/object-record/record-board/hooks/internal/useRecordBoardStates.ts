@@ -17,11 +17,11 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
   return {
     scopeId,
     getColumnIdsState: getState(recordBoardColumnIdsStateScopeMap, scopeId),
-    isLastColumnFamilyState: getFamilyState(
+    isFirstColumnFamilyState: getFamilyState(
       isFirstRecordBoardColumnFamilyStateScopeMap,
       scopeId,
     ),
-    isFirstColumnFamilyState: getFamilyState(
+    isLastColumnFamilyState: getFamilyState(
       isLastRecordBoardColumnFamilyStateScopeMap,
       scopeId,
     ),
