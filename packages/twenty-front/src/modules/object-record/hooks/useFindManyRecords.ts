@@ -32,11 +32,13 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,
+  depth,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
     onCompleted?: (data: ObjectRecordConnection<T>) => void;
     skip?: boolean;
     useRecordsWithoutConnection?: boolean;
+    depth?: number;
   }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -56,9 +58,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+    depth,
+  );
 
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

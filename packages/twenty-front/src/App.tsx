@@ -10,6 +10,7 @@ import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
@@ -59,6 +60,7 @@ export const App = () => {
           <Route path={AppPath.SignIn} element={<SignInUp />} />
           <Route path={AppPath.SignUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />

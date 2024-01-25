@@ -495,6 +495,8 @@ export type User = {
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
   passwordHash?: Maybe<Scalars['String']['output']>;
+  passwordResetToken?: Maybe<Scalars['String']['output']>;
+  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember: WorkspaceMember;
