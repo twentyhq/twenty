@@ -13,6 +13,7 @@
   "devDependencies": {
     "@react-email/components": "0.0.12",
     "@types/react": "^18.2.39",
+    "date-fns": "^2.30.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
