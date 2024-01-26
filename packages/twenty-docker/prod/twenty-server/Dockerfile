@@ -13,6 +13,8 @@ COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn workspaces focus twenty-emails twenty-server
 RUN npx nx run twenty-server:build
 
+WORKDIR /app/packages/twenty-server
+
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
 

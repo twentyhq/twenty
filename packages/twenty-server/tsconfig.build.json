@@ -4,8 +4,8 @@
     "rootDir": ".",
     "paths": {
       "src/*": ["packages/twenty-server/src/*"]
-    }
+    },
+    "types": ["node"]
   },
-  "include": ["@types/**/*", "src/**/*"],
-  "exclude": ["node_modules", "src/**/*spec.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
