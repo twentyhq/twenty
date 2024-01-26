@@ -24,6 +24,7 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
   return selectFieldMetadataItem.options.map((selectOption) => ({
     id: selectOption.id,
     title: selectOption.label,
+    value: selectOption.value,
     color: selectOption.color,
     position: selectOption.position,
     actions: [

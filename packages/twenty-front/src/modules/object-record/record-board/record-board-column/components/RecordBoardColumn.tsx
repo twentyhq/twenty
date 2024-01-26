@@ -33,6 +33,7 @@ export const RecordBoardColumn = ({
     isFirstColumnFamilyState,
     isLastColumnFamilyState,
     columnsFamilySelector,
+    recordBoardRecordIdsByColumnIdFamilyState,
   } = useRecordBoardStates();
   const columnDefinition = useRecoilValue(
     columnsFamilySelector(recordBoardColumnId),
@@ -46,7 +47,11 @@ export const RecordBoardColumn = ({
     isLastColumnFamilyState(recordBoardColumnId),
   );
 
-  if (!columnDefinition) {
+  const recordIds = useRecoilValue(
+    recordBoardRecordIdsByColumnIdFamilyState(recordBoardColumnId),
+  );
+
+  if (!columnDefinition || !recordIds) {
     return null;
   }
 
@@ -65,11 +70,10 @@ export const RecordBoardColumn = ({
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
             >
-              {[].map((cardId, _index) => (
-                <BoardCardIdContext.Provider
-                  value={cardId}
-                  key={cardId}
-                ></BoardCardIdContext.Provider>
+              {recordIds.map((recordId) => (
+                <BoardCardIdContext.Provider value={recordId} key={recordId}>
+                  <div>Card</div>
+                </BoardCardIdContext.Provider>
               ))}
             </RecordBoardColumnCardsContainer>
           </StyledColumn>
