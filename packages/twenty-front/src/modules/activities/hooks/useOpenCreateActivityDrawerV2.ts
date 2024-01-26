@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
+import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
@@ -17,9 +18,9 @@ import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRec
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { createRecordConnectionFromEdges } from '@/object-record/utils/createRecordConnectionFromEdges';
-import { createRecordConnectionFromRecords } from '@/object-record/utils/createRecordConnectionFromRecords';
-import { createRecordEdgeFromRecord } from '@/object-record/utils/createRecordEdgeFromRecord';
+import { getRecordConnectionFromEdges } from '@/object-record/utils/getRecordConnectionFromEdges';
+import { getRecordConnectionFromRecords } from '@/object-record/utils/getRecordConnectionFromRecords';
+import { getRecordEdgeFromRecord } from '@/object-record/utils/getRecordEdgeFromRecord';
 import { getRecordsFromRecordConnection } from '@/object-record/utils/getRecordsFromRecordConnection';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -113,13 +114,13 @@ export const useOpenCreateActivityDrawerV2 = ({
         return;
       }
 
-      const flattenedTargetableObjects = targetableObjects
+      const activityTargetableObjects = targetableObjects
         ? flattenTargetableObjectsAndTheirRelatedTargetableObjects(
             targetableObjects,
           )
         : [];
 
-      const activityTargetsToCreate = flattenedTargetableObjects.map(
+      const activityTargetsToCreate = activityTargetableObjects.map(
         (targetableObject) => {
           const targetableObjectFieldIdName =
             getActivityTargetObjectFieldIdName({
@@ -140,19 +141,17 @@ export const useOpenCreateActivityDrawerV2 = ({
         await createManyActivityTargetsInCache(activityTargetsToCreate);
 
       const newActivityTargetEdgesForCache = createdActivityTargetsInCache.map(
-        (createdActivityTarget) => {
-          return createRecordEdgeFromRecord({
+        (createdActivityTarget) =>
+          getRecordEdgeFromRecord({
             objectNameSingular: CoreObjectNameSingular.ActivityTarget,
             record: createdActivityTarget,
-          });
-        },
+          }),
       );
 
-      const newActivityTargetConnectionInCache =
-        createRecordConnectionFromEdges({
-          objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-          edges: newActivityTargetEdgesForCache,
-        });
+      const newActivityTargetConnectionForCache = getRecordConnectionFromEdges({
+        objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+        edges: newActivityTargetEdgesForCache,
+      });
 
       // Those requests are not mounted yet, so triggering optimistic effect here would be useless
       apolloClient.writeQuery({
@@ -166,7 +165,7 @@ export const useOpenCreateActivityDrawerV2 = ({
         },
         data: {
           [objectMetadataItemActivityTarget.namePlural]:
-            newActivityTargetConnectionInCache,
+            newActivityTargetConnectionForCache,
         },
       });
 
@@ -205,24 +204,20 @@ export const useOpenCreateActivityDrawerV2 = ({
 
       const newActivityIds = newActivities.map((activity) => activity.id);
 
-      const newActivityConnectionForCache = createRecordConnectionFromRecords({
+      const newActivityConnectionForCache = getRecordConnectionFromRecords({
         objectNameSingular: CoreObjectNameSingular.Activity,
         records: newActivities,
       });
 
+      const timelineActivitiesQueryVariables =
+        makeTimelineActivitiesQueryVariables({
+          activityIds: newActivityIds,
+        });
+
       // Inject query for timeline findManyActivities before it gets mounted
       apolloClient.writeQuery({
         query: findManyActivitiesQuery,
-        variables: {
-          filter: {
-            id: {
-              in: newActivityIds,
-            },
-          },
-          orderBy: {
-            createdAt: 'AscNullsFirst',
-          },
-        },
+        variables: timelineActivitiesQueryVariables,
         data: {
           [objectMetadataItemActivity.namePlural]:
             newActivityConnectionForCache,
@@ -261,7 +256,7 @@ export const useOpenCreateActivityDrawerV2 = ({
         ...createdActivityTargetsInCache,
       ];
 
-      const newActivityTargetsConnection = createRecordConnectionFromRecords({
+      const newActivityTargetsConnection = getRecordConnectionFromRecords({
         objectNameSingular: CoreObjectNameSingular.ActivityTarget,
         records: newActivityTargetsForTargetableObject,
       });

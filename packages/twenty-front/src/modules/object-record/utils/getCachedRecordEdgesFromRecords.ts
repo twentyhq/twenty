@@ -1,9 +1,9 @@
 import { makeReference, useApolloClient } from '@apollo/client';
 
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from '~/utils/string/capitalize';
+import { getCachedRecordFromRecord } from '@/object-record/utils/getCachedRecordFromRecord';
+import { getEdgeTypename } from '@/object-record/utils/getEdgeTypename';
 
 export const useGetCachedRecordEdgesFromRecords = <T extends ObjectRecord>({
   objectNameSingular,
@@ -11,16 +11,16 @@ export const useGetCachedRecordEdgesFromRecords = <T extends ObjectRecord>({
 }: {
   objectNameSingular: string;
   records: T[];
-}): CachedObjectRecordEdge<T>[] => {
+}): CachedObjectRecordEdge[] => {
   const apolloClient = useApolloClient();
 
-  const cachedObjectRecords = records.map((record) => ({
-    __typename: capitalize(objectNameSingular),
-    ...record,
-  })) as CachedObjectRecord<T>[];
+  const cachedRecordEdges = records.map((record) => {
+    const cachedRecord = getCachedRecordFromRecord({
+      objectNameSingular,
+      record,
+    });
 
-  const objectRecordsAsReferences = cachedObjectRecords.map((record) => {
-    const id = apolloClient.cache.identify(record);
+    const id = apolloClient.cache.identify(cachedRecord);
 
     if (!id) {
       throw new Error(
@@ -28,17 +28,16 @@ export const useGetCachedRecordEdgesFromRecords = <T extends ObjectRecord>({
       );
     }
 
-    return makeReference(id);
-  });
+    const reference = makeReference(id);
 
-  const cachedRecordEdges = objectRecordsAsReferences.map(
-    (objectRecordAsReference) =>
-      ({
-        __typename: `${capitalize(objectNameSingular)}Edge`,
-        cursor: '',
-        node: objectRecordAsReference,
-      }) as CachedObjectRecordEdge<T>,
-  );
+    const cachedObjectRecordEdge: CachedObjectRecordEdge = {
+      cursor: '',
+      node: reference,
+      __typename: getEdgeTypename({ objectNameSingular }),
+    };
+
+    return cachedObjectRecordEdge;
+  });
 
   return cachedRecordEdges;
 };

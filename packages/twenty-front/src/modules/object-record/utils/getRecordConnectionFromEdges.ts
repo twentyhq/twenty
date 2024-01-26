@@ -1,9 +1,10 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-import { capitalize } from '~/utils/string/capitalize';
+import { getConnectionTypename } from '@/object-record/utils/getConnectionTypename';
+import { getEmptyPageInfo } from '@/object-record/utils/getEmptyPageInfo';
 
-export const createRecordConnectionFromEdges = <T extends ObjectRecord>({
+export const getRecordConnectionFromEdges = <T extends ObjectRecord>({
   objectNameSingular,
   edges,
 }: {
@@ -11,14 +12,8 @@ export const createRecordConnectionFromEdges = <T extends ObjectRecord>({
   edges: ObjectRecordEdge<T>[];
 }) => {
   return {
-    __typename: `${capitalize(objectNameSingular)}Connection`,
+    __typename: getConnectionTypename({ objectNameSingular }),
     edges: edges,
-    pageInfo: {
-      __typename: 'PageInfo',
-      hasNextPage: false,
-      hasPreviousPage: false,
-      startCursor: '',
-      endCursor: '',
-    },
+    pageInfo: getEmptyPageInfo(),
   } as ObjectRecordConnection<T>;
 };

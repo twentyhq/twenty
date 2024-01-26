@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -57,45 +50,13 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activityTargets, loadingActivityTargets } = useActivityTargets({
+  const { activities, loading, initialized } = useTimelineActivities({
     targetableObject,
   });
 
-  const [initialized, setInitialized] = useState(false);
-  const [activitiesForDisplay, setActivitiesForDisplay] = useState<
-    ObjectRecord[]
-  >([]);
-
-  const { records: activities, loading: loadingActivities } =
-    useFindManyRecords({
-      skip: !isNonEmptyArray(activityTargets) || loadingActivityTargets,
-      objectNameSingular: CoreObjectNameSingular.Activity,
-      filter: {
-        id: {
-          in: activityTargets
-            ?.map((activityTarget) => activityTarget.activityId)
-            .filter(isNonEmptyString),
-        },
-      },
-      orderBy: {
-        createdAt: 'AscNullsFirst',
-      },
-      onCompleted: (data: ObjectRecordConnection) => {
-        setActivitiesForDisplay(data?.edges.map((edge) => edge.node) ?? []);
-        setInitialized(true);
-      },
-    });
-
-  useEffect(() => {
-    if (!loadingActivities) {
-      setActivitiesForDisplay(activities);
-    }
-  }, [activities, loadingActivities]);
-
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const showEmptyState =
-    !loadingActivities && activitiesForDisplay.length === 0;
+  const showEmptyState = !loading && activities.length === 0;
 
   const showLoadingState = !initialized;
 
@@ -129,7 +90,7 @@ export const Timeline = ({
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activitiesForDisplay as Activity[]} />
+      <TimelineItemsContainer activities={activities} />
     </StyledMainContainer>
   );
 };
