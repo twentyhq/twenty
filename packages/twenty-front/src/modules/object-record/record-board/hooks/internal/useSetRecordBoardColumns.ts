@@ -8,7 +8,7 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
   const { scopeId, getColumnIdsState, columnsFamilySelector } =
     useRecordBoardStates(recordBoardId);
 
-  const setRecordBoardColumns = useRecoilCallback(
+  const setColumns = useRecoilCallback(
     ({ set, snapshot }) =>
       (columns: RecordBoardColumnDefinition[]) => {
         const currentColumnsIds = snapshot
@@ -43,6 +43,6 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
 
   return {
     scopeId,
-    setRecordBoardColumns,
+    setColumns,
   };
 };

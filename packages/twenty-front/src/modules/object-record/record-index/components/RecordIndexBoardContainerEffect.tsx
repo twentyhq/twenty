@@ -2,38 +2,36 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
 
 type RecordIndexBoardContainerEffectProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
   recordBoardId: string;
   viewBarId: string;
 };
 
 export const RecordIndexBoardContainerEffect = ({
-  objectNamePlural,
+  objectNameSingular,
   recordBoardId,
 }: RecordIndexBoardContainerEffectProps) => {
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
+  useLoadRecordIndexBoard(objectNameSingular, recordBoardId);
+
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${objectNamePlural}`);
-  }, [navigate, objectNamePlural]);
+    navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
+  }, [navigate, objectMetadataItem.namePlural]);
 
-  const { setRecordBoardColumns } = useRecordBoard(recordBoardId);
+  const { setColumns } = useRecordBoard(recordBoardId);
 
   useEffect(() => {
-    setRecordBoardColumns(
+    setColumns(
       computeRecordBoardColumnDefinitionsFromObjectMetadata(
         objectMetadataItem,
         navigateToSelectSettings,
@@ -43,7 +41,7 @@ export const RecordIndexBoardContainerEffect = ({
     navigateToSelectSettings,
     objectMetadataItem,
     objectNameSingular,
-    setRecordBoardColumns,
+    setColumns,
   ]);
 
   return <></>;

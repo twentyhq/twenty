@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { DragDropContext } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilValue } from 'recoil';
 
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -40,7 +40,7 @@ const StyledBoardHeader = styled.div`
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { getColumnIdsState } = useRecordBoard(recordBoardId);
+  const { getColumnIdsState } = useRecordBoardStates(recordBoardId);
 
   const columnIds = useRecoilValue(getColumnIdsState());
 

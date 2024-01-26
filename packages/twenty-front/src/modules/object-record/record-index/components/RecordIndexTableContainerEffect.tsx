@@ -2,20 +2,19 @@ import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 type RecordIndexTableContainerEffectProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
   recordTableId: string;
   viewBarId: string;
 };
 
 export const RecordIndexTableContainerEffect = ({
-  objectNamePlural,
+  objectNameSingular,
   recordTableId,
   viewBarId,
 }: RecordIndexTableContainerEffectProps) => {
@@ -24,10 +23,6 @@ export const RecordIndexTableContainerEffect = ({
     setOnEntityCountChange,
     setObjectMetadataConfig,
   } = useRecordTable({ recordTableId });
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
 
   const {
     objectMetadataItem,
@@ -74,7 +69,7 @@ export const RecordIndexTableContainerEffect = ({
 
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries({
-      objectNamePlural,
+      objectNamePlural: objectMetadataItem.namePlural,
       recordTableId,
     });
 
