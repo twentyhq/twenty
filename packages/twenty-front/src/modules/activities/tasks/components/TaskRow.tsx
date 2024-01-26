@@ -16,11 +16,16 @@ import { useCompleteTask } from '../hooks/useCompleteTask';
 const StyledContainer = styled.div`
   align-items: center;
   align-self: stretch;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
   display: inline-flex;
   height: ${({ theme }) => theme.spacing(12)};
   min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
+
+  &:last-child {
+    border-bottom: 0;
+  }
 `;
 
 const StyledTaskBody = styled.div`
