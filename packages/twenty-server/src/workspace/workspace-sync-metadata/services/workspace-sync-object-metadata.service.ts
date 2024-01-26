@@ -121,8 +121,6 @@ export class WorkspaceSyncObjectMetadataService {
       }
     }
 
-    fs.writeFile('./storage.json', JSON.stringify(storage, null, 2));
-
     this.logger.log('Updating workspace metadata');
 
     // Apply changes to DB
