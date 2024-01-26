@@ -12,6 +12,7 @@ import {
   H1Title,
   H1TitleFontColor,
 } from '@/ui/display/typography/components/H1Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TimelineThread } from '~/generated/graphql';
@@ -39,6 +40,8 @@ export const EmailThreads = ({
 }) => {
   const { openEmailThread } = useEmailThread();
 
+  const { enqueueSnackBar } = useSnackBar();
+
   const threadQuery =
     entity.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? getTimelineThreadsFromPersonId
@@ -56,16 +59,22 @@ export const EmailThreads = ({
     variables: threadQueryVariables,
   });
 
+  if (threads.error) {
+    enqueueSnackBar(threads.error.message || 'Error loading email threads', {
+      variant: 'error',
+    });
+  }
+
   if (threads.loading) {
     return;
   }
 
   const timelineThreads: TimelineThread[] =
-    threads.data[
+    threads?.data?.[
       entity.targetObjectNameSingular === CoreObjectNameSingular.Person
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
-    ];
+    ] ?? [];
 
   return (
     <StyledContainer>
@@ -80,15 +89,14 @@ export const EmailThreads = ({
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads &&
-            timelineThreads.map((thread: TimelineThread, index: number) => (
-              <EmailThreadPreview
-                key={index}
-                divider={index < timelineThreads.length - 1}
-                thread={thread}
-                onClick={() => openEmailThread(thread)}
-              />
-            ))}
+          {timelineThreads.map((thread: TimelineThread, index: number) => (
+            <EmailThreadPreview
+              key={index}
+              divider={index < timelineThreads.length - 1}
+              thread={thread}
+              onClick={() => openEmailThread(thread)}
+            />
+          ))}
         </Card>
       </Section>
     </StyledContainer>
