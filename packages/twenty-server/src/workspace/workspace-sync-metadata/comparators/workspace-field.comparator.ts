@@ -149,18 +149,16 @@ export class WorkspaceFieldComparator {
       }
     }
 
-    if (Object.keys(fieldPropertiesToUpdateMap).length > 0) {
-      for (const [id, fieldPropertiesToUpdate] of Object.entries(
-        fieldPropertiesToUpdateMap,
-      )) {
-        result.push({
-          action: ComparatorAction.UPDATE,
-          object: {
-            id,
-            ...fieldPropertiesToUpdate,
-          },
-        });
-      }
+    for (const [id, fieldPropertiesToUpdate] of Object.entries(
+      fieldPropertiesToUpdateMap,
+    )) {
+      result.push({
+        action: ComparatorAction.UPDATE,
+        object: {
+          id,
+          ...fieldPropertiesToUpdate,
+        },
+      });
     }
 
     return result;
