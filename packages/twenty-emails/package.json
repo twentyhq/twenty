@@ -5,7 +5,7 @@
   "author": "",
   "private": true,
   "license": "AGPL-3.0",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
     "build": "vite build",

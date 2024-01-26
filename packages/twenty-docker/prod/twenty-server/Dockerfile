@@ -6,17 +6,12 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./tsconfig.base.json .
+COPY ./nx.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
-
-WORKDIR /app/packages/twenty-emails
-RUN yarn workspaces focus
-RUN yarn build
-
-WORKDIR /app/packages/twenty-server
-RUN yarn workspaces focus
-RUN yarn build
+RUN yarn workspaces focus twenty-emails twenty-server
+RUN npx nx run twenty-server:build
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
