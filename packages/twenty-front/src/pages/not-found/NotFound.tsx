@@ -39,9 +39,10 @@ export const NotFound = () => {
         <StyledErrorContainer>
           <AnimatedPlaceholder type="error404" />
           <StyledEmptyTextContainer>
-            <StyledErrorTitle>Unexpected Pit Stop</StyledErrorTitle>
+            <StyledErrorTitle>Off the beaten path</StyledErrorTitle>
             <StyledErrorSubTitle>
-              We have been notified and working on a fix.
+              The page you're seeking is either gone or never was. Let's get you
+              back on track
             </StyledErrorSubTitle>
           </StyledEmptyTextContainer>
           <StyledButtonContainer>
