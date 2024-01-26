@@ -5,6 +5,7 @@ const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color:${({ theme }) => theme.font.color.primary};
   width: 100%;
 `;
 
