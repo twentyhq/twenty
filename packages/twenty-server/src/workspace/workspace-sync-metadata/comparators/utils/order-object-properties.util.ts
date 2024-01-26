@@ -7,13 +7,15 @@ export function orderObjectProperties<T extends Array<any> | object>(
 ): T {
   if (Array.isArray(data)) {
     return data.map(orderObjectProperties) as T;
-  } else if (data !== null && typeof data === 'object') {
+  }
+
+  if (data !== null && typeof data === 'object') {
     return Object.fromEntries(
       Object.entries(data)
         .sort()
         .map(([key, value]) => [key, orderObjectProperties(value)]),
     ) as T;
-  } else {
-    return data;
   }
+
+  return data;
 }
