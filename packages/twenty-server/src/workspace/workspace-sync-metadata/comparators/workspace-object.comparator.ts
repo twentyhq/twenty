@@ -67,7 +67,7 @@ export class WorkspaceObjectComparator {
     // If there are no properties to update, the objects are equal
     if (Object.keys(objectPropertiesToUpdate).length === 0) {
       return {
-        action: ComparatorAction.EQUAL,
+        action: ComparatorAction.SKIP,
       };
     }
 

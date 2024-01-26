@@ -5,14 +5,14 @@ import { PartialFieldMetadata } from './partial-field-metadata.interface';
 import { PartialObjectMetadata } from './partial-object-metadata.interface';
 
 export const enum ComparatorAction {
-  EQUAL = 'EQUAL',
+  SKIP = 'SKIP',
   CREATE = 'CREATE',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
 }
 
-export interface ComparatorEqualResult {
-  action: ComparatorAction.EQUAL;
+export interface ComparatorSkipResult {
+  action: ComparatorAction.SKIP;
 }
 
 export interface ComparatorCreateResult<T> {
@@ -31,12 +31,12 @@ export interface ComparatorDeleteResult<T> {
 }
 
 export type ObjectComparatorResult =
-  | ComparatorEqualResult
+  | ComparatorSkipResult
   | ComparatorCreateResult<PartialObjectMetadata>
   | ComparatorUpdateResult<Partial<PartialObjectMetadata>>;
 
 export type FieldComparatorResult =
-  | ComparatorEqualResult
+  | ComparatorSkipResult
   | ComparatorCreateResult<PartialFieldMetadata>
   | ComparatorUpdateResult<Partial<PartialFieldMetadata> & { id: string }>
   | ComparatorDeleteResult<FieldMetadataEntity>;

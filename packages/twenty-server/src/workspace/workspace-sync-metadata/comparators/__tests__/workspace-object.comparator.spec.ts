@@ -56,7 +56,7 @@ describe('WorkspaceObjectComparator', () => {
     });
   });
 
-  it('should generate EQUAL action for identical objects', () => {
+  it('should generate SKIP action for identical objects', () => {
     const originalObjectMetadata = createMockObjectMetadata({
       id: '1',
       description: 'Same description',
@@ -71,7 +71,7 @@ describe('WorkspaceObjectComparator', () => {
     );
 
     expect(result).toEqual({
-      action: ComparatorAction.EQUAL,
+      action: ComparatorAction.SKIP,
     });
   });
 });
