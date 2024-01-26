@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { RATING_VALUES } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
+import { FieldRatingValue } from '@/object-record/field/types/FieldMetadata';
 import { IconTwentyStarFilled } from '@/ui/display/icon/components/IconTwentyStarFilled';
 
 const StyledContainer = styled.div`
@@ -16,12 +18,10 @@ const StyledRatingIconContainer = styled.div<{ isActive?: boolean }>`
 `;
 
 type RatingInputProps = {
-  onChange: (newValue: number) => void;
-  value: number;
+  onChange: (newValue: FieldRatingValue) => void;
+  value: FieldRatingValue;
   readonly?: boolean;
 };
-
-const RATING_LEVELS_NB = 5;
 
 export const RatingInput = ({
   onChange,
@@ -29,27 +29,29 @@ export const RatingInput = ({
   readonly,
 }: RatingInputProps) => {
   const theme = useTheme();
-  const [hoveredValue, setHoveredValue] = useState<number | null>(null);
+  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue | null>(
+    null,
+  );
   const currentValue = hoveredValue ?? value;
 
   return (
     <StyledContainer
       role="slider"
       aria-label="Rating"
-      aria-valuemax={RATING_LEVELS_NB}
+      aria-valuemax={RATING_VALUES.length}
       aria-valuemin={1}
-      aria-valuenow={value}
+      aria-valuenow={RATING_VALUES.indexOf(currentValue) + 1}
       tabIndex={0}
     >
-      {Array.from({ length: RATING_LEVELS_NB }, (_, index) => {
-        const rating = index + 1;
+      {RATING_VALUES.map((value, index) => {
+        const currentIndex = RATING_VALUES.indexOf(currentValue);
 
         return (
           <StyledRatingIconContainer
             key={index}
-            isActive={rating <= currentValue}
-            onClick={readonly ? undefined : () => onChange(rating)}
-            onMouseEnter={readonly ? undefined : () => setHoveredValue(rating)}
+            isActive={index <= currentIndex}
+            onClick={readonly ? undefined : () => onChange(value)}
+            onMouseEnter={readonly ? undefined : () => setHoveredValue(value)}
             onMouseLeave={readonly ? undefined : () => setHoveredValue(null)}
           >
             <IconTwentyStarFilled size={theme.icon.size.md} />

@@ -1,3 +1,4 @@
+import { RATING_VALUES } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
@@ -119,7 +120,7 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
-export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
+export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;
