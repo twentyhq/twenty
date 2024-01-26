@@ -16,7 +16,6 @@ import { useCompleteTask } from '../hooks/useCompleteTask';
 const StyledContainer = styled.div`
   align-items: center;
   align-self: stretch;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
   display: inline-flex;
   height: ${({ theme }) => theme.spacing(12)};
