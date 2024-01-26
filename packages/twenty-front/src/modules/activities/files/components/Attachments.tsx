@@ -16,7 +16,6 @@ import {
   StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
-import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -67,26 +66,26 @@ export const Attachments = ({
             onUploadFile={onUploadFile}
           />
         ) : (
-           <StyledEmptyContainer>
-        <AnimatedPlaceholder type="noFile" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>No Files</StyledEmptyTitle>
-          <StyledEmptySubTitle>
-            There are no associated files with this record.
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
-        <StyledFileInput
-          ref={inputFileRef}
-          onChange={handleFileChange}
-          type="file"
-        />
-        <Button
-          Icon={IconPlus}
-          title="Add file"
-          variant="secondary"
-          onClick={handleUploadFileClick}
-        />
-      </StyledEmptyContainer>
+          <StyledEmptyContainer>
+            <AnimatedPlaceholder type="noFile" />
+            <StyledEmptyTextContainer>
+              <StyledEmptyTitle>No Files</StyledEmptyTitle>
+              <StyledEmptySubTitle>
+                There are no associated files with this record.
+              </StyledEmptySubTitle>
+            </StyledEmptyTextContainer>
+            <StyledFileInput
+              ref={inputFileRef}
+              onChange={handleFileChange}
+              type="file"
+            />
+            <Button
+              Icon={IconPlus}
+              title="Add file"
+              variant="secondary"
+              onClick={handleUploadFileClick}
+            />
+          </StyledEmptyContainer>
         )}
       </StyledDropZoneContainer>
     );
