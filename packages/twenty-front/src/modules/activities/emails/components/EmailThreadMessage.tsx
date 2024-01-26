@@ -9,7 +9,6 @@ import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailTh
 
 const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(4, 6)};
@@ -17,6 +16,7 @@ const StyledThreadMessage = styled.div`
 
 const StyledThreadMessageHeader = styled.div`
   display: flex;
+  cursor: pointer;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -45,8 +45,8 @@ export const EmailThreadMessage = ({
   }
 
   return (
-    <StyledThreadMessage onClick={() => setIsOpen(!isOpen)}>
-      <StyledThreadMessageHeader>
+    <StyledThreadMessage>
+      <StyledThreadMessageHeader onClick={() => setIsOpen(!isOpen)}>
         <EmailThreadMessageSender sender={from} sentAt={sentAt} />
         {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
