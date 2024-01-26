@@ -5,18 +5,16 @@ WORKDIR /app
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
+COPY ./tsconfig.base.json .
 COPY ./.yarn/releases /app/.yarn/releases
-COPY ./tools/eslint-rules /app/tools/eslint-rules
-COPY ./packages/twenty-server/package.json /app/packages/twenty-server/package.json
-COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-emails /app/packages/twenty-emails
+COPY ./packages/twenty-server /app/packages/twenty-server
 
 WORKDIR /app/packages/twenty-emails
 RUN yarn workspaces focus
 RUN yarn build
 
 WORKDIR /app/packages/twenty-server
-COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn workspaces focus
 RUN yarn build
 

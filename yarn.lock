@@ -43105,6 +43105,14 @@ __metadata:
 "twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
+  dependencies:
+    "@nx/vite": "npm:17.2.8"
+    "@react-email/components": "npm:0.0.12"
+    "@vitejs/plugin-react-swc": "npm:^3.5.0"
+    date-fns: "npm:^2.30.0"
+    vite: "npm:^5.0.0"
+    vite-plugin-dts: "npm:~2.3.0"
+    vite-tsconfig-paths: "npm:^4.2.1"
   languageName: unknown
   linkType: soft
 
