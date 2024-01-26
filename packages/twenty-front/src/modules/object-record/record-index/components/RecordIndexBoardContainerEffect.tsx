@@ -25,8 +25,8 @@ export const RecordIndexBoardContainerEffect = ({
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${objectNameSingular}`);
-  }, [navigate, objectNameSingular]);
+    navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
+  }, [navigate, objectMetadataItem.namePlural]);
 
   const { setColumns } = useRecordBoard(recordBoardId);
 
