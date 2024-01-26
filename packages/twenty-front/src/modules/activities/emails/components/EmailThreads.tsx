@@ -74,7 +74,7 @@ export const EmailThreads = ({
       entity.targetObjectNameSingular === CoreObjectNameSingular.Person
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
-    ];
+    ] ?? [];
 
   return (
     <StyledContainer>
@@ -83,23 +83,20 @@ export const EmailThreads = ({
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>
-                {timelineThreads?.length ?? 0}
-              </StyledEmailCount>
+              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads &&
-            timelineThreads.map((thread: TimelineThread, index: number) => (
-              <EmailThreadPreview
-                key={index}
-                divider={index < timelineThreads.length - 1}
-                thread={thread}
-                onClick={() => openEmailThread(thread)}
-              />
-            ))}
+          {timelineThreads.map((thread: TimelineThread, index: number) => (
+            <EmailThreadPreview
+              key={index}
+              divider={index < timelineThreads.length - 1}
+              thread={thread}
+              onClick={() => openEmailThread(thread)}
+            />
+          ))}
         </Card>
       </Section>
     </StyledContainer>
