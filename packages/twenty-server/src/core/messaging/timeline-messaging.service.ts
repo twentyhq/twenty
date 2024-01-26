@@ -28,7 +28,7 @@ export class TimelineMessagingService {
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThread[]> {
-    const offset = (page - 1) * TIMELINE_THREADS_DEFAULT_PAGE_SIZE;
+    const offset = (page - 1) * pageSize;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
