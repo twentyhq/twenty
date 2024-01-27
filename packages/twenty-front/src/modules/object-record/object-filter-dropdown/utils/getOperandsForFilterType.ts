@@ -16,6 +16,7 @@ export const getOperandsForFilterType = (
     case 'DATE_TIME':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'RELATION':
+    case 'SELECT':
       return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
     default:
       return [];

@@ -7,4 +7,5 @@ export type FilterType =
   | 'CURRENCY'
   | 'FULL_NAME'
   | 'LINK'
-  | 'RELATION';
+  | 'RELATION'
+  | 'SELECT';

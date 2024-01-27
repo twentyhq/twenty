@@ -252,6 +252,47 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'SELECT': {
+        if (!isNonEmptyString(rawUIFilter.value)) {
+          break;
+        }
+
+        try {
+          JSON.parse(rawUIFilter.value);
+        } catch (e) {
+          throw new Error(
+            `Cannot parse filter value for SELECT filter : "${rawUIFilter.value}"`,
+          );
+        }
+
+        const parsedOptionValues = JSON.parse(rawUIFilter.value) as string[];
+
+        if (parsedOptionValues.length > 0) {
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Is:
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  in: parsedOptionValues,
+                } as UUIDFilter,
+              });
+              break;
+            case ViewFilterOperand.IsNot:
+              objectRecordFilters.push({
+                not: {
+                  [correspondingField.name]: {
+                    in: parsedOptionValues,
+                  } as UUIDFilter,
+                },
+              });
+              break;
+            default:
+              throw new Error(
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              );
+          }
+        }
+        break;
+      }
       default:
         throw new Error('Unknown filter type');
     }
