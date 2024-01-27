@@ -8,19 +8,32 @@ import {
   waitFor,
   within,
 } from '@storybook/test';
+import { useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockDefaultWorkspace } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import {
   RelationFieldInput,
   RelationFieldInputProps,
 } from '../RelationFieldInput';
+
+const RelationWorkspaceSetterEffect = () => {
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
+  useEffect(() => {
+    setCurrentWorkspace(mockDefaultWorkspace);
+  }, [setCurrentWorkspace]);
+
+  return <></>;
+};
 
 type RelationFieldInputWithContextProps = RelationFieldInputProps & {
   value: number;
@@ -56,6 +69,7 @@ const RelationFieldInputWithContext = ({
             }}
             entityId={entityId}
           >
+            <RelationWorkspaceSetterEffect />
             <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
           </FieldContextProvider>
         </RelationPickerScope>
