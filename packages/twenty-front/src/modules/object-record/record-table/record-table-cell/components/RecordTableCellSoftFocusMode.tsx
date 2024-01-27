@@ -1,8 +1,8 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/field/hooks/useToggleEditOnlyInput';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 

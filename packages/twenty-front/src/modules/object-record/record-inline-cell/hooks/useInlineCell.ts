@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 

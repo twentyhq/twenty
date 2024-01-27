@@ -1,16 +1,16 @@
 import { useContext } from 'react';
 
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 
-import { FieldDisplay } from '../../field/components/FieldDisplay';
-import { FieldInput } from '../../field/components/FieldInput';
-import { FieldContext } from '../../field/contexts/FieldContext';
-import { useGetButtonIcon } from '../../field/hooks/useGetButtonIcon';
-import { useIsFieldEmpty } from '../../field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '../../field/hooks/useIsFieldInputOnly';
-import { FieldInputEvent } from '../../field/types/FieldInputEvent';
-import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';

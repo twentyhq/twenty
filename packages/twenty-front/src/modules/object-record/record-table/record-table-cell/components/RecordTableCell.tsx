@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 
-import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
-import { FieldInput } from '@/object-record/field/components/FieldInput';
-import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
-import { FieldInputEvent } from '@/object-record/field/types/FieldInputEvent';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { useIsFieldEditModeValueEmpty } from '@/object-record/record-field/hooks/useIsFieldEditModeValueEmpty';
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { ColumnIndexContext } from '@/object-record/record-table/contexts/ColumnIndexContext';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 

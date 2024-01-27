@@ -1,4 +1,4 @@
-import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 

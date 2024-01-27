@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
