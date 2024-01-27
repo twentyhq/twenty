@@ -137,7 +137,7 @@ describe('usePersistField', () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          entityFieldsFamilySelector({ entityId, fieldName }),
+          recordStoreFamilySelector({ recordId: entityId, fieldName }),
         );
 
         return {
