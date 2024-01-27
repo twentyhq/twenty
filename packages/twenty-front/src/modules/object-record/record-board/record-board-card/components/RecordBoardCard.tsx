@@ -2,11 +2,13 @@ import { ReactNode, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
@@ -116,12 +118,14 @@ export const RecordBoardCard = () => {
   const { recordId } = useContext(RecordBoardCardContext);
 
   const {
+    getObjectSingularNameState,
     getIsCompactModeActiveState,
     isRecordBoardCardSelectedFamilyState,
     getVisibleFieldDefinitionsState,
   } = useRecordBoardStates();
 
   const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
+  const objectNameSingular = useRecoilValue(getObjectSingularNameState());
   const [isCardInCompactMode, setIsCardInCompactMode] =
     useState(isCompactModeActive);
 
@@ -132,6 +136,8 @@ export const RecordBoardCard = () => {
   const visibleBoardCardFieldDefinitions = useRecoilValue(
     getVisibleFieldDefinitionsState(),
   );
+
+  const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   const PreventSelectOnClickContainer = ({
     children,
@@ -153,6 +159,10 @@ export const RecordBoardCard = () => {
     }
   };
 
+  if (!objectNameSingular || !record) {
+    return null;
+  }
+
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
@@ -161,6 +171,7 @@ export const RecordBoardCard = () => {
         onClick={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
+          <RecordChip objectNameSingular={objectNameSingular} record={record} />
           {isCompactModeActive && (
             <StyledCompactIconContainer className="compact-icon-container">
               <LightIconButton

@@ -28,7 +28,11 @@ export const RecordIndexBoardContainerEffect = ({
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
 
-  const { setColumns } = useRecordBoard(recordBoardId);
+  const { setColumns, setObjectSingularName } = useRecordBoard(recordBoardId);
+
+  useEffect(() => {
+    setObjectSingularName(objectNameSingular);
+  }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
     setColumns(

@@ -6,7 +6,7 @@ import { isRecordBoardCompactModeActiveStateScopeMap } from '@/object-record/rec
 import { recordBoardColumnIdsStateScopeMap } from '@/object-record/record-board/states/recordBoardColumnIdsStateScopeMap';
 import { recordBoardFieldDefinitionsStateScopeMap } from '@/object-record/record-board/states/recordBoardFieldDefinitionsStateScopeMap';
 import { recordBoardFiltersStateScopeMap } from '@/object-record/record-board/states/recordBoardFiltersStateScopeMap';
-import { recordBoardObjectMetadataSingularNameStateScopeMap } from '@/object-record/record-board/states/recordBoardObjectMetadataSingularNameStateScopeMap';
+import { recordBoardObjectSingularNameStateScopeMap } from '@/object-record/record-board/states/recordBoardObjectSingularNameStateScopeMap';
 import { recordBoardRecordIdsByColumnIdFamilyStateScopeMap } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdFamilyStateScopeMap';
 import { recordBoardSortsStateScopeMap } from '@/object-record/record-board/states/recordBoardSortsStateScopeMap';
 import { recordBoardColumnsFamilySelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardColumnsFamilySelectorScopeMap';
@@ -25,8 +25,8 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
 
   return {
     scopeId,
-    getObjectMetadataSingularNameState: getState(
-      recordBoardObjectMetadataSingularNameStateScopeMap,
+    getObjectSingularNameState: getState(
+      recordBoardObjectSingularNameStateScopeMap,
       scopeId,
     ),
     getColumnIdsState: getState(recordBoardColumnIdsStateScopeMap, scopeId),
