@@ -63,10 +63,17 @@ export const useCurrencyField = () => {
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
-  const initialAmount = draftValue?.amount;
+  const initialAmount = draftValue?.amount
+    ? draftValue.amount
+    : fieldValue.amountMicros
+      ? fieldValue.amountMicros / 1000000
+      : null;
+
   const initialCurrencyCode = draftValue
     ? draftValue.currencyCode
-    : CurrencyCode.USD;
+    : fieldValue
+      ? fieldValue.currencyCode
+      : CurrencyCode.USD;
 
   return {
     fieldDefinition,

@@ -30,11 +30,7 @@ export const RecordTableCellSoftFocusMode = ({
     [Key.Backspace, Key.Delete],
     () => {
       if (!isFieldInputOnly) {
-        openTableCell({
-          initialValue: {
-            isEmpty: true,
-          },
-        });
+        openTableCell();
       }
     },
     TableHotkeyScope.TableSoftFocus,

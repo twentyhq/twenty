@@ -41,7 +41,6 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const { getColumnIdsState } = useRecordBoardStates(recordBoardId);
-
   const columnIds = useRecoilValue(getColumnIdsState());
 
   return (

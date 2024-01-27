@@ -205,6 +205,7 @@ export const RecordBoardCard = () => {
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {
+                      disableTooltip: true,
                       fieldMetadataId: fieldDefinition.fieldMetadataId,
                       label: fieldDefinition.label,
                       iconName: fieldDefinition.iconName,
