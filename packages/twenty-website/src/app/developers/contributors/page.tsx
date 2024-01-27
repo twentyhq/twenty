@@ -1,6 +1,9 @@
 import Database from 'better-sqlite3';
 
 import AvatarGrid from '@/app/components/AvatarGrid';
+import { Header } from '@/app/components/developers/contributors/Header';
+import { Background } from '@/app/components/oss-friends/Background';
+import { ContentContainer } from '@/app/components/oss-friends/ContentContainer';
 
 interface Contributor {
   login: string;
@@ -32,9 +35,15 @@ const Contributors = async () => {
   db.close();
 
   return (
-    <div>
-      <AvatarGrid users={contributors} />
-    </div>
+    <>
+      <Background />
+      <ContentContainer>
+        <Header />
+        <div>
+          <AvatarGrid users={contributors} />
+        </div>
+      </ContentContainer>
+    </>
   );
 };
 
