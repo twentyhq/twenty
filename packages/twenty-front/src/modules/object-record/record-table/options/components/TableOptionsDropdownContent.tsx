@@ -42,11 +42,11 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
     useRecordTableStates(recordTableId);
 
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
     { recordTableId },

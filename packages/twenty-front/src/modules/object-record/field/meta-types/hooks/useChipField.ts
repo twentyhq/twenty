@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/field/types/guards/isFieldText';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { FieldContext } from '../../contexts/FieldContext';
 
@@ -18,7 +18,7 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const record = useRecoilValue(entityFieldsFamilyState(entityId));
+  const record = useRecoilValue(recordStoreFamilyState(entityId));
 
   return {
     objectNameSingular,

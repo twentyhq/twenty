@@ -64,7 +64,7 @@ export class EnvironmentVariables {
   PORT: number;
 
   // Database
-  @IsUrl({ protocols: ['postgres'], require_tld: false })
+  @IsUrl({ protocols: ['postgres'], require_tld: false, allow_underscores: true })
   PG_DATABASE_URL: string;
 
   // Frontend URL
@@ -171,6 +171,10 @@ export class EnvironmentVariables {
   )
   @IsString()
   SENTRY_DSN?: string;
+
+  @IsDuration()
+  @IsOptional()
+  PASSWORD_RESET_TOKEN_EXPIRES_IN?: number;
 
   @CastToPositiveNumber()
   @IsNumber()

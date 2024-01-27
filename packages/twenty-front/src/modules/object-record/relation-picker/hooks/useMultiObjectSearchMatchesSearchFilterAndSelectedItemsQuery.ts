@@ -53,23 +53,9 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 
           if (!isNonEmptyArray(selectedIds)) return null;
 
-          const searchFilter =
-            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
-
           return [
             `filter${capitalize(nameSingular)}`,
-            {
-              and: [
-                {
-                  ...searchFilter,
-                },
-                {
-                  id: {
-                    in: selectedIds,
-                  },
-                },
-              ],
-            },
+            searchFilterPerMetadataItemNameSingular[nameSingular],
           ];
         })
         .filter(isDefined),

@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 
@@ -13,10 +13,9 @@ export const usePipelineSteps = () => {
       objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
-  const { deleteOneRecord: deleteOnePipelineStep } =
-    useDeleteOneRecord<PipelineStep>({
-      objectNameSingular: CoreObjectNameSingular.PipelineStep,
-    });
+  const { deleteOneRecord: deleteOnePipelineStep } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.PipelineStep,
+  });
 
   const handlePipelineStepAdd = useRecoilCallback(
     ({ snapshot }) =>
@@ -25,16 +24,10 @@ export const usePipelineSteps = () => {
         if (!currentPipeline?.id) return;
 
         return createOnePipelineStep?.({
-          variables: {
-            data: {
-              color: boardColumn.colorCode ?? 'gray',
-              id: boardColumn.id,
-              position: boardColumn.position,
-              name: boardColumn.title,
-              pipeline: { connect: { id: currentPipeline.id } },
-              type: 'ongoing',
-            },
-          },
+          color: boardColumn.colorCode ?? 'gray',
+          id: boardColumn.id,
+          position: boardColumn.position,
+          name: boardColumn.title,
         });
       },
     [createOnePipelineStep],

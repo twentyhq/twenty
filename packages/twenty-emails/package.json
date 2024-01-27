@@ -1,0 +1,25 @@
+{
+  "name": "twenty-emails",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "@react-email/components": "0.0.12",
+    "@types/react": "^18.2.39",
+    "date-fns": "^2.30.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  }
+}

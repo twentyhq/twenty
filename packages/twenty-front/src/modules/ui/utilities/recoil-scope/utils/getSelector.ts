@@ -8,5 +8,5 @@ export const getSelector = <StateType>(
   ) => RecoilValueReadOnly<StateType>,
   scopeId: string,
 ) => {
-  return stateScopeMap({ scopeId });
+  return () => stateScopeMap({ scopeId });
 };

@@ -2,10 +2,11 @@ import { useContext } from 'react';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { useRecoilState } from 'recoil';
 
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldPhone } from '../../types/guards/isFieldPhone';
 
@@ -18,8 +19,8 @@ export const usePhoneField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName: fieldName,
     }),
   );

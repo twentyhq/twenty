@@ -1,21 +1,22 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { isFieldValueEmpty } from '@/object-record/field/utils/isFieldValueEmpty';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../contexts/FieldContext';
-import { isEntityFieldEmptyFamilySelector } from '../states/selectors/isEntityFieldEmptyFamilySelector';
 
 export const useIsFieldEmpty = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-
-  const isFieldEmpty = useRecoilValue(
-    isEntityFieldEmptyFamilySelector({
-      fieldDefinition: {
-        type: fieldDefinition.type,
-      },
+  const fieldValue = useRecoilValue(
+    recordStoreFamilySelector({
       fieldName: fieldDefinition.metadata.fieldName,
-      entityId,
+      recordId: entityId,
     }),
   );
 
-  return isFieldEmpty;
+  return isFieldValueEmpty({
+    fieldDefinition,
+    fieldValue,
+  });
 };

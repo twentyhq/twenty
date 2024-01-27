@@ -36032,6 +36032,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"planer@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "planer@npm:1.2.0"
+  checksum: d2515294e772bbba1b26c0fa611590369f1ff510b11855eb55cb30e093286c888868020b9a62e41a46a4c5686def03f5c34fd91801fc9104404ffeb01ad46b78
+  languageName: node
+  linkType: hard
+
 "playwright-core@npm:1.40.1, playwright-core@npm:>=1.2.0":
   version: 1.40.1
   resolution: "playwright-core@npm:1.40.1"
@@ -42367,6 +42374,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
+  version: 0.0.0-use.local
+  resolution: "twenty-emails@workspace:packages/twenty-emails"
+  dependencies:
+    "@react-email/components": "npm:0.0.12"
+    "@types/react": "npm:^18.2.39"
+    date-fns: "npm:^2.30.0"
+    tsup: "npm:^8.0.1"
+    typescript: "npm:^5.3.3"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
@@ -42377,10 +42396,76 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@aws-sdk/client-s3": "npm:^3.363.0"
+    "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
+    "@nestjs/apollo": "npm:^11.0.5"
+    "@nestjs/axios": "npm:^3.0.1"
+    "@nestjs/cli": "npm:^9.0.0"
+    "@nestjs/common": "npm:^9.0.0"
+    "@nestjs/config": "npm:^2.3.2"
+    "@nestjs/core": "npm:^9.0.0"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
+    "@nestjs/jwt": "npm:^10.0.3"
+    "@nestjs/passport": "npm:^9.0.3"
+    "@nestjs/platform-express": "npm:^9.0.0"
+    "@nestjs/schematics": "npm:^9.0.0"
+    "@nestjs/serve-static": "npm:^3.0.0"
+    "@nestjs/terminus": "npm:^9.2.2"
+    "@nestjs/testing": "npm:^9.0.0"
+    "@nestjs/typeorm": "npm:^10.0.0"
+    "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
+    "@react-email/components": "npm:0.0.12"
+    "@react-email/render": "npm:0.0.10"
+    "@sentry/node": "npm:^7.66.0"
+    "@sentry/profiling-node": "npm:^1.3.4"
+    "@types/lodash.isempty": "npm:^4.4.7"
+    "@types/lodash.isobject": "npm:^3.0.7"
+    "@types/lodash.snakecase": "npm:^4.1.7"
+    "@types/lodash.upperfirst": "npm:^4.3.7"
+    "@types/react": "npm:^18.2.39"
+    axios: "npm:^1.6.2"
+    bcrypt: "npm:^5.1.1"
+    bullmq: "npm:^4.14.0"
+    class-transformer: "npm:^0.5.1"
     class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
+    date-fns: "npm:^2.30.0"
+    file-type: "npm:16.5.4"
+    googleapis: "npm:105"
+    graphql: "npm:^16.8.1"
+    graphql-fields: "npm:^2.0.3"
+    graphql-subscriptions: "npm:2.0.0"
+    graphql-tag: "npm:^2.12.6"
+    graphql-type-json: "npm:^0.3.2"
+    graphql-upload: "npm:^13.0.0"
+    graphql-yoga: "npm:^4.0.4"
+    jest: "npm:29.7.0"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.isempty: "npm:^4.4.0"
+    lodash.isobject: "npm:^3.0.2"
+    lodash.kebabcase: "npm:^4.1.1"
+    lodash.snakecase: "npm:^4.1.1"
+    lodash.upperfirst: "npm:^4.3.1"
+    mailparser: "npm:^3.6.5"
+    microdiff: "npm:^1.3.2"
+    nest-commander: "npm:^3.12.0"
+    nodemailer: "npm:^6.9.8"
+    openapi-types: "npm:^12.1.3"
+    passport: "npm:^0.6.0"
+    passport-google-oauth20: "npm:^2.0.0"
+    passport-jwt: "npm:^4.0.1"
+    passport-local: "npm:^1.0.0"
+    pg: "npm:^8.11.3"
+    pg-boss: "npm:^9.0.3"
+    planer: "npm:^1.2.0"
+    react: "npm:^18.2.0"
+    rimraf: "npm:^3.0.2"
+    sharp: "npm:^0.32.1"
+    twenty-emails: "workspace:*"
+    type-fest: "npm:^4.1.0"
+    typeorm: "npm:^0.3.17"
   languageName: unknown
   linkType: soft
 

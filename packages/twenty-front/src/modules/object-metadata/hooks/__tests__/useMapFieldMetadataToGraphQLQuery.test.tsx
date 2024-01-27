@@ -27,12 +27,32 @@ const getOneToManyRelation = () => {
         label
         url
       }
+accountOwner
+    {
+      id
+    }
       linkedinLink
       {
         label
         url
       }
+attachments
+      {
+        edges {
+          node {
+            id
+          }
+        }
+      }
 domainName
+opportunities
+      {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       annualRecurringRevenue
       {
         amountMicros
@@ -41,6 +61,30 @@ domainName
 createdAt
 address
 updatedAt
+activityTargets
+      {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+favorites
+      {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+people
+      {
+        edges {
+          node {
+            id
+          }
+        }
+      }
 name
 accountOwnerId
 employees
@@ -89,9 +133,17 @@ const getOneToManyFromRelationField = () => {
             personId
 pointOfContactId
 updatedAt
+company
+    {
+      id
+    }
 companyId
 pipelineStepId
 probability
+pipelineStep
+    {
+      id
+    }
 closeDate
       amount
       {
@@ -100,6 +152,14 @@ closeDate
       }
 id
 createdAt
+pointOfContact
+    {
+      id
+    }
+person
+    {
+      id
+    }
           }
         }
       }`,

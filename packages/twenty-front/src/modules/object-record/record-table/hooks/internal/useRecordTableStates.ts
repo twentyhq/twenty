@@ -25,14 +25,14 @@ import { tableRowIdsStateScopeMap } from '@/object-record/record-table/states/ta
 import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tableSortsStateScopeMap';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordTableScopeInternalContext,
-    getScopeIdFromComponentId(recordTableId),
+    getScopeIdOrUndefinedFromComponentId(recordTableId),
   );
 
   return {
@@ -94,27 +94,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    allRowsSelectedStatusSelector: getSelector(
+    getAllRowsSelectedStatusSelector: getSelector(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,
     ),
-    hiddenTableColumnsSelector: getSelector(
+    getHiddenTableColumnsSelector: getSelector(
       hiddenTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    numberOfTableColumnsSelector: getSelector(
+    getNumberOfTableColumnsSelector: getSelector(
       numberOfTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    selectedRowIdsSelector: getSelector(
+    getSelectedRowIdsSelector: getSelector(
       selectedRowIdsSelectorScopeMap,
       scopeId,
     ),
-    tableColumnsByKeySelector: getSelector(
+    getTableColumnsByKeySelector: getSelector(
       tableColumnsByKeySelectorScopeMap,
       scopeId,
     ),
-    visibleTableColumnsSelector: getSelector(
+    getVisibleTableColumnsSelector: getSelector(
       visibleTableColumnsSelectorScopeMap,
       scopeId,
     ),

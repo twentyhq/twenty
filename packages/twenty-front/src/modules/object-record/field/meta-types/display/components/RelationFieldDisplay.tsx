@@ -3,7 +3,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useRelationField();
+  const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
 
   if (!fieldValue || !fieldDefinition) return null;
 
@@ -13,6 +13,7 @@ export const RelationFieldDisplay = () => {
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
       record={fieldValue}
+      maxWidth={maxWidth}
     />
   );
 };

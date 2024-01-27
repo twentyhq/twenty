@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -14,7 +13,7 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -58,35 +57,19 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
             )
             .map(({ id }) => id);
 
-          const searchFilter =
-            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
-
           const excludedIdsUnion = [...selectedIds, ...excludedIds];
+          const excludedIdsFilter = excludedIdsUnion.length
+            ? { not: { id: { in: excludedIdsUnion } } }
+            : undefined;
 
-          const noFilter =
-            !isNonEmptyArray(excludedIdsUnion) &&
-            isDeeplyEqual(searchFilter, {});
+          const searchFilters = [
+            searchFilterPerMetadataItemNameSingular[nameSingular],
+            excludedIdsFilter,
+          ];
 
           return [
             `filter${capitalize(nameSingular)}`,
-            !noFilter
-              ? {
-                  and: [
-                    {
-                      ...searchFilter,
-                    },
-                    isNonEmptyArray(excludedIdsUnion)
-                      ? {
-                          not: {
-                            id: {
-                              in: [...selectedIds, ...excludedIds],
-                            },
-                          },
-                        }
-                      : {},
-                  ],
-                }
-              : {},
+            andFilterVariables(searchFilters),
           ];
         })
         .filter(isDefined),

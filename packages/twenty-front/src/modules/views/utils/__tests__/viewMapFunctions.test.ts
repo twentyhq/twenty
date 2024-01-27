@@ -1,7 +1,7 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { BoardFieldDefinition } from '@/object-record/record-board/types/BoardFieldDefinition';
+import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';

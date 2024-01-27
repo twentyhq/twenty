@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { Threads } from '@/activities/emails/components/Threads';
+import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
@@ -115,7 +115,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'files' && (
         <Attachments targetableObject={targetableObject} />
       )}
-      {activeTabId === 'emails' && <Threads entity={targetableObject} />}
+      {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
     </StyledShowPageRightContainer>
   );
 };

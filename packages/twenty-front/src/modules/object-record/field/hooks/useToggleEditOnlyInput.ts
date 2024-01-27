@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../contexts/FieldContext';
-import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 
 export const useToggleEditOnlyInput = () => {
@@ -22,11 +23,13 @@ export const useToggleEditOnlyInput = () => {
         if (fieldIsBoolean) {
           const fieldName = fieldDefinition.metadata.fieldName;
           const oldValue = snapshot
-            .getLoadable(entityFieldsFamilySelector({ entityId, fieldName }))
-            .valueOrThrow();
+            .getLoadable(
+              recordStoreFamilySelector({ recordId: entityId, fieldName }),
+            )
+            .getValue();
           const valueToPersist = !oldValue;
           set(
-            entityFieldsFamilySelector({ entityId, fieldName }),
+            recordStoreFamilySelector({ recordId: entityId, fieldName }),
             valueToPersist,
           );
 

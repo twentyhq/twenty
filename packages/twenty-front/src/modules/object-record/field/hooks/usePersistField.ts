@@ -5,9 +5,9 @@ import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullN
 import { isFieldFullNameValue } from '@/object-record/field/types/guards/isFieldFullNameValue';
 import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/field/types/guards/isFieldSelectValue';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../contexts/FieldContext';
-import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
@@ -86,7 +86,7 @@ export const usePersistField = () => {
           const fieldName = fieldDefinition.metadata.fieldName;
 
           set(
-            entityFieldsFamilySelector({ entityId, fieldName }),
+            recordStoreFamilySelector({ recordId: entityId, fieldName }),
             valueToPersist,
           );
 
@@ -114,7 +114,7 @@ export const usePersistField = () => {
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
-            entityFieldsFamilySelector({ entityId, fieldName }),
+            recordStoreFamilySelector({ recordId: entityId, fieldName }),
             valueToPersist,
           );
 
