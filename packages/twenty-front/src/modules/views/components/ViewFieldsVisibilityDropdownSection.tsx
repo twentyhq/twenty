@@ -6,7 +6,7 @@ import {
   ResponderProvided,
 } from '@hello-pangea/dnd';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconMinus, IconPlus } from '@/ui/display/icon';
 import { IconInfoCircle } from '@/ui/display/icon';

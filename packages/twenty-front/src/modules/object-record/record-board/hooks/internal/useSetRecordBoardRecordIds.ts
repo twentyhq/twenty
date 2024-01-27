@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
   const {
@@ -21,13 +22,20 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .getLoadable(columnsFamilySelector(columnId))
             .getValue();
 
+          const existingColumnRecordIds = snapshot
+            .getLoadable(recordBoardRecordIdsByColumnIdFamilyState(columnId))
+            .getValue();
+
           const columnRecordIds = records
             .filter((record) => record.stage === column?.value)
             .map((record) => record.id);
-          set(
-            recordBoardRecordIdsByColumnIdFamilyState(columnId),
-            columnRecordIds,
-          );
+
+          if (!isDeeplyEqual(existingColumnRecordIds, columnRecordIds)) {
+            set(
+              recordBoardRecordIdsByColumnIdFamilyState(columnId),
+              columnRecordIds,
+            );
+          }
         });
       },
     [

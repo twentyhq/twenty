@@ -3,20 +3,19 @@ import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { ColumnContext } from '@/object-record/record-table/contexts/ColumnContext';
+import { ColumnIndexContext } from '@/object-record/record-table/contexts/ColumnIndexContext';
+import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
+import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
+import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
+import { useCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useCurrentRowSelected';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
-import { FieldContext } from '../../field/contexts/FieldContext';
-import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
-import { ColumnContext } from '../contexts/ColumnContext';
-import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
-import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
-import { RowIdContext } from '../contexts/RowIdContext';
-import { RecordTableCell } from '../record-table-cell/components/RecordTableCell';
-import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 export const RecordTableCellContainer = ({
   cellIndex,

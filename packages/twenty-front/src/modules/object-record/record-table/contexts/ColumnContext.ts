@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';

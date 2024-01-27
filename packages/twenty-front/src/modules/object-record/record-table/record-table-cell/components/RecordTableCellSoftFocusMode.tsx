@@ -1,8 +1,8 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/field/hooks/useToggleEditOnlyInput';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -30,11 +30,7 @@ export const RecordTableCellSoftFocusMode = ({
     [Key.Backspace, Key.Delete],
     () => {
       if (!isFieldInputOnly) {
-        openTableCell({
-          initialValue: {
-            isEmpty: true,
-          },
-        });
+        openTableCell();
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -75,9 +71,7 @@ export const RecordTableCellSoftFocusMode = ({
         keyboardEvent.stopImmediatePropagation();
 
         openTableCell({
-          initialValue: {
-            value: keyboardEvent.key,
-          },
+          initialValue: keyboardEvent.key,
         });
       }
     },

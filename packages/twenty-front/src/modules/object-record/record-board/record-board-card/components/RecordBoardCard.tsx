@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -205,6 +205,7 @@ export const RecordBoardCard = () => {
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {
+                      disableTooltip: true,
                       fieldMetadataId: fieldDefinition.fieldMetadataId,
                       label: fieldDefinition.label,
                       iconName: fieldDefinition.iconName,

@@ -1,4 +1,4 @@
-import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInputOnly';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';

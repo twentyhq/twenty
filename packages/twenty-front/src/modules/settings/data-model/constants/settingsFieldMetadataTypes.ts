@@ -1,4 +1,4 @@
-import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   IconCalendarEvent,
   IconCheck,

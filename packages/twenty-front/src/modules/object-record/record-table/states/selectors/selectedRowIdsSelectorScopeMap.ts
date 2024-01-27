@@ -1,9 +1,11 @@
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
 import { isRowSelectedFamilyStateScopeMap } from '../../record-table-row/states/isRowSelectedFamilyStateScopeMap';
 import { tableRowIdsStateScopeMap } from '../tableRowIdsStateScopeMap';
 
-export const selectedRowIdsSelectorScopeMap = createSelectorScopeMap<string[]>({
+export const selectedRowIdsSelectorScopeMap = createSelectorReadOnlyScopeMap<
+  string[]
+>({
   key: 'selectedRowIdsSelectorScopeMap',
   get:
     ({ scopeId }) =>
