@@ -6,14 +6,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -34,14 +32,14 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,
-}: ObjectMetadataItemIdentifier & {
-  filter?: ObjectRecordQueryFilter;
-  orderBy?: OrderByField;
-  limit?: number;
-  onCompleted?: (data: ObjectRecordConnection<T>) => void;
-  skip?: boolean;
-  useRecordsWithoutConnection?: boolean;
-}) => {
+  depth,
+}: ObjectMetadataItemIdentifier &
+  ObjectRecordQueryVariables & {
+    onCompleted?: (data: ObjectRecordConnection<T>) => void;
+    skip?: boolean;
+    useRecordsWithoutConnection?: boolean;
+    depth?: number;
+  }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
     JSON.stringify(filter) +
@@ -60,16 +58,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  useRecordOptimisticEffect({
-    objectMetadataItem,
-    filter,
-    orderBy,
-    limit,
-  });
+  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+    depth,
+  );
 
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);

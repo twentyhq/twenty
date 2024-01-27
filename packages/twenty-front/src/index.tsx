@@ -21,10 +21,11 @@ import { AppI18nProvider } from '@/ui/i18n/components/AppI18nProvider.tsx';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
-import { App } from '~/App';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 
 import '@emotion/react';
+
+import { App } from './App';
 
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';

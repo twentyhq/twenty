@@ -157,7 +157,8 @@
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
-    "zod": "^3.22.2"
+    "zod": "^3.22.2",
+    "planer": "^1.2.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.0.0",
@@ -283,6 +284,7 @@
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
+      "packages/twenty-emails",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",

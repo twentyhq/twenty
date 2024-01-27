@@ -7,11 +7,12 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'message',
+  namePlural: 'messages',
   labelSingular: 'Message',
   labelPlural: 'Messages',
   description: 'Message',
@@ -23,22 +24,11 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 @IsSystem()
 export class MessageObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    // will be an array
-    type: FieldMetadataType.TEXT,
-    label: 'External Id',
-    description: 'Message id from the messaging provider',
-    icon: 'IconHash',
-  })
-  @IsNullable()
-  externalId: string;
-
-  @FieldMetadata({
     type: FieldMetadataType.TEXT,
     label: 'Header message Id',
     description: 'Message id from the message header',
     icon: 'IconHash',
   })
-  @IsNullable()
   headerMessageId: string;
 
   @FieldMetadata({
@@ -52,11 +42,14 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   messageThread: MessageThreadObjectMetadata;
 
   @FieldMetadata({
-    // will be a select later: incoming, outgoing
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Direction',
-    description: 'Direction',
+    description: 'Message Direction',
     icon: 'IconDirection',
+    options: [
+      { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
+      { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
+    ],
     defaultValue: { value: 'incoming' },
   })
   direction: string;
@@ -67,17 +60,23 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     description: 'Subject',
     icon: 'IconMessage',
   })
-  @IsNullable()
   subject: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Body',
+    label: 'Text',
+    description: 'Text',
     icon: 'IconMessage',
   })
-  @IsNullable()
-  body: string;
+  text: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Html',
+    description: 'Html',
+    icon: 'IconMessage',
+  })
+  html: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -101,4 +100,17 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Channel Association',
+    description: 'Messages from the channel.',
+    icon: 'IconMessage',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageChannelMessageAssociation',
+  })
+  @IsNullable()
+  messageChannelMessageAssociation: MessageChannelMessageAssociationObjectMetadata[];
 }

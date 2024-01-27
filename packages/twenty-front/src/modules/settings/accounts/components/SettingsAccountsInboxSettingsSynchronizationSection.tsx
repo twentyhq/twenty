@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/Account';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
 import { IconRefresh } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -25,12 +25,12 @@ const StyledTitle = styled.span`
 `;
 
 type SettingsAccountsInboxSettingsSynchronizationSectionProps = {
-  account: Account;
+  messageChannel: MessageChannel;
   onToggle: (value: boolean) => void;
 };
 
 export const SettingsAccountsInboxSettingsSynchronizationSection = ({
-  account,
+  messageChannel,
   onToggle,
 }: SettingsAccountsInboxSettingsSynchronizationSectionProps) => {
   const { translate } = useI18n('translations');
@@ -51,7 +51,7 @@ export const SettingsAccountsInboxSettingsSynchronizationSection = ({
             />
           </SettingsAccountsInboxSettingsCardMedia>
           <StyledTitle>{translate('syncEmails')}</StyledTitle>
-          <Toggle value={account.isSynced} onChange={onToggle} />
+          <Toggle value={messageChannel.isSynced} onChange={onToggle} />
         </StyledCardContent>
       </Card>
     </Section>

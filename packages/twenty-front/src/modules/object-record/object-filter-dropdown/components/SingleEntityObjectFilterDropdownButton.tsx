@@ -1,10 +1,12 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 
+import { ObjectFilterDropdownRecordRemoveFilterMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordRemoveFilterMenuItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { IconChevronDown } from '@/ui/display/icon/index';
 import useI18n from '@/ui/i18n/useI18n';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -67,6 +69,8 @@ export const SingleEntityObjectFilterDropdownButton = ({
       dropdownComponents={
         <>
           <ObjectFilterDropdownRecordSearchInput />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownRecordRemoveFilterMenuItem />
           <ObjectFilterDropdownRecordSelect />
         </>
       }

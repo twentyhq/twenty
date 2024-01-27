@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Reference } from '@apollo/client';
 
+import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -41,14 +42,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
-
-  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_RELATION_FIELD_TYPE_ENABLED',
-  );
-
-  const isSelectFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_SELECT_FIELD_TYPE_ENABLED',
-  );
 
   const isRatingFieldTypeEnabled = useIsFeatureEnabled(
     'IS_RATING_FIELD_TYPE_ENABLED',
@@ -240,16 +233,16 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
+            viewFields: (cachedViewFieldsConnection, { readField }) => {
+              const edges = readField<CachedObjectRecordEdge[]>(
                 'edges',
-                viewFieldsRef,
+                cachedViewFieldsConnection,
               );
 
-              if (!edges) return viewFieldsRef;
+              if (!edges) return cachedViewFieldsConnection;
 
               return {
-                ...viewFieldsRef,
+                ...cachedViewFieldsConnection,
                 edges: [...edges, { node: viewFieldToCreate }],
               };
             },
@@ -276,14 +269,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
-
-  if (!isRelationFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Relation);
-  }
-
-  if (!isSelectFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Select);
-  }
 
   if (!isRatingFieldTypeEnabled) {
     excludedFieldTypes.push(FieldMetadataType.Rating);

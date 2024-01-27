@@ -1,37 +1,21 @@
 import { useSetRecoilState } from 'recoil';
 
-import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
-import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useSetRecordBoardColumns } from '@/object-record/record-board/hooks/internal/useSetRecordBoardColumns';
+import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardRecordIds';
 
-type useRecordBoardProps = {
-  recordBoardScopeId?: string;
-};
+export const useRecordBoard = (recordBoardId?: string) => {
+  const { scopeId, getFieldDefinitionsState } =
+    useRecordBoardStates(recordBoardId);
 
-export const useRecordBoard = (props?: useRecordBoardProps) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    RecordBoardScopeInternalContext,
-    props?.recordBoardScopeId,
-  );
-
-  const { isBoardLoadedState, boardColumnsState, onFieldsChangeState } =
-    useRecordBoardScopedStates({
-      recordBoardScopeId: scopeId,
-    });
-  const setIsBoardLoaded = useSetRecoilState(isBoardLoadedState);
-
-  const setBoardColumns = useSetRecoilState(boardColumnsState);
-
-  const createOpportunity = useCreateOpportunity();
-
-  const setOnFieldsChange = useSetRecoilState(onFieldsChangeState);
+  const { setColumns } = useSetRecordBoardColumns(recordBoardId);
+  const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
+  const setFieldDefinitions = useSetRecoilState(getFieldDefinitionsState());
 
   return {
     scopeId,
-    setIsBoardLoaded,
-    setBoardColumns,
-    createOpportunity,
-    setOnFieldsChange,
+    setColumns,
+    setRecordIds,
+    setFieldDefinitions,
   };
 };

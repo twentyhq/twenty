@@ -1,73 +1,66 @@
 import { useApolloClient } from '@apollo/client';
-import { v4 } from 'uuid';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
+import { useGenerateCachedObjectRecord } from '@/object-record/hooks/useGenerateCachedObjectRecord';
+import { getCreateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { capitalize } from '~/utils/string/capitalize';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
 };
 
-export const useCreateOneRecord = <T>({
+export const useCreateOneRecord = <
+  CreatedObjectRecord extends ObjectRecord = ObjectRecord,
+>({
   objectNameSingular,
 }: useCreateOneRecordProps) => {
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular,
-  });
-
   const { objectMetadataItem, createOneRecordMutation } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
+    { objectNameSingular },
   );
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const apolloClient = useApolloClient();
 
-  const { generateEmptyRecord } = useGenerateEmptyRecord({
+  const { generateCachedObjectRecord } = useGenerateCachedObjectRecord({
     objectMetadataItem,
   });
 
-  const createOneRecord = async (input: Record<string, any>) => {
-    const recordId = v4();
+  const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+    const optimisticallyCreatedRecord =
+      generateCachedObjectRecord<CreatedObjectRecord>(input);
 
-    const generatedEmptyRecord = generateEmptyRecord({
-      id: recordId,
-      createdAt: new Date().toISOString(),
-      ...input,
-    });
-
-    const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
+    const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: input,
+      recordInput: { ...input, id: optimisticallyCreatedRecord.id },
     });
 
-    triggerOptimisticEffects({
-      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      createdRecords: [generatedEmptyRecord],
-    });
+    const mutationResponseField =
+      getCreateOneRecordMutationResponseField(objectNameSingular);
 
     const createdObject = await apolloClient.mutate({
       mutation: createOneRecordMutation,
       variables: {
-        input: { id: recordId, ...sanitizedUpdateOneRecordInput },
+        input: sanitizedCreateOneRecordInput,
       },
       optimisticResponse: {
-        [`create${capitalize(objectMetadataItem.nameSingular)}`]:
-          generatedEmptyRecord,
+        [mutationResponseField]: optimisticallyCreatedRecord,
+      },
+      update: (cache, { data }) => {
+        const record = data?.[mutationResponseField];
+
+        if (!record) return;
+
+        triggerCreateRecordsOptimisticEffect({
+          cache,
+          objectMetadataItem,
+          records: [record],
+        });
       },
     });
 
-    if (!createdObject.data) {
-      return null;
-    }
-
-    return createdObject.data[
-      `create${capitalize(objectMetadataItem.nameSingular)}`
-    ] as T;
+    return createdObject.data?.[mutationResponseField] ?? null;
   };
 
   return {

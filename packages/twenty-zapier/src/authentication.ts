@@ -1,4 +1,5 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
+
 import requestDb from './utils/requestDb';
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
@@ -20,7 +21,7 @@ export default {
       label: 'Api Key',
       type: 'string',
       helpText:
-        'Create the api-keys key in [your twenty workspace](https://app.twenty.com/settings/developers/api-keys)',
+        'Create an API key in [your twenty workspace](https://app.twenty.com/settings/developers)',
     },
   ],
   connectionLabel: '{{data.currentWorkspace.displayName}}',

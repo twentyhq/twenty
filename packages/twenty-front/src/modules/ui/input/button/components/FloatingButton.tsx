@@ -22,7 +22,7 @@ export type FloatingButtonProps = {
 const StyledButton = styled.button<
   Pick<
     FloatingButtonProps,
-    'size' | 'focus' | 'position' | 'applyBlur' | 'applyShadow'
+    'size' | 'focus' | 'position' | 'applyBlur' | 'applyShadow' | 'position'
   >
 >`
   align-items: center;
@@ -31,7 +31,18 @@ const StyledButton = styled.button<
 
   border: ${({ focus, theme }) =>
     focus ? `1px solid ${theme.color.blue}` : 'none'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ position, theme }) => {
+    switch (position) {
+      case 'left':
+        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+      case 'right':
+        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+      case 'middle':
+        return '0px';
+      case 'standalone':
+        return theme.border.radius.sm;
+    }
+  }};
   box-shadow: ${({ theme, applyShadow, focus }) =>
     applyShadow
       ? `0px 2px 4px 0px ${
@@ -84,6 +95,7 @@ export const FloatingButton = ({
   Icon,
   title,
   size = 'small',
+  position = 'standalone',
   applyBlur = true,
   applyShadow = true,
   disabled = false,
@@ -97,6 +109,7 @@ export const FloatingButton = ({
       size={size}
       applyBlur={applyBlur}
       applyShadow={applyShadow}
+      position={position}
       className={className}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}

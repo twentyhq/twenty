@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Account } from '@/accounts/types/Account';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { IconDotsVertical, IconMail, IconTrash } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -11,7 +11,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
-  account: Account;
+  account: ConnectedAccount;
   className?: string;
   onRemove?: (uuid: string) => void;
 };
@@ -43,7 +43,9 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconMail}
               text={translate('emailsSettings')}
               onClick={() => {
-                navigate(`/settings/accounts/emails/${account.id}`);
+                navigate(
+                  `/settings/accounts/emails/${account.messageChannels.edges[0].node.id}`,
+                );
                 closeDropdown();
               }}
             />

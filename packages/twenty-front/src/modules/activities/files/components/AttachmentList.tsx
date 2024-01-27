@@ -1,11 +1,15 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { DropZone } from '@/activities/files/components/DropZone';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Attachment } from '@/activities/files/types/Attachment';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 import { AttachmentRow } from './AttachmentRow';
 
 type AttachmentListProps = {
+  targetableObject: ActivityTargetableObject;
   title: string;
   attachments: Attachment[];
   button?: ReactElement | false;
@@ -17,7 +21,8 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px 24px;
+  padding: ${({ theme }) => theme.spacing(2, 6, 6)};
+  height: 100%;
 `;
 
 const StyledTitleBar = styled.h3`
@@ -51,26 +56,50 @@ const StyledAttachmentContainer = styled.div`
   width: 100%;
 `;
 
+const StyledDropZoneContainer = styled.div`
+  height: 100%;
+  width: 100%;
+`;
+
 export const AttachmentList = ({
+  targetableObject,
   title,
   attachments,
   button,
-}: AttachmentListProps) => (
-  <>
-    {attachments && attachments.length > 0 && (
-      <StyledContainer>
-        <StyledTitleBar>
-          <StyledTitle>
-            {title} <StyledCount>{attachments.length}</StyledCount>
-          </StyledTitle>
-          {button}
-        </StyledTitleBar>
-        <StyledAttachmentContainer>
-          {attachments.map((attachment) => (
-            <AttachmentRow key={attachment.id} attachment={attachment} />
-          ))}
-        </StyledAttachmentContainer>
-      </StyledContainer>
-    )}
-  </>
-);
+}: AttachmentListProps) => {
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const onUploadFile = async (file: File) => {
+    await uploadAttachmentFile(file, targetableObject);
+  };
+
+  return (
+    <>
+      {attachments && attachments.length > 0 && (
+        <StyledContainer>
+          <StyledTitleBar>
+            <StyledTitle>
+              {title} <StyledCount>{attachments.length}</StyledCount>
+            </StyledTitle>
+            {button}
+          </StyledTitleBar>
+          <StyledDropZoneContainer onDragEnter={() => setIsDraggingFile(true)}>
+            {isDraggingFile ? (
+              <DropZone
+                setIsDraggingFile={setIsDraggingFile}
+                onUploadFile={onUploadFile}
+              />
+            ) : (
+              <StyledAttachmentContainer>
+                {attachments.map((attachment) => (
+                  <AttachmentRow key={attachment.id} attachment={attachment} />
+                ))}
+              </StyledAttachmentContainer>
+            )}
+          </StyledDropZoneContainer>
+        </StyledContainer>
+      )}
+    </>
+  );
+};

@@ -1,6 +1,6 @@
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { BoardFieldDefinition } from '@/object-record/record-board/types/BoardFieldDefinition';
+import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
 
 describe('mapBoardFieldDefinitionsToViewFields', () => {
   it('should map board field definitions to view fields', () => {

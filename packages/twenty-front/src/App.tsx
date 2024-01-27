@@ -1,20 +1,23 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
-import { RecordShowPage } from '@/object-record/components/RecordShowPage';
-import { RecordTablePage } from '@/object-record/components/RecordTablePage';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
+import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
+import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
@@ -27,9 +30,9 @@ import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObj
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
-import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
-import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
-import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
+import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/SettingsDevelopersApiKeysNew';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -39,7 +42,13 @@ import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
   const { pathname } = useLocation();
+  const { defaultHomePagePath } = useDefaultHomePagePath();
+
   const pageTitle = getPageTitleFromPath(pathname);
+  const isNewRecordBoardEnabled = useIsFeatureEnabled(
+    'IS_NEW_RECORD_BOARD_ENABLED',
+  );
+
   return (
     <>
       <PageTitle title={pageTitle} />
@@ -51,15 +60,21 @@ export const App = () => {
           <Route path={AppPath.SignIn} element={<SignInUp />} />
           <Route path={AppPath.SignUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
-          <Route path="/" element={<Navigate to="/objects/companies" />} />
+          <Route path="/" element={<Navigate to={defaultHomePagePath} />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
-          <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
-          <Route path={AppPath.RecordTablePage} element={<RecordTablePage />} />
+          {!isNewRecordBoardEnabled && (
+            <Route
+              path={AppPath.OpportunitiesPage}
+              element={<Opportunities />}
+            />
+          )}
+          <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
 
           <Route
@@ -120,7 +135,7 @@ export const App = () => {
                     <Routes>
                       <Route
                         path={SettingsPath.Developers}
-                        element={<SettingsDevelopersApiKeys />}
+                        element={<SettingsDevelopers />}
                       />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}

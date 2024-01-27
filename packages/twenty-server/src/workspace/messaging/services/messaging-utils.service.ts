@@ -10,7 +10,6 @@ import {
   GmailMessage,
   Participant,
 } from 'src/workspace/messaging/types/gmailMessage';
-import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 
 @Injectable()
@@ -28,137 +27,140 @@ export class MessagingUtilsService {
     }));
   }
 
-  public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
-    return messages.reduce((acc, message) => {
-      if (message.externalId === message.messageThreadExternalId) {
-        acc.push({
-          id: message.messageThreadExternalId,
-          subject: message.subject,
-        });
-      }
-
-      return acc;
-    }, [] as GmailThread[]);
-  }
-
-  public async saveMessageThreads(
-    threads: GmailThread[],
-    dataSourceMetadata: DataSourceEntity,
-    workspaceDataSource: DataSource,
-    connectedAccountId: string,
-  ) {
-    const messageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
-      [connectedAccountId],
-    );
-
-    if (!messageChannel.length) {
-      throw new Error('No message channel found for this connected account');
-    }
-
-    for (const thread of threads) {
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
-        [thread.id, thread.subject, messageChannel[0].id, 'default'],
-      );
-    }
-  }
-
   public async saveMessages(
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccount,
+    gmailMessageChannelId: string,
   ) {
     for (const message of messages) {
-      const {
-        externalId,
-        headerMessageId,
-        subject,
-        messageThreadExternalId,
-        internalDate,
-        fromHandle,
-        fromDisplayName,
-        participants,
-        text,
-      } = message;
-
-      const receivedAt = new Date(parseInt(internalDate));
-
-      const messageThread = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
-        [messageThreadExternalId],
-      );
-
-      const messageId = v4();
-
-      const person = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
-        [fromHandle],
-      );
-
-      const personId = person[0]?.id;
-
-      const workspaceMember = await workspaceDataSource?.query(
-        `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
-        JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
-        WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
-        [fromHandle],
-      );
-
-      const workspaceMemberId = workspaceMember[0]?.id;
-
-      const messageDirection =
-        connectedAccount.handle === fromHandle ? 'outgoing' : 'incoming';
-
       await workspaceDataSource?.transaction(async (manager) => {
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "receivedAt", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-          [
-            messageId,
-            externalId,
-            headerMessageId,
-            subject,
-            receivedAt,
-            messageThread[0]?.id,
-            messageDirection,
-            text,
-          ],
+        const existingMessageChannelMessageAssociations = await manager.query(
+          `SELECT COUNT(*) FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+          WHERE "messageExternalId" = $1 AND "messageChannelId" = $2`,
+          [message.externalId, gmailMessageChannelId],
         );
 
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-          [
-            messageId,
-            'from',
-            fromHandle,
-            fromDisplayName,
-            personId,
-            workspaceMemberId,
-          ],
-        );
+        if (existingMessageChannelMessageAssociations[0]?.count > 0) {
+          return;
+        }
 
-        await this.saveMessageParticipants(
-          participants,
-          dataSourceMetadata,
-          messageId,
-          manager,
+        const savedOrExistingMessageThreadId =
+          await this.saveMessageThreadOrReturnExistingMessageThread(
+            message.messageThreadExternalId,
+            dataSourceMetadata,
+            workspaceDataSource,
+          );
+
+        const savedOrExistingMessageId =
+          await this.saveMessageOrReturnExistingMessage(
+            message,
+            savedOrExistingMessageThreadId,
+            connectedAccount,
+            dataSourceMetadata,
+            manager,
+          );
+
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+          [
+            gmailMessageChannelId,
+            savedOrExistingMessageId,
+            message.externalId,
+            savedOrExistingMessageThreadId,
+            message.messageThreadExternalId,
+          ],
         );
       });
     }
   }
 
-  public async saveMessageParticipants(
-    participants: Participant[],
+  private async saveMessageOrReturnExistingMessage(
+    message: GmailMessage,
+    messageThreadId: string,
+    connectedAccount,
     dataSourceMetadata: DataSourceEntity,
+    manager: EntityManager,
+  ): Promise<string> {
+    const existingMessages = await manager.query(
+      `SELECT "message"."id" FROM ${dataSourceMetadata.schema}."message" WHERE ${dataSourceMetadata.schema}."message"."headerMessageId" = $1 LIMIT 1`,
+      [message.headerMessageId],
+    );
+    const existingMessageId: string = existingMessages[0]?.id;
+
+    if (existingMessageId) {
+      return Promise.resolve(existingMessageId);
+    }
+
+    const newMessageId = v4();
+
+    const messageDirection =
+      connectedAccount.handle === message.fromHandle ? 'outgoing' : 'incoming';
+
+    const receivedAt = new Date(parseInt(message.internalDate));
+
+    await manager.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text", "html") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        newMessageId,
+        message.headerMessageId,
+        message.subject,
+        receivedAt,
+        messageDirection,
+        messageThreadId,
+        message.text,
+        message.html,
+      ],
+    );
+
+    await this.saveMessageParticipants(
+      message.participants,
+      newMessageId,
+      dataSourceMetadata,
+      manager,
+    );
+
+    return Promise.resolve(newMessageId);
+  }
+
+  private async saveMessageThreadOrReturnExistingMessageThread(
+    messageThreadExternalId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    const existingMessageThreads = await workspaceDataSource?.query(
+      `SELECT "messageChannelMessageAssociation"."messageThreadId" FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageThreadExternalId" = $1 LIMIT 1`,
+      [messageThreadExternalId],
+    );
+
+    const existingMessageThread = existingMessageThreads[0]?.messageThreadId;
+
+    if (existingMessageThread) {
+      return Promise.resolve(existingMessageThread);
+    }
+
+    const newMessageThreadId = v4();
+
+    await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("id") VALUES ($1)`,
+      [newMessageThreadId],
+    );
+
+    return Promise.resolve(newMessageThreadId);
+  }
+
+  private async saveMessageParticipants(
+    participants: Participant[],
     messageId: string,
+    dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ): Promise<void> {
     if (!participants) return;
 
     for (const participant of participants) {
       const participantPerson = await manager.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
+        `SELECT "person"."id" FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1 LIMIT 1`,
         [participant.handle],
       );
 
@@ -167,7 +169,8 @@ export class MessagingUtilsService {
       const workspaceMember = await manager.query(
         `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
           JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
+          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1
+          LIMIT 1`,
         [participant.handle],
       );
 
@@ -187,41 +190,16 @@ export class MessagingUtilsService {
     }
   }
 
-  public async getSavedMessageIdsAndThreadIds(
-    messageEternalIds: string[],
+  public async deleteMessageChannelMessageAssociations(
+    messageExternalIds: string[],
     connectedAccountId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
-  ): Promise<{
-    savedMessageIds: string[];
-    savedThreadIds: string[];
-  }> {
-    const messageIdsInDatabase: {
-      messageExternalId: string;
-      messageThreadExternalId: string;
-    }[] = await workspaceDataSource?.query(
-      `SELECT message."externalId" AS "messageExternalId",
-      "messageThread"."externalId" AS "messageThreadExternalId"
-      FROM ${dataSourceMetadata.schema}."message" message
-      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
-      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
-      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1
-        AND message."externalId" = ANY($2)`,
-      [connectedAccountId, messageEternalIds],
+  ) {
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+      [messageExternalIds, connectedAccountId],
     );
-
-    return {
-      savedMessageIds: messageIdsInDatabase.map(
-        (message) => message.messageExternalId,
-      ),
-      savedThreadIds: [
-        ...new Set(
-          messageIdsInDatabase.map(
-            (message) => message.messageThreadExternalId,
-          ),
-        ),
-      ],
-    };
   }
 
   public async getConnectedAccountsFromWorkspaceId(
@@ -240,7 +218,7 @@ export class MessagingUtilsService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google'`,
     );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
@@ -271,7 +249,7 @@ export class MessagingUtilsService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "id" = $1`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google' AND "id" = $1`,
       [connectedAccountId],
     );
 
@@ -298,49 +276,19 @@ export class MessagingUtilsService {
     );
   }
 
-  public async deleteMessages(
-    messageIds: string[],
+  public async getMessageChannelMessageAssociations(
+    messageExternalIds: string[],
+    gmailMessageChannelId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
   ) {
-    if (!messageIds || messageIds.length === 0) {
-      return;
-    }
+    const existingMessageChannelMessageAssociation =
+      await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+      WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+        [messageExternalIds, gmailMessageChannelId],
+      );
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."message" WHERE "externalId" = ANY($1)`,
-      [messageIds],
-    );
-  }
-
-  public async deleteEmptyThreads(
-    messageIds: string[],
-    connectedAccountId: string,
-    dataSourceMetadata: DataSourceEntity,
-    workspaceDataSource: DataSource,
-  ) {
-    const messageThreadsToDelete = await workspaceDataSource?.query(
-      `SELECT "messageThread"."id" FROM ${dataSourceMetadata.schema}."messageThread" "messageThread"
-      LEFT JOIN ${dataSourceMetadata.schema}."message" message ON "messageThread"."id" = message."messageThreadId"
-      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
-      WHERE "messageThread"."externalId" = ANY($1)
-      AND ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $2
-      GROUP BY "messageThread"."id"
-      HAVING COUNT(message."id") = 0`,
-      [messageIds, connectedAccountId],
-    );
-
-    if (!messageThreadsToDelete || messageThreadsToDelete.length === 0) {
-      return;
-    }
-
-    const messageThreadIdsToDelete = messageThreadsToDelete.map(
-      (messageThread) => messageThread.id,
-    );
-
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."messageThread" WHERE "id" = ANY($1)`,
-      [messageThreadIdsToDelete],
-    );
+    return existingMessageChannelMessageAssociation;
   }
 }

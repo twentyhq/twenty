@@ -9,8 +9,8 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Section } from '@/ui/layout/section/components/Section';
 
 export enum InboxSettingsVisibilityValue {
-  Everything = 'everything',
-  SubjectMetadata = 'subject-metadata',
+  Everything = 'share_everything',
+  SubjectMetadata = 'subject',
   Metadata = 'metadata',
 }
 
@@ -60,6 +60,8 @@ const StyledRadio = styled(Radio)`
   margin-left: auto;
 `;
 
+
+
 export const SettingsAccountsInboxSettingsVisibilitySection = ({
   onChange,
   value = InboxSettingsVisibilityValue.Everything,
@@ -101,38 +103,38 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
 
   return (
     <Section>
-      <H2Title
-        title={translate('emailVisibility')}
-        description={translate('emailVisibilityDsc')}
-      />
-      <Card>
-        {inboxSettingsVisibilityOptions.map(
-          (
-            { title, description, value: optionValue, visibleElements },
-            index,
-          ) => (
-            <StyledCardContent
-              key={value}
-              divider={index < inboxSettingsVisibilityOptions.length - 1}
-            >
-              <StyledCardMedia>
-                <StyledMetadataSkeleton isActive={visibleElements.metadata} />
-                <StyledSubjectSkeleton isActive={visibleElements.subject} />
-                <StyledBodySkeleton isActive={visibleElements.body} />
-              </StyledCardMedia>
-              <div>
-                <StyledTitle>{title}</StyledTitle>
-                <StyledDescription>{description}</StyledDescription>
-              </div>
-              <StyledRadio
-                value={optionValue}
-                onCheckedChange={() => onChange(optionValue)}
-                checked={value === optionValue}
-              />
-            </StyledCardContent>
-          ),
-        )}
-      </Card>
-    </Section>
-  );
-};
+    <H2Title
+      title={translate('emailVisibility')}
+      description={translate('emailVisibilityDsc')}
+    />
+    <Card>
+      {inboxSettingsVisibilityOptions.map(
+        (
+          { title, description, value: optionValue, visibleElements },
+          index,
+        ) => (
+          <StyledCardContent
+            key={optionValue}
+            divider={index < inboxSettingsVisibilityOptions.length - 1}
+          >
+            <StyledCardMedia>
+              <StyledMetadataSkeleton isActive={visibleElements.metadata} />
+              <StyledSubjectSkeleton isActive={visibleElements.subject} />
+              <StyledBodySkeleton isActive={visibleElements.body} />
+            </StyledCardMedia>
+            <div>
+              <StyledTitle>{title}</StyledTitle>
+              <StyledDescription>{description}</StyledDescription>
+            </div>
+            <StyledRadio
+              value={optionValue}
+              onCheckedChange={() => onChange(optionValue)}
+              checked={value === optionValue}
+            />
+          </StyledCardContent>
+        ),
+      )}
+    </Card>
+  </Section>
+);
+}
