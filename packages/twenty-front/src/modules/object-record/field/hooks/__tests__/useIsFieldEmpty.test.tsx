@@ -5,7 +5,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { phoneFieldDefinition } from '@/object-record/field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/field/hooks/useIsFieldEmpty';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const entityId = 'entityId';
 
@@ -27,7 +27,7 @@ describe('useIsFieldEmpty', () => {
     const { result } = renderHook(
       () => {
         const setFieldState = useSetRecoilState(
-          entityFieldsFamilyState(entityId),
+          recordStoreFamilyState(entityId),
         );
         return {
           setFieldState,
