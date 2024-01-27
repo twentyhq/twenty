@@ -40,8 +40,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     getOnColumnsChangeState,
     getIsRecordTableInitialLoadingState,
     getTableLastRowVisibleState,
-    numberOfTableColumnsSelector,
-    selectedRowIdsSelector,
+    getNumberOfTableColumnsSelector,
+    getSelectedRowIdsSelector,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useSetRecoilState(
@@ -176,7 +176,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          numberOfTableColumnsSelector,
+          getNumberOfTableColumnsSelector(),
         );
 
         const numberOfTableRows = getSnapshotValue(
@@ -215,7 +215,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       },
     [
       getSoftFocusPositionState,
-      numberOfTableColumnsSelector,
+      getNumberOfTableColumnsSelector,
       getNumberOfTableRowsState,
       setSoftFocusPosition,
     ],
@@ -231,7 +231,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          numberOfTableColumnsSelector,
+          getNumberOfTableColumnsSelector(),
         );
 
         const currentColumnNumber = softFocusPosition.column;
@@ -262,8 +262,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         }
       },
     [
+      getNumberOfTableColumnsSelector,
       getSoftFocusPositionState,
-      numberOfTableColumnsSelector,
       setSoftFocusPosition,
     ],
   );
@@ -352,6 +352,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableLastRowVisible,
     setSoftFocusPosition,
     isSomeCellInEditModeState,
-    selectedRowIdsSelector,
+    getSelectedRowIdsSelector,
   };
 };

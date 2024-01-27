@@ -15,10 +15,10 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
-import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
   useMapFieldMetadataToGraphQLQuery: () => () => '\n',
@@ -113,7 +113,7 @@ describe('usePersistField', () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          entityFieldsFamilySelector({ entityId, fieldName }),
+          recordStoreFamilySelector({ recordId: entityId, fieldName }),
         );
 
         return {
@@ -137,7 +137,7 @@ describe('usePersistField', () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          entityFieldsFamilySelector({ entityId, fieldName }),
+          recordStoreFamilySelector({ recordId: entityId, fieldName }),
         );
 
         return {

@@ -2,11 +2,12 @@ import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/contexts/RecordBoardColumnContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
-import { BoardCardIdContext } from '@/object-record/record-board-deprecated/contexts/BoardCardIdContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -71,9 +72,12 @@ export const RecordBoardColumn = ({
               droppableProvided={droppableProvided}
             >
               {recordIds.map((recordId) => (
-                <BoardCardIdContext.Provider value={recordId} key={recordId}>
-                  <div>Card</div>
-                </BoardCardIdContext.Provider>
+                <RecordBoardCardContext.Provider
+                  value={{ recordId }}
+                  key={recordId}
+                >
+                  <RecordBoardCard />
+                </RecordBoardCardContext.Provider>
               ))}
             </RecordBoardColumnCardsContainer>
           </StyledColumn>

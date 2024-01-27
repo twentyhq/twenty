@@ -10,10 +10,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -100,7 +100,7 @@ export const RecordRelationFieldCardContent = ({
 
   // TODO: temporary as ChipDisplay expect to find the entity in the entityFieldsFamilyState
   const setRelationEntityFields = useSetRecoilState(
-    entityFieldsFamilyState(relationRecord.id),
+    recordStoreFamilyState(relationRecord.id),
   );
 
   useEffect(() => {

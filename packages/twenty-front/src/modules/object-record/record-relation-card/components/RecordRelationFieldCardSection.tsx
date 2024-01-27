@@ -10,12 +10,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
-import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
@@ -91,7 +91,7 @@ export const RecordRelationFieldCardSection = () => {
     relationType,
     objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
-  const record = useRecoilValue(entityFieldsFamilyState(entityId));
+  const record = useRecoilValue(recordStoreFamilyState(entityId));
 
   const {
     labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
@@ -110,7 +110,7 @@ export const RecordRelationFieldCardSection = () => {
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | null
-  >(entityFieldsFamilySelector({ entityId, fieldName }));
+  >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
 

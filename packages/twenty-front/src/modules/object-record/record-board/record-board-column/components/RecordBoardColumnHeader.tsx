@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/contexts/RecordBoardColumnContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { BoardColumnHotkeyScope } from '@/object-record/record-board-deprecated/types/BoardColumnHotkeyScope';
 import { IconDotsVertical } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';

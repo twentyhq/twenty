@@ -1,7 +1,7 @@
 import { selectorFamily } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { isFieldValueEmpty } from '@/object-record/field/utils/isFieldValueEmpty';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
@@ -18,7 +18,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
     entityId: string;
   }) => {
     return ({ get }) => {
-      const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+      const fieldValue = get(recordStoreFamilyState(entityId))?.[fieldName];
 
       return isFieldValueEmpty({
         fieldDefinition,

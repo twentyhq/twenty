@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { FieldFullNameValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldFullName } from '../../types/guards/isFieldFullName';
@@ -18,8 +19,8 @@ export const useFullNameField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldFullNameValue>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName: fieldName,
     }),
   );

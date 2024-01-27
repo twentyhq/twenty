@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
 import {
   convertCurrencyMicrosToCurrency,
@@ -12,7 +13,6 @@ import {
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
@@ -50,8 +50,8 @@ export const useCurrencyField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldCurrencyValue>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName: fieldName,
     }),
   );

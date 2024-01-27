@@ -94,27 +94,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    allRowsSelectedStatusSelector: getSelector(
+    getAllRowsSelectedStatusSelector: getSelector(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,
     ),
-    hiddenTableColumnsSelector: getSelector(
+    getHiddenTableColumnsSelector: getSelector(
       hiddenTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    numberOfTableColumnsSelector: getSelector(
+    getNumberOfTableColumnsSelector: getSelector(
       numberOfTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    selectedRowIdsSelector: getSelector(
+    getSelectedRowIdsSelector: getSelector(
       selectedRowIdsSelectorScopeMap,
       scopeId,
     ),
-    tableColumnsByKeySelector: getSelector(
+    getTableColumnsByKeySelector: getSelector(
       tableColumnsByKeySelectorScopeMap,
       scopeId,
     ),
-    visibleTableColumnsSelector: getSelector(
+    getVisibleTableColumnsSelector: getSelector(
       visibleTableColumnsSelectorScopeMap,
       scopeId,
     ),

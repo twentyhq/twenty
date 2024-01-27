@@ -26,9 +26,9 @@ const StyledPlaceholder = styled.td`
 `;
 
 export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
+  const { getVisibleTableColumnsSelector } = useRecordTableStates();
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
 
   const { currentRowSelected } = useCurrentRowSelected();
 

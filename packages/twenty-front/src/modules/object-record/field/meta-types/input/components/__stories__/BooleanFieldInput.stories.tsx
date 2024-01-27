@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import {
@@ -18,7 +18,7 @@ const BooleanFieldValueSetterEffect = ({
   value: boolean;
   entityId: string;
 }) => {
-  const setField = useSetRecoilState(entityFieldsFamilyState(entityId));
+  const setField = useSetRecoilState(recordStoreFamilyState(entityId));
 
   useEffect(() => {
     setField({ id: entityId, Boolean: value });
