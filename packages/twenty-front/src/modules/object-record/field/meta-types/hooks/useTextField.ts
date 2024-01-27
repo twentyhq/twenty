@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
@@ -17,8 +18,8 @@ export const useTextField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName: fieldName,
     }),
   );

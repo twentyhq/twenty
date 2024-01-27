@@ -18,9 +18,9 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 export const RecordTableHeaderPlusButtonContent = () => {
   const { closeDropdown } = useDropdown();
 
-  const { hiddenTableColumnsSelector } = useRecordTableStates();
+  const { getHiddenTableColumnsSelector } = useRecordTableStates();
 
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
 
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns();

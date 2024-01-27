@@ -2,10 +2,10 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/field/hooks/useGetButtonIcon';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
@@ -18,7 +18,7 @@ export const useRelationField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
-    entityFieldsFamilySelector({ entityId, fieldName }),
+    recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
   const fieldInitialValue = useFieldInitialValue();

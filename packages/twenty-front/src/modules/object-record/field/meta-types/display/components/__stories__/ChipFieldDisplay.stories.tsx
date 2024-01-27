@@ -4,13 +4,13 @@ import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
 import { ChipFieldDisplay } from '@/object-record/field/meta-types/display/components/ChipFieldDisplay';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
 
 const ChipFieldValueSetterEffect = () => {
-  const setEntityFields = useSetRecoilState(entityFieldsFamilyState('123'));
+  const setEntityFields = useSetRecoilState(recordStoreFamilyState('123'));
 
   useEffect(() => {
     setEntityFields({

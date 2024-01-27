@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+
 import { FieldContext } from '../../contexts/FieldContext';
-import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 
@@ -14,8 +15,8 @@ export const useBooleanField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName: fieldName,
     }),
   );
