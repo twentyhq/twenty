@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
@@ -29,10 +28,9 @@ export const FullNameFieldInput = ({
   onTab,
   onShiftTab,
 }: FullNameFieldInputProps) => {
-  const { hotkeyScope, initialValue } = useFullNameField();
+  const { hotkeyScope, draftValue, setDraftValue } = useFullNameField();
 
   const persistField = usePersistField();
-  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
@@ -65,14 +63,14 @@ export const FullNameFieldInput = ({
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {
-    saveEditModeValue(convertToFullName(newDoubleText));
+    setDraftValue(convertToFullName(newDoubleText));
   };
 
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={initialValue.firstName}
-        secondValue={initialValue.lastName}
+        firstValue={draftValue.firstName}
+        secondValue={draftValue.lastName}
         firstValuePlaceholder={
           FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
         }

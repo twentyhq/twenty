@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { FieldUUidValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 
@@ -16,7 +16,7 @@ export const useUuidField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<string>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldUUidValue>(
     recordStoreFamilySelector({
       recordId: entityId,
       fieldName: fieldName,
@@ -24,16 +24,9 @@ export const useUuidField = () => {
   );
   const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
 
-  const fieldInitialValue = useFieldInitialValue();
-
-  const initialValue = fieldInitialValue?.isEmpty
-    ? ''
-    : fieldInitialValue?.value ?? fieldTextValue;
-
   return {
     fieldDefinition,
     fieldValue: fieldTextValue,
-    initialValue,
     setFieldValue,
     hotkeyScope,
   };

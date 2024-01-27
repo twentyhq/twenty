@@ -1,13 +1,16 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
-import { FieldSelectValue } from '../../types/FieldMetadata';
+import {
+  FieldSelectDraftValue,
+  FieldSelectValue,
+} from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldSelect } from '../../types/guards/isFieldSelect';
 import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
@@ -27,16 +30,18 @@ export const useSelectField = () => {
   );
 
   const fieldSelectValue = isFieldSelectValue(fieldValue) ? fieldValue : null;
-
-  const fieldInitialValue = useFieldInitialValue();
-
   const persistField = usePersistField();
+
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldSelectDraftValue>(entityId);
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
     fieldDefinition,
     persistField,
     fieldValue: fieldSelectValue,
-    initialValue: fieldInitialValue,
+    draftValue,
+    setDraftValue,
     setFieldValue,
     hotkeyScope,
   };

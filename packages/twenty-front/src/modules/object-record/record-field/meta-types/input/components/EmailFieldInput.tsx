@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -22,10 +21,10 @@ export const EmailFieldInput = ({
   onTab,
   onShiftTab,
 }: EmailFieldInputProps) => {
-  const { fieldDefinition, initialValue, hotkeyScope } = useEmailField();
+  const { fieldDefinition, draftValue, setDraftValue, hotkeyScope } =
+    useEmailField();
 
   const persistField = usePersistField();
-  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistField(newText));
@@ -51,7 +50,7 @@ export const EmailFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    saveEditModeValue(newText);
+    setDraftValue(newText);
   };
 
   return (
@@ -59,7 +58,7 @@ export const EmailFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={initialValue}
+        value={draftValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

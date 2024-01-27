@@ -3,7 +3,13 @@ import { CurrencyDisplay } from '@/ui/field/display/components/CurrencyDisplay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 export const CurrencyFieldDisplay = () => {
-  const { initialAmount } = useCurrencyField();
+  const { fieldValue } = useCurrencyField();
 
-  return <CurrencyDisplay amount={initialAmount} />;
+  return (
+    <CurrencyDisplay
+      amount={
+        fieldValue.amountMicros ? fieldValue.amountMicros / 1000000 : null
+      }
+    />
+  );
 };

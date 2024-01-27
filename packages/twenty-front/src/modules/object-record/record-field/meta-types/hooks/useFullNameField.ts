@@ -1,12 +1,15 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
-import { FieldFullNameValue } from '../../types/FieldMetadata';
+import {
+  FieldFullNameDraftValue,
+  FieldFullNameValue,
+} from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldFullName } from '../../types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '../../types/guards/isFieldFullNameValue';
@@ -35,17 +38,17 @@ export const useFullNameField = () => {
     persistField(newValue);
   };
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldFullNameDraftValue>(entityId);
 
-  const initialValue: FieldFullNameValue = fieldInitialValue?.isEmpty
-    ? { firstName: '', lastName: '' }
-    : fieldValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
     setFieldValue,
+    draftValue,
+    setDraftValue,
     hotkeyScope,
     persistFullNameField,
   };

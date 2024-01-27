@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { FieldLinkValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -25,13 +25,10 @@ export const useLinkField = () => {
     }),
   );
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldLinkValue>(entityId);
 
-  const initialValue: FieldLinkValue = fieldInitialValue?.isEmpty
-    ? { url: '', label: '' }
-    : fieldInitialValue?.value
-      ? { url: fieldInitialValue.value, label: '' }
-      : fieldValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   const persistField = usePersistField();
 
@@ -46,7 +43,8 @@ export const useLinkField = () => {
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
+    draftValue,
+    setDraftValue,
     setFieldValue,
     hotkeyScope,
     persistLinkField,

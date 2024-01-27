@@ -1,46 +1,21 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldInitialValue } from '@/object-record/record-field/types/FieldInitialValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
-import {
-  convertCurrencyMicrosToCurrency,
-  convertCurrencyToCurrencyMicros,
-} from '~/utils/convert-currency-amount';
+import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
-import { FieldCurrencyValue } from '../../types/FieldMetadata';
+import {
+  FieldCurrencyDraftValue,
+  FieldCurrencyValue,
+} from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
-
-const initializeValue = (
-  fieldInitialValue: FieldInitialValue | undefined,
-  fieldValue: FieldCurrencyValue,
-) => {
-  if (fieldInitialValue?.isEmpty) {
-    return { amount: null, currencyCode: CurrencyCode.USD };
-  }
-  if (!isNaN(Number(fieldInitialValue?.value))) {
-    return {
-      amount: Number(fieldInitialValue?.value),
-      currencyCode: CurrencyCode.USD,
-    };
-  }
-
-  if (!fieldValue) {
-    return { amount: null, currencyCode: CurrencyCode.USD };
-  }
-
-  return {
-    amount: convertCurrencyMicrosToCurrency(fieldValue.amountMicros),
-    currencyCode: CurrencyCode.USD,
-  };
-};
 
 export const useCurrencyField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
@@ -83,16 +58,20 @@ export const useCurrencyField = () => {
     persistField(newCurrencyValue);
   };
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldCurrencyDraftValue>(entityId);
 
-  const initialValue = initializeValue(fieldInitialValue, fieldValue);
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
-  const initialAmount = initialValue.amount;
-  const initialCurrencyCode = initialValue.currencyCode;
+  const initialAmount = draftValue?.amount;
+  const initialCurrencyCode = draftValue
+    ? draftValue.currencyCode
+    : CurrencyCode.USD;
 
   return {
     fieldDefinition,
     fieldValue,
+    setDraftValue,
     initialAmount,
     initialCurrencyCode,
     setFieldValue,

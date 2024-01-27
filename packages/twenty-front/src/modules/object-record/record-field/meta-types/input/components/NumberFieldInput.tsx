@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -21,10 +20,13 @@ export const NumberFieldInput = ({
   onTab,
   onShiftTab,
 }: NumberFieldInputProps) => {
-  const { fieldDefinition, initialValue, hotkeyScope, persistNumberField } =
-    useNumberField();
-
-  const saveEditModeValue = useSaveFieldEditModeValue();
+  const {
+    fieldDefinition,
+    draftValue,
+    setDraftValue,
+    hotkeyScope,
+    persistNumberField,
+  } = useNumberField();
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistNumberField(newText));
@@ -50,7 +52,7 @@ export const NumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    saveEditModeValue(newText);
+    setDraftValue(newText);
   };
 
   return (
@@ -58,7 +60,7 @@ export const NumberFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={initialValue?.toString() ?? ''}
+        value={draftValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
@@ -22,10 +21,10 @@ export const TextFieldInput = ({
   onTab,
   onShiftTab,
 }: TextFieldInputProps) => {
-  const { fieldDefinition, initialValue, hotkeyScope } = useTextField();
+  const { fieldDefinition, draftValue, hotkeyScope, setDraftValue } =
+    useTextField();
 
   const persistField = usePersistField();
-  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistField(newText));
@@ -51,7 +50,7 @@ export const TextFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    saveEditModeValue(newText);
+    setDraftValue(newText);
   };
 
   return (
@@ -59,7 +58,7 @@ export const TextFieldInput = ({
       <TextAreaInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={initialValue}
+        value={draftValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

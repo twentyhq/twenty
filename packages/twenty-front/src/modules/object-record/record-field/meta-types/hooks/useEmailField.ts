@@ -1,10 +1,11 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldEmailDraftValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
 
@@ -22,16 +23,16 @@ export const useEmailField = () => {
     }),
   );
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldEmailDraftValue>(entityId);
 
-  const initialValue = fieldInitialValue?.isEmpty
-    ? ''
-    : fieldInitialValue?.value ?? fieldValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
     fieldDefinition,
+    draftValue,
+    setDraftValue,
     fieldValue,
-    initialValue,
     setFieldValue,
     hotkeyScope,
   };

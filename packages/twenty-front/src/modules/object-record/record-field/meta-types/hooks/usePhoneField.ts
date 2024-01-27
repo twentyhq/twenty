@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import { isPossiblePhoneNumber } from 'libphonenumber-js';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldPhoneDraftValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldPhone } from '../../types/guards/isFieldPhone';
@@ -13,7 +14,6 @@ import { isFieldPhone } from '../../types/guards/isFieldPhone';
 export const usePhoneField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  //assertFieldMetadata('PHONE', isFieldPhone, fieldDefinition);
   assertFieldMetadata('TEXT', isFieldPhone, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
@@ -32,18 +32,17 @@ export const usePhoneField = () => {
 
     persistField(newPhoneValue);
   };
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldPhoneDraftValue>(entityId);
 
-  const fieldInitialValue = useFieldInitialValue();
-
-  const initialValue = fieldInitialValue?.isEmpty
-    ? ''
-    : fieldInitialValue?.value ?? fieldValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
     setFieldValue,
+    draftValue,
+    setDraftValue,
     hotkeyScope,
     persistPhoneField,
   };

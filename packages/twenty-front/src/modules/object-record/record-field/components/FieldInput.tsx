@@ -2,9 +2,10 @@ import { useContext } from 'react';
 
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
+import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -30,6 +31,7 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {
+  recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: FieldInputEvent;
@@ -40,6 +42,7 @@ type FieldInputProps = {
 };
 
 export const FieldInput = ({
+  recordFieldInputdId,
   onCancel,
   onSubmit,
   onEnter,
@@ -51,11 +54,11 @@ export const FieldInput = ({
   const { fieldDefinition } = useContext(FieldContext);
 
   return (
-    <>
+    <RecordFieldInputScope
+      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
+    >
       {isFieldRelation(fieldDefinition) ? (
-        <RecoilScope>
-          <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </RecoilScope>
+        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldInput
           onEnter={onEnter}
@@ -127,6 +130,6 @@ export const FieldInput = ({
       ) : (
         <></>
       )}
-    </>
+    </RecordFieldInputScope>
   );
 };

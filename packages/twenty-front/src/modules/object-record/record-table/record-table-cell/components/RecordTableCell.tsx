@@ -2,9 +2,9 @@ import { useContext } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
-import { useIsFieldEditModeValueEmpty } from '@/object-record/record-field/hooks/useIsFieldEditModeValueEmpty';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { ColumnIndexContext } from '@/object-record/record-table/contexts/ColumnIndexContext';
+import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTable } from '../../hooks/useRecordTable';
@@ -18,13 +18,13 @@ export const RecordTableCell = ({
   customHotkeyScope: HotkeyScope;
 }) => {
   const { closeTableCell } = useTableCell();
+  const rowId = useContext(RowIdContext);
 
   const { moveLeft, moveRight, moveDown } = useRecordTable();
 
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
-  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
 
-  const skipFieldPersist = isFirstColumnCell && isEditModeValueEmpty;
+  const skipFieldPersist = isFirstColumnCell;
 
   const handleEnter: FieldInputEvent = (persistField) => {
     if (!skipFieldPersist) {
@@ -86,6 +86,7 @@ export const RecordTableCell = ({
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
+          recordFieldInputdId={rowId ?? ''}
           onCancel={handleCancel}
           onClickOutside={handleClickOutside}
           onEnter={handleEnter}

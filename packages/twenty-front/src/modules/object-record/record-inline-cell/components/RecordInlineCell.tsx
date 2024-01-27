@@ -16,7 +16,7 @@ import { useInlineCell } from '../hooks/useInlineCell';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
 export const RecordInlineCell = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, entityId } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
 
@@ -79,6 +79,7 @@ export const RecordInlineCell = () => {
       showLabel={fieldDefinition.showLabel}
       editModeContent={
         <FieldInput
+          recordFieldInputdId={entityId}
           onEnter={handleEnter}
           onCancel={handleCancel}
           onEscape={handleEscape}

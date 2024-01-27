@@ -1,10 +1,14 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import {
+  FieldTextDraftValue,
+  FieldTextValue,
+} from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
@@ -17,7 +21,7 @@ export const useTextField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<string>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldTextValue>(
     recordStoreFamilySelector({
       recordId: entityId,
       fieldName: fieldName,
@@ -25,17 +29,17 @@ export const useTextField = () => {
   );
   const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldTextDraftValue>(entityId);
 
-  const initialValue = fieldInitialValue?.isEmpty
-    ? ''
-    : fieldInitialValue?.value ?? fieldTextValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
+    draftValue,
+    setDraftValue,
     maxWidth,
     fieldDefinition,
     fieldValue: fieldTextValue,
-    initialValue,
     setFieldValue,
     hotkeyScope,
   };

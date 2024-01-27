@@ -1,11 +1,12 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldRelationDraftValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
@@ -21,18 +22,15 @@ export const useRelationField = () => {
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { getDraftValueSelector } =
+    useRecordFieldInput<FieldRelationDraftValue>(entityId);
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
-  const initialSearchValue = fieldInitialValue?.isEmpty
-    ? null
-    : fieldInitialValue?.value;
-
-  const initialValue = fieldInitialValue?.isEmpty ? null : fieldValue;
+  const initialSearchValue = draftValue;
 
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
     initialSearchValue,
     setFieldValue,
     maxWidth: button && maxWidth ? maxWidth - 28 : maxWidth,

@@ -1,12 +1,11 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldEditModeValueEmpty } from '@/object-record/record-field/hooks/useIsFieldEditModeValueEmpty';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
-import { entityFieldInitialValueFamilyState } from '@/object-record/record-field/states/entityFieldInitialValueFamilyState';
-import { FieldInitialValue } from '@/object-record/record-field/types/FieldInitialValue';
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -49,17 +48,19 @@ export const useTableCell = () => {
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
 
   const isEmpty = useIsFieldEmpty();
-  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
 
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { entityId } = useContext(FieldContext);
 
   const deleteOneRecord = useContext(EntityDeleteContext);
 
-  const [, setFieldInitialValue] = useRecoilState(
-    entityFieldInitialValueFamilyState({
-      entityId,
-      fieldMetadataId: fieldDefinition.fieldMetadataId,
-    }),
+  const {
+    setDraftValue: setFieldInputDraftValue,
+    getDraftValueSelector: getFieldInputDraftValueSelector,
+    isDraftValueEmpty: isCurrentFieldInputValueEmpty,
+  } = useRecordFieldInput(entityId);
+
+  const currentFieldInputDraftValue = useRecoilValue(
+    getFieldInputDraftValueSelector(),
   );
 
   const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
@@ -68,7 +69,7 @@ export const useTableCell = () => {
     await deleteOneRecord(tableRowIds[0]);
   });
 
-  const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
+  const openTableCell = (options?: { initialValue?: FieldInputDraftValue }) => {
     if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
       leaveTableFocus();
       navigate(`${basePathToShowPage}${entityId}`);
@@ -79,7 +80,7 @@ export const useTableCell = () => {
     setCurrentTableCellInEditMode();
 
     if (options?.initialValue) {
-      setFieldInitialValue(options.initialValue);
+      setFieldInputDraftValue(options.initialValue);
     }
 
     if (customCellHotkeyScope) {
@@ -95,10 +96,13 @@ export const useTableCell = () => {
   const closeTableCell = async () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
-    setFieldInitialValue(undefined);
+    setFieldInputDraftValue(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
 
-    if (isFirstColumnCell && isEditModeValueEmpty) {
+    if (
+      isFirstColumnCell &&
+      isCurrentFieldInputValueEmpty(currentFieldInputDraftValue)
+    ) {
       await deleteRow();
     }
   };

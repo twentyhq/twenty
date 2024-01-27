@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -21,9 +20,8 @@ export const LinkFieldInput = ({
   onTab,
   onShiftTab,
 }: LinkFieldInputProps) => {
-  const { initialValue, hotkeyScope, persistLinkField } = useLinkField();
-
-  const saveEditModeValue = useSaveFieldEditModeValue();
+  const { draftValue, setDraftValue, hotkeyScope, persistLinkField } =
+    useLinkField();
 
   const handleEnter = (newURL: string) => {
     onEnter?.(() =>
@@ -74,7 +72,7 @@ export const LinkFieldInput = ({
   };
 
   const handleChange = (newURL: string) => {
-    saveEditModeValue({
+    setDraftValue({
       url: newURL,
       label: newURL,
     });
@@ -83,7 +81,7 @@ export const LinkFieldInput = ({
   return (
     <FieldInputOverlay>
       <TextInput
-        value={initialValue.url}
+        value={draftValue.url}
         autoFocus
         placeholder="URL"
         hotkeyScope={hotkeyScope}

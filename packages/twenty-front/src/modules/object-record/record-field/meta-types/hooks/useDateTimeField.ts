@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldDateTimeDraftValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -22,9 +24,13 @@ export const useDateTimeField = () => {
     }),
   );
 
+  const { setDraftValue } =
+    useRecordFieldInput<FieldDateTimeDraftValue>(entityId);
+
   return {
     fieldDefinition,
     fieldValue,
+    setDraftValue,
     setFieldValue,
     hotkeyScope,
     clearable,

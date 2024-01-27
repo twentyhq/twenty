@@ -24,7 +24,7 @@ export const RelationFieldInput = ({
   onSubmit,
   onCancel,
 }: RelationFieldInputProps) => {
-  const { fieldDefinition, initialValue, initialSearchValue } =
+  const { fieldDefinition, initialSearchValue, fieldValue } =
     useRelationField();
 
   const persistField = usePersistField();
@@ -39,7 +39,7 @@ export const RelationFieldInput = ({
     <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={fieldDefinition}
-        recordId={initialValue?.id ?? ''}
+        recordId={fieldValue.id}
         onSubmit={handleSubmit}
         onCancel={onCancel}
         initialSearchFilter={initialSearchValue}

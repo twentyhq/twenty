@@ -1,4 +1,3 @@
-import { useSaveFieldEditModeValue } from '@/object-record/record-field/hooks/useSaveFieldEditModeValue';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { Nullable } from '~/types/Nullable';
 
@@ -18,10 +17,10 @@ export const DateFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope, clearable } = useDateTimeField();
+  const { fieldValue, hotkeyScope, clearable, setDraftValue } =
+    useDateTimeField();
 
   const persistField = usePersistField();
-  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!newDate) {
@@ -49,7 +48,7 @@ export const DateFieldInput = ({
   };
 
   const handleChange = (newDate: Nullable<Date>) => {
-    saveEditModeValue(newDate);
+    setDraftValue(newDate?.toDateString() ?? '');
   };
 
   const dateValue = fieldValue ? new Date(fieldValue) : null;

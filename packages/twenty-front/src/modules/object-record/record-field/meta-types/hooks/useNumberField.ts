@@ -1,6 +1,8 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldNumberDraftValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import {
   canBeCastAsIntegerOrNull,
@@ -8,7 +10,6 @@ import {
 } from '~/utils/cast-as-integer-or-null';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
@@ -39,18 +40,16 @@ export const useNumberField = () => {
     persistField(castedValue);
   };
 
-  const fieldInitialValue = useFieldInitialValue();
+  const { setDraftValue, getDraftValueSelector } =
+    useRecordFieldInput<FieldNumberDraftValue>(entityId);
 
-  const initialValue = fieldInitialValue?.isEmpty
-    ? null
-    : !isNaN(Number(fieldInitialValue?.value))
-      ? Number(fieldInitialValue?.value)
-      : null ?? fieldValue;
+  const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
+    draftValue,
+    setDraftValue,
     setFieldValue,
     hotkeyScope,
     persistNumberField,
