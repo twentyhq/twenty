@@ -71,9 +71,7 @@ export const RecordTableCellSoftFocusMode = ({
         keyboardEvent.stopImmediatePropagation();
 
         openTableCell({
-          initialValue: {
-            value: keyboardEvent.key,
-          },
+          initialValue: keyboardEvent.key,
         });
       }
     },

@@ -1,8 +1,8 @@
 import { recordBoardFieldDefinitionsStateScopeMap } from '@/object-record/record-board/states/recordBoardFieldDefinitionsStateScopeMap';
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
 export const recordBoardVisibleFieldDefinitionsScopedSelector =
-  createSelectorScopeMap({
+  createSelectorReadOnlyScopeMap({
     key: 'recordBoardVisibleFieldDefinitionsScopedSelector',
     get:
       ({ scopeId }) =>

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldNumberDraftValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldNumberValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import {
   canBeCastAsIntegerOrNull,
@@ -41,7 +41,7 @@ export const useNumberField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberDraftValue>(entityId);
+    useRecordFieldInput<FieldNumberValue>(entityId);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

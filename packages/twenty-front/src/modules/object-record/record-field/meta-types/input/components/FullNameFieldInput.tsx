@@ -69,8 +69,8 @@ export const FullNameFieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={draftValue.firstName}
-        secondValue={draftValue.lastName}
+        firstValue={draftValue?.firstName ?? ''}
+        secondValue={draftValue?.lastName ?? ''}
         firstValuePlaceholder={
           FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
         }

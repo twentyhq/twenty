@@ -60,7 +60,7 @@ export const PhoneFieldInput = ({
       <PhoneInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={draftValue}
+        value={draftValue ?? ''}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

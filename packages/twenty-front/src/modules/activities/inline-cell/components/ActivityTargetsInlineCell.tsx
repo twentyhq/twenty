@@ -3,11 +3,10 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
-import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 type ActivityTargetsInlineCellProps = {
   activity?: Pick<GraphQLActivity, 'id'> & {
@@ -27,7 +26,7 @@ export const ActivityTargetsInlineCell = ({
   });
 
   return (
-    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
+    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
       <RecordInlineCellContainer
         buttonIcon={IconPencil}
         customEditHotkeyScope={{
@@ -48,6 +47,6 @@ export const ActivityTargetsInlineCell = ({
         }
         isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
       />
-    </RecoilScope>
+    </RecordFieldInputScope>
   );
 };

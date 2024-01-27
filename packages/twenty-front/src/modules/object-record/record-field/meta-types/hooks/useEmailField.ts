@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldEmailDraftValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldEmailValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -24,7 +24,7 @@ export const useEmailField = () => {
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldEmailDraftValue>(entityId);
+    useRecordFieldInput<FieldEmailValue>(entityId);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

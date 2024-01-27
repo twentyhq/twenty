@@ -26,7 +26,7 @@ import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tab
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
@@ -94,27 +94,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    getAllRowsSelectedStatusSelector: getSelector(
+    getAllRowsSelectedStatusSelector: getSelectorReadOnly(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,
     ),
-    getHiddenTableColumnsSelector: getSelector(
+    getHiddenTableColumnsSelector: getSelectorReadOnly(
       hiddenTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    getNumberOfTableColumnsSelector: getSelector(
+    getNumberOfTableColumnsSelector: getSelectorReadOnly(
       numberOfTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    getSelectedRowIdsSelector: getSelector(
+    getSelectedRowIdsSelector: getSelectorReadOnly(
       selectedRowIdsSelectorScopeMap,
       scopeId,
     ),
-    getTableColumnsByKeySelector: getSelector(
+    getTableColumnsByKeySelector: getSelectorReadOnly(
       tableColumnsByKeySelectorScopeMap,
       scopeId,
     ),
-    getVisibleTableColumnsSelector: getSelector(
+    getVisibleTableColumnsSelector: getSelectorReadOnly(
       visibleTableColumnsSelectorScopeMap,
       scopeId,
     ),

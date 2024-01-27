@@ -7,10 +7,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
-import {
-  FieldSelectDraftValue,
-  FieldSelectValue,
-} from '../../types/FieldMetadata';
+import { FieldSelectValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldSelect } from '../../types/guards/isFieldSelect';
 import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
@@ -33,7 +30,7 @@ export const useSelectField = () => {
   const persistField = usePersistField();
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldSelectDraftValue>(entityId);
+    useRecordFieldInput<FieldSelectValue>(entityId);
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {

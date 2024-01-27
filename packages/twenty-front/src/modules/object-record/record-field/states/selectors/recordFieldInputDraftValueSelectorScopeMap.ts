@@ -8,4 +8,9 @@ export const recordFieldInputDraftValueSelectorScopeMap =
       <T>({ scopeId }: { scopeId: string }) =>
       ({ get }) =>
         get(recordFieldInputDraftValueStateScopeMap({ scopeId })) as T,
+    set:
+      <T>({ scopeId }: { scopeId: string }) =>
+      ({ set }, newValue: T) => {
+        set(recordFieldInputDraftValueStateScopeMap({ scopeId }), newValue);
+      },
   });

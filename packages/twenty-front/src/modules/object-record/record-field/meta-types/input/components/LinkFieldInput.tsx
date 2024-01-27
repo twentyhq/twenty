@@ -81,7 +81,7 @@ export const LinkFieldInput = ({
   return (
     <FieldInputOverlay>
       <TextInput
-        value={draftValue.url}
+        value={draftValue?.url ?? ''}
         autoFocus
         placeholder="URL"
         hotkeyScope={hotkeyScope}

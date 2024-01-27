@@ -39,7 +39,7 @@ export const RelationFieldInput = ({
     <StyledRelationPickerContainer>
       <RelationPicker
         fieldDefinition={fieldDefinition}
-        recordId={fieldValue.id}
+        recordId={fieldValue?.id}
         onSubmit={handleSubmit}
         onCancel={onCancel}
         initialSearchFilter={initialSearchValue}

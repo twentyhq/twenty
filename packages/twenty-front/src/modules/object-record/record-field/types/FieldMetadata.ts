@@ -123,19 +123,3 @@ export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
 export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;
-
-export type FieldTextDraftValue = string;
-export type FieldNumberDraftValue = string;
-export type FieldDateTimeDraftValue = string;
-export type FieldPhoneDraftValue = string;
-export type FieldEmailDraftValue = string;
-export type FieldLinkDraftValue = { url: string; label: string };
-export type FieldCurrencyDraftValue =
-  | {
-      currencyCode: CurrencyCode;
-      amount: string;
-    }
-  | undefined;
-export type FieldFullNameDraftValue = { firstName: string; lastName: string };
-export type FieldSelectDraftValue = string;
-export type FieldRelationDraftValue = string;

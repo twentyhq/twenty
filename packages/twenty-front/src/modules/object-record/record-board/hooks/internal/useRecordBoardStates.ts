@@ -14,7 +14,7 @@ import { recordBoardVisibleFieldDefinitionsScopedSelector } from '@/object-recor
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordBoardStates = (recordBoardId?: string) => {
@@ -49,7 +49,7 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       recordBoardFieldDefinitionsStateScopeMap,
       scopeId,
     ),
-    getVisibleFieldDefinitionsState: getSelector(
+    getVisibleFieldDefinitionsState: getSelectorReadOnly(
       recordBoardVisibleFieldDefinitionsScopedSelector,
       scopeId,
     ),

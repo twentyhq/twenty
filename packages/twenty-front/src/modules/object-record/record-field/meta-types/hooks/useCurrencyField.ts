@@ -2,17 +2,13 @@ import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
 import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
-import {
-  FieldCurrencyDraftValue,
-  FieldCurrencyValue,
-} from '../../types/FieldMetadata';
+import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
@@ -59,28 +55,15 @@ export const useCurrencyField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldCurrencyDraftValue>(entityId);
+    useRecordFieldInput<FieldCurrencyValue>(entityId);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
-
-  const initialAmount = draftValue?.amount
-    ? draftValue.amount
-    : fieldValue.amountMicros
-      ? fieldValue.amountMicros / 1000000
-      : null;
-
-  const initialCurrencyCode = draftValue
-    ? draftValue.currencyCode
-    : fieldValue
-      ? fieldValue.currencyCode
-      : CurrencyCode.USD;
 
   return {
     fieldDefinition,
     fieldValue,
+    draftValue,
     setDraftValue,
-    initialAmount,
-    initialCurrencyCode,
     setFieldValue,
     hotkeyScope,
     persistCurrencyField,

@@ -6,10 +6,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
-import {
-  FieldFullNameDraftValue,
-  FieldFullNameValue,
-} from '../../types/FieldMetadata';
+import { FieldFullNameValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldFullName } from '../../types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '../../types/guards/isFieldFullNameValue';
@@ -39,7 +36,7 @@ export const useFullNameField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldFullNameDraftValue>(entityId);
+    useRecordFieldInput<FieldFullNameValue>(entityId);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

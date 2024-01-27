@@ -5,7 +5,6 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -54,7 +53,7 @@ export const useTableCell = () => {
   const deleteOneRecord = useContext(EntityDeleteContext);
 
   const {
-    setDraftValue: setFieldInputDraftValue,
+    initDraftValue: initFieldInputDraftValue,
     getDraftValueSelector: getFieldInputDraftValueSelector,
     isDraftValueEmpty: isCurrentFieldInputValueEmpty,
   } = useRecordFieldInput(entityId);
@@ -69,7 +68,7 @@ export const useTableCell = () => {
     await deleteOneRecord(tableRowIds[0]);
   });
 
-  const openTableCell = (options?: { initialValue?: FieldInputDraftValue }) => {
+  const openTableCell = (options?: { initialValue?: string }) => {
     if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
       leaveTableFocus();
       navigate(`${basePathToShowPage}${entityId}`);
@@ -80,7 +79,7 @@ export const useTableCell = () => {
     setCurrentTableCellInEditMode();
 
     if (options?.initialValue) {
-      setFieldInputDraftValue(options.initialValue);
+      initFieldInputDraftValue(options.initialValue);
     }
 
     if (customCellHotkeyScope) {
@@ -96,7 +95,6 @@ export const useTableCell = () => {
   const closeTableCell = async () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
-    setFieldInputDraftValue(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
 
     if (

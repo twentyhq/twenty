@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldRelationDraftValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -18,12 +18,12 @@ export const useRelationField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<any | null>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue>(
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
   const { getDraftValueSelector } =
-    useRecordFieldInput<FieldRelationDraftValue>(entityId);
+    useRecordFieldInput<FieldRelationValue>(entityId);
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   const initialSearchValue = draftValue;

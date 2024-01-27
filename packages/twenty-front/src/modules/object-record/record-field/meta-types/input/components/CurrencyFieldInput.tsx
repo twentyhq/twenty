@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -20,19 +21,14 @@ export const CurrencyFieldInput = ({
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
-  const {
-    hotkeyScope,
-    initialAmount,
-    initialCurrencyCode,
-    persistCurrencyField,
-    setDraftValue,
-  } = useCurrencyField();
+  const { hotkeyScope, draftValue, persistCurrencyField, setDraftValue } =
+    useCurrencyField();
 
   const handleEnter = (newValue: string) => {
     onEnter?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: initialCurrencyCode,
+        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
       });
     });
   };
@@ -41,7 +37,7 @@ export const CurrencyFieldInput = ({
     onEscape?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: initialCurrencyCode,
+        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
       });
     });
   };
@@ -53,7 +49,7 @@ export const CurrencyFieldInput = ({
     onClickOutside?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: initialCurrencyCode,
+        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
       });
     });
   };
@@ -62,7 +58,7 @@ export const CurrencyFieldInput = ({
     onTab?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: initialCurrencyCode,
+        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
       });
     });
   };
@@ -71,7 +67,7 @@ export const CurrencyFieldInput = ({
     onShiftTab?.(() =>
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: initialCurrencyCode,
+        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
       }),
     );
   };
@@ -79,14 +75,14 @@ export const CurrencyFieldInput = ({
   const handleChange = (newValue: string) => {
     setDraftValue({
       amount: newValue,
-      currencyCode: initialCurrencyCode,
+      currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
     });
   };
 
   return (
     <FieldInputOverlay>
       <TextInput
-        value={initialAmount?.toString() ?? ''}
+        value={draftValue?.amount?.toString() ?? ''}
         autoFocus
         placeholder="Currency"
         onClickOutside={handleClickOutside}

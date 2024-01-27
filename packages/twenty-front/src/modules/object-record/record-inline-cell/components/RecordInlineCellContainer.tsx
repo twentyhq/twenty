@@ -134,7 +134,7 @@ export const RecordInlineCellContainer = ({
     buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
   const theme = useTheme();
-  const labelId = `label-${entityId}-${fieldDefinition.metadata.fieldName}`;
+  const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
 
   return (
     <StyledInlineCellBaseContainer
@@ -154,7 +154,7 @@ export const RecordInlineCellContainer = ({
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
-          {!showLabel && !fieldDefinition.disableTooltip && (
+          {!showLabel && !fieldDefinition?.disableTooltip && (
             <StyledTooltip
               anchorSelect={`#${labelId}`}
               content={label}

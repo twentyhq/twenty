@@ -3,7 +3,7 @@ import { isPossiblePhoneNumber } from 'libphonenumber-js';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldPhoneDraftValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldPhoneValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -33,7 +33,7 @@ export const usePhoneField = () => {
     persistField(newPhoneValue);
   };
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldPhoneDraftValue>(entityId);
+    useRecordFieldInput<FieldPhoneValue>(entityId);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
