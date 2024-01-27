@@ -31,8 +31,6 @@ export const useRecordFieldInput = <FieldValue>(
           )
           .getValue();
 
-        console.log(recordFieldValue);
-
         if (isUndefined(value)) {
           set(
             getDraftValueSelector(),

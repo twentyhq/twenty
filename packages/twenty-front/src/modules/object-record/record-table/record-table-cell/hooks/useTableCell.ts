@@ -48,15 +48,16 @@ export const useTableCell = () => {
 
   const isEmpty = useIsFieldEmpty();
 
-  const { entityId } = useContext(FieldContext);
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const deleteOneRecord = useContext(EntityDeleteContext);
-
   const {
     initDraftValue: initFieldInputDraftValue,
     getDraftValueSelector: getFieldInputDraftValueSelector,
     isDraftValueEmpty: isCurrentFieldInputValueEmpty,
-  } = useRecordFieldInput(entityId);
+  } = useRecordFieldInput(
+    `${entityId}-${fieldDefinition?.metadata?.fieldName}`,
+  );
 
   const currentFieldInputDraftValue = useRecoilValue(
     getFieldInputDraftValueSelector(),

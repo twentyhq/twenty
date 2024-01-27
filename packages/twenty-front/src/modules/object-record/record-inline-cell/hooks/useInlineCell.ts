@@ -10,7 +10,11 @@ import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditM
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 
 export const useInlineCell = () => {
-  const { recoilScopeId = '', entityId } = useContext(FieldContext);
+  const {
+    recoilScopeId = '',
+    entityId,
+    fieldDefinition,
+  } = useContext(FieldContext);
 
   const [isInlineCellInEditMode, setIsInlineCellInEditMode] = useRecoilState(
     isInlineCellInEditModeScopedState(recoilScopeId),
@@ -21,8 +25,9 @@ export const useInlineCell = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const { initDraftValue: initFieldInputDraftValue } =
-    useRecordFieldInput(entityId);
+  const { initDraftValue: initFieldInputDraftValue } = useRecordFieldInput(
+    `${entityId}-${fieldDefinition?.metadata?.fieldName}`,
+  );
 
   const closeInlineCell = () => {
     setIsInlineCellInEditMode(false);

@@ -41,7 +41,7 @@ export const useNumberField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberValue>(entityId);
+    useRecordFieldInput<FieldNumberValue>(`${entityId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

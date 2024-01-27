@@ -2,8 +2,8 @@ import { useContext } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTable } from '../../hooks/useRecordTable';
@@ -17,7 +17,7 @@ export const RecordTableCell = ({
   customHotkeyScope: HotkeyScope;
 }) => {
   const { closeTableCell } = useTableCell();
-  const rowId = useContext(RowIdContext);
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const { moveLeft, moveRight, moveDown } = useRecordTable();
 
@@ -69,7 +69,7 @@ export const RecordTableCell = ({
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
-          recordFieldInputdId={rowId ?? ''}
+          recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
           onCancel={handleCancel}
           onClickOutside={handleClickOutside}
           onEnter={handleEnter}

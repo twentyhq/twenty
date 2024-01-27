@@ -24,7 +24,7 @@ export const useEmailField = () => {
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldEmailValue>(entityId);
+    useRecordFieldInput<FieldEmailValue>(`${entityId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

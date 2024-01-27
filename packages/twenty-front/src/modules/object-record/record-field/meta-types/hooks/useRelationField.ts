@@ -22,8 +22,9 @@ export const useRelationField = () => {
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
-  const { getDraftValueSelector } =
-    useRecordFieldInput<FieldRelationValue>(entityId);
+  const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue>(
+    `${entityId}-${fieldName}`,
+  );
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   const initialSearchValue = draftValue;

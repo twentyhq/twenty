@@ -30,7 +30,7 @@ export const useSelectField = () => {
   const persistField = usePersistField();
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldSelectValue>(entityId);
+    useRecordFieldInput<FieldSelectValue>(`${entityId}-${fieldName}`);
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {

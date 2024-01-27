@@ -33,7 +33,7 @@ export const usePhoneField = () => {
     persistField(newPhoneValue);
   };
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldPhoneValue>(entityId);
+    useRecordFieldInput<FieldPhoneValue>(`${entityId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

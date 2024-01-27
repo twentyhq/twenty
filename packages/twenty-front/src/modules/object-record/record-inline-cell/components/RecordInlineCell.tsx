@@ -79,7 +79,7 @@ export const RecordInlineCell = () => {
       showLabel={fieldDefinition.showLabel}
       editModeContent={
         <FieldInput
-          recordFieldInputdId={entityId}
+          recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
           onEnter={handleEnter}
           onCancel={handleCancel}
           onEscape={handleEscape}
