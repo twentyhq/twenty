@@ -78,9 +78,7 @@ export const useTableCell = () => {
     setDragSelectionStartEnabled(false);
     setCurrentTableCellInEditMode();
 
-    if (options?.initialValue) {
-      initFieldInputDraftValue(options.initialValue);
-    }
+    initFieldInputDraftValue(options?.initialValue);
 
     if (customCellHotkeyScope) {
       setHotkeyScope(
