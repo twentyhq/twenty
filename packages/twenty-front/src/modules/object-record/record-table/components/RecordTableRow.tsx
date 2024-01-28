@@ -4,10 +4,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-import { ColumnContext } from '../contexts/ColumnContext';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 import { CheckboxCell } from './CheckboxCell';
@@ -55,12 +55,15 @@ export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
             .sort((columnA, columnB) => columnA.position - columnB.position)
             .map((column, columnIndex) => {
               return (
-                <ColumnContext.Provider
-                  value={column}
+                <RecordTableCellContext.Provider
+                  value={{
+                    columnDefinition: column,
+                    columnIndex,
+                  }}
                   key={column.fieldMetadataId}
                 >
-                  <RecordTableCellContainer cellIndex={columnIndex} />
-                </ColumnContext.Provider>
+                  <RecordTableCellContainer />
+                </RecordTableCellContext.Provider>
               );
             })}
           <td></td>

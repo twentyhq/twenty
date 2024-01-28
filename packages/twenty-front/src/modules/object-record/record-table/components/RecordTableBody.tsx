@@ -1,32 +1,44 @@
 import { useRecoilValue } from 'recoil';
 
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
-import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
-import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
 type RecordTableBodyProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
 };
 
-export const RecordTableBody = ({ objectNamePlural }: RecordTableBodyProps) => {
+export const RecordTableBody = ({
+  objectNameSingular,
+}: RecordTableBodyProps) => {
   const { getTableRowIdsState } = useRecordTableStates();
 
   const tableRowIds = useRecoilValue(getTableRowIdsState());
+
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
+    objectNameSingular,
+  });
 
   return (
     <>
       <tbody>
         {tableRowIds.map((rowId, rowIndex) => (
-          <RowIdContext.Provider value={rowId} key={rowId}>
-            <RowIndexContext.Provider value={rowIndex}>
-              <RecordTableRow key={rowId} rowId={rowId} />
-            </RowIndexContext.Provider>
-          </RowIdContext.Provider>
+          <RecordTableRowContext.Provider
+            value={{
+              recordId: rowId,
+              rowIndex,
+              pathToShowPage: getBasePathToShowPage({ objectMetadataItem }),
+            }}
+            key={rowId}
+          >
+            <RecordTableRow key={rowId} rowId={rowId} />
+          </RecordTableRowContext.Provider>
         ))}
       </tbody>
-      <RecordTableBodyFetchMoreLoader objectNamePlural={objectNamePlural} />
+      <RecordTableBodyFetchMoreLoader objectNameSingular={objectNameSingular} />
     </>
   );
 };

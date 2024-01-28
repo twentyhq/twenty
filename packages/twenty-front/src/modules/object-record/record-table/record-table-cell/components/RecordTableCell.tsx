@@ -4,22 +4,20 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
+import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
-import { useRecordTable } from '../../hooks/useRecordTable';
-import { useTableCell } from '../hooks/useTableCell';
-
-import { TableCellContainer } from './RecordTableCellContainer';
 
 export const RecordTableCell = ({
   customHotkeyScope,
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const { closeTableCell } = useTableCell();
+  const { closeTableCell } = useCloseRecordTableCell();
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const { moveLeft, moveRight, moveDown } = useRecordTable();
+  const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -65,7 +63,7 @@ export const RecordTableCell = ({
   };
 
   return (
-    <TableCellContainer
+    <RecordTableCellContainer
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput

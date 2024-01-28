@@ -33,7 +33,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     getTableFiltersState,
     getTableSortsState,
     getTableColumnsState,
-    getObjectMetadataConfigState,
     getOnEntityCountChangeState,
     getSoftFocusPositionState,
     getNumberOfTableRowsState,
@@ -53,10 +52,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const setTableFilters = useSetRecoilState(getTableFiltersState());
-
-  const setObjectMetadataConfig = useSetRecoilState(
-    getObjectMetadataConfigState(),
-  );
 
   const setTableSorts = useSetRecoilState(getTableSortsState());
 
@@ -333,7 +328,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,
-    setObjectMetadataConfig,
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,

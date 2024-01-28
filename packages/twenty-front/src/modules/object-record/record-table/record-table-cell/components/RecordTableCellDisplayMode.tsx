@@ -1,7 +1,7 @@
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
-import { useTableCell } from '../hooks/useTableCell';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
@@ -12,7 +12,7 @@ export const RecordTableCellDisplayMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { openTableCell } = useTableCell();
+  const { openTableCell } = useOpenRecordTableCell();
 
   const handleClick = () => {
     setSoftFocusOnCurrentCell();

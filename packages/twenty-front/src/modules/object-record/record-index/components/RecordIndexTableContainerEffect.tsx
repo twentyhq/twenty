@@ -18,17 +18,11 @@ export const RecordIndexTableContainerEffect = ({
   recordTableId,
   viewBarId,
 }: RecordIndexTableContainerEffectProps) => {
-  const {
-    setAvailableTableColumns,
-    setOnEntityCountChange,
-    setObjectMetadataConfig,
-  } = useRecordTable({ recordTableId });
+  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+    recordTableId,
+  });
 
-  const {
-    objectMetadataItem,
-    basePathToShowPage,
-    labelIdentifierFieldMetadata,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -38,20 +32,6 @@ export const RecordIndexTableContainerEffect = ({
   const { setEntityCountInCurrentView } = useViewBar({
     viewBarId,
   });
-
-  useEffect(() => {
-    if (basePathToShowPage && labelIdentifierFieldMetadata) {
-      setObjectMetadataConfig?.({
-        basePathToShowPage,
-        labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
-      });
-    }
-  }, [
-    basePathToShowPage,
-    objectMetadataItem,
-    labelIdentifierFieldMetadata,
-    setObjectMetadataConfig,
-  ]);
 
   useEffect(() => {
     const availableTableColumns = columnDefinitions.filter(

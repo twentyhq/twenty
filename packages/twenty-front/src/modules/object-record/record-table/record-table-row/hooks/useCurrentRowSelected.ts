@@ -1,37 +1,32 @@
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-import { RowIdContext } from '../../contexts/RowIdContext';
-
 export const useCurrentRowSelected = () => {
-  const currentRowId = useContext(RowIdContext);
+  const { recordId } = useContext(RecordTableRowContext);
 
   const { isRowSelectedFamilyState } = useRecordTableStates();
 
-  const isRowSelected = useRecoilValue(
-    isRowSelectedFamilyState(currentRowId ?? ''),
-  );
+  const isRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
       (newSelectedState: boolean) => {
-        if (!currentRowId) return;
-
         const isRowSelected = getSnapshotValue(
           snapshot,
-          isRowSelectedFamilyState(currentRowId),
+          isRowSelectedFamilyState(recordId),
         );
 
         if (newSelectedState && !isRowSelected) {
-          set(isRowSelectedFamilyState(currentRowId), true);
+          set(isRowSelectedFamilyState(recordId), true);
         } else if (!newSelectedState && isRowSelected) {
-          set(isRowSelectedFamilyState(currentRowId), false);
+          set(isRowSelectedFamilyState(recordId), false);
         }
       },
-    [currentRowId, isRowSelectedFamilyState],
+    [recordId, isRowSelectedFamilyState],
   );
 
   return {

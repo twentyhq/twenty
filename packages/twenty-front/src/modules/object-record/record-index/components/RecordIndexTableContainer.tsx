@@ -1,4 +1,3 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
@@ -18,10 +17,6 @@ export const RecordIndexTableContainer = ({
   objectNameSingular,
   createRecord,
 }: RecordIndexTableContainerProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
   });
@@ -37,7 +32,7 @@ export const RecordIndexTableContainer = ({
     <>
       <RecordTableWithWrappers
         recordTableId={recordTableId}
-        objectNamePlural={objectMetadataItem.namePlural}
+        objectNameSingular={objectNameSingular}
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
         createRecord={createRecord}
