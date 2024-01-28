@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButto
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const MAX_ROWS = 5;
 
@@ -125,7 +126,11 @@ export const AutosizeTextInput = ({
     variant === AutosizeTextInputVariant.Button,
   );
   const [text, setText] = useState(value);
-
+  const textInputRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
   const isSendButtonDisabled = !text;
   const words = text.split(/\s|\n/).filter((word) => word).length;
 
@@ -160,6 +165,8 @@ export const AutosizeTextInput = ({
       event.preventDefault();
 
       setText('');
+      textInputRef.current?.blur();
+      console.log('Autosize text input blur');
     },
     InputHotkeyScope.TextInput,
     [onValidate, setText, isFocused],
@@ -181,6 +188,18 @@ export const AutosizeTextInput = ({
     setText('');
   };
 
+  const handleFocus = () => {
+    onFocus?.();
+    setIsFocused(true);
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+  };
+
+  const handleBlur = () => {
+    console.log('handle blur');
+    setIsFocused(false);
+    goBackToPreviousHotkeyScope();
+  };
+
   const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
@@ -189,17 +208,15 @@ export const AutosizeTextInput = ({
         <StyledInputContainer>
           {!isHidden && (
             <StyledTextArea
+              ref={textInputRef}
               autoFocus={variant === AutosizeTextInputVariant.Button}
               placeholder={placeholder ?? 'Write a comment'}
               maxRows={MAX_ROWS}
               minRows={computedMinRows}
               onChange={handleInputChange}
               value={text}
-              onFocus={() => {
-                onFocus?.();
-                setIsFocused(true);
-              }}
-              onBlur={() => setIsFocused(false)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               variant={variant}
             />
           )}

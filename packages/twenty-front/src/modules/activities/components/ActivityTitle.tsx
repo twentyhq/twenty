@@ -7,6 +7,13 @@ import {
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
 
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
+import { useRef } from 'react';
+
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
   value: string;
@@ -52,23 +59,48 @@ export const ActivityTitle = ({
   type,
   onTitleChange,
   onCompletionChange,
-}: ActivityTitleProps) => (
-  <StyledContainer>
-    {type === 'Task' && (
-      <Checkbox
-        size={CheckboxSize.Large}
-        shape={CheckboxShape.Rounded}
-        checked={completed}
-        onCheckedChange={(value) => onCompletionChange(value)}
+}: ActivityTitleProps) => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      titleInputRef.current?.blur();
+    },
+    ActivityEditorHotkeyScope.ActivityTitle,
+  );
+
+  return (
+    <StyledContainer>
+      {type === 'Task' && (
+        <Checkbox
+          size={CheckboxSize.Large}
+          shape={CheckboxShape.Rounded}
+          checked={completed}
+          onCheckedChange={(value) => onCompletionChange(value)}
+        />
+      )}
+      <StyledEditableTitleInput
+        ref={titleInputRef}
+        autoComplete="off"
+        autoFocus
+        placeholder={`${type} title`}
+        onChange={(event) => onTitleChange(event.target.value)}
+        value={title}
+        completed={completed}
+        onBlur={() => {
+          goBackToPreviousHotkeyScope();
+        }}
+        onFocus={() =>
+          setHotkeyScopeAndMemorizePreviousScope(
+            ActivityEditorHotkeyScope.ActivityTitle,
+          )
+        }
       />
-    )}
-    <StyledEditableTitleInput
-      autoComplete="off"
-      autoFocus
-      placeholder={`${type} title`}
-      onChange={(event) => onTitleChange(event.target.value)}
-      value={title}
-      completed={completed}
-    />
-  </StyledContainer>
-);
+    </StyledContainer>
+  );
+};
