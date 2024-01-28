@@ -1,18 +1,16 @@
+import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { ActivityType } from '@/activities/types/Activity';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
-
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
-import { useRef } from 'react';
-
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;

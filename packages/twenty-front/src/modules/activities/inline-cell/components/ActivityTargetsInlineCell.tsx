@@ -1,3 +1,5 @@
+import { Key } from 'ts-key-enum';
+
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
@@ -10,7 +12,6 @@ import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/stat
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { Key } from 'ts-key-enum';
 
 type ActivityTargetsInlineCellProps = {
   activity?: Pick<GraphQLActivity, 'id'> & {

@@ -5,6 +5,7 @@ import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButt
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -14,7 +15,6 @@ import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 
 const StyledTasksContainer = styled.div`
   display: flex;
