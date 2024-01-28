@@ -6,10 +6,10 @@ import styled from '@emotion/styled';
 import { IconArrowRight } from '@/ui/display/icon/index';
 import { Button } from '@/ui/input/button/components/Button';
 import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const MAX_ROWS = 5;
 
