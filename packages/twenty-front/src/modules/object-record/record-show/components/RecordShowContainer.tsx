@@ -54,6 +54,7 @@ export const RecordShowContainer = ({
   const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
+    depth: 3,
   });
 
   useEffect(() => {

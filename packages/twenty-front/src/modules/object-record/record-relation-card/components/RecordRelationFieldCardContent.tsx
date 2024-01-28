@@ -1,19 +1,16 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -75,39 +72,18 @@ export const RecordRelationFieldCardContent = ({
   });
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
-  const {
-    labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
-    objectMetadataItem: relationObjectMetadataItem,
-  } = useObjectMetadataItem({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationObjectMetadataNameSingular,
+    });
   const persistField = usePersistField();
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const { FieldContextProvider } = useFieldContext({
-    fieldMetadataName: relationLabelIdentifierFieldMetadata?.name || '',
-    fieldPosition: 0,
-    isLabelIdentifier: true,
-    objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: relationRecord.id,
-  });
-
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
-
-  // TODO: temporary as ChipDisplay expect to find the entity in the entityFieldsFamilyState
-  const setRelationEntityFields = useSetRecoilState(
-    recordStoreFamilyState(relationRecord.id),
-  );
-
-  useEffect(() => {
-    setRelationEntityFields(relationRecord);
-  }, [relationRecord, setRelationEntityFields]);
-
-  if (!FieldContextProvider) return null;
 
   const handleDetach = () => {
     closeDropdown();
@@ -162,9 +138,10 @@ export const RecordRelationFieldCardContent = ({
 
   return (
     <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
-      <FieldContextProvider>
-        <FieldDisplay />
-      </FieldContextProvider>
+      <RecordChip
+        record={relationRecord}
+        objectNameSingular={relationObjectMetadataItem.nameSingular}
+      />
       {/* TODO: temporary to prevent removing a company from an opportunity */}
       {!isOpportunityCompanyRelation && (
         <DropdownScope dropdownScopeId={dropdownScopeId}>
