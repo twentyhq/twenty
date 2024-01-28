@@ -38,6 +38,7 @@ const StyledTable = styled.table`
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
     color: ${({ theme }) => theme.font.color.primary};
     padding: 0;
+    border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
     text-align: left;
 
