@@ -49,6 +49,8 @@ type ActivityTitleProps = {
   completed: boolean;
   onTitleChange: (title: string) => void;
   onCompletionChange: (value: boolean) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const ActivityTitle = ({
@@ -57,6 +59,8 @@ export const ActivityTitle = ({
   type,
   onTitleChange,
   onCompletionChange,
+  onFocus,
+  onBlur,
 }: ActivityTitleProps) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -74,12 +78,14 @@ export const ActivityTitle = ({
 
   const handleBlur = () => {
     goBackToPreviousHotkeyScope();
+    onBlur?.();
   };
 
   const handleFocus = () => {
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityTitle,
     );
+    onFocus?.();
   };
 
   return (

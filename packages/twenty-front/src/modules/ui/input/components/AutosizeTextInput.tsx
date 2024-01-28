@@ -28,6 +28,7 @@ type AutosizeTextInputProps = {
   buttonTitle?: string;
   value?: string;
   className?: string;
+  onBlur?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -120,6 +121,7 @@ export const AutosizeTextInput = ({
   buttonTitle,
   value = '',
   className,
+  onBlur,
 }: AutosizeTextInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
@@ -194,6 +196,7 @@ export const AutosizeTextInput = ({
   };
 
   const handleBlur = () => {
+    onBlur?.();
     setIsFocused(false);
     goBackToPreviousHotkeyScope();
   };

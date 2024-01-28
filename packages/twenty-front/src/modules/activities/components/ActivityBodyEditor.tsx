@@ -5,17 +5,19 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -33,12 +35,16 @@ type ActivityBodyEditorProps = {
   activity: Pick<Activity, 'id' | 'body'>;
   onChange?: (activityBody: string) => void;
   containerClassName?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const ActivityBodyEditor = ({
   activity,
   onChange,
   containerClassName,
+  onFocus,
+  onBlur,
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
@@ -51,7 +57,9 @@ export const ActivityBodyEditor = ({
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
-  const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
+  const activityEditorAnyFieldInFocus = useRecoilValue(
+    activityEditorAnyFieldInFocusState,
+  );
 
   useEffect(() => {
     if (body) {
@@ -169,7 +177,7 @@ export const ActivityBodyEditor = ({
     callback: (event) => {
       if (
         (event.target as HTMLDivElement)?.id === containerId &&
-        currentHotkeyScope?.scope === RightDrawerHotkeyScope.RightDrawer
+        !activityEditorAnyFieldInFocus
       ) {
         editor.focus();
       }
@@ -216,10 +224,12 @@ export const ActivityBodyEditor = ({
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityBody,
     );
+    onFocus?.();
   };
 
   const handlerBlockEditorBlur = () => {
     goBackToPreviousHotkeyScope();
+    onBlur?.();
   };
 
   return (
