@@ -4,10 +4,13 @@ import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/compo
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { Key } from 'ts-key-enum';
 
 type ActivityTargetsInlineCellProps = {
   activity?: Pick<GraphQLActivity, 'id'> & {
@@ -25,13 +28,21 @@ export const ActivityTargetsInlineCell = ({
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
     activityId: activity?.id ?? '',
   });
+  const { closeInlineCell } = useInlineCell();
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      closeInlineCell();
+    },
+    RelationPickerHotkeyScope.Targets,
+  );
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecordInlineCellContainer
         buttonIcon={IconPencil}
         customEditHotkeyScope={{
-          scope: RelationPickerHotkeyScope.RelationPicker,
+          scope: RelationPickerHotkeyScope.Targets,
         }}
         IconLabel={IconArrowUpRight}
         editModeContent={
