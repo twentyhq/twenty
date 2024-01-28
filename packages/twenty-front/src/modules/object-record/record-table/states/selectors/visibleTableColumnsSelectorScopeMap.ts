@@ -1,6 +1,6 @@
+import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
-import { availableTableColumnsStateScopeMap } from '../availableTableColumnsStateScopeMap';
 import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
 export const visibleTableColumnsSelectorScopeMap =

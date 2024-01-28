@@ -5,13 +5,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 
-type useRecordTableProps = {
-  recordTableId?: string;
-};
-
-export const useRecordTableMoveFocus = (props?: useRecordTableProps) => {
-  const recordTableId = props?.recordTableId;
-
+export const useRecordTableMoveFocus = (recordTableId?: string) => {
   const {
     scopeId,
     getSoftFocusPositionState,

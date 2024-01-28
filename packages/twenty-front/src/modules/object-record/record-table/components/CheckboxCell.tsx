@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
-
-import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -18,8 +19,11 @@ const StyledContainer = styled.div`
 `;
 
 export const CheckboxCell = () => {
+  const { recordId } = useContext(RecordTableRowContext);
+  const { isRowSelectedFamilyState } = useRecordTableStates();
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
-  const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
+  const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 
   const handleClick = useCallback(() => {
     setCurrentRowSelected(!currentRowSelected);

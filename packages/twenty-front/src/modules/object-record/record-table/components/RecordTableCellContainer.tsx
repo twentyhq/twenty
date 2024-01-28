@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -9,17 +10,22 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
-import { useCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useCurrentRowSelected';
+import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
+const StyledContainer = styled.td<{ isSelected: boolean }>`
+  background: ${({ isSelected, theme }) =>
+    isSelected ? theme.accent.quaternary : theme.background.primary};
+`;
+
 export const RecordTableCellContainer = () => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
-  const { setCurrentRowSelected } = useCurrentRowSelected();
+  const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -33,7 +39,9 @@ export const RecordTableCellContainer = () => {
 
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { columnDefinition } = useContext(RecordTableCellContext);
-  const { recordId, pathToShowPage } = useContext(RecordTableRowContext);
+  const { recordId, pathToShowPage, isSelected } = useContext(
+    RecordTableRowContext,
+  );
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -46,7 +54,10 @@ export const RecordTableCellContainer = () => {
     : TableHotkeyScope.CellEditMode;
 
   return (
-    <td onContextMenu={(event) => handleContextMenu(event)}>
+    <StyledContainer
+      isSelected={isSelected}
+      onContextMenu={(event) => handleContextMenu(event)}
+    >
       <FieldContext.Provider
         value={{
           recoilScopeId: recordId + columnDefinition.label,
@@ -66,6 +77,6 @@ export const RecordTableCellContainer = () => {
       >
         <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
       </FieldContext.Provider>
-    </td>
+    </StyledContainer>
   );
 };

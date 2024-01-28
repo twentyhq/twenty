@@ -50,8 +50,7 @@ const StyledTable = styled.table`
     }
   }
 
-  th,
-  td {
+  th {
     background-color: ${({ theme }) => theme.background.primary};
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
   }
