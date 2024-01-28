@@ -30,7 +30,6 @@ export const SignInBackgroundMockContainerEffect = ({
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,
-    setObjectMetadataConfig,
   } = useRecordTable({
     recordTableId,
   });
@@ -81,10 +80,6 @@ export const SignInBackgroundMockContainerEffect = ({
     setTableColumns,
   ]);
 
-  useEffect(() => {
-    setObjectMetadataConfig?.(mockIdentifier);
-  }, [setObjectMetadataConfig]);
-
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries({
       objectNamePlural,
@@ -103,9 +98,4 @@ export const SignInBackgroundMockContainerEffect = ({
   }, [setEntityCountInCurrentView, setOnEntityCountChange]);
 
   return <></>;
-};
-
-const mockIdentifier = {
-  basePathToShowPage: '/object/company/',
-  labelIdentifierFieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
 };

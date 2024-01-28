@@ -1,10 +1,12 @@
-import { useContext } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
+import { RecordTableFirstColumnScrollEffect } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
-import { RecordTableRefContext } from '@/object-record/record-table/contexts/RecordTableRefContext';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { rgba } from '@/ui/theme/constants/colors';
@@ -48,8 +50,7 @@ const StyledTable = styled.table`
     }
   }
 
-  th,
-  td {
+  th {
     background-color: ${({ theme }) => theme.background.primary};
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
   }
@@ -98,31 +99,43 @@ const StyledTable = styled.table`
 
 type RecordTableProps = {
   recordTableId: string;
-  objectNamePlural: string;
+  objectNameSingular: string;
   onColumnsChange: (columns: any) => void;
   createRecord: () => void;
 };
 
 export const RecordTable = ({
   recordTableId,
-  objectNamePlural,
+  objectNameSingular,
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const recordTableRef = useContext(RecordTableRefContext);
+  const recordTableRef = useRef<HTMLTableElement>(null);
   const { scopeId } = useRecordTableStates(recordTableId);
+
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
+    objectNameSingular,
+  });
 
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
       onColumnsChange={onColumnsChange}
     >
-      {!!objectNamePlural && (
-        <StyledTable ref={recordTableRef} className="entity-table-cell">
-          <RecordTableHeader createRecord={createRecord} />
-          <RecordTableBodyEffect objectNamePlural={objectNamePlural} />
-          <RecordTableBody objectNamePlural={objectNamePlural} />
-        </StyledTable>
+      {!!objectNameSingular && (
+        <RecordTableContext.Provider
+          value={{
+            objectMetadataItem,
+            recordTableRef,
+          }}
+        >
+          <RecordTableFirstColumnScrollEffect />
+          <StyledTable ref={recordTableRef} className="entity-table-cell">
+            <RecordTableHeader createRecord={createRecord} />
+            <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
+            <RecordTableBody objectNameSingular={objectNameSingular} />
+          </StyledTable>
+        </RecordTableContext.Provider>
       )}
     </RecordTableScope>
   );

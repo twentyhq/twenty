@@ -5,18 +5,18 @@ import { useRecoilValue } from 'recoil';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
+import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
-import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
 import { useMoveSoftFocusToCurrentCellOnHover } from '../hooks/useMoveSoftFocusToCurrentCellOnHover';
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
-import { useTableCell } from '../hooks/useTableCell';
 
 import { RecordTableCellButton } from './RecordTableCellButton';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
@@ -33,7 +33,7 @@ const StyledCellBaseContainer = styled.div`
   user-select: none;
 `;
 
-export type TableCellContainerProps = {
+export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
@@ -49,28 +49,26 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
-export const TableCellContainer = ({
+export const RecordTableCellContainer = ({
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
-}: TableCellContainerProps) => {
-  const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-
-  const { isSomeCellInEditModeState } = useRecordTable();
-  const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
-
+}: RecordTableCellContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
+  const isSomeCellInEditModeState = useGetIsSomeCellInEditModeState();
+  const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
 
   const moveSoftFocusToCurrentCellOnHover =
     useMoveSoftFocusToCurrentCellOnHover();
 
   const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
-
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
-  const { openTableCell } = useTableCell();
+  const { openTableCell } = useOpenRecordTableCell();
 
   const handleButtonClick = () => {
     setSoftFocusOnCurrentTableCell();
@@ -90,14 +88,11 @@ export const TableCellContainer = ({
 
   const editModeContentOnly = useIsFieldInputOnly();
 
-  const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
-
   const isEmpty = useIsFieldEmpty();
 
-  const isFirstColumn = useContext(ColumnIndexContext) === 0;
-
+  const { columnIndex } = useContext(RecordTableCellContext);
+  const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
-
   const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
 
   const showButton =
@@ -105,7 +100,7 @@ export const TableCellContainer = ({
     hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
     !editModeContentOnly &&
-    (!isFirstColumnCell || !isEmpty);
+    (!isFirstColumn || !isEmpty);
 
   return (
     <CellHotkeyScopeContext.Provider

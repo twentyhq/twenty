@@ -7,7 +7,6 @@ import { isSoftFocusActiveStateScopeMap } from '@/object-record/record-table/sta
 import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/record-table/states/isSoftFocusOnTableCellFamilyStateScopeMap';
 import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
 import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
-import { objectMetadataConfigStateScopeMap } from '@/object-record/record-table/states/objectMetadataConfigStateScopeMap';
 import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
 import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
 import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
@@ -44,10 +43,7 @@ export const useRecordTableStates = (recordTableId?: string) => {
     getTableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
     getTableSortsState: getState(tableSortsStateScopeMap, scopeId),
     getTableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
-    getObjectMetadataConfigState: getState(
-      objectMetadataConfigStateScopeMap,
-      scopeId,
-    ),
+
     getOnColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
     getOnEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,

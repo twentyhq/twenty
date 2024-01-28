@@ -4,13 +4,13 @@ import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
+import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 const recordTableId = 'people';
-const objectNamePlural = 'people';
+const objectNameSingular = 'person';
 const onColumnsChange = jest.fn();
 
 const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
@@ -37,7 +37,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 describe('useObjectRecordTable', () => {
   it('should skip fetch if currentWorkspace is undefined', async () => {
     const { result } = renderHook(
-      () => useObjectRecordTable(objectNamePlural),
+      () => useLoadRecordIndexTable(objectNameSingular),
       {
         wrapper: Wrapper,
       },

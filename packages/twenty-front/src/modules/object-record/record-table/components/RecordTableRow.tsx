@@ -3,34 +3,32 @@ import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-import { ColumnContext } from '../contexts/ColumnContext';
-import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
-
 import { CheckboxCell } from './CheckboxCell';
 
-export const StyledRow = styled.tr<{ selected: boolean }>`
-  background: ${(props) =>
-    props.selected ? props.theme.accent.quaternary : 'none'};
-`;
-
 type RecordTableRowProps = {
-  rowId: string;
+  recordId: string;
+  rowIndex: number;
 };
 
 const StyledPlaceholder = styled.td`
   height: 30px;
 `;
 
-export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
-  const { getVisibleTableColumnsSelector } = useRecordTableStates();
+export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
+  const { getVisibleTableColumnsSelector, isRowSelectedFamilyState } =
+    useRecordTableStates();
+  const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+  const { objectMetadataItem } = useContext(RecordTableContext);
 
   const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-
-  const { currentRowSelected } = useCurrentRowSelected();
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
 
@@ -40,34 +38,46 @@ export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
   });
 
   return (
-    <StyledRow
-      ref={elementRef}
-      data-testid={`row-id-${rowId}`}
-      selected={currentRowSelected}
-      data-selectable-id={rowId}
+    <RecordTableRowContext.Provider
+      value={{
+        recordId,
+        rowIndex,
+        pathToShowPage:
+          getBasePathToShowPage({ objectMetadataItem }) + recordId,
+        isSelected: currentRowSelected,
+      }}
     >
-      {inView ? (
-        <>
-          <td>
-            <CheckboxCell />
-          </td>
-          {[...visibleTableColumns]
-            .sort((columnA, columnB) => columnA.position - columnB.position)
-            .map((column, columnIndex) => {
-              return (
-                <ColumnContext.Provider
-                  value={column}
-                  key={column.fieldMetadataId}
-                >
-                  <RecordTableCellContainer cellIndex={columnIndex} />
-                </ColumnContext.Provider>
-              );
-            })}
-          <td></td>
-        </>
-      ) : (
-        <StyledPlaceholder />
-      )}
-    </StyledRow>
+      <tr
+        ref={elementRef}
+        data-testid={`row-id-${recordId}`}
+        data-selectable-id={recordId}
+      >
+        {inView ? (
+          <>
+            <td>
+              <CheckboxCell />
+            </td>
+            {[...visibleTableColumns]
+              .sort((columnA, columnB) => columnA.position - columnB.position)
+              .map((column, columnIndex) => {
+                return (
+                  <RecordTableCellContext.Provider
+                    value={{
+                      columnDefinition: column,
+                      columnIndex,
+                    }}
+                    key={column.fieldMetadataId}
+                  >
+                    <RecordTableCellContainer />
+                  </RecordTableCellContext.Provider>
+                );
+              })}
+            <td></td>
+          </>
+        ) : (
+          <StyledPlaceholder />
+        )}
+      </tr>
+    </RecordTableRowContext.Provider>
   );
 };

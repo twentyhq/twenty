@@ -2,29 +2,22 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
-import { useFindManyRecords } from './useFindManyRecords';
+import { useFindManyRecords } from '../../hooks/useFindManyRecords';
 
-export const useObjectRecordTable = (objectNamePlural: string) => {
+export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
   });
-
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-  );
 
   const {
     getTableFiltersState,
@@ -38,12 +31,12 @@ export const useObjectRecordTable = (objectNamePlural: string) => {
 
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
-    foundObjectMetadataItem?.fields ?? [],
+    objectMetadataItem?.fields ?? [],
   );
 
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
-    foundObjectMetadataItem?.fields ?? [],
+    objectMetadataItem?.fields ?? [],
   );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
