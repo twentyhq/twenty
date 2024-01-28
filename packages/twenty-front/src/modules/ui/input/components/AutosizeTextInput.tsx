@@ -166,7 +166,6 @@ export const AutosizeTextInput = ({
 
       setText('');
       textInputRef.current?.blur();
-      console.log('Autosize text input blur');
     },
     InputHotkeyScope.TextInput,
     [onValidate, setText, isFocused],
@@ -195,7 +194,6 @@ export const AutosizeTextInput = ({
   };
 
   const handleBlur = () => {
-    console.log('handle blur');
     setIsFocused(false);
     goBackToPreviousHotkeyScope();
   };
