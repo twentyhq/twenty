@@ -55,7 +55,7 @@ const StyledTopContainer = styled.div`
 
 const StyledMiddleContainer = styled.div`
   flex-grow: 2;
-  & > *:first-child {
+  & > .editor-container {
     height: 100%;
   }
 `;
@@ -186,6 +186,7 @@ export const ActivityEditor = ({
         <ActivityBodyEditor
           activity={activity}
           onChange={updateTitleFromBody}
+          containerClassName="editor-container"
         />
       </StyledMiddleContainer>
       {showComment && (
