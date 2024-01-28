@@ -16,6 +16,10 @@ import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -24,11 +28,13 @@ const StyledBlockNoteStyledContainer = styled.div`
 type ActivityBodyEditorProps = {
   activity: Pick<Activity, 'id' | 'body'>;
   onChange?: (activityBody: string) => void;
+  containerClassName?: string;
 };
 
 export const ActivityBodyEditor = ({
   activity,
   onChange,
+  containerClassName,
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
@@ -37,6 +43,10 @@ export const ActivityBodyEditor = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const containerId = useId();
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   useEffect(() => {
     if (body) {
@@ -161,9 +171,30 @@ export const ActivityBodyEditor = ({
     },
   });
 
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      editor.domElement?.blur();
+    },
+    ActivityEditorHotkeyScope.ActivityBody,
+  );
+
   return (
-    <StyledBlockNoteStyledContainer ref={containerRef} id={containerId}>
-      <BlockEditor editorRef={editorRef} editor={editor} />
+    <StyledBlockNoteStyledContainer
+      ref={containerRef}
+      id={containerId}
+      className={containerClassName}
+    >
+      <BlockEditor
+        onFocus={() =>
+          setHotkeyScopeAndMemorizePreviousScope(
+            ActivityEditorHotkeyScope.ActivityBody,
+          )
+        }
+        onBlur={() => goBackToPreviousHotkeyScope()}
+        editorRef={editorRef}
+        editor={editor}
+      />
     </StyledBlockNoteStyledContainer>
   );
 };
