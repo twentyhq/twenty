@@ -15,7 +15,15 @@ import { useInlineCell } from '../hooks/useInlineCell';
 
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
-export const RecordInlineCell = () => {
+type RecordInlineCellProps = {
+  onBlur?: () => void;
+  onFocus?: () => void;
+};
+
+export const RecordInlineCell = ({
+  onBlur,
+  onFocus,
+}: RecordInlineCellProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
@@ -29,34 +37,41 @@ export const RecordInlineCell = () => {
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleCancel = () => {
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleEscape = () => {
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
+    onBlur?.();
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
+    onBlur?.();
   };
 
   const { getIcon } = useIcons();
@@ -92,6 +107,7 @@ export const RecordInlineCell = () => {
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
       editModeContentOnly={isFieldInputOnly}
+      onInlineCellClick={onFocus}
     />
   );
 };

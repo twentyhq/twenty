@@ -49,6 +49,8 @@ type ActivityTitleProps = {
   completed: boolean;
   onTitleChange: (title: string) => void;
   onCompletionChange: (value: boolean) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const ActivityTitle = ({
@@ -57,6 +59,8 @@ export const ActivityTitle = ({
   type,
   onTitleChange,
   onCompletionChange,
+  onFocus,
+  onBlur,
 }: ActivityTitleProps) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -71,6 +75,18 @@ export const ActivityTitle = ({
     },
     ActivityEditorHotkeyScope.ActivityTitle,
   );
+
+  const handleBlur = () => {
+    goBackToPreviousHotkeyScope();
+    onBlur?.();
+  };
+
+  const handleFocus = () => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ActivityEditorHotkeyScope.ActivityTitle,
+    );
+    onFocus?.();
+  };
 
   return (
     <StyledContainer>
@@ -90,14 +106,8 @@ export const ActivityTitle = ({
         onChange={(event) => onTitleChange(event.target.value)}
         value={title}
         completed={completed}
-        onBlur={() => {
-          goBackToPreviousHotkeyScope();
-        }}
-        onFocus={() =>
-          setHotkeyScopeAndMemorizePreviousScope(
-            ActivityEditorHotkeyScope.ActivityTitle,
-          )
-        }
+        onBlur={handleBlur}
+        onFocus={handleFocus}
       />
     </StyledContainer>
   );

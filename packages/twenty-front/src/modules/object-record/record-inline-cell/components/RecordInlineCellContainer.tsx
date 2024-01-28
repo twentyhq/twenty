@@ -95,6 +95,7 @@ type RecordInlineCellContainerProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
+  onInlineCellClick?: () => void;
 };
 
 export const RecordInlineCellContainer = ({
@@ -110,6 +111,7 @@ export const RecordInlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
+  onInlineCellClick,
 }: RecordInlineCellContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -127,6 +129,10 @@ export const RecordInlineCellContainer = ({
     if (!editModeContentOnly) {
       openInlineCell(customEditHotkeyScope);
     }
+  };
+
+  const handleInlineCellClick = () => {
+    onInlineCellClick?.();
   };
 
   const showEditButton =
@@ -163,7 +169,7 @@ export const RecordInlineCellContainer = ({
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer>
+      <StyledValueContainer onClick={handleInlineCellClick}>
         {isInlineCellInEditMode ? (
           <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
         ) : editModeContentOnly ? (

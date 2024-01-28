@@ -21,10 +21,14 @@ type ActivityTargetsInlineCellProps = {
       }> | null;
     };
   };
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const ActivityTargetsInlineCell = ({
   activity,
+  onFocus,
+  onBlur,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
     activityId: activity?.id ?? '',
@@ -50,6 +54,7 @@ export const ActivityTargetsInlineCell = ({
           <ActivityTargetInlineCellEditMode
             activityId={activity?.id ?? ''}
             activityTargetObjectRecords={activityTargetObjectRecords as any}
+            onBlur={onBlur}
           />
         }
         label="Relations"
@@ -59,6 +64,7 @@ export const ActivityTargetsInlineCell = ({
           />
         }
         isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
+        onInlineCellClick={onFocus}
       />
     </RecoilScope>
   );
