@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 
@@ -11,14 +11,11 @@ export const RightDrawerEmailThreadFetchMoreLoader = ({
   loading,
   fetchMoreMessages,
 }: RightDrawerEmailThreadFetchMoreLoaderProps) => {
-  const onLastRowVisible = useRecoilCallback(
-    () => async () => {
-      if (!loading) {
-        fetchMoreMessages();
-      }
-    },
-    [fetchMoreMessages, loading],
-  );
+  const onLastRowVisible = useCallback(() => {
+    if (!loading) {
+      fetchMoreMessages();
+    }
+  }, [fetchMoreMessages, loading]);
 
   return (
     <FetchMoreLoader loading={loading} onLastRowVisible={onLastRowVisible} />
