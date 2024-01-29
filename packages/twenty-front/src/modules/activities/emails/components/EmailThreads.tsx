@@ -25,6 +25,7 @@ import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMo
 import {
   GetTimelineThreadsFromPersonIdQueryVariables,
   TimelineThread,
+  TimelineThreadsWithTotal,
 } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -85,7 +86,7 @@ export const EmailThreads = ({
           page: emailThreadsPage.pageNumber + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult || !fetchMoreResult?.[queryName].length) {
+          if (!fetchMoreResult?.[queryName]?.timelineThreads?.length) {
             setEmailThreadsPage((emailThreadsPage) => ({
               ...emailThreadsPage,
               hasNextPage: false,
@@ -94,10 +95,13 @@ export const EmailThreads = ({
           }
 
           return {
-            [queryName]: [
-              ...(prev?.[queryName] ?? []),
-              ...(fetchMoreResult?.[queryName] ?? []),
-            ],
+            [queryName]: {
+              ...prev?.[queryName],
+              timelineThreads: [
+                ...(prev?.[queryName]?.timelineThreads ?? []),
+                ...(fetchMoreResult?.[queryName]?.timelineThreads ?? []),
+              ],
+            },
           };
         },
       });
@@ -115,11 +119,8 @@ export const EmailThreads = ({
     });
   }
 
-  if (loading) {
-    return;
-  }
-
-  const timelineThreads: TimelineThread[] = data?.[queryName] ?? [];
+  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
+    data?.[queryName] ?? [];
 
   return (
     <StyledContainer>
@@ -128,21 +129,23 @@ export const EmailThreads = ({
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
+              <StyledEmailCount>{totalNumberOfThreads ?? 0}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
-        <Card>
-          {timelineThreads.map((thread: TimelineThread, index: number) => (
-            <EmailThreadPreview
-              key={index}
-              divider={index < timelineThreads.length - 1}
-              thread={thread}
-              onClick={() => openEmailThread(thread)}
-            />
-          ))}
-        </Card>
+        {!loading && (
+          <Card>
+            {timelineThreads?.map((thread: TimelineThread, index: number) => (
+              <EmailThreadPreview
+                key={index}
+                divider={index < timelineThreads.length - 1}
+                thread={thread}
+                onClick={() => openEmailThread(thread)}
+              />
+            ))}
+          </Card>
+        )}
         <FetchMoreLoader
           loading={isFetchingMoreEmails}
           onLastRowVisible={fetchMoreRecords}
