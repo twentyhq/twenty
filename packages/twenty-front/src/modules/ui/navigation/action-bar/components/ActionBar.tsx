@@ -48,15 +48,8 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
       className="action-bar"
       ref={wrapperRef}
     >
-      {actionBarEntries.map((item) => (
-        <ActionBarItem
-          Icon={item.Icon}
-          accent={item.accent}
-          label={item.label}
-          onClick={item.onClick}
-          key={item.label}
-          subActions={item?.subActions}
-        />
+      {actionBarEntries.map((item, index) => (
+        <ActionBarItem key={index} item={item} selectedIds={selectedIds} />
       ))}
     </StyledContainerActionBar>
   );

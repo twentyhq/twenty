@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
+import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -18,7 +18,11 @@ export const RecordIndexTableContainerEffect = ({
   recordTableId,
   viewBarId,
 }: RecordIndexTableContainerEffectProps) => {
-  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+  const {
+    setAvailableTableColumns,
+    setOnEntityCountChange,
+    resetTableRowSelection,
+  } = useRecordTable({
     recordTableId,
   });
 
@@ -47,11 +51,10 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns,
   ]);
 
-  const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries({
-      objectNamePlural: objectMetadataItem.namePlural,
-      recordTableId,
-    });
+  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+    objectMetadataItem,
+    callback: resetTableRowSelection,
+  });
 
   useEffect(() => {
     setActionBarEntries?.();

@@ -1,10 +1,10 @@
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
-import { ContextMenuItemAccent } from './ContextMenuItemAccent';
+import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 export type ContextMenuEntry = {
   label: string;
   Icon: IconComponent;
-  accent?: ContextMenuItemAccent;
-  onClick: () => void;
+  accent?: MenuItemAccent;
+  isVisible?: (selectedRecordIds: string[]) => boolean;
+  onClick: (selectedRecordIds: string[]) => void;
 };

@@ -75,15 +75,19 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
     >
       <DropdownMenu data-select-disable width={width}>
         <DropdownMenuItemsContainer>
-          {contextMenuEntries.map((item) => (
-            <ContextMenuItem
-              Icon={item.Icon}
-              label={item.label}
-              accent={item.accent}
-              onClick={item.onClick}
-              key={item.label}
-            />
-          ))}
+          {contextMenuEntries.map((item, index) => {
+            const isItemVisible =
+              item.isVisible === undefined ? true : item.isVisible(selectedIds);
+            return (
+              isItemVisible && (
+                <ContextMenuItem
+                  key={index}
+                  item={item}
+                  selectedIds={selectedIds}
+                />
+              )
+            );
+          })}
         </DropdownMenuItemsContainer>
       </DropdownMenu>
     </StyledContainerContextMenu>
