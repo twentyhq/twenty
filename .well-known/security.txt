@@ -1,5 +1,4 @@
-Contact: https://github.com/documenso/documenso/issues/new?assignees=&labels=bug&projects=&template=bug-report.yml
-Contact: security@twenty.com
+Contact: https://github.com/twentyhq/twenty/issues/new
 Preferred-Languages: en
 Canonical: https://twenty.com/.well-known/security.txt
 Policy: https://github.com/twentyhq/twenty/security/policy
