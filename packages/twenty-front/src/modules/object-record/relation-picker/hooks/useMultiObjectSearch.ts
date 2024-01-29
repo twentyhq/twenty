@@ -5,7 +5,7 @@ import { useMultiObjectSearchSelectedItemsQuery } from '@/object-record/relation
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 5;
+export const MULTI_OBJECT_SEARCH_REQUEST_LIMIT = 5;
 
 export type ObjectRecordForSelect = {
   objectMetadataItem: ObjectMetadataItem;

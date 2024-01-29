@@ -238,16 +238,21 @@ export const RecordShowContainer = ({
             </>
           )}
         </ShowPageLeftContainer>
-        <ShowPageRightContainer
-          targetableObject={{
-            id: record?.id ?? '',
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          timeline
-          tasks
-          notes
-          emails
-        />
+        {record ? (
+          <ShowPageRightContainer
+            targetableObject={{
+              id: record.id,
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+              targetObjectRecord: record,
+            }}
+            timeline
+            tasks
+            notes
+            emails
+          />
+        ) : (
+          <></>
+        )}
       </ShowPageContainer>
     </RecoilScope>
   );
