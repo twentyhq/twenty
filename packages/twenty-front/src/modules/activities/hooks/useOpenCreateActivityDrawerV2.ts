@@ -5,10 +5,10 @@ import { v4 } from 'uuid';
 
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
 import { useInjectIntoUseActivityTargets } from '@/activities/hooks/useInjectIntoUseActivityTargets';
-import { useModifyActivityOnActivityTargetsCacheReference } from '@/activities/hooks/useModifyActivityOnActivityTargetCacheReference';
-import { useModifyActivityTargetsOnActivityCacheReference } from '@/activities/hooks/useModifyActivityTargetsOnActivityCacheReference';
+import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useModifyActivityOnActivityTargetCache';
+import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { useInjectIntoTimelineActivitiesCache } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesCache';
+import { useInjectIntoTimelineActivitiesNextQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesNextQuery';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
@@ -62,19 +62,19 @@ export const useOpenCreateActivityDrawerV2 = ({
     targetableObject,
   });
 
-  const { injectIntoTimelineActivitiesCache } =
-    useInjectIntoTimelineActivitiesCache();
+  const { injectIntoTimelineActivitiesNextQuery } =
+    useInjectIntoTimelineActivitiesNextQuery();
 
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
   const { injectIntoUseActivityTargets } = useInjectIntoUseActivityTargets();
 
-  const { modifyActivityTargetsOnActivityCacheReference } =
-    useModifyActivityTargetsOnActivityCacheReference();
+  const { modifyActivityTargetsOnActivityCache } =
+    useModifyActivityTargetsOnActivityCache();
 
-  const { modifyActivityOnActivityTargetsCacheReference } =
-    useModifyActivityOnActivityTargetsCacheReference();
+  const { modifyActivityOnActivityTargetsCache } =
+    useModifyActivityOnActivityTargetsCache();
 
   return useCallback(
     async ({
@@ -118,7 +118,7 @@ export const useOpenCreateActivityDrawerV2 = ({
         activityTargetsToInject: createdActivityTargetsInCache,
       });
 
-      injectIntoTimelineActivitiesCache({
+      injectIntoTimelineActivitiesNextQuery({
         activityTargets,
         activityToInject: createdActivityInCache,
       });
@@ -128,12 +128,12 @@ export const useOpenCreateActivityDrawerV2 = ({
         activityTargetsToInject: createdActivityTargetsInCache,
       });
 
-      modifyActivityTargetsOnActivityCacheReference({
+      modifyActivityTargetsOnActivityCache({
         activityId,
         activityTargets: createdActivityTargetsInCache,
       });
 
-      modifyActivityOnActivityTargetsCacheReference({
+      modifyActivityOnActivityTargetsCache({
         activityTargetIds: createdActivityTargetsInCache.map(mapToRecordId),
         activity: createdActivityInCache,
       });
@@ -153,11 +153,11 @@ export const useOpenCreateActivityDrawerV2 = ({
       workspaceMemberRecord,
       activityTargets,
       targetableObject,
-      injectIntoTimelineActivitiesCache,
+      injectIntoTimelineActivitiesNextQuery,
       injectIntoActivityTargetInlineCellCache,
       injectIntoUseActivityTargets,
-      modifyActivityTargetsOnActivityCacheReference,
-      modifyActivityOnActivityTargetsCacheReference,
+      modifyActivityTargetsOnActivityCache,
+      modifyActivityOnActivityTargetsCache,
     ],
   );
 };

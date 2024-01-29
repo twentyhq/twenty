@@ -7,7 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { getCachedRecordEdgesFromRecords } from '@/object-record/cache/utils/getCachedRecordEdgesFromRecords';
 
-export const useModifyActivityTargetsOnActivityCacheReference = () => {
+export const useModifyActivityTargetsOnActivityCache = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -19,7 +19,7 @@ export const useModifyActivityTargetsOnActivityCacheReference = () => {
 
   const apolloClient = useApolloClient();
 
-  const modifyActivityTargetsOnActivityCacheReference = ({
+  const modifyActivityTargetsOnActivityCache = ({
     activityId,
     activityTargets,
   }: {
@@ -46,6 +46,6 @@ export const useModifyActivityTargetsOnActivityCacheReference = () => {
   };
 
   return {
-    modifyActivityTargetsOnActivityCacheReference,
+    modifyActivityTargetsOnActivityCache,
   };
 };

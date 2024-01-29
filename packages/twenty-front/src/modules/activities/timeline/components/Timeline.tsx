@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
 import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -50,21 +50,13 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, loading, initialized } = useTimelineActivities({
+  const { activities, initialized } = useTimelineActivities({
     targetableObject,
   });
 
-  console.log({
-    activities,
-    loading,
-    initialized,
+  const openCreateActivity = useOpenCreateActivityDrawerV2({
+    targetableObject,
   });
-
-  // const openCreateActivity = useOpenCreateActivityDrawerV2({
-  //   targetableObject,
-  // });
-
-  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const showEmptyState = initialized && activities.length === 0;
 

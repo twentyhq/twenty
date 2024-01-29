@@ -4,8 +4,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -60,7 +60,7 @@ export const useAddRecordInCache = ({
         });
 
         // TODO: remove this once we get rid of entityFieldsFamilyState
-        set(entityFieldsFamilyState(record.id), record);
+        set(recordStoreFamilyState(record.id), record);
       },
     [
       objectMetadataItem,
