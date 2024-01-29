@@ -54,9 +54,19 @@ export const Timeline = ({
     targetableObject,
   });
 
+  console.log({
+    activities,
+    loading,
+    initialized,
+  });
+
+  // const openCreateActivity = useOpenCreateActivityDrawerV2({
+  //   targetableObject,
+  // });
+
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const showEmptyState = !loading && activities.length === 0;
+  const showEmptyState = initialized && activities.length === 0;
 
   const showLoadingState = !initialized;
 

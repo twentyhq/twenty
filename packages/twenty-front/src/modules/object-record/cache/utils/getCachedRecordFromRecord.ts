@@ -1,6 +1,6 @@
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
+import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getNodeTypename } from '@/object-record/utils/getNodeTypename';
 
 export const getCachedRecordFromRecord = <T extends ObjectRecord>({
   objectNameSingular,

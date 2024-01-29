@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useAddRecordInCache } from '@/object-record/hooks/useAddRecordInCache';
-import { useGenerateCachedObjectRecord } from '@/object-record/hooks/useGenerateCachedObjectRecord';
+import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
+import { useGenerateCachedObjectRecord } from '@/object-record/cache/hooks/useGenerateCachedObjectRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type useCreateOneRecordInCacheProps = {

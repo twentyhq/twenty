@@ -1,32 +1,27 @@
 import { useCallback } from 'react';
-import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
+import { useInjectIntoUseActivityTargets } from '@/activities/hooks/useInjectIntoUseActivityTargets';
+import { useModifyActivityOnActivityTargetsCacheReference } from '@/activities/hooks/useModifyActivityOnActivityTargetCacheReference';
+import { useModifyActivityTargetsOnActivityCacheReference } from '@/activities/hooks/useModifyActivityTargetsOnActivityCacheReference';
+import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
+import { useInjectIntoTimelineActivitiesCache } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesCache';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { getRecordConnectionFromEdges } from '@/object-record/utils/getRecordConnectionFromEdges';
-import { getRecordConnectionFromRecords } from '@/object-record/utils/getRecordConnectionFromRecords';
-import { getRecordEdgeFromRecord } from '@/object-record/utils/getRecordEdgeFromRecord';
-import { getRecordsFromRecordConnection } from '@/object-record/utils/getRecordsFromRecordConnection';
+import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { capitalize } from '~/utils/string/capitalize';
 
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
@@ -50,6 +45,12 @@ export const useOpenCreateActivityDrawerV2 = ({
     });
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { record: workspaceMemberRecord } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectRecordId: currentWorkspaceMember?.id,
+  });
+
   const setHotkeyScope = useSetHotkeyScope();
 
   const [, setActivityTargetableEntityArray] = useRecoilState(
@@ -57,34 +58,23 @@ export const useOpenCreateActivityDrawerV2 = ({
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  const {
-    objectMetadataItem: objectMetadataItemActivity,
-    findManyRecordsQuery: findManyActivitiesQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-  });
-
   const { activityTargets } = useActivityTargets({
     targetableObject,
   });
 
-  const {
-    objectMetadataItem: objectMetadataItemActivityTarget,
-    findManyRecordsQuery: findManyActivityTargetsQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-  });
+  const { injectIntoTimelineActivitiesCache } =
+    useInjectIntoTimelineActivitiesCache();
 
-  const { record: workspaceMemberRecord } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    objectRecordId: currentWorkspaceMember?.id,
-  });
+  const { injectIntoActivityTargetInlineCellCache } =
+    useInjectIntoActivityTargetInlineCellCache();
 
-  const modifyActivityFromCache = useModifyRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
+  const { injectIntoUseActivityTargets } = useInjectIntoUseActivityTargets();
 
-  const apolloClient = useApolloClient();
+  const { modifyActivityTargetsOnActivityCacheReference } =
+    useModifyActivityTargetsOnActivityCacheReference();
+
+  const { modifyActivityOnActivityTargetsCacheReference } =
+    useModifyActivityOnActivityTargetsCacheReference();
 
   return useCallback(
     async ({
@@ -93,7 +83,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       assigneeId,
     }: {
       type: ActivityType;
-      targetableObjects?: ActivityTargetableObject[];
+      targetableObjects: ActivityTargetableObject[];
       assigneeId?: string;
     }) => {
       const activityId = v4();
@@ -114,202 +104,38 @@ export const useOpenCreateActivityDrawerV2 = ({
         return;
       }
 
-      const activityTargetableObjects = targetableObjects
-        ? flattenTargetableObjectsAndTheirRelatedTargetableObjects(
-            targetableObjects,
-          )
-        : [];
-
-      const activityTargetsToCreate = activityTargetableObjects.map(
-        (targetableObject) => {
-          const targetableObjectFieldIdName =
-            getActivityTargetObjectFieldIdName({
-              nameSingular: targetableObject.targetObjectNameSingular,
-            });
-
-          return {
-            [targetableObject.targetObjectNameSingular]:
-              targetableObject.targetObjectRecord,
-            [targetableObjectFieldIdName]: targetableObject.id,
-            activityId: createdActivityInCache.id,
-            id: v4(),
-          };
-        },
-      );
+      const activityTargetsToCreate =
+        getActivityTargetsToCreateFromTargetableObjects({
+          activityId,
+          targetableObjects,
+        });
 
       const createdActivityTargetsInCache =
         await createManyActivityTargetsInCache(activityTargetsToCreate);
 
-      const newActivityTargetEdgesForCache = createdActivityTargetsInCache.map(
-        (createdActivityTarget) =>
-          getRecordEdgeFromRecord({
-            objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-            record: createdActivityTarget,
-          }),
-      );
-
-      const newActivityTargetConnectionForCache = getRecordConnectionFromEdges({
-        objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-        edges: newActivityTargetEdgesForCache,
+      injectIntoUseActivityTargets({
+        targetableObject,
+        activityTargetsToInject: createdActivityTargetsInCache,
       });
 
-      // Those requests are not mounted yet, so triggering optimistic effect here would be useless
-      apolloClient.writeQuery({
-        query: findManyActivityTargetsQuery,
-        variables: {
-          filter: {
-            activityId: {
-              eq: activityId,
-            },
-          },
-        },
-        data: {
-          [objectMetadataItemActivityTarget.namePlural]:
-            newActivityTargetConnectionForCache,
-        },
+      injectIntoTimelineActivitiesCache({
+        activityTargets,
+        activityToInject: createdActivityInCache,
       });
 
-      // Try to trigger optimistic effect here
-      // It doesn't work because the requests are not mounted yet
-
-      // This read/write could be replaced by a trigger optimistic effect create on activities
-      // Read current cache state
-      const { data: exitistingActivitiesQueryResult } =
-        await apolloClient.query({
-          query: findManyActivitiesQuery,
-          variables: {
-            filter: {
-              id: {
-                in: activityTargets
-                  ?.map((activityTarget) => activityTarget.activityId)
-                  .filter(isNonEmptyString),
-              },
-            },
-            orderBy: {
-              createdAt: 'AscNullsFirst',
-            },
-          },
-        });
-
-      const newActivities = getRecordsFromRecordConnection({
-        recordConnection: exitistingActivitiesQueryResult[
-          objectMetadataItemActivity.namePlural
-        ] as ObjectRecordConnection<Activity>,
+      injectIntoActivityTargetInlineCellCache({
+        activityId,
+        activityTargetsToInject: createdActivityTargetsInCache,
       });
 
-      newActivities.unshift({
-        ...createdActivityInCache,
-        __typename: 'Activity',
+      modifyActivityTargetsOnActivityCacheReference({
+        activityId,
+        activityTargets: createdActivityTargetsInCache,
       });
 
-      const newActivityIds = newActivities.map((activity) => activity.id);
-
-      const newActivityConnectionForCache = getRecordConnectionFromRecords({
-        objectNameSingular: CoreObjectNameSingular.Activity,
-        records: newActivities,
-      });
-
-      const timelineActivitiesQueryVariables =
-        makeTimelineActivitiesQueryVariables({
-          activityIds: newActivityIds,
-        });
-
-      // Inject query for timeline findManyActivities before it gets mounted
-      apolloClient.writeQuery({
-        query: findManyActivitiesQuery,
-        variables: timelineActivitiesQueryVariables,
-        data: {
-          [objectMetadataItemActivity.namePlural]:
-            newActivityConnectionForCache,
-        },
-      });
-
-      const targetObjectFieldName = getActivityTargetObjectFieldIdName({
-        nameSingular: targetableObject.targetObjectNameSingular,
-      });
-
-      // This read/write too ?
-      // This could be replaced by a trigger optimistic effect create on activityTargets
-      // Inject query for useActivityTargets on targetableObject in Timeline
-      const existingActivityTargetsForTargetableObjectQueryResult =
-        apolloClient.readQuery({
-          query: findManyActivityTargetsQuery,
-          variables: {
-            filter: {
-              [targetObjectFieldName]: {
-                eq: targetableObject.id,
-              },
-            },
-          },
-        });
-
-      const existingActivityTargetsForTargetableObject =
-        getRecordsFromRecordConnection({
-          recordConnection:
-            existingActivityTargetsForTargetableObjectQueryResult[
-              objectMetadataItemActivityTarget.namePlural
-            ] as ObjectRecordConnection<ActivityTarget>,
-        });
-
-      const newActivityTargetsForTargetableObject = [
-        ...existingActivityTargetsForTargetableObject,
-        ...createdActivityTargetsInCache,
-      ];
-
-      const newActivityTargetsConnection = getRecordConnectionFromRecords({
-        objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-        records: newActivityTargetsForTargetableObject,
-      });
-
-      apolloClient.writeQuery({
-        query: findManyActivityTargetsQuery,
-        variables: {
-          filter: {
-            [targetObjectFieldName]: {
-              eq: targetableObject.id,
-            },
-          },
-        },
-        data: {
-          [objectMetadataItemActivityTarget.namePlural]:
-            newActivityTargetsConnection,
-        },
-      });
-
-      // This could be replaced by a trigger optimistic effect on relations of activity
-      // Can this be replaced by a trigger optimistic effect ?
-      // This has no effect right now
-      modifyActivityFromCache(createdActivityInCache.id, {
-        activityTargets: (activityTargetsRef, { toReference }) => {
-          const newActivityTargetsForCacheModify =
-            createdActivityTargetsInCache.map((createdActivityTarget) => {
-              const activityTargetRef = toReference({
-                __typename: capitalize(CoreObjectNameSingular.ActivityTarget),
-                id: createdActivityTarget.id,
-              });
-
-              return {
-                __typename: `${capitalize(
-                  CoreObjectNameSingular.ActivityTarget,
-                )}Edge`,
-                node: activityTargetRef,
-              };
-            });
-
-          console.log({
-            activityTargetsRef,
-            newActivityTargetsForCacheModify,
-            newState: {
-              ...activityTargetsRef,
-              edges: newActivityTargetsForCacheModify,
-            },
-          });
-
-          return {
-            ...activityTargetsRef,
-            edges: newActivityTargetsForCacheModify,
-          };
-        },
+      modifyActivityOnActivityTargetsCacheReference({
+        activityTargetIds: createdActivityTargetsInCache.map(mapToRecordId),
+        activity: createdActivityInCache,
       });
 
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
@@ -324,15 +150,14 @@ export const useOpenCreateActivityDrawerV2 = ({
       setHotkeyScope,
       setViewableActivityId,
       createOneActivityInCache,
-      modifyActivityFromCache,
       workspaceMemberRecord,
-      apolloClient,
-      findManyActivityTargetsQuery,
-      objectMetadataItemActivityTarget,
       activityTargets,
-      findManyActivitiesQuery,
-      objectMetadataItemActivity,
       targetableObject,
+      injectIntoTimelineActivitiesCache,
+      injectIntoActivityTargetInlineCellCache,
+      injectIntoUseActivityTargets,
+      modifyActivityTargetsOnActivityCacheReference,
+      modifyActivityOnActivityTargetsCacheReference,
     ],
   );
 };

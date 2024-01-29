@@ -13,7 +13,7 @@ import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';

@@ -2,8 +2,8 @@ import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useAddRecordInCache } from '@/object-record/hooks/useAddRecordInCache';
-import { useGenerateCachedObjectRecord } from '@/object-record/hooks/useGenerateCachedObjectRecord';
+import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
+import { useGenerateCachedObjectRecord } from '@/object-record/cache/hooks/useGenerateCachedObjectRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({

@@ -1,19 +1,19 @@
-import { makeReference, useApolloClient } from '@apollo/client';
+import { ApolloClient, makeReference } from '@apollo/client';
 
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
+import { getCachedRecordFromRecord } from '@/object-record/cache/utils/getCachedRecordFromRecord';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getCachedRecordFromRecord } from '@/object-record/utils/getCachedRecordFromRecord';
-import { getEdgeTypename } from '@/object-record/utils/getEdgeTypename';
 
-export const useGetCachedRecordEdgesFromRecords = <T extends ObjectRecord>({
+export const getCachedRecordEdgesFromRecords = <T extends ObjectRecord>({
+  apolloClient,
   objectNameSingular,
   records,
 }: {
+  apolloClient: ApolloClient<object>;
   objectNameSingular: string;
   records: T[];
 }): CachedObjectRecordEdge[] => {
-  const apolloClient = useApolloClient();
-
   const cachedRecordEdges = records.map((record) => {
     const cachedRecord = getCachedRecordFromRecord({
       objectNameSingular,

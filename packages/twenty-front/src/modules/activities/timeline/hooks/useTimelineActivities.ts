@@ -13,11 +13,16 @@ export const useTimelineActivities = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activityTargets, loadingActivityTargets } = useActivityTargets({
+  const {
+    activityTargets,
+    loadingActivityTargets,
+    initialized: initializedActivityTargets,
+  } = useActivityTargets({
     targetableObject,
   });
 
   const [initialized, setInitialized] = useState(false);
+
   const [activities, setActivities] = useState<Activity[]>([]);
 
   const activityIds = activityTargets
@@ -32,13 +37,14 @@ export const useTimelineActivities = ({
 
   const { records: activitiesFromRequest, loading: loadingActivities } =
     useFindManyRecords<Activity>({
-      skip: !isNonEmptyArray(activityTargets) || loadingActivityTargets,
+      skip: loadingActivityTargets || !isNonEmptyArray(activityTargets),
       objectNameSingular: CoreObjectNameSingular.Activity,
       filter: timelineActivitiesQueryVariables.filter,
       orderBy: timelineActivitiesQueryVariables.orderBy,
-      onCompleted: (data) => {
-        setActivities(data?.edges.map((edge) => edge.node) ?? []);
-        setInitialized(true);
+      onCompleted: () => {
+        if (!initialized) {
+          setInitialized(true);
+        }
       },
     });
 
@@ -48,9 +54,20 @@ export const useTimelineActivities = ({
     }
   }, [activitiesFromRequest, loadingActivities]);
 
+  const noActivityTargets =
+    initializedActivityTargets && !isNonEmptyArray(activityTargets);
+
+  useEffect(() => {
+    if (noActivityTargets) {
+      setInitialized(true);
+    }
+  }, [noActivityTargets]);
+
+  const loading = loadingActivities || loadingActivityTargets;
+
   return {
     activities,
-    loading: !loadingActivities,
+    loading,
     initialized,
   };
 };
