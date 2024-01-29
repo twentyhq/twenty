@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -54,9 +54,7 @@ export const Timeline = ({
     targetableObject,
   });
 
-  const openCreateActivity = useOpenCreateActivityDrawerV2({
-    targetableObject,
-  });
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const showEmptyState = initialized && activities.length === 0;
 
