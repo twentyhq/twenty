@@ -13,7 +13,7 @@ export const getTimelineThreadsFromCompanyId = gql`
       page: $page
       pageSize: $pageSize
     ) {
-      ...TimelineThreadFragment
+      ...TimelineThreadsWithTotalFragment
     }
   }
   ${timelineThreadFragment}

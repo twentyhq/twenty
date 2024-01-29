@@ -1,9 +1,12 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
 
 @ObjectType('TimelineThreadsWithTotal')
 export class TimelineThreadsWithTotal {
+  @Field()
   totalNumberOfThreads: number;
+
+  @Field(() => [TimelineThread])
   timelineThreads: TimelineThread[];
 }

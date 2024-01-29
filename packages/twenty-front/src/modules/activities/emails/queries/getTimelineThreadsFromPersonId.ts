@@ -13,7 +13,7 @@ export const getTimelineThreadsFromPersonId = gql`
       page: $page
       pageSize: $pageSize
     ) {
-      ...TimelineThreadFragment
+      ...TimelineThreadsWithTotalFragment
     }
   }
   ${timelineThreadFragment}
