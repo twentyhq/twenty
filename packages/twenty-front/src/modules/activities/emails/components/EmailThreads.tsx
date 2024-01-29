@@ -76,10 +76,6 @@ export const EmailThreads = ({
     variables: threadQueryVariables,
   });
 
-  if (loading) {
-    return;
-  }
-
   const fetchMoreRecords = async () => {
     if (emailThreadsPage.hasNextPage && !isFetchingMoreEmails) {
       setIsFetchingMoreEmails(true);
@@ -102,8 +98,8 @@ export const EmailThreads = ({
             [queryName]: {
               ...prev?.[queryName],
               timelineThreads: [
-                ...(prev?.[queryName].timelineThreads ?? []),
-                ...(fetchMoreResult?.[queryName].timelineThreads ?? []),
+                ...(prev?.[queryName]?.timelineThreads ?? []),
+                ...(fetchMoreResult?.[queryName]?.timelineThreads ?? []),
               ],
             },
           };
@@ -138,16 +134,18 @@ export const EmailThreads = ({
           }
           fontColor={H1TitleFontColor.Primary}
         />
-        <Card>
-          {timelineThreads?.map((thread: TimelineThread, index: number) => (
-            <EmailThreadPreview
-              key={index}
-              divider={index < timelineThreads.length - 1}
-              thread={thread}
-              onClick={() => openEmailThread(thread)}
-            />
-          ))}
-        </Card>
+        {!loading && (
+          <Card>
+            {timelineThreads?.map((thread: TimelineThread, index: number) => (
+              <EmailThreadPreview
+                key={index}
+                divider={index < timelineThreads.length - 1}
+                thread={thread}
+                onClick={() => openEmailThread(thread)}
+              />
+            ))}
+          </Card>
+        )}
         <FetchMoreLoader
           loading={isFetchingMoreEmails}
           onLastRowVisible={fetchMoreRecords}
