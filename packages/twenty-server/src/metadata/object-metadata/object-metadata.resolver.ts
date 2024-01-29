@@ -5,10 +5,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { ObjectMetadataDTO } from 'src/metadata/object-metadata/dtos/object-metadata.dto';
-import {
-  DeleteObjectInput,
-  DeleteObjectResponse,
-} from 'src/metadata/object-metadata/dtos/delete-object.input';
+import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 @UseGuards(JwtAuthGuard)
@@ -18,12 +15,9 @@ export class ObjectMetadataResolver {
 
   @Mutation(() => ObjectMetadataDTO)
   deleteOneObject(
-    @Args('input') input: DeleteObjectInput,
+    @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<DeleteObjectResponse> {
-    return this.objectMetadataService.deleteOneObject(
-      input,
-      workspaceId,
-    ) as Promise<DeleteObjectResponse>;
+  ) {
+    return this.objectMetadataService.deleteOneObject(input, workspaceId);
   }
 }

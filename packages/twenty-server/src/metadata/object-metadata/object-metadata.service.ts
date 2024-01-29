@@ -33,7 +33,7 @@ import {
   computeCustomName,
   computeObjectTargetTable,
 } from 'src/workspace/utils/compute-object-target-table.util';
-import { DeleteObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
+import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -90,7 +90,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteOneObject(
-    input: DeleteObjectInput,
+    input: DeleteOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
     const objectMetadata = await this.objectMetadataRepository.findOne({
