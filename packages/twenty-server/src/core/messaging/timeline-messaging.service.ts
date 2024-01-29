@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
-import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
+import { TimelineThreadsWithTotal } from 'src/core/messaging/dtos/timeline-threads-with-total.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
@@ -27,7 +27,7 @@ export class TimelineMessagingService {
     personIds: string[],
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineThread[]> {
+  ): Promise<TimelineThreadsWithTotal> {
     const offset = (page - 1) * pageSize;
 
     const dataSourceMetadata =
@@ -82,7 +82,10 @@ export class TimelineMessagingService {
     );
 
     if (!messageThreads) {
-      return [];
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
     }
 
     const messageThreadIds = messageThreads.map(
@@ -350,7 +353,10 @@ export class TimelineMessagingService {
       };
     });
 
-    return timelineThreads;
+    return {
+      totalNumberOfThreads: 1,
+      timelineThreads,
+    };
   }
 
   async getMessagesFromCompanyId(
@@ -358,7 +364,7 @@ export class TimelineMessagingService {
     companyId: string,
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ) {
+  ): Promise<TimelineThreadsWithTotal> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -380,7 +386,10 @@ export class TimelineMessagingService {
     );
 
     if (!personIds) {
-      return [];
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
     }
 
     const formattedPersonIds = personIds.map(
