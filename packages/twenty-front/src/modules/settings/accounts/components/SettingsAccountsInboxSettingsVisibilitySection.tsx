@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { SoonPill } from 'tsup.ui.index';
 
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -60,6 +61,16 @@ const StyledRadio = styled(Radio)`
   margin-left: auto;
 `;
 
+const StyledSoonPill = styled(SoonPill)`
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
+const StyledSection = styled(Section)`
+  position: relative;
+`;
+
 const inboxSettingsVisibilityOptions = [
   {
     title: 'Everything',
@@ -97,11 +108,12 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
   onChange,
   value = InboxSettingsVisibilityValue.Everything,
 }: SettingsAccountsInboxSettingsVisibilitySectionProps) => (
-  <Section>
+  <StyledSection>
     <H2Title
       title="Email visibility"
       description="Define what will be visible to other users in your workspace"
     />
+    <StyledSoonPill />
     <Card>
       {inboxSettingsVisibilityOptions.map(
         (
@@ -131,5 +143,5 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
         ),
       )}
     </Card>
-  </Section>
+  </StyledSection>
 );
