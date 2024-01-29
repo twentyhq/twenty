@@ -4,7 +4,7 @@ import {
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
-export const mockedPeopleMetadata: ObjectEdge = {
+export const mockedPeopleMetadata = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -558,9 +558,9 @@ export const mockedPeopleMetadata: ObjectEdge = {
       totalCount: 19,
     },
   },
-};
+} as ObjectEdge;
 
-export const mockedCompaniesMetadata: ObjectEdge = {
+export const mockedCompaniesMetadata = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -1094,7 +1094,7 @@ export const mockedCompaniesMetadata: ObjectEdge = {
       totalCount: 18,
     },
   },
-};
+} as ObjectEdge;
 
 export const mockedPipelineStepsMetadata = {
   __typename: 'objectEdge',
