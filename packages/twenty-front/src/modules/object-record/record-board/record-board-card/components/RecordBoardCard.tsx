@@ -1,17 +1,24 @@
 import { ReactNode, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
+import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -105,7 +112,7 @@ const StyledCheckboxContainer = styled.div`
 const StyledFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: fit-content;
 `;
 
 const StyledCompactIconContainer = styled.div`
@@ -116,7 +123,7 @@ const StyledCompactIconContainer = styled.div`
 
 export const RecordBoardCard = () => {
   const { recordId } = useContext(RecordBoardCardContext);
-
+  const { updateOneRecord } = useContext(RecordBoardContext);
   const {
     getObjectSingularNameState,
     getIsCompactModeActiveState,
@@ -139,6 +146,19 @@ export const RecordBoardCard = () => {
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setIsCurrentCardSelected(true);
+    setContextMenuPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+    setContextMenuOpenState(true);
+  };
+
   const PreventSelectOnClickContainer = ({
     children,
   }: {
@@ -159,16 +179,29 @@ export const RecordBoardCard = () => {
     }
   };
 
+  const useUpdateOneRecordHook: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
   if (!objectNameSingular || !record) {
     return null;
   }
 
   return (
-    <StyledBoardCardWrapper>
+    <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       <StyledBoardCard
         selected={isCurrentCardSelected}
         onMouseLeave={onMouseLeaveBoard}
-        onClick={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
+        onClick={() => {
+          setIsCurrentCardSelected(!isCurrentCardSelected);
+        }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
           <RecordChip objectNameSingular={objectNameSingular} record={record} />
@@ -212,6 +245,7 @@ export const RecordBoardCard = () => {
                       type: fieldDefinition.type,
                       metadata: fieldDefinition.metadata,
                     },
+                    useUpdateRecord: useUpdateOneRecordHook,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >

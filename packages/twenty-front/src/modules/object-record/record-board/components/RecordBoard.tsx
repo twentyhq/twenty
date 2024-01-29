@@ -1,14 +1,16 @@
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import styled from '@emotion/styled';
-import { DragDropContext } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useRecoilValue } from 'recoil';
+import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type RecordBoardProps = {
   recordBoardId: string;
@@ -38,10 +40,49 @@ const StyledBoardHeader = styled.div`
 `;
 
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
+  const { updateOneRecord, objectMetadataItem } =
+    useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { getColumnIdsState } = useRecordBoardStates(recordBoardId);
+  const { getColumnIdsState, columnsFamilySelector } =
+    useRecordBoardStates(recordBoardId);
   const columnIds = useRecoilValue(getColumnIdsState());
+
+  const selectFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.type === FieldMetadataType.Select,
+  );
+
+  const onDragEnd: OnDragEndResponder = useRecoilCallback(
+    ({ snapshot }) =>
+      async (result) => {
+        const draggedRecordId = result.draggableId;
+        const destinationColumnId = result.destination?.droppableId;
+
+        if (!destinationColumnId) {
+          return;
+        }
+
+        const column = await snapshot
+          .getLoadable(columnsFamilySelector(destinationColumnId))
+          .getValue();
+
+        if (!column) {
+          return;
+        }
+
+        if (!selectFieldMetadataItem) {
+          return;
+        }
+
+        updateOneRecord({
+          idToUpdate: draggedRecordId,
+          updateOneRecordInput: {
+            [selectFieldMetadataItem.name]: column.value,
+          },
+        });
+      },
+    [columnsFamilySelector, selectFieldMetadataItem, updateOneRecord],
+  );
 
   return (
     <RecordBoardScope
@@ -53,7 +94,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
         <StyledBoardHeader />
         <ScrollWrapper>
           <StyledContainer ref={boardRef}>
-            <DragDropContext onDragEnd={() => {}}>
+            <DragDropContext onDragEnd={onDragEnd}>
               {columnIds.map((columnId) => (
                 <RecordBoardColumn
                   key={columnId}

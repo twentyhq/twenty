@@ -3,8 +3,6 @@ import { Droppable } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
-import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -52,7 +50,7 @@ export const RecordBoardColumn = ({
     recordBoardRecordIdsByColumnIdFamilyState(recordBoardColumnId),
   );
 
-  if (!columnDefinition || !recordIds) {
+  if (!columnDefinition) {
     return null;
   }
 
@@ -70,16 +68,8 @@ export const RecordBoardColumn = ({
             <RecordBoardColumnHeader />
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-            >
-              {recordIds.map((recordId) => (
-                <RecordBoardCardContext.Provider
-                  value={{ recordId }}
-                  key={recordId}
-                >
-                  <RecordBoardCard />
-                </RecordBoardCardContext.Provider>
-              ))}
-            </RecordBoardColumnCardsContainer>
+              recordIds={recordIds}
+            />
           </StyledColumn>
         )}
       </Droppable>
