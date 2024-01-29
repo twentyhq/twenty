@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
@@ -67,7 +68,7 @@ export const EmailThreads = ({
       ? { personId: entity.id }
       : { companyId: entity.id }),
     page: 1,
-    pageSize: 10,
+    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   } as GetTimelineThreadsFromPersonIdQueryVariables;
 
   const { data, loading, fetchMore, error } = useQuery(threadQuery, {
