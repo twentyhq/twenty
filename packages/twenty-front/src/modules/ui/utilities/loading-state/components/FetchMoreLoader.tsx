@@ -27,15 +27,8 @@ export const FetchMoreLoader = ({
   });
 
   return (
-    <tbody ref={tbodyRef}>
-      {loading && (
-        <tr>
-          <td colSpan={7}>
-            <StyledText>Loading more...</StyledText>
-          </td>
-          <td colSpan={7} />
-        </tr>
-      )}
-    </tbody>
+    <div ref={tbodyRef}>
+      {loading && <StyledText>Loading more...</StyledText>}
+    </div>
   );
 };

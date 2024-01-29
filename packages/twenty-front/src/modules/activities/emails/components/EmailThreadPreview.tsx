@@ -36,11 +36,17 @@ const StyledHeading = styled.div<{ unread: boolean }>`
   }
 `;
 
+const StyledParticipantsContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 const StyledAvatar = styled(Avatar)`
-  margin: ${({ theme }) => theme.spacing(0, 1)};
+  margin-left: ${({ theme }) => theme.spacing(-1)};
 `;
 
 const StyledSenderName = styled.span`
+  margin: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -91,11 +97,28 @@ export const EmailThreadPreview = ({
   return (
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
-        <StyledAvatar
-          avatarUrl={thread.firstParticipant.avatarUrl}
-          placeholder={thread.firstParticipant.displayName}
-          type="rounded"
-        />
+        <StyledParticipantsContainer>
+          <Avatar
+            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            placeholder={thread.firstParticipant.displayName}
+            type="rounded"
+          />
+          {thread?.lastTwoParticipants?.[0] && (
+            <StyledAvatar
+              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+              placeholder={thread.lastTwoParticipants[0].displayName}
+              type="rounded"
+            />
+          )}
+          {thread?.lastTwoParticipants?.[1] && (
+            <StyledAvatar
+              avatarUrl={thread.lastTwoParticipants[1].avatarUrl}
+              placeholder={thread.lastTwoParticipants[1].displayName}
+              type="rounded"
+            />
+          )}
+        </StyledParticipantsContainer>
+
         <StyledSenderName>
           {thread.firstParticipant.displayName}
         </StyledSenderName>
