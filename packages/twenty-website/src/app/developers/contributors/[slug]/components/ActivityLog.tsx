@@ -1,19 +1,9 @@
 'use client';
 
-import styled from '@emotion/styled';
 import { ResponsiveTimeRange } from '@nivo/calendar';
 
+import { CardContainer } from '@/app/developers/contributors/[slug]/components/CardContainer';
 import { Title } from '@/app/developers/contributors/[slug]/components/Title';
-
-const Container = styled.div`
-  border: 3px solid #141414;
-  width: 100%;
-  border-radius: 12px;
-  padding: 40px;
-  display: flex;
-  gap: 32px;
-  flex-direction: column;
-`;
 
 export const ActivityLog = ({
   data,
@@ -21,7 +11,7 @@ export const ActivityLog = ({
   data: { value: number; day: string }[];
 }) => {
   return (
-    <Container>
+    <CardContainer>
       <Title>Activity</Title>
       <div style={{ width: '100%', height: '140px' }}>
         <ResponsiveTimeRange
@@ -32,6 +22,6 @@ export const ActivityLog = ({
           dayBorderColor="#ffffff"
         />
       </div>
-    </Container>
+    </CardContainer>
   );
 };

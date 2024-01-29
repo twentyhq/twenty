@@ -2,13 +2,10 @@
 
 import styled from '@emotion/styled';
 
-const Container = styled.div`
-  display: flex;
-  padding: 40px;
-  gap: 16px;
-  border-radius: 12px;
-  border: 3px solid #141414;
-  width: 100%;
+import { CardContainer } from '@/app/developers/contributors/[slug]/components/CardContainer';
+
+const Container = styled(CardContainer)`
+  flex-direction: row;
 
   .item {
     display: flex;
