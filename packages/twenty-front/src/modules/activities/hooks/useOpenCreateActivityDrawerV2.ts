@@ -4,9 +4,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { useWriteActivityTargetsInCache } from '@/activities/hooks/useInjectIntoUseActivityTargets';
 import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useModifyActivityOnActivityTargetCache';
 import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
+import { useWriteActivityTargetsInCache } from '@/activities/hooks/useWriteActivityTargetsInCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { useInjectIntoTimelineActivitiesQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQuery';
 import { Activity, ActivityType } from '@/activities/types/Activity';
