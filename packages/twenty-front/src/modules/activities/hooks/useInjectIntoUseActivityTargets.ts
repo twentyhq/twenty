@@ -9,7 +9,7 @@ import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getR
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
-export const useInjectIntoUseActivityTargets = () => {
+export const useWriteActivityTargetsInCache = () => {
   const apolloClient = useApolloClient();
 
   const {

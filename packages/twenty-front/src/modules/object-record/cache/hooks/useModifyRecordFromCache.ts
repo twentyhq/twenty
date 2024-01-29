@@ -23,15 +23,9 @@ export const useModifyRecordFromCache = ({
       id: recordId,
     });
 
-    const result = cache.modify<CachedObjectRecord>({
+    cache.modify<CachedObjectRecord>({
       id: cachedRecordId,
       fields: fieldModifiers,
     });
-
-    if (!result) {
-      throw new Error(
-        `Could not modify record with ref ${cachedRecordId} from cache`,
-      );
-    }
   };
 };

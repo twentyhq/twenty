@@ -4,11 +4,11 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { useInjectIntoUseActivityTargets } from '@/activities/hooks/useInjectIntoUseActivityTargets';
+import { useWriteActivityTargetsInCache } from '@/activities/hooks/useInjectIntoUseActivityTargets';
 import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useModifyActivityOnActivityTargetCache';
 import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { useInjectIntoTimelineActivitiesNextQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesNextQuery';
+import { useInjectIntoTimelineActivitiesQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQuery';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
@@ -63,12 +63,12 @@ export const useOpenCreateActivityDrawerV2 = ({
   });
 
   const { injectIntoTimelineActivitiesNextQuery } =
-    useInjectIntoTimelineActivitiesNextQuery();
+    useInjectIntoTimelineActivitiesQuery();
 
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
-  const { injectIntoUseActivityTargets } = useInjectIntoUseActivityTargets();
+  const { injectIntoUseActivityTargets } = useWriteActivityTargetsInCache();
 
   const { modifyActivityTargetsOnActivityCache } =
     useModifyActivityTargetsOnActivityCache();

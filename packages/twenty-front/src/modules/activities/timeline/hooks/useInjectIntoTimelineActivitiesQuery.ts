@@ -10,7 +10,7 @@ import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getR
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
-export const useInjectIntoTimelineActivitiesNextQuery = () => {
+export const useInjectIntoTimelineActivitiesQuery = () => {
   const apolloClient = useApolloClient();
 
   const {
@@ -20,7 +20,7 @@ export const useInjectIntoTimelineActivitiesNextQuery = () => {
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
-  const injectIntoTimelineActivitiesNextQuery = ({
+  const injectIntoTimelineActivitiesQuery = ({
     activityTargets,
     activityToInject,
   }: {
@@ -84,6 +84,6 @@ export const useInjectIntoTimelineActivitiesNextQuery = () => {
   };
 
   return {
-    injectIntoTimelineActivitiesNextQuery,
+    injectIntoTimelineActivitiesNextQuery: injectIntoTimelineActivitiesQuery,
   };
 };

@@ -5,7 +5,7 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider addTypename={false}>
