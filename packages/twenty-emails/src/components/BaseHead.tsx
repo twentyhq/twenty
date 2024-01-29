@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Font, Head } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
 
