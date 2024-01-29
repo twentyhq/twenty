@@ -169,12 +169,10 @@ export const ActivityEditor = ({
               AssigneeFieldContextProvider && (
                 <>
                   <DueAtFieldContextProvider>
-                    <RecordInlineCell
-                    />
+                    <RecordInlineCell />
                   </DueAtFieldContextProvider>
                   <AssigneeFieldContextProvider>
-                    <RecordInlineCell
-                    />
+                    <RecordInlineCell />
                   </AssigneeFieldContextProvider>
                 </>
               )}

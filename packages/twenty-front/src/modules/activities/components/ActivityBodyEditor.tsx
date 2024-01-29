@@ -15,6 +15,7 @@ import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -23,7 +24,6 @@ import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
