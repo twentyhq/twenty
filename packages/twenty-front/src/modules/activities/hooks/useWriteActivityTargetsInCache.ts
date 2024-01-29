@@ -19,7 +19,7 @@ export const useWriteActivityTargetsInCache = () => {
     objectNameSingular: CoreObjectNameSingular.ActivityTarget,
   });
 
-  const injectIntoUseActivityTargets = ({
+  const writeActivityTargetsInCache = ({
     targetableObject,
     activityTargetsToInject,
   }: {
@@ -79,6 +79,6 @@ export const useWriteActivityTargetsInCache = () => {
   };
 
   return {
-    injectIntoUseActivityTargets,
+    writeActivityTargetsInCache,
   };
 };

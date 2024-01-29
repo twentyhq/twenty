@@ -68,7 +68,7 @@ export const useOpenCreateActivityDrawerV2 = ({
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
-  const { injectIntoUseActivityTargets } = useWriteActivityTargetsInCache();
+  const { writeActivityTargetsInCache } = useWriteActivityTargetsInCache();
 
   const { modifyActivityTargetsOnActivityCache } =
     useModifyActivityTargetsOnActivityCache();
@@ -113,7 +113,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       const createdActivityTargetsInCache =
         await createManyActivityTargetsInCache(activityTargetsToCreate);
 
-      injectIntoUseActivityTargets({
+      writeActivityTargetsInCache({
         targetableObject,
         activityTargetsToInject: createdActivityTargetsInCache,
       });
@@ -155,7 +155,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       targetableObject,
       injectIntoTimelineActivitiesNextQuery,
       injectIntoActivityTargetInlineCellCache,
-      injectIntoUseActivityTargets,
+      writeActivityTargetsInCache,
       modifyActivityTargetsOnActivityCache,
       modifyActivityOnActivityTargetsCache,
     ],
