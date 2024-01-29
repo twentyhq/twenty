@@ -122,9 +122,6 @@ export const EmailThreads = ({
   const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
     data?.[queryName] ?? [];
 
-  console.log('timelineThreads', timelineThreads);
-  console.log('totalNumberOfThreads', totalNumberOfThreads);
-
   return (
     <StyledContainer>
       <Section>
