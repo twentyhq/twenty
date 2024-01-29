@@ -5,7 +5,10 @@ import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
 export const favoriteId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
-export const mockRecord = { id: 'f088c8c9-05d2-4276-b065-b863cc7d0b33' };
+const favoriteTargetObjectId = 'f2d8b9e9-7932-4065-bc09-baf12388b75d';
+export const favoriteTargetObjectRecord = {
+  id: favoriteTargetObjectId,
+};
 
 export const initialFavorites = [
   {
@@ -88,8 +91,7 @@ export const mocks = [
       variables: {
         input: {
           id: mockId,
-          favoritesId: favoriteId,
-          favorites: { id: favoriteId },
+          personId: favoriteTargetObjectId,
           position: 4,
           workspaceMemberId: '1',
         },

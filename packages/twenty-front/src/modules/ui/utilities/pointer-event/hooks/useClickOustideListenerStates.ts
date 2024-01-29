@@ -5,8 +5,7 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useClickOustideListenerStates = (componentId: string) => {
-  // TODO: improve typing
-  const scopeId = getScopeIdFromComponentId(componentId) ?? '';
+  const scopeId = getScopeIdFromComponentId(componentId);
 
   return {
     scopeId,

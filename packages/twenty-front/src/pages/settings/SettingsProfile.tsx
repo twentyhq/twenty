@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ChangePassword } from '@/settings/profile/components/ChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
@@ -33,6 +34,9 @@ export const SettingsProfile = () => (
           description="The email associated to your account"
         />
         <EmailField />
+      </Section>
+      <Section>
+        <ChangePassword />
       </Section>
       <Section>
         <DeleteAccount />

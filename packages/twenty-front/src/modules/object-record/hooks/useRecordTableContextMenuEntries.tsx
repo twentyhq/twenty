@@ -5,9 +5,9 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import {
@@ -38,9 +38,11 @@ export const useRecordTableContextMenuEntries = (
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
-  const { selectedRowIdsSelector } = useRecordTableStates(props?.recordTableId);
+  const { getSelectedRowIdsSelector } = useRecordTableStates(
+    props?.recordTableId,
+  );
 
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
 
   const { resetTableRowSelection } = useRecordTable({
     recordTableId: props?.recordTableId,
@@ -53,12 +55,15 @@ export const useRecordTableContextMenuEntries = (
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
-    const selectedRowIds = getSnapshotValue(snapshot, selectedRowIdsSelector);
+    const selectedRowIds = getSnapshotValue(
+      snapshot,
+      getSelectedRowIdsSelector(),
+    );
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
     const selectedRecord = snapshot
-      .getLoadable(entityFieldsFamilyState(selectedRowId))
+      .getLoadable(recordStoreFamilyState(selectedRowId))
       .getValue();
 
     const foundFavorite = favorites?.find(
@@ -89,13 +94,13 @@ export const useRecordTableContextMenuEntries = (
       async () => {
         const rowIdsToDelete = getSnapshotValue(
           snapshot,
-          selectedRowIdsSelector,
+          getSelectedRowIdsSelector(),
         );
 
         resetTableRowSelection();
         await deleteManyRecords(rowIdsToDelete);
       },
-    [deleteManyRecords, resetTableRowSelection, selectedRowIdsSelector],
+    [deleteManyRecords, resetTableRowSelection, getSelectedRowIdsSelector],
   );
 
   const handleExecuteQuickActionOnClick = useRecoilCallback(
@@ -103,7 +108,7 @@ export const useRecordTableContextMenuEntries = (
       async () => {
         const rowIdsToExecuteQuickActionOn = getSnapshotValue(
           snapshot,
-          selectedRowIdsSelector,
+          getSelectedRowIdsSelector(),
         );
 
         resetTableRowSelection();
@@ -116,7 +121,7 @@ export const useRecordTableContextMenuEntries = (
     [
       executeQuickActionOnOneRecord,
       resetTableRowSelection,
-      selectedRowIdsSelector,
+      getSelectedRowIdsSelector,
     ],
   );
 

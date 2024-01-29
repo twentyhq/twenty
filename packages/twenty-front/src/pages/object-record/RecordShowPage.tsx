@@ -4,8 +4,8 @@ import { useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -39,7 +39,7 @@ export const RecordShowPage = () => {
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const setEntityFields = useSetRecoilState(
-    entityFieldsFamilyState(objectRecordId ?? ''),
+    recordStoreFamilyState(objectRecordId),
   );
 
   const { record } = useFindOneRecord({

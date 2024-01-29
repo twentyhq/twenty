@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
@@ -48,9 +48,7 @@ export class GoogleGmailService {
     );
 
     if (connectedAccount.length > 0) {
-      console.log('This account is already connected to your workspace.');
-
-      return;
+      throw new ConflictException('Connected account already exists');
     }
 
     const connectedAccountId = v4();

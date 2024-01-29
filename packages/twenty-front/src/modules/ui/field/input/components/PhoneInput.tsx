@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
 
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { CountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/CountryPickerDropdownButton';
-
-import { useRegisterInputEvents } from '../../../../object-record/field/meta-types/input/hooks/useRegisterInputEvents';
 
 import 'react-phone-number-input/style.css';
 

@@ -1,6 +1,10 @@
+import { ReactNode } from 'react';
 import { Heading } from '@react-email/components';
-import * as React from 'react';
 
-export const Title = ({ value }) => {
+type TitleProps = {
+  value: ReactNode;
+};
+
+export const Title = ({ value }: TitleProps) => {
   return <Heading as="h1">{value}</Heading>;
 };

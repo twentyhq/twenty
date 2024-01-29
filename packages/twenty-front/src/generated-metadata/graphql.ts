@@ -443,6 +443,17 @@ export type Telemetry = {
   enabled: Scalars['Boolean']['output'];
 };
 
+export type TimelineThreadParticipant = {
+  __typename?: 'TimelineThreadParticipant';
+  avatarUrl: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  handle: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  personId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberId?: Maybe<Scalars['String']['output']>;
+};
+
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -495,6 +506,8 @@ export type User = {
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
   passwordHash?: Maybe<Scalars['String']['output']>;
+  passwordResetToken?: Maybe<Scalars['String']['output']>;
+  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember: WorkspaceMember;

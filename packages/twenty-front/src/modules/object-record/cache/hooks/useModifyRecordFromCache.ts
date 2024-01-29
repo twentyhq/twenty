@@ -12,7 +12,7 @@ export const useModifyRecordFromCache = ({
 }) => {
   const { cache } = useApolloClient();
 
-  return <CachedObjectRecord extends ObjectRecord>(
+  return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
     recordId: string,
     fieldModifiers: Modifiers<CachedObjectRecord>,
   ) => {

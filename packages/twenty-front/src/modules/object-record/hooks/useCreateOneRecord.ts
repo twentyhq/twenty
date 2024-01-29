@@ -28,13 +28,16 @@ export const useCreateOneRecord = <
   });
 
   const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
-    const optimisticallyCreatedRecord =
-      generateCachedObjectRecord<CreatedObjectRecord>(input);
-
     const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: { ...input, id: optimisticallyCreatedRecord.id },
+      recordInput: input,
     });
+
+    const optimisticallyCreatedRecord =
+      generateCachedObjectRecord<CreatedObjectRecord>({
+        ...input,
+        ...sanitizedCreateOneRecordInput,
+      });
 
     const mutationResponseField =
       getCreateOneRecordMutationResponseField(objectNameSingular);
@@ -42,7 +45,10 @@ export const useCreateOneRecord = <
     const createdObject = await apolloClient.mutate({
       mutation: createOneRecordMutation,
       variables: {
-        input: sanitizedCreateOneRecordInput,
+        input: {
+          ...sanitizedCreateOneRecordInput,
+          id: optimisticallyCreatedRecord.id,
+        },
       },
       optimisticResponse: {
         [mutationResponseField]: optimisticallyCreatedRecord,

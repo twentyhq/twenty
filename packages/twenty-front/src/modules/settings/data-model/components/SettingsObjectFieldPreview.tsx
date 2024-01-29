@@ -2,10 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
-import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
-import { BooleanFieldInput } from '@/object-record/field/meta-types/input/components/BooleanFieldInput';
-import { RatingFieldInput } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
+import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';

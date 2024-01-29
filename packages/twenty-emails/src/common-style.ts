@@ -25,6 +25,7 @@ export const emailTheme = {
     colors: {
       highlighted: grayScale.gray60,
       primary: grayScale.gray50,
+      tertiary: grayScale.gray40,
       inverted: grayScale.gray0,
     },
     weight: {

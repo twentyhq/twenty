@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { FieldMetadata } from '../../field/types/FieldMetadata';
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 import { RecordTableScopeInternalContext } from './scope-internal-context/RecordTableScopeInternalContext';
 import { RecordTableScopeInitEffect } from './RecordTableScopeInitEffect';

@@ -28,8 +28,9 @@ export const triggerDeleteRecordsOptimisticEffect = ({
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
-        )
+        ) {
           return cachedConnection;
+        }
 
         const { variables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(

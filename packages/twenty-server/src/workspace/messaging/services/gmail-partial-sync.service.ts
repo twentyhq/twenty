@@ -28,11 +28,14 @@ export class GmailPartialSyncService {
     lastSyncHistoryId: string,
     maxResults: number,
   ) {
-    const { connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
+    const { workspaceDataSource, dataSourceMetadata } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+
+    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const gmailClient = await this.gmailClientProvider.getGmailClient(
       connectedAccount.refreshToken,
@@ -53,17 +56,19 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
+    const { workspaceDataSource, dataSourceMetadata } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+
+    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
     if (!lastSyncHistoryId) {
       // Fall back to full sync
-
       await this.messageQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         { workspaceId, connectedAccountId },
@@ -125,7 +130,7 @@ export class GmailPartialSyncService {
     const gmailMessageChannelId = gmailMessageChannel[0].id;
 
     const { messagesAdded, messagesDeleted } =
-      await this.getMessageIdsAndThreadIdsFromHistory(history);
+      await this.getMessageIdsFromHistory(history);
 
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messagesAdded);
@@ -144,7 +149,7 @@ export class GmailPartialSyncService {
       gmailMessageChannelId,
     );
 
-    await this.utils.deleteMessageChannelMessages(
+    await this.utils.deleteMessageChannelMessageAssociations(
       messagesDeleted,
       gmailMessageChannelId,
       dataSourceMetadata,
@@ -161,7 +166,7 @@ export class GmailPartialSyncService {
     );
   }
 
-  private async getMessageIdsAndThreadIdsFromHistory(
+  private async getMessageIdsFromHistory(
     history: gmail_v1.Schema$ListHistoryResponse,
   ): Promise<{
     messagesAdded: string[];
@@ -193,9 +198,17 @@ export class GmailPartialSyncService {
       { messagesAdded: [], messagesDeleted: [] },
     );
 
+    const uniqueMessagesAdded = messagesAdded.filter(
+      (messageId) => !messagesDeleted.includes(messageId),
+    );
+
+    const uniqueMessagesDeleted = messagesDeleted.filter(
+      (messageId) => !messagesAdded.includes(messageId),
+    );
+
     return {
-      messagesAdded,
-      messagesDeleted,
+      messagesAdded: uniqueMessagesAdded,
+      messagesDeleted: uniqueMessagesDeleted,
     };
   }
 }

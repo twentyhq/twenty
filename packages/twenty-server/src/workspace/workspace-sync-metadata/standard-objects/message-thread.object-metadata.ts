@@ -7,7 +7,7 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { MessageChannelMessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
@@ -37,14 +37,14 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Channel Syncs',
+    label: 'Message Channel Association',
     description: 'Messages from the channel.',
     icon: 'IconMessage',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannelMessage',
+    objectName: 'messageChannelMessageAssociation',
   })
   @IsNullable()
-  messageChannelMessage: MessageChannelMessageObjectMetadata[];
+  messageChannelMessageAssociation: MessageChannelMessageAssociationObjectMetadata[];
 }

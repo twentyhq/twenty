@@ -42,7 +42,8 @@ export const useApolloFactory = () => {
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignIn) &&
           !isMatchingLocation(AppPath.SignUp) &&
-          !isMatchingLocation(AppPath.Invite)
+          !isMatchingLocation(AppPath.Invite) &&
+          !isMatchingLocation(AppPath.ResetPassword)
         ) {
           navigate(AppPath.SignIn);
         }

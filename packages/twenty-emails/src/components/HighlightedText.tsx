@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ReactNode } from 'react';
 import { Column } from '@react-email/components';
 import { Row } from '@react-email/row';
 import { Text } from '@react-email/text';
@@ -18,7 +18,11 @@ const highlightedStyle = {
   color: emailTheme.font.colors.highlighted,
 };
 
-export const HighlightedText = ({ value }) => {
+type HighlightedTextProps = {
+  value: ReactNode;
+};
+
+export const HighlightedText = ({ value }: HighlightedTextProps) => {
   return (
     <Row style={rowStyle}>
       <Column>

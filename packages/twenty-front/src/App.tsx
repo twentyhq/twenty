@@ -10,6 +10,7 @@ import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
@@ -29,9 +30,9 @@ import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObj
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
-import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
-import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
-import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
+import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/SettingsDevelopersApiKeysNew';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -59,6 +60,7 @@ export const App = () => {
           <Route path={AppPath.SignIn} element={<SignInUp />} />
           <Route path={AppPath.SignUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
@@ -133,7 +135,7 @@ export const App = () => {
                     <Routes>
                       <Route
                         path={SettingsPath.Developers}
-                        element={<SettingsDevelopersApiKeys />}
+                        element={<SettingsDevelopers />}
                       />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}
