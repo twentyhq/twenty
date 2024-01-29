@@ -29,7 +29,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
       [objectMetadataItem.namePlural]: (
         cachedConnection,
         {
-          INVALIDATE: _INVALIDATE,
+          DELETE: _DELETE,
           readField,
           storeFieldName: _storeFieldName,
           toReference,
@@ -97,7 +97,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
             cachedEdges?.length === variables.first &&
             nextCachedEdges.length < variables.first
           ) {
-            return INVALIDATE;
+            return DELETE;
           }
 
           if (nextCachedEdges.length > variables.first) {
