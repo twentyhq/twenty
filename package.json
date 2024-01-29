@@ -116,6 +116,7 @@
     "patch-package": "^8.0.0",
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
+    "planer": "^1.2.0",
     "prettier": "^3.0.3",
     "prism-react-renderer": "^2.1.0",
     "qs": "^6.11.2",
@@ -157,8 +158,7 @@
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
-    "zod": "^3.22.2",
-    "planer": "^1.2.0"
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.0.0",

@@ -25,7 +25,7 @@ export const seedOpportunity = async (
     .values([
       {
         id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
-        name: 'Opportunity 1',
+        name: 'فرصت 1',
         amountAmountMicros: 100000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
@@ -37,7 +37,7 @@ export const seedOpportunity = async (
       },
       {
         id: '53f66647-0543-4cc2-9f96-95cc699960f2',
-        name: 'Opportunity 2',
+        name: 'فرصت 2',
         amountAmountMicros: 2000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
@@ -49,7 +49,7 @@ export const seedOpportunity = async (
       },
       {
         id: '81ab695d-2f89-406f-90ea-180f433b2445',
-        name: 'Opportunity 3',
+        name: 'فرصت 3',
         amountAmountMicros: 300000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
@@ -61,7 +61,7 @@ export const seedOpportunity = async (
       },
       {
         id: '9b059852-35b1-4045-9cde-42f715148954',
-        name: 'Opportunity 4',
+        name: 'فرصت 4',
         amountAmountMicros: 4000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
