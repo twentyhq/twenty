@@ -89,7 +89,7 @@ export const EmailThreads = ({
           page: emailThreadsPage.pageNumber + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult || !fetchMoreResult?.[queryName].length) {
+          if (!fetchMoreResult?.[queryName]?.timelineThreads?.length) {
             setEmailThreadsPage((emailThreadsPage) => ({
               ...emailThreadsPage,
               hasNextPage: false,
@@ -98,10 +98,13 @@ export const EmailThreads = ({
           }
 
           return {
-            [queryName]: [
-              ...(prev?.[queryName] ?? []),
-              ...(fetchMoreResult?.[queryName] ?? []),
-            ],
+            [queryName]: {
+              ...prev?.[queryName],
+              timelineThreads: [
+                ...(prev?.[queryName].timelineThreads ?? []),
+                ...(fetchMoreResult?.[queryName].timelineThreads ?? []),
+              ],
+            },
           };
         },
       });
