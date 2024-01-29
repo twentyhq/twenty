@@ -29,9 +29,7 @@ const getWrapper =
   );
 
 const RatingWrapper = getWrapper(ratingfieldDefinition);
-const PhoneWrapper = phoneFieldDefinition
-  ? getWrapper(phoneFieldDefinition)
-  : undefined;
+const PhoneWrapper = getWrapper(phoneFieldDefinition);
 
 describe('useIsFieldInputOnly', () => {
   it('should return true', () => {

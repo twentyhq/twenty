@@ -35,18 +35,16 @@ describe('isFieldValueEmpty', () => {
 
   it('should return correct value for relation field', () => {
     expect(
-      !!relationFieldDefinition &&
-        isFieldValueEmpty({
-          fieldDefinition: relationFieldDefinition,
-          fieldValue: null,
-        }),
+      isFieldValueEmpty({
+        fieldDefinition: relationFieldDefinition,
+        fieldValue: null,
+      }),
     ).toBe(true);
     expect(
-      !!relationFieldDefinition &&
-        isFieldValueEmpty({
-          fieldDefinition: relationFieldDefinition,
-          fieldValue: { foo: 'bar' },
-        }),
+      isFieldValueEmpty({
+        fieldDefinition: relationFieldDefinition,
+        fieldValue: { foo: 'bar' },
+      }),
     ).toBe(false);
   });
 

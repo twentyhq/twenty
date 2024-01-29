@@ -29,12 +29,8 @@ const getWrapper =
     </FieldContext.Provider>
   );
 
-const PhoneWrapper = phoneFieldDefinition
-  ? getWrapper(phoneFieldDefinition)
-  : undefined;
-const RelationWrapper = relationFieldDefinition
-  ? getWrapper(relationFieldDefinition)
-  : undefined;
+const PhoneWrapper = getWrapper(phoneFieldDefinition);
+const RelationWrapper = getWrapper(relationFieldDefinition);
 
 describe('useGetButtonIcon', () => {
   it('should return undefined', () => {

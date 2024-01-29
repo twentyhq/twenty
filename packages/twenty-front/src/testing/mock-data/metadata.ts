@@ -1,9 +1,10 @@
 import {
   FieldMetadataType,
+  ObjectEdge,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
-export const mockedPeopleMetadata = {
+export const mockedPeopleMetadata: ObjectEdge = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -559,7 +560,7 @@ export const mockedPeopleMetadata = {
   },
 };
 
-export const mockedCompaniesMetadata = {
+export const mockedCompaniesMetadata: ObjectEdge = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -583,6 +584,7 @@ export const mockedCompaniesMetadata = {
       edges: [
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'c03b0e35-b095-42b6-b10f-3e04ef9adf8e',
@@ -604,10 +606,11 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'aaf9520e-7723-418d-a464-42cf41db5b0e',
-            type: 'NUMBER',
+            type: FieldMetadataType.Number,
             name: 'employees',
             label: 'Employees',
             description: 'Number of employees in the company',
@@ -625,6 +628,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'ea8a043d-58c8-4b13-a041-74fb31c79e42',
@@ -682,6 +686,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '1987f9fb-1f75-42a6-93e2-652811855f5b',
@@ -705,6 +710,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '4ab25246-cf21-4265-9241-885111814e25',
@@ -728,6 +734,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '72268a05-1ac6-4b4c-b0f1-91dc82aa1f57',
@@ -750,6 +757,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'e51b0291-33e5-401e-b595-3940a28bc5ce',
@@ -805,10 +813,11 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '6c9e87b5-e554-48f6-b6a8-3fce9ab9328b',
-            type: 'BOOLEAN',
+            type: FieldMetadataType.Boolean,
             name: 'idealCustomerProfile',
             label: 'ICP',
             description:
@@ -860,6 +869,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'ed7fb62c-5e1a-4f35-82ff-5c59efc28edb',
@@ -883,6 +893,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'a5109540-d918-4f33-b80c-235a5816d44b',
@@ -906,10 +917,11 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '6b50c2a4-85b5-41ff-a774-8331ad7b3b61',
-            type: 'CURRENCY',
+            type: FieldMetadataType.Currency,
             name: 'annualRecurringRevenue',
             label: 'ARR',
             description:
@@ -961,6 +973,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: 'aec12544-a9e8-464f-b7f7-b6f1ce3faebe',
@@ -1050,6 +1063,7 @@ export const mockedCompaniesMetadata = {
         },
         {
           __typename: 'fieldEdge',
+          cursor: '',
           node: {
             __typename: 'field',
             id: '726f398f-7007-49f9-8b03-f71813c9fcf2',
@@ -1257,7 +1271,7 @@ export const mockedPipelineStepsMetadata = {
           node: {
             __typename: 'field',
             id: '8c712fbc-306f-4534-86c1-caae09b840a2',
-            type: 'NUMBER',
+            type: FieldMetadataType.Number,
             name: 'position',
             label: 'Position',
             description: 'Pipeline Step position',
@@ -1604,7 +1618,7 @@ export const mockedFavoritesMetadata = {
           node: {
             __typename: 'field',
             id: '7ff19811-b2fe-428e-89e1-7c2ab79d6ba4',
-            type: 'NUMBER',
+            type: FieldMetadataType.Number,
             name: 'position',
             label: 'Position',
             description: 'Favorite position',
@@ -4062,7 +4076,7 @@ export const mockedOpportunitiesMetadata = {
           node: {
             __typename: 'field',
             id: '2aabeef9-7a6b-41a0-a80e-f3c0047c6920',
-            type: 'CURRENCY',
+            type: FieldMetadataType.Currency,
             name: 'amount',
             label: 'Amount',
             description: 'Opportunity amount',
@@ -6086,7 +6100,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'e73c3bd2-3c2e-48dc-92b9-6e217ff27c05',
-                type: 'NUMBER',
+                type: FieldMetadataType.Number,
                 name: 'size',
                 label: 'Size',
                 description: 'View Field size',
@@ -6153,7 +6167,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: 'b5ec1333-8f24-4f75-a603-147b98eb9ce3',
-                type: 'NUMBER',
+                type: FieldMetadataType.Number,
                 name: 'position',
                 label: 'Position',
                 description: 'View Field position',
@@ -6176,7 +6190,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 __typename: 'field',
                 id: '3160b24b-37b9-4072-89e0-1d189b7089c7',
-                type: 'BOOLEAN',
+                type: FieldMetadataType.Boolean,
                 name: 'isVisible',
                 label: 'Visible',
                 description: 'View Field visibility',

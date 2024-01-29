@@ -95,7 +95,7 @@ export const useFavorites = () => {
     targetObjectNameSingular: string,
   ) => {
     createOneFavorite({
-      [`${targetObjectNameSingular}`]: targetRecord,
+      [targetObjectNameSingular]: targetRecord,
       position: favorites.length + 1,
       workspaceMemberId: currentWorkspaceMember?.id,
     });
