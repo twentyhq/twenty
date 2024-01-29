@@ -242,6 +242,23 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
+    const totalNumberOfThreads = await workspaceDataSource?.query(
+      `
+      SELECT COUNT(DISTINCT "messageThread".id)
+      FROM
+          ${dataSourceMetadata.schema}."message" message 
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."person" person ON person.id = "messageParticipant"."personId"
+      WHERE
+          person.id = ANY($1)
+      `,
+      [personIds],
+    );
+
     const threadParticipantsByThreadId: {
       [key: string]: TimelineThreadParticipant[];
     } = messageThreadIds.reduce((messageThreadIdAcc, messageThreadId) => {
@@ -354,7 +371,7 @@ export class TimelineMessagingService {
     });
 
     return {
-      totalNumberOfThreads: 1,
+      totalNumberOfThreads,
       timelineThreads,
     };
   }
