@@ -45,10 +45,11 @@ const StyledAvatar = styled(Avatar)`
   margin-left: ${({ theme }) => theme.spacing(-1)};
 `;
 
-const StyledSenderName = styled.span`
+const StyledSenderNames = styled.span`
   margin: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledThreadCount = styled.span`
@@ -94,6 +95,23 @@ export const EmailThreadPreview = ({
   thread,
   onClick,
 }: EmailThreadPreviewProps) => {
+  const senderNames =
+    thread.firstParticipant.displayName +
+    (thread?.lastTwoParticipants?.[0]?.displayName
+      ? `, ${thread.lastTwoParticipants?.[0]?.displayName}`
+      : '') +
+    (thread?.lastTwoParticipants?.[1]?.displayName
+      ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
+      : '');
+
+  const [finalDisplayedName, finalAvatarUrl] =
+    thread.participantCount > 3
+      ? [`${thread.participantCount}`, '']
+      : [
+          thread?.lastTwoParticipants?.[1]?.displayName,
+          thread?.lastTwoParticipants?.[1]?.avatarUrl,
+        ];
+
   return (
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
@@ -110,18 +128,16 @@ export const EmailThreadPreview = ({
               type="rounded"
             />
           )}
-          {thread?.lastTwoParticipants?.[1] && (
+          {finalDisplayedName && (
             <StyledAvatar
-              avatarUrl={thread.lastTwoParticipants[1].avatarUrl}
-              placeholder={thread.lastTwoParticipants[1].displayName}
+              avatarUrl={finalAvatarUrl}
+              placeholder={finalDisplayedName}
               type="rounded"
             />
           )}
         </StyledParticipantsContainer>
 
-        <StyledSenderName>
-          {thread.firstParticipant.displayName}
-        </StyledSenderName>
+        <StyledSenderNames>{senderNames}</StyledSenderNames>
         <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
       </StyledHeading>
 
