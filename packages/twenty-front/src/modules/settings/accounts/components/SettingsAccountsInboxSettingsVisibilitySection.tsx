@@ -22,6 +22,7 @@ const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
+  opacity: 0.56;
 `;
 
 const StyledCardMedia = styled(SettingsAccountsInboxSettingsCardMedia)`
@@ -124,6 +125,7 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
               value={optionValue}
               onCheckedChange={() => onChange(optionValue)}
               checked={value === optionValue}
+              disabled={true}
             />
           </StyledCardContent>
         ),
