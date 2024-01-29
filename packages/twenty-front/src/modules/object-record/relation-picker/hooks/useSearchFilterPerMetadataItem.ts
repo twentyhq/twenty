@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
-import { orFilterVariables } from '@/object-record/utils/orFilterVariables';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -27,7 +27,7 @@ export const useSearchFilterPerMetadataItem = ({
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
                 if (searchFilterValue) {
-                  const fullNameFilter = orFilterVariables([
+                  const fullNameFilter = makeOrFilterVariables([
                     {
                       [labelIdentifierFieldMetadataItem.name]: {
                         firstName: {

@@ -8,7 +8,7 @@ import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { orFilterVariables } from '@/object-record/utils/orFilterVariables';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -136,7 +136,7 @@ export const CommandMenu = () => {
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: search
-      ? orFilterVariables([
+      ? makeOrFilterVariables([
           { name: { firstName: { ilike: `%${search}%` } } },
           { name: { firstName: { ilike: `%${search}%` } } },
         ])
@@ -159,7 +159,7 @@ export const CommandMenu = () => {
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: search
-      ? orFilterVariables([
+      ? makeOrFilterVariables([
           { title: { ilike: `%${search}%` } },
           { body: { ilike: `%${search}%` } },
         ])
