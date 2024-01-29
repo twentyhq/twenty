@@ -24,6 +24,7 @@ import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMo
 import {
   GetTimelineThreadsFromPersonIdQueryVariables,
   TimelineThread,
+  TimelineThreadsWithTotal,
 } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -74,6 +75,10 @@ export const EmailThreads = ({
     variables: threadQueryVariables,
   });
 
+  if (loading) {
+    return;
+  }
+
   const fetchMoreRecords = async () => {
     if (emailThreadsPage.hasNextPage && !isFetchingMoreEmails) {
       setIsFetchingMoreEmails(true);
@@ -114,11 +119,11 @@ export const EmailThreads = ({
     });
   }
 
-  if (loading) {
-    return;
-  }
+  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
+    data?.[queryName] ?? [];
 
-  const timelineThreads: TimelineThread[] = data?.[queryName] ?? [];
+  console.log('timelineThreads', timelineThreads);
+  console.log('totalNumberOfThreads', totalNumberOfThreads);
 
   return (
     <StyledContainer>
@@ -127,13 +132,13 @@ export const EmailThreads = ({
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
+              <StyledEmailCount>{totalNumberOfThreads ?? 0}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads.map((thread: TimelineThread, index: number) => (
+          {timelineThreads?.map((thread: TimelineThread, index: number) => (
             <EmailThreadPreview
               key={index}
               divider={index < timelineThreads.length - 1}

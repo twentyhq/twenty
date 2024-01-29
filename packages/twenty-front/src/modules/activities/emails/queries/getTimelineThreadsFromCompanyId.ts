@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { timelineThreadFragment } from '@/activities/emails/queries/fragments/timelineThreadFragment';
+import { timelineThreadWithTotalFragment } from '@/activities/emails/queries/fragments/timelineThreadWithTotalFragment';
 
 export const getTimelineThreadsFromCompanyId = gql`
   query GetTimelineThreadsFromCompanyId(
@@ -16,5 +16,5 @@ export const getTimelineThreadsFromCompanyId = gql`
       ...TimelineThreadsWithTotalFragment
     }
   }
-  ${timelineThreadFragment}
+  ${timelineThreadWithTotalFragment}
 `;

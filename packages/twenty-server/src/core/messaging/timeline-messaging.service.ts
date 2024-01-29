@@ -371,7 +371,7 @@ export class TimelineMessagingService {
     });
 
     return {
-      totalNumberOfThreads,
+      totalNumberOfThreads: totalNumberOfThreads[0]?.count ?? 0,
       timelineThreads,
     };
   }

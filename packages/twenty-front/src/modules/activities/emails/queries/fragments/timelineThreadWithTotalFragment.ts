@@ -1,13 +1,13 @@
 import { gql } from '@apollo/client';
 
-import { participantFragment } from '@/activities/emails/queries/fragments/participantFragment';
+import { timelineThreadFragment } from '@/activities/emails/queries/fragments/timelineThreadFragment';
 
-export const timelineThreadFragmentWithTotal = gql`
+export const timelineThreadWithTotalFragment = gql`
   fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
     totalNumberOfThreads
     timelineThreads {
       ...TimelineThreadFragment
     }
   }
-  ${participantFragment}
+  ${timelineThreadFragment}
 `;

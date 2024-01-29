@@ -520,7 +520,7 @@ export type TimelineThreadParticipant = {
 export type TimelineThreadsWithTotal = {
   __typename?: 'TimelineThreadsWithTotal';
   timelineThreads: Array<TimelineThread>;
-  totalNumberOfThreads: Scalars['Float'];
+  totalNumberOfThreads: Scalars['Int'];
 };
 
 export type TransientToken = {
