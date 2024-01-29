@@ -14,6 +14,7 @@ export const PageAddTaskButton = ({
   const { selectedFilter } = useFilterDropdown({
     filterDropdownId: filterDropdownId,
   });
+
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleClick = () => {

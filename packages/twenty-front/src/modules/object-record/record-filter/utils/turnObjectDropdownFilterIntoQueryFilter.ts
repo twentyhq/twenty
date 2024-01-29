@@ -10,7 +10,7 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
-import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
@@ -260,5 +260,5 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return andFilterVariables(objectRecordFilters);
+  return makeAndFilterVariables(objectRecordFilters);
 };
