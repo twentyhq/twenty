@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isFieldRelationValue } from '@/object-record/field/types/guards/isFieldRelationValue';
+import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
