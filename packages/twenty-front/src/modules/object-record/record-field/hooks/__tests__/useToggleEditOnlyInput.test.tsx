@@ -24,13 +24,19 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
-          updatePerson(id: $idToUpdate, data: $input) {
+        mutation UpdateOneCompany(
+          $idToUpdate: ID!
+          $input: CompanyUpdateInput!
+        ) {
+          updateCompany(id: $idToUpdate, data: $input) {
             id
           }
         }
       `,
-      variables: { idToUpdate: 'entityId', input: { isActive: true } },
+      variables: {
+        idToUpdate: 'entityId',
+        input: { idealCustomerProfile: true },
+      },
     },
     result: jest.fn(() => ({
       data: {
@@ -45,7 +51,7 @@ const mocks: MockedResponse[] = [
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const useUpdateOneRecordMutation: RecordUpdateHook = () => {
     const { updateOneRecord } = useUpdateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.Person,
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {

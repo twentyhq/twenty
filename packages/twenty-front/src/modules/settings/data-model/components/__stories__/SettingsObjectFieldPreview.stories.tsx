@@ -1,13 +1,10 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -20,22 +17,9 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldPreview',
   component: SettingsObjectFieldPreview,
   decorators: [
-    (Story) => {
-      // wait for metadata
-      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-      return objectMetadataItems.length ? <Story /> : <></>;
-    },
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    (Story) => (
-      <RecoilRoot>
-        <RelationPickerScope relationPickerScopeId="relation-picker">
-          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <Story />
-          </SnackBarProviderScope>
-        </RelationPickerScope>
-      </RecoilRoot>
-    ),
+    SnackBarDecorator,
   ],
   args: {
     fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(

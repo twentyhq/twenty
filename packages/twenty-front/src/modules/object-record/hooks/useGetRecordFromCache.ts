@@ -37,7 +37,7 @@ export const useGetRecordFromCache = ({
       id: recordId,
     });
 
-    return cache.readFragment<CachedObjectRecord>({
+    return cache.readFragment<CachedObjectRecord & { __typename: string }>({
       id: cachedRecordId,
       fragment: cacheReadFragment,
     });
