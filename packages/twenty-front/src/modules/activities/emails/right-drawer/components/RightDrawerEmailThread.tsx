@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { RightDrawerEmailThreadFetchMoreLoader } from '@/activities/emails/right-drawer/components/RightDrawerEmailThreadFetchMoreLoader';
 import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -26,9 +26,10 @@ export const RightDrawerEmailThread = () => {
   const {
     records: messages,
     loading,
-    fetchMoreRecords: fetchMoreMessages,
+    fetchMoreRecords,
   } = useFindManyRecords<EmailThreadMessageType>({
     depth: 3,
+    limit: 10,
     filter: {
       messageThreadId: {
         eq: viewableEmailThread?.id,
@@ -41,6 +42,12 @@ export const RightDrawerEmailThread = () => {
     skip: !viewableEmailThread,
     useRecordsWithoutConnection: true,
   });
+
+  const fetchMoreMessages = useCallback(() => {
+    if (!loading) {
+      fetchMoreRecords();
+    }
+  }, [fetchMoreRecords, loading]);
 
   if (!viewableEmailThread) {
     return null;
@@ -60,10 +67,7 @@ export const RightDrawerEmailThread = () => {
           sentAt={message.receivedAt}
         />
       ))}
-      <RightDrawerEmailThreadFetchMoreLoader
-        loading={loading}
-        fetchMoreMessages={fetchMoreMessages}
-      />
+      <FetchMoreLoader loading={loading} onLastRowVisible={fetchMoreMessages} />
     </StyledContainer>
   );
 };
