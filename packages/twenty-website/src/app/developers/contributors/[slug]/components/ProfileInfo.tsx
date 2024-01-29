@@ -38,23 +38,33 @@ const Container = styled.div`
   }
 `;
 
-export const ProfileInfo = () => {
+interface ProfileInfoProps {
+  mergedPRsCount: number;
+  rank: number;
+  activeDays: number;
+}
+
+export const ProfileInfo = ({
+  mergedPRsCount,
+  rank,
+  activeDays,
+}: ProfileInfoProps) => {
   return (
     <>
       <Container>
         <div className="item">
           <p className="title">Merged PR</p>
-          <span className="value">2</span>
+          <span className="value">{mergedPRsCount}</span>
         </div>
         <div className="separator"></div>
         <div className="item">
           <p className="title">Rank</p>
-          <span className="value">1%</span>
+          <span className="value">{rank}%</span>
         </div>
         <div className="separator"></div>
         <div className="item">
           <p className="title">Active Days</p>
-          <span className="value">2</span>
+          <span className="value">{activeDays}</span>
         </div>
       </Container>
     </>
