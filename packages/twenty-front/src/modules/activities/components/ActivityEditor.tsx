@@ -1,12 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
@@ -86,9 +84,6 @@ export const ActivityEditor = ({
 }: ActivityEditorProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
-  const [, setActivityEditorAnyFieldInFocus] = useRecoilState(
-    activityEditorAnyFieldInFocusState,
-  );
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
 
@@ -148,14 +143,6 @@ export const ActivityEditor = ({
     }
   };
 
-  const handleActivityEditorFieldFocus = () => {
-    setActivityEditorAnyFieldInFocus(true);
-  };
-
-  const handleActivityEditorFieldBlur = () => {
-    setActivityEditorAnyFieldInFocus(false);
-  };
-
   if (!activity) {
     return <></>;
   }
@@ -175,8 +162,6 @@ export const ActivityEditor = ({
               debouncedUpdateTitle(newTitle);
             }}
             onCompletionChange={handleActivityCompletionChange}
-            onBlur={handleActivityEditorFieldBlur}
-            onFocus={handleActivityEditorFieldFocus}
           />
           <PropertyBox>
             {activity.type === 'Task' &&
@@ -185,22 +170,16 @@ export const ActivityEditor = ({
                 <>
                   <DueAtFieldContextProvider>
                     <RecordInlineCell
-                      onBlur={handleActivityEditorFieldBlur}
-                      onFocus={handleActivityEditorFieldFocus}
                     />
                   </DueAtFieldContextProvider>
                   <AssigneeFieldContextProvider>
                     <RecordInlineCell
-                      onBlur={handleActivityEditorFieldBlur}
-                      onFocus={handleActivityEditorFieldFocus}
                     />
                   </AssigneeFieldContextProvider>
                 </>
               )}
             <ActivityTargetsInlineCell
               activity={activity as unknown as GraphQLActivity}
-              onBlur={handleActivityEditorFieldBlur}
-              onFocus={handleActivityEditorFieldFocus}
             />
           </PropertyBox>
         </StyledTopContainer>
@@ -210,16 +189,12 @@ export const ActivityEditor = ({
           activity={activity}
           onChange={updateTitleFromBody}
           containerClassName="editor-container"
-          onBlur={handleActivityEditorFieldBlur}
-          onFocus={handleActivityEditorFieldFocus}
         />
       </StyledMiddleContainer>
       {showComment && (
         <ActivityComments
           activity={activity}
           scrollableContainerRef={containerRef}
-          onBlur={handleActivityEditorFieldBlur}
-          onFocus={handleActivityEditorFieldFocus}
         />
       )}
     </StyledContainer>

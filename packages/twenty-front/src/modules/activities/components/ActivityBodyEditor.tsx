@@ -7,7 +7,6 @@ import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -24,6 +23,7 @@ import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -33,16 +33,12 @@ type ActivityBodyEditorProps = {
   activity: Pick<Activity, 'id' | 'body'>;
   onChange?: (activityBody: string) => void;
   containerClassName?: string;
-  onFocus?: () => void;
-  onBlur?: () => void;
 };
 
 export const ActivityBodyEditor = ({
   activity,
   onChange,
   containerClassName,
-  onFocus,
-  onBlur,
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
@@ -55,9 +51,7 @@ export const ActivityBodyEditor = ({
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
-  const activityEditorAnyFieldInFocus = useRecoilValue(
-    activityEditorAnyFieldInFocusState,
-  );
+  const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
 
   useEffect(() => {
     if (body) {
@@ -175,7 +169,7 @@ export const ActivityBodyEditor = ({
     callback: (event) => {
       if (
         (event.target as HTMLDivElement)?.id === containerId &&
-        !activityEditorAnyFieldInFocus
+        currentHotkeyScope?.scope === RightDrawerHotkeyScope.RightDrawer
       ) {
         editor.focus();
       }
@@ -222,12 +216,10 @@ export const ActivityBodyEditor = ({
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityBody,
     );
-    onFocus?.();
   };
 
   const handlerBlockEditorBlur = () => {
     goBackToPreviousHotkeyScope();
-    onBlur?.();
   };
 
   return (

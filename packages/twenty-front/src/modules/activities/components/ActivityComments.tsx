@@ -53,15 +53,11 @@ const StyledThreadCommentTitle = styled.div`
 type ActivityCommentsProps = {
   activity: Pick<Activity, 'id'>;
   scrollableContainerRef: React.RefObject<HTMLDivElement>;
-  onFocus?: () => void;
-  onBlur?: () => void;
 };
 
 export const ActivityComments = ({
   activity,
   scrollableContainerRef,
-  onFocus,
-  onBlur,
 }: ActivityCommentsProps) => {
   const { createOneRecord: createOneComment } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Comment,
@@ -104,12 +100,6 @@ export const ActivityComments = ({
       top: scrollableContainer.scrollHeight,
       behavior: 'smooth',
     });
-
-    onFocus?.();
-  };
-
-  const handleBlur = () => {
-    onBlur?.();
   };
 
   return (
@@ -132,7 +122,6 @@ export const ActivityComments = ({
             onFocus={handleFocus}
             variant={AutosizeTextInputVariant.Button}
             placeholder={comments.length > 0 ? 'Reply...' : undefined}
-            onBlur={handleBlur}
           />
         )}
       </StyledCommentActionBar>
