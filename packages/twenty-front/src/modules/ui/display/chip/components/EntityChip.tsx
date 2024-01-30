@@ -64,7 +64,7 @@ export const EntityChip = ({
         ) : (
           <Avatar
             avatarUrl={avatarUrl}
-            colorId={entityId}
+            entityId={entityId}
             placeholder={name}
             size="sm"
             type={avatarType}

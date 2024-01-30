@@ -328,7 +328,7 @@ export const CommandMenu = () => {
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
-                              colorId={person.id}
+                              entityId={person.id}
                               placeholder={
                                 person.name.firstName +
                                 ' ' +
@@ -350,7 +350,7 @@ export const CommandMenu = () => {
                           to={`object/company/${company.id}`}
                           Icon={() => (
                             <Avatar
-                              colorId={company.id}
+                              entityId={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
                                 company.domainName,

@@ -77,7 +77,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
         <Avatar
           avatarUrl={avatarUrl}
           size="md"
-          colorId={author?.id}
+          entityId={author?.id}
           placeholder={authorName}
         />
         <StyledName>{authorName}</StyledName>
