@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { grayScale } from '@/ui/theme/constants/colors';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
@@ -15,29 +16,17 @@ const StyledCardContent = styled(CardContent)`
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
-  align-items: center;
+  display: flex;
   color: ${({ theme, unread }) =>
     unread ? theme.font.color.primary : theme.font.color.secondary};
-  display: flex;
   font-weight: ${({ theme, unread }) =>
     unread ? theme.font.weight.medium : theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
   overflow: hidden;
-  width: 160px;
-
-  :before {
-    background-color: ${({ theme, unread }) =>
-      unread ? theme.color.blue : 'transparent'};
-    border-radius: ${({ theme }) => theme.border.radius.rounded};
-    content: '';
-    display: block;
-    height: 6px;
-    width: 6px;
-  }
+  width: 20%;
 `;
 
 const StyledParticipantsContainer = styled.div`
-  align-items: center;
+  align-items: flex-start;
   display: flex;
 `;
 
@@ -46,6 +35,7 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const StyledSenderNames = styled.span`
+  display: flex;
   margin: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -56,26 +46,27 @@ const StyledThreadCount = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledSubject = styled.span<{ unread: boolean }>`
-  color: ${({ theme, unread }) =>
-    unread ? theme.font.color.primary : theme.font.color.secondary};
-  white-space: nowrap;
-`;
-
-const StyledBody = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledSubjectAndBody = styled.div`
   display: flex;
   flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   overflow: hidden;
+`;
+
+const StyledSubject = styled.span<{ unread: boolean }>`
+  color: ${({ theme, unread }) =>
+    unread ? theme.font.color.primary : theme.font.color.secondary};
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 0;
+`;
+
+const StyledBody = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledReceivedAt = styled.div`
@@ -104,12 +95,13 @@ export const EmailThreadPreview = ({
       ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
       : '');
 
-  const [finalDisplayedName, finalAvatarUrl] =
+  const [finalDisplayedName, finalAvatarUrl, isCountIcon] =
     thread.participantCount > 3
-      ? [`${thread.participantCount}`, '']
+      ? [`${thread.participantCount}`, '', true]
       : [
           thread?.lastTwoParticipants?.[1]?.displayName,
           thread?.lastTwoParticipants?.[1]?.avatarUrl,
+          false,
         ];
 
   return (
@@ -133,6 +125,8 @@ export const EmailThreadPreview = ({
               avatarUrl={finalAvatarUrl}
               placeholder={finalDisplayedName}
               type="rounded"
+              color={isCountIcon ? grayScale.gray50 : undefined}
+              backgroundColor={isCountIcon ? grayScale.gray10 : undefined}
             />
           )}
         </StyledParticipantsContainer>

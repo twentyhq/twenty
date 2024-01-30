@@ -43,7 +43,7 @@ export const MultipleObjectRecordSelectItem = ({
         avatar={
           <Avatar
             avatarUrl={objectRecordForSelect.recordIdentifier.avatarUrl}
-            colorId={objectRecordForSelect.record.id}
+            entityId={objectRecordForSelect.record.id}
             placeholder={objectRecordForSelect.recordIdentifier.name}
             size="md"
             type={
