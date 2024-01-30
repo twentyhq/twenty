@@ -13,9 +13,7 @@ import {
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageService } from 'src/workspace/messaging/message/message.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -28,8 +26,6 @@ export class GmailPartialSyncService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageService: MessageService,
   ) {}
 
   private async getHistoryFromGmail(

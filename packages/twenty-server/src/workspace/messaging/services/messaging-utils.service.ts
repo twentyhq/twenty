@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import {
   GmailMessage,
@@ -17,8 +15,6 @@ import { MessageService } from 'src/workspace/messaging/message/message.service'
 @Injectable()
 export class MessagingUtilsService {
   constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
   ) {}
