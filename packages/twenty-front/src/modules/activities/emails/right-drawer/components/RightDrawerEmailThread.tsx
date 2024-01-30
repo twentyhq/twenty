@@ -2,13 +2,13 @@ import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -67,7 +67,10 @@ export const RightDrawerEmailThread = () => {
           sentAt={message.receivedAt}
         />
       ))}
-      <FetchMoreLoader loading={loading} onLastRowVisible={fetchMoreMessages} />
+      <EmailThreadFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={fetchMoreMessages}
+      />
     </StyledContainer>
   );
 };

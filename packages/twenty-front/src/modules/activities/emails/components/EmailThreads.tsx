@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
@@ -21,7 +22,6 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
-import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 import {
   GetTimelineThreadsFromPersonIdQueryVariables,
   TimelineThread,
@@ -146,7 +146,7 @@ export const EmailThreads = ({
             ))}
           </Card>
         )}
-        <FetchMoreLoader
+        <EmailThreadFetchMoreLoader
           loading={isFetchingMoreEmails}
           onLastRowVisible={fetchMoreRecords}
         />
