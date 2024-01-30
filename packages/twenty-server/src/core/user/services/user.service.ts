@@ -63,7 +63,7 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async createWorkspaceMember(user: User, avatarUrl?: string) {
+  async createWorkspaceMember(user: User) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         user.defaultWorkspace.id,
@@ -77,7 +77,7 @@ export class UserService extends TypeOrmQueryService<User> {
       ("nameFirstName", "nameLastName", "colorScheme", "userId", "avatarUrl")
       VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
         user.id
-      }', '${avatarUrl ?? ''}')`,
+      }', '${user.defaultAvatarUrl ?? ''}')`,
     );
   }
 
