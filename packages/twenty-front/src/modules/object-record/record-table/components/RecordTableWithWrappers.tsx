@@ -9,6 +9,13 @@ import { EntityDeleteContext } from '@/object-record/record-table/contexts/Entit
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptyContainer,
+  StyledEmptySubTitle,
+  StyledEmptyTextContainer,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
@@ -18,35 +25,6 @@ import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext
 import { useRecordTable } from '../hooks/useRecordTable';
 
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
-
-const StyledObjectEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledEmptyObjectTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyObjectSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
 
 const StyledTableWithHeader = styled.div`
   display: flex;
@@ -130,20 +108,24 @@ export const RecordTableWithWrappers = ({
                 tableBodyRef={tableBodyRef}
               />
               {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <StyledObjectEmptyContainer>
-                  <StyledEmptyObjectTitle>
-                    No {foundObjectMetadataItem?.namePlural}
-                  </StyledEmptyObjectTitle>
-                  <StyledEmptyObjectSubTitle>
-                    Create one:
-                  </StyledEmptyObjectSubTitle>
+                <StyledEmptyContainer>
+                  <AnimatedPlaceholder type="noRecord" />
+                  <StyledEmptyTextContainer>
+                    <StyledEmptyTitle>
+                      Add your first {foundObjectMetadataItem?.namePlural}
+                    </StyledEmptyTitle>
+                    <StyledEmptySubTitle>
+                      Use our API or add your first{' '}
+                      {foundObjectMetadataItem?.namePlural} manually
+                    </StyledEmptySubTitle>
+                  </StyledEmptyTextContainer>
                   <Button
                     Icon={IconPlus}
                     title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
                     variant={'secondary'}
                     onClick={createRecord}
                   />
-                </StyledObjectEmptyContainer>
+                </StyledEmptyContainer>
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>
