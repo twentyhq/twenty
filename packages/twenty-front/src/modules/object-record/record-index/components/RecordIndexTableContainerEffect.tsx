@@ -2,38 +2,27 @@ import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 type RecordIndexTableContainerEffectProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
   recordTableId: string;
   viewBarId: string;
 };
 
 export const RecordIndexTableContainerEffect = ({
-  objectNamePlural,
+  objectNameSingular,
   recordTableId,
   viewBarId,
 }: RecordIndexTableContainerEffectProps) => {
-  const {
-    setAvailableTableColumns,
-    setOnEntityCountChange,
-    setObjectMetadataConfig,
-  } = useRecordTable({ recordTableId });
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
+  const { setAvailableTableColumns, setOnEntityCountChange } = useRecordTable({
+    recordTableId,
   });
 
-  const {
-    objectMetadataItem,
-    basePathToShowPage,
-    labelIdentifierFieldMetadata,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -43,20 +32,6 @@ export const RecordIndexTableContainerEffect = ({
   const { setEntityCountInCurrentView } = useViewBar({
     viewBarId,
   });
-
-  useEffect(() => {
-    if (basePathToShowPage && labelIdentifierFieldMetadata) {
-      setObjectMetadataConfig?.({
-        basePathToShowPage,
-        labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
-      });
-    }
-  }, [
-    basePathToShowPage,
-    objectMetadataItem,
-    labelIdentifierFieldMetadata,
-    setObjectMetadataConfig,
-  ]);
 
   useEffect(() => {
     const availableTableColumns = columnDefinitions.filter(
@@ -74,7 +49,7 @@ export const RecordIndexTableContainerEffect = ({
 
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries({
-      objectNamePlural,
+      objectNamePlural: objectMetadataItem.namePlural,
       recordTableId,
     });
 

@@ -1,14 +1,9 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -55,26 +50,22 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activityTargets } = useActivityTargets({ targetableObject });
-
-  const { records: activities } = useFindManyRecords({
-    skip: !activityTargets?.length,
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    filter: {
-      id: {
-        in: activityTargets
-          ?.map((activityTarget) => activityTarget.activityId)
-          .filter(isNonEmptyString),
-      },
-    },
-    orderBy: {
-      createdAt: 'AscNullsFirst',
-    },
+  const { activities, initialized } = useTimelineActivities({
+    targetableObject,
   });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (!activities.length) {
+  const showEmptyState = initialized && activities.length === 0;
+
+  const showLoadingState = !initialized;
+
+  if (showLoadingState) {
+    // TODO: Display a beautiful loading page
+    return <></>;
+  }
+
+  if (showEmptyState) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
@@ -99,7 +90,7 @@ export const Timeline = ({
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities as Activity[]} />
+      <TimelineItemsContainer activities={activities} />
     </StyledMainContainer>
   );
 };

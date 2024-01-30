@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
 import { recordBoardCardIdsByColumnIdFamilyState } from '@/object-record/record-board-deprecated/states/recordBoardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
@@ -72,7 +72,7 @@ export const useUpdateCompanyBoardColumnsInternal = () => {
 
           if (!isDeeplyEqual(currentCompanyProgress, companyProgress)) {
             set(companyProgressesFamilyState(id), companyProgress);
-            set(entityFieldsFamilyState(id), companyProgress.opportunity);
+            set(recordStoreFamilyState(id), companyProgress.opportunity);
           }
         }
 

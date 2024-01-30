@@ -13,7 +13,6 @@ import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnec
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
-import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -28,7 +27,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
-  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
+  limit,
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,

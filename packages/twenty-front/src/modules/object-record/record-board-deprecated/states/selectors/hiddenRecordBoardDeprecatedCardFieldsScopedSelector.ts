@@ -1,10 +1,10 @@
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
 import { availableRecordBoardDeprecatedCardFieldsScopedState } from '../availableRecordBoardDeprecatedCardFieldsScopedState';
 import { recordBoardCardFieldsScopedState } from '../recordBoardDeprecatedCardFieldsScopedState';
 
 export const hiddenRecordBoardDeprecatedCardFieldsScopedSelector =
-  createSelectorScopeMap({
+  createSelectorReadOnlyScopeMap({
     key: 'hiddenRecordBoardDeprecatedCardFieldsScopedSelector',
     get:
       ({ scopeId }) =>

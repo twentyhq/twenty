@@ -1,7 +1,6 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 
-import { StyledRow } from '@/object-record/record-table/components/RecordTableRow';
 import { grayScale } from '@/ui/theme/constants/colors';
 
 type FetchMoreLoaderProps = {
@@ -30,12 +29,12 @@ export const FetchMoreLoader = ({
   return (
     <tbody ref={tbodyRef}>
       {loading && (
-        <StyledRow selected={false}>
+        <tr>
           <td colSpan={7}>
             <StyledText>Loading more...</StyledText>
           </td>
           <td colSpan={7} />
-        </StyledRow>
+        </tr>
       )}
     </tbody>
   );

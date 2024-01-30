@@ -7,7 +7,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 180px 148px 148px 36px;
+  grid-template-columns: 312px 132px 68px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -36,7 +36,6 @@ export const SettingsApiKeysFieldItemTableRow = ({
   return (
     <StyledApisFieldTableRow onClick={() => onClick()}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
-      <TableCell color={theme.font.color.tertiary}>Internal</TableCell>{' '}
       <TableCell
         color={
           fieldItem.expiration === 'Expired'

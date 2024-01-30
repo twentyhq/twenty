@@ -13,7 +13,7 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -69,7 +69,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
 
           return [
             `filter${capitalize(nameSingular)}`,
-            andFilterVariables(searchFilters),
+            makeAndFilterVariables(searchFilters),
           ];
         })
         .filter(isDefined),

@@ -2,11 +2,11 @@ import { act } from 'react-dom/test-utils';
 import { renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
-import { FieldType } from '@/object-record/field/types/FieldType';
 import { useRecordBoardDeprecatedCardFieldsInternal } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedCardFieldsInternal';
 import { onFieldsChangeScopedState } from '@/object-record/record-board-deprecated/states/onFieldsChangeScopedState';
 import { recordBoardCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedCardFieldsScopedState';
 import { savedRecordBoardDeprecatedCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/savedRecordBoardDeprecatedCardFieldsScopedState';
+import { FieldType } from '@/object-record/record-field/types/FieldType';
 
 const recordBoardScopeId = 'recordBoardScopeId';
 

@@ -1,17 +1,15 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-import { useRecoilValue } from 'recoil';
+import { fn } from '@storybook/test';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -33,24 +31,14 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [
-    (Story) => {
-      // wait for metadata
-      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-      return objectMetadataItems.length ? <Story /> : <></>;
-    },
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    (Story) => (
-      <RelationPickerScope relationPickerScopeId="relation-picker">
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <Story />
-        </SnackBarProviderScope>
-      </RelationPickerScope>
-    ),
+    SnackBarDecorator,
   ],
   args: {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
+    onChange: fn(),
     values: fieldMetadataFormDefaultValues,
   },
   parameters: {
@@ -82,10 +70,6 @@ export const WithOpenSelect: Story = {
     await userEvent.click(input);
 
     await userEvent.click(inputField);
-
-    const selectLabel = canvas.getByText('Number');
-
-    await userEvent.click(selectLabel);
   },
 };
 

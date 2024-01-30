@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { RecordBoardDeprecatedScopeInternalContext } from '@/object-record/record-board-deprecated/scopes/scope-internal-context/RecordBoardDeprecatedScopeInternalContext';
 import { onFieldsChangeScopedState } from '@/object-record/record-board-deprecated/states/onFieldsChangeScopedState';
 import { recordBoardCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedCardFieldsScopedState';
 import { savedRecordBoardDeprecatedCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/savedRecordBoardDeprecatedCardFieldsScopedState';
 import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 

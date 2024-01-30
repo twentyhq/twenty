@@ -23,7 +23,7 @@ export class GmailPartialSyncJob
 
   async handle(data: GmailPartialSyncJobData): Promise<void> {
     console.log(
-      `fetching messages for workspace ${data.workspaceId} and account ${
+      `gmail partial-sync for workspace ${data.workspaceId} and account ${
         data.connectedAccountId
       } with ${this.environmentService.getMessageQueueDriverType()}`,
     );

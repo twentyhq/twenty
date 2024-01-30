@@ -2,6 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { DroppableProvided } from '@hello-pangea/dnd';
 
+import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
+
 const StyledPlaceholder = styled.div`
   min-height: 1px;
 `;
@@ -13,12 +15,12 @@ const StyledColumnCardsContainer = styled.div`
 `;
 
 type RecordBoardColumnCardsContainerProps = {
-  children: React.ReactNode;
+  recordIds: string[];
   droppableProvided: DroppableProvided;
 };
 
 export const RecordBoardColumnCardsContainer = ({
-  children,
+  recordIds,
   droppableProvided,
 }: RecordBoardColumnCardsContainerProps) => {
   return (
@@ -27,7 +29,7 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {children}
+      <RecordBoardColumnCardsMemo recordIds={recordIds} />
       <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
     </StyledColumnCardsContainer>
   );

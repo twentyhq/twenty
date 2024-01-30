@@ -158,7 +158,7 @@ const TokenForm = ({
         <Form>
           <label>
             To load your playground schema,{' '}
-            <StyledLink href="https://app.twenty.com/settings/developers/api-keys">
+            <StyledLink href="https://app.twenty.com/settings/developers">
               generate an API key
             </StyledLink>{' '}
             and paste it here:
