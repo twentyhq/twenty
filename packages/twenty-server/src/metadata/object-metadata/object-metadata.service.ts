@@ -23,6 +23,7 @@ import {
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -169,6 +170,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
       [
         {

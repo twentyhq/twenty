@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-import fs from 'fs/promises';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
@@ -134,16 +133,6 @@ export class WorkspaceSyncObjectMetadataService {
         manager,
         storage,
       );
-
-    fs.writeFile(
-      './metadataObjectUpdaterResult.json',
-      JSON.stringify(metadataObjectUpdaterResult, null, 2),
-    );
-
-    fs.writeFile(
-      './metadataFieldUpdaterResult.json',
-      JSON.stringify(metadataFieldUpdaterResult, null, 2),
-    );
 
     this.logger.log('Generating migrations');
 

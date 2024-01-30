@@ -20,7 +20,7 @@ export function RelationMetadata(
     );
 
     Reflect.defineMetadata(
-      'relationMetadata',
+      'relationMetadataCollection',
       [
         ...relationMetadataCollection,
         {

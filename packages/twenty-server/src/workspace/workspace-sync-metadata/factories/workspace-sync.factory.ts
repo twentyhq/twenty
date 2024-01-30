@@ -18,6 +18,7 @@ import {
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
+import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 @Injectable()
 export class WorkspaceSyncFactory {
@@ -61,6 +62,7 @@ export class WorkspaceSyncFactory {
 
         workspaceMigrations.push({
           workspaceId: objectMetadata.workspaceId,
+          name: generateMigrationName(`create-${objectMetadata.nameSingular}`),
           isCustom: false,
           migrations,
         });
@@ -119,6 +121,7 @@ export class WorkspaceSyncFactory {
 
         workspaceMigrations.push({
           workspaceId: fieldMetadata.workspaceId,
+          name: generateMigrationName(`create-${fieldMetadata.name}`),
           isCustom: false,
           migrations,
         });
@@ -147,6 +150,7 @@ export class WorkspaceSyncFactory {
 
         workspaceMigrations.push({
           workspaceId: fieldMetadata.workspaceId,
+          name: generateMigrationName(`delete-${fieldMetadata.name}`),
           isCustom: false,
           migrations,
         });
@@ -218,6 +222,9 @@ export class WorkspaceSyncFactory {
 
         workspaceMigrations.push({
           workspaceId: relationMetadata.workspaceId,
+          name: generateMigrationName(
+            `create-relation-from-${fromObjectMetadata.nameSingular}-to-${toObjectMetadata.nameSingular}`,
+          ),
           isCustom: false,
           migrations,
         });
