@@ -83,14 +83,23 @@ export const RightDrawer = () => {
     return <></>;
   }
 
+  const variants = {
+    fullScreen: {
+      width: '100%',
+    },
+    normal: {
+      width: rightDrawerWidth,
+    },
+    close: {
+      width: 0,
+    },
+  };
+
   return (
     <StyledContainer
-      initial={{
-        width: 0,
-      }}
-      animate={{
-        width: rightDrawerWidth,
-      }}
+      initial="close"
+      animate={isRightDrawerOpen ? 'normal' : 'close'}
+      variants={variants}
       transition={{
         duration: theme.animation.duration.normal,
       }}
