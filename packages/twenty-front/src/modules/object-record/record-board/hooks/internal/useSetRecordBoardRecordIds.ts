@@ -7,7 +7,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
   const {
     scopeId,
-    recordBoardRecordIdsByColumnIdFamilyState,
+    recordIdsByColumnIdFamilyState,
     columnsFamilySelector,
     getColumnIdsState,
   } = useRecordBoardStates(recordBoardId);
@@ -23,7 +23,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .getValue();
 
           const existingColumnRecordIds = snapshot
-            .getLoadable(recordBoardRecordIdsByColumnIdFamilyState(columnId))
+            .getLoadable(recordIdsByColumnIdFamilyState(columnId))
             .getValue();
 
           const columnRecordIds = records
@@ -31,18 +31,11 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .map((record) => record.id);
 
           if (!isDeeplyEqual(existingColumnRecordIds, columnRecordIds)) {
-            set(
-              recordBoardRecordIdsByColumnIdFamilyState(columnId),
-              columnRecordIds,
-            );
+            set(recordIdsByColumnIdFamilyState(columnId), columnRecordIds);
           }
         });
       },
-    [
-      columnsFamilySelector,
-      getColumnIdsState,
-      recordBoardRecordIdsByColumnIdFamilyState,
-    ],
+    [columnsFamilySelector, getColumnIdsState, recordIdsByColumnIdFamilyState],
   );
 
   return {

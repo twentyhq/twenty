@@ -1,11 +1,10 @@
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
-import { ActionBarItemAccent } from './ActionBarItemAccent';
+import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 export type ActionBarEntry = {
   label: string;
   Icon: IconComponent;
-  accent?: ActionBarItemAccent;
+  accent?: MenuItemAccent;
   onClick?: () => void;
   subActions?: ActionBarEntry[];
 };
