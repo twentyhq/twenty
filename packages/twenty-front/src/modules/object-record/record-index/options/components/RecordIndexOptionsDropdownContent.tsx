@@ -3,8 +3,13 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
+import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -17,24 +22,23 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-import { useTableColumns } from '../../hooks/useTableColumns';
-import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-
 type TableOptionsMenu = 'fields';
 
-export const TableOptionsDropdownContent = ({
-  onImport,
-  recordTableId,
-}: {
-  onImport?: () => void;
-  recordTableId: string;
-}) => {
+type RecordIndexOptionsDropdownContentProps = {
+  recordIndexId: string;
+  objectNameSingular: string;
+};
+
+export const RecordIndexOptionsDropdownContent = ({
+  recordIndexId,
+  objectNameSingular,
+}: RecordIndexOptionsDropdownContentProps) => {
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-  const { closeDropdown } = useDropdown(TableOptionsDropdownId);
+  const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,
@@ -43,13 +47,13 @@ export const TableOptionsDropdownContent = ({
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
   const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
-    useRecordTableStates(recordTableId);
+    useRecordTableStates(recordIndexId);
 
   const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
   const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
-    { recordTableId },
+    { recordTableId: recordIndexId },
   );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
@@ -99,6 +103,16 @@ export const TableOptionsDropdownContent = ({
     TableOptionsHotkeyScope.Dropdown,
   );
 
+  const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
+  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
+
+  const handleImport =
+    CoreObjectNameSingular.Company === objectNameSingular
+      ? openCompanySpreadsheetImport
+      : CoreObjectNameSingular.Person === objectNameSingular
+        ? openPersonSpreadsheetImport
+        : undefined;
+
   return (
     <>
       {!currentMenu && (
@@ -122,9 +136,9 @@ export const TableOptionsDropdownContent = ({
               LeftIcon={IconTag}
               text="Fields"
             />
-            {onImport && (
+            {handleImport && (
               <MenuItem
-                onClick={onImport}
+                onClick={() => handleImport}
                 LeftIcon={IconFileImport}
                 text="Import"
               />
