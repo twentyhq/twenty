@@ -90,15 +90,15 @@ export const RightDrawer = () => {
     normal: {
       width: rightDrawerWidth,
     },
-    close: {
+    closed: {
       width: 0,
     },
   };
 
   return (
     <StyledContainer
-      initial="close"
-      animate={isRightDrawerOpen ? 'normal' : 'close'}
+      initial="closed"
+      animate={isRightDrawerOpen ? 'normal' : 'closed'}
       variants={variants}
       transition={{
         duration: theme.animation.duration.normal,
