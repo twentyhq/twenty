@@ -8,7 +8,6 @@ import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useM
 import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
 import { useWriteActivityTargetsInCache } from '@/activities/hooks/useWriteActivityTargetsInCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { useInjectIntoTimelineActivitiesQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQuery';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';

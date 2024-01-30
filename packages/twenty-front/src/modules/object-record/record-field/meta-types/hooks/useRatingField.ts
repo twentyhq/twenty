@@ -23,7 +23,7 @@ export const useRatingField = () => {
     }),
   );
 
-  const rating = +(fieldValue ?? 0);
+  const rating = fieldValue ?? 'RATING_1';
 
   return {
     fieldDefinition,

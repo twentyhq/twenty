@@ -32,7 +32,7 @@ export const RecordBoardColumn = ({
     isFirstColumnFamilyState,
     isLastColumnFamilyState,
     columnsFamilySelector,
-    recordBoardRecordIdsByColumnIdFamilyState,
+    recordIdsByColumnIdFamilyState,
   } = useRecordBoardStates();
   const columnDefinition = useRecoilValue(
     columnsFamilySelector(recordBoardColumnId),
@@ -47,7 +47,7 @@ export const RecordBoardColumn = ({
   );
 
   const recordIds = useRecoilValue(
-    recordBoardRecordIdsByColumnIdFamilyState(recordBoardColumnId),
+    recordIdsByColumnIdFamilyState(recordBoardColumnId),
   );
 
   if (!columnDefinition) {
@@ -60,6 +60,7 @@ export const RecordBoardColumn = ({
         columnDefinition: columnDefinition,
         isFirstColumn: isFirstColumn,
         isLastColumn: isLastColumn,
+        recordCount: recordIds.length,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>

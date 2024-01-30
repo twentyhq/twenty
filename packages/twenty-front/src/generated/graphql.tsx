@@ -97,6 +97,11 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type DeleteOneObjectInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID'];
+};
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -223,7 +228,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   deleteCurrentWorkspace: Workspace;
-  deleteOneObject: ObjectDeleteResponse;
+  deleteOneObject: Object;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -256,6 +261,11 @@ export type MutationCreateEventArgs = {
 
 export type MutationCreateOneRefreshTokenArgs = {
   input: CreateOneRefreshTokenInput;
+};
+
+
+export type MutationDeleteOneObjectArgs = {
+  input: DeleteOneObjectInput;
 };
 
 
@@ -329,25 +339,6 @@ export type ObjectConnection = {
   totalCount: Scalars['Int'];
 };
 
-export type ObjectDeleteResponse = {
-  __typename?: 'ObjectDeleteResponse';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  dataSourceId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['ID']>;
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isSystem?: Maybe<Scalars['Boolean']>;
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  labelPlural?: Maybe<Scalars['String']>;
-  labelSingular?: Maybe<Scalars['String']>;
-  namePlural?: Maybe<Scalars['String']>;
-  nameSingular?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
 export type ObjectFieldsConnection = {
   __typename?: 'ObjectFieldsConnection';
   /** Array of edges. */
@@ -378,8 +369,8 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
-  getTimelineThreadsFromCompanyId: Array<TimelineThread>;
-  getTimelineThreadsFromPersonId: Array<TimelineThread>;
+  getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
+  getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
   objects: ObjectConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
@@ -515,6 +506,12 @@ export type TimelineThreadParticipant = {
   lastName: Scalars['String'];
   personId?: Maybe<Scalars['ID']>;
   workspaceMemberId?: Maybe<Scalars['ID']>;
+};
+
+export type TimelineThreadsWithTotal = {
+  __typename?: 'TimelineThreadsWithTotal';
+  timelineThreads: Array<TimelineThread>;
+  totalNumberOfThreads: Scalars['Int'];
 };
 
 export type TransientToken = {
@@ -715,6 +712,8 @@ export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticip
 
 export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
+export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
   page: Scalars['Int'];
@@ -722,7 +721,7 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['ID'];
@@ -731,7 +730,7 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -912,6 +911,14 @@ export const TimelineThreadFragmentFragmentDoc = gql`
   participantCount
 }
     ${ParticipantFragmentFragmentDoc}`;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
+  totalNumberOfThreads
+  timelineThreads {
+    ...TimelineThreadFragment
+  }
+}
+    ${TimelineThreadFragmentFragmentDoc}`;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -970,10 +977,10 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
     page: $page
     pageSize: $pageSize
   ) {
-    ...TimelineThreadFragment
+    ...TimelineThreadsWithTotalFragment
   }
 }
-    ${TimelineThreadFragmentFragmentDoc}`;
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromCompanyIdQuery__
@@ -1011,10 +1018,10 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
     page: $page
     pageSize: $pageSize
   ) {
-    ...TimelineThreadFragment
+    ...TimelineThreadsWithTotalFragment
   }
 }
-    ${TimelineThreadFragmentFragmentDoc}`;
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromPersonIdQuery__

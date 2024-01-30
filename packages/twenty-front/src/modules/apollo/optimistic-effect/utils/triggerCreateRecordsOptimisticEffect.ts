@@ -29,7 +29,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
       [objectMetadataItem.namePlural]: (
         cachedConnection,
         {
-          INVALIDATE: _INVALIDATE,
+          DELETE: _DELETE,
           readField,
           storeFieldName: _storeFieldName,
           toReference,
