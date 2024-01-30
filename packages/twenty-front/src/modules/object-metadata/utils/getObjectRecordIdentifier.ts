@@ -16,15 +16,6 @@ export const getObjectRecordIdentifier = ({
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity: {
-      return {
-        id: record.id,
-        name: record?.company?.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-        linkToShowPage: `/opportunities/${record.id}`,
-      };
-    }
     case CoreObjectNameSingular.WorkspaceMember: {
       const workspaceMember = record as WorkspaceMember;
 

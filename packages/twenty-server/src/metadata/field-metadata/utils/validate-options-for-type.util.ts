@@ -5,14 +5,16 @@ import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/fie
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
-  FieldMetadataComplexOptions,
-  FieldMetadataDefaultOptions,
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
 } from 'src/metadata/field-metadata/dtos/options.input';
 
+import { isEnumFieldMetadataType } from './is-enum-field-metadata-type.util';
+
 export const optionsValidatorsMap = {
-  [FieldMetadataType.RATING]: [FieldMetadataDefaultOptions],
-  [FieldMetadataType.SELECT]: [FieldMetadataComplexOptions],
-  [FieldMetadataType.MULTI_SELECT]: [FieldMetadataComplexOptions],
+  // RATING doesn't need to be provided as it's the backend that will generate the options
+  [FieldMetadataType.SELECT]: [FieldMetadataComplexOption],
+  [FieldMetadataType.MULTI_SELECT]: [FieldMetadataComplexOption],
 };
 
 export const validateOptionsForType = (
@@ -25,6 +27,14 @@ export const validateOptionsForType = (
     return false;
   }
 
+  if (!isEnumFieldMetadataType(type)) {
+    return true;
+  }
+
+  if (type === FieldMetadataType.RATING) {
+    return true;
+  }
+
   const validators = optionsValidatorsMap[type];
 
   if (!validators) return false;
@@ -33,7 +43,7 @@ export const validateOptionsForType = (
     return validators.some((validator) => {
       const optionsInstance = plainToInstance<
         any,
-        FieldMetadataDefaultOptions | FieldMetadataComplexOptions
+        FieldMetadataDefaultOption | FieldMetadataComplexOption
       >(validator, option);
 
       return (

@@ -259,10 +259,6 @@ export class AuthService {
 
     assert(isPasswordValid, 'Password too weak', BadRequestException);
 
-    const isPasswordSame = await compareHash(newPassword, user.passwordHash);
-
-    assert(!isPasswordSame, 'Password cannot be repeated', BadRequestException);
-
     const newPasswordHash = await hashPassword(newPassword);
 
     await this.userRepository.update(userId, {

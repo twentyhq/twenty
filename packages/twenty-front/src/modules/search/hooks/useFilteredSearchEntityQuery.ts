@@ -2,17 +2,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
-import { orFilterVariables } from '@/object-record/utils/orFilterVariables';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { assertNotNull } from '~/utils/assert';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
-
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
@@ -56,7 +55,7 @@ export const useFilteredSearchEntityQuery = ({
       return undefined;
     }
 
-    return orFilterVariables(
+    return makeOrFilterVariables(
       fieldNames.map((fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
@@ -85,7 +84,7 @@ export const useFilteredSearchEntityQuery = ({
     records: filteredSelectedRecords,
   } = useFindManyRecords({
     objectNameSingular,
-    filter: andFilterVariables([...searchFilters, selectedIdsFilter]),
+    filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
     orderBy: { [orderByField]: sortOrder },
     skip: !selectedIds.length,
   });
@@ -97,7 +96,7 @@ export const useFilteredSearchEntityQuery = ({
   const { loading: recordsToSelectLoading, records: recordsToSelect } =
     useFindManyRecords({
       objectNameSingular,
-      filter: andFilterVariables([...searchFilters, notFilter]),
+      filter: makeAndFilterVariables([...searchFilters, notFilter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: { [orderByField]: sortOrder },
     });

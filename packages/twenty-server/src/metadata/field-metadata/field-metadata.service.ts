@@ -25,7 +25,13 @@ import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
-import { FieldMetadataEntity } from './field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from './field-metadata.entity';
+
+import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
+import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -58,6 +64,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (!objectMetadata) {
       throw new NotFoundException('Object does not exist');
+    }
+
+    // Double check in case the service is directly called
+    if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
+      if (
+        !fieldMetadataInput.options &&
+        fieldMetadataInput.type !== FieldMetadataType.RATING
+      ) {
+        throw new BadRequestException('Options are required for enum fields');
+      }
+    }
+
+    // Generate options for rating fields
+    if (fieldMetadataInput.type === FieldMetadataType.RATING) {
+      fieldMetadataInput.options = generateRatingOptions();
     }
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({

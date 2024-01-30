@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -8,6 +8,7 @@ import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmai
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -22,8 +23,13 @@ const StyledContainer = styled.div`
 export const RightDrawerEmailThread = () => {
   const viewableEmailThread = useRecoilValue(viewableEmailThreadState);
 
-  const { records: messages } = useFindManyRecords<EmailThreadMessageType>({
+  const {
+    records: messages,
+    loading,
+    fetchMoreRecords,
+  } = useFindManyRecords<EmailThreadMessageType>({
     depth: 3,
+    limit: 10,
     filter: {
       messageThreadId: {
         eq: viewableEmailThread?.id,
@@ -37,6 +43,12 @@ export const RightDrawerEmailThread = () => {
     useRecordsWithoutConnection: true,
   });
 
+  const fetchMoreMessages = useCallback(() => {
+    if (!loading) {
+      fetchMoreRecords();
+    }
+  }, [fetchMoreRecords, loading]);
+
   if (!viewableEmailThread) {
     return null;
   }
@@ -45,7 +57,7 @@ export const RightDrawerEmailThread = () => {
     <StyledContainer>
       <EmailThreadHeader
         subject={viewableEmailThread.subject}
-        lastMessageSentAt={viewableEmailThread.receivedAt}
+        lastMessageSentAt={viewableEmailThread.lastMessageReceivedAt}
       />
       {messages.map((message) => (
         <EmailThreadMessage
@@ -55,6 +67,7 @@ export const RightDrawerEmailThread = () => {
           sentAt={message.receivedAt}
         />
       ))}
+      <FetchMoreLoader loading={loading} onLastRowVisible={fetchMoreMessages} />
     </StyledContainer>
   );
 };

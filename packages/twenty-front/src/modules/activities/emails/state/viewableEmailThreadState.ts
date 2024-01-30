@@ -1,8 +1,8 @@
 import { atom } from 'recoil';
 
-import { MockedThread } from '@/activities/emails/mocks/mockedEmailThreads';
+import { TimelineThread } from '~/generated/graphql';
 
-export const viewableEmailThreadState = atom<MockedThread | null>({
+export const viewableEmailThreadState = atom<TimelineThread | null>({
   key: 'viewableEmailThreadState',
   default: null,
 });

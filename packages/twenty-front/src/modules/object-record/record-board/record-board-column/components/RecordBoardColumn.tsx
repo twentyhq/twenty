@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
+import { useRecoilValue } from 'recoil';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/contexts/RecordBoardColumnContext';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
-import { BoardCardIdContext } from '@/object-record/record-board-deprecated/contexts/BoardCardIdContext';
-import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
+import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -22,35 +23,53 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
 
 type RecordBoardColumnProps = {
   recordBoardColumnId: string;
-  columnDefinition: BoardColumnDefinition;
 };
 
 export const RecordBoardColumn = ({
   recordBoardColumnId,
-  columnDefinition,
 }: RecordBoardColumnProps) => {
-  const isFirstColumn = columnDefinition.position === 0;
+  const {
+    isFirstColumnFamilyState,
+    isLastColumnFamilyState,
+    columnsFamilySelector,
+    recordIdsByColumnIdFamilyState,
+  } = useRecordBoardStates();
+  const columnDefinition = useRecoilValue(
+    columnsFamilySelector(recordBoardColumnId),
+  );
+
+  const isFirstColumn = useRecoilValue(
+    isFirstColumnFamilyState(recordBoardColumnId),
+  );
+
+  const isLastColumn = useRecoilValue(
+    isLastColumnFamilyState(recordBoardColumnId),
+  );
+
+  const recordIds = useRecoilValue(
+    recordIdsByColumnIdFamilyState(recordBoardColumnId),
+  );
+
+  if (!columnDefinition) {
+    return null;
+  }
 
   return (
     <RecordBoardColumnContext.Provider
       value={{
-        id: recordBoardColumnId,
         columnDefinition: columnDefinition,
+        isFirstColumn: isFirstColumn,
+        isLastColumn: isLastColumn,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
           <StyledColumn isFirstColumn={isFirstColumn}>
+            <RecordBoardColumnHeader />
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-            >
-              {[].map((cardId, _index) => (
-                <BoardCardIdContext.Provider
-                  value={cardId}
-                  key={cardId}
-                ></BoardCardIdContext.Provider>
-              ))}
-            </RecordBoardColumnCardsContainer>
+              recordIds={recordIds}
+            />
           </StyledColumn>
         )}
       </Droppable>
