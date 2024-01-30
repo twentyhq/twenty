@@ -34,25 +34,11 @@ import {
   computeObjectTargetTable,
 } from 'src/workspace/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
+import { RelationToDelete } from 'src/metadata/relation-metadata/types/relation-to-delete';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
 import { CreateObjectInput } from './dtos/create-object.input';
-
-type RelationToDelete = {
-  id: string;
-  fromFieldMetadataId: string;
-  toFieldMetadataId: string;
-  fromFieldMetadataName: string;
-  toFieldMetadataName: string;
-  fromObjectMetadataId: string;
-  toObjectMetadataId: string;
-  fromObjectName: string;
-  toObjectName: string;
-  toFieldMetadataIsCustom: boolean;
-  toObjectMetadataIsCustom: boolean;
-  direction: string;
-};
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -116,6 +102,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const relationsToDelete: RelationToDelete[] = [];
 
+    // TODO: Most of this logic should be moved to relation-metadata.service.ts
     for (const relation of [
       ...objectMetadata.fromRelations,
       ...objectMetadata.toRelations,
