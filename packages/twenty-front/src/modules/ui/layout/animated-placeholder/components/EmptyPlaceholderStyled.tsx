@@ -26,7 +26,6 @@ export const StyledEmptyTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
 export const StyledEmptySubTitle = styled.div`
