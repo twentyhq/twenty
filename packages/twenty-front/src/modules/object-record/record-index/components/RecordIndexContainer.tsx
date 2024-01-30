@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
+import { RecordIndexBoardContainerEffect } from '@/object-record/record-index/components/RecordIndexBoardContainerEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
+import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
+import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
+import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
@@ -55,6 +60,12 @@ export const RecordIndexContainer = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
+  const setRecordIndexFieldDefinitions = useSetRecoilState(
+    recordIndexFieldDefinitionsState,
+  );
+  const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
+  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
+
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
@@ -90,12 +101,17 @@ export const RecordIndexContainer = ({
             setTableColumns(
               mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
             );
+            setRecordIndexFieldDefinitions(
+              mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+            );
           }}
           onViewFiltersChange={(viewFilters) => {
             setTableFilters(mapViewFiltersToFilters(viewFilters));
+            setRecordIndexFilters(mapViewFiltersToFilters(viewFilters));
           }}
           onViewSortsChange={(viewSorts) => {
             setTableSorts(mapViewSortsToSorts(viewSorts));
+            setRecordIndexSorts(mapViewSortsToSorts(viewSorts));
           }}
           onViewTypeChange={(viewType: ViewType) => {
             setRecordIndexViewType(viewType);
@@ -111,11 +127,11 @@ export const RecordIndexContainer = ({
           <RecordIndexTableContainer
             recordTableId={recordIndexId}
             viewBarId={recordIndexId}
-            objectNamePlural={objectNamePlural}
+            objectNameSingular={objectNameSingular}
             createRecord={createRecord}
           />
           <RecordIndexTableContainerEffect
-            objectNamePlural={objectNamePlural}
+            objectNameSingular={objectNameSingular}
             recordTableId={recordIndexId}
             viewBarId={recordIndexId}
           />
@@ -126,12 +142,12 @@ export const RecordIndexContainer = ({
           <RecordIndexBoardContainer
             recordBoardId={recordIndexId}
             viewBarId={recordIndexId}
-            objectNamePlural={objectNamePlural}
+            objectNameSingular={objectNameSingular}
             createRecord={createRecord}
           />
-          <RecordIndexTableContainerEffect
-            objectNamePlural={objectNamePlural}
-            recordTableId={recordIndexId}
+          <RecordIndexBoardContainerEffect
+            objectNameSingular={objectNameSingular}
+            recordBoardId={recordIndexId}
             viewBarId={recordIndexId}
           />
         </>

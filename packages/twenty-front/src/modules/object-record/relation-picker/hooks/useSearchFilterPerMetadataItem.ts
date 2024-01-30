@@ -1,8 +1,7 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -17,7 +16,7 @@ export const useSearchFilterPerMetadataItem = ({
     Object.fromEntries<ObjectRecordQueryFilter>(
       objectMetadataItems
         .map((objectMetadataItem) => {
-          if (!isNonEmptyString(searchFilterValue)) return null;
+          if (searchFilterValue === '') return null;
 
           const labelIdentifierFieldMetadataItem =
             getLabelIdentifierFieldMetadataItem(objectMetadataItem);
@@ -27,8 +26,8 @@ export const useSearchFilterPerMetadataItem = ({
           if (labelIdentifierFieldMetadataItem) {
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
-                searchFilter = {
-                  or: [
+                if (searchFilterValue) {
+                  const fullNameFilter = makeOrFilterVariables([
                     {
                       [labelIdentifierFieldMetadataItem.name]: {
                         firstName: {
@@ -43,16 +42,23 @@ export const useSearchFilterPerMetadataItem = ({
                         },
                       },
                     },
-                  ],
-                };
+                  ]);
+
+                  if (fullNameFilter) {
+                    searchFilter = fullNameFilter;
+                  }
+                }
                 break;
               }
-              default:
-                searchFilter = {
-                  [labelIdentifierFieldMetadataItem.name]: {
-                    ilike: `%${searchFilterValue}%`,
-                  },
-                };
+              default: {
+                if (searchFilterValue) {
+                  searchFilter = {
+                    [labelIdentifierFieldMetadataItem.name]: {
+                      ilike: `%${searchFilterValue}%`,
+                    },
+                  };
+                }
+              }
             }
           }
 

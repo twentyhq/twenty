@@ -15,6 +15,7 @@ const StyledContainer = styled.div`
 
 export const SignInBackgroundMockContainer = () => {
   const objectNamePlural = 'companies';
+  const objectNameSingular = 'company';
   const recordTableId = 'sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
@@ -33,7 +34,7 @@ export const SignInBackgroundMockContainer = () => {
         viewId={viewBarId}
       />
       <RecordTableWithWrappers
-        objectNamePlural={objectNamePlural}
+        objectNameSingular={objectNameSingular}
         recordTableId={recordTableId}
         viewBarId={viewBarId}
         createRecord={async () => {}}

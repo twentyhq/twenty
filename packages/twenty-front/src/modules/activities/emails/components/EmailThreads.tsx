@@ -1,26 +1,40 @@
+import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
+import {
+  emailThreadsPageState,
+  EmailThreadsPageType,
+} from '@/activities/emails/state/emailThreadsPageState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   H1Title,
   H1TitleFontColor,
 } from '@/ui/display/typography/components/H1Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
-import { TimelineThread } from '~/generated/graphql';
+import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
+import {
+  GetTimelineThreadsFromPersonIdQueryVariables,
+  TimelineThread,
+  TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(6, 6, 2)};
+  height: 100%;
+  overflow: auto;
 `;
 
 const StyledH1Title = styled(H1Title)`
@@ -38,11 +52,17 @@ export const EmailThreads = ({
   entity: ActivityTargetableObject;
 }) => {
   const { openEmailThread } = useEmailThread();
+  const { enqueueSnackBar } = useSnackBar();
 
-  const threadQuery =
+  const [emailThreadsPage, setEmailThreadsPage] =
+    useRecoilState<EmailThreadsPageType>(emailThreadsPageState);
+
+  const [isFetchingMoreEmails, setIsFetchingMoreEmails] = useState(false);
+
+  const [threadQuery, queryName] =
     entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? getTimelineThreadsFromPersonId
-      : getTimelineThreadsFromCompanyId;
+      ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
+      : [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId'];
 
   const threadQueryVariables = {
     ...(entity.targetObjectNameSingular === CoreObjectNameSingular.Person
@@ -50,22 +70,57 @@ export const EmailThreads = ({
       : { companyId: entity.id }),
     page: 1,
     pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  };
+  } as GetTimelineThreadsFromPersonIdQueryVariables;
 
-  const threads = useQuery(threadQuery, {
+  const { data, loading, fetchMore, error } = useQuery(threadQuery, {
     variables: threadQueryVariables,
   });
 
-  if (threads.loading) {
-    return;
+  const fetchMoreRecords = async () => {
+    if (emailThreadsPage.hasNextPage && !isFetchingMoreEmails) {
+      setIsFetchingMoreEmails(true);
+
+      await fetchMore({
+        variables: {
+          ...threadQueryVariables,
+          page: emailThreadsPage.pageNumber + 1,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult?.[queryName]?.timelineThreads?.length) {
+            setEmailThreadsPage((emailThreadsPage) => ({
+              ...emailThreadsPage,
+              hasNextPage: false,
+            }));
+            return prev;
+          }
+
+          return {
+            [queryName]: {
+              ...prev?.[queryName],
+              timelineThreads: [
+                ...(prev?.[queryName]?.timelineThreads ?? []),
+                ...(fetchMoreResult?.[queryName]?.timelineThreads ?? []),
+              ],
+            },
+          };
+        },
+      });
+      setEmailThreadsPage((emailThreadsPage) => ({
+        ...emailThreadsPage,
+        pageNumber: emailThreadsPage.pageNumber + 1,
+      }));
+      setIsFetchingMoreEmails(false);
+    }
+  };
+
+  if (error) {
+    enqueueSnackBar(error.message || 'Error loading email threads', {
+      variant: 'error',
+    });
   }
 
-  const timelineThreads: TimelineThread[] =
-    threads.data[
-      entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-        ? 'getTimelineThreadsFromPersonId'
-        : 'getTimelineThreadsFromCompanyId'
-    ];
+  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
+    data?.[queryName] ?? [];
 
   return (
     <StyledContainer>
@@ -74,14 +129,14 @@ export const EmailThreads = ({
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads?.length}</StyledEmailCount>
+              <StyledEmailCount>{totalNumberOfThreads ?? 0}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
-        <Card>
-          {timelineThreads &&
-            timelineThreads.map((thread: TimelineThread, index: number) => (
+        {!loading && (
+          <Card>
+            {timelineThreads?.map((thread: TimelineThread, index: number) => (
               <EmailThreadPreview
                 key={index}
                 divider={index < timelineThreads.length - 1}
@@ -89,7 +144,12 @@ export const EmailThreads = ({
                 onClick={() => openEmailThread(thread)}
               />
             ))}
-        </Card>
+          </Card>
+        )}
+        <FetchMoreLoader
+          loading={isFetchingMoreEmails}
+          onLastRowVisible={fetchMoreRecords}
+        />
       </Section>
     </StyledContainer>
   );

@@ -1,13 +1,13 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/field/hooks/useToggleEditOnlyInput';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { useTableCell } from '../hooks/useTableCell';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
@@ -16,7 +16,7 @@ type RecordTableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 export const RecordTableCellSoftFocusMode = ({
   children,
 }: RecordTableCellSoftFocusModeProps) => {
-  const { openTableCell } = useTableCell();
+  const { openTableCell } = useOpenRecordTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
   const toggleEditOnlyInput = useToggleEditOnlyInput();
@@ -30,11 +30,7 @@ export const RecordTableCellSoftFocusMode = ({
     [Key.Backspace, Key.Delete],
     () => {
       if (!isFieldInputOnly) {
-        openTableCell({
-          initialValue: {
-            isEmpty: true,
-          },
-        });
+        openTableCell();
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -75,9 +71,7 @@ export const RecordTableCellSoftFocusMode = ({
         keyboardEvent.stopImmediatePropagation();
 
         openTableCell({
-          initialValue: {
-            value: keyboardEvent.key,
-          },
+          initialValue: keyboardEvent.key,
         });
       }
     },

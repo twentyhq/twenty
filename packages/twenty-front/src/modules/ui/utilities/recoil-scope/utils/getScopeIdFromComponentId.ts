@@ -1,2 +1,2 @@
-export const getScopeIdFromComponentId = (componentId?: string) =>
-  componentId ? `${componentId}-scope` : undefined;
+export const getScopeIdFromComponentId = (componentId: string) =>
+  `${componentId}-scope`;

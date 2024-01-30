@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -83,8 +83,8 @@ export const RecordTableHeaderCell = ({
   const {
     getResizeFieldOffsetState,
     getTableColumnsState,
-    tableColumnsByKeySelector,
-    visibleTableColumnsSelector,
+    getTableColumnsByKeySelector,
+    getVisibleTableColumnsSelector,
   } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
@@ -92,8 +92,8 @@ export const RecordTableHeaderCell = ({
   );
 
   const tableColumns = useRecoilValue(getTableColumnsState());
-  const tableColumnsByKey = useRecoilValue(tableColumnsByKeySelector);
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+  const tableColumnsByKey = useRecoilValue(getTableColumnsByKeySelector());
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null

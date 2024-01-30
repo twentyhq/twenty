@@ -1,11 +1,11 @@
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
 import { isRecordBoardDeprecatedCardSelectedFamilyState } from '../isRecordBoardDeprecatedCardSelectedFamilyState';
 import { recordBoardCardIdsByColumnIdFamilyState } from '../recordBoardCardIdsByColumnIdFamilyState';
 import { recordBoardColumnsScopedState } from '../recordBoardColumnsScopedState';
 
 export const selectedRecordBoardDeprecatedCardIdsScopedSelector =
-  createSelectorScopeMap<string[]>({
+  createSelectorReadOnlyScopeMap<string[]>({
     key: 'selectedRecordBoardDeprecatedCardIdsScopedSelector',
     get:
       ({ scopeId }) =>

@@ -5,7 +5,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getScopedFamilyStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyStateDeprecated';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';

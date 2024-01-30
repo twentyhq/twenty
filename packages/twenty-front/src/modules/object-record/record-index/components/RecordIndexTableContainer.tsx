@@ -1,6 +1,5 @@
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
@@ -8,20 +7,16 @@ import { RecordTableContextMenu } from '@/object-record/record-table/context-men
 type RecordIndexTableContainerProps = {
   recordTableId: string;
   viewBarId: string;
-  objectNamePlural: string;
+  objectNameSingular: string;
   createRecord: () => Promise<void>;
 };
 
 export const RecordIndexTableContainer = ({
   recordTableId,
   viewBarId,
-  objectNamePlural,
+  objectNameSingular,
   createRecord,
 }: RecordIndexTableContainerProps) => {
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,
   });
@@ -37,7 +32,7 @@ export const RecordIndexTableContainer = ({
     <>
       <RecordTableWithWrappers
         recordTableId={recordTableId}
-        objectNamePlural={objectNamePlural}
+        objectNameSingular={objectNameSingular}
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
         createRecord={createRecord}

@@ -1,4 +1,4 @@
-import { FieldType } from '@/object-record/field/types/FieldType';
+import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const parseFieldType = (fieldType: FieldMetadataType): FieldType => {

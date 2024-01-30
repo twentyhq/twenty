@@ -2,12 +2,17 @@ import debounce from 'lodash.debounce';
 
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 
-export const useEntitySelectSearch = () => {
+export const useEntitySelectSearch = ({
+  relationPickerScopeId,
+}: {
+  relationPickerScopeId?: string;
+} = {}) => {
   const {
-    setRelationPickerPreselectedId,
     relationPickerSearchFilter,
+    searchQuery,
+    setRelationPickerPreselectedId,
     setRelationPickerSearchFilter,
-  } = useRelationPicker();
+  } = useRelationPicker({ relationPickerScopeId });
 
   const debouncedSetSearchFilter = debounce(
     setRelationPickerSearchFilter,
@@ -26,6 +31,7 @@ export const useEntitySelectSearch = () => {
 
   return {
     searchFilter: relationPickerSearchFilter,
+    searchQuery,
     handleSearchFilterChange,
   };
 };

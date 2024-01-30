@@ -202,39 +202,39 @@ export class MessagingUtilsService {
     );
   }
 
-  public async getConnectedAccountsFromWorkspaceId(
-    workspaceId: string,
+  public async getConnectedAccounts(
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
   ): Promise<any[]> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
     const connectedAccounts = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google'`,
+    );
+
+    return connectedAccounts;
+  }
+
+  public async getConnectedAcountByIdOrFail(
+    connectedAccountId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ): Promise<any> {
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "id" = $1`,
+      [connectedAccountId],
     );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
       throw new Error('No connected account found');
     }
 
-    return connectedAccounts;
+    return connectedAccounts[0];
   }
 
-  public async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
+  public async getDataSourceMetadataWorkspaceMetadata(
     workspaceId: string,
-    connectedAccountId: string,
   ): Promise<{
     dataSourceMetadata: DataSourceEntity;
     workspaceDataSource: DataSource;
-    connectedAccount: any;
   }> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -248,19 +248,9 @@ export class MessagingUtilsService {
       throw new Error('No workspace data source found');
     }
 
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google' AND "id" = $1`,
-      [connectedAccountId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
     return {
       dataSourceMetadata,
       workspaceDataSource,
-      connectedAccount: connectedAccounts[0],
     };
   }
 
