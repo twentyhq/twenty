@@ -85,6 +85,6 @@ export class User {
   })
   refreshTokens: RefreshToken[];
 
-  @Field(() => WorkspaceMember, { nullable: false })
+  @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
 }

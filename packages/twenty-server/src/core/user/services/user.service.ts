@@ -21,10 +21,16 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        user.defaultWorkspace.id,
-      );
+    let dataSourceMetadata;
+
+    try {
+      dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          user.defaultWorkspace.id,
+        );
+    } catch (e) {
+      return;
+    }
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
