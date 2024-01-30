@@ -63,7 +63,7 @@ export const TaskGroups = ({
         <StyledEmptyTextContainer>
           <StyledEmptyTitle>No Task</StyledEmptyTitle>
           <StyledEmptySubTitle>
-            There are no associated tasks with this record
+            There are no tasks for this user filter
           </StyledEmptySubTitle>
         </StyledEmptyTextContainer>
         <Button
