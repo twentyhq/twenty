@@ -6,13 +6,10 @@ import { useRecoilState } from 'recoil';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
+import { useEmailThreadStates } from '@/activities/emails/hooks/internal/useEmailThreadStates';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
-import {
-  emailThreadsPageState,
-  EmailThreadsPageType,
-} from '@/activities/emails/state/emailThreadsPageState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
@@ -22,6 +19,7 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import {
   GetTimelineThreadsFromPersonIdQueryVariables,
   TimelineThread,
@@ -54,8 +52,13 @@ export const EmailThreads = ({
   const { openEmailThread } = useEmailThread();
   const { enqueueSnackBar } = useSnackBar();
 
-  const [emailThreadsPage, setEmailThreadsPage] =
-    useRecoilState<EmailThreadsPageType>(emailThreadsPageState);
+  const { getEmailThreadsPageState } = useEmailThreadStates({
+    emailThreadScopeId: getScopeIdFromComponentId(entity.id),
+  });
+
+  const [emailThreadsPage, setEmailThreadsPage] = useRecoilState(
+    getEmailThreadsPageState(),
+  );
 
   const [isFetchingMoreEmails, setIsFetchingMoreEmails] = useState(false);
 
@@ -91,7 +94,14 @@ export const EmailThreads = ({
               ...emailThreadsPage,
               hasNextPage: false,
             }));
-            return prev;
+            return {
+              [queryName]: {
+                ...prev?.[queryName],
+                timelineThreads: [
+                  ...(prev?.[queryName]?.timelineThreads ?? []),
+                ],
+              },
+            };
           }
 
           return {
