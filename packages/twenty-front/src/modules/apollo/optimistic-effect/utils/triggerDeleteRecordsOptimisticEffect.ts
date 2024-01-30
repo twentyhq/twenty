@@ -64,5 +64,5 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     },
   });
 
-  records.forEach((record) => cache.evict({ id: cache.identify(record) }));
+  cache.gc();
 };
