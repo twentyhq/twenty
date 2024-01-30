@@ -4,11 +4,11 @@ import { useRecoilValue } from 'recoil';
 
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { FetchMoreLoader } from '@/activities/emails/components/FetchMoreLoader';
 import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

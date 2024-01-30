@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { FetchMoreLoader } from '@/activities/emails/components/FetchMoreLoader';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
@@ -21,7 +22,6 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
-import { FetchMoreLoader } from '@/ui/utilities/loading-state/components/FetchMoreLoader';
 import {
   GetTimelineThreadsFromPersonIdQueryVariables,
   TimelineThread,
