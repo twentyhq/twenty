@@ -2,29 +2,24 @@ import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class GmailRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   async refreshAndSaveAccessToken(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
       );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     if (!workspaceDataSource) {
       throw new Error('No workspace data source found');
