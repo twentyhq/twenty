@@ -24,6 +24,7 @@ const StyledAvatar = styled(Avatar)`
 
 const StyledSenderName = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -33,6 +34,10 @@ const StyledThreadMessageSentAt = styled.div`
   display: flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledRecordChip = styled(RecordChip)`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 type EmailThreadMessageSenderProps = {
@@ -57,7 +62,7 @@ export const EmailThreadMessageSender = ({
     <StyledEmailThreadMessageSender>
       <StyledEmailThreadMessageSenderUser>
         {person ? (
-          <RecordChip
+          <StyledRecordChip
             objectNameSingular={CoreObjectNameSingular.Person}
             record={person}
           />
