@@ -59,7 +59,7 @@ export const SingleEntitySelectMenuItems = ({
   );
 
   useScopedHotkeys(
-    Key.Escape,
+    [Key.Escape],
     () => {
       onCancel?.();
     },

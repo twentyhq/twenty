@@ -6,6 +6,7 @@ import { RecordBoardActionBar } from '@/object-record/record-board/action-bar/co
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardContextMenu } from '@/object-record/record-board/context-menu/components/RecordBoardContextMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type RecordIndexBoardContainerProps = {
   recordBoardId: string;
@@ -20,14 +21,23 @@ export const RecordIndexBoardContainer = ({
 }: RecordIndexBoardContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
+  const selectFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.type === FieldMetadataType.Select,
+  );
+
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
   const { createOneRecord } = useCreateOneRecord({ objectNameSingular });
+
+  if (!selectFieldMetadataItem) {
+    return;
+  }
 
   return (
     <RecordBoardContext.Provider
       value={{
         objectMetadataItem,
+        selectFieldMetadataItem,
         createOneRecord,
         updateOneRecord,
         deleteOneRecord,

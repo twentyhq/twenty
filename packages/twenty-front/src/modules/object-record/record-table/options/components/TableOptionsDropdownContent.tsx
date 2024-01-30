@@ -80,7 +80,7 @@ export const TableOptionsDropdownContent = ({
   const resetMenu = () => setCurrentMenu(undefined);
 
   useScopedHotkeys(
-    Key.Escape,
+    [Key.Escape],
     () => {
       closeDropdown();
     },

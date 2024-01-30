@@ -1,3 +1,5 @@
+import { Key } from 'ts-key-enum';
+
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -28,7 +30,7 @@ export const RecordTableInternalEffect = ({
   });
 
   useScopedHotkeys(
-    'escape',
+    [Key.Escape],
     () => {
       resetTableRowSelection();
     },

@@ -66,7 +66,10 @@ export const RightDrawer = () => {
 
   useScopedHotkeys(
     [Key.Escape],
-    () => closeRightDrawer(),
+
+    () => {
+      closeRightDrawer();
+    },
     RightDrawerHotkeyScope.RightDrawer,
     [setIsRightDrawerOpen],
   );

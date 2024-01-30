@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -124,7 +125,7 @@ export const CommandMenu = () => {
   );
 
   useScopedHotkeys(
-    'esc',
+    [Key.Escape],
     () => {
       closeCommandMenu();
     },

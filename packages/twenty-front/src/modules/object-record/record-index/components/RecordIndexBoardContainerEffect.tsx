@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { useResetBoardRecordSelection } from '@/object-record/record-board/hooks/useResetBoardRecordSelection';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
@@ -39,7 +39,7 @@ export const RecordIndexBoardContainerEffect = ({
     getSelectedRecordIdsSelector,
     setFieldDefinitions,
   } = useRecordBoard(recordBoardId);
-  const { resetRecordSelection } = useResetBoardRecordSelection(recordBoardId);
+  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
