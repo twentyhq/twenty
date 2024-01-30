@@ -10,7 +10,7 @@ export class MessageService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getFirstMessageByHeaderMessageId(
+  public async getFirstByHeaderMessageId(
     workspaceId: string,
     headerMessageId: string,
   ): Promise<ObjectRecord<MessageObjectMetadata> | null> {
@@ -31,7 +31,7 @@ export class MessageService {
     return messages[0];
   }
 
-  public async getMesssagesByIds(
+  public async getByIds(
     workspaceId: string,
     messageIds: string[],
   ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
@@ -46,7 +46,7 @@ export class MessageService {
     );
   }
 
-  public async deleteMessagesByIds(
+  public async deleteByIds(
     workspaceId: string,
     messageIds: string[],
   ): Promise<void> {

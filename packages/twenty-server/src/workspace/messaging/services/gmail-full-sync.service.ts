@@ -38,11 +38,10 @@ export class GmailFullSyncService {
         workspaceId,
       );
 
-    const connectedAccount =
-      await this.connectedAccountService.getConnectedAcountByIdOrFail(
-        connectedAccountId,
-        workspaceId,
-      );
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
@@ -52,7 +51,7 @@ export class GmailFullSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstMessageChannelByConnectedAccountIdOrFail(
+      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
         workspaceId,
         connectedAccountId,
       );
@@ -79,7 +78,7 @@ export class GmailFullSyncService {
     }
 
     const existingMessageChannelMessageAssociations =
-      await this.messageChannelMessageAssociationService.getMessageChannelMessageAssociationsByMessageExternalIdsAndMessageChannelId(
+      await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
         gmailMessageChannelId,
         workspaceId,

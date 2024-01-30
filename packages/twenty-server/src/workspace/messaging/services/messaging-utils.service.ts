@@ -38,7 +38,7 @@ export class MessagingUtilsService {
     for (const message of messages) {
       await workspaceDataSource?.transaction(async (manager) => {
         const existingMessageChannelMessageAssociationsCount =
-          await this.messageChannelMessageAssociationService.countMessageChannelMessageAssociationsByMessageExternalIdsAndMessageChannelId(
+          await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
             [message.externalId],
             gmailMessageChannelId,
             workspaceId,
@@ -88,11 +88,10 @@ export class MessagingUtilsService {
     manager: EntityManager,
     workspaceId: string,
   ): Promise<string> {
-    const existingMessage =
-      await this.messageService.getFirstMessageByHeaderMessageId(
-        workspaceId,
-        message.headerMessageId,
-      );
+    const existingMessage = await this.messageService.getFirstByHeaderMessageId(
+      workspaceId,
+      message.headerMessageId,
+    );
     const existingMessageId = existingMessage?.id;
 
     if (existingMessageId) {
@@ -137,7 +136,7 @@ export class MessagingUtilsService {
     workspaceId: string,
   ) {
     const existingMessageChannelMessageAssociationByMessageThreadExternalId =
-      await this.messageChannelMessageAssociationService.getFirstMessageChannelMessageAssociationByMessageThreadExternalId(
+      await this.messageChannelMessageAssociationService.getFirstByMessageThreadExternalId(
         messageThreadExternalId,
         workspaceId,
       );
@@ -205,7 +204,7 @@ export class MessagingUtilsService {
     workspaceId: string,
   ) {
     const messageChannelMessageAssociationsToDelete =
-      await this.messageChannelMessageAssociationService.getMessageChannelMessageAssociationsByMessageExternalIdsAndMessageChannelId(
+      await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,
@@ -217,14 +216,14 @@ export class MessagingUtilsService {
           messageChannelMessageAssociationToDelete.messageId,
       );
 
-    await this.messageChannelMessageAssociationService.deleteMessageChannelMessageAssociations(
+    await this.messageChannelMessageAssociationService.deleteByMessageExternalIdsAndMessageChannelId(
       messagesDeleted,
       gmailMessageChannelId,
       workspaceId,
     );
 
     const messageChannelMessageAssociationByMessageIds =
-      await this.messageChannelMessageAssociationService.getMessageChannelMessageAssociationByMessageIds(
+      await this.messageChannelMessageAssociationService.getByMessageIds(
         messageIdsFromMessageChannelMessageAssociationsToDelete,
         workspaceId,
       );
@@ -243,9 +242,6 @@ export class MessagingUtilsService {
           ),
       );
 
-    await this.messageService.deleteMessagesByIds(
-      workspaceId,
-      messageIdsToDelete,
-    );
+    await this.messageService.deleteByIds(workspaceId, messageIdsToDelete);
   }
 }

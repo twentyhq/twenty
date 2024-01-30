@@ -34,11 +34,10 @@ export class GmailPartialSyncService {
     lastSyncHistoryId: string,
     maxResults: number,
   ) {
-    const connectedAccount =
-      await this.connectedAccountService.getConnectedAcountByIdOrFail(
-        connectedAccountId,
-        workspaceId,
-      );
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
 
     const gmailClient = await this.gmailClientProvider.getGmailClient(
       connectedAccount.refreshToken,
@@ -64,11 +63,10 @@ export class GmailPartialSyncService {
         workspaceId,
       );
 
-    const connectedAccount =
-      await this.connectedAccountService.getConnectedAcountByIdOrFail(
-        connectedAccountId,
-        workspaceId,
-      );
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
@@ -121,7 +119,7 @@ export class GmailPartialSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstMessageChannelByConnectedAccountIdOrFail(
+      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
         workspaceId,
         connectedAccountId,
       );

@@ -10,7 +10,7 @@ export class MessageChannelService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getMessageChannelsByConnectedAccountId(
+  public async getByConnectedAccountId(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
@@ -25,11 +25,11 @@ export class MessageChannelService {
     );
   }
 
-  public async getFirstMessageChannelByConnectedAccountIdOrFail(
+  public async getFirstByConnectedAccountIdOrFail(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata>> {
-    const messageChannels = await this.getMessageChannelsByConnectedAccountId(
+    const messageChannels = await this.getByConnectedAccountId(
       workspaceId,
       connectedAccountId,
     );

@@ -65,7 +65,7 @@ export class GmailFullSyncCommand extends CommandRunner {
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     const connectedAccounts =
-      await this.connectedAccountService.getConnectedAccounts(workspaceId);
+      await this.connectedAccountService.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
       await this.messageQueueService.add<GmailFullSyncJobData>(

@@ -10,7 +10,7 @@ export class ConnectedAccountService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getConnectedAccounts(
+  public async getAll(
     workspaceId: string,
   ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[]> {
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
@@ -23,7 +23,7 @@ export class ConnectedAccountService {
     );
   }
 
-  public async getConnectedAcountByIdOrFail(
+  public async getByIdOrFail(
     connectedAccountId: string,
     workspaceId: string,
   ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {

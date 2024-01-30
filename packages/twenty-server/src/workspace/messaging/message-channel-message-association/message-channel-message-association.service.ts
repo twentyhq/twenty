@@ -10,7 +10,7 @@ export class MessageChannelMessageAssociationService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getMessageChannelMessageAssociationsByMessageExternalIdsAndMessageChannelId(
+  public async getByMessageExternalIdsAndMessageChannelId(
     messageExternalIds: string[],
     messageChannelId: string,
     workspaceId: string,
@@ -27,7 +27,7 @@ export class MessageChannelMessageAssociationService {
     );
   }
 
-  public async countMessageChannelMessageAssociationsByMessageExternalIdsAndMessageChannelId(
+  public async countByMessageExternalIdsAndMessageChannelId(
     messageExternalIds: string[],
     messageChannelId: string,
     workspaceId: string,
@@ -46,9 +46,9 @@ export class MessageChannelMessageAssociationService {
     return result[0]?.count;
   }
 
-  public async deleteMessageChannelMessageAssociations(
+  public async deleteByMessageExternalIdsAndMessageChannelId(
     messageExternalIds: string[],
-    connectedAccountId: string,
+    messageChannelId: string,
     workspaceId: string,
   ) {
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
@@ -58,11 +58,11 @@ export class MessageChannelMessageAssociationService {
 
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
-      [messageExternalIds, connectedAccountId],
+      [messageExternalIds, messageChannelId],
     );
   }
 
-  public async getMessageChannelMessageAssociationByMessageThreadExternalIds(
+  public async getByMessageThreadExternalIds(
     messageThreadExternalIds: string[],
     workspaceId: string,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
@@ -78,12 +78,12 @@ export class MessageChannelMessageAssociationService {
     );
   }
 
-  public async getFirstMessageChannelMessageAssociationByMessageThreadExternalId(
+  public async getFirstByMessageThreadExternalId(
     messageThreadExternalId: string,
     workspaceId: string,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata> | null> {
     const existingMessageChannelMessageAssociations =
-      await this.getMessageChannelMessageAssociationByMessageThreadExternalIds(
+      await this.getByMessageThreadExternalIds(
         [messageThreadExternalId],
         workspaceId,
       );
@@ -98,7 +98,7 @@ export class MessageChannelMessageAssociationService {
     return existingMessageChannelMessageAssociations[0];
   }
 
-  public async getMessageChannelMessageAssociationByMessageIds(
+  public async getByMessageIds(
     messageIds: string[],
     workspaceId: string,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
