@@ -45,8 +45,11 @@ export const EmailThreadMessage = ({
   }
 
   return (
-    <StyledThreadMessage>
-      <StyledThreadMessageHeader onClick={() => setIsOpen(!isOpen)}>
+    <StyledThreadMessage
+      onClick={() => !isOpen && setIsOpen(true)}
+      style={{ cursor: isOpen ? 'auto' : 'pointer' }}
+    >
+      <StyledThreadMessageHeader onClick={() => isOpen && setIsOpen(false)}>
         <EmailThreadMessageSender sender={from} sentAt={sentAt} />
         {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
