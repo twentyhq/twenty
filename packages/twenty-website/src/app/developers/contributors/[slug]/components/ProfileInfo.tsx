@@ -37,7 +37,7 @@ const Container = styled(CardContainer)`
 
 interface ProfileInfoProps {
   mergedPRsCount: number;
-  rank: number;
+  rank: string;
   activeDays: number;
 }
 

@@ -8,4 +8,5 @@ export const CardContainer = styled.div`
   display: flex;
   gap: 32px;
   flex-direction: column;
+  background-color: #fafafa;
 `;
