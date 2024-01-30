@@ -9,7 +9,6 @@ export const StyledEmptyContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(6)};
   justify-content: center;
   text-align: center;
-  margin: ${({ theme }) => theme.spacing(16)} 0px;
 `;
 
 export const StyledEmptyTextContainer = styled.div`
