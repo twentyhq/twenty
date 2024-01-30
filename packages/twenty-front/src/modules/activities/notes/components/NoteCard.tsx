@@ -10,7 +10,7 @@ import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/object-record/field/contexts/FieldContext';
+} from '@/object-record/record-field/contexts/FieldContext';
 import { IconComment } from '@/ui/display/icon';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`

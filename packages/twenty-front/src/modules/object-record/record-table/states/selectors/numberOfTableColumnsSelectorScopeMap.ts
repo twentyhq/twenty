@@ -1,11 +1,12 @@
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
 import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
-export const numberOfTableColumnsSelectorScopeMap = createSelectorScopeMap({
-  key: 'numberOfTableColumnsSelectorScopeMap',
-  get:
-    ({ scopeId }) =>
-    ({ get }) =>
-      get(tableColumnsStateScopeMap({ scopeId })).length,
-});
+export const numberOfTableColumnsSelectorScopeMap =
+  createSelectorReadOnlyScopeMap({
+    key: 'numberOfTableColumnsSelectorScopeMap',
+    get:
+      ({ scopeId }) =>
+      ({ get }) =>
+        get(tableColumnsStateScopeMap({ scopeId })).length,
+  });

@@ -2,13 +2,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
-import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
-import { orFilterVariables } from '@/object-record/utils/orFilterVariables';
-
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 
 export const useRecordsForSelect = ({
   searchFilterText,
@@ -53,7 +52,7 @@ export const useRecordsForSelect = ({
       return undefined;
     }
 
-    return orFilterVariables(
+    return makeOrFilterVariables(
       fieldNames.map((fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
@@ -81,7 +80,7 @@ export const useRecordsForSelect = ({
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecordsData,
   } = useFindManyRecords({
-    filter: andFilterVariables([...searchFilters, selectedIdsFilter]),
+    filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
     orderBy: orderByField,
     objectNameSingular,
     skip: !selectedIds.length,
@@ -93,7 +92,7 @@ export const useRecordsForSelect = ({
     : undefined;
   const { loading: recordsToSelectLoading, records: recordsToSelectData } =
     useFindManyRecords({
-      filter: andFilterVariables([...searchFilters, notFilter]),
+      filter: makeAndFilterVariables([...searchFilters, notFilter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: orderByField,
       objectNameSingular,

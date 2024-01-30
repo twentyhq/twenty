@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
+import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -21,14 +22,13 @@ export const RecordIndexTableContainerEffect = ({
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    setObjectMetadataConfig,
-  } = useRecordTable({ recordTableId });
+    resetTableRowSelection,
+    getSelectedRowIdsSelector,
+  } = useRecordTable({
+    recordTableId,
+  });
 
-  const {
-    objectMetadataItem,
-    basePathToShowPage,
-    labelIdentifierFieldMetadata,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -38,20 +38,6 @@ export const RecordIndexTableContainerEffect = ({
   const { setEntityCountInCurrentView } = useViewBar({
     viewBarId,
   });
-
-  useEffect(() => {
-    if (basePathToShowPage && labelIdentifierFieldMetadata) {
-      setObjectMetadataConfig?.({
-        basePathToShowPage,
-        labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
-      });
-    }
-  }, [
-    basePathToShowPage,
-    objectMetadataItem,
-    labelIdentifierFieldMetadata,
-    setObjectMetadataConfig,
-  ]);
 
   useEffect(() => {
     const availableTableColumns = columnDefinitions.filter(
@@ -67,11 +53,13 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns,
   ]);
 
-  const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries({
-      objectNamePlural: objectMetadataItem.namePlural,
-      recordTableId,
-    });
+  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+
+  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+    objectMetadataItem,
+    selectedRecordIds: selectedRowIds,
+    callback: resetTableRowSelection,
+  });
 
   useEffect(() => {
     setActionBarEntries?.();

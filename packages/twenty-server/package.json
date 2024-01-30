@@ -8,19 +8,18 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "prebuild": "rimraf dist",
-    "build": "yarn prebuild && nest build",
-    "build-twenty-emails": "yarn nx run twenty-emails:build",
+    "build": "yarn prebuild && nest build --path ./tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "set NODE_ENV=development && yarn build-twenty-emails && nest start",
-    "start:dev": "yarn build-twenty-emails && nest start --watch",
-    "start:debug": "yarn build-twenty-emails && nest start --debug --watch",
+    "start": "NODE_ENV=development && nest start",
+    "start:dev": "npx nx start --watch",
+    "start:debug": "npx nx start:dev --debug",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
-    "test": "yarn build-twenty-emails && jest",
-    "test:watch": "yarn build-twenty-emails && jest --watch",
-    "test:cov": "yarn build-twenty-emails && jest --coverage",
-    "test:debug": "yarn build-twenty-emails && node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
-    "test:e2e": "yarn build-twenty-emails && ./scripts/run-integration.sh",
+    "test": "jest",
+    "test:watch": "npx nx test --watch",
+    "test:cov": "npx nx test --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
+    "test:e2e": "./scripts/run-integration.sh",
     "typeorm": "npx ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
     "typeorm:migrate": "yarn typeorm migration:run -d ./src/database/typeorm/metadata/metadata.datasource.ts && yarn typeorm migration:run -d ./src/database/typeorm/core/core.datasource.ts",
     "database:init": "yarn database:setup && yarn database:seed:dev",
@@ -96,7 +95,6 @@
     "react": "^18.2.0",
     "rimraf": "^3.0.2",
     "sharp": "^0.32.1",
-    "twenty-emails": "workspace:*",
     "type-fest": "^4.1.0",
     "typeorm": "^0.3.17"
   },
@@ -112,5 +110,14 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
+  },
+  "nx": {
+    "targets": {
+      "test:debug": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }

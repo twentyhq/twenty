@@ -2,11 +2,12 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
   const {
     scopeId,
-    recordBoardRecordIdsByColumnIdFamilyState,
+    recordIdsByColumnIdFamilyState,
     columnsFamilySelector,
     getColumnIdsState,
   } = useRecordBoardStates(recordBoardId);
@@ -21,20 +22,20 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .getLoadable(columnsFamilySelector(columnId))
             .getValue();
 
+          const existingColumnRecordIds = snapshot
+            .getLoadable(recordIdsByColumnIdFamilyState(columnId))
+            .getValue();
+
           const columnRecordIds = records
             .filter((record) => record.stage === column?.value)
             .map((record) => record.id);
-          set(
-            recordBoardRecordIdsByColumnIdFamilyState(columnId),
-            columnRecordIds,
-          );
+
+          if (!isDeeplyEqual(existingColumnRecordIds, columnRecordIds)) {
+            set(recordIdsByColumnIdFamilyState(columnId), columnRecordIds);
+          }
         });
       },
-    [
-      columnsFamilySelector,
-      getColumnIdsState,
-      recordBoardRecordIdsByColumnIdFamilyState,
-    ],
+    [columnsFamilySelector, getColumnIdsState, recordIdsByColumnIdFamilyState],
   );
 
   return {

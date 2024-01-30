@@ -6,5 +6,9 @@ import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu
 export const RecordBoardDeprecatedContextMenu = () => {
   const { selectedCardIdsSelector } = useRecordBoardDeprecatedScopedStates();
   const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
-  return <ContextMenu selectedIds={selectedCardIds}></ContextMenu>;
+
+  if (!selectedCardIds.length) {
+    return null;
+  }
+  return <ContextMenu />;
 };

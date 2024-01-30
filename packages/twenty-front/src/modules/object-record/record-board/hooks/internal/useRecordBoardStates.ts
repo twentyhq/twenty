@@ -10,11 +10,12 @@ import { recordBoardObjectSingularNameStateScopeMap } from '@/object-record/reco
 import { recordBoardRecordIdsByColumnIdFamilyStateScopeMap } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdFamilyStateScopeMap';
 import { recordBoardSortsStateScopeMap } from '@/object-record/record-board/states/recordBoardSortsStateScopeMap';
 import { recordBoardColumnsFamilySelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardColumnsFamilySelectorScopeMap';
+import { recordBoardSelectedRecordIdsSelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsSelectorScopeMap';
 import { recordBoardVisibleFieldDefinitionsScopedSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsScopedSelector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordBoardStates = (recordBoardId?: string) => {
@@ -49,17 +50,21 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       recordBoardFieldDefinitionsStateScopeMap,
       scopeId,
     ),
-    getVisibleFieldDefinitionsState: getSelector(
+    getVisibleFieldDefinitionsState: getSelectorReadOnly(
       recordBoardVisibleFieldDefinitionsScopedSelector,
       scopeId,
     ),
 
-    recordBoardRecordIdsByColumnIdFamilyState: getFamilyState(
+    recordIdsByColumnIdFamilyState: getFamilyState(
       recordBoardRecordIdsByColumnIdFamilyStateScopeMap,
       scopeId,
     ),
     isRecordBoardCardSelectedFamilyState: getFamilyState(
       isRecordBoardCardSelectedFamilyStateScopeMap,
+      scopeId,
+    ),
+    getSelectedRecordIdsSelector: getSelectorReadOnly(
+      recordBoardSelectedRecordIdsSelectorScopeMap,
       scopeId,
     ),
 

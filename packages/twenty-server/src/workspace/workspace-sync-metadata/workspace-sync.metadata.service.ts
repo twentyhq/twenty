@@ -39,7 +39,7 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
-import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
+import { FieldMetadataComplexOption } from 'src/metadata/field-metadata/dtos/options.input';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -314,7 +314,7 @@ export class WorkspaceSyncMetadataService {
       convertedField.options
         ? {
             options: this.generateUUIDForNewSelectFieldOptions(
-              convertedField.options as FieldMetadataComplexOptions[],
+              convertedField.options as FieldMetadataComplexOption[],
             ),
           }
         : {}),
@@ -323,8 +323,8 @@ export class WorkspaceSyncMetadataService {
   }
 
   private generateUUIDForNewSelectFieldOptions(
-    options: FieldMetadataComplexOptions[],
-  ): FieldMetadataComplexOptions[] {
+    options: FieldMetadataComplexOption[],
+  ): FieldMetadataComplexOption[] {
     return options.map((option) => ({
       ...option,
       id: uuidV4(),

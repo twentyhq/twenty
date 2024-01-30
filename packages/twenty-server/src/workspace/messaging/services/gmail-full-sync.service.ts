@@ -1,8 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import {
+  GmailFullSyncJobData,
+  GmailFullSyncJob,
+} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -10,18 +16,23 @@ export class GmailFullSyncService {
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     private readonly utils: MessagingUtilsService,
+    @Inject(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async fetchConnectedAccountThreads(
     workspaceId: string,
     connectedAccountId: string,
-    maxResults = 500,
+    nextPageToken?: string,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
+    const { workspaceDataSource, dataSourceMetadata } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+
+    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
@@ -48,7 +59,8 @@ export class GmailFullSyncService {
 
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
-      maxResults,
+      maxResults: 500,
+      pageToken: nextPageToken,
     });
 
     const messagesData = messages.data.messages;
@@ -119,5 +131,20 @@ export class GmailFullSyncService {
       dataSourceMetadata,
       workspaceDataSource,
     );
+
+    if (messages.data.nextPageToken) {
+      await this.messageQueueService.add<GmailFullSyncJobData>(
+        GmailFullSyncJob.name,
+        {
+          workspaceId,
+          connectedAccountId,
+          nextPageToken: messages.data.nextPageToken,
+        },
+        {
+          id: `${workspaceId}-${connectedAccountId}`,
+          retryLimit: 2,
+        },
+      );
+    }
   }
 }
