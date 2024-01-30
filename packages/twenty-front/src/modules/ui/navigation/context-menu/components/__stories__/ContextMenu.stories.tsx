@@ -9,7 +9,7 @@ import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '../../states/contextMenuPositionState';
 import { ContextMenu } from '../ContextMenu';
 
-const FilledContextMenu = (props: { selectedIds: string[] }) => {
+const FilledContextMenu = () => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   setContextMenuPosition({
     x: 100,
@@ -17,7 +17,7 @@ const FilledContextMenu = (props: { selectedIds: string[] }) => {
   });
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   setContextMenuOpenState(true);
-  return <ContextMenu selectedIds={props.selectedIds} />;
+  return <ContextMenu />;
 };
 
 const meta: Meta<typeof ContextMenu> = {

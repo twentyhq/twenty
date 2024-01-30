@@ -97,6 +97,11 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type DeleteOneObjectInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID'];
+};
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -223,7 +228,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   deleteCurrentWorkspace: Workspace;
-  deleteOneObject: ObjectDeleteResponse;
+  deleteOneObject: Object;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -256,6 +261,11 @@ export type MutationCreateEventArgs = {
 
 export type MutationCreateOneRefreshTokenArgs = {
   input: CreateOneRefreshTokenInput;
+};
+
+
+export type MutationDeleteOneObjectArgs = {
+  input: DeleteOneObjectInput;
 };
 
 
@@ -327,25 +337,6 @@ export type ObjectConnection = {
   pageInfo: PageInfo;
   /** Fetch total count of records */
   totalCount: Scalars['Int'];
-};
-
-export type ObjectDeleteResponse = {
-  __typename?: 'ObjectDeleteResponse';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  dataSourceId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['ID']>;
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isSystem?: Maybe<Scalars['Boolean']>;
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  labelPlural?: Maybe<Scalars['String']>;
-  labelSingular?: Maybe<Scalars['String']>;
-  namePlural?: Maybe<Scalars['String']>;
-  nameSingular?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type ObjectFieldsConnection = {
