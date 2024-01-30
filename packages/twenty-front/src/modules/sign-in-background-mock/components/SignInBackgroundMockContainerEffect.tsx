@@ -83,6 +83,7 @@ export const SignInBackgroundMockContainerEffect = ({
 
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,
+    selectedRecordIds: [],
     callback: resetTableRowSelection,
   });
 

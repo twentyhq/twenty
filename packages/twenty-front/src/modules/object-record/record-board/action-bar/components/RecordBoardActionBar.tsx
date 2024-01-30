@@ -12,7 +12,11 @@ export const RecordBoardActionBar = ({
 }: RecordBoardActionBarProps) => {
   const { getSelectedRecordIdsSelector } = useRecordBoardStates(recordBoardId);
 
-  const selectedRowIds = useRecoilValue(getSelectedRecordIdsSelector());
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
 
-  return <ActionBar selectedIds={selectedRowIds} />;
+  if (!selectedRecordIds.length) {
+    return null;
+  }
+
+  return <ActionBar />;
 };

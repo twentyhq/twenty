@@ -5,7 +5,6 @@ export type ActionBarEntry = {
   label: string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
-  onClick?: (selectedIds: string[]) => void;
-  isVisible?: (selectedRecordIds: string[]) => boolean;
+  onClick?: () => void;
   subActions?: ActionBarEntry[];
 };

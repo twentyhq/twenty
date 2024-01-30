@@ -5,6 +5,5 @@ export type ContextMenuEntry = {
   label: string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
-  isVisible?: (selectedRecordIds: string[]) => boolean;
-  onClick: (selectedRecordIds: string[]) => void;
+  onClick: () => void;
 };

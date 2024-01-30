@@ -12,7 +12,11 @@ export const RecordBoardContextMenu = ({
 }: RecordBoardContextMenuProps) => {
   const { getSelectedRecordIdsSelector } = useRecordBoardStates(recordBoardId);
 
-  const selectedRowIds = useRecoilValue(getSelectedRecordIdsSelector());
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
 
-  return <ContextMenu selectedIds={selectedRowIds} />;
+  if (!selectedRecordIds.length) {
+    return null;
+  }
+
+  return <ContextMenu />;
 };

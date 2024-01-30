@@ -11,7 +11,6 @@ import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
   item: ActionBarEntry;
-  selectedIds: string[];
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`
@@ -41,7 +40,7 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
+export const ActionBarItem = ({ item }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
@@ -73,7 +72,7 @@ export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
                   LeftIcon={subAction.Icon}
                   onClick={() => {
                     closeDropdown();
-                    subAction.onClick?.(selectedIds);
+                    subAction.onClick?.();
                   }}
                 />
               ))}
@@ -83,7 +82,7 @@ export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
       ) : (
         <StyledButton
           accent={item.accent ?? 'default'}
-          onClick={() => item.onClick?.(selectedIds)}
+          onClick={() => item.onClick?.()}
         >
           {item.Icon && <item.Icon size={theme.icon.size.md} />}
           <StyledButtonLabel>{item.label}</StyledButtonLabel>

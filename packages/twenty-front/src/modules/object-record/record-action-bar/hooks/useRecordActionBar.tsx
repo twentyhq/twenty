@@ -22,11 +22,13 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
+  selectedRecordIds: string[];
   callback?: () => void;
 };
 
 export const useRecordActionBar = ({
   objectMetadataItem,
+  selectedRecordIds,
   callback,
 }: useRecordActionBarProps) => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
@@ -42,52 +44,43 @@ export const useRecordActionBar = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const handleFavoriteButtonClick = useRecoilCallback(
-    ({ snapshot }) =>
-      (selectedRecordIds: string[]) => {
-        if (selectedRecordIds.length > 1) {
-          return;
-        }
+  const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
+    if (selectedRecordIds.length > 1) {
+      return;
+    }
 
-        const selectedRecordId = selectedRecordIds[0];
-        const selectedRecord = snapshot
-          .getLoadable(recordStoreFamilyState(selectedRecordId))
-          .getValue();
+    const selectedRecordId = selectedRecordIds[0];
+    const selectedRecord = snapshot
+      .getLoadable(recordStoreFamilyState(selectedRecordId))
+      .getValue();
 
-        const foundFavorite = favorites?.find(
-          (favorite) => favorite.recordId === selectedRecordId,
-        );
+    const foundFavorite = favorites?.find(
+      (favorite) => favorite.recordId === selectedRecordId,
+    );
 
-        const isFavorite = !!selectedRecordId && !!foundFavorite;
+    const isFavorite = !!selectedRecordId && !!foundFavorite;
 
-        if (isFavorite) {
-          deleteFavorite(foundFavorite.id);
-        } else if (selectedRecord) {
-          createFavorite(selectedRecord, objectMetadataItem.nameSingular);
-        }
-        callback?.();
-      },
-  );
+    if (isFavorite) {
+      deleteFavorite(foundFavorite.id);
+    } else if (selectedRecord) {
+      createFavorite(selectedRecord, objectMetadataItem.nameSingular);
+    }
+    callback?.();
+  });
 
-  const handleDeleteClick = useCallback(
-    async (selectedRecordIds: string[]) => {
-      callback?.();
-      await deleteManyRecords(selectedRecordIds);
-    },
-    [callback, deleteManyRecords],
-  );
+  const handleDeleteClick = useCallback(async () => {
+    callback?.();
+    await deleteManyRecords(selectedRecordIds);
+  }, [callback, deleteManyRecords, selectedRecordIds]);
 
-  const handleExecuteQuickActionOnClick = useCallback(
-    async (selectedRecordIds: string[]) => {
-      callback?.();
-      await Promise.all(
-        selectedRecordIds.map(async (recordId) => {
-          await executeQuickActionOnOneRecord(recordId);
-        }),
-      );
-    },
-    [callback, executeQuickActionOnOneRecord],
-  );
+  const handleExecuteQuickActionOnClick = useCallback(async () => {
+    callback?.();
+    await Promise.all(
+      selectedRecordIds.map(async (recordId) => {
+        await executeQuickActionOnOneRecord(recordId);
+      }),
+    );
+  }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
@@ -95,8 +88,7 @@ export const useRecordActionBar = ({
         label: 'Delete',
         Icon: IconTrash,
         accent: 'danger',
-        onClick: (selectedRecordIds: string[]) =>
-          handleDeleteClick(selectedRecordIds),
+        onClick: () => handleDeleteClick(),
       },
     ],
     [handleDeleteClick],
@@ -106,53 +98,40 @@ export const useRecordActionBar = ({
     'IS_QUICK_ACTIONS_ENABLED',
   );
 
+  const hasOnlyOneRecordSelected = selectedRecordIds.length === 1;
+
+  const isFavorite =
+    isNonEmptyString(selectedRecordIds[0]) &&
+    !!favorites?.find((favorite) => favorite.recordId === selectedRecordIds[0]);
+
   return {
     setContextMenuEntries: useCallback(() => {
       setContextMenuEntries([
         ...baseActions,
-        {
-          label: 'Remove from favorites',
-          Icon: IconHeartOff,
-          isVisible: (selectedRecordIds: string[]) => {
-            if (selectedRecordIds.length > 1) {
-              return false;
-            }
-
-            const isFavorite =
-              selectedRecordIds.length === 1 &&
-              isNonEmptyString(selectedRecordIds[0]) &&
-              !!favorites?.find(
-                (favorite) => favorite.recordId === selectedRecordIds[0],
-              );
-            return isFavorite;
-          },
-          onClick: (selectedRecordIds: string[]) =>
-            handleFavoriteButtonClick(selectedRecordIds),
-        },
-        {
-          label: 'Add to favorites',
-          Icon: IconHeart,
-          isVisible: (selectedRecordIds: string[]) => {
-            if (selectedRecordIds.length > 1) {
-              return false;
-            }
-
-            const isFavorite =
-              selectedRecordIds.length === 1 &&
-              isNonEmptyString(selectedRecordIds[0]) &&
-              !!favorites?.find(
-                (favorite) => favorite.recordId === selectedRecordIds[0],
-              );
-            return !isFavorite;
-          },
-          onClick: (selectedRecordIds: string[]) =>
-            handleFavoriteButtonClick(selectedRecordIds),
-        },
+        ...(isFavorite && hasOnlyOneRecordSelected
+          ? [
+              {
+                label: 'Remove from favorites',
+                Icon: IconHeartOff,
+                onClick: handleFavoriteButtonClick,
+              },
+            ]
+          : []),
+        ...(!isFavorite && hasOnlyOneRecordSelected
+          ? [
+              {
+                label: 'Add to favorites',
+                Icon: IconHeart,
+                onClick: handleFavoriteButtonClick,
+              },
+            ]
+          : []),
       ]);
     }, [
       baseActions,
-      favorites,
       handleFavoriteButtonClick,
+      hasOnlyOneRecordSelected,
+      isFavorite,
       setContextMenuEntries,
     ]),
 
@@ -167,8 +146,7 @@ export const useRecordActionBar = ({
                   {
                     label: 'Enrich',
                     Icon: IconPuzzle,
-                    onClick: (selectedRecordIds: string[]) =>
-                      handleExecuteQuickActionOnClick(selectedRecordIds),
+                    onClick: handleExecuteQuickActionOnClick,
                   },
                   {
                     label: 'Send to mailjet',

@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
@@ -30,7 +31,8 @@ export const RecordIndexBoardContainerEffect = ({
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
 
-  const { setColumns, setObjectSingularName } = useRecordBoard(recordBoardId);
+  const { setColumns, setObjectSingularName, getSelectedRecordIdsSelector } =
+    useRecordBoard(recordBoardId);
   const { resetRecordSelection } = useResetBoardRecordSelection(recordBoardId);
 
   useEffect(() => {
@@ -51,8 +53,11 @@ export const RecordIndexBoardContainerEffect = ({
     setColumns,
   ]);
 
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,
+    selectedRecordIds,
     callback: resetRecordSelection,
   });
 

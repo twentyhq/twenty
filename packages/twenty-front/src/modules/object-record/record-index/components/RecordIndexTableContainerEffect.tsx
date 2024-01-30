@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -22,6 +23,7 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns,
     setOnEntityCountChange,
     resetTableRowSelection,
+    getSelectedRowIdsSelector,
   } = useRecordTable({
     recordTableId,
   });
@@ -51,8 +53,11 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns,
   ]);
 
+  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,
+    selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
   });
 

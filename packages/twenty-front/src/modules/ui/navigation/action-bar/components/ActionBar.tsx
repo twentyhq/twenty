@@ -9,10 +9,6 @@ import { actionBarOpenState } from '../states/actionBarIsOpenState';
 
 import { ActionBarItem } from './ActionBarItem';
 
-type ActionBarProps = {
-  selectedIds: string[];
-};
-
 const StyledContainerActionBar = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
@@ -33,15 +29,16 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export const ActionBar = ({ selectedIds }: ActionBarProps) => {
+export const ActionBar = () => {
   const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  if (selectedIds.length === 0 || !actionBarOpen || contextMenuIsOpen) {
+  if (!actionBarOpen || contextMenuIsOpen) {
     return null;
   }
+
   return (
     <StyledContainerActionBar
       data-select-disable
@@ -49,7 +46,7 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
       ref={wrapperRef}
     >
       {actionBarEntries.map((item, index) => (
-        <ActionBarItem key={index} item={item} selectedIds={selectedIds} />
+        <ActionBarItem key={index} item={item} />
       ))}
     </StyledContainerActionBar>
   );

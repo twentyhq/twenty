@@ -3,16 +3,12 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type ContextMenuItemProps = {
   item: ContextMenuEntry;
-  selectedIds: string[];
 };
 
-export const ContextMenuItem = ({
-  item,
-  selectedIds,
-}: ContextMenuItemProps) => (
+export const ContextMenuItem = ({ item }: ContextMenuItemProps) => (
   <MenuItem
     LeftIcon={item.Icon}
-    onClick={() => item.onClick(selectedIds)}
+    onClick={item.onClick}
     accent={item.accent}
     text={item.label}
   />

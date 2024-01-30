@@ -14,10 +14,6 @@ import { PositionType } from '../types/PositionType';
 
 import { ContextMenuItem } from './ContextMenuItem';
 
-type ContextMenuProps = {
-  selectedIds: string[];
-};
-
 type StyledContainerProps = {
   position: PositionType;
 };
@@ -41,7 +37,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 2;
 `;
 
-export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
+export const ContextMenu = () => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
@@ -57,7 +53,7 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
     },
   });
 
-  if (selectedIds.length === 0 || !contextMenuIsOpen) {
+  if (!contextMenuIsOpen) {
     return null;
   }
 
@@ -76,17 +72,7 @@ export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
       <DropdownMenu data-select-disable width={width}>
         <DropdownMenuItemsContainer>
           {contextMenuEntries.map((item, index) => {
-            const isItemVisible =
-              item.isVisible === undefined ? true : item.isVisible(selectedIds);
-            return (
-              isItemVisible && (
-                <ContextMenuItem
-                  key={index}
-                  item={item}
-                  selectedIds={selectedIds}
-                />
-              )
-            );
+            return <ContextMenuItem key={index} item={item} />;
           })}
         </DropdownMenuItemsContainer>
       </DropdownMenu>
