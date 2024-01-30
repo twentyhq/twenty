@@ -85,6 +85,9 @@ export const RightDrawer = () => {
 
   return (
     <StyledContainer
+      initial={{
+        width: 0,
+      }}
       animate={{
         width: rightDrawerWidth,
       }}
