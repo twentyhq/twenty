@@ -7,6 +7,7 @@ import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useR
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useResetBoardRecordSelection } from '@/object-record/record-board/hooks/useResetBoardRecordSelection';
 import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
+import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
 
 type RecordIndexBoardContainerEffectProps = {
@@ -18,12 +19,13 @@ type RecordIndexBoardContainerEffectProps = {
 export const RecordIndexBoardContainerEffect = ({
   objectNameSingular,
   recordBoardId,
+  viewBarId,
 }: RecordIndexBoardContainerEffectProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  useLoadRecordIndexBoard(objectNameSingular, recordBoardId);
+  useLoadRecordIndexBoard({ objectNameSingular, recordBoardId, viewBarId });
 
   const navigate = useNavigate();
 
@@ -31,8 +33,12 @@ export const RecordIndexBoardContainerEffect = ({
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
 
-  const { setColumns, setObjectSingularName, getSelectedRecordIdsSelector } =
-    useRecordBoard(recordBoardId);
+  const {
+    setColumns,
+    setObjectSingularName,
+    getSelectedRecordIdsSelector,
+    setFieldDefinitions,
+  } = useRecordBoard(recordBoardId);
   const { resetRecordSelection } = useResetBoardRecordSelection(recordBoardId);
 
   useEffect(() => {
@@ -52,6 +58,14 @@ export const RecordIndexBoardContainerEffect = ({
     objectNameSingular,
     setColumns,
   ]);
+
+  const recordIndexFieldDefinitions = useRecoilValue(
+    recordIndexFieldDefinitionsState,
+  );
+
+  useEffect(() => {
+    setFieldDefinitions(recordIndexFieldDefinitions);
+  }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
 
   const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
 

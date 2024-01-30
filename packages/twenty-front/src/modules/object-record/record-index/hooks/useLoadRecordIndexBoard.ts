@@ -10,11 +10,19 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
-export const useLoadRecordIndexBoard = (
-  objectNameSingular: string,
-  recordBoardId: string,
-) => {
+type UseLoadRecordIndexBoardProps = {
+  objectNameSingular: string;
+  viewBarId: string;
+  recordBoardId: string;
+};
+
+export const useLoadRecordIndexBoard = ({
+  objectNameSingular,
+  viewBarId,
+  recordBoardId,
+}: UseLoadRecordIndexBoardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -47,6 +55,10 @@ export const useLoadRecordIndexBoard = (
       orderBy,
     });
 
+  const { setEntityCountInCurrentView } = useViewBar({
+    viewBarId,
+  });
+
   useEffect(() => {
     setRecordIdsInBoard(records);
   }, [records, setRecordIdsInBoard]);
@@ -54,6 +66,10 @@ export const useLoadRecordIndexBoard = (
   useEffect(() => {
     setRecordsInStore(records);
   }, [records, setRecordsInStore]);
+
+  useEffect(() => {
+    setEntityCountInCurrentView(records.length);
+  }, [records.length, setEntityCountInCurrentView]);
 
   return {
     records,
