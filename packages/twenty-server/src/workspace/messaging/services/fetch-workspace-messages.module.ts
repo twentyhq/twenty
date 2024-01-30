@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-assocation.module';
 import { MessageChannelModule } from 'src/workspace/messaging/message-channel/message-channel.module';
@@ -17,8 +15,6 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 
 @Module({
   imports: [
-    TypeORMModule,
-    DataSourceModule,
     EnvironmentModule,
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
