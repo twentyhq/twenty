@@ -6,12 +6,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 0,
     fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
-    label: 'Domain Name',
+    label: 'وبگاه',
     size: 100,
     type: 'TEXT',
     metadata: {
       fieldName: 'domainName',
-      placeHolder: 'Domain Name',
+      placeHolder: 'وبگاه',
       relationObjectMetadataNameSingular: '',
       relationObjectMetadataNamePlural: '',
       objectMetadataNameSingular: 'company',
@@ -22,12 +22,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 1,
     fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
-    label: 'Employees',
+    label: 'کارمندان',
     size: 100,
     type: 'NUMBER',
     metadata: {
       fieldName: 'employees',
-      placeHolder: 'Employees',
+      placeHolder: 'کارمندان',
       relationObjectMetadataNameSingular: '',
       relationObjectMetadataNamePlural: '',
       objectMetadataNameSingular: 'company',
@@ -38,12 +38,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 2,
     fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
-    label: 'Name',
+    label: 'نام',
     size: 100,
     type: 'TEXT',
     metadata: {
       fieldName: 'name',
-      placeHolder: 'Name',
+      placeHolder: 'نام',
       relationObjectMetadataNameSingular: '',
       relationObjectMetadataNamePlural: '',
       objectMetadataNameSingular: 'company',
@@ -54,12 +54,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 3,
     fieldMetadataId: '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
-    label: 'Favorites',
+    label: 'موارد دلخواه',
     size: 100,
     type: 'RELATION',
     metadata: {
       fieldName: 'favorites',
-      placeHolder: 'Favorites',
+      placeHolder: 'موارد دلخواه',
       relationType: 'FROM_MANY_OBJECTS',
       relationObjectMetadataNameSingular: '',
       relationObjectMetadataNamePlural: '',
@@ -71,12 +71,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 4,
     fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
-    label: 'Address',
+    label: 'آدرس',
     size: 100,
     type: 'TEXT',
     metadata: {
       fieldName: 'address',
-      placeHolder: 'Address',
+      placeHolder: 'آدرس',
       relationObjectMetadataNameSingular: '',
       relationObjectMetadataNamePlural: '',
       objectMetadataNameSingular: 'company',
@@ -87,12 +87,12 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 5,
     fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',
-    label: 'Account Owner',
+    label: 'صاحب حساب',
     size: 100,
     type: 'RELATION',
     metadata: {
       fieldName: 'accountOwner',
-      placeHolder: 'Account Owner',
+      placeHolder: 'صاحب حساب',
       relationType: 'TO_ONE_OBJECT',
       relationObjectMetadataNameSingular: 'workspaceMember',
       relationObjectMetadataNamePlural: 'workspaceMembers',
@@ -104,7 +104,7 @@ export const signInBackgroundMockColumnDefinitions = [
   {
     position: 6,
     fieldMetadataId: '20202020-68b4-4c8e-af19-738eba2a42a5',
-    label: 'People',
+    label: 'افراد',
     size: 100,
     type: 'RELATION',
     metadata: {
