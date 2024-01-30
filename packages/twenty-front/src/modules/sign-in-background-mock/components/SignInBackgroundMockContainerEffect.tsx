@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
+import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import {
@@ -30,6 +30,7 @@ export const SignInBackgroundMockContainerEffect = ({
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,
+    resetTableRowSelection,
   } = useRecordTable({
     recordTableId,
   });
@@ -80,11 +81,11 @@ export const SignInBackgroundMockContainerEffect = ({
     setTableColumns,
   ]);
 
-  const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries({
-      objectNamePlural,
-      recordTableId,
-    });
+  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+    objectMetadataItem,
+    selectedRecordIds: [],
+    callback: resetTableRowSelection,
+  });
 
   useEffect(() => {
     setActionBarEntries?.();

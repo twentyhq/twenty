@@ -12,5 +12,9 @@ export const RecordTableActionBar = ({
 
   const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
 
-  return <ActionBar selectedIds={selectedRowIds} />;
+  if (!selectedRowIds.length) {
+    return null;
+  }
+
+  return <ActionBar />;
 };
