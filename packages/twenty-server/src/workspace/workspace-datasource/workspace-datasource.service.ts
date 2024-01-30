@@ -22,6 +22,15 @@ export class WorkspaceDataSourceService {
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource> {
+    const { dataSource } =
+      await this.connectedToWorkspaceDataSourceAndReturnMetadata(workspaceId);
+
+    return dataSource;
+  }
+
+  public async connectedToWorkspaceDataSourceAndReturnMetadata(
+    workspaceId: string,
+  ) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -36,7 +45,7 @@ export class WorkspaceDataSourceService {
       );
     }
 
-    return dataSource;
+    return { dataSource, dataSourceMetadata };
   }
 
   /**
