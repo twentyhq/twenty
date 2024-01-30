@@ -21,7 +21,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         cachedConnection,
-        { INVALIDATE, readField, storeFieldName },
+        { DELETE, readField, storeFieldName },
       ) => {
         if (
           !isCachedObjectConnection(
@@ -49,12 +49,14 @@ export const triggerDeleteRecordsOptimisticEffect = ({
             return nodeId && !recordIds.includes(nodeId);
           }) || [];
 
+        if (nextCachedEdges.length === cachedEdges?.length)
+          return cachedConnection;
+
         if (
           isDefined(variables?.first) &&
-          cachedEdges?.length === variables.first &&
-          nextCachedEdges.length < variables.first
+          cachedEdges?.length === variables.first
         ) {
-          return INVALIDATE;
+          return DELETE;
         }
 
         return { ...cachedConnection, edges: nextCachedEdges };
