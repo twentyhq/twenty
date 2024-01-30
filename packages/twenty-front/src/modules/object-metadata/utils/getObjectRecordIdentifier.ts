@@ -52,10 +52,13 @@ export const getObjectRecordIdentifier = ({
       ? 'squared'
       : 'rounded';
 
+  // TODO: This is a temporary solution before we seed imageIdentifierFieldMetadataId in the database
   const avatarUrl =
     (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
       ? getLogoUrlFromDomainName(record['domainName'] ?? '')
-      : imageIdentifierFieldValue) ?? '';
+      : objectMetadataItem.nameSingular === CoreObjectNameSingular.Person
+        ? record['avatarUrl'] ?? ''
+        : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,
