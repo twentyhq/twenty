@@ -108,7 +108,7 @@ export class AuthService {
     }
 
     const passwordHash = password ? await hashPassword(password) : undefined;
-    let workspace: Workspace | null;
+    let workspace: Workspace | null = null;
 
     if (workspaceInviteHash) {
       workspace = await this.workspaceRepository.findOneBy({
@@ -126,15 +126,6 @@ export class AuthService {
         'Sign up is disabled',
         ForbiddenException,
       );
-
-      const workspaceToCreate = this.workspaceRepository.create({
-        displayName: '',
-        domainName: '',
-        inviteHash: v4(),
-        subscriptionStatus: 'incomplete',
-      });
-
-      workspace = await this.workspaceRepository.save(workspaceToCreate);
     }
 
     let imagePath: string | undefined = undefined;
@@ -164,13 +155,22 @@ export class AuthService {
       defaultAvatarUrl: imagePath,
       canImpersonate: false,
       passwordHash,
-      defaultWorkspace: workspace,
+      defaultWorkspace: workspace || undefined,
     });
 
     return await this.userRepository.save(userToCreate);
   }
 
   async createWorkspaceSchema(user: User) {
+    const workspaceToCreate = this.workspaceRepository.create({
+      displayName: '',
+      domainName: '',
+      inviteHash: v4(),
+      subscriptionStatus: 'active',
+    });
+    const workspace = await this.workspaceRepository.save(workspaceToCreate);
+
+    await this.userRepository.update(user.id, { defaultWorkspace: workspace });
     await this.workspaceManagerService.init(user.defaultWorkspace.id);
     await this.userService.createWorkspaceMember(user);
   }
