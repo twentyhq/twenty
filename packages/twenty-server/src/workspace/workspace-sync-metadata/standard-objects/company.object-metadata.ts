@@ -16,41 +16,41 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 @ObjectMetadata({
   namePlural: 'companies',
-  labelSingular: 'Company',
-  labelPlural: 'Companies',
-  description: 'A company',
+  labelSingular: 'شرکت',
+  labelPlural: 'شرکت ها',
+  description: 'یک شرکت',
   icon: 'IconBuildingSkyscraper',
 })
 export class CompanyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The company name',
+    label: 'نام',
+    description: 'نام شرکت',
     icon: 'IconBuildingSkyscraper',
   })
   name: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Domain Name',
+    label: 'وبگاه',
     description:
-      'The company website URL. We use this url to fetch the company icon',
+      'آدرس وب سایت شرکت. ما از این url برای واکشی نماد شرکت استفاده می کنیم',
     icon: 'IconLink',
   })
   domainName?: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Address',
-    description: 'The company address',
+    label: 'نشانی',
+    description: 'نشانی شرکت',
     icon: 'IconMap',
   })
   address: string;
 
   @FieldMetadata({
     type: FieldMetadataType.NUMBER,
-    label: 'Employees',
-    description: 'Number of employees in the company',
+    label: 'کارمندان',
+    description: 'تعداد کارکنان شرکت',
     icon: 'IconUsers',
   })
   @IsNullable()
@@ -58,8 +58,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.LINK,
-    label: 'Linkedin',
-    description: 'The company Linkedin account',
+    label: 'لینکدین',
+    description: 'حساب لینکدین شرکت',
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
@@ -68,7 +68,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.LINK,
     label: 'X',
-    description: 'The company Twitter/X account',
+    description: 'حساب تویتتر شرکت',
     icon: 'IconBrandX',
   })
   @IsNullable()
@@ -76,9 +76,9 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.CURRENCY,
-    label: 'ARR',
+    label: 'درآمد سالانه',
     description:
-      'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
+      'درآمد دوره ای سالانه: درآمد واقعی یا تخمینی سالانه شرکت',
     icon: 'IconMoneybag',
   })
   @IsNullable()
@@ -86,9 +86,9 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
-    label: 'ICP',
+    label: 'نمایه مشتری ایده آل',
     description:
-      'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
+      'نمایه مشتری ایده آل: نشان می دهد که آیا شرکت مناسب ترین و با ارزش ترین مشتری برای شما است یا خیر',
     icon: 'IconTarget',
     defaultValue: { value: false },
   })
@@ -97,8 +97,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   // Relations
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'People',
-    description: 'People linked to the company.',
+    label: 'افراد',
+    description: 'افراد مرتبط با شرکت.',
     icon: 'IconUsers',
   })
   @RelationMetadata({
@@ -110,9 +110,9 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Account Owner',
+    label: 'صاحب حساب',
     description:
-      'Your team member responsible for managing the company account',
+      'عضو تیم شما مسئول مدیریت حساب شرکت است',
     icon: 'IconUserCircle',
     joinColumn: 'accountOwnerId',
   })
@@ -121,8 +121,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Activities',
-    description: 'Activities tied to the company',
+    label: 'فعالیت ها',
+    description: 'فعالیت های مرتبط با شرکت',
     icon: 'IconCheckbox',
   })
   @RelationMetadata({
@@ -134,8 +134,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Opportunities',
-    description: 'Opportunities linked to the company.',
+    label: 'فرصت ها',
+    description: 'فرصت های مرتبط با شرکت',
     icon: 'IconTargetArrow',
   })
   @RelationMetadata({
@@ -147,8 +147,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Favorites',
-    description: 'Favorites linked to the company',
+    label: 'موارد دلخواه',
+    description: 'موارد دلخواه مرتبط با شرکت',
     icon: 'IconHeart',
   })
   @RelationMetadata({
@@ -160,8 +160,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Attachments',
-    description: 'Attachments linked to the company.',
+    label: 'پیوست ها',
+    description: 'پیوست های مرتبط با شرکت',
     icon: 'IconFileImport',
   })
   @RelationMetadata({

@@ -16,24 +16,24 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 export class ApiKeyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'ApiKey name',
+    label: 'نام',
+    description: 'ApiKey نام',
     icon: 'IconLink',
   })
   name: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Expiration date',
-    description: 'ApiKey expiration date',
+    label: 'تاریخ انقضا',
+    description: 'ApiKey تاریخ انقضا',
     icon: 'IconCalendar',
   })
   expiresAt: Date;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Revocation date',
-    description: 'ApiKey revocation date',
+    label: 'تاریخ ابطال',
+    description: 'ApiKey تاریخ ابطال',
     icon: 'IconCalendar',
   })
   @IsNullable()

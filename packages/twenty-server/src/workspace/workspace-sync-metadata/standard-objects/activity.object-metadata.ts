@@ -13,33 +13,33 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 @ObjectMetadata({
   namePlural: 'activities',
-  labelSingular: 'Activity',
-  labelPlural: 'Activities',
-  description: 'An activity',
+  labelSingular: 'فعالیت',
+  labelPlural: 'فعالیت ها',
+  description: 'یک فعالیت',
   icon: 'IconCheckbox',
 })
 @IsSystem()
 export class ActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Title',
-    description: 'Activity title',
+    label: 'عنوان',
+    description: 'عنوان فعالیت',
     icon: 'IconNotes',
   })
   title: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Activity body',
+    label: 'متن',
+    description: 'متن فعالیت',
     icon: 'IconList',
   })
   body: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'Activity type',
+    label: 'نوع',
+    description: 'نوع فعالیت',
     icon: 'IconCheckbox',
     defaultValue: { value: 'Note' },
   })
@@ -47,8 +47,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Reminder Date',
-    description: 'Activity reminder date',
+    label: 'تاریخ یادآوری',
+    description: 'تاریخ یادآوری فعالیت',
     icon: 'IconCalendarEvent',
   })
   @IsNullable()
@@ -56,8 +56,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Due Date',
-    description: 'Activity due date',
+    label: 'تاریخ سررسید',
+    description: 'تاریخ سررسید فعالیت',
     icon: 'IconCalendarEvent',
   })
   @IsNullable()
@@ -65,8 +65,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Completion Date',
-    description: 'Activity completion date',
+    label: 'تاریخ تکمیل',
+    description: 'تاریخ تکمیل فعالیت',
     icon: 'IconCheck',
   })
   @IsNullable()
@@ -74,8 +74,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Targets',
-    description: 'Activity targets',
+    label: 'اهداف',
+    description: 'اهداف فعالیت',
     icon: 'IconCheckbox',
   })
   @RelationMetadata({
@@ -87,8 +87,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Attachments',
-    description: 'Activity attachments',
+    label: 'پیوست ها',
+    description: 'پیوست های فعالیت',
     icon: 'IconFileImport',
   })
   @RelationMetadata({
@@ -100,8 +100,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Comments',
-    description: 'Activity comments',
+    label: 'نظرات',
+    description: 'نظرات فعالیت',
     icon: 'IconComment',
   })
   @RelationMetadata({
@@ -113,8 +113,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Author',
-    description: 'Activity author',
+    label: 'نویسنده',
+    description: 'نویسنده فعالیت',
     icon: 'IconUserCircle',
     joinColumn: 'authorId',
   })
@@ -122,7 +122,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Assignee',
+    label: 'منتسب',
     description: 'Acitivity assignee',
     icon: 'IconUserCircle',
     joinColumn: 'assigneeId',

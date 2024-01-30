@@ -14,24 +14,24 @@ import { PipelineStepObjectMetadata } from 'src/workspace/workspace-sync-metadat
 
 @ObjectMetadata({
   namePlural: 'opportunities',
-  labelSingular: 'Opportunity',
-  labelPlural: 'Opportunities',
-  description: 'An opportunity',
+  labelSingular: 'فرصت',
+  labelPlural: 'فرصت ها',
+  description: 'یک فرصت',
   icon: 'IconTargetArrow',
 })
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'The opportunity name',
+    label: 'نام فرصت',
+    description: 'نام فرصت',
     icon: 'IconTargetArrow',
   })
   name: string;
 
   @FieldMetadata({
     type: FieldMetadataType.CURRENCY,
-    label: 'Amount',
-    description: 'Opportunity amount',
+    label: 'مبلغ',
+    description: 'مبلغ فرصت',
     icon: 'IconCurrencyDollar',
   })
   @IsNullable()
@@ -39,8 +39,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Close date',
-    description: 'Opportunity close date',
+    label: 'تاریخ بسته شدن',
+    description: 'تاریخ بسته شدن فرصت',
     icon: 'IconCalendarEvent',
   })
   @IsNullable()
@@ -48,8 +48,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Probability',
-    description: 'Opportunity probability',
+    label: 'احتمال',
+    description: 'احتمال فرصت',
     icon: 'IconProgressCheck',
     defaultValue: { value: '0' },
   })
@@ -57,20 +57,20 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.SELECT,
-    label: 'Stage',
-    description: 'Opportunity stage',
+    label: 'مرحله',
+    description: 'مرحله فرصت',
     icon: 'IconProgressCheck',
     options: [
-      { value: 'new', label: 'New', position: 0, color: 'red' },
-      { value: 'screening', label: 'Screening', position: 1, color: 'purple' },
-      { value: 'meeting', label: 'Meeting', position: 2, color: 'sky' },
+      { value: 'new', label: 'جدید', position: 0, color: 'red' },
+      { value: 'screening', label: 'غربالگری', position: 1, color: 'purple' },
+      { value: 'meeting', label: 'جلسه', position: 2, color: 'sky' },
       {
         value: 'proposal',
-        label: 'Proposal',
+        label: 'پیشنهاد',
         position: 3,
         color: 'turquoise',
       },
-      { value: 'customer', label: 'Customer', position: 4, color: 'yellow' },
+      { value: 'customer', label: 'مشتری', position: 4, color: 'yellow' },
     ],
     defaultValue: { value: 'new' },
   })
@@ -79,8 +79,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   // Relations
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Pipeline Step',
-    description: 'Opportunity pipeline step',
+    label: 'مرحله خط لوله',
+    description: 'مرحله خط لوله فرصت',
     icon: 'IconKanban',
     joinColumn: 'pipelineStepId',
   })
@@ -89,8 +89,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Point of Contact',
-    description: 'Opportunity point of contact',
+    label: 'نقطه ارتباط فرصت',
+    description: 'نقطه ارتباط فرصت',
     icon: 'IconUser',
     joinColumn: 'pointOfContactId',
   })
@@ -99,8 +99,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Company',
-    description: 'Opportunity company',
+    label: 'شرکت',
+    description: 'فرصت شرکت',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
@@ -109,8 +109,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Favorites',
-    description: 'Favorites linked to the opportunity',
+    label: 'موارد دلخواه',
+    description: 'موارد دلخواه مرتبط با فرصت',
     icon: 'IconHeart',
   })
   @RelationMetadata({
@@ -122,8 +122,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Activities',
-    description: 'Activities tied to the opportunity',
+    label: 'فعالیت ها',
+    description: 'فعالیت های مرتبط با فرصت',
     icon: 'IconCheckbox',
   })
   @RelationMetadata({

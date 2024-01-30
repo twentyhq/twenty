@@ -13,7 +13,7 @@ export abstract class BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation date',
+    label: 'تاریخ ایجاد',
     icon: 'IconCalendar',
     defaultValue: { type: 'now' },
   })
@@ -21,7 +21,7 @@ export abstract class BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Update date',
+    label: 'تاریخ به روز رسانی',
     icon: 'IconCalendar',
     defaultValue: { type: 'now' },
   })

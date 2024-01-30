@@ -12,9 +12,9 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 @ObjectMetadata({
   namePlural: 'connectedAccounts',
-  labelSingular: 'Connected Account',
-  labelPlural: 'Connected Accounts',
-  description: 'A connected account',
+  labelSingular: 'حساب متصل',
+  labelPlural: 'حساب های متصل',
+  description: 'حساب متصل',
   icon: 'IconAt',
 })
 @Gate({

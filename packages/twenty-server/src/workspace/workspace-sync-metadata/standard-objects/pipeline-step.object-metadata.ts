@@ -10,8 +10,8 @@ import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata
 
 @ObjectMetadata({
   namePlural: 'pipelineSteps',
-  labelSingular: 'Pipeline Step',
-  labelPlural: 'Pipeline Steps',
+  labelSingular: 'مرحله خط لوله',
+  labelPlural: 'مراحل خط لوله',
   description: 'A pipeline step',
   icon: 'IconLayoutKanban',
 })
@@ -19,24 +19,24 @@ import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata
 export class PipelineStepObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Pipeline Step name',
+    label: 'نام',
+    description: 'نام مرحله',
     icon: 'IconCurrencyDollar',
   })
   name: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Color',
-    description: 'Pipeline Step color',
+    label: 'رنگ',
+    description: 'رنگ مرحله',
     icon: 'IconColorSwatch',
   })
   color: string;
 
   @FieldMetadata({
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'Pipeline Step position',
+    label: 'موقعیت',
+    description: 'موقعیت مرحله',
     icon: 'IconHierarchy2',
     defaultValue: { value: 0 },
   })
@@ -46,8 +46,8 @@ export class PipelineStepObjectMetadata extends BaseObjectMetadata {
   // Relations
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Opportunities',
-    description: 'Opportunities linked to the step.',
+    label: 'فرصت ها',
+    description: 'فرصت های مرتبط با مرحله.',
     icon: 'IconTargetArrow',
   })
   @RelationMetadata({
