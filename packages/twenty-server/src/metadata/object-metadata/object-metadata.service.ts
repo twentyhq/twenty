@@ -1,5 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import console from 'console';
 
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -10,6 +16,7 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import {
@@ -22,7 +29,12 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import {
+  computeCustomName,
+  computeObjectTargetTable,
+} from 'src/workspace/utils/compute-object-target-table.util';
+import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
+import { RelationToDelete } from 'src/metadata/relation-metadata/types/relation-to-delete';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -61,6 +73,123 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     console.log(`metadata query time: ${end - start} ms`);
 
     return result;
+  }
+
+  public async deleteOneObject(
+    input: DeleteOneObjectInput,
+    workspaceId: string,
+  ): Promise<ObjectMetadataEntity> {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      relations: [
+        'fromRelations.fromFieldMetadata',
+        'fromRelations.toFieldMetadata',
+        'toRelations.fromFieldMetadata',
+        'toRelations.toFieldMetadata',
+        'fromRelations.fromObjectMetadata',
+        'fromRelations.toObjectMetadata',
+        'toRelations.fromObjectMetadata',
+        'toRelations.toObjectMetadata',
+      ],
+      where: {
+        id: input.id,
+        workspaceId,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new NotFoundException('Object does not exist');
+    }
+
+    const relationsToDelete: RelationToDelete[] = [];
+
+    // TODO: Most of this logic should be moved to relation-metadata.service.ts
+    for (const relation of [
+      ...objectMetadata.fromRelations,
+      ...objectMetadata.toRelations,
+    ]) {
+      relationsToDelete.push({
+        id: relation.id,
+        fromFieldMetadataId: relation.fromFieldMetadata.id,
+        toFieldMetadataId: relation.toFieldMetadata.id,
+        fromFieldMetadataName: relation.fromFieldMetadata.name,
+        toFieldMetadataName: relation.toFieldMetadata.name,
+        fromObjectMetadataId: relation.fromObjectMetadata.id,
+        toObjectMetadataId: relation.toObjectMetadata.id,
+        fromObjectName: relation.fromObjectMetadata.nameSingular,
+        toObjectName: relation.toObjectMetadata.nameSingular,
+        toFieldMetadataIsCustom: relation.toFieldMetadata.isCustom,
+        toObjectMetadataIsCustom: relation.toObjectMetadata.isCustom,
+        direction:
+          relation.fromObjectMetadata.nameSingular ===
+          objectMetadata.nameSingular
+            ? 'from'
+            : 'to',
+      });
+    }
+
+    await this.relationMetadataRepository.delete(
+      relationsToDelete.map((relation) => relation.id),
+    );
+
+    for (const relationToDelete of relationsToDelete) {
+      const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
+        where: {
+          name: `${relationToDelete.toFieldMetadataName}Id`,
+          objectMetadataId: relationToDelete.toObjectMetadataId,
+          workspaceId,
+        },
+      });
+
+      const foreignKeyFieldsToDeleteIds = foreignKeyFieldsToDelete.map(
+        (field) => field.id,
+      );
+
+      await this.fieldMetadataRepository.delete([
+        ...foreignKeyFieldsToDeleteIds,
+        relationToDelete.fromFieldMetadataId,
+        relationToDelete.toFieldMetadataId,
+      ]);
+
+      if (relationToDelete.direction === 'from') {
+        await this.workspaceMigrationService.createCustomMigration(
+          workspaceId,
+          [
+            {
+              name: computeCustomName(
+                relationToDelete.toObjectName,
+                relationToDelete.toObjectMetadataIsCustom,
+              ),
+              action: 'alter',
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: computeCustomName(
+                    `${relationToDelete.toFieldMetadataName}Id`,
+                    relationToDelete.toFieldMetadataIsCustom,
+                  ),
+                } satisfies WorkspaceMigrationColumnDrop,
+              ],
+            },
+          ],
+        );
+      }
+    }
+
+    await this.objectMetadataRepository.delete(objectMetadata.id);
+
+    // DROP TABLE
+    await this.workspaceMigrationService.createCustomMigration(workspaceId, [
+      {
+        name: computeObjectTargetTable(objectMetadata),
+        action: 'drop',
+      },
+    ]);
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
+
+    return objectMetadata;
   }
 
   override async createOne(
