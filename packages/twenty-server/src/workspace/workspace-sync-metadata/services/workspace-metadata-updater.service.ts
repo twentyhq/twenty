@@ -12,7 +12,7 @@ import {
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
+import { FieldMetadataComplexOption } from 'src/metadata/field-metadata/dtos/options.input';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
@@ -86,7 +86,7 @@ export class WorkspaceMetadataUpdaterService {
       ...(field.type === FieldMetadataType.SELECT && field.options
         ? {
             options: this.generateUUIDForNewSelectFieldOptions(
-              field.options as FieldMetadataComplexOptions[],
+              field.options as FieldMetadataComplexOption[],
             ),
           }
         : {}),
@@ -95,8 +95,8 @@ export class WorkspaceMetadataUpdaterService {
   }
 
   private generateUUIDForNewSelectFieldOptions(
-    options: FieldMetadataComplexOptions[],
-  ): FieldMetadataComplexOptions[] {
+    options: FieldMetadataComplexOption[],
+  ): FieldMetadataComplexOption[] {
     return options.map((option) => ({
       ...option,
       id: uuidV4(),

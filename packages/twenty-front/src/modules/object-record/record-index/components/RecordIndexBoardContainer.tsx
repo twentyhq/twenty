@@ -2,7 +2,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordBoardActionBar } from '@/object-record/record-board/action-bar/components/RecordBoardActionBar';
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
+import { RecordBoardContextMenu } from '@/object-record/record-board/context-menu/components/RecordBoardContextMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 
 type RecordIndexBoardContainerProps = {
@@ -32,6 +34,8 @@ export const RecordIndexBoardContainer = ({
       }}
     >
       <RecordBoard recordBoardId={recordBoardId} />
+      <RecordBoardActionBar recordBoardId={recordBoardId} />
+      <RecordBoardContextMenu recordBoardId={recordBoardId} />
     </RecordBoardContext.Provider>
   );
 };

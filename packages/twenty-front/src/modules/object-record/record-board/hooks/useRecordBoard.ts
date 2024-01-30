@@ -5,8 +5,12 @@ import { useSetRecordBoardColumns } from '@/object-record/record-board/hooks/int
 import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardRecordIds';
 
 export const useRecordBoard = (recordBoardId?: string) => {
-  const { scopeId, getFieldDefinitionsState, getObjectSingularNameState } =
-    useRecordBoardStates(recordBoardId);
+  const {
+    scopeId,
+    getFieldDefinitionsState,
+    getObjectSingularNameState,
+    getSelectedRecordIdsSelector,
+  } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
   const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
@@ -19,5 +23,6 @@ export const useRecordBoard = (recordBoardId?: string) => {
     setRecordIds,
     setFieldDefinitions,
     setObjectSingularName,
+    getSelectedRecordIdsSelector,
   };
 };

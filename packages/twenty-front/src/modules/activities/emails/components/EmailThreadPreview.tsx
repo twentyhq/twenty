@@ -36,13 +36,20 @@ const StyledHeading = styled.div<{ unread: boolean }>`
   }
 `;
 
-const StyledAvatar = styled(Avatar)`
-  margin: ${({ theme }) => theme.spacing(0, 1)};
+const StyledParticipantsContainer = styled.div`
+  align-items: center;
+  display: flex;
 `;
 
-const StyledSenderName = styled.span`
+const StyledAvatar = styled(Avatar)`
+  margin-left: ${({ theme }) => theme.spacing(-1)};
+`;
+
+const StyledSenderNames = styled.span`
+  margin: ${({ theme }) => theme.spacing(0, 1)};
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledThreadCount = styled.span`
@@ -88,17 +95,49 @@ export const EmailThreadPreview = ({
   thread,
   onClick,
 }: EmailThreadPreviewProps) => {
+  const senderNames =
+    thread.firstParticipant.displayName +
+    (thread?.lastTwoParticipants?.[0]?.displayName
+      ? `, ${thread.lastTwoParticipants?.[0]?.displayName}`
+      : '') +
+    (thread?.lastTwoParticipants?.[1]?.displayName
+      ? `, ${thread.lastTwoParticipants?.[1]?.displayName}`
+      : '');
+
+  const [finalDisplayedName, finalAvatarUrl] =
+    thread.participantCount > 3
+      ? [`${thread.participantCount}`, '']
+      : [
+          thread?.lastTwoParticipants?.[1]?.displayName,
+          thread?.lastTwoParticipants?.[1]?.avatarUrl,
+        ];
+
   return (
     <StyledCardContent onClick={() => onClick()} divider={divider}>
       <StyledHeading unread={!thread.read}>
-        <StyledAvatar
-          avatarUrl={thread.firstParticipant.avatarUrl}
-          placeholder={thread.firstParticipant.displayName}
-          type="rounded"
-        />
-        <StyledSenderName>
-          {thread.firstParticipant.displayName}
-        </StyledSenderName>
+        <StyledParticipantsContainer>
+          <Avatar
+            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            placeholder={thread.firstParticipant.displayName}
+            type="rounded"
+          />
+          {thread?.lastTwoParticipants?.[0] && (
+            <StyledAvatar
+              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+              placeholder={thread.lastTwoParticipants[0].displayName}
+              type="rounded"
+            />
+          )}
+          {finalDisplayedName && (
+            <StyledAvatar
+              avatarUrl={finalAvatarUrl}
+              placeholder={finalDisplayedName}
+              type="rounded"
+            />
+          )}
+        </StyledParticipantsContainer>
+
+        <StyledSenderNames>{senderNames}</StyledSenderNames>
         <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
       </StyledHeading>
 

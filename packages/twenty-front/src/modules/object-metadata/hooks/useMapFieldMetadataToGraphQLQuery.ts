@@ -28,6 +28,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
         'EMAIL',
         'NUMBER',
         'BOOLEAN',
+        'RATING',
         'SELECT',
       ] as FieldType[]
     ).includes(fieldType);
