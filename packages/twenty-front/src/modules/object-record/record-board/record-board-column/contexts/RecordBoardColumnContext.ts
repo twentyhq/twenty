@@ -6,6 +6,7 @@ type RecordBoardColumnContextProps = {
   columnDefinition: RecordBoardColumnDefinition;
   isFirstColumn: boolean;
   isLastColumn: boolean;
+  recordCount: number;
 };
 
 export const RecordBoardColumnContext =

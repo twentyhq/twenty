@@ -4,4 +4,5 @@ export enum AppHotkeyScope {
   CommandMenu = 'command-menu',
   CommandMenuOpen = 'command-menu-open',
   KeyboardShortcutMenu = 'keyboard-shortcut-menu',
+  KeyboardShortcutMenuOpen = 'keyboard-shortcut-menu-open',
 }

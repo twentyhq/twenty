@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 
-export const useResetBoardRecordSelection = (recordBoardId?: string) => {
+export const useRecordBoardSelection = (recordBoardId?: string) => {
   const { getSelectedRecordIdsSelector, isRecordBoardCardSelectedFamilyState } =
     useRecordBoardStates(recordBoardId);
 
@@ -20,5 +20,21 @@ export const useResetBoardRecordSelection = (recordBoardId?: string) => {
     [getSelectedRecordIdsSelector, isRecordBoardCardSelectedFamilyState],
   );
 
-  return { resetRecordSelection };
+  const setRecordAsSelected = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (recordId: string, isSelected: boolean) => {
+        const isRecordCurrentlySelected = snapshot
+          .getLoadable(isRecordBoardCardSelectedFamilyState(recordId))
+          .getValue();
+
+        if (isRecordCurrentlySelected === isSelected) {
+          return;
+        }
+
+        set(isRecordBoardCardSelectedFamilyState(recordId), isSelected);
+      },
+    [isRecordBoardCardSelectedFamilyState],
+  );
+
+  return { resetRecordSelection, setRecordAsSelected };
 };

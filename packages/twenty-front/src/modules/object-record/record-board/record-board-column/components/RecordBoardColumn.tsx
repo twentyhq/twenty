@@ -14,6 +14,7 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
       isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
+  height: fit-content;
   max-width: 200px;
   min-width: 200px;
 
@@ -60,6 +61,7 @@ export const RecordBoardColumn = ({
         columnDefinition: columnDefinition,
         isFirstColumn: isFirstColumn,
         isLastColumn: isLastColumn,
+        recordCount: recordIds.length,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
