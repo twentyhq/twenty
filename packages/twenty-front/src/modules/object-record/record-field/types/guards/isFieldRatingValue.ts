@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
+import { RATING_VALUES } from '../../meta-types/input/components/RatingFieldInput';
 import { FieldRatingValue } from '../FieldMetadata';
 
-const ratingSchema = z
-  .string()
-  .transform((value) => +value)
-  .pipe(z.number().int().min(1).max(5));
+const ratingSchema = z.string().pipe(z.enum(RATING_VALUES));
 
 export const isFieldRatingValue = (
   fieldValue: unknown,

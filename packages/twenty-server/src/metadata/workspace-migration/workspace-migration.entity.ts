@@ -58,7 +58,7 @@ export type WorkspaceMigrationColumnAction = {
 
 export type WorkspaceMigrationTableAction = {
   name: string;
-  action: 'create' | 'alter';
+  action: 'create' | 'alter' | 'drop';
   columns?: WorkspaceMigrationColumnAction[];
 };
 
