@@ -3,8 +3,13 @@ import { Field, Relation } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItem = Omit<
   Field,
-  'fromRelationMetadata' | 'toRelationMetadata' | 'defaultValue' | 'options'
+  | '__typename'
+  | 'fromRelationMetadata'
+  | 'toRelationMetadata'
+  | 'defaultValue'
+  | 'options'
 > & {
+  __typename?: string;
   fromRelationMetadata?:
     | (Pick<Relation, 'id' | 'toFieldMetadataId' | 'relationType'> & {
         toObjectMetadata: Pick<

@@ -5,7 +5,6 @@ import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldM
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
 
 export type RelationPickerProps = {
@@ -27,32 +26,14 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
-  const {
-    relationPickerSearchFilter,
-    setRelationPickerSearchFilter,
-    searchQuery,
-  } = useRelationPicker({ relationPickerScopeId: 'relation-picker' });
+  const relationPickerScopeId = 'relation-picker';
+  const { setRelationPickerSearchFilter } = useRelationPicker({
+    relationPickerScopeId,
+  });
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
-
-  const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(
-            fieldDefinition.metadata.relationObjectMetadataNameSingular,
-          ) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: recordId ? [recordId] : [],
-    excludeEntityIds: excludeRecordIds,
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
 
   const handleEntitySelected = (
     selectedEntity: EntityForSelect | null | undefined,
@@ -62,12 +43,15 @@ export const RelationPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
-      entitiesToSelect={entities.entitiesToSelect}
-      loading={entities.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={entities.selectedEntities[0]}
       width={width}
+      relationObjectNameSingular={
+        fieldDefinition.metadata.relationObjectMetadataNameSingular
+      }
+      relationPickerScopeId={relationPickerScopeId}
+      selectedRelationRecordIds={recordId ? [recordId] : []}
+      excludedRelationRecordIds={excludeRecordIds}
     />
   );
 };

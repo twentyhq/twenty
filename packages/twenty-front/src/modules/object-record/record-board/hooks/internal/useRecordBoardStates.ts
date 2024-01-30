@@ -10,6 +10,7 @@ import { recordBoardObjectSingularNameStateScopeMap } from '@/object-record/reco
 import { recordBoardRecordIdsByColumnIdFamilyStateScopeMap } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdFamilyStateScopeMap';
 import { recordBoardSortsStateScopeMap } from '@/object-record/record-board/states/recordBoardSortsStateScopeMap';
 import { recordBoardColumnsFamilySelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardColumnsFamilySelectorScopeMap';
+import { recordBoardSelectedRecordIdsSelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsSelectorScopeMap';
 import { recordBoardVisibleFieldDefinitionsScopedSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsScopedSelector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
@@ -54,12 +55,16 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       scopeId,
     ),
 
-    recordBoardRecordIdsByColumnIdFamilyState: getFamilyState(
+    recordIdsByColumnIdFamilyState: getFamilyState(
       recordBoardRecordIdsByColumnIdFamilyStateScopeMap,
       scopeId,
     ),
     isRecordBoardCardSelectedFamilyState: getFamilyState(
       isRecordBoardCardSelectedFamilyStateScopeMap,
+      scopeId,
+    ),
+    getSelectedRecordIdsSelector: getSelectorReadOnly(
+      recordBoardSelectedRecordIdsSelectorScopeMap,
       scopeId,
     ),
 

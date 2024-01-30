@@ -5,6 +5,7 @@
     "types": ["jest", "node"]
   },
   "include": [
+    "vite.config.ts",
     "jest.config.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
