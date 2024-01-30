@@ -20,6 +20,13 @@ import {
   H1TitleFontColor,
 } from '@/ui/display/typography/components/H1Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptyContainer,
+  StyledEmptySubTitle,
+  StyledEmptyTextContainer,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
 import {
@@ -122,18 +129,32 @@ export const EmailThreads = ({
   const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
     data?.[queryName] ?? [];
 
+  if (!loading && !timelineThreads?.length) {
+    return (
+      <StyledEmptyContainer>
+        <AnimatedPlaceholder type="emptyInbox" />
+        <StyledEmptyTextContainer>
+          <StyledEmptyTitle>Empty Inbox</StyledEmptyTitle>
+          <StyledEmptySubTitle>
+            No email exchange has occurred with this record yet.
+          </StyledEmptySubTitle>
+        </StyledEmptyTextContainer>
+      </StyledEmptyContainer>
+    );
+  }
+
   return (
     <StyledContainer>
       <Section>
         <StyledH1Title
           title={
             <>
-              Inbox{' '}
-              <StyledEmailCount>{totalNumberOfThreads ?? 0}</StyledEmailCount>
+              Inbox <StyledEmailCount>{totalNumberOfThreads}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
+
         {!loading && (
           <Card>
             {timelineThreads?.map((thread: TimelineThread, index: number) => (
