@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
-import { FetchMoreLoader } from '@/activities/emails/components/FetchMoreLoader';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
@@ -146,7 +146,7 @@ export const EmailThreads = ({
             ))}
           </Card>
         )}
-        <FetchMoreLoader
+        <EmailThreadFetchMoreLoader
           loading={isFetchingMoreEmails}
           onLastRowVisible={fetchMoreRecords}
         />
