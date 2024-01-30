@@ -4,8 +4,10 @@ import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/o
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useViewBar } from '@/views/hooks/useViewBar';
+import { ViewType } from '@/views/types/ViewType';
 
 type RecordIndexOptionsDropdownProps = {
+  viewType: ViewType;
   objectNameSingular: string;
   recordIndexId: string;
 };
@@ -13,6 +15,7 @@ type RecordIndexOptionsDropdownProps = {
 export const RecordIndexOptionsDropdown = ({
   recordIndexId,
   objectNameSingular,
+  viewType,
 }: RecordIndexOptionsDropdownProps) => {
   const { setViewEditMode } = useViewBar();
 
@@ -24,6 +27,7 @@ export const RecordIndexOptionsDropdown = ({
       dropdownOffset={{ y: 8 }}
       dropdownComponents={
         <RecordIndexOptionsDropdownContent
+          viewType={viewType}
           objectNameSingular={objectNameSingular}
           recordIndexId={recordIndexId}
         />

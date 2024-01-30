@@ -77,6 +77,7 @@ export const RecordIndexContainer = ({
             <RecordIndexOptionsDropdown
               recordIndexId={recordIndexId}
               objectNameSingular={objectNameSingular}
+              viewType={recordIndexViewType ?? ViewType.Table}
             />
           }
           optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}

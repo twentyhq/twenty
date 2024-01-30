@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
+import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { useRecordIndexOptionsImport } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsImport';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -17,15 +18,18 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
+import { ViewType } from '@/views/types/ViewType';
 
 type RecordIndexOptionsMenu = 'fields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
   objectNameSingular: string;
+  viewType: ViewType;
 };
 
 export const RecordIndexOptionsDropdownContent = ({
+  viewType,
   recordIndexId,
   objectNameSingular,
 }: RecordIndexOptionsDropdownContentProps) => {
@@ -47,8 +51,6 @@ export const RecordIndexOptionsDropdownContent = ({
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
-    const name = viewEditInputRef.current?.value;
-    handleViewNameSubmit(name);
     setCurrentMenu(option);
   };
 
@@ -74,10 +76,36 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const {
     handleColumnVisibilityChange,
-    handleReorderField,
+    handleReorderColumns,
     visibleTableColumns,
     hiddenTableColumns,
   } = useRecordIndexOptionsForTable(recordIndexId);
+
+  const {
+    visibleBoardFields,
+    hiddenBoardFields,
+    handleReorderBoardFields,
+    handleBoardFieldVisibilityChange,
+  } = useRecordIndexOptionsForBoard({
+    objectNameSingular,
+    viewBarId: recordIndexId,
+  });
+
+  const visibleRecordFields =
+    viewType === ViewType.Kanban ? visibleBoardFields : visibleTableColumns;
+
+  const hiddenRecordFields =
+    viewType === ViewType.Kanban ? hiddenBoardFields : hiddenTableColumns;
+
+  const handleReorderFields =
+    viewType === ViewType.Kanban
+      ? handleReorderBoardFields
+      : handleReorderColumns;
+
+  const handleChangeFieldVisibility =
+    viewType === ViewType.Kanban
+      ? handleBoardFieldVisibilityChange
+      : handleColumnVisibilityChange;
 
   const { handleImport } = useRecordIndexOptionsImport({ objectNameSingular });
 
@@ -122,20 +150,20 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuSeparator />
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
-            fields={visibleTableColumns}
+            fields={visibleRecordFields}
             isVisible={true}
-            onVisibilityChange={handleColumnVisibilityChange}
+            onVisibilityChange={handleChangeFieldVisibility}
             isDraggable={true}
-            onDragEnd={handleReorderField}
+            onDragEnd={handleReorderFields}
           />
-          {hiddenTableColumns.length > 0 && (
+          {hiddenRecordFields.length > 0 && (
             <>
               <DropdownMenuSeparator />
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
-                fields={hiddenTableColumns}
+                fields={hiddenRecordFields}
                 isVisible={false}
-                onVisibilityChange={handleColumnVisibilityChange}
+                onVisibilityChange={handleChangeFieldVisibility}
                 isDraggable={false}
               />
             </>

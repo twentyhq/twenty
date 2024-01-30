@@ -16,7 +16,7 @@ export const useRecordIndexOptionsForTable = (recordTableId: string) => {
     { recordTableId: recordTableId },
   );
 
-  const handleReorderField: OnDragEndResponder = useCallback(
+  const handleReorderColumns: OnDragEndResponder = useCallback(
     (result) => {
       if (
         !result.destination ||
@@ -36,7 +36,7 @@ export const useRecordIndexOptionsForTable = (recordTableId: string) => {
   );
 
   return {
-    handleReorderField,
+    handleReorderColumns,
     handleColumnVisibilityChange,
     visibleTableColumns,
     hiddenTableColumns,

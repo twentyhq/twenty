@@ -5,6 +5,7 @@ import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/o
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
+import { ViewType } from '@/views/types/ViewType';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ export const SignInBackgroundMockContainer = () => {
           <RecordIndexOptionsDropdown
             recordIndexId={recordIndexId}
             objectNameSingular={objectNameSingular}
+            viewType={ViewType.Table}
           />
         }
         optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
