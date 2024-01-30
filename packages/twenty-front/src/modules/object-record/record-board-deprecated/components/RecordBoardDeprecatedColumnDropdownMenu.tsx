@@ -71,7 +71,6 @@ export const RecordBoardDeprecatedColumnDropdownMenu = ({
     [Key.Escape, Key.Enter],
     () => {
       closeMenu();
-      console.log('toto');
     },
     BoardColumnHotkeyScope.BoardColumn,
     [],
