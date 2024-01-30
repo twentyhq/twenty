@@ -11,7 +11,9 @@ const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(4, 6)};
+
+  padding-top: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledThreadMessageHeader = styled.div`
@@ -20,6 +22,12 @@ const StyledThreadMessageHeader = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(0, 6)};
+`;
+
+const StyledThreadMessageBody = styled.div`
+  /* padding: ${({ theme }) => theme.spacing(4, 6)}; */
+  padding: ${({ theme }) => theme.spacing(0, 6)};
 `;
 
 type EmailThreadMessageProps = {
@@ -53,11 +61,13 @@ export const EmailThreadMessage = ({
         <EmailThreadMessageSender sender={from} sentAt={sentAt} />
         {isOpen && <EmailThreadMessageReceivers receivers={receivers} />}
       </StyledThreadMessageHeader>
-      {isOpen ? (
-        <EmailThreadMessageBody body={body} />
-      ) : (
-        <EmailThreadMessageBodyPreview body={body} />
-      )}
+      <StyledThreadMessageBody>
+        {isOpen ? (
+          <EmailThreadMessageBody body={body} />
+        ) : (
+          <EmailThreadMessageBodyPreview body={body} />
+        )}
+      </StyledThreadMessageBody>
     </StyledThreadMessage>
   );
 };
