@@ -48,6 +48,10 @@ export const useUpdateOneRecord = <
       id: idToUpdate,
     };
 
+    console.log({
+      optimisticallyUpdatedRecord,
+    });
+
     const updatedRelationFields = cachedRecord
       ? getRelationFieldsToOptimisticallyUpdate({
           cachedRecord,

@@ -35,8 +35,9 @@ export const triggerUpdateRecordOptimisticEffect = ({
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
-        )
+        ) {
           return cachedConnection;
+        }
 
         const { variables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
@@ -61,12 +62,14 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
           if (matchesFilter && recordIndex === -1) {
             const nodeReference = toReference(record);
-            nodeReference &&
+
+            if (isDefined(nodeReference)) {
               nextCachedEdges.push({
                 __typename: objectEdgeTypeName,
                 node: nodeReference,
                 cursor: '',
               });
+            }
           }
 
           if (!matchesFilter && recordIndex > -1) {

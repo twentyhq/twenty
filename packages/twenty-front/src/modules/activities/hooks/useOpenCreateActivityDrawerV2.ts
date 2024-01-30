@@ -8,6 +8,7 @@ import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useM
 import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
 import { useWriteActivityTargetsInCache } from '@/activities/hooks/useWriteActivityTargetsInCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
+import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { useInjectIntoTimelineActivitiesQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQuery';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
@@ -33,6 +34,8 @@ export const useOpenCreateActivityDrawerV2 = ({
   targetableObject: ActivityTargetableObject;
 }) => {
   const { openRightDrawer } = useRightDrawer();
+
+  const [, setIsCreatingActivity] = useRecoilState(isCreatingActivityState);
 
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
     useCreateManyRecordsInCache<ActivityTarget>({
@@ -113,6 +116,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       const createdActivityTargetsInCache =
         await createManyActivityTargetsInCache(activityTargetsToCreate);
 
+      // TODO: find better naming and refactor those hooks
       writeActivityTargetsInCache({
         targetableObject,
         activityTargetsToInject: createdActivityTargetsInCache,
@@ -138,6 +142,7 @@ export const useOpenCreateActivityDrawerV2 = ({
         activity: createdActivityInCache,
       });
 
+      setIsCreatingActivity(true);
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableActivityId(activityId);
       setActivityTargetableEntityArray(targetableObjects ?? []);
@@ -158,6 +163,7 @@ export const useOpenCreateActivityDrawerV2 = ({
       writeActivityTargetsInCache,
       modifyActivityTargetsOnActivityCache,
       modifyActivityOnActivityTargetsCache,
+      setIsCreatingActivity,
     ],
   );
 };

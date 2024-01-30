@@ -89,7 +89,7 @@ export const RecordShowPage = () => {
             />
             <ShowPageAddButton
               key="add"
-              entity={{
+              activityTargetObject={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
                 targetObjectRecord: record,

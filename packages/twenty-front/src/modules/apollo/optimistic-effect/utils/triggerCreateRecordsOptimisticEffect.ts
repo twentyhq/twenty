@@ -4,7 +4,7 @@ import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCac
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { capitalize } from '~/utils/string/capitalize';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -20,9 +20,9 @@ export const triggerCreateRecordsOptimisticEffect = ({
   objectMetadataItem: ObjectMetadataItem;
   records: CachedObjectRecord[];
 }) => {
-  const objectEdgeTypeName = `${capitalize(
-    objectMetadataItem.nameSingular,
-  )}Edge`;
+  const objectEdgeTypeName = getEdgeTypename({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
   cache.modify<StoreObject>({
     fields: {
@@ -40,13 +40,9 @@ export const triggerCreateRecordsOptimisticEffect = ({
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
-        )
+        ) {
           return cachedConnection;
-
-        /* const { variables } =
-          parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
-            storeFieldName,
-          ); */
+        }
 
         const cachedEdges = readField<CachedObjectRecordEdge[]>(
           'edges',
@@ -56,18 +52,21 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
         const hasAddedRecords = records
           .map((record) => {
-            /* const matchesFilter =
-              !variables?.filter ||
-              isRecordMatchingFilter({
-                record,
-                filter: variables.filter,
-                objectMetadataItem,
-              }); */
-
-            if (/* matchesFilter && */ record.id) {
+            if (record.id) {
               const nodeReference = toReference(record);
 
-              if (nodeReference) {
+              const recordAlreadyInCache = cachedEdges?.some((cachedEdge) => {
+                return nodeReference?.__ref === cachedEdge.node.__ref;
+              });
+
+              console.log({
+                _storeFieldName,
+                recordAlreadyInCache,
+                nodeReference,
+                cachedEdges,
+              });
+
+              if (nodeReference && !recordAlreadyInCache) {
                 nextCachedEdges.unshift({
                   __typename: objectEdgeTypeName,
                   node: nodeReference,
@@ -83,27 +82,6 @@ export const triggerCreateRecordsOptimisticEffect = ({
           .some((hasAddedRecord) => hasAddedRecord);
 
         if (!hasAddedRecords) return cachedConnection;
-
-        /* if (variables?.orderBy) {
-          nextCachedEdges = sortCachedObjectEdges({
-            edges: nextCachedEdges,
-            orderBy: variables.orderBy,
-            readCacheField: readField,
-          });
-        }
-
-        if (isDefined(variables?.first)) {
-          if (
-            cachedEdges?.length === variables.first &&
-            nextCachedEdges.length < variables.first
-          ) {
-            return INVALIDATE;
-          }
-
-          if (nextCachedEdges.length > variables.first) {
-            nextCachedEdges.splice(variables.first);
-          }
-        } */
 
         return { ...cachedConnection, edges: nextCachedEdges };
       },
