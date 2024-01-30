@@ -1,15 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
+import { useRecordIndexOptionsImport } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsImport';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -22,7 +18,7 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-type TableOptionsMenu = 'fields';
+type RecordIndexOptionsMenu = 'fields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
@@ -33,55 +29,28 @@ export const RecordIndexOptionsDropdownContent = ({
   recordIndexId,
   objectNameSingular,
 }: RecordIndexOptionsDropdownContentProps) => {
-  const { setViewEditMode, handleViewNameSubmit } = useViewBar();
+  const { setViewEditMode, handleViewNameSubmit } = useViewBar({
+    viewBarId: recordIndexId,
+  });
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
-  const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
-    undefined,
-  );
+  const [currentMenu, setCurrentMenu] = useState<
+    RecordIndexOptionsMenu | undefined
+  >(undefined);
+
+  const resetMenu = () => setCurrentMenu(undefined);
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
-    useRecordTableStates(recordIndexId);
-
-  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-
-  const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
-    { recordTableId: recordIndexId },
-  );
-
-  const handleSelectMenu = (option: TableOptionsMenu) => {
+  const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     const name = viewEditInputRef.current?.value;
     handleViewNameSubmit(name);
     setCurrentMenu(option);
   };
-
-  const handleReorderField: OnDragEndResponder = useCallback(
-    (result) => {
-      if (
-        !result.destination ||
-        result.destination.index === 1 ||
-        result.source.index === 1
-      ) {
-        return;
-      }
-
-      const reorderFields = [...visibleTableColumns];
-      const [removed] = reorderFields.splice(result.source.index - 1, 1);
-      reorderFields.splice(result.destination.index - 1, 0, removed);
-
-      handleColumnReorder(reorderFields);
-    },
-    [visibleTableColumns, handleColumnReorder],
-  );
-
-  const resetMenu = () => setCurrentMenu(undefined);
 
   useScopedHotkeys(
     [Key.Escape],
@@ -103,15 +72,14 @@ export const RecordIndexOptionsDropdownContent = ({
     TableOptionsHotkeyScope.Dropdown,
   );
 
-  const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
-  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
+  const {
+    handleColumnVisibilityChange,
+    handleReorderField,
+    visibleTableColumns,
+    hiddenTableColumns,
+  } = useRecordIndexOptionsForTable(recordIndexId);
 
-  const handleImport =
-    CoreObjectNameSingular.Company === objectNameSingular
-      ? openCompanySpreadsheetImport
-      : CoreObjectNameSingular.Person === objectNameSingular
-        ? openPersonSpreadsheetImport
-        : undefined;
+  const { handleImport } = useRecordIndexOptionsImport({ objectNameSingular });
 
   return (
     <>
@@ -138,7 +106,7 @@ export const RecordIndexOptionsDropdownContent = ({
             />
             {handleImport && (
               <MenuItem
-                onClick={() => handleImport}
+                onClick={() => handleImport()}
                 LeftIcon={IconFileImport}
                 text="Import"
               />
