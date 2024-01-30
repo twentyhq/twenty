@@ -63,13 +63,25 @@ export class WorkspaceMigrationRunnerService {
       }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    // Loop over each migration and create or update the table
-    // TODO: Should be done in a transaction
-    for (const migration of flattenedPendingMigrations) {
-      await this.handleTableChanges(queryRunner, schemaName, migration);
+    try {
+      // Loop over each migration and create or update the table
+      for (const migration of flattenedPendingMigrations) {
+        await this.handleTableChanges(queryRunner, schemaName, migration);
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
 
     // Update appliedAt date for each migration
@@ -80,8 +92,6 @@ export class WorkspaceMigrationRunnerService {
         pendingMigration,
       );
     }
-
-    await queryRunner.release();
 
     // Increment workspace cache version
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
