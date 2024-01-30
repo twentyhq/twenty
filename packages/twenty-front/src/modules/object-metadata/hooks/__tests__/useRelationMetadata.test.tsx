@@ -3,7 +3,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
@@ -23,7 +23,7 @@ describe('useRelationMetadata', () => {
   it('should return correct properties', async () => {
     const { result, rerender } = renderHook(
       ({ fieldMetadataItem }: { fieldMetadataItem?: FieldMetadataItem }) =>
-        useRelationMetadata({ fieldMetadataItem }),
+        useGetRelationMetadata({ fieldMetadataItem }),
       {
         wrapper: Wrapper,
         initialProps: {},
