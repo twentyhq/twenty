@@ -11,9 +11,7 @@ const StyledThreadMessage = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
-
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(4, 0)};
 `;
 
 const StyledThreadMessageHeader = styled.div`
@@ -26,7 +24,6 @@ const StyledThreadMessageHeader = styled.div`
 `;
 
 const StyledThreadMessageBody = styled.div`
-  /* padding: ${({ theme }) => theme.spacing(4, 6)}; */
   padding: ${({ theme }) => theme.spacing(0, 6)};
 `;
 
