@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { animate } from 'framer-motion';
 
 import {
   Background,
@@ -56,12 +57,27 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
       y.set(clientY);
     };
 
+    const handleLeave = () => {
+      animate(x, window.innerWidth / 2, {
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      });
+      animate(y, window.innerHeight / 2, {
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      });
+    };
+
     window.addEventListener('mousemove', handleMove);
     window.addEventListener('touchmove', handleMove);
+    window.document.addEventListener('mouseleave', handleLeave);
 
     return () => {
       window.removeEventListener('mousemove', handleMove);
       window.removeEventListener('touchmove', handleMove);
+      window.document.removeEventListener('mouseleave', handleLeave);
     };
   }, [x, y]);
 
