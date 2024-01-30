@@ -75,12 +75,21 @@ export const EmailThreads = ({
     pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   } as GetTimelineThreadsFromPersonIdQueryVariables;
 
-  const { data, loading, fetchMore, error } = useQuery(threadQuery, {
+  const {
+    data,
+    loading: firstQueryLoading,
+    fetchMore,
+    error,
+  } = useQuery(threadQuery, {
     variables: threadQueryVariables,
   });
 
   const fetchMoreRecords = async () => {
-    if (emailThreadsPage.hasNextPage && !isFetchingMoreEmails) {
+    if (
+      emailThreadsPage.hasNextPage &&
+      !isFetchingMoreEmails &&
+      !firstQueryLoading
+    ) {
       setIsFetchingMoreEmails(true);
 
       await fetchMore({
@@ -144,7 +153,7 @@ export const EmailThreads = ({
           }
           fontColor={H1TitleFontColor.Primary}
         />
-        {!loading && (
+        {!firstQueryLoading && (
           <Card>
             {timelineThreads?.map((thread: TimelineThread, index: number) => (
               <EmailThreadPreview
@@ -157,7 +166,7 @@ export const EmailThreads = ({
           </Card>
         )}
         <EmailThreadFetchMoreLoader
-          loading={isFetchingMoreEmails}
+          loading={isFetchingMoreEmails || firstQueryLoading}
           onLastRowVisible={fetchMoreRecords}
         />
       </Section>
