@@ -38,7 +38,7 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
-const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
+export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
   targetableObject: ActivityTargetableObject;
