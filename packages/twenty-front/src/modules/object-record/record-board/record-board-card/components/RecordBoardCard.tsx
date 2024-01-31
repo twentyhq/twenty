@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useEffect, useState } from 'react';
+import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -140,12 +140,7 @@ export const RecordBoardCard = () => {
 
   const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
 
-  const [isCardInCompactMode, setIsCardInCompactMode] =
-    useState(isCompactModeActive);
-
-  useEffect(() => {
-    setIsCardInCompactMode(isCompactModeActive);
-  }, [isCompactModeActive]);
+  const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
     isRecordBoardCardSelectedFamilyState(recordId),
@@ -248,7 +243,10 @@ export const RecordBoardCard = () => {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <AnimatedEaseInOut isOpen={!isCardInCompactMode} initial={false}>
+          <AnimatedEaseInOut
+            isOpen={!isCardInCompactMode || !isCompactModeActive}
+            initial={false}
+          >
             {visibleBoardCardFieldDefinitions.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
