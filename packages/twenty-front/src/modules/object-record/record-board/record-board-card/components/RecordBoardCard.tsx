@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useState } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -119,6 +119,7 @@ const StyledCompactIconContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const RecordBoardCard = () => {
@@ -133,8 +134,13 @@ export const RecordBoardCard = () => {
 
   const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
   const objectNameSingular = useRecoilValue(getObjectSingularNameState());
+
   const [isCardInCompactMode, setIsCardInCompactMode] =
     useState(isCompactModeActive);
+
+  useEffect(() => {
+    setIsCardInCompactMode(isCompactModeActive);
+  }, [isCompactModeActive]);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
     isRecordBoardCardSelectedFamilyState(recordId),

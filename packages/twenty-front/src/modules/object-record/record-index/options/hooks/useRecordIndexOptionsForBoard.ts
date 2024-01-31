@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -12,17 +13,24 @@ import { useViewFields } from '@/views/hooks/internal/useViewFields';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
+  recordBoardId: string;
   viewBarId: string;
 };
 
 export const useRecordIndexOptionsForBoard = ({
   objectNameSingular,
+  recordBoardId,
   viewBarId,
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
     useRecoilState(recordIndexFieldDefinitionsState);
 
   const { persistViewFields } = useViewFields(viewBarId);
+  const { getIsCompactModeActiveState } = useRecordBoard(recordBoardId);
+
+  const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(
+    getIsCompactModeActiveState(),
+  );
 
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
@@ -152,5 +160,7 @@ export const useRecordIndexOptionsForBoard = ({
     handleBoardFieldVisibilityChange,
     visibleBoardFields,
     hiddenBoardFields,
+    isCompactModeActive,
+    setIsCompactModeActive,
   };
 };
