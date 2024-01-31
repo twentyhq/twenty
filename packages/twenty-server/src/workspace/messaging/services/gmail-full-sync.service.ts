@@ -67,6 +67,8 @@ export class GmailFullSyncService {
       pageToken: nextPageToken,
     });
 
+    console.log('messageList query result from gmail', messages);
+
     const messagesData = messages.data.messages;
 
     const messageExternalIds = messagesData
@@ -84,6 +86,11 @@ export class GmailFullSyncService {
         workspaceId,
       );
 
+    console.log(
+      'existingMessagesInDB',
+      existingMessageChannelMessageAssociations,
+    );
+
     const existingMessageChannelMessageAssociationsExternalIds =
       existingMessageChannelMessageAssociations.map(
         (messageChannelMessageAssociation) =>
@@ -97,6 +104,8 @@ export class GmailFullSyncService {
         ),
     );
 
+    console.log('newMessagesToFetch', messagesToFetch);
+
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messagesToFetch);
 
@@ -105,6 +114,8 @@ export class GmailFullSyncService {
         messageQueries,
         accessToken,
       );
+
+    console.log('messagesToSave', messagesToSave);
 
     if (messagesToSave.length === 0) {
       return;
@@ -133,6 +144,12 @@ export class GmailFullSyncService {
       historyId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    console.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
+        nextPageToken ? `and ${nextPageToken} pageToken` : ''
+      } done.`,
     );
 
     if (messages.data.nextPageToken) {
