@@ -15,6 +15,7 @@ type SettingsNavigationCardProps = {
   Icon: IconComponent;
   onClick?: () => void;
   title: string;
+  className?: string;
 };
 
 const StyledCard = styled(Card)<{
@@ -63,15 +64,16 @@ export const SettingsNavigationCard = ({
   Icon,
   onClick,
   title,
+  className,
 }: SettingsNavigationCardProps) => {
   const theme = useTheme();
 
   return (
-    <StyledCard disabled={disabled} onClick={onClick}>
+    <StyledCard disabled={disabled} onClick={onClick} className={className}>
       <StyledCardContent>
         <StyledHeader>
           <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
-          <StyledTitle>
+          <StyledTitle className={className}>
             {title}
             {hasSoonPill && <SoonPill />}
           </StyledTitle>
