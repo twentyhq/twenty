@@ -10,10 +10,6 @@ import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
-const StyledPlaceholder = styled.div`
-  min-height: 1px;
-`;
-
 const StyledColumnCardsContainer = styled.div`
   display: flex;
   flex: 1;
@@ -43,7 +39,6 @@ export const RecordBoardColumnCardsContainer = ({
       {...droppableProvided?.droppableProps}
     >
       <RecordBoardColumnCardsMemo recordIds={recordIds} />
-      <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
       <RecordBoardColumnFetchMoreLoader />
       <Draggable
         draggableId={`new-${columnDefinition.id}`}
