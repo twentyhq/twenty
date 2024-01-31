@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -48,6 +49,9 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const [createWorkspace] = useCreateWorkspaceMutation();
 
@@ -76,12 +80,27 @@ export const CreateWorkspace = () => {
           },
         });
         setCurrentWorkspace({
-          id: result.data?.createWorkspace?.id ?? '',
+          id: result.data?.createWorkspace?.defaultWorkspace?.id ?? '',
           displayName: data.name,
           subscriptionStatus:
-            result.data?.createWorkspace?.subscriptionStatus ?? 'incomplete',
+            result.data?.createWorkspace?.defaultWorkspace
+              ?.subscriptionStatus ?? 'incomplete',
           allowImpersonation:
-            result.data?.createWorkspace?.allowImpersonation ?? false,
+            result.data?.createWorkspace?.defaultWorkspace
+              ?.allowImpersonation ?? false,
+        });
+        setCurrentWorkspaceMember({
+          id: result.data?.createWorkspace?.workspaceMember?.id ?? '',
+          locale: result.data?.createWorkspace?.workspaceMember?.locale ?? 'en',
+          name: {
+            firstName:
+              result.data?.createWorkspace?.workspaceMember?.name?.firstName ??
+              '',
+            lastName:
+              result.data?.createWorkspace?.workspaceMember?.name?.lastName ??
+              '',
+          },
+          avatarUrl: result.data?.createWorkspace?.workspaceMember?.avatarUrl,
         });
 
         if (result.errors || !result.data?.createWorkspace) {
@@ -97,7 +116,13 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, setCurrentWorkspace, createWorkspace],
+    [
+      enqueueSnackBar,
+      navigate,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+      createWorkspace,
+    ],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

@@ -88,12 +88,11 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async updateUser(
-    userId: string,
-    data: QueryDeepPartialEntity<User>,
-  ): Promise<User> {
+  async updateUser(userId: string, data: QueryDeepPartialEntity<User>) {
     await this.userRepository.update(userId, data);
+  }
 
+  async getUser(userId: string): Promise<User> {
     return await this.userRepository.findOneOrFail({
       where: { id: userId },
       relations: ['defaultWorkspace'],

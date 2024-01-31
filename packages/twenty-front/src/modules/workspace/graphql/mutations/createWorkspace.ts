@@ -4,11 +4,6 @@ export const CREATE_WORKSPACE = gql`
   mutation CreateWorkspace($input: CreateWorkspaceInput!) {
     createWorkspace(data: $input) {
       id
-      firstName
-      lastName
-      email
-      canImpersonate
-      supportUserHash
       workspaceMember {
         id
         name {

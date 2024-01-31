@@ -32,14 +32,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    const updatedUser = await this.userService.updateUser(user.id, {
+    await this.userService.updateUser(user.id, {
       defaultWorkspace: workspace,
     });
 
     await this.workspaceManagerService.init(workspace.id);
+    const updatedUser = await this.userService.getUser(user.id);
+
     await this.userService.createWorkspaceMember(updatedUser);
 
-    return workspace;
+    return updatedUser;
   }
 
   async deleteWorkspace(id: string) {
