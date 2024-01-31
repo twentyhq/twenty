@@ -8,6 +8,7 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   IconCheckbox,
   IconMail,
@@ -65,6 +66,12 @@ export const ShowPageRightContainer = ({
       objectNameSingular: targetableObject.targetObjectNameSingular,
     });
 
+  const shouldDisplayEmailsTab =
+    (emails &&
+      targetableObject.targetObjectNameSingular ===
+        CoreObjectNameSingular.Company) ||
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -95,8 +102,8 @@ export const ShowPageRightContainer = ({
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
-      hide: !emails,
-      disabled: !isMessagingEnabled || targetableObjectMetadataItem.isCustom,
+      hide: !shouldDisplayEmailsTab,
+      disabled: !isMessagingEnabled,
     },
   ];
 

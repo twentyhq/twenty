@@ -23,6 +23,7 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const StyledSenderName = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
