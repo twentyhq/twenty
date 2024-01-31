@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpsertRecordFieldFromState = () =>
@@ -14,7 +14,7 @@ export const useUpsertRecordFieldFromState = () =>
         fieldName: F extends string ? F : never;
       }) =>
         set(
-          entityFieldsFamilySelector({ entityId: record.id, fieldName }),
+          recordStoreFamilySelector({ recordId: record.id, fieldName }),
           (previousField) =>
             isDeeplyEqual(previousField, record[fieldName])
               ? previousField

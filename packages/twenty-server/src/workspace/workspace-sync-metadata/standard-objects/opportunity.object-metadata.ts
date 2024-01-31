@@ -55,6 +55,27 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   probability: string;
 
+  @FieldMetadata({
+    type: FieldMetadataType.SELECT,
+    label: 'Stage',
+    description: 'Opportunity stage',
+    icon: 'IconProgressCheck',
+    options: [
+      { value: 'new', label: 'New', position: 0, color: 'red' },
+      { value: 'screening', label: 'Screening', position: 1, color: 'purple' },
+      { value: 'meeting', label: 'Meeting', position: 2, color: 'sky' },
+      {
+        value: 'proposal',
+        label: 'Proposal',
+        position: 3,
+        color: 'turquoise',
+      },
+      { value: 'customer', label: 'Customer', position: 4, color: 'yellow' },
+    ],
+    defaultValue: { value: 'new' },
+  })
+  stage: string;
+
   // Relations
   @FieldMetadata({
     type: FieldMetadataType.RELATION,

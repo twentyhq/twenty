@@ -5,13 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 
-import { actionBarOpenState } from '../states/actionBarIsOpenState';
-
 import { ActionBarItem } from './ActionBarItem';
-
-type ActionBarProps = {
-  selectedIds: string[];
-};
 
 const StyledContainerActionBar = styled.div`
   align-items: center;
@@ -33,30 +27,23 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export const ActionBar = ({ selectedIds }: ActionBarProps) => {
-  const actionBarOpen = useRecoilValue(actionBarOpenState);
+export const ActionBar = () => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  if (selectedIds.length === 0 || !actionBarOpen || contextMenuIsOpen) {
+  if (contextMenuIsOpen) {
     return null;
   }
+
   return (
     <StyledContainerActionBar
       data-select-disable
       className="action-bar"
       ref={wrapperRef}
     >
-      {actionBarEntries.map((item) => (
-        <ActionBarItem
-          Icon={item.Icon}
-          accent={item.accent}
-          label={item.label}
-          onClick={item.onClick}
-          key={item.label}
-          subActions={item?.subActions}
-        />
+      {actionBarEntries.map((item, index) => (
+        <ActionBarItem key={index} item={item} />
       ))}
     </StyledContainerActionBar>
   );

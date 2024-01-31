@@ -3,7 +3,13 @@ import styled from '@emotion/styled';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import {
+  StyledErrorContainer,
+  StyledErrorSubTitle,
+  StyledErrorTitle,
+} from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -20,29 +26,8 @@ const StyledBackDrop = styled.div`
   z-index: 10000;
 `;
 
-const StyledTextContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(15)};
-`;
-
 const StyledButtonContainer = styled.div`
   width: 200px;
-`;
-
-type StyledInfoProps = {
-  color: 'dark' | 'light';
-};
-
-const StyledInfo = styled.div<StyledInfoProps>`
-  color: ${(props) =>
-    props.color === 'light'
-      ? props.theme.font.color.extraLight
-      : props.theme.font.color.primary};
-  font-size: ${() => (useIsMobile() ? '2.5rem' : '4rem')};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
 export const NotFound = () => {
@@ -51,17 +36,23 @@ export const NotFound = () => {
   return (
     <>
       <StyledBackDrop>
-        <StyledTextContainer>
-          <StyledInfo color="dark">404</StyledInfo>
-          <StyledInfo color="light">Page not found</StyledInfo>
-        </StyledTextContainer>
-        <StyledButtonContainer>
-          <MainButton
-            title="Back to content"
-            fullWidth
-            onClick={() => navigate('/')}
-          />
-        </StyledButtonContainer>
+        <StyledErrorContainer>
+          <AnimatedPlaceholder type="error404" />
+          <StyledEmptyTextContainer>
+            <StyledErrorTitle>Off the beaten path</StyledErrorTitle>
+            <StyledErrorSubTitle>
+              The page you're seeking is either gone or never was. Let's get you
+              back on track
+            </StyledErrorSubTitle>
+          </StyledEmptyTextContainer>
+          <StyledButtonContainer>
+            <MainButton
+              title="Back to content"
+              fullWidth
+              onClick={() => navigate('/')}
+            />
+          </StyledButtonContainer>
+        </StyledErrorContainer>
       </StyledBackDrop>
       <SignInBackgroundMockPage />
     </>

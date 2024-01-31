@@ -1,19 +1,20 @@
 import { useContext, useMemo } from 'react';
 
-import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
-import { RowIndexContext } from '../../contexts/RowIndexContext';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+
 import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useCurrentTableCellPosition = () => {
-  const currentRowNumber = useContext(RowIndexContext);
-  const currentColumnNumber = useContext(ColumnIndexContext);
+  const { rowIndex } = useContext(RecordTableRowContext);
+  const { columnIndex } = useContext(RecordTableCellContext);
 
   const currentTableCellPosition: TableCellPosition = useMemo(
     () => ({
-      column: currentColumnNumber,
-      row: currentRowNumber,
+      column: columnIndex,
+      row: rowIndex,
     }),
-    [currentColumnNumber, currentRowNumber],
+    [columnIndex, rowIndex],
   );
 
   return currentTableCellPosition;

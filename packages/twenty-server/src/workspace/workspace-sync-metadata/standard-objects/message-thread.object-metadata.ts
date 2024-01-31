@@ -46,5 +46,5 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageChannelMessageAssociation',
   })
   @IsNullable()
-  messageChannelMessageAssociation: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
 }

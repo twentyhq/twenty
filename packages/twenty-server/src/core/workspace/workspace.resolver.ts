@@ -7,7 +7,7 @@ import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';

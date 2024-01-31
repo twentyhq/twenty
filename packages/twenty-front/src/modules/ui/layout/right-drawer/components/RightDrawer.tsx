@@ -66,7 +66,10 @@ export const RightDrawer = () => {
 
   useScopedHotkeys(
     [Key.Escape],
-    () => closeRightDrawer(),
+
+    () => {
+      closeRightDrawer();
+    },
     RightDrawerHotkeyScope.RightDrawer,
     [setIsRightDrawerOpen],
   );
@@ -83,11 +86,23 @@ export const RightDrawer = () => {
     return <></>;
   }
 
+  const variants = {
+    fullScreen: {
+      width: '100%',
+    },
+    normal: {
+      width: rightDrawerWidth,
+    },
+    closed: {
+      width: 0,
+    },
+  };
+
   return (
     <StyledContainer
-      animate={{
-        width: rightDrawerWidth,
-      }}
+      initial="closed"
+      animate={isRightDrawerOpen ? 'normal' : 'closed'}
+      variants={variants}
       transition={{
         duration: theme.animation.duration.normal,
       }}
