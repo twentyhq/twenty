@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerOptions } from 'src/integrations/exception-handler/interfaces/exception-handler-options.interface';
 
 import { ExceptionHandlerDriverInterface } from 'src/integrations/exception-handler/interfaces';
 import { EXCEPTION_HANDLER_DRIVER } from 'src/integrations/exception-handler/exception-handler.constants';
@@ -12,7 +12,10 @@ export class ExceptionHandlerService {
     private driver: ExceptionHandlerDriverInterface,
   ) {}
 
-  captureException(exception: unknown, user?: ExceptionHandlerUser) {
-    this.driver.captureException(exception, user);
+  captureExceptions(
+    exceptions: ReadonlyArray<any>,
+    options?: ExceptionHandlerOptions,
+  ): string[] {
+    return this.driver.captureExceptions(exceptions, options);
   }
 }

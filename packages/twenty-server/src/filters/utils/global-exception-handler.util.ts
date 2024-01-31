@@ -39,13 +39,16 @@ export const handleException = (
     return;
   }
 
-  exceptionHandlerService.captureException(exception, user);
+  exceptionHandlerService.captureExceptions([exception], { user });
 };
 
 export const convertExceptionToGraphQLError = (
   exception: Error,
 ): BaseGraphQLError => {
+  console.log('convertExceptionToGraphQLError: ', exception);
   if (exception instanceof HttpException) {
+    console.log('convertExceptionToGraphQLError instanceof HttpException');
+
     return convertHttpExceptionToGraphql(exception);
   }
 
@@ -55,6 +58,8 @@ export const convertExceptionToGraphQLError = (
 export const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
+
+  console.log('convertHttpExceptionToGraphql', status);
 
   if (status in graphQLPredefinedExceptions) {
     const message = exception.getResponse()['message'] ?? exception.message;

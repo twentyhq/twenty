@@ -1,6 +1,10 @@
+import { ExceptionHandlerOptions } from './exception-handler-options.interface';
 import { ExceptionHandlerUser } from './exception-handler-user.interface';
 
 export interface ExceptionHandlerDriverInterface {
-  captureException(exception: unknown, user?: ExceptionHandlerUser): void;
+  captureExceptions(
+    exceptions: ReadonlyArray<any>,
+    options?: ExceptionHandlerOptions,
+  ): string[];
   captureMessage(message: string, user?: ExceptionHandlerUser): void;
 }

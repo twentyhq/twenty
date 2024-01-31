@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
+import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 

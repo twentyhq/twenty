@@ -20,11 +20,15 @@ import { CoreModule } from 'src/core/core.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import {
+  convertExceptionToGraphQLError,
+  handleExceptionAndConvertToGraphQLError,
+} from 'src/filters/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { User } from './core/user/user.entity';
+import { useExceptionHandler } from './integrations/exception-handler/hooks/use-exception-handler.hook';
 
 @Injectable()
 export class GraphQLConfigService
@@ -38,7 +42,6 @@ export class GraphQLConfigService
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
-    const exceptionHandlerService = this.exceptionHandlerService;
     const isDebugMode = this.environmentService.isDebugMode();
     const config: YogaDriverConfig = {
       context: ({ req }) => ({ req }),
@@ -47,10 +50,7 @@ export class GraphQLConfigService
       maskedErrors: {
         maskError(error: GraphQLError, message, isDev) {
           if (error.originalError) {
-            return handleExceptionAndConvertToGraphQLError(
-              error.originalError,
-              exceptionHandlerService,
-            );
+            return convertExceptionToGraphQLError(error.originalError);
           }
 
           return maskError(error, message, isDev);
@@ -65,7 +65,7 @@ export class GraphQLConfigService
           }
 
           const token = await this.tokenService.validateToken(context.req);
-          
+
           user = token.user;
 
           return await this.createSchema(context, token.workspace);
@@ -108,7 +108,12 @@ export class GraphQLConfigService
         }
       },
       resolvers: { JSON: GraphQLJSON },
-      plugins: [],
+      plugins: [
+        useExceptionHandler({
+          exceptionHandlerService: this.exceptionHandlerService,
+          tokenService: this.tokenService,
+        }),
+      ],
     };
 
     if (isDebugMode) {

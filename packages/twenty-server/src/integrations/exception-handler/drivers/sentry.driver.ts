@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/node';
 import { ProfilingIntegration } from '@sentry/profiling-node';
 
 import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerOptions } from 'src/integrations/exception-handler/interfaces/exception-handler-options.interface';
 
 import {
   ExceptionHandlerDriverInterface,
@@ -32,19 +33,57 @@ export class ExceptionHandlerSentryDriver
     });
   }
 
-  captureException(exception: Error, user?: ExceptionHandlerUser) {
-    Sentry.captureException(exception, (scope) => {
-      if (user) {
-        scope.setUser({
-          id: user.id,
-          ip_address: user.ipAddress,
-          email: user.email,
-          username: user.username,
-        });
+  captureExceptions(
+    exceptions: ReadonlyArray<any>,
+    options?: ExceptionHandlerOptions,
+  ) {
+    const eventIds: string[] = [];
+
+    Sentry.withScope((scope) => {
+      if (options?.operation) {
+        scope.setTag('operation', options.operation.name);
+        scope.setTag('operationName', options.operation.name);
       }
 
-      return scope;
+      if (options?.document) {
+        scope.setExtra('document', options.document);
+      }
+
+      console.log('exceptions', exceptions, options);
+
+      for (const exception of exceptions) {
+        const errorPath = (exception.path ?? [])
+          .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
+          .join(' > ');
+
+        if (errorPath) {
+          scope.addBreadcrumb({
+            category: 'execution-path',
+            message: errorPath,
+            level: 'debug',
+          });
+        }
+
+        const eventId = Sentry.captureException(exception, {
+          fingerprint: [
+            'graphql',
+            errorPath,
+            options?.operation?.name,
+            options?.operation?.type,
+          ],
+          contexts: {
+            GraphQL: {
+              operationName: options?.operation?.name,
+              operationType: options?.operation?.type,
+            },
+          },
+        });
+
+        eventIds.push(eventId);
+      }
     });
+
+    return eventIds;
   }
 
   captureMessage(message: string, user?: ExceptionHandlerUser) {
