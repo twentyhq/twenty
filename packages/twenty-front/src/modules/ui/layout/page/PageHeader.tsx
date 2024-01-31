@@ -71,11 +71,33 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledSkeletonLoader = styled.div`
+  width: 108px;
+  height: 24px;
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.xl};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  animation: loading ${({ theme }) => theme.animation.duration.normal}s infinite;
+
+  @keyframes loading {
+    0% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.7;
+    }
+  }
+`;
+
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
   Icon: IconComponent;
   children?: ReactNode;
+  loading?: boolean;
 };
 
 export const PageHeader = ({
@@ -83,6 +105,7 @@ export const PageHeader = ({
   hasBackButton,
   Icon,
   children,
+  loading,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -105,12 +128,16 @@ export const PageHeader = ({
             variant="tertiary"
           />
         )}
-        <StyledTopBarIconStyledTitleContainer>
-          {Icon && <Icon size={theme.icon.size.md} />}
-          <StyledTitleContainer data-testid="top-bar-title">
-            <OverflowingTextWithTooltip text={title} />
-          </StyledTitleContainer>
-        </StyledTopBarIconStyledTitleContainer>
+        {loading ? (
+          <StyledSkeletonLoader />
+        ) : (
+          <StyledTopBarIconStyledTitleContainer>
+            {Icon && <Icon size={theme.icon.size.md} />}
+            <StyledTitleContainer data-testid="top-bar-title">
+              <OverflowingTextWithTooltip text={title} />
+            </StyledTitleContainer>
+          </StyledTopBarIconStyledTitleContainer>
+        )}
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>
