@@ -22,6 +22,10 @@ const StyledPlaceholder = styled.td`
   height: 30px;
 `;
 
+const StyledTd = styled.td`
+  background-color: ${({ theme }) => theme.background.primary};
+`;
+
 export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
   const { getVisibleTableColumnsSelector, isRowSelectedFamilyState } =
     useRecordTableStates();
@@ -54,9 +58,9 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
       >
         {inView ? (
           <>
-            <td>
+            <StyledTd>
               <CheckboxCell />
-            </td>
+            </StyledTd>
             {[...visibleTableColumns]
               .sort((columnA, columnB) => columnA.position - columnB.position)
               .map((column, columnIndex) => {
