@@ -84,7 +84,7 @@ export default async function ({ params }: { params: { slug: string } }) {
   ORDER BY 
     DATE(createdAt) DESC
   LIMIT
-    5
+    10
 `,
     )
     .all({ user_id: params.slug }) as {
