@@ -7,7 +7,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 type RecordBoardContextProps = {
   objectMetadataItem: ObjectMetadataItem;
   selectFieldMetadataItem: FieldMetadataItem;
-  onFetchMoreVisibilityChange: (isVisible: boolean) => void;
   createOneRecord: (recordInput: Partial<ObjectRecord>) => void;
   updateOneRecord: ({
     idToUpdate,

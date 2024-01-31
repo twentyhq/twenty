@@ -1,9 +1,7 @@
-import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { grayScale } from '@/ui/theme/constants/colors';
 
@@ -18,10 +16,13 @@ const StyledText = styled.div`
 `;
 
 export const RecordBoardColumnFetchMoreLoader = () => {
-  const { getIsFetchingRecordState } = useRecordBoardStates();
+  const { getIsFetchingRecordState, getOnFetchMoreVisibilityChangeState } =
+    useRecordBoardStates();
   const isFetchingRecords = useRecoilValue(getIsFetchingRecordState());
 
-  const { onFetchMoreVisibilityChange } = useContext(RecordBoardContext);
+  const onFetchMoreVisibilityChange = useRecoilValue(
+    getOnFetchMoreVisibilityChangeState(),
+  );
 
   const { ref } = useInView({
     onChange: onFetchMoreVisibilityChange,

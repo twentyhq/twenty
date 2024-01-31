@@ -13,6 +13,7 @@ export const RecordBoardActionBar = ({
   const { getSelectedRecordIdsSelector } = useRecordBoardStates(recordBoardId);
 
   const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+  console.log(selectedRecordIds);
 
   if (!selectedRecordIds.length) {
     return null;
