@@ -13,7 +13,7 @@ export const ActivityLog = ({
   return (
     <CardContainer>
       <Title>Activity</Title>
-      <div style={{ width: '100%', height: '140px' }}>
+      <div style={{ width: '100%', height: '214px' }}>
         <ResponsiveTimeRange
           data={data}
           emptyColor="#F4EFFF"
