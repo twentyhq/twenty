@@ -82,6 +82,8 @@ export class FetchMessagesByBatchesService {
       },
     );
 
+    console.log('responseFromGmailQuery', response);
+
     return response;
   }
 
