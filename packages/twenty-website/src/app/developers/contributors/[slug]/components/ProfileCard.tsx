@@ -86,7 +86,9 @@ export const ProfileCard = ({
       <Details>
         <h3 className="username">
           @{username}
-          <StyledGithubIcon size="M" color="rgba(0,0,0,1)" />
+          <a href={`https://github.com/${username}`} target="_blank">
+            <StyledGithubIcon size="M" color="rgba(0,0,0,1)" />
+          </a>
         </h3>
         <p className="duration">
           Contributing since{' '}
