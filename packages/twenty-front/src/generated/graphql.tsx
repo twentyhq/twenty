@@ -227,7 +227,7 @@ export type Mutation = {
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createWorkspaceSchema: Workspace;
+  createWorkspace: Workspace;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;

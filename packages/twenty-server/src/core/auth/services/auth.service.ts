@@ -161,20 +161,6 @@ export class AuthService {
     return await this.userRepository.save(userToCreate);
   }
 
-  async createWorkspaceSchema(user: User) {
-    const workspaceToCreate = this.workspaceRepository.create({
-      displayName: '',
-      domainName: '',
-      inviteHash: v4(),
-      subscriptionStatus: 'active',
-    });
-    const workspace = await this.workspaceRepository.save(workspaceToCreate);
-
-    await this.userRepository.update(user.id, { defaultWorkspace: workspace });
-    await this.workspaceManagerService.init(user.defaultWorkspace.id);
-    await this.userService.createWorkspaceMember(user);
-  }
-
   async verify(email: string): Promise<Verify> {
     const user = await this.userRepository.findOne({
       where: {

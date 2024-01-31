@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { assert } from 'src/utils/assert';
 import { User } from 'src/core/user/user.entity';
@@ -85,6 +86,13 @@ export class UserService extends TypeOrmQueryService<User> {
         user.id
       }', '${user.defaultAvatarUrl ?? ''}')`,
     );
+  }
+
+  async updateUser(
+    userId: string,
+    data: QueryDeepPartialEntity<User>,
+  ): Promise<void> {
+    await this.userRepository.update(userId, data);
   }
 
   async deleteUser(userId: string): Promise<User> {

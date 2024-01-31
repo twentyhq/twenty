@@ -95,14 +95,6 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @Mutation(() => Workspace)
-  @UseGuards(JwtAuthGuard)
-  async createWorkspaceSchema(@AuthUser() user: User): Promise<Workspace> {
-    await this.authService.createWorkspaceSchema(user);
-
-    return user.defaultWorkspace;
-  }
-
   @Mutation(() => TransientToken)
   @UseGuards(JwtAuthGuard)
   async generateTransientToken(

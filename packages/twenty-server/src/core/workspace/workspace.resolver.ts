@@ -12,6 +12,8 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { User } from 'src/core/user/user.entity';
 
 import { Workspace } from './workspace.entity';
 
@@ -33,6 +35,14 @@ export class WorkspaceResolver {
     assert(workspace, 'User not found');
 
     return workspace;
+  }
+
+  @Mutation(() => Workspace)
+  @UseGuards(JwtAuthGuard)
+  async createWorkspace(@AuthUser() user: User): Promise<Workspace> {
+    await this.workspaceService.createWorkspace(user);
+
+    return user.defaultWorkspace;
   }
 
   @Mutation(() => Workspace)
