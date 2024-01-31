@@ -60,4 +60,19 @@ export class MessageService {
       [messageIds],
     );
   }
+
+  public async getByMessageThreadIds(
+    workspaceId: string,
+    messageThreadIds: string[],
+  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
+
+    return await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."message" WHERE "messageThreadId" = ANY($1)`,
+      [messageThreadIds],
+    );
+  }
 }

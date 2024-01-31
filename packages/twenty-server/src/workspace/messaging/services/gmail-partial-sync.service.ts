@@ -100,20 +100,24 @@ export class GmailPartialSyncService {
         accessToken,
       );
 
-    await this.utils.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+    if (messagesToSave.length !== 0) {
+      await this.utils.saveMessages(
+        messagesToSave,
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
-    await this.utils.deleteMessages(
-      messagesDeleted,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+    if (messagesDeleted.length !== 0) {
+      await this.utils.deleteMessages(
+        messagesDeleted,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
     if (errors.length) throw new Error('Error fetching messages');
 

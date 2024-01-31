@@ -11,12 +11,14 @@ import {
 import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 
 @Injectable()
 export class MessagingUtilsService {
   constructor(
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
+    private readonly messageThreadService: MessageThreadService,
   ) {}
 
   public createQueriesFromMessageIds(
@@ -199,28 +201,33 @@ export class MessagingUtilsService {
   }
 
   public async deleteMessages(
-    messagesDeleted: string[],
+    messagesDeletedMessageExternalIds: string[],
     gmailMessageChannelId: string,
     workspaceId: string,
   ) {
     const messageChannelMessageAssociationsToDelete =
       await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
-        messagesDeleted,
+        messagesDeletedMessageExternalIds,
         gmailMessageChannelId,
         workspaceId,
       );
+
+    const messageChannelMessageAssociationIdsToDeleteIds =
+      messageChannelMessageAssociationsToDelete.map(
+        (messageChannelMessageAssociationToDelete) =>
+          messageChannelMessageAssociationToDelete.id,
+      );
+
+    await this.messageChannelMessageAssociationService.deleteByIds(
+      messageChannelMessageAssociationIdsToDeleteIds,
+      workspaceId,
+    );
 
     const messageIdsFromMessageChannelMessageAssociationsToDelete =
       messageChannelMessageAssociationsToDelete.map(
         (messageChannelMessageAssociationToDelete) =>
           messageChannelMessageAssociationToDelete.messageId,
       );
-
-    await this.messageChannelMessageAssociationService.deleteByMessageExternalIdsAndMessageChannelId(
-      messagesDeleted,
-      gmailMessageChannelId,
-      workspaceId,
-    );
 
     const messageChannelMessageAssociationByMessageIds =
       await this.messageChannelMessageAssociationService.getByMessageIds(
@@ -243,5 +250,26 @@ export class MessagingUtilsService {
       );
 
     await this.messageService.deleteByIds(workspaceId, messageIdsToDelete);
+
+    const messageThreadIdsFromMessageChannelMessageAssociationsToDelete =
+      messageChannelMessageAssociationsToDelete.map(
+        (messageChannelMessageAssociationToDelete) =>
+          messageChannelMessageAssociationToDelete.messageThreadId,
+      );
+
+    const messagesByThreadIds = await this.messageService.getByMessageThreadIds(
+      workspaceId,
+      messageThreadIdsFromMessageChannelMessageAssociationsToDelete,
+    );
+
+    const threadIdsToDelete =
+      messageThreadIdsFromMessageChannelMessageAssociationsToDelete.filter(
+        (threadId) =>
+          !messagesByThreadIds.find(
+            (message) => message.messageThreadId === threadId,
+          ),
+      );
+
+    await this.messageThreadService.deleteByIds(threadIdsToDelete, workspaceId);
   }
 }

@@ -62,6 +62,18 @@ export class MessageChannelMessageAssociationService {
     );
   }
 
+  public async deleteByIds(ids: string[], workspaceId: string) {
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "id" = ANY($1)`,
+      [ids],
+    );
+  }
+
   public async getByMessageThreadExternalIds(
     messageThreadExternalIds: string[],
     workspaceId: string,
