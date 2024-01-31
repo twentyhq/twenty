@@ -7,6 +7,7 @@ const StyledThreadMessageBody = styled.div`
   flex-direction: column;
   margin-top: ${({ theme }) => theme.spacing(4)};
   white-space: pre-line;
+  overflow-wrap: break-word;
 `;
 
 type EmailThreadMessageBodyProps = {

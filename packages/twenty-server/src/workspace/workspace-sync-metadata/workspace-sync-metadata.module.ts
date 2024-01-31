@@ -8,8 +8,12 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
-import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
+import { workspaceSyncMetadataFactories } from 'src/workspace/workspace-sync-metadata/factories';
+import { workspaceSyncMetadataComparators } from 'src/workspace/workspace-sync-metadata/comparators';
+import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
+import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 
 @Module({
   imports: [
@@ -26,7 +30,14 @@ import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metad
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
-  providers: [WorkspaceSyncMetadataService, ReflectiveMetadataFactory],
+  providers: [
+    ...workspaceSyncMetadataFactories,
+    ...workspaceSyncMetadataComparators,
+    WorkspaceMetadataUpdaterService,
+    WorkspaceSyncObjectMetadataService,
+    WorkspaceSyncRelationMetadataService,
+    WorkspaceSyncMetadataService,
+  ],
   exports: [WorkspaceSyncMetadataService],
 })
 export class WorkspaceSyncMetadataModule {}

@@ -8,17 +8,16 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "prebuild": "rimraf dist",
-    "build": "yarn prebuild && nest build",
-    "build-twenty-emails": "yarn nx run twenty-emails:build",
+    "build": "yarn prebuild && nest build --path ./tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "set NODE_ENV=development && yarn build-twenty-emails && nest start",
-    "start:dev": "yarn build-twenty-emails && nest start --watch",
-    "start:debug": "yarn build-twenty-emails && nest start --debug --watch",
+    "start": "NODE_ENV=development && nest start",
+    "start:dev": "npx nx start --watch",
+    "start:debug": "npx nx start:dev --debug",
     "start:prod": "node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:watch": "npx nx test --watch",
+    "test:cov": "npx nx test --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "./scripts/run-integration.sh",
     "typeorm": "npx ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
@@ -79,6 +78,7 @@
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
     "lodash.kebabcase": "^4.1.1",
+    "lodash.omit": "^4.5.0",
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
     "mailparser": "^3.6.5",
@@ -92,16 +92,17 @@
     "passport-local": "^1.0.0",
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
+    "planer": "^1.2.0",
     "react": "^18.2.0",
     "rimraf": "^3.0.2",
     "sharp": "^0.32.1",
-    "twenty-emails": "workspace:*",
     "type-fest": "^4.1.0",
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isobject": "^3.0.7",
+    "@types/lodash.omit": "^4.5.9",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
@@ -111,5 +112,14 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
+  },
+  "nx": {
+    "targets": {
+      "test:debug": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }

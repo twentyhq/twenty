@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -29,9 +29,7 @@ export const RightDrawerActivity = ({
   showComment = true,
   autoFillTitle = false,
 }: RightDrawerActivityProps) => {
-  const [, setEntityFields] = useRecoilState(
-    entityFieldsFamilyState(activityId),
-  );
+  const setEntityFields = useSetRecoilState(recordStoreFamilyState(activityId));
 
   const { record: activity } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,

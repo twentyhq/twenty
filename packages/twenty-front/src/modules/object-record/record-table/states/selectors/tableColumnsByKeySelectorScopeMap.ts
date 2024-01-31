@@ -1,18 +1,20 @@
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
-import { ColumnDefinition } from '../../types/ColumnDefinition';
 import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
-export const tableColumnsByKeySelectorScopeMap = createSelectorScopeMap({
-  key: 'tableColumnsByKeySelectorScopeMap',
-  get:
-    ({ scopeId }) =>
-    ({ get }) =>
-      get(tableColumnsStateScopeMap({ scopeId })).reduce<
-        Record<string, ColumnDefinition<FieldMetadata>>
-      >(
-        (result, column) => ({ ...result, [column.fieldMetadataId]: column }),
-        {},
-      ),
-});
+export const tableColumnsByKeySelectorScopeMap = createSelectorReadOnlyScopeMap(
+  {
+    key: 'tableColumnsByKeySelectorScopeMap',
+    get:
+      ({ scopeId }) =>
+      ({ get }) =>
+        get(tableColumnsStateScopeMap({ scopeId })).reduce<
+          Record<string, ColumnDefinition<FieldMetadata>>
+        >(
+          (result, column) => ({ ...result, [column.fieldMetadataId]: column }),
+          {},
+        ),
+  },
+);

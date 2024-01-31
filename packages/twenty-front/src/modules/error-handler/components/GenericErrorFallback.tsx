@@ -1,4 +1,14 @@
 import { FallbackProps } from 'react-error-boundary';
+import { Button } from 'tsup.ui.index';
+
+import { IconRefresh } from '@/ui/display/icon';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptyContainer,
+  StyledEmptySubTitle,
+  StyledEmptyTextContainer,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 type GenericErrorFallbackProps = FallbackProps;
 
@@ -7,20 +17,18 @@ export const GenericErrorFallback = ({
   resetErrorBoundary,
 }: GenericErrorFallbackProps) => {
   return (
-    <div
-      style={{
-        color: 'red',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-      }}
-    >
-      <div>{error.message}</div>
-      <button onClick={() => resetErrorBoundary()}>Retry</button>
-    </div>
+    <StyledEmptyContainer>
+      <AnimatedPlaceholder type="errorIndex" />
+      <StyledEmptyTextContainer>
+        <StyledEmptyTitle>Server’s on a coffee break</StyledEmptyTitle>
+        <StyledEmptySubTitle>{error.message}</StyledEmptySubTitle>
+      </StyledEmptyTextContainer>
+      <Button
+        Icon={IconRefresh}
+        title="Reload"
+        variant={'secondary'}
+        onClick={() => resetErrorBoundary()}
+      />
+    </StyledEmptyContainer>
   );
 };

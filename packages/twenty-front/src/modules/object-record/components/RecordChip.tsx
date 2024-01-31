@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
@@ -8,15 +9,21 @@ export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   maxWidth?: number;
+  className?: string;
 };
 
 export const RecordChip = ({
   objectNameSingular,
   record,
   maxWidth,
+  className,
 }: RecordChipProps) => {
-  const { mapToObjectRecordIdentifier } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
+  });
+
+  const mapToObjectRecordIdentifier = useMapToObjectRecordIdentifier({
+    objectMetadataItem,
   });
 
   const objectRecordIdentifier = mapToObjectRecordIdentifier(record);
@@ -29,6 +36,7 @@ export const RecordChip = ({
       avatarUrl={objectRecordIdentifier.avatarUrl}
       linkToEntity={objectRecordIdentifier.linkToShowPage}
       maxWidth={maxWidth}
+      className={className}
     />
   );
 };

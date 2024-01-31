@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 
 // TODO: implement dry-run
 interface RunWorkspaceMigrationsOptions {
@@ -31,8 +31,10 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       );
 
     await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      dataSourceMetadata.id,
-      options.workspaceId,
+      {
+        workspaceId: options.workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      },
     );
   }
 

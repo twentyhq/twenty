@@ -1,5 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const generateEmptyFieldValue = (
   fieldMetadataItem: FieldMetadataItem,
@@ -39,7 +42,21 @@ export const generateEmptyFieldValue = (
       return true;
     }
     case FieldMetadataType.Relation: {
-      return null;
+      if (
+        !isNonEmptyString(
+          fieldMetadataItem.fromRelationMetadata?.toObjectMetadata
+            ?.nameSingular,
+        )
+      ) {
+        return null;
+      }
+
+      return {
+        __typename: `${capitalize(
+          fieldMetadataItem.fromRelationMetadata.toObjectMetadata.nameSingular,
+        )}Connection`,
+        edges: [],
+      };
     }
     case FieldMetadataType.Currency: {
       return {

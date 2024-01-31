@@ -46,7 +46,7 @@ export const Favorites = () => {
                       label={labelIdentifier}
                       Icon={() => (
                         <Avatar
-                          colorId={recordId}
+                          entityId={recordId}
                           avatarUrl={avatarUrl}
                           type={avatarType}
                           placeholder={labelIdentifier}

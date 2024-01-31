@@ -1,20 +1,15 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-import { ContextMenuItemAccent } from '../types/ContextMenuItemAccent';
-
 type ContextMenuItemProps = {
-  Icon: IconComponent;
-  label: string;
-  accent?: ContextMenuItemAccent;
-  onClick: () => void;
+  item: ContextMenuEntry;
 };
 
-export const ContextMenuItem = ({
-  label,
-  Icon,
-  accent = 'default',
-  onClick,
-}: ContextMenuItemProps) => (
-  <MenuItem LeftIcon={Icon} onClick={onClick} accent={accent} text={label} />
+export const ContextMenuItem = ({ item }: ContextMenuItemProps) => (
+  <MenuItem
+    LeftIcon={item.Icon}
+    onClick={item.onClick}
+    accent={item.accent}
+    text={item.label}
+  />
 );

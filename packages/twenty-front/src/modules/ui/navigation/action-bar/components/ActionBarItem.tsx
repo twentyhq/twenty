@@ -3,22 +3,17 @@ import styled from '@emotion/styled';
 import { MenuItem } from 'tsup.ui.index';
 
 import { IconChevronDown } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-
-import { ActionBarItemAccent } from '../types/ActionBarItemAccent';
+import { ActionBarEntry } from '@/ui/navigation/action-bar/types/ActionBarEntry';
+import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
-  Icon: IconComponent;
-  label: string;
-  accent?: ActionBarItemAccent;
-  onClick?: () => void;
-  subActions?: ActionBarItemProps[];
+  item: ActionBarEntry;
 };
 
-const StyledButton = styled.div<{ accent: ActionBarItemAccent }>`
+const StyledButton = styled.div<{ accent: MenuItemAccent }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) =>
     props.accent === 'danger'
@@ -45,19 +40,13 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({
-  label,
-  Icon,
-  accent = 'standard',
-  onClick,
-  subActions,
-}: ActionBarItemProps) => {
+export const ActionBarItem = ({ item }: ActionBarItemProps) => {
   const theme = useTheme();
-  const dropdownId = `action-bar-item-${label}`;
+  const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
   return (
     <>
-      {Array.isArray(subActions) ? (
+      {Array.isArray(item.subActions) ? (
         <Dropdown
           dropdownId={dropdownId}
           dropdownPlacement="top-start"
@@ -65,15 +54,18 @@ export const ActionBarItem = ({
             scope: dropdownId,
           }}
           clickableComponent={
-            <StyledButton accent={accent} onClick={toggleDropdown}>
-              {Icon && <Icon size={theme.icon.size.md} />}
-              <StyledButtonLabel>{label}</StyledButtonLabel>
+            <StyledButton
+              accent={item.accent ?? 'default'}
+              onClick={toggleDropdown}
+            >
+              {item.Icon && <item.Icon size={theme.icon.size.md} />}
+              <StyledButtonLabel>{item.label}</StyledButtonLabel>
               <IconChevronDown size={theme.icon.size.md} />
             </StyledButton>
           }
           dropdownComponents={
             <DropdownMenuItemsContainer>
-              {subActions.map((subAction) => (
+              {item.subActions.map((subAction) => (
                 <MenuItem
                   key={subAction.label}
                   text={subAction.label}
@@ -88,9 +80,12 @@ export const ActionBarItem = ({
           }
         />
       ) : (
-        <StyledButton accent={accent} onClick={onClick}>
-          {Icon && <Icon size={theme.icon.size.md} />}
-          <StyledButtonLabel>{label}</StyledButtonLabel>
+        <StyledButton
+          accent={item.accent ?? 'default'}
+          onClick={() => item.onClick?.()}
+        >
+          {item.Icon && <item.Icon size={theme.icon.size.md} />}
+          <StyledButtonLabel>{item.label}</StyledButtonLabel>
         </StyledButton>
       )}
     </>

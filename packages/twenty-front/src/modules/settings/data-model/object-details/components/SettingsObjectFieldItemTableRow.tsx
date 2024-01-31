@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
@@ -53,9 +53,13 @@ export const SettingsObjectFieldItemTableRow = ({
   const fieldDataTypeIsSupported =
     fieldMetadataItem.type in settingsFieldMetadataTypes;
 
-  const { relationObjectMetadataItem, relationType } = useRelationMetadata({
-    fieldMetadataItem,
-  });
+  const getRelationMetadata = useGetRelationMetadata();
+
+  const { relationObjectMetadataItem, relationType } =
+    useMemo(
+      () => getRelationMetadata({ fieldMetadataItem }),
+      [fieldMetadataItem, getRelationMetadata],
+    ) ?? {};
 
   if (!fieldDataTypeIsSupported) return null;
 

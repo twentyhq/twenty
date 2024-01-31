@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectConnection';
+import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
@@ -21,15 +21,16 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         cachedConnection,
-        { INVALIDATE, readField, storeFieldName },
+        { DELETE, readField, storeFieldName },
       ) => {
         if (
-          !isCachedObjectConnection(
+          !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
-        )
+        ) {
           return cachedConnection;
+        }
 
         const { variables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
@@ -48,12 +49,14 @@ export const triggerDeleteRecordsOptimisticEffect = ({
             return nodeId && !recordIds.includes(nodeId);
           }) || [];
 
+        if (nextCachedEdges.length === cachedEdges?.length)
+          return cachedConnection;
+
         if (
           isDefined(variables?.first) &&
-          cachedEdges?.length === variables.first &&
-          nextCachedEdges.length < variables.first
+          cachedEdges?.length === variables.first
         ) {
-          return INVALIDATE;
+          return DELETE;
         }
 
         return { ...cachedConnection, edges: nextCachedEdges };
@@ -61,5 +64,5 @@ export const triggerDeleteRecordsOptimisticEffect = ({
     },
   });
 
-  records.forEach((record) => cache.evict({ id: cache.identify(record) }));
+  cache.gc();
 };

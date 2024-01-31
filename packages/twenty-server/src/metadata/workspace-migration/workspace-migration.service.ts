@@ -57,10 +57,12 @@ export class WorkspaceMigrationService {
    * @param migrations
    */
   public async createCustomMigration(
+    name: string,
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
   ) {
     await this.workspaceMigrationRepository.save({
+      name,
       migrations,
       workspaceId,
       isCustom: true,
