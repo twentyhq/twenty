@@ -12,11 +12,12 @@ const Item = styled.div`
   gap: 17px;
 `;
 
-const StyledTitle = styled.h4`
+const StyledTitle = styled.a`
   font-size: 24px;
   font-weight: 400;
   color: #474747;
   margin: 0;
+  text-decoration: none;
 
   @media (max-width: 810px) {
     font-size: 20px;
@@ -68,7 +69,9 @@ export const PullRequestItem = ({
         />
       </div>
       <div>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle href={url} target="_blank">
+          {title}
+        </StyledTitle>
         <StyledDescription>
           #{prNumber} by {authorId.slice(1)} was{' '}
           {mergedAt ? `merged` : `opened`}{' '}
