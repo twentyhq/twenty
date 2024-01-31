@@ -141,18 +141,18 @@ export const useSignInUp = () => {
 
         if (
           billing?.isBillingEnabled &&
-          currentWorkspace.subscriptionStatus !== 'active'
+          (!currentWorkspace ||
+            currentWorkspace.subscriptionStatus !== 'active')
         ) {
-          navigate('/plan-required');
+          navigate(AppPath.PlanRequired);
+          return;
+        }
+        if (currentWorkspace?.displayName) {
+          navigate(AppPath.Index);
           return;
         }
 
-        if (currentWorkspace.displayName) {
-          navigate('/');
-          return;
-        }
-
-        navigate('/create/workspace');
+        navigate(AppPath.CreateWorkspace);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',

@@ -101,7 +101,7 @@ export const PageChangeEffect = () => {
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute
     ) {
-      navigate('/');
+      navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
       const inviteHash =
         matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)

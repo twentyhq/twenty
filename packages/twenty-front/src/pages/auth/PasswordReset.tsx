@@ -157,13 +157,13 @@ export const PasswordReset = () => {
 
       if (
         billing?.isBillingEnabled &&
-        currentWorkspace.subscriptionStatus !== 'active'
+        (!currentWorkspace || currentWorkspace.subscriptionStatus !== 'active')
       ) {
         navigate(AppPath.PlanRequired);
         return;
       }
 
-      if (currentWorkspace.displayName) {
+      if (currentWorkspace?.displayName) {
         navigate(AppPath.Index);
         return;
       }

@@ -27,10 +27,13 @@ export const getOnboardingStatus = ({
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
   }
-
   // if the user has not been fetched yet, we can't know the onboarding status
-  if (!currentWorkspaceMember) {
+  if (currentWorkspace && !currentWorkspaceMember) {
     return undefined;
+  }
+
+  if (!currentWorkspace && isBillingEnabled) {
+    return OnboardingStatus.Incomplete;
   }
 
   if (
@@ -48,8 +51,8 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingWorkspaceCreation;
   }
   if (
-    !currentWorkspaceMember.name.firstName ||
-    !currentWorkspaceMember.name.lastName
+    !currentWorkspaceMember?.name.firstName ||
+    !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
   }
