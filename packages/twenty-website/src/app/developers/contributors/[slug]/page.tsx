@@ -8,6 +8,7 @@ import { ContentContainer } from '@/app/developers/contributors/[slug]/component
 import { ProfileCard } from '@/app/developers/contributors/[slug]/components/ProfileCard';
 import { ProfileInfo } from '@/app/developers/contributors/[slug]/components/ProfileInfo';
 import { PullRequests } from '@/app/developers/contributors/[slug]/components/PullRequests';
+import { ThankYou } from '@/app/developers/contributors/[slug]/components/ThankYou';
 
 interface Contributor {
   login: string;
@@ -135,6 +136,7 @@ export default async function ({ params }: { params: { slug: string } }) {
         <ProfileCard
           username={contributor.login}
           avatarUrl={contributor.avatarUrl}
+          firstContributionAt={pullRequestActivity[0].day}
         />
         <ProfileInfo
           mergedPRsCount={mergedPullRequests[0].merged_count}
@@ -143,40 +145,8 @@ export default async function ({ params }: { params: { slug: string } }) {
         />
         <ActivityLog data={pullRequestActivity} />
         <PullRequests list={pullRequestList} />
+        <ThankYou authorId={contributor.login} />
       </ContentContainer>
     </>
   );
-
-  // return (
-  //   <div
-  //     style={{
-  //       maxWidth: '900px',
-  //       display: 'flex',
-  //       padding: '40px',
-  //       gap: '24px',
-  //     }}
-  //   >
-  //     <div style={{ flexDirection: 'column', width: '240px' }}>
-  //       <Image
-  //         src={contributor.avatarUrl}
-  //         alt={contributor.login}
-  //         width={240}
-  //         height={240}
-  //       />
-  //       <h1>{contributor.login}</h1>
-  //     </div>
-  //     <div style={{ flexDirection: 'column' }}>
-  //       <div style={{ width: '450px', height: '200px' }}>
-  //         <ActivityLog data={pullRequestActivity} />
-  //       </div>
-  //       <div style={{ width: '450px' }}>
-  //         {pullRequestList.map((pr) => (
-  //           <div>
-  //             <a href={pr.url}>{pr.title}</a>
-  //           </div>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
 }

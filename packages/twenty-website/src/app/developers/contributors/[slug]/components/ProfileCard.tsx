@@ -1,6 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { format } from 'date-fns';
 
 import { GithubIcon } from '@/app/components/Icons';
 
@@ -50,9 +51,14 @@ const Details = styled.div`
 interface ProfileCardProps {
   username: string;
   avatarUrl: string;
+  firstContributionAt: string;
 }
 
-export const ProfileCard = ({ username, avatarUrl }: ProfileCardProps) => {
+export const ProfileCard = ({
+  username,
+  avatarUrl,
+  firstContributionAt,
+}: ProfileCardProps) => {
   return (
     <ProfileContainer>
       <Avatar>
@@ -63,7 +69,10 @@ export const ProfileCard = ({ username, avatarUrl }: ProfileCardProps) => {
           @{username}
           <GithubIcon size="M" color="rgba(0,0,0,1)" />
         </h3>
-        <p className="duration">Contributing since March 2001</p>
+        <p className="duration">
+          Contributing since{' '}
+          {format(new Date(firstContributionAt), 'MMMM yyyy')}
+        </p>
       </Details>
     </ProfileContainer>
   );

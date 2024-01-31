@@ -103,7 +103,8 @@ const LinkNextToCTA = styled.a`
 
 const CallToAction = () => {
   const path = usePathname();
-  const isTwentyDev = path.includes('developers');
+  // const isTwentyDev = path.includes('developers');
+  const isTwentyDev = false;
 
   return (
     <CallToActionContainer>
@@ -152,7 +153,8 @@ const CallToAction = () => {
 
 export const HeaderDesktop = () => {
   const path = usePathname();
-  const isTwentyDev = path.includes('developers');
+  // const isTwentyDev = path.includes('developers');
+  const isTwentyDev = false;
 
   return (
     <Nav>

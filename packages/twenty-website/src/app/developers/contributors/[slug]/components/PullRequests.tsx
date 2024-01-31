@@ -11,9 +11,6 @@ const List = styled.div`
   gap: 24px;
   flex-direction: column;
 `;
-
-const ListItem = styled.div``;
-
 interface PullRequestsProps {
   list: {
     id: string;
@@ -26,7 +23,6 @@ interface PullRequestsProps {
 }
 
 export const PullRequests = ({ list }: PullRequestsProps) => {
-  // console.log(list);
   return (
     <CardContainer>
       <Title>Pull Requests</Title>
