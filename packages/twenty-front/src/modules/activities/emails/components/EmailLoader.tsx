@@ -6,11 +6,11 @@ import {
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
-export const EmailLoader = () => (
+export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
   <StyledEmptyContainer>
     <AnimatedPlaceholder type="loadingMessages" />
     <StyledEmptyTextContainer>
-      <StyledEmptyTitle>Loading emails</StyledEmptyTitle>
+      <StyledEmptyTitle>{loadingText || 'Loading emails'}</StyledEmptyTitle>
       <Loader />
     </StyledEmptyTextContainer>
   </StyledEmptyContainer>

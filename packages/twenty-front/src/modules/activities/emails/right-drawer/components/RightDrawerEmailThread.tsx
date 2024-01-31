@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
@@ -25,7 +26,7 @@ export const RightDrawerEmailThread = () => {
 
   const {
     records: messages,
-    loading,
+    loading: firstQueryLoading,
     fetchMoreRecords,
   } = useFindManyRecords<EmailThreadMessageType>({
     depth: 3,
@@ -44,10 +45,10 @@ export const RightDrawerEmailThread = () => {
   });
 
   const fetchMoreMessages = useCallback(() => {
-    if (!loading) {
+    if (!firstQueryLoading) {
       fetchMoreRecords();
     }
-  }, [fetchMoreRecords, loading]);
+  }, [fetchMoreRecords, firstQueryLoading]);
 
   if (!viewableEmailThread) {
     return null;
@@ -59,18 +60,24 @@ export const RightDrawerEmailThread = () => {
         subject={viewableEmailThread.subject}
         lastMessageSentAt={viewableEmailThread.lastMessageReceivedAt}
       />
-      {messages.map((message) => (
-        <EmailThreadMessage
-          key={message.id}
-          participants={message.messageParticipants}
-          body={message.text}
-          sentAt={message.receivedAt}
-        />
-      ))}
-      <EmailThreadFetchMoreLoader
-        loading={loading}
-        onLastRowVisible={fetchMoreMessages}
-      />
+      {firstQueryLoading ? (
+        <EmailLoader loadingText="Loading thread" />
+      ) : (
+        <>
+          {messages.map((message) => (
+            <EmailThreadMessage
+              key={message.id}
+              participants={message.messageParticipants}
+              body={message.text}
+              sentAt={message.receivedAt}
+            />
+          ))}
+          <EmailThreadFetchMoreLoader
+            loading={firstQueryLoading}
+            onLastRowVisible={fetchMoreMessages}
+          />
+        </>
+      )}
     </StyledContainer>
   );
 };
