@@ -3,6 +3,8 @@ import { isFirstRecordBoardColumnFamilyStateScopeMap } from '@/object-record/rec
 import { isLastRecordBoardColumnFamilyStateScopeMap } from '@/object-record/record-board/states/isLastRecordBoardColumnFamilyStateScopeMap';
 import { isRecordBoardCardSelectedFamilyStateScopeMap } from '@/object-record/record-board/states/isRecordBoardCardSelectedFamilyStateScopeMap';
 import { isRecordBoardCompactModeActiveStateScopeMap } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveStateScopeMap';
+import { isRecordBoardFetchingRecordsStateScopeMap } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsStateScopeMap';
+import { onRecordBoardFetchMoreVisibilityChangeStateScopeMap } from '@/object-record/record-board/states/onRecordBoardFetchMoreVisibilityChangeStateScopeMap';
 import { recordBoardColumnIdsStateScopeMap } from '@/object-record/record-board/states/recordBoardColumnIdsStateScopeMap';
 import { recordBoardFieldDefinitionsStateScopeMap } from '@/object-record/record-board/states/recordBoardFieldDefinitionsStateScopeMap';
 import { recordBoardFiltersStateScopeMap } from '@/object-record/record-board/states/recordBoardFiltersStateScopeMap';
@@ -28,6 +30,10 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     scopeId,
     getObjectSingularNameState: getState(
       recordBoardObjectSingularNameStateScopeMap,
+      scopeId,
+    ),
+    getIsFetchingRecordState: getState(
+      isRecordBoardFetchingRecordsStateScopeMap,
       scopeId,
     ),
     getColumnIdsState: getState(recordBoardColumnIdsStateScopeMap, scopeId),
@@ -70,6 +76,11 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
 
     getIsCompactModeActiveState: getState(
       isRecordBoardCompactModeActiveStateScopeMap,
+      scopeId,
+    ),
+
+    getOnFetchMoreVisibilityChangeState: getState(
+      onRecordBoardFetchMoreVisibilityChangeStateScopeMap,
       scopeId,
     ),
   };

@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectConnection';
+import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -36,7 +36,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
         },
       ) => {
         if (
-          !isCachedObjectConnection(
+          !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
