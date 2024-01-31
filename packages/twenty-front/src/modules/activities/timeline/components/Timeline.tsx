@@ -9,7 +9,6 @@ import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
   StyledEmptyTextContainer,
-  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
