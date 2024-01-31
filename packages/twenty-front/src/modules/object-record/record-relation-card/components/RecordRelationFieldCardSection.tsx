@@ -1,6 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
@@ -20,6 +20,7 @@ import { RelationPickerScope } from '@/object-record/relation-picker/scopes/Rela
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconForbid, IconPlus } from '@/ui/display/icon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -79,7 +80,22 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const StyledCardNoContent = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.light};
+
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(10)};
+  padding: ${({ theme }) => theme.spacing(0, 2)};
+`;
+
 export const RecordRelationFieldCardSection = () => {
+  const theme = useTheme();
+
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -160,17 +176,21 @@ export const RecordRelationFieldCardSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
+  const { getIcon } = useIcons();
+  const Icon = getIcon(relationObjectMetadataItem.icon);
+
   return (
     <Section>
       <StyledHeader isDropdownOpen={isDropdownOpen}>
         <StyledTitle>
           <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
           {parseFieldRelationType(relationFieldMetadataItem) ===
-            'TO_ONE_OBJECT' && (
-            <StyledLink to={filterLinkHref}>
-              All ({relationRecords.length})
-            </StyledLink>
-          )}
+            'TO_ONE_OBJECT' &&
+            relationRecords.length > 0 && (
+              <StyledLink to={filterLinkHref}>
+                All ({relationRecords.length})
+              </StyledLink>
+            )}
         </StyledTitle>
         <DropdownScope dropdownScopeId={dropdownId}>
           <StyledAddDropdown
@@ -203,6 +223,12 @@ export const RecordRelationFieldCardSection = () => {
           />
         </DropdownScope>
       </StyledHeader>
+      {relationRecords.length === 0 && (
+        <StyledCardNoContent>
+          <Icon size={theme.icon.size.sm} />
+          <div>No {relationObjectMetadataItem.labelSingular}</div>
+        </StyledCardNoContent>
+      )}
       {!!relationRecords.length && (
         <Card>
           {relationRecords.slice(0, 5).map((relationRecord, index) => (

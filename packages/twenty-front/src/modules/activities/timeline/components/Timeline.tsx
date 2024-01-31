@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -36,8 +35,6 @@ export const Timeline = ({
     targetableObject,
   });
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
-
   const showEmptyState = initialized && activities.length === 0;
 
   const showLoadingState = !initialized;
@@ -57,20 +54,7 @@ export const Timeline = ({
             There are no activities associated with this record.{' '}
           </StyledEmptySubTitle>
         </StyledEmptyTextContainer>
-        <ActivityCreateButton
-          onNoteClick={() =>
-            openCreateActivity({
-              type: 'Note',
-              targetableObjects: [targetableObject],
-            })
-          }
-          onTaskClick={() =>
-            openCreateActivity({
-              type: 'Task',
-              targetableObjects: [targetableObject],
-            })
-          }
-        />
+        <TimelineCreateButtonGroup targetableObject={targetableObject} />
       </StyledEmptyContainer>
     );
   }
