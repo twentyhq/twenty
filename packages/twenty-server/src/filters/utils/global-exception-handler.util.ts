@@ -75,8 +75,11 @@ export const convertHttpExceptionToGraphql = (exception: HttpException) => {
     );
   }
 
-  error.stack = exception.stack;
-  error.extensions['response'] = exception.getResponse();
+  // Only show the stack trace in development mode
+  if (process.env.NODE_ENV === 'development') {
+    error.stack = exception.stack;
+    error.extensions['response'] = exception.getResponse();
+  }
 
   return error;
 };
