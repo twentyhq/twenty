@@ -11,6 +11,9 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
+import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -20,21 +23,20 @@ export class GmailPartialSyncService {
     private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly messageChannelService: MessageChannelService,
   ) {}
 
-  private async getHistory(
+  private async getHistoryFromGmail(
     workspaceId: string,
     connectedAccountId: string,
     lastSyncHistoryId: string,
     maxResults: number,
   ) {
-    const { workspaceDataSource, dataSourceMetadata } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
-
-    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
     );
 
     const gmailClient = await this.gmailClientProvider.getGmailClient(
@@ -56,13 +58,14 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
 
-    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
     );
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
@@ -88,7 +91,7 @@ export class GmailPartialSyncService {
       throw new Error('No refresh token found');
     }
 
-    const history = await this.getHistory(
+    const history = await this.getHistoryFromGmail(
       workspaceId,
       connectedAccountId,
       lastSyncHistoryId,
@@ -106,28 +109,22 @@ export class GmailPartialSyncService {
     }
 
     if (!history.history) {
-      await this.utils.saveLastSyncHistoryId(
+      await this.connectedAccountService.saveLastSyncHistoryId(
         historyId,
         connectedAccountId,
-        dataSourceMetadata,
-        workspaceDataSource,
+        workspaceId,
       );
 
       return;
     }
 
-    const gmailMessageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
-      [connectedAccountId],
-    );
-
-    if (!gmailMessageChannel.length) {
-      throw new Error(
-        `No gmail message channel found for connected account ${connectedAccountId}`,
+    const gmailMessageChannel =
+      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+        workspaceId,
+        connectedAccountId,
       );
-    }
 
-    const gmailMessageChannelId = gmailMessageChannel[0].id;
+    const gmailMessageChannelId = gmailMessageChannel.id;
 
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsFromHistory(history);
@@ -147,22 +144,21 @@ export class GmailPartialSyncService {
       workspaceDataSource,
       connectedAccount,
       gmailMessageChannelId,
+      workspaceId,
     );
 
-    await this.utils.deleteMessageChannelMessageAssociations(
+    await this.utils.deleteMessages(
       messagesDeleted,
       gmailMessageChannelId,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
     );
 
     if (errors.length) throw new Error('Error fetching messages');
 
-    await this.utils.saveLastSyncHistoryId(
+    await this.connectedAccountService.saveLastSyncHistoryId(
       historyId,
       connectedAccount.id,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
     );
   }
 

@@ -60,6 +60,7 @@ export const RecordBoardColumn = ({
         columnDefinition: columnDefinition,
         isFirstColumn: isFirstColumn,
         isLastColumn: isLastColumn,
+        recordCount: recordIds.length,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>

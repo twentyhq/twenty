@@ -2,15 +2,19 @@ import { useContext, useRef } from 'react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type RecordBoardProps = {
   recordBoardId: string;
@@ -40,17 +44,25 @@ const StyledBoardHeader = styled.div`
 `;
 
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
-  const { updateOneRecord, objectMetadataItem } =
+  const { updateOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
   const { getColumnIdsState, columnsFamilySelector } =
     useRecordBoardStates(recordBoardId);
+
   const columnIds = useRecoilValue(getColumnIdsState());
 
-  const selectFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.type === FieldMetadataType.Select,
-  );
+  const { resetRecordSelection, setRecordAsSelected } =
+    useRecordBoardSelection(recordBoardId);
+
+  useListenClickOutsideByClassName({
+    classNames: ['record-board-card'],
+    excludeClassNames: ['action-bar', 'context-menu'],
+    callback: resetRecordSelection,
+  });
+
+  useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
 
   const onDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
@@ -106,7 +118,8 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
         </ScrollWrapper>
         <DragSelect
           dragSelectable={boardRef}
-          onDragSelectionChange={() => {}}
+          onDragSelectionStart={resetRecordSelection}
+          onDragSelectionChange={setRecordAsSelected}
         />
       </StyledWrapper>
     </RecordBoardScope>
