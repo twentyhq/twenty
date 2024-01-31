@@ -10,6 +10,17 @@ const StyledTitle = styled.div`
   font-size: 24px;
   font-weight: 500;
   gap: 8px;
+
+  @media (max-width: 810px) {
+    font-size: 20px;
+  }
+`;
+
+const StyledHeartIcon = styled(HeartIcon)`
+  @media (max-width: 810px) {
+    width: 16px !important;
+    height: 16px !important;
+  }
 `;
 
 interface ThankYouProps {
@@ -20,7 +31,7 @@ export const ThankYou = ({ authorId }: ThankYouProps) => {
   return (
     <CardContainer>
       <StyledTitle>
-        Thank you @{authorId} <HeartIcon color="#333333" size="18px" />
+        Thank you @{authorId} <StyledHeartIcon color="#333333" size="18px" />
       </StyledTitle>
     </CardContainer>
   );

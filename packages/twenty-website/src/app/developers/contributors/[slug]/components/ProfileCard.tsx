@@ -18,11 +18,13 @@ const Avatar = styled.div`
   height: 96px;
   border-radius: 16px;
   overflow: hidden;
+  flex-shrink: 0;
 
   img {
     width: 100%;
-    height: auto;
     display: block;
+    height: 100%;
+    object-fit: cover;
   }
 `;
 
@@ -38,6 +40,11 @@ const Details = styled.div`
     margin: 0;
     display: flex;
     gap: 12px;
+
+    @media (max-width: 810px) {
+      font-size: 24px;
+      line-height: 28.8px;
+    }
   }
 
   .duration {
@@ -45,6 +52,18 @@ const Details = styled.div`
     font-weight: 400;
     color: #818181;
     margin: 0;
+
+    @media (max-width: 810px) {
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+`;
+
+const StyledGithubIcon = styled(GithubIcon)`
+  @media (max-width: 810px) {
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -67,7 +86,7 @@ export const ProfileCard = ({
       <Details>
         <h3 className="username">
           @{username}
-          <GithubIcon size="M" color="rgba(0,0,0,1)" />
+          <StyledGithubIcon size="M" color="rgba(0,0,0,1)" />
         </h3>
         <p className="duration">
           Contributing since{' '}

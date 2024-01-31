@@ -9,4 +9,9 @@ export const CardContainer = styled.div`
   gap: 32px;
   flex-direction: column;
   background-color: #fafafa;
+
+  @media (max-width: 810px) {
+    gap: 16px;
+    padding: 24px;
+  }
 `;

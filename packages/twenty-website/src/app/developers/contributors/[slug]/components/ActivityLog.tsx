@@ -20,6 +20,8 @@ export const ActivityLog = ({
           colors={['#E9DFFF', '#B28FFE', '#915FFD']}
           dayBorderWidth={2}
           dayBorderColor="#ffffff"
+          dayRadius={4}
+          daySpacing={2}
         />
       </div>
     </CardContainer>

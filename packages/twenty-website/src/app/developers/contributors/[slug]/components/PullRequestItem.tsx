@@ -17,6 +17,10 @@ const StyledTitle = styled.h4`
   font-weight: 400;
   color: #474747;
   margin: 0;
+
+  @media (max-width: 810px) {
+    font-size: 20px;
+  }
 `;
 
 const StyledDescription = styled.div`
@@ -24,6 +28,17 @@ const StyledDescription = styled.div`
   line-height: 28px;
   font-weight: 500;
   color: #b3b3b3;
+
+  @media (max-width: 810px) {
+    font-size: 18px;
+  }
+`;
+
+const StyledPullRequestIcon = styled(PullRequestIcon)`
+  @media screen {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 interface PullRequestItemProps {
@@ -47,7 +62,10 @@ export const PullRequestItem = ({
   return (
     <Item key={id}>
       <div>
-        <PullRequestIcon color={mergedAt ? '#915FFD' : '#1A7F37'} size="M" />
+        <StyledPullRequestIcon
+          color={mergedAt ? '#915FFD' : '#1A7F37'}
+          size="M"
+        />
       </div>
       <div>
         <StyledTitle>{title}</StyledTitle>

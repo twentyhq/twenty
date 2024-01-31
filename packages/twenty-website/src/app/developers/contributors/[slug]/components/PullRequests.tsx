@@ -29,6 +29,7 @@ export const PullRequests = ({ list }: PullRequestsProps) => {
       <List>
         {list.map((pr) => (
           <PullRequestItem
+            key={pr.id}
             id={pr.id}
             title={pr.title}
             url={pr.url}
