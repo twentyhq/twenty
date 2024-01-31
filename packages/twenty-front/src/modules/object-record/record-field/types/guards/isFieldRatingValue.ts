@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-import { RATING_VALUES } from '../../meta-types/input/components/RatingFieldInput';
+import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+
 import { FieldRatingValue } from '../FieldMetadata';
 
 const ratingSchema = z.string().pipe(z.enum(RATING_VALUES));

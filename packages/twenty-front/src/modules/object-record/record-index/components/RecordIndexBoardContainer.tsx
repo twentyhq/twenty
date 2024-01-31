@@ -1,4 +1,4 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -19,7 +19,9 @@ export const RecordIndexBoardContainer = ({
   recordBoardId,
   objectNameSingular,
 }: RecordIndexBoardContainerProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
+    objectNameSingular,
+  });
 
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.type === FieldMetadataType.Select,

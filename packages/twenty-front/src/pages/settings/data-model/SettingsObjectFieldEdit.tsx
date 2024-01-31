@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -43,11 +43,21 @@ export const SettingsObjectFieldEdit = () => {
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
+  const getRelationMetadata = useGetRelationMetadata();
   const {
     relationFieldMetadataItem,
     relationObjectMetadataItem,
     relationType,
-  } = useRelationMetadata({ fieldMetadataItem: activeMetadataField });
+  } =
+    useMemo(
+      () =>
+        activeMetadataField
+          ? getRelationMetadata({
+              fieldMetadataItem: activeMetadataField,
+            })
+          : null,
+      [activeMetadataField, getRelationMetadata],
+    ) ?? {};
 
   const {
     formValues,

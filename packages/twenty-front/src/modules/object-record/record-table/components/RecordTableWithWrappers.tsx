@@ -80,6 +80,8 @@ export const RecordTableWithWrappers = ({
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
+  const objectLabel = foundObjectMetadataItem?.nameSingular;
+
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper>
@@ -112,16 +114,15 @@ export const RecordTableWithWrappers = ({
                   <AnimatedPlaceholder type="noRecord" />
                   <StyledEmptyTextContainer>
                     <StyledEmptyTitle>
-                      Add your first {foundObjectMetadataItem?.namePlural}
+                      Add your first {objectLabel}
                     </StyledEmptyTitle>
                     <StyledEmptySubTitle>
-                      Use our API or add your first{' '}
-                      {foundObjectMetadataItem?.namePlural} manually
+                      Use our API or add your first {objectLabel} manually
                     </StyledEmptySubTitle>
                   </StyledEmptyTextContainer>
                   <Button
                     Icon={IconPlus}
-                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                    title={`Add a ${objectLabel}`}
                     variant={'secondary'}
                     onClick={createRecord}
                   />

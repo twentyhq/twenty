@@ -106,6 +106,10 @@ export class WorkspaceSyncFactory {
 
     if (createdFieldMetadataCollection.length > 0) {
       for (const fieldMetadata of createdFieldMetadataCollection) {
+        if (fieldMetadata.type === FieldMetadataType.RELATION) {
+          continue;
+        }
+
         const migrations = [
           {
             name: computeObjectTargetTable(

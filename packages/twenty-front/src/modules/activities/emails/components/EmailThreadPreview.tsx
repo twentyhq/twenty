@@ -17,10 +17,6 @@ const StyledCardContent = styled(CardContent)`
 
 const StyledHeading = styled.div<{ unread: boolean }>`
   display: flex;
-  color: ${({ theme, unread }) =>
-    unread ? theme.font.color.primary : theme.font.color.secondary};
-  font-weight: ${({ theme, unread }) =>
-    unread ? theme.font.weight.medium : theme.font.weight.regular};
   overflow: hidden;
   width: 20%;
 `;
@@ -53,9 +49,8 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span<{ unread: boolean }>`
-  color: ${({ theme, unread }) =>
-    unread ? theme.font.color.primary : theme.font.color.secondary};
+const StyledSubject = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -136,7 +131,7 @@ export const EmailThreadPreview = ({
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
+        <StyledSubject>{thread.subject}</StyledSubject>
         <StyledBody>{thread.lastMessageBody}</StyledBody>
       </StyledSubjectAndBody>
       <StyledReceivedAt>

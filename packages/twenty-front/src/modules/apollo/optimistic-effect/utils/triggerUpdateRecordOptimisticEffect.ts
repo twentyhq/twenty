@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectConnection';
+import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
@@ -31,7 +31,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         { DELETE, readField, storeFieldName, toReference },
       ) => {
         if (
-          !isCachedObjectConnection(
+          !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
             cachedConnection,
           )
