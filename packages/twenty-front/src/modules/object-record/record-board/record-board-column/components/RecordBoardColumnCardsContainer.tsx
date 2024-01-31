@@ -5,6 +5,7 @@ import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
+import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
 import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -43,6 +44,7 @@ export const RecordBoardColumnCardsContainer = ({
     >
       <RecordBoardColumnCardsMemo recordIds={recordIds} />
       <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
+      <RecordBoardColumnFetchMoreLoader />
       <Draggable
         draggableId={`new-${columnDefinition.id}`}
         index={recordIds.length}

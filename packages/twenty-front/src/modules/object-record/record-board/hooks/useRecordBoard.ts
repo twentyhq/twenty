@@ -11,6 +11,7 @@ export const useRecordBoard = (recordBoardId?: string) => {
     getObjectSingularNameState,
     getSelectedRecordIdsSelector,
     getIsCompactModeActiveState,
+    getOnFetchMoreVisibilityChangeState,
   } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
@@ -26,5 +27,6 @@ export const useRecordBoard = (recordBoardId?: string) => {
     setObjectSingularName,
     getSelectedRecordIdsSelector,
     getIsCompactModeActiveState,
+    getOnFetchMoreVisibilityChangeState,
   };
 };

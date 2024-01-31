@@ -9,6 +9,7 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 
 type useRecordIndexOptionsForBoardParams = {
@@ -36,8 +37,15 @@ export const useRecordIndexOptionsForBoard = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } =
+  const { columnDefinitions: availableColumnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+
+  // Todo replace this with label identifier logic
+  const columnDefinitions = availableColumnDefinitions
+    .filter(
+      (columnDefinition) => columnDefinition.metadata.fieldName !== 'name',
+    )
+    .filter(filterAvailableTableColumns);
 
   const visibleBoardFields = useMemo(
     () =>
