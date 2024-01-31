@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
+import { WorkspaceQueryListener } from 'src/workspace/workspace-query-runner/workspace-query-runner-listener.service';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
@@ -25,6 +27,8 @@ import { WorkspaceModule } from './workspace/workspace.module';
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,
+    EventEmitterModule.forRoot(),
   ],
+  providers: [WorkspaceQueryListener],
 })
 export class AppModule {}

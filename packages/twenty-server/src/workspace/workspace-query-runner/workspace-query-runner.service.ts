@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -28,11 +29,6 @@ import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-buil
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
-import {
-  CallWebhookJobsJob,
-  CallWebhookJobsJobData,
-  CallWebhookJobsJobOperation,
-} from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
@@ -54,6 +50,7 @@ export class WorkspaceQueryRunnerService {
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async findMany<
@@ -150,11 +147,7 @@ export class WorkspaceQueryRunnerService {
         'insertInto',
       )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.create,
-        options,
-      );
+      this.eventEmitter.emit('createMany', parsedResults);
 
       return parsedResults;
     } catch (exception) {
@@ -194,11 +187,7 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.update,
-        options,
-      );
+      this.eventEmitter.emit('updateOne', parsedResults);
 
       return parsedResults?.[0];
     } catch (exception) {
@@ -229,11 +218,7 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.delete,
-        options,
-      );
+      this.eventEmitter.emit('deleteOne', parsedResults);
 
       return parsedResults?.[0];
     } catch (exception) {
@@ -264,11 +249,7 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.update,
-        options,
-      );
+      this.eventEmitter.emit('udpateMany', parsedResults);
 
       return parsedResults;
     } catch (exception) {
@@ -302,11 +283,7 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.delete,
-        options,
-      );
+      this.eventEmitter.emit('deleteMany', parsedResults);
 
       return parsedResults;
     } catch (exception) {
@@ -374,27 +351,5 @@ export class WorkspaceQueryRunnerService {
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult(result, objectMetadataItem, command);
-  }
-
-  async triggerWebhooks<Record>(
-    jobsData: Record[] | undefined,
-    operation: CallWebhookJobsJobOperation,
-    options: WorkspaceQueryRunnerOptions,
-  ) {
-    if (!Array.isArray(jobsData)) {
-      return;
-    }
-    jobsData.forEach((jobData) => {
-      this.messageQueueService.add<CallWebhookJobsJobData>(
-        CallWebhookJobsJob.name,
-        {
-          record: jobData,
-          workspaceId: options.workspaceId,
-          operation,
-          objectMetadataItem: options.objectMetadataItem,
-        },
-        { retryLimit: 3 },
-      );
-    });
   }
 }
