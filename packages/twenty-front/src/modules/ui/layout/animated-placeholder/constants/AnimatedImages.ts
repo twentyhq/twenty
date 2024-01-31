@@ -5,6 +5,7 @@ export const Background: Record<string, string> = {
   noTask: '/images/placeholders/background/no_task_bg.png',
   errorIndex: '/images/placeholders/background/error_index_bg.png',
   emptyTimeline: '/images/placeholders/background/empty_timeline_bg.png',
+  messagesLoading: '/images/placeholders/background/messages_loading_bg.png',
   error404: '/images/placeholders/background/404_bg.png',
   error500: '/images/placeholders/background/500_bg.png',
 };
@@ -16,6 +17,7 @@ export const MovingImage: Record<string, string> = {
   noTask: '/images/placeholders/moving-image/no_task.png',
   errorIndex: '/images/placeholders/moving-image/error_index.png',
   emptyTimeline: '/images/placeholders/moving-image/empty_timeline.png',
+  messagesLoading: '/images/placeholders/moving-image/messages_loading.png',
   error404: '/images/placeholders/moving-image/404.png',
   error500: '/images/placeholders/moving-image/500.png',
 };
