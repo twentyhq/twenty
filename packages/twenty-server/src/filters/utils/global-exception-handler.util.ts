@@ -30,12 +30,20 @@ export const handleExceptionAndConvertToGraphQLError = (
   return convertExceptionToGraphQLError(exception);
 };
 
+export const filterException = (exception: Error): boolean => {
+  if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return true;
+  }
+
+  return false;
+};
+
 export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
 ): void => {
-  if (exception instanceof HttpException && exception.getStatus() < 500) {
+  if (filterException(exception)) {
     return;
   }
 
@@ -45,10 +53,7 @@ export const handleException = (
 export const convertExceptionToGraphQLError = (
   exception: Error,
 ): BaseGraphQLError => {
-  console.log('convertExceptionToGraphQLError: ', exception);
   if (exception instanceof HttpException) {
-    console.log('convertExceptionToGraphQLError instanceof HttpException');
-
     return convertHttpExceptionToGraphql(exception);
   }
 
@@ -58,8 +63,6 @@ export const convertExceptionToGraphQLError = (
 export const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
-
-  console.log('convertHttpExceptionToGraphql', status);
 
   if (status in graphQLPredefinedExceptions) {
     const message = exception.getResponse()['message'] ?? exception.message;

@@ -11,6 +11,10 @@ import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfa
 
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { TokenService } from 'src/core/auth/services/token.service';
+import {
+  convertExceptionToGraphQLError,
+  filterException,
+} from 'src/filters/utils/global-exception-handler.util';
 
 export type ExceptionHandlerPluginOptions = {
   /**
@@ -80,23 +84,60 @@ export const useExceptionHandler = <
             setResult,
           }) => {
             if (result.errors && result.errors.length > 0) {
-              const eventIds = exceptionHandlerService.captureExceptions(
-                result.errors,
+              const exceptions = result.errors.reduce<{
+                filtered: any[];
+                unfiltered: any[];
+              }>(
+                (acc, err) => {
+                  // Filter out exceptions that we don't want to be captured by exception handler
+                  if (filterException(err)) {
+                    acc.filtered.push(err);
+                  } else {
+                    acc.unfiltered.push(err);
+                  }
+
+                  return acc;
+                },
                 {
-                  operation: {
-                    name: opName,
-                    type: operationType,
-                  },
-                  document,
-                  user,
+                  filtered: [],
+                  unfiltered: [],
                 },
               );
 
+              if (exceptions.unfiltered.length > 0) {
+                const eventIds = exceptionHandlerService.captureExceptions(
+                  exceptions.unfiltered,
+                  {
+                    operation: {
+                      name: opName,
+                      type: operationType,
+                    },
+                    document,
+                    user,
+                  },
+                );
+
+                exceptions.unfiltered.map((err, i) =>
+                  addEventId(err, eventIds?.[i]),
+                );
+              }
+
+              const concatenatedErrors = [
+                ...exceptions.filtered,
+                ...exceptions.unfiltered,
+              ];
+              const errors = concatenatedErrors.map((err) => {
+                // Properly convert errors to GraphQLErrors
+                const graphQLError = convertExceptionToGraphQLError(
+                  err.originalError,
+                );
+
+                return graphQLError;
+              });
+
               setResult({
                 ...result,
-                errors: result.errors.map((err, i) =>
-                  addEventId(err, eventIds?.[i]),
-                ),
+                errors,
               });
             }
           };

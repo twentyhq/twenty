@@ -1,10 +1,7 @@
 import { YogaDriverConfig } from '@graphql-yoga/nestjs';
-import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { maskError } from 'graphql-yoga';
 
 import { TokenService } from 'src/core/auth/services/token.service';
-import { convertExceptionToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
@@ -31,15 +28,6 @@ export const metadataModuleFactory = async (
       }),
     ],
     path: '/metadata',
-    maskedErrors: {
-      maskError(error: GraphQLError, message, isDev) {
-        if (error.originalError) {
-          return convertExceptionToGraphQLError(error.originalError);
-        }
-
-        return maskError(error, message, isDev);
-      },
-    },
   };
 
   if (environmentService.isDebugMode()) {

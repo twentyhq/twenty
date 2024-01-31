@@ -9,26 +9,19 @@ import {
 import { GraphQLSchema, GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import {
-  GraphQLSchemaWithContext,
-  YogaInitialContext,
-  maskError,
-} from 'graphql-yoga';
+import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { CoreModule } from 'src/core/core.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import {
-  convertExceptionToGraphQLError,
-  handleExceptionAndConvertToGraphQLError,
-} from 'src/filters/utils/global-exception-handler.util';
+import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-import { User } from './core/user/user.entity';
 import { useExceptionHandler } from './integrations/exception-handler/hooks/use-exception-handler.hook';
+import { User } from './core/user/user.entity';
 
 @Injectable()
 export class GraphQLConfigService
@@ -47,15 +40,6 @@ export class GraphQLConfigService
       context: ({ req }) => ({ req }),
       autoSchemaFile: true,
       include: [CoreModule],
-      maskedErrors: {
-        maskError(error: GraphQLError, message, isDev) {
-          if (error.originalError) {
-            return convertExceptionToGraphQLError(error.originalError);
-          }
-
-          return maskError(error, message, isDev);
-        },
-      },
       conditionalSchema: async (context) => {
         let user: User | undefined;
 
@@ -64,11 +48,11 @@ export class GraphQLConfigService
             return new GraphQLSchema({});
           }
 
-          const token = await this.tokenService.validateToken(context.req);
+          const data = await this.tokenService.validateToken(context.req);
 
-          user = token.user;
+          user = data.user;
 
-          return await this.createSchema(context, token.workspace);
+          return await this.createSchema(context, data.workspace);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {

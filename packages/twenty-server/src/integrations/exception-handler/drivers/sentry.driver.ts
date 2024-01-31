@@ -49,8 +49,6 @@ export class ExceptionHandlerSentryDriver
         scope.setExtra('document', options.document);
       }
 
-      console.log('exceptions', exceptions, options);
-
       for (const exception of exceptions) {
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
