@@ -38,12 +38,12 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => User)
   @UseGuards(JwtAuthGuard)
   async createWorkspace(
     @Args('data') data: CreateWorkspaceInput,
     @AuthUser() user: User,
-  ): Promise<Workspace> {
+  ) {
     return await this.workspaceService.createWorkspace(user, data);
   }
 

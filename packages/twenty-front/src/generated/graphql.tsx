@@ -235,7 +235,7 @@ export type Mutation = {
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createWorkspace: Workspace;
+  createWorkspace: User;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;
@@ -877,7 +877,7 @@ export type CreateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subscriptionStatus: string } };
+export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } | null } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1692,11 +1692,36 @@ export const CreateWorkspaceDocument = gql`
     mutation CreateWorkspace($input: CreateWorkspaceInput!) {
   createWorkspace(data: $input) {
     id
-    domainName
-    displayName
-    logo
-    allowImpersonation
-    subscriptionStatus
+    firstName
+    lastName
+    email
+    canImpersonate
+    supportUserHash
+    workspaceMember {
+      id
+      name {
+        firstName
+        lastName
+      }
+      colorScheme
+      avatarUrl
+      locale
+    }
+    defaultWorkspace {
+      id
+      displayName
+      logo
+      domainName
+      inviteHash
+      allowImpersonation
+      subscriptionStatus
+      featureFlags {
+        id
+        key
+        value
+        workspaceId
+      }
+    }
   }
 }
     `;
