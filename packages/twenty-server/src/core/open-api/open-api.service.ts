@@ -32,6 +32,10 @@ export class OpenApiService {
     try {
       const workspace = await this.tokenService.validateToken(request);
 
+      if (!workspace) {
+        return schema;
+      }
+
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
     } catch (err) {

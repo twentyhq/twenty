@@ -66,7 +66,7 @@ export class User {
   @Column({ nullable: true })
   deletedAt: Date;
 
-  @Field(() => Workspace, { nullable: false })
+  @Field(() => Workspace, { nullable: true })
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
     onDelete: 'SET NULL',
   })

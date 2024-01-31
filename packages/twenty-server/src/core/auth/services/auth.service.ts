@@ -180,16 +180,9 @@ export class AuthService {
       where: {
         email,
       },
-      relations: ['defaultWorkspace'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
-
-    assert(
-      user.defaultWorkspace,
-      'User has no default workspace',
-      NotFoundException,
-    );
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
