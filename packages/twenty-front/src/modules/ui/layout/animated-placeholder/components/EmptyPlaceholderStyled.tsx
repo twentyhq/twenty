@@ -9,7 +9,6 @@ export const StyledEmptyContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(6)};
   justify-content: center;
   text-align: center;
-  margin: ${({ theme }) => theme.spacing(16)} 0px;
 `;
 
 export const StyledEmptyTextContainer = styled.div`
@@ -26,7 +25,6 @@ export const StyledEmptyTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
 export const StyledEmptySubTitle = styled.div`
