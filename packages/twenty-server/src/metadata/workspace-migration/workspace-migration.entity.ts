@@ -58,7 +58,7 @@ export type WorkspaceMigrationColumnAction = {
 
 export type WorkspaceMigrationTableAction = {
   name: string;
-  action: 'create' | 'alter';
+  action: 'create' | 'alter' | 'drop';
   columns?: WorkspaceMigrationColumnAction[];
 };
 
@@ -70,7 +70,7 @@ export class WorkspaceMigrationEntity {
   @Column({ nullable: true, type: 'jsonb' })
   migrations: WorkspaceMigrationTableAction[];
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   name: string;
 
   @Column({ default: false })

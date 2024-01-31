@@ -72,4 +72,5 @@ export {
   TbTemplate,
   TbRectangle,
   TbCircleCheckFilled,
+  TbFlag
 } from "react-icons/tb";

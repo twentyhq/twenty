@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser, AddressObject } from 'mailparser';
+import planer from 'planer';
 
 import {
   GmailMessage,
   Participant,
-} from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
-import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
+} from 'src/workspace/messaging/types/gmail-message';
+import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
+import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
 
 @Injectable()
 export class FetchMessagesByBatchesService {
@@ -80,6 +81,8 @@ export class FetchMessagesByBatchesService {
         },
       },
     );
+
+    console.log('responseFromGmailQuery', response);
 
     return response;
   }
@@ -197,6 +200,21 @@ export class FetchMessagesByBatchesService {
             ...this.formatAddressObjectAsParticipants(bcc, 'bcc'),
           ];
 
+          let textWithoutReplyQuotations = text;
+
+          if (text)
+            try {
+              textWithoutReplyQuotations = planer.extractFrom(
+                text,
+                'text/plain',
+              );
+            } catch (error) {
+              console.log(
+                'Error while trying to remove reply quotations',
+                error,
+              );
+            }
+
           const messageFromGmail: GmailMessage = {
             historyId,
             externalId: id,
@@ -207,7 +225,7 @@ export class FetchMessagesByBatchesService {
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
             participants,
-            text: text || '',
+            text: textWithoutReplyQuotations || '',
             html: html || '',
             attachments,
           };

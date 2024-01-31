@@ -1,3 +1,5 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export type CachedObjectRecord = ObjectRecord & { __typename: string };
+export type CachedObjectRecord<T extends ObjectRecord = ObjectRecord> = T & {
+  __typename: string;
+};

@@ -127,8 +127,9 @@ export const useViewBar = (props?: UseViewProps) => {
         if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
           set(currentViewFieldsState, queriedViewFields);
           set(savedViewFieldsState, queriedViewFields);
-          onViewFieldsChange?.(queriedViewFields);
         }
+
+        onViewFieldsChange?.(queriedViewFields);
       },
     [scopeId],
   );

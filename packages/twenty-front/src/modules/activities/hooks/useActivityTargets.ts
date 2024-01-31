@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
@@ -13,17 +15,26 @@ export const useActivityTargets = ({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: {
-      [targetObjectFieldName]: {
-        eq: targetableObject.id,
+  const [initialized, setInitialized] = useState(false);
+
+  const { records: activityTargets, loading: loadingActivityTargets } =
+    useFindManyRecords({
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      filter: {
+        [targetObjectFieldName]: {
+          eq: targetableObject.id,
+        },
       },
-    },
-    skip: !targetableObject.id,
-  });
+      onCompleted: () => {
+        if (!initialized) {
+          setInitialized(true);
+        }
+      },
+    });
 
   return {
     activityTargets: activityTargets as ActivityTarget[],
+    loadingActivityTargets,
+    initialized,
   };
 };

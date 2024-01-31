@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 
-import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
 type RecordBoardScopeProps = {
   children: ReactNode;

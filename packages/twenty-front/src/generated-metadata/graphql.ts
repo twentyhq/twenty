@@ -220,7 +220,7 @@ export type Mutation = {
   createOneObject: Object;
   createOneRelation: Relation;
   deleteOneField: FieldDeleteResponse;
-  deleteOneObject: ObjectDeleteResponse;
+  deleteOneObject: Object;
   deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
   updateOneField: Field;
@@ -295,25 +295,6 @@ export type ObjectConnection = {
   pageInfo: PageInfo;
   /** Fetch total count of records */
   totalCount: Scalars['Int']['output'];
-};
-
-export type ObjectDeleteResponse = {
-  __typename?: 'ObjectDeleteResponse';
-  createdAt?: Maybe<Scalars['DateTime']['output']>;
-  dataSourceId?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['ID']['output']>;
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']['output']>;
-  isActive?: Maybe<Scalars['Boolean']['output']>;
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  isSystem?: Maybe<Scalars['Boolean']['output']>;
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']['output']>;
-  labelPlural?: Maybe<Scalars['String']['output']>;
-  labelSingular?: Maybe<Scalars['String']['output']>;
-  namePlural?: Maybe<Scalars['String']['output']>;
-  nameSingular?: Maybe<Scalars['String']['output']>;
-  updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type ObjectFieldsConnection = {
@@ -450,8 +431,8 @@ export type TimelineThreadParticipant = {
   firstName: Scalars['String']['output'];
   handle: Scalars['String']['output'];
   lastName: Scalars['String']['output'];
-  personId?: Maybe<Scalars['String']['output']>;
-  workspaceMemberId?: Maybe<Scalars['String']['output']>;
+  personId?: Maybe<Scalars['ID']['output']>;
+  workspaceMemberId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type UpdateFieldInput = {
@@ -696,7 +677,7 @@ export type DeleteOneObjectMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'ObjectDeleteResponse', id?: string | null, dataSourceId?: string | null, nameSingular?: string | null, namePlural?: string | null, labelSingular?: string | null, labelPlural?: string | null, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, createdAt?: any | null, updatedAt?: any | null, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null } };
+export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null } };
 
 export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['ID']['input'];

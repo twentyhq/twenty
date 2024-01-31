@@ -1,10 +1,15 @@
 import { useApolloClient } from '@apollo/client';
 
+import { isObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isObjectRecordConnection';
+import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
+import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
@@ -19,6 +24,8 @@ export const useUpdateOneRecord = <
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
+  const getRelationMetadata = useGetRelationMetadata();
+
   const apolloClient = useApolloClient();
 
   const updateOneRecord = async ({
@@ -30,17 +37,18 @@ export const useUpdateOneRecord = <
   }) => {
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
-    const optimisticallyUpdatedRecord = {
-      ...(cachedRecord ?? {}),
-      ...updateOneRecordInput,
-      __typename: capitalize(objectNameSingular),
-      id: idToUpdate,
-    };
-
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
       recordInput: updateOneRecordInput,
     });
+
+    const optimisticallyUpdatedRecord = {
+      ...(cachedRecord ?? {}),
+      ...updateOneRecordInput,
+      ...sanitizedUpdateOneRecordInput,
+      __typename: capitalize(objectNameSingular),
+      id: idToUpdate,
+    };
 
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
@@ -58,6 +66,54 @@ export const useUpdateOneRecord = <
         const record = data?.[mutationResponseField];
 
         if (!record) return;
+
+        objectMetadataItem.fields.forEach((fieldMetadataItem) => {
+          const relationMetadata = getRelationMetadata({ fieldMetadataItem });
+
+          if (!relationMetadata) return;
+
+          const { relationObjectMetadataItem, relationFieldMetadataItem } =
+            relationMetadata;
+
+          const previousFieldValue = cachedRecord?.[fieldMetadataItem.name];
+          const nextFieldValue =
+            updateOneRecordInput[fieldMetadataItem.name] ?? null;
+
+          if (
+            !(fieldMetadataItem.name in updateOneRecordInput) ||
+            isObjectRecordConnection(
+              relationObjectMetadataItem.nameSingular,
+              previousFieldValue,
+            ) ||
+            isDeeplyEqual(previousFieldValue, nextFieldValue)
+          ) {
+            return;
+          }
+
+          if (previousFieldValue) {
+            triggerDetachRelationOptimisticEffect({
+              cache,
+              objectNameSingular,
+              recordId: record.id,
+              relationObjectMetadataNameSingular:
+                relationObjectMetadataItem.nameSingular,
+              relationFieldName: relationFieldMetadataItem.name,
+              relationRecordId: previousFieldValue.id,
+            });
+          }
+
+          if (nextFieldValue) {
+            triggerAttachRelationOptimisticEffect({
+              cache,
+              objectNameSingular,
+              recordId: record.id,
+              relationObjectMetadataNameSingular:
+                relationObjectMetadataItem.nameSingular,
+              relationFieldName: relationFieldMetadataItem.name,
+              relationRecordId: nextFieldValue.id,
+            });
+          }
+        });
 
         triggerUpdateRecordOptimisticEffect({
           cache,

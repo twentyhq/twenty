@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { FieldType } from '@/object-record/field/types/FieldType';
+import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

@@ -123,7 +123,7 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
   );
 
   useScopedHotkeys(
-    Key.Escape,
+    [Key.Escape],
     () => {
       setViewEditMode('none');
       closeDropdown();
