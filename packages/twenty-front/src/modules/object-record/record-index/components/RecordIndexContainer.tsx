@@ -90,7 +90,7 @@ export const RecordIndexContainer = ({
         )
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
       },
-    [columnDefinitions, recordIndexViewType, setTableColumns],
+    [columnDefinitions, setTableColumns],
   );
 
   return (

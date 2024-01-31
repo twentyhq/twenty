@@ -18,10 +18,6 @@ type RecordTableRowProps = {
   rowIndex: number;
 };
 
-const StyledPlaceholder = styled.td`
-  height: 30px;
-`;
-
 const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};
 `;
