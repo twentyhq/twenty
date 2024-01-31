@@ -149,7 +149,7 @@ export const EmailThreads = ({
   const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
     data?.[queryName] ?? [];
 
-  if (true) {
+  if (firstQueryLoading) {
     return <EmailLoader />;
   }
 
