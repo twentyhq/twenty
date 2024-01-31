@@ -12,13 +12,14 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
+import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useCreateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -48,7 +49,7 @@ export const CreateWorkspace = () => {
   const onboardingStatus = useOnboardingStatus();
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [createWorkspace] = useCreateWorkspaceMutation();
 
   // Form
   const {
@@ -67,7 +68,7 @@ export const CreateWorkspace = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        const result = await updateWorkspace({
+        const result = await createWorkspace({
           variables: {
             input: {
               displayName: data.name,
@@ -75,20 +76,20 @@ export const CreateWorkspace = () => {
           },
         });
         setCurrentWorkspace({
-          id: result.data?.updateWorkspace?.id ?? '',
+          id: result.data?.createWorkspace?.id ?? '',
           displayName: data.name,
           subscriptionStatus:
-            result.data?.updateWorkspace?.subscriptionStatus ?? 'incomplete',
+            result.data?.createWorkspace?.subscriptionStatus ?? 'incomplete',
           allowImpersonation:
-            result.data?.updateWorkspace?.allowImpersonation ?? false,
+            result.data?.createWorkspace?.allowImpersonation ?? false,
         });
 
-        if (result.errors || !result.data?.updateWorkspace) {
+        if (result.errors || !result.data?.createWorkspace) {
           throw result.errors ?? new Error('Unknown error');
         }
 
         setTimeout(() => {
-          navigate('/create/profile');
+          navigate(AppPath.CreateProfile);
         }, 20);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
@@ -96,7 +97,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, setCurrentWorkspace, updateWorkspace],
+    [enqueueSnackBar, navigate, setCurrentWorkspace, createWorkspace],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

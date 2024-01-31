@@ -10,6 +10,7 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { UserService } from 'src/core/user/services/user.service';
+import { CreateWorkspaceInput } from 'src/core/workspace/dtos/create-workspace-input';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -21,18 +22,24 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     super(workspaceRepository);
   }
 
-  async createWorkspace(user: User) {
+  async createWorkspace(user: User, data: CreateWorkspaceInput) {
     const workspaceToCreate = this.workspaceRepository.create({
       displayName: '',
       domainName: '',
       inviteHash: v4(),
       subscriptionStatus: 'active',
+      ...data,
     });
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    await this.userService.updateUser(user.id, { defaultWorkspace: workspace });
-    await this.workspaceManagerService.init(user.defaultWorkspace.id);
-    await this.userService.createWorkspaceMember(user);
+    const updatedUser = await this.userService.updateUser(user.id, {
+      defaultWorkspace: workspace,
+    });
+
+    await this.workspaceManagerService.init(workspace.id);
+    await this.userService.createWorkspaceMember(updatedUser);
+
+    return workspace;
   }
 
   async deleteWorkspace(id: string) {

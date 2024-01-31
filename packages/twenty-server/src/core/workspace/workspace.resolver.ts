@@ -14,6 +14,7 @@ import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-i
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/user/user.entity';
+import { CreateWorkspaceInput } from 'src/core/workspace/dtos/create-workspace-input';
 
 import { Workspace } from './workspace.entity';
 
@@ -39,10 +40,11 @@ export class WorkspaceResolver {
 
   @Mutation(() => Workspace)
   @UseGuards(JwtAuthGuard)
-  async createWorkspace(@AuthUser() user: User): Promise<Workspace> {
-    await this.workspaceService.createWorkspace(user);
-
-    return user.defaultWorkspace;
+  async createWorkspace(
+    @Args('data') data: CreateWorkspaceInput,
+    @AuthUser() user: User,
+  ): Promise<Workspace> {
+    return await this.workspaceService.createWorkspace(user, data);
   }
 
   @Mutation(() => Workspace)

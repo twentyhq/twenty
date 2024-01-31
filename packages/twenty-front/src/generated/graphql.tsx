@@ -86,6 +86,14 @@ export type CreateRefreshTokenInput = {
   expiresAt: Scalars['DateTime'];
 };
 
+export type CreateWorkspaceInput = {
+  allowImpersonation?: InputMaybe<Scalars['Boolean']>;
+  displayName?: InputMaybe<Scalars['String']>;
+  domainName?: InputMaybe<Scalars['String']>;
+  inviteHash?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['String']>;
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -262,6 +270,11 @@ export type MutationCreateEventArgs = {
 
 export type MutationCreateOneRefreshTokenArgs = {
   input: CreateOneRefreshTokenInput;
+};
+
+
+export type MutationCreateWorkspaceArgs = {
+  data: CreateWorkspaceInput;
 };
 
 
@@ -858,6 +871,13 @@ export type UploadProfilePictureMutationVariables = Exact<{
 
 
 export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: string };
+
+export type CreateWorkspaceMutationVariables = Exact<{
+  input: CreateWorkspaceInput;
+}>;
+
+
+export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subscriptionStatus: string } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1668,6 +1688,44 @@ export function useUploadProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type UploadProfilePictureMutationHookResult = ReturnType<typeof useUploadProfilePictureMutation>;
 export type UploadProfilePictureMutationResult = Apollo.MutationResult<UploadProfilePictureMutation>;
 export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
+export const CreateWorkspaceDocument = gql`
+    mutation CreateWorkspace($input: CreateWorkspaceInput!) {
+  createWorkspace(data: $input) {
+    id
+    domainName
+    displayName
+    logo
+    allowImpersonation
+    subscriptionStatus
+  }
+}
+    `;
+export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+
+/**
+ * __useCreateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
+      }
+export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
+export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
+export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
 export const DeleteCurrentWorkspaceDocument = gql`
     mutation DeleteCurrentWorkspace {
   deleteCurrentWorkspace {
