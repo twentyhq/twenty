@@ -1,4 +1,5 @@
 import { ReactNode, useContext, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -20,6 +21,7 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -119,22 +121,26 @@ const StyledCompactIconContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRecordInlineCellPlaceholder = styled.div`
+  height: 24px;
 `;
 
 export const RecordBoardCard = () => {
   const { recordId } = useContext(RecordBoardCardContext);
-  const { updateOneRecord } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectMetadataItem } =
+    useContext(RecordBoardContext);
   const {
-    getObjectSingularNameState,
     getIsCompactModeActiveState,
     isRecordBoardCardSelectedFamilyState,
     getVisibleFieldDefinitionsState,
   } = useRecordBoardStates();
 
   const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
-  const objectNameSingular = useRecoilValue(getObjectSingularNameState());
-  const [isCardInCompactMode, setIsCardInCompactMode] =
-    useState(isCompactModeActive);
+
+  const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
     isRecordBoardCardSelectedFamilyState(recordId),
@@ -190,13 +196,21 @@ export const RecordBoardCard = () => {
     return [updateEntity, { loading: false }];
   };
 
-  if (!objectNameSingular || !record) {
+  const scrollWrapperRef = useContext(ScrollWrapperContext);
+
+  const { ref: cardRef, inView } = useInView({
+    root: scrollWrapperRef.current,
+    rootMargin: '1000px',
+  });
+
+  if (!record) {
     return null;
   }
 
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       <StyledBoardCard
+        ref={cardRef}
         selected={isCurrentCardSelected}
         onMouseLeave={onMouseLeaveBoard}
         onClick={() => {
@@ -204,7 +218,10 @@ export const RecordBoardCard = () => {
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          <RecordChip objectNameSingular={objectNameSingular} record={record} />
+          <RecordChip
+            objectNameSingular={objectMetadataItem.nameSingular}
+            record={record}
+          />
           {isCompactModeActive && (
             <StyledCompactIconContainer className="compact-icon-container">
               <LightIconButton
@@ -226,7 +243,10 @@ export const RecordBoardCard = () => {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <AnimatedEaseInOut isOpen={!isCardInCompactMode} initial={false}>
+          <AnimatedEaseInOut
+            isOpen={!isCardInCompactMode || !isCompactModeActive}
+            initial={false}
+          >
             {visibleBoardCardFieldDefinitions.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
@@ -249,7 +269,11 @@ export const RecordBoardCard = () => {
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <RecordInlineCell />
+                  {inView ? (
+                    <RecordInlineCell />
+                  ) : (
+                    <StyledRecordInlineCellPlaceholder />
+                  )}
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}

@@ -7,13 +7,19 @@ import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/opti
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { useRecordIndexOptionsImport } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsImport';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
+import {
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconFileImport,
+  IconTag,
+} from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
@@ -86,8 +92,11 @@ export const RecordIndexOptionsDropdownContent = ({
     hiddenBoardFields,
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
+    isCompactModeActive,
+    setIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
     objectNameSingular,
+    recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
 
@@ -168,6 +177,20 @@ export const RecordIndexOptionsDropdownContent = ({
               />
             </>
           )}
+        </>
+      )}
+      {viewType === ViewType.Kanban && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <MenuItemToggle
+              LeftIcon={IconBaselineDensitySmall}
+              onToggleChange={setIsCompactModeActive}
+              toggled={isCompactModeActive}
+              text="Compact view"
+              toggleSize="small"
+            />
+          </DropdownMenuItemsContainer>
         </>
       )}
     </>

@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -21,11 +21,35 @@ export const RecordIndexBoardContainerEffect = ({
   recordBoardId,
   viewBarId,
 }: RecordIndexBoardContainerEffectProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
   });
 
-  useLoadRecordIndexBoard({ objectNameSingular, recordBoardId, viewBarId });
+  const {
+    setColumns,
+    setObjectSingularName,
+    getSelectedRecordIdsSelector,
+    setFieldDefinitions,
+    getOnFetchMoreVisibilityChangeState,
+  } = useRecordBoard(recordBoardId);
+
+  const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
+    objectNameSingular,
+    recordBoardId,
+    viewBarId,
+  });
+
+  const setOnFetchMoreVisibilityChange = useSetRecoilState(
+    getOnFetchMoreVisibilityChangeState(),
+  );
+
+  useEffect(() => {
+    setOnFetchMoreVisibilityChange(() => () => {
+      if (!loading) {
+        fetchMoreRecords?.();
+      }
+    });
+  }, [fetchMoreRecords, loading, setOnFetchMoreVisibilityChange]);
 
   const navigate = useNavigate();
 
@@ -33,12 +57,6 @@ export const RecordIndexBoardContainerEffect = ({
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
 
-  const {
-    setColumns,
-    setObjectSingularName,
-    getSelectedRecordIdsSelector,
-    setFieldDefinitions,
-  } = useRecordBoard(recordBoardId);
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
   useEffect(() => {
