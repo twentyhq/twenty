@@ -89,10 +89,13 @@ export const useAuth = () => {
       setTokenPair(verifyResult.data?.verify.tokens);
 
       const user = verifyResult.data?.verify.user;
-      const workspaceMember = {
-        ...user.workspaceMember,
-        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-      };
+      let workspaceMember = null;
+      if (user.workspaceMember) {
+        workspaceMember = {
+          ...user.workspaceMember,
+          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        };
+      }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentUser(user);
       setCurrentWorkspaceMember(workspaceMember);
