@@ -100,7 +100,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @IsSystem()
   @IsNullable()
-  recordPostion: number;
+  recordPosition: number;
 
   // Relations
   @FieldMetadata({

@@ -103,7 +103,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsSystem()
   @IsNullable()
-  recordPostion: number;
+  recordPosition: number;
 
   // Relations
   @FieldMetadata({
