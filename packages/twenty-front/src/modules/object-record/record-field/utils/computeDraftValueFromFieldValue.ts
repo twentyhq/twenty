@@ -4,6 +4,7 @@ import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldIn
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { computeEmptyDraftValue } from '@/object-record/record-field/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 
@@ -21,18 +22,20 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
   // than the intputDraftValue type as string can be typed anywhere
 
   if (isFieldCurrency(fieldDefinition)) {
-    if (isFieldValueEmpty({ fieldValue, fieldDefinition })) {
+    if (
+      isFieldValueEmpty({ fieldValue, fieldDefinition }) ||
+      !isFieldCurrencyValue(fieldValue)
+    ) {
       return computeEmptyDraftValue<FieldValue>({ fieldDefinition });
     }
 
-    if (isFieldCurrencyValue(fieldValue)) {
-      return {
-        amount: fieldValue?.amountMicros
-          ? fieldValue.amountMicros / 1000000
-          : '',
-        currenyCode: CurrencyCode.USD,
-      } as unknown as FieldInputDraftValue<FieldValue>;
-    }
+    return {
+      amount: fieldValue?.amountMicros ? fieldValue.amountMicros / 1000000 : '',
+      currenyCode: CurrencyCode.USD,
+    } as unknown as FieldInputDraftValue<FieldValue>;
+  }
+  if (isFieldRelation(fieldDefinition)) {
+    return computeEmptyDraftValue<FieldValue>({ fieldDefinition });
   }
 
   return fieldValue as FieldInputDraftValue<FieldValue>;

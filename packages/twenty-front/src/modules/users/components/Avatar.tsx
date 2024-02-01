@@ -16,21 +16,24 @@ export type AvatarProps = {
   className?: string;
   size?: AvatarSize;
   placeholder: string | undefined;
-  colorId?: string;
+  entityId?: string;
   type?: Nullable<AvatarType>;
+  color?: string;
+  backgroundColor?: string;
   onClick?: () => void;
 };
 
-const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
+export const StyledAvatar = styled.div<
+  AvatarProps & { color: string; backgroundColor: string }
+>`
   align-items: center;
-  background-color: ${({ avatarUrl, colorId }) =>
-    !isNonEmptyString(avatarUrl) ? stringToHslColor(colorId, 75, 85) : 'none'};
+  background-color: ${({ backgroundColor }) => backgroundColor};
   ${({ avatarUrl }) =>
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-position: center;
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
+  color: ${({ color }) => color};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
 
@@ -95,9 +98,11 @@ export const Avatar = ({
   className,
   size = 'md',
   placeholder,
-  colorId = placeholder,
+  entityId = placeholder,
   onClick,
   type = 'squared',
+  color,
+  backgroundColor,
 }: AvatarProps) => {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
@@ -114,6 +119,13 @@ export const Avatar = ({
     }
   }, [avatarUrl]);
 
+  const fixedColor = color ?? stringToHslColor(entityId ?? '', 75, 25);
+  const fixedBackgroundColor =
+    backgroundColor ??
+    (!isNonEmptyString(avatarUrl)
+      ? stringToHslColor(entityId ?? '', 75, 85)
+      : 'none');
+
   return (
     <StyledAvatar
       className={className}
@@ -121,8 +133,10 @@ export const Avatar = ({
       placeholder={placeholder}
       size={size}
       type={type}
-      colorId={colorId ?? ''}
+      entityId={entityId}
       onClick={onClick}
+      color={fixedColor}
+      backgroundColor={fixedBackgroundColor}
     >
       {(noAvatarUrl || isInvalidAvatarUrl) &&
         placeholder?.[0]?.toLocaleUpperCase()}

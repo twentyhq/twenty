@@ -40,7 +40,7 @@ export const WorkspaceMemberCard = ({
   <StyledContainer>
     <Avatar
       avatarUrl={workspaceMember.avatarUrl}
-      colorId={workspaceMember.id}
+      entityId={workspaceMember.id}
       placeholder={workspaceMember.name.firstName || ''}
       type="squared"
       size="xl"

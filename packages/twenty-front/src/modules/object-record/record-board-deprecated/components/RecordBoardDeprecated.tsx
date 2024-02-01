@@ -12,9 +12,7 @@ import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-boa
 import { useSetRecordBoardDeprecatedCardSelectedInternal } from '@/object-record/record-board-deprecated/hooks/internal/useSetRecordBoardDeprecatedCardSelectedInternal';
 import { RecordBoardDeprecatedScope } from '@/object-record/record-board-deprecated/scopes/RecordBoardDeprecatedScope';
 import { Opportunity } from '@/pipeline/types/Opportunity';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { logError } from '~/utils/logError';
@@ -128,12 +126,6 @@ export const RecordBoardDeprecated = ({
   });
 
   const boardRef = useRef<HTMLDivElement>(null);
-
-  useScopedHotkeys(
-    'escape',
-    unselectAllActiveCards,
-    PageHotkeyScope.OpportunitiesPage,
-  );
 
   return (
     <RecordBoardDeprecatedScope recordBoardScopeId={recordBoardId}>

@@ -94,7 +94,7 @@ export const Dropdown = ({
   });
 
   useScopedHotkeys(
-    Key.Escape,
+    [Key.Escape],
     () => {
       closeDropdown();
     },

@@ -15,6 +15,7 @@ export const useGetRecordFromCache = ({
 
   return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
     recordId: string,
+    cache = apolloClient.cache,
   ) => {
     if (!objectMetadataItem) {
       return null;
@@ -31,7 +32,6 @@ export const useGetRecordFromCache = ({
       }
     `;
 
-    const cache = apolloClient.cache;
     const cachedRecordId = cache.identify({
       __typename: capitalize(objectMetadataItem.nameSingular),
       id: recordId,
