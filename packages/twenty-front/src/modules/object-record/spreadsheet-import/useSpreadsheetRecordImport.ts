@@ -3,18 +3,25 @@ import { isValidPhoneNumber } from 'libphonenumber-js';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const getValidation = (type: FieldMetadataType, fieldName: string) => {
+const firstName = ' Firstname';
+const lastName = ' Lastname';
+
+const getValidation = (
+  type: FieldMetadataType,
+  fieldName: string,
+): Validation[] => {
   switch (type) {
     case FieldMetadataType.Number:
       return [
         {
-          regex: /^\d+$/,
+          rule: 'regex',
+          value: '^d+$',
           errorMessage: fieldName + ' must be a number',
           level: 'error',
         },
@@ -29,7 +36,7 @@ const getValidation = (type: FieldMetadataType, fieldName: string) => {
         },
       ];
     default:
-      return;
+      return [];
   }
 };
 
@@ -57,16 +64,49 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
       type: 'input' | 'checkbox';
     };
     example?: string;
-  }[] = fields.map((field) => ({
-    icon: getIcon(field.icon),
-    label: field.label,
-    key: field.name,
-    fieldType: {
-      type: 'input',
-    },
-    example: field.defaultValue as string,
-    validations: getValidation(field.type, field.name),
-  }));
+    validations?: Validation[];
+  }[] = [];
+  for (const field of objectMetadataItem.fields) {
+    if (
+      !field.isActive ||
+      field.isSystem ||
+      field.type === FieldMetadataType.Relation ||
+      field.name === 'createdAt'
+    ) {
+      continue;
+    }
+    if (field.type === FieldMetadataType.FullName) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label + firstName,
+        key: field.name + firstName,
+        fieldType: {
+          type: 'input',
+        },
+        validations: getValidation(field.type, field.name),
+      });
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label + lastName,
+        key: field.name + lastName,
+        fieldType: {
+          type: 'input',
+        },
+        validations: getValidation(field.type, field.name),
+      });
+    } else {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label,
+        key: field.name,
+        fieldType: {
+          type: 'input',
+        },
+        example: field.defaultValue as string,
+        validations: getValidation(field.type, field.name),
+      });
+    }
+  }
 
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
@@ -82,7 +122,6 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           const fieldMapping: Record<string, any> = {};
           for (const field of fields) {
             const value = record[field.name];
-            const values = value?.toString().split(' ');
 
             switch (field.type) {
               case FieldMetadataType.Boolean:
@@ -105,10 +144,10 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 };
                 break;
               case FieldMetadataType.FullName:
+                console.log(record, field.name + firstName);
                 fieldMapping[field.name] = {
-                  firstName: values?.[0] || '',
-                  lastName:
-                    (values?.length && values?.slice(1).join(' ')) || '',
+                  firstName: record[field.name + firstName] || '',
+                  lastName: record[field.name + lastName] || '',
                 };
                 break;
               default:
