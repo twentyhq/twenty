@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import fs from 'fs/promises';
-
 import { DataSource } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -12,6 +10,7 @@ import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factor
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
+import { WorkspaceLogsService } from 'src/workspace/workspace-sync-metadata/services/workspace-logs.service';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -24,6 +23,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
+    private readonly workspaceLogsService: WorkspaceLogsService,
   ) {}
 
   /**
@@ -82,10 +82,7 @@ export class WorkspaceSyncMetadataService {
 
         await queryRunner.rollbackTransaction();
 
-        await fs.writeFile(
-          './logs/workspace-migrations.json',
-          JSON.stringify(workspaceMigrations, null, 2),
-        );
+        await this.workspaceLogsService.saveLogs(storage, workspaceMigrations);
 
         return;
       }
