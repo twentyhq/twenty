@@ -43225,6 +43225,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-zapier@workspace:packages/twenty-zapier"
   dependencies:
+    jest: "npm:29.7.0"
+    rimraf: "npm:^3.0.2"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
   languageName: unknown
