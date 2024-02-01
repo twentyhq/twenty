@@ -128,7 +128,7 @@ export const IconPicker = ({
       ),
     ];
 
-    const finalFilteredIconKeys: any[] =
+    const finalFilteredIconKeys: string[] =
       filteredSearchResults.length === 0
         ? uniqueFilteredIconKeys.filter(
             (iconKey) => iconKey !== selectedIconKey,
