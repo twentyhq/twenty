@@ -62,10 +62,6 @@ export class GraphQLConfigService
 
           const workspace = await this.tokenService.validateToken(context.req);
 
-          if (!workspace) {
-            return new GraphQLSchema({});
-          }
-
           return await this.createSchema(context, workspace);
         } catch (error) {
           if (error instanceof UnauthorizedException) {

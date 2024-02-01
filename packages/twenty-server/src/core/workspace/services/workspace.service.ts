@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
@@ -23,25 +23,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async createWorkspace(user: User, data: CreateWorkspaceInput) {
-    const workspaceToCreate = this.workspaceRepository.create({
-      displayName: '',
-      domainName: '',
-      inviteHash: v4(),
-      subscriptionStatus: 'active',
-      ...data,
+    if (!data.displayName || !data.displayName.length) {
+      throw new BadRequestException("'displayName' not provided");
+    }
+    await this.workspaceRepository.update(user.defaultWorkspace.id, {
+      displayName: data.displayName,
     });
-    const workspace = await this.workspaceRepository.save(workspaceToCreate);
+    await this.workspaceManagerService.init(user.defaultWorkspace.id);
+    await this.userService.createWorkspaceMember(user);
 
-    await this.userService.updateUser(user.id, {
-      defaultWorkspace: workspace,
-    });
-
-    await this.workspaceManagerService.init(workspace.id);
-    const updatedUser = await this.userService.getUser(user.id);
-
-    await this.userService.createWorkspaceMember(updatedUser);
-
-    return updatedUser;
+    return await this.userService.getUser(user.id);
   }
 
   async deleteWorkspace(id: string) {

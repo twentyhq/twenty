@@ -108,7 +108,7 @@ export class AuthService {
     }
 
     const passwordHash = password ? await hashPassword(password) : undefined;
-    let workspace: Workspace | null = null;
+    let workspace: Workspace | null;
 
     if (workspaceInviteHash) {
       workspace = await this.workspaceRepository.findOneBy({
@@ -126,6 +126,15 @@ export class AuthService {
         'Sign up is disabled',
         ForbiddenException,
       );
+
+      const workspaceToCreate = this.workspaceRepository.create({
+        displayName: '',
+        domainName: '',
+        inviteHash: v4(),
+        subscriptionStatus: 'incomplete',
+      });
+
+      workspace = await this.workspaceRepository.save(workspaceToCreate);
     }
 
     let imagePath: string | undefined = undefined;
@@ -155,7 +164,7 @@ export class AuthService {
       defaultAvatarUrl: imagePath,
       canImpersonate: false,
       passwordHash,
-      defaultWorkspace: workspace || undefined,
+      defaultWorkspace: workspace,
     });
 
     return await this.userRepository.save(userToCreate);
@@ -166,12 +175,24 @@ export class AuthService {
       where: {
         email,
       },
+      relations: ['defaultWorkspace'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
 
+    assert(
+      user.defaultWorkspace,
+      'User has no default workspace',
+      NotFoundException,
+    );
+
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember) {
+      user.workspaceMember = workspaceMember;
+    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

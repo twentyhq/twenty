@@ -16,12 +16,8 @@ import { User } from 'src/core/user/user.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
-export type JwtPayload = {
-  sub: string;
-  workspaceId?: string;
-  jti?: string;
-};
-export type PassportUser = { user?: User; workspace?: Workspace | null };
+export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
+export type PassportUser = { user?: User; workspace: Workspace };
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -46,7 +42,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       id: payload.workspaceId ?? payload.sub,
     });
 
-    if (workspace && payload.jti) {
+    if (!workspace) {
+      throw new UnauthorizedException();
+    }
+
+    if (payload.jti) {
       const dataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
           workspace.id,
@@ -68,7 +68,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     let user;
 
-    if (payload.workspaceId || !workspace) {
+    if (payload.workspaceId) {
       user = await this.userRepository.findOne({
         where: { id: payload.sub },
         relations: ['defaultWorkspace'],

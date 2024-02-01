@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -45,10 +41,6 @@ export class ApiRestQueryBuilderFactory {
     objectMetadataItem: ObjectMetadataEntity;
   }> {
     const workspace = await this.tokenService.validateToken(request);
-
-    if (!workspace) {
-      throw new UnauthorizedException();
-    }
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

@@ -141,13 +141,12 @@ export const useSignInUp = () => {
 
         if (
           billing?.isBillingEnabled &&
-          (!currentWorkspace ||
-            currentWorkspace.subscriptionStatus !== 'active')
+          currentWorkspace.subscriptionStatus !== 'active'
         ) {
           navigate(AppPath.PlanRequired);
           return;
         }
-        if (currentWorkspace?.displayName) {
+        if (currentWorkspace.displayName) {
           navigate(AppPath.Index);
           return;
         }

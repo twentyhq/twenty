@@ -68,9 +68,13 @@ export class TokenService {
       throw new NotFoundException('User is not found');
     }
 
+    if (!user.defaultWorkspace) {
+      throw new NotFoundException('User does not have a default workspace');
+    }
+
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: user.defaultWorkspace?.id || undefined,
+      workspaceId: user.defaultWorkspace.id,
     };
 
     return {
@@ -188,7 +192,7 @@ export class TokenService {
     return !!token;
   }
 
-  async validateToken(request: Request): Promise<Workspace | null | undefined> {
+  async validateToken(request: Request): Promise<Workspace> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
