@@ -1,13 +1,15 @@
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
-type PageTitleProps = {
-  title: string;
-};
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
-export const PageTitle = (props: PageTitleProps) => {
+export const PageTitle = () => {
+  const { pathname } = useLocation();
+  const pageTitle = getPageTitleFromPath(pathname);
+
   return (
     <Helmet>
-      <title>{props.title}</title>
+      <title>{pageTitle}</title>
     </Helmet>
   );
 };

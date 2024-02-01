@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -38,20 +38,17 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
-import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
-  const { pathname } = useLocation();
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
-  const pageTitle = getPageTitleFromPath(pathname);
   const isNewRecordBoardEnabled = useIsFeatureEnabled(
     'IS_NEW_RECORD_BOARD_ENABLED',
   );
 
   return (
     <>
-      <PageTitle title={pageTitle} />
+      <PageTitle />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
       <DefaultLayout>
