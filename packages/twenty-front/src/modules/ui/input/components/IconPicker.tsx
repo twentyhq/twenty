@@ -116,26 +116,18 @@ export const IconPicker = ({
         })
       : [];
 
-    const filteredSearchResults = filteredIconKeys.filter(
-      (iconKey) => iconKey.toLowerCase() === selectedIconKey?.toLowerCase(),
-    );
+    const isSelectedIconMatchingFilter =
+      selectedIconKey && filteredIconKeys.includes(selectedIconKey);
 
     const uniqueFilteredIconKeys = [
       ...new Set(
-        selectedIconKey
+        selectedIconKey && isSelectedIconMatchingFilter
           ? [selectedIconKey, ...filteredIconKeys]
           : filteredIconKeys,
       ),
     ];
 
-    const finalFilteredIconKeys: string[] =
-      filteredSearchResults.length === 0
-        ? uniqueFilteredIconKeys.filter(
-            (iconKey) => iconKey !== selectedIconKey,
-          )
-        : uniqueFilteredIconKeys;
-
-    return finalFilteredIconKeys.slice(0, 25);
+    return uniqueFilteredIconKeys.slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
   const iconKeys2d = useMemo(
