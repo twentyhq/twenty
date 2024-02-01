@@ -38,7 +38,7 @@ export const RightDrawerEmailThread = () => {
     },
     objectNameSingular: CoreObjectNameSingular.Message,
     orderBy: {
-      receivedAt: 'DescNullsLast',
+      receivedAt: 'AscNullsLast',
     },
     skip: !viewableEmailThread,
     useRecordsWithoutConnection: true,
