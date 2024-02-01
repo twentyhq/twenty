@@ -13,22 +13,22 @@ export const sanitizeRecordInput = ({
   return Object.fromEntries(
     Object.entries(recordInput)
       .map<[string, unknown] | undefined>(([fieldName, fieldValue]) => {
-        const fieldDefinition = objectMetadataItem.fields.find(
+        const fieldMetadataItem = objectMetadataItem.fields.find(
           (field) => field.name === fieldName,
         );
 
-        if (!fieldDefinition) return undefined;
+        if (!fieldMetadataItem) return undefined;
 
         if (
-          fieldDefinition.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
           isFieldRelationValue(fieldValue)
         ) {
-          const relationIdFieldName = `${fieldDefinition.name}Id`;
-          const relationIdFieldDefinition = objectMetadataItem.fields.find(
+          const relationIdFieldName = `${fieldMetadataItem.name}Id`;
+          const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
             (field) => field.name === relationIdFieldName,
           );
 
-          return relationIdFieldDefinition
+          return relationIdFieldMetadataItem
             ? [relationIdFieldName, fieldValue?.id ?? null]
             : undefined;
         }
