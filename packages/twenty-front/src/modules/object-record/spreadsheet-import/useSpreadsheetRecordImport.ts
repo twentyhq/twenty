@@ -1,7 +1,6 @@
-import { isValidPhoneNumber } from 'libphonenumber-js';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -9,36 +8,8 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const firstName = ' Firstname';
-const lastName = ' Lastname';
-
-const getValidation = (
-  type: FieldMetadataType,
-  fieldName: string,
-): Validation[] => {
-  switch (type) {
-    case FieldMetadataType.Number:
-      return [
-        {
-          rule: 'regex',
-          value: '^d+$',
-          errorMessage: fieldName + ' must be a number',
-          level: 'error',
-        },
-      ];
-    case FieldMetadataType.Phone:
-      return [
-        {
-          rule: 'function',
-          isValid: (value: string) => isValidPhoneNumber(value),
-          errorMessage: fieldName + ' is not valid',
-          level: 'error',
-        },
-      ];
-    default:
-      return [];
-  }
-};
+const firstName = 'Firstname';
+const lastName = 'Lastname';
 
 export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { openSpreadsheetImport } = useSpreadsheetImport<any>();
@@ -47,13 +18,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const fields = objectMetadataItem.fields
-    .filter(
-      (x) =>
-        x.isActive &&
-        !x.isSystem &&
-        x.type !== FieldMetadataType.Relation &&
-        x.name !== 'createdAt',
-    )
+    .filter((x) => x.isActive && !x.isSystem && x.name !== 'createdAt')
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const templateFields: {
@@ -63,36 +28,36 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     fieldType: {
       type: 'input' | 'checkbox';
     };
-    example?: string;
     validations?: Validation[];
   }[] = [];
-  for (const field of objectMetadataItem.fields) {
-    if (
-      !field.isActive ||
-      field.isSystem ||
-      field.type === FieldMetadataType.Relation ||
-      field.name === 'createdAt'
-    ) {
-      continue;
-    }
+  for (const field of fields) {
     if (field.type === FieldMetadataType.FullName) {
       templateFields.push({
         icon: getIcon(field.icon),
-        label: field.label + firstName,
-        key: field.name + firstName,
+        label: `${firstName} (${field.label})`,
+        key: `${firstName} (${field.name})`,
         fieldType: {
           type: 'input',
         },
-        validations: getValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(field.type, field.name),
       });
       templateFields.push({
         icon: getIcon(field.icon),
-        label: field.label + lastName,
-        key: field.name + lastName,
+        label: `${firstName} (${field.label})`,
+        key: `${firstName} (${field.name})`,
         fieldType: {
           type: 'input',
         },
-        validations: getValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(field.type, field.name),
+      });
+    } else if (field.type === FieldMetadataType.Relation) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label + ' (ID)',
+        key: field.name,
+        fieldType: {
+          type: 'input',
+        },
       });
     } else {
       templateFields.push({
@@ -102,8 +67,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         fieldType: {
           type: 'input',
         },
-        example: field.defaultValue as string,
-        validations: getValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(field.type, field.name),
       });
     }
   }
@@ -143,10 +107,15 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                   url: value || null,
                 };
                 break;
+              case FieldMetadataType.Relation:
+                if (value) {
+                  fieldMapping[field.name + 'Id'] = value;
+                }
+                break;
               case FieldMetadataType.FullName:
                 fieldMapping[field.name] = {
-                  firstName: record[field.name + firstName] || '',
-                  lastName: record[field.name + lastName] || '',
+                  firstName: record[`${firstName} (${field.name})`] || '',
+                  lastName: record[`${lastName} (${field.name})`] || '',
                 };
                 break;
               default:
