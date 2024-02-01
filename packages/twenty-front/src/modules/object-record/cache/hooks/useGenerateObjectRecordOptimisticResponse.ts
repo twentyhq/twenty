@@ -41,14 +41,16 @@ export const useGenerateObjectRecordOptimisticResponse = ({
         const relationRecordTypeName = capitalize(
           relationMetadata.relationObjectMetadataItem.nameSingular,
         );
-        const relationRecordId = result[relationIdFieldName] as string;
+        const relationRecordId = result[relationIdFieldName] as string | null;
 
         return {
           ...result,
-          [fieldMetadataItem.name]: {
-            __typename: relationRecordTypeName,
-            id: relationRecordId,
-          },
+          [fieldMetadataItem.name]: relationRecordId
+            ? {
+                __typename: relationRecordTypeName,
+                id: relationRecordId,
+              }
+            : null,
         };
       },
       input,
