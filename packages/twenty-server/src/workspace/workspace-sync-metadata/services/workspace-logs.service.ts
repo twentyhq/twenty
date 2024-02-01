@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { existsSync } from 'fs';
 import fs from 'fs/promises';
 
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
@@ -13,6 +14,11 @@ export class WorkspaceLogsService {
     storage: WorkspaceSyncStorage,
     workspaceMigrations: WorkspaceMigrationEntity[],
   ) {
+    // Check if `logs` folder exists
+    if (existsSync('./logs') === false) {
+      await fs.mkdir('./logs', { recursive: true });
+    }
+
     // Save workspace migrations
     await fs.writeFile(
       './logs/workspace-migrations.json',
