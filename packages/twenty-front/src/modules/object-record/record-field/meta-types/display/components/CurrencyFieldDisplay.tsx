@@ -8,7 +8,7 @@ export const CurrencyFieldDisplay = () => {
   return (
     <CurrencyDisplay
       amount={
-        fieldValue.amountMicros ? fieldValue.amountMicros / 1000000 : null
+        fieldValue?.amountMicros ? fieldValue.amountMicros / 1000000 : null
       }
     />
   );
