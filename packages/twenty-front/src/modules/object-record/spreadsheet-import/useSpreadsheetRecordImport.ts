@@ -144,7 +144,6 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 };
                 break;
               case FieldMetadataType.FullName:
-                console.log(record, field.name + firstName);
                 fieldMapping[field.name] = {
                   firstName: record[field.name + firstName] || '',
                   lastName: record[field.name + lastName] || '',
