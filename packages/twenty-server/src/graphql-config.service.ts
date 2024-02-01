@@ -9,11 +9,7 @@ import {
 import { GraphQLSchema, GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import {
-  GraphQLSchemaWithContext,
-  YogaInitialContext,
-  maskError,
-} from 'graphql-yoga';
+import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { CoreModule } from 'src/core/core.module';
@@ -23,6 +19,9 @@ import { ExceptionHandlerService } from 'src/integrations/exception-handler/exce
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
+import { useExceptionHandler } from './integrations/exception-handler/hooks/use-exception-handler.hook';
+import { User } from './core/user/user.entity';
 
 @Injectable()
 export class GraphQLConfigService
@@ -36,33 +35,24 @@ export class GraphQLConfigService
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
-    const exceptionHandlerService = this.exceptionHandlerService;
     const isDebugMode = this.environmentService.isDebugMode();
     const config: YogaDriverConfig = {
       context: ({ req }) => ({ req }),
       autoSchemaFile: true,
       include: [CoreModule],
-      maskedErrors: {
-        maskError(error: GraphQLError, message, isDev) {
-          if (error.originalError) {
-            return handleExceptionAndConvertToGraphQLError(
-              error.originalError,
-              exceptionHandlerService,
-            );
-          }
-
-          return maskError(error, message, isDev);
-        },
-      },
       conditionalSchema: async (context) => {
+        let user: User | undefined;
+
         try {
           if (!this.tokenService.isTokenPresent(context.req)) {
             return new GraphQLSchema({});
           }
 
-          const workspace = await this.tokenService.validateToken(context.req);
+          const data = await this.tokenService.validateToken(context.req);
 
-          return await this.createSchema(context, workspace);
+          user = data.user;
+
+          return await this.createSchema(context, data.workspace);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -92,11 +82,22 @@ export class GraphQLConfigService
           throw handleExceptionAndConvertToGraphQLError(
             error,
             this.exceptionHandlerService,
+            user
+              ? {
+                  id: user.id,
+                  email: user.email,
+                }
+              : undefined,
           );
         }
       },
       resolvers: { JSON: GraphQLJSON },
-      plugins: [],
+      plugins: [
+        useExceptionHandler({
+          exceptionHandlerService: this.exceptionHandlerService,
+          tokenService: this.tokenService,
+        }),
+      ],
     };
 
     if (isDebugMode) {
