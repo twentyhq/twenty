@@ -43,7 +43,11 @@ export class WorkspaceSyncObjectMetadataService {
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
       await objectMetadataRepository.find({
-        where: { workspaceId: context.workspaceId, isCustom: false },
+        where: {
+          workspaceId: context.workspaceId,
+          isCustom: false,
+          fields: { isCustom: false },
+        },
         relations: ['dataSource', 'fields'],
       });
 
