@@ -116,6 +116,10 @@ export const IconPicker = ({
         })
       : [];
 
+    const filteredSearchResults = filteredIconKeys.filter(
+      (iconKey) => iconKey.toLowerCase() === selectedIconKey?.toLowerCase(),
+    );
+
     const uniqueFilteredIconKeys = [
       ...new Set(
         selectedIconKey
@@ -124,7 +128,14 @@ export const IconPicker = ({
       ),
     ];
 
-    return uniqueFilteredIconKeys.slice(0, 25);
+    const finalFilteredIconKeys: any[] =
+      filteredSearchResults.length === 0
+        ? uniqueFilteredIconKeys.filter(
+            (iconKey) => iconKey !== selectedIconKey,
+          )
+        : uniqueFilteredIconKeys;
+
+    return finalFilteredIconKeys.slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
   const iconKeys2d = useMemo(
