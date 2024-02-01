@@ -391,6 +391,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
           ],
         },
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE,
+              columnName: 'recordPosition',
+              columnType: 'float',
+              isNullable: true,
+            } satisfies WorkspaceMigrationColumnCreate,
+          ],
+        } satisfies WorkspaceMigrationTableAction,
         // This is temporary until we implement mainIdentifier
         {
           name: computeObjectTargetTable(createdObjectMetadata),
