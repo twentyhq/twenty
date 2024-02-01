@@ -116,6 +116,10 @@ export const useOpenCreateActivityDrawerV2 = ({
       const createdActivityTargetsInCache =
         await createManyActivityTargetsInCache(activityTargetsToCreate);
 
+      console.log({
+        createdActivityTargetsInCache,
+      });
+
       // TODO: find better naming and refactor those hooks
       writeActivityTargetsInCache({
         targetableObject,

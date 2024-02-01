@@ -1,25 +1,22 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
+import { useCreateActivityFromEditor } from '@/activities/hooks/useCreateActivityFromEditor';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { Comment } from '@/activities/types/Comment';
+import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -57,19 +54,6 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
-type ActivityForEditor = Pick<
-  Activity,
-  'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt' | 'updatedAt'
-> & {
-  comments?: Array<Comment>;
-} & {
-  assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
-} & {
-  activityTargets?: Array<
-    Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
-  >;
-};
-
 type ActivityEditorProps = {
   activity: ActivityForEditor;
   showComment?: boolean;
@@ -91,16 +75,6 @@ export const ActivityEditor = ({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
-  const { createOneRecord: createOneActivity } =
-    useCreateOneRecord<ActivityForEditor>({
-      objectNameSingular: CoreObjectNameSingular.Activity,
-    });
-
-  const { createManyRecords: createManyActivityTargets } =
-    useCreateManyRecords<ActivityTarget>({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    });
-
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activity.id,
@@ -118,30 +92,16 @@ export const ActivityEditor = ({
       clearable: true,
     });
 
-  const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
-    isCreatingActivityState,
-  );
+  const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
 
-  const createActivity = () => {
-    createManyActivityTargets(activity.activityTargets);
-    createOneActivity?.({
-      ...activity,
-      title: newTitle ?? '',
-      updatedAt: new Date().toISOString(),
-      activityTargets: activity.activityTargets?.map((activityTarget) => ({
-        ...activityTarget,
-        id: undefined,
-      })),
-    });
-  };
+  const { createActivity } = useCreateActivityFromEditor();
 
   const updateTitle = (newTitle: string) => {
     if (isCreatingActivity) {
-      console.log({
-        activity,
+      createActivity({
+        ...activity,
+        title: newTitle ?? '',
       });
-
-      setIsCreatingActivity(false);
     } else {
       updateOneActivity?.({
         idToUpdate: activity.id,
