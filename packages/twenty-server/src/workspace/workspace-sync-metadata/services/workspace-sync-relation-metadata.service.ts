@@ -34,7 +34,7 @@ export class WorkspaceSyncRelationMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<void> {
+  ): Promise<WorkspaceMigrationEntity[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
     const workspaceMigrationRepository = manager.getRepository(
@@ -106,6 +106,10 @@ export class WorkspaceSyncRelationMetadataService {
       );
 
     // Save migrations into DB
-    await workspaceMigrationRepository.save(workspaceRelationMigrations);
+    const workspaceMigrations = await workspaceMigrationRepository.save(
+      workspaceRelationMigrations,
+    );
+
+    return workspaceMigrations;
   }
 }

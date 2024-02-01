@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import fs from 'fs/promises';
+
 import { DataSource } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -34,6 +36,7 @@ export class WorkspaceSyncMetadataService {
    */
   public async syncStandardObjectsAndFieldsMetadata(
     context: WorkspaceSyncContext,
+    options?: { dryRun?: boolean },
   ) {
     this.logger.log('Syncing standard objects and fields metadata');
     const queryRunner = this.metadataDataSource.createQueryRunner();
@@ -52,19 +55,40 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log('Syncing standard objects and fields metadata');
 
-      await this.workspaceSyncObjectMetadataService.synchronize(
-        context,
-        manager,
-        storage,
-        workspaceFeatureFlagsMap,
-      );
+      const workspaceObjectMigrations =
+        await this.workspaceSyncObjectMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
 
-      await this.workspaceSyncRelationMetadataService.synchronize(
-        context,
-        manager,
-        storage,
-        workspaceFeatureFlagsMap,
-      );
+      const workspaceRelationMigrations =
+        await this.workspaceSyncRelationMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
+
+      // If we're running a dry run, rollback the transaction and do not execute migrations
+      if (options?.dryRun) {
+        const workspaceMigrations = [
+          ...workspaceObjectMigrations,
+          ...workspaceRelationMigrations,
+        ];
+
+        this.logger.log('Running in dry run mode, rolling back transaction');
+
+        await queryRunner.rollbackTransaction();
+
+        await fs.writeFile(
+          './logs/workspace-migrations.json',
+          JSON.stringify(workspaceMigrations, null, 2),
+        );
+
+        return;
+      }
 
       await queryRunner.commitTransaction();
 
