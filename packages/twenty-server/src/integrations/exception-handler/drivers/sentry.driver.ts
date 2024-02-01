@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/node';
 import { ProfilingIntegration } from '@sentry/profiling-node';
 
+import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerOptions } from 'src/integrations/exception-handler/interfaces/exception-handler-options.interface';
+
 import {
   ExceptionHandlerDriverInterface,
   ExceptionHandlerSentryDriverFactoryOptions,
@@ -30,11 +33,69 @@ export class ExceptionHandlerSentryDriver
     });
   }
 
-  captureException(exception: Error) {
-    Sentry.captureException(exception);
+  captureExceptions(
+    exceptions: ReadonlyArray<any>,
+    options?: ExceptionHandlerOptions,
+  ) {
+    const eventIds: string[] = [];
+
+    Sentry.withScope((scope) => {
+      if (options?.operation) {
+        scope.setTag('operation', options.operation.name);
+        scope.setTag('operationName', options.operation.name);
+      }
+
+      if (options?.document) {
+        scope.setExtra('document', options.document);
+      }
+
+      for (const exception of exceptions) {
+        const errorPath = (exception.path ?? [])
+          .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
+          .join(' > ');
+
+        if (errorPath) {
+          scope.addBreadcrumb({
+            category: 'execution-path',
+            message: errorPath,
+            level: 'debug',
+          });
+        }
+
+        const eventId = Sentry.captureException(exception, {
+          fingerprint: [
+            'graphql',
+            errorPath,
+            options?.operation?.name,
+            options?.operation?.type,
+          ],
+          contexts: {
+            GraphQL: {
+              operationName: options?.operation?.name,
+              operationType: options?.operation?.type,
+            },
+          },
+        });
+
+        eventIds.push(eventId);
+      }
+    });
+
+    return eventIds;
   }
 
-  captureMessage(message: string) {
-    Sentry.captureMessage(message);
+  captureMessage(message: string, user?: ExceptionHandlerUser) {
+    Sentry.captureMessage(message, (scope) => {
+      if (user) {
+        scope.setUser({
+          id: user.id,
+          ip_address: user.ipAddress,
+          email: user.email,
+          username: user.username,
+        });
+      }
+
+      return scope;
+    });
   }
 }

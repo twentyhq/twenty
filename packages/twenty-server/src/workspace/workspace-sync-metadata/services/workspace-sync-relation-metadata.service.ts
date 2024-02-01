@@ -34,7 +34,7 @@ export class WorkspaceSyncRelationMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<void> {
+  ): Promise<WorkspaceMigrationEntity[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
     const workspaceMigrationRepository = manager.getRepository(
@@ -44,7 +44,11 @@ export class WorkspaceSyncRelationMetadataService {
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
       await objectMetadataRepository.find({
-        where: { workspaceId: context.workspaceId, isCustom: false },
+        where: {
+          workspaceId: context.workspaceId,
+          isCustom: false,
+          fields: { isCustom: false },
+        },
         relations: ['dataSource', 'fields'],
       });
 
@@ -58,10 +62,12 @@ export class WorkspaceSyncRelationMetadataService {
     );
 
     // Retrieve relation metadata collection from DB
-    // TODO: filter out custom relations once isCustom has been added to relationMetadata table
     const originalRelationMetadataCollection =
       await relationMetadataRepository.find({
-        where: { workspaceId: context.workspaceId },
+        where: {
+          workspaceId: context.workspaceId,
+          fromFieldMetadata: { isCustom: false },
+        },
       });
 
     // Create standard relation metadata collection
@@ -100,6 +106,10 @@ export class WorkspaceSyncRelationMetadataService {
       );
 
     // Save migrations into DB
-    await workspaceMigrationRepository.save(workspaceRelationMigrations);
+    const workspaceMigrations = await workspaceMigrationRepository.save(
+      workspaceRelationMigrations,
+    );
+
+    return workspaceMigrations;
   }
 }

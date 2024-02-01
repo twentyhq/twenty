@@ -33,7 +33,7 @@ export class WorkspaceSyncObjectMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<void> {
+  ): Promise<WorkspaceMigrationEntity[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
     const workspaceMigrationRepository = manager.getRepository(
@@ -43,7 +43,11 @@ export class WorkspaceSyncObjectMetadataService {
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
       await objectMetadataRepository.find({
-        where: { workspaceId: context.workspaceId, isCustom: false },
+        where: {
+          workspaceId: context.workspaceId,
+          isCustom: false,
+          fields: { isCustom: false },
+        },
         relations: ['dataSource', 'fields'],
       });
 
@@ -149,6 +153,10 @@ export class WorkspaceSyncObjectMetadataService {
     this.logger.log('Saving migrations');
 
     // Save migrations into DB
-    await workspaceMigrationRepository.save(workspaceObjectMigrations);
+    const workspaceMigrations = await workspaceMigrationRepository.save(
+      workspaceObjectMigrations,
+    );
+
+    return workspaceMigrations;
   }
 }

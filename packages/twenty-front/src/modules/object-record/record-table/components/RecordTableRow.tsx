@@ -69,7 +69,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
                 <RecordTableCellContainer />
               </RecordTableCellContext.Provider>
             ) : (
-              <td></td>
+              <td key={column.fieldMetadataId}></td>
             );
           })}
         <td></td>
