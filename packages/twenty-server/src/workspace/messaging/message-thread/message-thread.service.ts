@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
@@ -11,15 +13,16 @@ export class MessageThreadService {
   public async deleteByIds(
     messageThreadIds: string[],
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."messageThread" WHERE id = ANY($1)`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."messageThread" WHERE id = ANY($1)`,
       [messageThreadIds],
+      workspaceId,
+      transactionManager,
     );
   }
 }
