@@ -13,53 +13,16 @@ export const requestSchema = async (
           nameSingular
           namePlural
           labelSingular
-          labelPlural
-          description
-          isCustom
-          labelIdentifierFieldMetadataId
-          imageIdentifierFieldMetadataId
           fields(paging: {first: 1000}, filter: {isActive: {is:true}}) {
             edges {
               node {
-                id
                 type
                 name
                 label
                 description
-                icon
-                isCustom
-                isActive
                 targetColumnMap
-                isSystem
                 isNullable
-                createdAt
-                updatedAt
-                fromRelationMetadata {
-                  id
-                  relationType
-                  toObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                  }
-                  toFieldMetadataId
-                }
-                toRelationMetadata {
-                  id
-                  relationType
-                  fromObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                    isSystem
-                  }
-                  fromFieldMetadataId
-                }
                 defaultValue
-                options
               }
             }
           }

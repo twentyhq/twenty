@@ -6,7 +6,11 @@ const objectListRequest = async (z: ZObject, bundle: Bundle) => {
   const schema = await requestSchema(z, bundle);
   return schema.data.objects.edges.map((edge: any) => {
     const object = edge.node;
-    return { id: object.nameSingular, nameSingular: object.nameSingular };
+    return {
+      id: object.nameSingular,
+      nameSingular: object.nameSingular,
+      labelSingular: object.labelSingular,
+    };
   });
 };
 

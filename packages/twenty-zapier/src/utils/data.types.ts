@@ -6,31 +6,16 @@ export type Node = {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
-  labelPlural: string;
-  description: string;
-  isCustom: boolean;
-  labelIdentifierFieldMetadataId: string | null;
-  imageIdentifierFieldMetadataId: string | null;
   fields: {
     edges: {
       node: {
-        id: string;
         type: string;
         name: string;
         label: string;
         description: string | null;
-        icon: string | null;
-        isCustom: boolean;
         targetColumnMap: object;
-        isActive: boolean;
-        isSystem: boolean;
         isNullable: boolean;
-        createdAt: string;
-        updatedAt: string;
         defaultValue: object | null;
-        options: object | null;
-        fromRelationMetadata: object | null;
-        toRelationMetadata: object | null;
       };
     }[];
   };
