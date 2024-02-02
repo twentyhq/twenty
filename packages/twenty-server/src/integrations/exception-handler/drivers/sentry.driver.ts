@@ -49,6 +49,15 @@ export class ExceptionHandlerSentryDriver
         scope.setExtra('document', options.document);
       }
 
+      if (options?.user) {
+        scope.setUser({
+          id: options.user.id,
+          ip_address: options.user.ipAddress,
+          email: options.user.email,
+          username: options.user.username,
+        });
+      }
+
       for (const exception of exceptions) {
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
