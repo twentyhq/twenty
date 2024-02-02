@@ -98,7 +98,9 @@ export const useAuth = () => {
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentUser(user);
-      setCurrentWorkspaceMember(workspaceMember);
+      if (workspaceMember) {
+        setCurrentWorkspaceMember(workspaceMember);
+      }
       setCurrentWorkspace(workspace);
       return {
         user,
