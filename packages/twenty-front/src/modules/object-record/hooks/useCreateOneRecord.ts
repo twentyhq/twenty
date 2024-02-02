@@ -13,6 +13,10 @@ type useCreateOneRecordProps = {
   objectNameSingular: string;
 };
 
+type CreateOneRecordOptions = {
+  skipOptimisticEffect?: boolean;
+};
+
 export const useCreateOneRecord = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
@@ -31,10 +35,15 @@ export const useCreateOneRecord = <
 
   const getRelationMetadata = useGetRelationMetadata();
 
-  const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+  const createOneRecord = async (
+    input: Partial<CreatedObjectRecord>,
+    options?: CreateOneRecordOptions,
+  ) => {
+    const idForCreation = input.id ?? v4();
+
     const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: { ...input, id: v4() },
+      recordInput: { ...input, id: idForCreation },
     });
 
     const optimisticallyCreatedRecord =
@@ -55,21 +64,25 @@ export const useCreateOneRecord = <
       variables: {
         input: sanitizedCreateOneRecordInput,
       },
-      optimisticResponse: {
-        [mutationResponseField]: optimisticallyCreatedRecord,
-      },
-      update: (cache, { data }) => {
-        const record = data?.[mutationResponseField];
+      optimisticResponse: options?.skipOptimisticEffect
+        ? undefined
+        : {
+            [mutationResponseField]: optimisticallyCreatedRecord,
+          },
+      update: options?.skipOptimisticEffect
+        ? undefined
+        : (cache, { data }) => {
+            const record = data?.[mutationResponseField];
 
-        if (!record) return;
+            if (!record) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          records: [record],
-          getRelationMetadata,
-        });
-      },
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              records: [record],
+              getRelationMetadata,
+            });
+          },
     });
 
     return createdObject.data?.[mutationResponseField] ?? null;

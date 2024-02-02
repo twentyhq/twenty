@@ -10,6 +10,10 @@ import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
+type CreateManyRecordsOptions = {
+  skipOptimisticEffect?: boolean;
+};
+
 export const useCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
@@ -29,13 +33,20 @@ export const useCreateManyRecords = <
 
   const getRelationMetadata = useGetRelationMetadata();
 
-  const createManyRecords = async (data: Partial<CreatedObjectRecord>[]) => {
-    const sanitizedCreateManyRecordsInput = data.map((input) =>
-      sanitizeRecordInput({
+  const createManyRecords = async (
+    data: Partial<CreatedObjectRecord>[],
+    options?: CreateManyRecordsOptions,
+  ) => {
+    const sanitizedCreateManyRecordsInput = data.map((input) => {
+      const idForCreation = input.id ?? v4();
+
+      const sanitizedRecordInput = sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: { ...input, id: v4() },
-      }),
-    );
+        recordInput: { ...input, id: idForCreation },
+      });
+
+      return sanitizedRecordInput;
+    });
 
     const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
       (record) =>
@@ -51,21 +62,25 @@ export const useCreateManyRecords = <
       variables: {
         data: sanitizedCreateManyRecordsInput,
       },
-      optimisticResponse: {
-        [mutationResponseField]: optimisticallyCreatedRecords,
-      },
-      update: (cache, { data }) => {
-        const records = data?.[mutationResponseField];
+      optimisticResponse: options?.skipOptimisticEffect
+        ? undefined
+        : {
+            [mutationResponseField]: optimisticallyCreatedRecords,
+          },
+      update: options?.skipOptimisticEffect
+        ? undefined
+        : (cache, { data }) => {
+            const records = data?.[mutationResponseField];
 
-        if (!records?.length) return;
+            if (!records?.length) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          records,
-          getRelationMetadata,
-        });
-      },
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              records,
+              getRelationMetadata,
+            });
+          },
     });
 
     return createdObjects.data?.[mutationResponseField] ?? [];

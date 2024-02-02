@@ -32,15 +32,26 @@ export const useCreateActivityFromEditor = () => {
       activityToCreate as any,
     );
 
-    await createOneActivity?.({
-      ...activityWithConnection,
-      updatedAt: new Date().toISOString(),
+    console.log('before createOneActivity', {
+      activityWithConnection,
     });
+
+    await createOneActivity?.(
+      {
+        ...activityWithConnection,
+        updatedAt: new Date().toISOString(),
+      },
+      {
+        skipOptimisticEffect: true,
+      },
+    );
 
     const activityTargetsToCreate = activityToCreate.activityTargets ?? [];
 
     if (isNonEmptyArray(activityTargetsToCreate)) {
-      await createManyActivityTargets(activityTargetsToCreate);
+      await createManyActivityTargets(activityTargetsToCreate, {
+        skipOptimisticEffect: true,
+      });
     }
 
     modifyActivityTargetsOnActivityCache({

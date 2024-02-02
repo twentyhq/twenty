@@ -17,12 +17,19 @@ export const getObjectRecordIdentifier = ({
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
     case CoreObjectNameSingular.WorkspaceMember: {
-      const workspaceMember = record as WorkspaceMember;
+      const workspaceMember = record as Partial<WorkspaceMember> & {
+        id: string;
+      };
+
+      const name = workspaceMember.name
+        ? `${workspaceMember.name?.firstName ?? ''} ${
+            workspaceMember.name?.lastName ?? ''
+          }`
+        : '';
 
       return {
         id: workspaceMember.id,
-        name:
-          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
+        name,
         avatarUrl: workspaceMember.avatarUrl ?? undefined,
         avatarType: 'rounded',
       };
