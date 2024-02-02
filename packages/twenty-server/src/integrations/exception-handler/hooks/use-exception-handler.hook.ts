@@ -90,7 +90,7 @@ export const useExceptionHandler = <
               }>(
                 (acc, err) => {
                   // Filter out exceptions that we don't want to be captured by exception handler
-                  if (filterException(err)) {
+                  if (filterException(err?.originalError ?? err)) {
                     acc.filtered.push(err);
                   } else {
                     acc.unfiltered.push(err);
