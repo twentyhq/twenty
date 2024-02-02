@@ -1,17 +1,82 @@
 import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
-export const requestSchema = async (z: ZObject, bundle: Bundle) => {
-  const options = {
-    url: `${process.env.SERVER_BASE_URL}/open-api`,
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${bundle.authData.apiKey}`,
-    },
-  } satisfies HttpRequestOptions;
+import { Node } from './computeInputFields';
 
-  return z.request(options).then((response) => response.json);
+type Schema = {
+  data: {
+    objects: {
+      edges: { node: Node }[];
+    };
+  };
+};
+
+export const requestSchema = async (
+  z: ZObject,
+  bundle: Bundle,
+): Promise<Schema> => {
+  const query = `query GetObjects {
+    objects(paging: {first: 1000}, filter: {isActive: {is:true}}) {
+      edges {
+        node {
+          nameSingular
+          namePlural
+          labelSingular
+          labelPlural
+          description
+          isCustom
+          labelIdentifierFieldMetadataId
+          imageIdentifierFieldMetadataId
+          fields(paging: {first: 1000}, filter: {isActive: {is:true}}) {
+            edges {
+              node {
+                id
+                type
+                name
+                label
+                description
+                icon
+                isCustom
+                isActive
+                targetColumnMap
+                isSystem
+                isNullable
+                createdAt
+                updatedAt
+                fromRelationMetadata {
+                  id
+                  relationType
+                  toObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                    isSystem
+                  }
+                  toFieldMetadataId
+                }
+                toRelationMetadata {
+                  id
+                  relationType
+                  fromObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                    isSystem
+                  }
+                  fromFieldMetadataId
+                }
+                defaultValue
+                options
+              }
+            }
+          }
+        }
+      }
+    }
+  }`;
+  const endpoint = 'metadata';
+  return await requestDb(z, bundle, query, endpoint);
 };
 
 const requestDb = async (
