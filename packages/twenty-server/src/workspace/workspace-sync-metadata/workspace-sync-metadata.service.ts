@@ -10,6 +10,7 @@ import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factor
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
+import { WorkspaceLogsService } from 'src/workspace/workspace-sync-metadata/services/workspace-logs.service';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -22,6 +23,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
+    private readonly workspaceLogsService: WorkspaceLogsService,
   ) {}
 
   /**
@@ -34,6 +36,7 @@ export class WorkspaceSyncMetadataService {
    */
   public async syncStandardObjectsAndFieldsMetadata(
     context: WorkspaceSyncContext,
+    options?: { dryRun?: boolean },
   ) {
     this.logger.log('Syncing standard objects and fields metadata');
     const queryRunner = this.metadataDataSource.createQueryRunner();
@@ -52,19 +55,37 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log('Syncing standard objects and fields metadata');
 
-      await this.workspaceSyncObjectMetadataService.synchronize(
-        context,
-        manager,
-        storage,
-        workspaceFeatureFlagsMap,
-      );
+      const workspaceObjectMigrations =
+        await this.workspaceSyncObjectMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
 
-      await this.workspaceSyncRelationMetadataService.synchronize(
-        context,
-        manager,
-        storage,
-        workspaceFeatureFlagsMap,
-      );
+      const workspaceRelationMigrations =
+        await this.workspaceSyncRelationMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
+
+      // If we're running a dry run, rollback the transaction and do not execute migrations
+      if (options?.dryRun) {
+        const workspaceMigrations = [
+          ...workspaceObjectMigrations,
+          ...workspaceRelationMigrations,
+        ];
+
+        this.logger.log('Running in dry run mode, rolling back transaction');
+
+        await queryRunner.rollbackTransaction();
+
+        await this.workspaceLogsService.saveLogs(storage, workspaceMigrations);
+
+        return;
+      }
 
       await queryRunner.commitTransaction();
 

@@ -144,13 +144,14 @@ export const useRecordIndexOptionsForBoard = ({
             updatedFieldDefinition.fieldMetadataId
               ? {
                   ...exitingFieldDefinition,
-                  isVisible: !updatedFieldDefinition.isVisible,
+                  isVisible: !exitingFieldDefinition.isVisible,
                 }
               : exitingFieldDefinition,
         );
       }
 
       setRecordIndexFieldDefinitions(updatedFieldsDefinitions);
+
       persistViewFields(
         mapBoardFieldDefinitionsToViewFields(updatedFieldsDefinitions),
       );

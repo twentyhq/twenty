@@ -1,8 +1,10 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
+import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 
@@ -15,14 +17,26 @@ export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
   records,
+  getRelationMetadata,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   records: CachedObjectRecord[];
+  getRelationMetadata: ReturnType<typeof useGetRelationMetadata>;
 }) => {
   const objectEdgeTypeName = getEdgeTypename({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
+
+  records.forEach((record) =>
+    triggerUpdateRelationsOptimisticEffect({
+      cache,
+      objectMetadataItem,
+      previousRecord: null,
+      nextRecord: record,
+      getRelationMetadata,
+    }),
+  );
 
   cache.modify<StoreObject>({
     fields: {

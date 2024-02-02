@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -18,10 +18,12 @@ import { recordIndexSortsState } from '@/object-record/record-index/states/recor
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
+import { ViewField } from '@/views/types/ViewField';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -58,15 +60,38 @@ export const RecordIndexContainer = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const setRecordIndexFieldDefinitions = useSetRecoilState(
-    recordIndexFieldDefinitionsState,
-  );
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableId: recordIndexId,
   });
+
+  const onViewFieldsChange = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (viewFields: ViewField[]) => {
+        setTableColumns(
+          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+        );
+
+        const existingRecordIndexFieldDefinitions = snapshot
+          .getLoadable(recordIndexFieldDefinitionsState)
+          .getValue();
+
+        const newFieldDefinitions = mapViewFieldsToColumnDefinitions(
+          viewFields,
+          columnDefinitions,
+        );
+        if (
+          !isDeeplyEqual(
+            existingRecordIndexFieldDefinitions,
+            newFieldDefinitions,
+          )
+        )
+          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+      },
+    [columnDefinitions, setTableColumns],
+  );
 
   return (
     <StyledContainer>
@@ -81,14 +106,7 @@ export const RecordIndexContainer = ({
             />
           }
           optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
-          onViewFieldsChange={(viewFields) => {
-            setTableColumns(
-              mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-            );
-            setRecordIndexFieldDefinitions(
-              mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-            );
-          }}
+          onViewFieldsChange={onViewFieldsChange}
           onViewFiltersChange={(viewFilters) => {
             setTableFilters(mapViewFiltersToFilters(viewFilters));
             setRecordIndexFilters(mapViewFiltersToFilters(viewFilters));

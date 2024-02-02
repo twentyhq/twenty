@@ -291,6 +291,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { type: 'now' },
           },
+          {
+            type: FieldMetadataType.NUMBER,
+            name: 'recordPosition',
+            label: 'Record position',
+            targetColumnMap: {
+              value: 'recordPosition',
+            },
+            icon: 'IconHierarchy2',
+            description: 'Record position',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            isSystem: true,
+            workspaceId: objectMetadataInput.workspaceId,
+            defaultValue: null,
+          },
         ],
     });
 
@@ -375,6 +391,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
           ],
         },
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE,
+              columnName: 'recordPosition',
+              columnType: 'float',
+              isNullable: true,
+            } satisfies WorkspaceMigrationColumnCreate,
+          ],
+        } satisfies WorkspaceMigrationTableAction,
         // This is temporary until we implement mainIdentifier
         {
           name: computeObjectTargetTable(createdObjectMetadata),
