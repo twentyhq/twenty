@@ -38,35 +38,34 @@ describe('formatFieldMetadataItemInput', () => {
       label: 'Example Label',
       icon: 'example-icon',
       description: 'Example description',
-      defaultValue: 'example-default-value',
       options: [
-        { id: '1', label: 'Option 1', color: 'red' as const },
+        { id: '1', label: 'Option 1', color: 'red' as const, isDefault: true },
         { id: '2', label: 'Option 2', color: 'blue' as const },
       ],
     };
 
     const expected = {
-      defaultValue: 'EXAMPLE_DEFAULT_VALUE',
       description: 'Example description',
       icon: 'example-icon',
       label: 'Example Label',
       name: 'exampleLabel',
       options: [
         {
-          id: 1,
+          id: '1',
           label: 'Option 1',
           color: 'red',
           position: 0,
           value: 'OPTION_1',
         },
         {
-          id: 2,
+          id: '2',
           label: 'Option 2',
           color: 'blue',
           position: 1,
           value: 'OPTION_2',
         },
       ],
+      defaultValue: 'OPTION_1',
     };
 
     const result = formatFieldMetadataItemInput(input);
@@ -79,16 +78,15 @@ describe('formatFieldMetadataItemInput', () => {
       label: 'Example Label',
       icon: 'example-icon',
       description: 'Example description',
-      defaultValue: 'example-default-value',
     };
 
     const expected = {
-      defaultValue: 'EXAMPLE_DEFAULT_VALUE',
       description: 'Example description',
       icon: 'example-icon',
       label: 'Example Label',
       name: 'exampleLabel',
       options: undefined,
+      defaultValue: undefined,
     };
 
     const result = formatFieldMetadataItemInput(input);
