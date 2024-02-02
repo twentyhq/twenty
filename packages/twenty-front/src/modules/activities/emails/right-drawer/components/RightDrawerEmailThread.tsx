@@ -1,15 +1,11 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
-import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -22,45 +18,20 @@ const StyledContainer = styled.div`
 `;
 
 export const RightDrawerEmailThread = () => {
-  const viewableEmailThread = useRecoilValue(viewableEmailThreadState);
+  const { thread, messages, fetchMoreMessages, loading } =
+    useRightDrawerEmailThread();
 
-  const {
-    records: messages,
-    loading: firstQueryLoading,
-    fetchMoreRecords,
-  } = useFindManyRecords<EmailThreadMessageType>({
-    depth: 3,
-    limit: 10,
-    filter: {
-      messageThreadId: {
-        eq: viewableEmailThread?.id,
-      },
-    },
-    objectNameSingular: CoreObjectNameSingular.Message,
-    orderBy: {
-      receivedAt: 'AscNullsLast',
-    },
-    skip: !viewableEmailThread,
-    useRecordsWithoutConnection: true,
-  });
-
-  const fetchMoreMessages = useCallback(() => {
-    if (!firstQueryLoading) {
-      fetchMoreRecords();
-    }
-  }, [fetchMoreRecords, firstQueryLoading]);
-
-  if (!viewableEmailThread) {
+  if (!thread) {
     return null;
   }
 
   return (
     <StyledContainer>
       <EmailThreadHeader
-        subject={viewableEmailThread.subject}
-        lastMessageSentAt={viewableEmailThread.lastMessageReceivedAt}
+        subject={thread.subject}
+        lastMessageSentAt={thread.lastMessageReceivedAt}
       />
-      {firstQueryLoading ? (
+      {loading ? (
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
@@ -73,7 +44,7 @@ export const RightDrawerEmailThread = () => {
             />
           ))}
           <EmailThreadFetchMoreLoader
-            loading={firstQueryLoading}
+            loading={loading}
             onLastRowVisible={fetchMoreMessages}
           />
         </>
