@@ -5,7 +5,7 @@ import { Field } from '~/generated-metadata/graphql';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
-const getOptionValueFromLabel = (label: string) => {
+export const getOptionValueFromLabel = (label: string) => {
   // Remove accents
   const unaccentedLabel = label
     .normalize('NFD')
