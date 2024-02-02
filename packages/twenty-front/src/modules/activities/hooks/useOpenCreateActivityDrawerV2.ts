@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
@@ -79,95 +78,78 @@ export const useOpenCreateActivityDrawerV2 = ({
   const { modifyActivityOnActivityTargetsCache } =
     useModifyActivityOnActivityTargetsCache();
 
-  return useCallback(
-    async ({
-      type,
-      targetableObjects,
-      assigneeId,
-    }: {
-      type: ActivityType;
-      targetableObjects: ActivityTargetableObject[];
-      assigneeId?: string;
-    }) => {
-      const activityId = v4();
+  const openCreateActivityDrawer = async ({
+    type,
+    targetableObjects,
+    assigneeId,
+  }: {
+    type: ActivityType;
+    targetableObjects: ActivityTargetableObject[];
+    assigneeId?: string;
+  }) => {
+    const activityId = v4();
 
-      const createdActivityInCache = await createOneActivityInCache({
-        id: activityId,
-        author: workspaceMemberRecord,
-        authorId: workspaceMemberRecord?.id,
-        assignee: !assigneeId ? workspaceMemberRecord : undefined,
-        assigneeId:
-          assigneeId ?? isNonEmptyString(workspaceMemberRecord?.id)
-            ? workspaceMemberRecord?.id
-            : undefined,
-        type: type,
-      });
+    const createdActivityInCache = await createOneActivityInCache({
+      id: activityId,
+      author: workspaceMemberRecord,
+      authorId: workspaceMemberRecord?.id,
+      assignee: !assigneeId ? workspaceMemberRecord : undefined,
+      assigneeId:
+        assigneeId ?? isNonEmptyString(workspaceMemberRecord?.id)
+          ? workspaceMemberRecord?.id
+          : undefined,
+      type: type,
+    });
 
-      if (!createdActivityInCache) {
-        return;
-      }
+    if (!createdActivityInCache) {
+      return;
+    }
 
-      const activityTargetsToCreate =
-        getActivityTargetsToCreateFromTargetableObjects({
-          activityId,
-          targetableObjects,
-        });
-
-      const createdActivityTargetsInCache =
-        await createManyActivityTargetsInCache(activityTargetsToCreate);
-
-      console.log({
-        createdActivityTargetsInCache,
-      });
-
-      // TODO: find better naming and refactor those hooks
-      writeActivityTargetsInCache({
-        targetableObject,
-        activityTargetsToInject: createdActivityTargetsInCache,
-      });
-
-      injectIntoTimelineActivitiesNextQuery({
-        activityTargets,
-        activityToInject: createdActivityInCache,
-      });
-
-      injectIntoActivityTargetInlineCellCache({
+    const activityTargetsToCreate =
+      getActivityTargetsToCreateFromTargetableObjects({
         activityId,
-        activityTargetsToInject: createdActivityTargetsInCache,
+        targetableObjects,
       });
 
-      modifyActivityTargetsOnActivityCache({
-        activityId,
-        activityTargets: createdActivityTargetsInCache,
-      });
+    const createdActivityTargetsInCache =
+      await createManyActivityTargetsInCache(activityTargetsToCreate);
 
-      modifyActivityOnActivityTargetsCache({
-        activityTargetIds: createdActivityTargetsInCache.map(mapToRecordId),
-        activity: createdActivityInCache,
-      });
+    console.log({
+      createdActivityTargetsInCache,
+    });
 
-      setIsCreatingActivity(true);
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      setViewableActivityId(activityId);
-      setActivityTargetableEntityArray(targetableObjects ?? []);
-      openRightDrawer(RightDrawerPages.CreateActivity);
-    },
-    [
-      openRightDrawer,
-      setActivityTargetableEntityArray,
-      createManyActivityTargetsInCache,
-      setHotkeyScope,
-      setViewableActivityId,
-      createOneActivityInCache,
-      workspaceMemberRecord,
-      activityTargets,
+    // TODO: find better naming and refactor those hooks
+    writeActivityTargetsInCache({
       targetableObject,
-      injectIntoTimelineActivitiesNextQuery,
-      injectIntoActivityTargetInlineCellCache,
-      writeActivityTargetsInCache,
-      modifyActivityTargetsOnActivityCache,
-      modifyActivityOnActivityTargetsCache,
-      setIsCreatingActivity,
-    ],
-  );
+      activityTargetsToInject: createdActivityTargetsInCache,
+    });
+
+    injectIntoTimelineActivitiesNextQuery({
+      activityTargets,
+      activityToInject: createdActivityInCache,
+    });
+
+    injectIntoActivityTargetInlineCellCache({
+      activityId,
+      activityTargetsToInject: createdActivityTargetsInCache,
+    });
+
+    modifyActivityTargetsOnActivityCache({
+      activityId,
+      activityTargets: createdActivityTargetsInCache,
+    });
+
+    modifyActivityOnActivityTargetsCache({
+      activityTargetIds: createdActivityTargetsInCache.map(mapToRecordId),
+      activity: createdActivityInCache,
+    });
+
+    setIsCreatingActivity(true);
+    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setViewableActivityId(activityId);
+    setActivityTargetableEntityArray(targetableObjects ?? []);
+    openRightDrawer(RightDrawerPages.CreateActivity);
+  };
+
+  return openCreateActivityDrawer;
 };
