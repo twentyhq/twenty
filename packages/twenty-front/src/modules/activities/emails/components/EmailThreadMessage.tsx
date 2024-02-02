@@ -60,7 +60,7 @@ export const EmailThreadMessage = ({
       </StyledThreadMessageHeader>
       <StyledThreadMessageBody>
         {isOpen ? (
-          <EmailThreadMessageBody body={body} isDisplayed={isOpen} />
+          <EmailThreadMessageBody body={body} isDisplayed />
         ) : (
           <EmailThreadMessageBodyPreview body={body} />
         )}
