@@ -143,11 +143,9 @@ export class WorkspaceQueryRunnerService {
     args: CreateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    await this.createMany({ data: [args.data] }, options);
+    const results = await this.createMany({ data: [args.data] }, options);
 
-    throw new BadRequestException('Not implemented');
-
-    // return results?.[0];
+    return results?.[0];
   }
 
   async updateOne<Record extends IRecord = IRecord>(
