@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
@@ -14,16 +16,17 @@ export class MessageChannelMessageAssociationService {
     messageExternalIds: string[],
     messageChannelId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannelMessageAssociation"
     WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
       [messageExternalIds, messageChannelId],
+      workspaceId,
+      transactionManager,
     );
   }
 
@@ -31,16 +34,17 @@ export class MessageChannelMessageAssociationService {
     messageExternalIds: string[],
     messageChannelId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<number> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const result = await workspaceDataSource?.query(
-      `SELECT COUNT(*) FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+    const result = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT COUNT(*) FROM ${dataSourceSchema}."messageChannelMessageAssociation"
     WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
       [messageExternalIds, messageChannelId],
+      workspaceId,
+      transactionManager,
     );
 
     return result[0]?.count;
@@ -50,42 +54,62 @@ export class MessageChannelMessageAssociationService {
     messageExternalIds: string[],
     messageChannelId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ) {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."messageChannelMessageAssociation" WHERE "messageExternalId" = ANY($1) AND "messageChannelId" = $2`,
       [messageExternalIds, messageChannelId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async deleteByIds(
+    ids: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."messageChannelMessageAssociation" WHERE "id" = ANY($1)`,
+      [ids],
+      workspaceId,
+      transactionManager,
     );
   }
 
   public async getByMessageThreadExternalIds(
     messageThreadExternalIds: string[],
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannelMessageAssociation"
     WHERE "messageThreadExternalId" = ANY($1)`,
       [messageThreadExternalIds],
+      workspaceId,
+      transactionManager,
     );
   }
 
   public async getFirstByMessageThreadExternalId(
     messageThreadExternalId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata> | null> {
     const existingMessageChannelMessageAssociations =
       await this.getByMessageThreadExternalIds(
         [messageThreadExternalId],
         workspaceId,
+        transactionManager,
       );
 
     if (
@@ -101,16 +125,17 @@ export class MessageChannelMessageAssociationService {
   public async getByMessageIds(
     messageIds: string[],
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessageAssociation"
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannelMessageAssociation"
     WHERE "messageId" = ANY($1)`,
       [messageIds],
+      workspaceId,
+      transactionManager,
     );
   }
 }

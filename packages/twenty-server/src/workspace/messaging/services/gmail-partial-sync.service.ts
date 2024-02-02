@@ -82,8 +82,8 @@ export class GmailPartialSyncService {
 
     const gmailMessageChannel =
       await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
-        workspaceId,
         connectedAccountId,
+        workspaceId,
       );
 
     const gmailMessageChannelId = gmailMessageChannel.id;
@@ -100,24 +100,29 @@ export class GmailPartialSyncService {
         accessToken,
       );
 
-    await this.utils.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+    if (messagesToSave.length !== 0) {
+      await this.utils.saveMessages(
+        messagesToSave,
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
-    await this.utils.deleteMessages(
-      messagesDeleted,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+    if (messagesDeleted.length !== 0) {
+      await this.utils.deleteMessages(
+        workspaceDataSource,
+        messagesDeleted,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
     if (errors.length) throw new Error('Error fetching messages');
 
-    await this.connectedAccountService.saveLastSyncHistoryId(
+    await this.connectedAccountService.updateLastSyncHistoryId(
       newHistoryId,
       connectedAccount.id,
       workspaceId,

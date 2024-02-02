@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
@@ -11,17 +13,18 @@ export class MessageService {
   ) {}
 
   public async getFirstByHeaderMessageId(
-    workspaceId: string,
     headerMessageId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageObjectMetadata> | null> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const messages = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."message" WHERE "headerMessageId" = $1 LIMIT 1`,
+    const messages = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."message" WHERE "headerMessageId" = $1 LIMIT 1`,
       [headerMessageId],
+      workspaceId,
+      transactionManager,
     );
 
     if (!messages || messages.length === 0) {
@@ -32,32 +35,50 @@ export class MessageService {
   }
 
   public async getByIds(
-    workspaceId: string,
     messageIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."message" WHERE "id" = ANY($1)`,
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."message" WHERE "id" = ANY($1)`,
       [messageIds],
+      workspaceId,
+      transactionManager,
     );
   }
 
   public async deleteByIds(
-    workspaceId: string,
     messageIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."message" WHERE "id" = ANY($1)`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."message" WHERE "id" = ANY($1)`,
       [messageIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async getByMessageThreadIds(
+    messageThreadIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."message" WHERE "messageThreadId" = ANY($1)`,
+      [messageThreadIds],
+      workspaceId,
+      transactionManager,
     );
   }
 }

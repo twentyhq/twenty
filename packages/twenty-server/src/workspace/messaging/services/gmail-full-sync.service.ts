@@ -52,8 +52,8 @@ export class GmailFullSyncService {
 
     const gmailMessageChannel =
       await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
-        workspaceId,
         connectedAccountId,
+        workspaceId,
       );
 
     const gmailMessageChannelId = gmailMessageChannel.id;
@@ -129,7 +129,7 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
-    await this.connectedAccountService.saveLastSyncHistoryId(
+    await this.connectedAccountService.updateLastSyncHistoryId(
       historyId,
       connectedAccount.id,
       workspaceId,
