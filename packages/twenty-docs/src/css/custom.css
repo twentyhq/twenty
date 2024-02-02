@@ -105,6 +105,8 @@ html {
   height: 14px !important;
   width: 14px !important;
   font-size: 9px !important;
+  padding: none !important;
+  top: inherit !important;
 }
 
 .DocSearch-Button-Keys {

@@ -1,12 +1,41 @@
 ---
 title: Backend Development
-displayed_sidebar: backendSidebar
 sidebar_position: 0
 sidebar_custom_props:
   icon: TbTerminal
-  isSidebarRoot: true
 ---
 
-Welcome to the Backend Development section of the documentation.
 
-Here you will find information about the development process, the recommended tools, and the best practices you should follow.
+import DocCardList from '@theme/DocCardList';
+
+
+<DocCardList />
+
+Twenty primarily uses NestJS for the backend. 
+
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM. 
+
+Here's what the tech stack now looks like. 
+
+## Tech Stack
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/) 
