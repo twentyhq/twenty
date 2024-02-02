@@ -10,6 +10,7 @@ import { WorkspaceHealthCommandModule } from 'src/workspace/workspace-health/com
 import { AppModule } from './app.module';
 
 import { WorkspaceSyncMetadataCommandsModule } from './workspace/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-migration-runner/commands/workspace-sync-metadata-commands.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { WorkspaceSyncMetadataCommandsModule } from './workspace/workspace-sync-
     StopCleanInactiveWorkspacesCronCommand,
     CleanInactiveWorkspacesCommand,
     WorkspaceHealthCommandModule,
+    WorkspaceMigrationRunnerCommandsModule,
   ],
 })
 export class CommandModule {}

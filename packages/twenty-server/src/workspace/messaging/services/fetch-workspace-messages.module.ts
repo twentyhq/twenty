@@ -4,6 +4,7 @@ import { EnvironmentModule } from 'src/integrations/environment/environment.modu
 import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-assocation.module';
 import { MessageChannelModule } from 'src/workspace/messaging/message-channel/message-channel.module';
+import { MessageThreadModule } from 'src/workspace/messaging/message-thread/message-thread.module';
 import { MessageModule } from 'src/workspace/messaging/message/message.module';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
@@ -21,6 +22,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
     MessageChannelModule,
     MessageChannelMessageAssociationModule,
     MessageModule,
+    MessageThreadModule,
   ],
   providers: [
     GmailFullSyncService,
