@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -40,19 +41,28 @@ export const useRecordIndexOptionsForBoard = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions: availableColumnDefinitions } =
+  const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  // Todo replace this with label identifier logic
-  const columnDefinitions = availableColumnDefinitions
-    .filter(
-      (columnDefinition) => columnDefinition.metadata.fieldName !== 'name',
-    )
-    .filter(filterAvailableTableColumns);
+  const boardFields = useMemo(
+    () =>
+      columnDefinitions.filter(
+        (columnDefinition) =>
+          filterAvailableTableColumns(columnDefinition) &&
+          !isLabelIdentifierField({
+            fieldMetadataItem: {
+              id: columnDefinition.fieldMetadataId,
+              name: columnDefinition.metadata.fieldName,
+            },
+            objectMetadataItem,
+          }),
+      ),
+    [columnDefinitions, objectMetadataItem],
+  );
 
   const visibleBoardFields = useMemo(
     () =>
-      columnDefinitions.filter((columnDefinition) => {
+      boardFields.filter((columnDefinition) => {
         return recordIndexFieldDefinitions.some(
           (existingRecordFieldDefinition) => {
             return (
@@ -63,12 +73,12 @@ export const useRecordIndexOptionsForBoard = ({
           },
         );
       }),
-    [columnDefinitions, recordIndexFieldDefinitions],
+    [boardFields, recordIndexFieldDefinitions],
   );
 
   const hiddenBoardFields = useMemo(
     () =>
-      columnDefinitions.filter((columnDefinition) => {
+      boardFields.filter((columnDefinition) => {
         return !recordIndexFieldDefinitions.some(
           (existingRecordFieldDefinition) => {
             return (
@@ -79,7 +89,7 @@ export const useRecordIndexOptionsForBoard = ({
           },
         );
       }),
-    [columnDefinitions, recordIndexFieldDefinitions],
+    [boardFields, recordIndexFieldDefinitions],
   );
 
   const handleReorderBoardFields: OnDragEndResponder = useCallback(
@@ -129,7 +139,7 @@ export const useRecordIndexOptionsForBoard = ({
       let updatedFieldsDefinitions: ColumnDefinition<FieldMetadata>[];
 
       if (isNewViewField) {
-        const correspondingFieldDefinition = columnDefinitions.find(
+        const correspondingFieldDefinition = boardFields.find(
           (availableTableColumn) =>
             availableTableColumn.fieldMetadataId ===
             updatedFieldDefinition.fieldMetadataId,
@@ -163,7 +173,7 @@ export const useRecordIndexOptionsForBoard = ({
       recordIndexFieldDefinitions,
       setRecordIndexFieldDefinitions,
       persistViewFields,
-      columnDefinitions,
+      boardFields,
     ],
   );
 

@@ -23,22 +23,22 @@ import { isDefined } from '~/utils/isDefined';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];
+  isDraggable: boolean;
+  isFirstFieldEditable?: boolean;
+  onDragEnd?: OnDragEndResponder;
   onVisibilityChange: (
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
   ) => void;
   title: string;
-  isVisible: boolean;
-  isDraggable: boolean;
-  onDragEnd?: OnDragEndResponder;
 };
 
 export const ViewFieldsVisibilityDropdownSection = ({
   fields,
+  isDraggable,
+  isFirstFieldEditable = true,
+  onDragEnd,
   onVisibilityChange,
   title,
-  isVisible,
-  isDraggable,
-  onDragEnd,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
@@ -47,8 +47,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   const [openToolTipIndex, setOpenToolTipIndex] = useState<number>();
 
   const handleInfoButtonClick = (index: number) => {
-    if (index === openToolTipIndex) setOpenToolTipIndex(undefined);
-    else setOpenToolTipIndex(index);
+    setOpenToolTipIndex(index === openToolTipIndex ? undefined : index);
   };
 
   const { getIcon } = useIcons();
@@ -57,27 +56,23 @@ export const ViewFieldsVisibilityDropdownSection = ({
     index: number,
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
   ) => {
-    if (field.infoTooltipContent) {
-      return [
-        {
-          Icon: IconInfoCircle,
-          onClick: () => handleInfoButtonClick(index),
-          isActive: openToolTipIndex === index,
-        },
-        {
-          Icon: field.isVisible ? IconMinus : IconPlus,
-          onClick: () => onVisibilityChange(field),
-        },
-      ];
-    }
-    if (!field.infoTooltipContent) {
-      return [
-        {
-          Icon: isVisible ? IconMinus : IconPlus,
-          onClick: () => onVisibilityChange(field),
-        },
-      ];
-    }
+    const iconButtons = [
+      field.infoTooltipContent
+        ? {
+            Icon: IconInfoCircle,
+            onClick: () => handleInfoButtonClick(index),
+            isActive: openToolTipIndex === index,
+          }
+        : null,
+      !isFirstFieldEditable && index === 0
+        ? null
+        : {
+            Icon: field.isVisible ? IconMinus : IconPlus,
+            onClick: () => onVisibilityChange(field),
+          },
+    ].filter(isDefined);
+
+    return iconButtons.length ? iconButtons : undefined;
   };
 
   const ref = useRef<HTMLDivElement>(null);
@@ -89,50 +84,57 @@ export const ViewFieldsVisibilityDropdownSection = ({
     },
   });
 
+  const draggableItems = isDraggable ? [...fields] : [];
+  const nonDraggableItems = isDraggable ? [] : [...fields];
+
+  if (isDraggable && !isFirstFieldEditable) {
+    draggableItems.shift();
+    nonDraggableItems.push(fields[0]);
+  }
+
   return (
     <div ref={ref}>
       <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       <DropdownMenuItemsContainer>
-        {isDraggable ? (
+        {nonDraggableItems.map((field, fieldIndex) => (
+          <MenuItem
+            key={field.fieldMetadataId}
+            LeftIcon={getIcon(field.iconName)}
+            iconButtons={getIconButtons(fieldIndex, field)}
+            isTooltipOpen={openToolTipIndex === fieldIndex}
+            text={field.label}
+            className={`${title}-fixed-item-tooltip-anchor-${fieldIndex}`}
+          />
+        ))}
+        {!!draggableItems.length && (
           <DraggableList
             onDragEnd={handleOnDrag}
             draggableItems={
               <>
-                {[...fields]
-                  .sort((a, b) => a.position - b.position)
-                  .map((field, index) => (
+                {draggableItems.map((field, index) => {
+                  const fieldIndex = index + nonDraggableItems.length;
+
+                  return (
                     <DraggableItem
                       key={field.fieldMetadataId}
                       draggableId={field.fieldMetadataId}
-                      index={index + 1}
+                      index={fieldIndex + 1}
                       itemComponent={
                         <MenuItemDraggable
                           key={field.fieldMetadataId}
                           LeftIcon={getIcon(field.iconName)}
-                          iconButtons={getIconButtons(index + 1, field)}
-                          isTooltipOpen={openToolTipIndex === index + 1}
+                          iconButtons={getIconButtons(fieldIndex, field)}
+                          isTooltipOpen={openToolTipIndex === fieldIndex}
                           text={field.label}
-                          className={`${title}-draggable-item-tooltip-anchor-${
-                            index + 1
-                          }`}
+                          className={`${title}-draggable-item-tooltip-anchor-${fieldIndex}`}
                         />
                       }
                     />
-                  ))}
+                  );
+                })}
               </>
             }
           />
-        ) : (
-          fields.map((field, index) => (
-            <MenuItem
-              key={field.fieldMetadataId}
-              LeftIcon={getIcon(field.iconName)}
-              iconButtons={getIconButtons(index, field)}
-              isTooltipOpen={openToolTipIndex === index}
-              text={field.label}
-              className={`${title}-fixed-item-tooltip-anchor-${index}`}
-            />
-          ))
         )}
       </DropdownMenuItemsContainer>
       {isDefined(openToolTipIndex) &&

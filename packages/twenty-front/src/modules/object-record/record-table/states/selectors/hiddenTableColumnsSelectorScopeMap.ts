@@ -1,7 +1,7 @@
+import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
+import { tableColumnsByKeySelectorScopeMap } from '@/object-record/record-table/states/selectors/tableColumnsByKeySelectorScopeMap';
+import { visibleTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/visibleTableColumnsSelectorScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
-
-import { availableTableColumnsStateScopeMap } from '../availableTableColumnsStateScopeMap';
-import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
 export const hiddenTableColumnsSelectorScopeMap =
   createSelectorReadOnlyScopeMap({
@@ -9,19 +9,27 @@ export const hiddenTableColumnsSelectorScopeMap =
     get:
       ({ scopeId }) =>
       ({ get }) => {
-        const columns = get(tableColumnsStateScopeMap({ scopeId }));
-        const columnKeys = columns.map(
-          ({ fieldMetadataId }) => fieldMetadataId,
+        const columnsByKey = get(
+          tableColumnsByKeySelectorScopeMap({ scopeId }),
         );
-        const otherAvailableColumns = get(
+        const availableColumns = get(
           availableTableColumnsStateScopeMap({ scopeId }),
-        ).filter(
-          ({ fieldMetadataId }) => !columnKeys.includes(fieldMetadataId),
         );
+        const visibleColumnKeys = get(
+          visibleTableColumnsSelectorScopeMap({ scopeId }),
+        ).map(({ fieldMetadataId }) => fieldMetadataId);
 
-        return [
-          ...columns.filter((column) => !column.isVisible),
-          ...otherAvailableColumns,
-        ];
+        const hiddenColumns = availableColumns
+          .filter(
+            ({ fieldMetadataId }) =>
+              !visibleColumnKeys.includes(fieldMetadataId),
+          )
+          .map((availableColumn) => ({
+            ...(columnsByKey[availableColumn.fieldMetadataId] ??
+              availableColumn),
+            isVisible: false,
+          }));
+
+        return hiddenColumns;
       },
   });

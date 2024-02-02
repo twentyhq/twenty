@@ -6,11 +6,17 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 
 export const useRecordIndexOptionsForTable = (recordTableId: string) => {
-  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
-    useRecordTableStates(recordTableId);
+  const {
+    getHiddenTableColumnsSelector,
+    getVisibleTableColumnsSelector,
+    getLabelIdentifierTableColumnSelector,
+  } = useRecordTableStates(recordTableId);
 
   const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
   const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const labelIdentifierTableColumn = useRecoilValue(
+    getLabelIdentifierTableColumnSelector(),
+  );
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
     { recordTableId: recordTableId },
@@ -40,5 +46,6 @@ export const useRecordIndexOptionsForTable = (recordTableId: string) => {
     handleColumnVisibilityChange,
     visibleTableColumns,
     hiddenTableColumns,
+    labelIdentifierTableColumn,
   };
 };

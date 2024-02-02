@@ -216,11 +216,11 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
           {hasVisibleFields && (
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
+              isFirstFieldEditable
               fields={visibleBoardCardFields}
-              isVisible={true}
-              onVisibilityChange={handleFieldVisibilityChange}
-              isDraggable={true}
+              isDraggable
               onDragEnd={handleReorderField}
+              onVisibilityChange={handleFieldVisibilityChange}
             />
           )}
           {hasVisibleFields && hasHiddenFields && <DropdownMenuSeparator />}
@@ -228,9 +228,8 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Hidden"
               fields={hiddenBoardCardFields}
-              isVisible={false}
-              onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
+              onVisibilityChange={handleFieldVisibilityChange}
             />
           )}
         </>
