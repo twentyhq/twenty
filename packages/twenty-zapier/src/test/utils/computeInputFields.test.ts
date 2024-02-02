@@ -1,4 +1,5 @@
-import { computeInputFields, InputField } from '../../utils/computeInputFields';
+import { computeInputFields } from '../../utils/computeInputFields';
+import { InputField } from '../../utils/data.types';
 
 describe('computeInputFields', () => {
   test('should create Person input fields properly', () => {

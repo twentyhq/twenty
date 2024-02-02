@@ -2,7 +2,10 @@ import { Bundle, ZObject } from 'zapier-platform-core';
 
 import { ObjectData } from '../../utils/data.types';
 import handleQueryParams from '../../utils/handleQueryParams';
-import requestDb, { requestDbViaRestApi } from '../../utils/requestDb';
+import requestDb, {
+  requestDbViaRestApi,
+  requestSchema,
+} from '../../utils/requestDb';
 
 export enum Operation {
   create = 'create',
@@ -61,21 +64,7 @@ const getNamePluralFromNameSingular = async (
   bundle: Bundle,
   nameSingular: string,
 ): Promise<string> => {
-  const result = await requestDb(
-    z,
-    bundle,
-    `query GetObjects {
-    objects(paging: {first: 1000}) {
-      edges {
-        node {
-          nameSingular
-          namePlural
-        }
-      }
-    }
-  }`,
-    'metadata',
-  );
+  const result = await requestSchema(z, bundle);
   for (const object of result.data.objects.edges) {
     if (object.node.nameSingular === nameSingular) {
       return object.node.namePlural;

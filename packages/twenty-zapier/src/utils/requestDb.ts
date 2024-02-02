@@ -1,14 +1,6 @@
 import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
-import { Node } from './computeInputFields';
-
-type Schema = {
-  data: {
-    objects: {
-      edges: { node: Node }[];
-    };
-  };
-};
+import { Schema } from '../utils/data.types';
 
 export const requestSchema = async (
   z: ZObject,
