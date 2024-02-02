@@ -28,31 +28,6 @@ export class GmailPartialSyncService {
     private readonly messageChannelService: MessageChannelService,
   ) {}
 
-  private async getHistoryFromGmail(
-    workspaceId: string,
-    connectedAccountId: string,
-    lastSyncHistoryId: string,
-    maxResults: number,
-  ) {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    const gmailClient = await this.gmailClientProvider.getGmailClient(
-      connectedAccount.refreshToken,
-    );
-
-    const history = await gmailClient.users.history.list({
-      userId: 'me',
-      startHistoryId: lastSyncHistoryId,
-      historyTypes: ['messageAdded', 'messageDeleted'],
-      maxResults,
-    });
-
-    return history.data;
-  }
-
   public async fetchConnectedAccountThreads(
     workspaceId: string,
     connectedAccountId: string,
@@ -71,15 +46,7 @@ export class GmailPartialSyncService {
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
     if (!lastSyncHistoryId) {
-      // Fall back to full sync
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
-        { workspaceId, connectedAccountId },
-        {
-          id: `${workspaceId}-${connectedAccount.id}`,
-          retryLimit: 2,
-        },
-      );
+      await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
       return;
     }
@@ -91,30 +58,25 @@ export class GmailPartialSyncService {
       throw new Error('No refresh token found');
     }
 
-    const history = await this.getHistoryFromGmail(
-      workspaceId,
-      connectedAccountId,
+    const { history, error } = await this.getHistoryFromGmail(
+      refreshToken,
       lastSyncHistoryId,
       maxResults,
     );
 
-    const historyId = history.historyId;
+    if (error && error.code === 404) {
+      await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
-    if (!historyId) {
-      throw new Error('No history id found');
-    }
-
-    if (historyId === lastSyncHistoryId) {
       return;
     }
 
-    if (!history.history) {
-      await this.connectedAccountService.saveLastSyncHistoryId(
-        historyId,
-        connectedAccountId,
-        workspaceId,
-      );
+    const newHistoryId = history?.historyId;
 
+    if (!newHistoryId) {
+      throw new Error('No history id found');
+    }
+
+    if (newHistoryId === lastSyncHistoryId) {
       return;
     }
 
@@ -156,7 +118,7 @@ export class GmailPartialSyncService {
     if (errors.length) throw new Error('Error fetching messages');
 
     await this.connectedAccountService.saveLastSyncHistoryId(
-      historyId,
+      newHistoryId,
       connectedAccount.id,
       workspaceId,
     );
@@ -206,5 +168,50 @@ export class GmailPartialSyncService {
       messagesAdded: uniqueMessagesAdded,
       messagesDeleted: uniqueMessagesDeleted,
     };
+  }
+
+  private async getHistoryFromGmail(
+    refreshToken: string,
+    lastSyncHistoryId: string,
+    maxResults: number,
+  ): Promise<{
+    history?: gmail_v1.Schema$ListHistoryResponse;
+    error?: any;
+  }> {
+    const gmailClient =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
+
+    try {
+      const history = await gmailClient.users.history.list({
+        userId: 'me',
+        startHistoryId: lastSyncHistoryId,
+        historyTypes: ['messageAdded', 'messageDeleted'],
+        maxResults,
+      });
+
+      return { history: history.data };
+    } catch (error) {
+      const errorData = error?.response?.data?.error;
+
+      if (errorData) {
+        return { error: errorData };
+      }
+
+      throw error;
+    }
+  }
+
+  private async fallbackToFullSync(
+    workspaceId: string,
+    connectedAccountId: string,
+  ) {
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
+      { workspaceId, connectedAccountId },
+      {
+        id: `${workspaceId}-${connectedAccountId}`,
+        retryLimit: 2,
+      },
+    );
   }
 }
