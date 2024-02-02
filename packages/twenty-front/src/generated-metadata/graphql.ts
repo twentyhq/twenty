@@ -24,6 +24,11 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type ApiKeyToken = {
+  __typename?: 'ApiKeyToken';
+  token: Scalars['String']['output'];
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
@@ -41,6 +46,11 @@ export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
   accessToken: AuthToken;
   refreshToken: AuthToken;
+};
+
+export type AuthTokens = {
+  __typename?: 'AuthTokens';
+  tokens: AuthTokenPair;
 };
 
 export type Billing = {
@@ -136,6 +146,12 @@ export type DeleteOneRelationInput = {
   id: Scalars['ID']['input'];
 };
 
+export type EmailPasswordResetLink = {
+  __typename?: 'EmailPasswordResetLink';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
+
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
@@ -214,8 +230,20 @@ export type IdFilterComparison = {
   notLike?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type InvalidatePassword = {
+  __typename?: 'InvalidatePassword';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
+
+export type LoginToken = {
+  __typename?: 'LoginToken';
+  loginToken: AuthToken;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  challenge: LoginToken;
   createOneField: Field;
   createOneObject: Object;
   createOneRelation: Relation;
@@ -223,11 +251,25 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
+  emailPasswordResetLink: EmailPasswordResetLink;
+  generateApiKeyToken: ApiKeyToken;
+  generateTransientToken: TransientToken;
+  impersonate: Verify;
+  renewToken: AuthTokens;
+  signUp: LoginToken;
   updateOneField: Field;
   updateOneObject: Object;
+  updatePasswordViaResetToken: InvalidatePassword;
   uploadFile: Scalars['String']['output'];
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
+  verify: Verify;
+};
+
+
+export type MutationChallengeArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -261,6 +303,34 @@ export type MutationDeleteOneRelationArgs = {
 };
 
 
+export type MutationEmailPasswordResetLinkArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationGenerateApiKeyTokenArgs = {
+  apiKeyId: Scalars['String']['input'];
+  expiresAt: Scalars['String']['input'];
+};
+
+
+export type MutationImpersonateArgs = {
+  userId: Scalars['String']['input'];
+};
+
+
+export type MutationRenewTokenArgs = {
+  refreshToken: Scalars['String']['input'];
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
 };
@@ -268,6 +338,12 @@ export type MutationUpdateOneFieldArgs = {
 
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
+};
+
+
+export type MutationUpdatePasswordViaResetTokenArgs = {
+  newPassword: Scalars['String']['input'];
+  passwordResetToken: Scalars['String']['input'];
 };
 
 
@@ -285,6 +361,11 @@ export type MutationUploadImageArgs = {
 
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload']['input'];
+};
+
+
+export type MutationVerifyArgs = {
+  loginToken: Scalars['String']['input'];
 };
 
 export type ObjectConnection = {
@@ -321,13 +402,27 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  checkUserExists: UserExists;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   currentUser: User;
   field: Field;
   fields: FieldConnection;
+  findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
   relation: Relation;
   relations: RelationConnection;
+  validatePasswordResetToken: ValidatePasswordResetToken;
+};
+
+
+export type QueryCheckUserExistsArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type QueryCheckWorkspaceInviteHashIsValidArgs = {
+  inviteHash: Scalars['String']['input'];
 };
 
 
@@ -339,6 +434,11 @@ export type QueryFieldArgs = {
 export type QueryFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryFindWorkspaceFromInviteHashArgs = {
+  inviteHash: Scalars['String']['input'];
 };
 
 
@@ -360,6 +460,11 @@ export type QueryRelationArgs = {
 
 export type QueryRelationsArgs = {
   paging?: CursorPaging;
+};
+
+
+export type QueryValidatePasswordResetTokenArgs = {
+  passwordResetToken: Scalars['String']['input'];
 };
 
 export type RefreshToken = {
@@ -424,6 +529,19 @@ export type Telemetry = {
   enabled: Scalars['Boolean']['output'];
 };
 
+export type TimelineThread = {
+  __typename?: 'TimelineThread';
+  firstParticipant: TimelineThreadParticipant;
+  id: Scalars['ID']['output'];
+  lastMessageBody: Scalars['String']['output'];
+  lastMessageReceivedAt: Scalars['DateTime']['output'];
+  lastTwoParticipants: Array<TimelineThreadParticipant>;
+  numberOfMessagesInThread: Scalars['Float']['output'];
+  participantCount: Scalars['Float']['output'];
+  read: Scalars['Boolean']['output'];
+  subject: Scalars['String']['output'];
+};
+
 export type TimelineThreadParticipant = {
   __typename?: 'TimelineThreadParticipant';
   avatarUrl: Scalars['String']['output'];
@@ -433,6 +551,11 @@ export type TimelineThreadParticipant = {
   lastName: Scalars['String']['output'];
   personId?: Maybe<Scalars['ID']['output']>;
   workspaceMemberId?: Maybe<Scalars['ID']['output']>;
+};
+
+export type TransientToken = {
+  __typename?: 'TransientToken';
+  transientToken: AuthToken;
 };
 
 export type UpdateFieldInput = {
@@ -502,6 +625,23 @@ export type UserEdge = {
   node: User;
 };
 
+export type UserExists = {
+  __typename?: 'UserExists';
+  exists: Scalars['Boolean']['output'];
+};
+
+export type ValidatePasswordResetToken = {
+  __typename?: 'ValidatePasswordResetToken';
+  email: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+};
+
+export type Verify = {
+  __typename?: 'Verify';
+  tokens: AuthTokenPair;
+  user: User;
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   allowImpersonation: Scalars['Boolean']['output'];
@@ -522,6 +662,11 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
+};
+
+export type WorkspaceInviteHashValid = {
+  __typename?: 'WorkspaceInviteHashValid';
+  isValid: Scalars['Boolean']['output'];
 };
 
 export type WorkspaceMember = {
