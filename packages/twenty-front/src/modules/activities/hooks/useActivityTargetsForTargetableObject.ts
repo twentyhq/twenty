@@ -6,7 +6,7 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTarget
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
-export const useActivityTargets = ({
+export const useActivityTargetsForTargetableObject = ({
   targetableObject,
 }: {
   targetableObject: ActivityTargetableObject;
@@ -31,6 +31,17 @@ export const useActivityTargets = ({
         }
       },
     });
+
+  console.log({
+    activityTargets,
+    loadingActivityTargets,
+    initialized,
+    filter: {
+      [targetObjectFieldName]: {
+        eq: targetableObject.id,
+      },
+    },
+  });
 
   return {
     activityTargets: activityTargets as ActivityTarget[],

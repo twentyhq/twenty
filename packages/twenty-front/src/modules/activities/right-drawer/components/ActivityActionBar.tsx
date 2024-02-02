@@ -18,6 +18,8 @@ export const ActivityActionBar = () => {
   const deleteActivity = () => {
     if (viewableActivityId) {
       deleteOneActivity?.(viewableActivityId);
+
+      // TODO: Remove from useActivityTargetsForTargetableObject query
     }
 
     setIsRightDrawerOpen(false);

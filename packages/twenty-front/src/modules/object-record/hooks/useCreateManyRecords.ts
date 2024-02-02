@@ -2,8 +2,8 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
@@ -31,7 +31,7 @@ export const useCreateManyRecords = <
       objectMetadataItem,
     });
 
-  const getRelationMetadata = useGetRelationMetadata();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const createManyRecords = async (
     data: Partial<CreatedObjectRecord>[],
@@ -78,7 +78,7 @@ export const useCreateManyRecords = <
               cache,
               objectMetadataItem,
               records,
-              getRelationMetadata,
+              objectMetadataItems,
             });
           },
     });

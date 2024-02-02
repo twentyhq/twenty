@@ -4,7 +4,6 @@ import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 
@@ -16,32 +15,32 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  records,
-  getRelationMetadata,
+  records: recordsToCreate,
+  objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   records: CachedObjectRecord[];
-  getRelationMetadata: ReturnType<typeof useGetRelationMetadata>;
+  objectMetadataItems: ObjectMetadataItem[];
 }) => {
   const objectEdgeTypeName = getEdgeTypename({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  records.forEach((record) =>
+  recordsToCreate.forEach((record) =>
     triggerUpdateRelationsOptimisticEffect({
       cache,
-      objectMetadataItem,
-      previousRecord: null,
-      nextRecord: record,
-      getRelationMetadata,
+      relationSourceObjectMetadataItem: objectMetadataItem,
+      currentRelationSourceRecord: null,
+      updatedRelationSourceRecord: record,
+      objectMetadataItems,
     }),
   );
 
   cache.modify<StoreObject>({
     fields: {
       [objectMetadataItem.namePlural]: (
-        cachedConnection,
+        rootQueryCachedResponse,
         {
           DELETE: _DELETE,
           readField,
@@ -49,41 +48,43 @@ export const triggerCreateRecordsOptimisticEffect = ({
           toReference,
         },
       ) => {
-        if (
+        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
           !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
-            cachedConnection,
-          )
-        ) {
-          return cachedConnection;
+            rootQueryCachedResponse,
+          );
+
+        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
+          return rootQueryCachedResponse;
         }
 
-        const cachedEdges = readField<CachedObjectRecordEdge[]>(
+        const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
+
+        const rootQueryCachedRecordEdges = readField<CachedObjectRecordEdge[]>(
           'edges',
-          cachedConnection,
+          rootQueryCachedObjectRecordConnection,
         );
-        const nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
+        const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
+          ? [...rootQueryCachedRecordEdges]
+          : [];
 
-        const hasAddedRecords = records
-          .map((record) => {
-            if (record.id) {
-              const nodeReference = toReference(record);
+        const hasAddedRecords = recordsToCreate
+          .map((recordToCreate) => {
+            if (recordToCreate.id) {
+              const recordToCreateReference = toReference(recordToCreate);
 
-              const recordAlreadyInCache = cachedEdges?.some((cachedEdge) => {
-                return nodeReference?.__ref === cachedEdge.node.__ref;
-              });
+              const recordAlreadyInCache = rootQueryCachedRecordEdges?.some(
+                (cachedEdge) => {
+                  return (
+                    recordToCreateReference?.__ref === cachedEdge.node.__ref
+                  );
+                },
+              );
 
-              console.log({
-                _storeFieldName,
-                recordAlreadyInCache,
-                nodeReference,
-                cachedEdges,
-              });
-
-              if (nodeReference && !recordAlreadyInCache) {
-                nextCachedEdges.unshift({
+              if (recordToCreateReference && !recordAlreadyInCache) {
+                nextRootQueryCachedRecordEdges.unshift({
                   __typename: objectEdgeTypeName,
-                  node: nodeReference,
+                  node: recordToCreateReference,
                   cursor: '',
                 });
 
@@ -95,9 +96,14 @@ export const triggerCreateRecordsOptimisticEffect = ({
           })
           .some((hasAddedRecord) => hasAddedRecord);
 
-        if (!hasAddedRecords) return cachedConnection;
+        if (!hasAddedRecords) {
+          return rootQueryCachedObjectRecordConnection;
+        }
 
-        return { ...cachedConnection, edges: nextCachedEdges };
+        return {
+          ...rootQueryCachedObjectRecordConnection,
+          edges: nextRootQueryCachedRecordEdges,
+        };
       },
     },
   });

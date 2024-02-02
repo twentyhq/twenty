@@ -27,6 +27,11 @@ export const useCreateOneRecordInCache = <T>({
     const generatedCachedObjectRecord =
       generateObjectRecordOptimisticResponse(input);
 
+    console.log({
+      input,
+      generatedCachedObjectRecord,
+    });
+
     addRecordInCache(generatedCachedObjectRecord);
 
     return generatedCachedObjectRecord as T;

@@ -12,8 +12,8 @@ export const useGenerateFindOneRecordQuery = () => {
   }: {
     objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
     depth?: number;
-  }) =>
-    gql`
+  }) => {
+    return gql`
       query FindOne${objectMetadataItem.nameSingular}($objectRecordId: UUID!) {
         ${objectMetadataItem.nameSingular}(filter: {
           id: {
@@ -22,9 +22,15 @@ export const useGenerateFindOneRecordQuery = () => {
         }){
           id
           ${objectMetadataItem.fields
-            .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
+            .map((field) =>
+              mapFieldMetadataToGraphQLQuery({
+                field,
+                maxDepthForRelations: depth,
+              }),
+            )
             .join('\n')}
         }
       }
-    `;
+  `;
+  };
 };

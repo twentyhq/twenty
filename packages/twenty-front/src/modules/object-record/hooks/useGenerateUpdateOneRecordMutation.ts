@@ -31,7 +31,7 @@ export const useGenerateUpdateOneRecordMutation = ({
        ${mutationResponseField}(id: $idToUpdate, data: $input) {
         id
         ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field))
+          .map((field) => mapFieldMetadataToGraphQLQuery({ field }))
           .join('\n')}
       }
     }

@@ -36,7 +36,11 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
        ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) {
         id
         ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field))
+          .map((field) =>
+            mapFieldMetadataToGraphQLQuery({
+              field,
+            }),
+          )
           .join('\n')}
       }
     }

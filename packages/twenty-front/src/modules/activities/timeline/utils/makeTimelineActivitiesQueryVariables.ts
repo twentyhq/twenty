@@ -12,7 +12,7 @@ export const makeTimelineActivitiesQueryVariables = ({
       },
     },
     orderBy: {
-      createdAt: 'AscNullsFirst',
+      createdAt: 'DescNullsFirst',
     },
   };
 };

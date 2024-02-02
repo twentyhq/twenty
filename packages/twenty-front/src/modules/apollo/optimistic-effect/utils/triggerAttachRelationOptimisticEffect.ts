@@ -2,57 +2,78 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const triggerAttachRelationOptimisticEffect = ({
+export const triggerAttachRelationSourceToRelationTargetOptimisticEffect = ({
   cache,
-  objectNameSingular,
-  recordId,
-  relationObjectMetadataNameSingular,
-  relationFieldName,
-  relationRecordId,
+  relationSourceObjectNameSingular,
+  relationSourceRecordIdToAttach,
+  relationTargetObjectNameSingular,
+  relationTargetFieldName,
+  relationTargetRecordId,
 }: {
   cache: ApolloCache<unknown>;
-  objectNameSingular: string;
-  recordId: string;
-  relationObjectMetadataNameSingular: string;
-  relationFieldName: string;
-  relationRecordId: string;
+  relationSourceObjectNameSingular: string;
+  relationSourceRecordIdToAttach: string;
+  relationTargetObjectNameSingular: string;
+  relationTargetFieldName: string;
+  relationTargetRecordId: string;
 }) => {
-  const recordTypeName = capitalize(objectNameSingular);
-  const relationRecordTypeName = capitalize(relationObjectMetadataNameSingular);
+  const relationSourceRecordTypeName = capitalize(
+    relationSourceObjectNameSingular,
+  );
+  const relationTargetRecordTypeName = capitalize(
+    relationTargetObjectNameSingular,
+  );
+
+  const relationTargetRecordCacheId = cache.identify({
+    id: relationTargetRecordId,
+    __typename: relationTargetRecordTypeName,
+  });
 
   cache.modify<StoreObject>({
-    id: cache.identify({
-      id: relationRecordId,
-      __typename: relationRecordTypeName,
-    }),
+    id: relationTargetRecordCacheId,
     fields: {
-      [relationFieldName]: (cachedFieldValue, { toReference }) => {
-        const nodeReference = toReference({
-          id: recordId,
-          __typename: recordTypeName,
+      [relationTargetFieldName]: (
+        relationTargetFieldValuePointingToSource,
+        { toReference },
+      ) => {
+        const isRelationTargetFieldPointingToSourceAnObjectRecordConnection =
+          isCachedObjectRecordConnection(
+            relationSourceObjectNameSingular,
+            relationTargetFieldValuePointingToSource,
+          );
+
+        const relationSourceRecordReference = toReference({
+          id: relationSourceRecordIdToAttach,
+          __typename: relationSourceRecordTypeName,
         });
 
-        if (!nodeReference) return cachedFieldValue;
+        if (!isDefined(relationSourceRecordReference)) {
+          return relationTargetFieldValuePointingToSource;
+        }
 
-        if (
-          isCachedObjectRecordConnection(objectNameSingular, cachedFieldValue)
-        ) {
-          // To many objects => add record to next relation field list
-          const nextEdges: CachedObjectRecordEdge[] = [
-            ...cachedFieldValue.edges,
-            {
-              __typename: `${recordTypeName}Edge`,
-              node: nodeReference,
-              cursor: '',
-            },
-          ];
-          return { ...cachedFieldValue, edges: nextEdges };
+        if (isRelationTargetFieldPointingToSourceAnObjectRecordConnection) {
+          const relationTargetFieldEdgesPointingToSourceWithRelationSourceRecordToAttach: CachedObjectRecordEdge[] =
+            [
+              ...relationTargetFieldValuePointingToSource.edges,
+              {
+                __typename: `${relationSourceRecordTypeName}Edge`,
+                node: relationSourceRecordReference,
+                cursor: '',
+              },
+            ];
+
+          return {
+            ...relationTargetFieldValuePointingToSource,
+            edges:
+              relationTargetFieldEdgesPointingToSourceWithRelationSourceRecordToAttach,
+          };
         }
 
         // To one object => attach next relation record
-        return nodeReference;
+        return relationSourceRecordReference;
       },
     },
   });

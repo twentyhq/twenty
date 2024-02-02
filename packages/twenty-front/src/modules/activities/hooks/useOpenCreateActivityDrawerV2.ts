@@ -2,13 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { useModifyActivityOnActivityTargetsCache } from '@/activities/hooks/useModifyActivityOnActivityTargetCache';
-import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
-import { useWriteActivityTargetsInCache } from '@/activities/hooks/useWriteActivityTargetsInCache';
+import { useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache } from '@/activities/hooks/useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
-import { useInjectIntoTimelineActivitiesQuery } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQuery';
+import { useInjectIntoTimelineActivitiesQueryAfterDrawerMount } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueryAfterDrawerMount';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
@@ -17,7 +14,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -51,6 +47,7 @@ export const useOpenCreateActivityDrawerV2 = ({
   const { record: workspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
+    depth: 3,
   });
 
   const setHotkeyScope = useSetHotkeyScope();
@@ -60,23 +57,18 @@ export const useOpenCreateActivityDrawerV2 = ({
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  const { activityTargets } = useActivityTargets({
-    targetableObject,
-  });
-
-  const { injectIntoTimelineActivitiesNextQuery } =
-    useInjectIntoTimelineActivitiesQuery();
+  const { injectIntoTimelineActivitiesQueryAfterDrawerMount } =
+    useInjectIntoTimelineActivitiesQueryAfterDrawerMount({
+      targetableObject,
+    });
 
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
-  const { writeActivityTargetsInCache } = useWriteActivityTargetsInCache();
-
-  const { modifyActivityTargetsOnActivityCache } =
-    useModifyActivityTargetsOnActivityCache();
-
-  const { modifyActivityOnActivityTargetsCache } =
-    useModifyActivityOnActivityTargetsCache();
+  const {
+    attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache,
+  } =
+    useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache();
 
   const openCreateActivityDrawer = async ({
     type,
@@ -114,19 +106,9 @@ export const useOpenCreateActivityDrawerV2 = ({
     const createdActivityTargetsInCache =
       await createManyActivityTargetsInCache(activityTargetsToCreate);
 
-    console.log({
-      createdActivityTargetsInCache,
-    });
-
-    // TODO: find better naming and refactor those hooks
-    writeActivityTargetsInCache({
-      targetableObject,
-      activityTargetsToInject: createdActivityTargetsInCache,
-    });
-
-    injectIntoTimelineActivitiesNextQuery({
-      activityTargets,
+    injectIntoTimelineActivitiesQueryAfterDrawerMount({
       activityToInject: createdActivityInCache,
+      activityTargetsToInject: createdActivityTargetsInCache,
     });
 
     injectIntoActivityTargetInlineCellCache({
@@ -134,14 +116,13 @@ export const useOpenCreateActivityDrawerV2 = ({
       activityTargetsToInject: createdActivityTargetsInCache,
     });
 
-    modifyActivityTargetsOnActivityCache({
-      activityId,
-      activityTargets: createdActivityTargetsInCache,
-    });
-
-    modifyActivityOnActivityTargetsCache({
-      activityTargetIds: createdActivityTargetsInCache.map(mapToRecordId),
-      activity: createdActivityInCache,
+    attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache({
+      relationSourceRecord: createdActivityInCache,
+      relationSourceFieldName: 'activityTargets',
+      relationSourceNameSingular: CoreObjectNameSingular.Activity,
+      relationTargetFieldName: 'activity',
+      relationTargetNameSingular: CoreObjectNameSingular.ActivityTarget,
+      relationTargetRecords: createdActivityTargetsInCache,
     });
 
     setIsCreatingActivity(true);
