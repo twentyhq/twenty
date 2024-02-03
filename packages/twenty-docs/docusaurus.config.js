@@ -90,7 +90,7 @@ const config = {
         respectPrefersColorScheme: false,
       },
       navbar: {
-        /*title: 'Twenty',*/
+        title: 'for Developers',
         logo: {
           alt: 'Twenty',
           src: 'img/logo-square-dark.svg',
@@ -98,19 +98,13 @@ const config = {
         },
         items: [
           {
-            type: 'search',
-            position: 'right',
-          },
-          {
             to: 'https://github.com/twentyhq/twenty/releases',
             label: 'Releases',
             position: 'right',
           },
           {
-            href: 'https://github.com/twentyhq/twenty',
+            type: 'custom-github-link',
             position: 'right',
-            className: 'header-github-link',
-            'aria-label': 'GitHub repository',
           },
         ],
       },

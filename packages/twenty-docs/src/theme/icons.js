@@ -10,6 +10,7 @@ export {
   TbBolt,
   TbBrandDocker,
   TbBrandFigma,
+  TbBrandGithub,
   TbBrandGraphql,
   TbBrandVscode,
   TbBrandWindows,
