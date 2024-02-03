@@ -11,6 +11,35 @@ import DocCardList from '@theme/DocCardList';
 
 <DocCardList />
 
+## Useful commands
+
+### Starting the app
+
+```bash
+ nx start twenty-front
+ ```
+
+### Regenerate graphql schema based on API graphql schema
+
+```bash
+nx graphql:generate twenty-front
+```
+
+### Lint
+
+```bash
+nx lint twenty-front
+```
+
+### Test
+
+```bash
+nx test twenty-front# run jest tests
+nx storybook:dev twenty-front# run storybook
+nx storybook:test twenty-front# run tests # (needs yarn storybook:dev to be running)
+nx storybook:coverage twenty-front # (needs yarn storybook:dev to be running)
+```
+
 ## Tech Stack
 
 The project has a clean and simple stack, with minimal boilerplate code.

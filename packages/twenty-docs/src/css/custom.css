@@ -296,8 +296,15 @@ display: none !important;
 
 .navbar__title {
   color: var(--ifm-link-color);
+  font-family: 'IBM Plex Mono', 'Courier New', Courier, monospace;
+  font-size: 11px;
 }
 
 .navbar__brand {
   text-decoration: none;
 }
+
+.navbar__link {
+  color: var(--ifm-link-color);
+}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');

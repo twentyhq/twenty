@@ -89,6 +89,11 @@ const config = {
         defaultMode: 'light',
         respectPrefersColorScheme: false,
       },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       navbar: {
         title: 'for Developers',
         logo: {
@@ -97,11 +102,11 @@ const config = {
           srcDark: 'img/logo-square-light.svg',
         },
         items: [
-          {
+          /*{
             to: 'https://github.com/twentyhq/twenty/releases',
             label: 'Releases',
             position: 'right',
-          },
+          },*/
           {
             type: 'custom-github-link',
             position: 'right',
