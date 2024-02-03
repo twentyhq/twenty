@@ -30,30 +30,30 @@ export const seedUsers = async (
     .values([
       {
         id: SeedUserIds.Tim,
-        firstName: 'Tim',
-        lastName: 'Apple',
-        email: 'tim@apple.dev',
+        firstName: 'امیر',
+        lastName: 'عزیزی',
+        email: 'amir@taba.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3nBfHtGZYyxEFa3r9rGmg.XC73FzrxwSkC.DkJKi0KZ1It9nWMxqK', // 123456Aa
         defaultWorkspaceId: workspaceId,
       },
       {
         id: SeedUserIds.Jony,
-        firstName: 'Jony',
-        lastName: 'Ive',
-        email: 'jony.ive@apple.dev',
+        firstName: 'بهنام',
+        lastName: 'مقدسیان',
+        email: 'behnam@taba.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3nBfHtGZYyxEFa3r9rGmg.XC73FzrxwSkC.DkJKi0KZ1It9nWMxqK', // 123456Aa
         defaultWorkspaceId: workspaceId,
       },
       ,
       {
         id: SeedUserIds.Phil,
-        firstName: 'Phil',
-        lastName: 'Schiler',
-        email: 'phil.schiler@apple.dev',
+        firstName: 'امیرحسین',
+        lastName: 'عبدالله زاده',
+        email: 'amirhossein@taba.dev',
         passwordHash:
-          '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
+          '$2b$10$3nBfHtGZYyxEFa3r9rGmg.XC73FzrxwSkC.DkJKi0KZ1It9nWMxqK', // 123456Aa
         defaultWorkspaceId: workspaceId,
       },
     ])

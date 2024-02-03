@@ -8,8 +8,8 @@ import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 
 @ObjectMetadata({
   namePlural: 'viewFields',
-  labelSingular: 'View Field',
-  labelPlural: 'View Fields',
+  labelSingular: 'فیلد نما',
+  labelPlural: 'فیلد های نما',
   description: '(System) View Fields',
   icon: 'IconTag',
 })
@@ -25,8 +25,8 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
-    label: 'Visible',
-    description: 'View Field visibility',
+    label: 'قابل مشاهده بودن',
+    description: 'قابل مشاهده بودن فیلد',
     icon: 'IconEye',
     defaultValue: { value: true },
   })
@@ -34,8 +34,8 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.NUMBER,
-    label: 'Size',
-    description: 'View Field size',
+    label: 'اندازه',
+    description: 'اندازه فیلد نما',
     icon: 'IconEye',
     defaultValue: { value: 0 },
   })
@@ -43,8 +43,8 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.NUMBER,
-    label: 'Position',
-    description: 'View Field position',
+    label: 'موقعیت',
+    description: 'موقعیت فیلد نما',
     icon: 'IconList',
     defaultValue: { value: 0 },
   })
@@ -52,7 +52,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'View',
+    label: 'نما',
     description: 'View Field related view',
     icon: 'IconLayoutCollage',
     joinColumn: 'viewId',

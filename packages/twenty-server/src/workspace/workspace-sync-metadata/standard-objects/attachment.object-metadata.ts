@@ -11,41 +11,41 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 @ObjectMetadata({
   namePlural: 'attachments',
-  labelSingular: 'Attachment',
-  labelPlural: 'Attachments',
-  description: 'An attachment',
+  labelSingular: 'پیوست',
+  labelPlural: 'پیوست ها',
+  description: 'پیوست',
   icon: 'IconFileImport',
 })
 @IsSystem()
 export class AttachmentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'Attachment name',
+    label: 'نام پیوست',
+    description: 'نام پیوست',
     icon: 'IconFileUpload',
   })
   name: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Full path',
-    description: 'Attachment full path',
+    label: 'مسیر کامل',
+    description: 'مسیر کامل پیوست',
     icon: 'IconLink',
   })
   fullPath: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'Attachment type',
+    label: 'نوع',
+    description: 'نوع پیوست',
     icon: 'IconList',
   })
   type: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Author',
-    description: 'Attachment author',
+    label: 'نویسنده',
+    description: 'نویسنده پیوست',
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
@@ -53,8 +53,8 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Activity',
-    description: 'Attachment activity',
+    label: 'فعالیت',
+    description: 'فعالیت پیوست',
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
@@ -63,8 +63,8 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Person',
-    description: 'Attachment person',
+    label: 'شخص',
+    description: 'شخص پیوست',
     icon: 'IconUser',
     joinColumn: 'personId',
   })
@@ -73,8 +73,8 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Company',
-    description: 'Attachment company',
+    label: 'شرکت',
+    description: 'شرکت پیوست',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })

@@ -8,25 +8,25 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 @ObjectMetadata({
   namePlural: 'comments',
-  labelSingular: 'Comment',
-  labelPlural: 'Comments',
-  description: 'A comment',
+  labelSingular: 'اظهار نظر',
+  labelPlural: 'نظرات',
+  description: 'اظهار نظر',
   icon: 'IconMessageCircle',
 })
 @IsSystem()
 export class CommentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Comment body',
+    label: 'متن',
+    description: 'متن نظر',
     icon: 'IconLink',
   })
   body: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Author',
-    description: 'Comment author',
+    label: 'نویسنده',
+    description: 'نویسنده نظر',
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
@@ -34,8 +34,8 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Activity',
-    description: 'Comment activity',
+    label: 'فعالیت',
+    description: 'فعالیت های نظر',
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })

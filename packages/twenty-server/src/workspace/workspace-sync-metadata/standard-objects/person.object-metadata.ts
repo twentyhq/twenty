@@ -18,16 +18,16 @@ import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata
 
 @ObjectMetadata({
   namePlural: 'people',
-  labelSingular: 'Person',
-  labelPlural: 'People',
-  description: 'A person',
+  labelSingular: 'شخص',
+  labelPlural: 'افراد',
+  description: 'یک شخص',
   icon: 'IconUser',
 })
 export class PersonObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.FULL_NAME,
-    label: 'Name',
-    description: 'Contact’s name',
+    label: 'نام',
+    description: 'نام مخاطب',
     icon: 'IconUser',
   })
   @IsNullable()
@@ -35,16 +35,16 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.EMAIL,
-    label: 'Email',
-    description: 'Contact’s Email',
+    label: 'ایمیل',
+    description: 'ایمیل مخاطب',
     icon: 'IconMail',
   })
   email: string;
 
   @FieldMetadata({
     type: FieldMetadataType.LINK,
-    label: 'Linkedin',
-    description: 'Contact’s Linkedin account',
+    label: 'لینکدین',
+    description: 'حساب لینکدین مخاطب',
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
@@ -53,7 +53,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.LINK,
     label: 'X',
-    description: 'Contact’s X/Twitter account',
+    description: 'حساب توییتر مخاطب',
     icon: 'IconBrandX',
   })
   @IsNullable()
@@ -61,32 +61,32 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Job Title',
-    description: 'Contact’s job title',
+    label: 'عنوان شغلی',
+    description: 'عنوان شغلی مخاطب',
     icon: 'IconBriefcase',
   })
   jobTitle: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Phone',
-    description: 'Contact’s phone number',
+    label: 'شماره تماس',
+    description: 'شماره تماس مخاطب',
     icon: 'IconPhone',
   })
   phone: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'City',
-    description: 'Contact’s city',
+    label: 'شهر',
+    description: 'شهر مخاطب',
     icon: 'IconMap',
   })
   city: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Avatar',
-    description: 'Contact’s avatar',
+    label: 'آواتار',
+    description: 'آواتار مخاطب',
     icon: 'IconFileUpload',
   })
   @IsSystem()
@@ -95,8 +95,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   // Relations
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Company',
-    description: 'Contact’s company',
+    label: 'شرکت',
+    description: 'شرکت مخاطب',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
@@ -105,8 +105,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'POC for Opportunities',
-    description: 'Point of Contact for Opportunities',
+    label: 'نقطه تماس برای فرصت ها',
+    description: 'نقطه تماس برای فرصت ها',
     icon: 'IconTargetArrow',
   })
   @RelationMetadata({
@@ -119,8 +119,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Activities',
-    description: 'Activities tied to the contact',
+    label: 'فعالیت ها',
+    description: 'فعالیت های مرتبط با مخاطب',
     icon: 'IconCheckbox',
   })
   @RelationMetadata({
@@ -132,8 +132,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Favorites',
-    description: 'Favorites linked to the contact',
+    label: 'موارد دلخواه',
+    description: 'موارد دلخواه به مخاطب پیوند داده شده است',
     icon: 'IconHeart',
   })
   @RelationMetadata({
@@ -145,8 +145,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Attachments',
-    description: 'Attachments linked to the contact.',
+    label: 'پیوست ها',
+    description: 'پیوست‌های مرتبط با مخاطب.',
     icon: 'IconFileImport',
   })
   @RelationMetadata({
@@ -158,8 +158,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Participants',
-    description: 'Message Participants',
+    label: 'پیام شرکت کنندگان',
+    description: 'پیام شرکت کنندگان',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({

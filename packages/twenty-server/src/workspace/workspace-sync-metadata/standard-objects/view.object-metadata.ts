@@ -12,8 +12,8 @@ import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 
 @ObjectMetadata({
   namePlural: 'views',
-  labelSingular: 'View',
-  labelPlural: 'Views',
+  labelSingular: 'نما',
+  labelPlural: 'نماها',
   description: '(System) Views',
   icon: 'IconLayoutCollage',
 })
@@ -21,8 +21,8 @@ import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 export class ViewObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Name',
-    description: 'View name',
+    label: 'نام',
+    description: 'نام نما',
   })
   name: string;
 
@@ -35,16 +35,16 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Type',
-    description: 'View type',
+    label: 'نوع',
+    description: 'نوع نما',
     defaultValue: { value: 'table' },
   })
   type: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'View Fields',
-    description: 'View Fields',
+    label: 'فیلد های نما',
+    description: 'فیلد های نما',
     icon: 'IconTag',
   })
   @RelationMetadata({
@@ -56,8 +56,8 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'View Filters',
-    description: 'View Filters',
+    label: 'فیلترهای نما',
+    description: 'فیلترهای نما',
     icon: 'IconFilterBolt',
   })
   @RelationMetadata({
@@ -69,8 +69,8 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'View Sorts',
-    description: 'View Sorts',
+    label: 'مرتب سازی های نما',
+    description: 'مرتب سازی های نما',
     icon: 'IconArrowsSort',
   })
   @RelationMetadata({

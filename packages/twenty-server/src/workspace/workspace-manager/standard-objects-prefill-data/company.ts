@@ -16,33 +16,33 @@ export const companyPrefillData = async (
     .orIgnore()
     .values([
       {
-        name: 'Airbnb',
-        domainName: 'airbnb.com',
-        address: 'San Francisco',
+        name: 'ارتباطات هدی ارقام',
+        domainName: 'hodaargham.com',
+        address: 'کرج',
         employees: 5000,
       },
       {
-        name: 'Qonto',
-        domainName: 'qonto.com',
-        address: 'San Francisco',
+        name: 'رسانه مهر',
+        domainName: 'mehrfcp.ir',
+        address: 'تهران',
         employees: 800,
       },
       {
-        name: 'Stripe',
-        domainName: 'stripe.com',
-        address: 'San Francisco',
+        name: 'ضحی کیش',
+        domainName: 'zohakish.ir',
+        address: 'تهران',
         employees: 8000,
       },
       {
-        name: 'Figma',
-        domainName: 'figma.com',
-        address: 'San Francisco',
+        name: 'راهپویان همتا',
+        domainName: 'hamrahvas.com',
+        address: 'مشهد',
         employees: 800,
       },
       {
-        name: 'Notion',
-        domainName: 'notion.com',
-        address: 'San Francisco',
+        name: 'تالیا',
+        domainName: 'taliya.ir',
+        address: 'اصفهان',
         employees: 400,
       },
     ])
