@@ -1,6 +1,6 @@
 {
   "name": "twenty-docs",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-docs node ../../node_modules/nx/bin/nx.js",
