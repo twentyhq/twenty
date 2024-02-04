@@ -18,6 +18,7 @@ import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/inter
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/integrations/environment/decorators/is-strictly-lower-than.decorator';
+import { CaptchaDriverType } from 'src/integrations/captcha/interfaces';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -199,6 +200,18 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_SIGN_UP_DISABLED?: boolean;
+
+  @IsEnum(CaptchaDriverType)
+  @IsOptional()
+  CAPTCHA_DRIVER?: CaptchaDriverType;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SITE_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SECRET_KEY?: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

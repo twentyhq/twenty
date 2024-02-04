@@ -8,6 +8,7 @@ import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { MessageQueueDriverType } from 'src/integrations/message-queue/interfaces';
+import { CaptchaDriverType } from 'src/integrations/captcha/interfaces';
 
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { SupportDriver } from './interfaces/support.interface';
@@ -197,6 +198,18 @@ export class EnvironmentService {
     return (
       this.configService.get<EmailDriver>('EMAIL_DRIVER') ?? EmailDriver.Logger
     );
+  }
+
+  getCaptchaDriver(): CaptchaDriverType | undefined {
+    return this.configService.get<CaptchaDriverType>('CAPTCHA_DRIVER');
+  }
+
+  getCaptchaSiteKey(): string | undefined {
+    return this.configService.get<string>('CAPTCHA_SITE_KEY');
+  }
+
+  getCaptchaSecretKey(): string | undefined {
+    return this.configService.get<string>('CAPTCHA_SECRET_KEY');
   }
 
   getEmailHost(): string | undefined {
