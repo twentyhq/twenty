@@ -77,6 +77,10 @@ export class GmailPartialSyncService {
     }
 
     if (newHistoryId === lastSyncHistoryId) {
+      console.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
+      );
+
       return;
     }
 
@@ -126,6 +130,10 @@ export class GmailPartialSyncService {
       newHistoryId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    console.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done.`,
     );
   }
 
