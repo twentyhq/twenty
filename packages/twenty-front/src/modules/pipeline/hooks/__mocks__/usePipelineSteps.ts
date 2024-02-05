@@ -34,7 +34,7 @@ export const currentPipelineId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
 
 const data = {
   color: 'yellow',
-  id: 'columnId',
+  id: mockId,
   position: 1,
   name: 'Column Title',
 };

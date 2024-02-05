@@ -11,10 +11,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { assert } from 'src/utils/assert';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
 import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';

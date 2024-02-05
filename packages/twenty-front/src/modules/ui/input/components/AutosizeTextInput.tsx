@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { IconArrowRight } from '@/ui/display/icon/index';
 import { Button } from '@/ui/input/button/components/Button';
@@ -151,7 +152,7 @@ export const AutosizeTextInput = ({
   );
 
   useScopedHotkeys(
-    'esc',
+    Key.Escape,
     (event: KeyboardEvent) => {
       if (!isFocused) {
         return;

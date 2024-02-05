@@ -4,6 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
@@ -17,6 +18,7 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldPreview',
   component: SettingsObjectFieldPreview,
   decorators: [
+    RecordStoreDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -28,6 +30,23 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
     objectMetadataId: mockedCompaniesMetadata.node.id,
   },
   parameters: {
+    records: [
+      {
+        id: `${mockedCompaniesMetadata.node.id}-field-form`,
+        domainName: 'Test',
+        idealCustomerProfile: true,
+        annualRecurringRevenue: {
+          amountMicros: 1000000,
+          currency: 'USD',
+        },
+        updatedAt: '2021-08-05T14:00:00.000Z',
+        linkedinLink: {
+          label: 'LinkedIn',
+          url: 'https://linkedin.com',
+        },
+        employees: 100,
+      },
+    ],
     msw: graphqlMocks,
   },
 };

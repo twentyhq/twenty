@@ -46,7 +46,9 @@ export const RecordBoardColumnHeader = () => {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { columnDefinition, recordCount } = useContext(
+    RecordBoardColumnContext,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -66,7 +68,6 @@ export const RecordBoardColumnHeader = () => {
   };
 
   const boardColumnTotal = 0;
-  const cardIds = [];
 
   return (
     <>
@@ -81,7 +82,7 @@ export const RecordBoardColumnHeader = () => {
         />
         {!!boardColumnTotal && <StyledAmount>${boardColumnTotal}</StyledAmount>}
         {!isHeaderHovered && (
-          <StyledNumChildren>{cardIds.length}</StyledNumChildren>
+          <StyledNumChildren>{recordCount}</StyledNumChildren>
         )}
         {isHeaderHovered && (
           <StyledHeaderActions>

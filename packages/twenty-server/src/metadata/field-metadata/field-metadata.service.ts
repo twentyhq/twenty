@@ -24,6 +24,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.input';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 import {
   FieldMetadataEntity,
@@ -111,6 +112,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdFieldMetadata.name}`),
       fieldMetadataInput.workspaceId,
       [
         {
@@ -228,6 +230,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (fieldMetadataInput.options || fieldMetadataInput.defaultValue) {
       await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`update-${updatedFieldMetadata.name}`),
         existingFieldMetadata.workspaceId,
         [
           {

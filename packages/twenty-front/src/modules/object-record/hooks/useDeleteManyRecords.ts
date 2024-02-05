@@ -1,9 +1,10 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -14,26 +15,22 @@ type useDeleteOneRecordProps = {
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteOneRecordProps) => {
-  const { objectMetadataItem, deleteManyRecordsMutation } =
+  const apolloClient = useApolloClient();
+
+  const { objectMetadataItem, deleteManyRecordsMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
-  const apolloClient = useApolloClient();
+  const getRelationMetadata = useGetRelationMetadata();
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
 
   const deleteManyRecords = async (idsToDelete: string[]) => {
-    const deleteRecordFilter: ObjectRecordQueryFilter = {
-      id: {
-        in: idsToDelete,
-      },
-    };
     const deletedRecords = await apolloClient.mutate({
       mutation: deleteManyRecordsMutation,
       variables: {
-        filter: deleteRecordFilter,
-        // atMost: idsToDelete.length,
+        filter: { id: { in: idsToDelete } },
       },
       optimisticResponse: {
         [mutationResponseField]: idsToDelete.map((idToDelete) => ({
@@ -46,10 +43,15 @@ export const useDeleteManyRecords = ({
 
         if (!records?.length) return;
 
+        const cachedRecords = records
+          .map((record) => getRecordFromCache(record.id, cache))
+          .filter(isDefined);
+
         triggerDeleteRecordsOptimisticEffect({
           cache,
           objectMetadataItem,
-          records,
+          records: cachedRecords,
+          getRelationMetadata,
         });
       },
     });

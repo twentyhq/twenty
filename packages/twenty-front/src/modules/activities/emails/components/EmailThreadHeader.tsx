@@ -27,6 +27,7 @@ const StyledHeading = styled.h2`
   margin: 0;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   max-width: 100%;
+  color: ${({ theme }) => theme.font.color.primary};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
