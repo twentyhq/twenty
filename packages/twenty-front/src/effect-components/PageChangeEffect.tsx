@@ -30,7 +30,6 @@ export const PageChangeEffect = () => {
   const [previousLocation, setPreviousLocation] = useState('');
 
   const onboardingStatus = useOnboardingStatus();
-  console.log('onboardingStatus', onboardingStatus);
 
   const setHotkeyScope = useSetHotkeyScope();
 

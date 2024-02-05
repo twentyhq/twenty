@@ -45,7 +45,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!workspace) {
       throw new UnauthorizedException();
     }
-
     if (payload.jti) {
       const dataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(

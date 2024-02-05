@@ -21,16 +21,22 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
-    let dataSourceMetadata;
+    const dataSourcesMetadata =
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+        user.defaultWorkspace.id,
+      );
 
-    try {
-      dataSourceMetadata =
-        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          user.defaultWorkspace.id,
-        );
-    } catch (e) {
+    if (!dataSourcesMetadata.length) {
       return;
     }
+
+    if (dataSourcesMetadata.length > 1) {
+      throw new Error(
+        `user '${user.id}' default workspace '${user.defaultWorkspace.id}' has multiple data source metadata`,
+      );
+    }
+
+    const dataSourceMetadata = dataSourcesMetadata[0];
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
