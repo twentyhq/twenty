@@ -30,6 +30,15 @@ describe('getOptionValueFromLabel', () => {
 
     expect(result).toEqual(expected);
   });
+
+  it('should handle labels with emojis', () => {
+    const label = '📱 Example Label';
+    const expected = 'EXAMPLE_LABEL';
+
+    const result = getOptionValueFromLabel(label);
+
+    expect(result).toEqual(expected);
+  });
 });
 
 describe('formatFieldMetadataItemInput', () => {
