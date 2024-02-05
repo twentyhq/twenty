@@ -3,14 +3,11 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
@@ -22,6 +19,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import { useCreateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -51,11 +49,6 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
-  );
-
   const [createWorkspace] = useCreateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
 
@@ -82,30 +75,9 @@ export const CreateWorkspace = () => {
               displayName: data.name,
             },
           },
+          refetchQueries: [GET_CURRENT_USER_AND_VIEWS],
         });
-        setCurrentWorkspace({
-          id: result.data?.createWorkspace?.defaultWorkspace?.id ?? '',
-          displayName: data.name,
-          subscriptionStatus:
-            result.data?.createWorkspace?.defaultWorkspace
-              ?.subscriptionStatus ?? 'incomplete',
-          allowImpersonation:
-            result.data?.createWorkspace?.defaultWorkspace
-              ?.allowImpersonation ?? false,
-        });
-        setCurrentWorkspaceMember({
-          id: result.data?.createWorkspace?.workspaceMember?.id ?? '',
-          locale: result.data?.createWorkspace?.workspaceMember?.locale ?? 'en',
-          name: {
-            firstName:
-              result.data?.createWorkspace?.workspaceMember?.name?.firstName ??
-              '',
-            lastName:
-              result.data?.createWorkspace?.workspaceMember?.name?.lastName ??
-              '',
-          },
-          avatarUrl: result.data?.createWorkspace?.workspaceMember?.avatarUrl,
-        });
+
         await apolloMetadataClient?.refetchQueries({
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
         });
@@ -123,14 +95,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [
-      enqueueSnackBar,
-      navigate,
-      apolloMetadataClient,
-      setCurrentWorkspace,
-      setCurrentWorkspaceMember,
-      createWorkspace,
-    ],
+    [enqueueSnackBar, navigate, apolloMetadataClient, createWorkspace],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

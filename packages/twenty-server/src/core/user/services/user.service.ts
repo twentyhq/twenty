@@ -45,6 +45,10 @@ export class UserService extends TypeOrmQueryService<User> {
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
     );
 
+    if (!workspaceMembers.length) {
+      return;
+    }
+
     assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
 
     const userWorkspaceMember = new WorkspaceMember();
