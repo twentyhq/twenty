@@ -13,8 +13,9 @@ import { StandardObjectFactory } from 'src/workspace/workspace-sync-metadata/fac
 import { WorkspaceObjectComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-object.comparator';
 import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-field.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { WorkspaceSyncFactory } from 'src/workspace/workspace-sync-metadata/factories/workspace-sync.factory';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
+import { ObjectWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/object-workspace-migration.factory';
+import { FieldWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/field-workspace-migration.factory';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -25,7 +26,8 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceObjectComparator: WorkspaceObjectComparator,
     private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
-    private readonly workspaceSyncFactory: WorkspaceSyncFactory,
+    private readonly objectWorkspaceMigrationFactory: ObjectWorkspaceMigrationFactory,
+    private readonly fieldWorkspaceMigrationFactory: FieldWorkspaceMigrationFactory,
   ) {}
 
   async synchronize(
@@ -33,12 +35,9 @@ export class WorkspaceSyncObjectMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<WorkspaceMigrationEntity[]> {
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
-    const workspaceMigrationRepository = manager.getRepository(
-      WorkspaceMigrationEntity,
-    );
 
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
@@ -141,22 +140,21 @@ export class WorkspaceSyncObjectMetadataService {
     this.logger.log('Generating migrations');
 
     // Create migrations
-    const workspaceObjectMigrations =
-      await this.workspaceSyncFactory.createObjectMigration(
-        originalObjectMetadataCollection,
+    const objectWorkspaceMigrations =
+      await this.objectWorkspaceMigrationFactory.create(
         metadataObjectUpdaterResult.createdObjectMetadataCollection,
         storage.objectMetadataDeleteCollection,
+      );
+
+    const fieldWorkspaceMigrations =
+      await this.fieldWorkspaceMigrationFactory.create(
+        originalObjectMetadataCollection,
         metadataFieldUpdaterResult.createdFieldMetadataCollection,
         storage.fieldMetadataDeleteCollection,
       );
 
     this.logger.log('Saving migrations');
 
-    // Save migrations into DB
-    const workspaceMigrations = await workspaceMigrationRepository.save(
-      workspaceObjectMigrations,
-    );
-
-    return workspaceMigrations;
+    return [...objectWorkspaceMigrations, ...fieldWorkspaceMigrations];
   }
 }

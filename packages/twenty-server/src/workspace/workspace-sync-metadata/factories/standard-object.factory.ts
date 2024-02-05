@@ -6,7 +6,7 @@ import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-ma
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
+import { standardObjectMetadataCollection } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
@@ -16,7 +16,7 @@ export class StandardObjectFactory {
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata[] {
-    return standardObjectMetadata
+    return standardObjectMetadataCollection
       .map((metadata) =>
         this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
       )
