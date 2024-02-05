@@ -187,12 +187,23 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     if (existingFieldMetadata.isCustom === false) {
+      let fieldMetadataInputOverrided = {};
+
+      if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
+        fieldMetadataInputOverrided = {
+          options: fieldMetadataInput.options,
+        };
+      }
+
       // We can only update the isActive field for standard fields
-      fieldMetadataInput = {
+      fieldMetadataInputOverrided = {
+        ...fieldMetadataInputOverrided,
         id: fieldMetadataInput.id,
         isActive: fieldMetadataInput.isActive,
         workspaceId: fieldMetadataInput.workspaceId,
       };
+
+      fieldMetadataInput = fieldMetadataInputOverrided as UpdateFieldInput;
     }
 
     const objectMetadata =

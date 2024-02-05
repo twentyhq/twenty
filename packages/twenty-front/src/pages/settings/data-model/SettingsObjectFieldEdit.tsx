@@ -172,6 +172,10 @@ export const SettingsObjectFieldEdit = () => {
     navigate(`/settings/objects/${objectSlug}`);
   };
 
+  const shouldDisplaySaveAndCancel =
+    activeMetadataField.isCustom ||
+    activeMetadataField.type === FieldMetadataType.Select;
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -186,7 +190,7 @@ export const SettingsObjectFieldEdit = () => {
               { children: activeMetadataField.label },
             ]}
           />
-          {activeMetadataField.isCustom && (
+          {shouldDisplaySaveAndCancel && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}

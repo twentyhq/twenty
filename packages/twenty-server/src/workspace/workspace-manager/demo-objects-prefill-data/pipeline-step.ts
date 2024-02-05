@@ -11,27 +11,27 @@ export const pipelineStepPrefillData = async (
     .orIgnore()
     .values([
       {
-        name: 'New',
+        name: 'NEW',
         color: 'red',
         position: 0,
       },
       {
-        name: 'Screening',
+        name: 'SCREENING',
         color: 'purple',
         position: 1,
       },
       {
-        name: 'Meeting',
+        name: 'MEETING',
         color: 'sky',
         position: 2,
       },
       {
-        name: 'Proposal',
+        name: 'PROPOSAL',
         color: 'turquoise',
         position: 3,
       },
       {
-        name: 'Customer',
+        name: 'CUSTOMER',
         color: 'yellow',
         position: 4,
       },
