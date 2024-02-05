@@ -23,7 +23,7 @@ export const useCreateOneRecordInCache = <T>({
     objectMetadataItem,
   });
 
-  const createOneRecordInCache = async (input: ObjectRecord) => {
+  const createOneRecordInCache = (input: ObjectRecord) => {
     const generatedCachedObjectRecord =
       generateObjectRecordOptimisticResponse(input);
 

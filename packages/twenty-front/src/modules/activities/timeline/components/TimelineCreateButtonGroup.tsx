@@ -19,9 +19,7 @@ export const TimelineCreateButtonGroup = ({
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const setActiveTabId = useSetRecoilState(getActiveTabIdState());
 
-  const openCreateActivity = useOpenCreateActivityDrawerV2({
-    targetableObject,
-  });
+  const openCreateActivity = useOpenCreateActivityDrawerV2();
 
   return (
     <ButtonGroup variant={'secondary'}>
@@ -32,6 +30,7 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Note',
             targetableObjects: [targetableObject],
+            timelineTargetableObject: targetableObject,
           })
         }
       />
@@ -42,6 +41,7 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Task',
             targetableObjects: [targetableObject],
+            timelineTargetableObject: targetableObject,
           })
         }
       />

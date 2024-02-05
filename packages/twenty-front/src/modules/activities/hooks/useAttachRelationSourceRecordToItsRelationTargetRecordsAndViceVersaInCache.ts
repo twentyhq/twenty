@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { StringKeyOf } from 'type-fest';
 
 import { getRelationTargetFromRelationSource } from '@/apollo/optimistic-effect/utils/getRelationTargetFromRelationSource';
 import { triggerAttachRelationSourceToRelationTargetOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
@@ -29,8 +30,8 @@ export const useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersa
         relationTargetRecords: RelationRecord[];
         relationSourceNameSingular: string;
         relationTargetNameSingular: string;
-        relationSourceFieldName: string;
-        relationTargetFieldName: string;
+        relationSourceFieldName: StringKeyOf<ParentRecord>;
+        relationTargetFieldName: StringKeyOf<RelationRecord>;
       }) => {
         const relationSourceObjectMetadataItem =
           getObjectMetadataItemByNameSingular({
@@ -66,6 +67,7 @@ export const useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersa
           );
         }
 
+        // TODO: could we use triggerUpdateRelationsOptimisticEffect here?
         relationTargetRecords.forEach((relationTargetRecord) => {
           triggerAttachRelationSourceToRelationTargetOptimisticEffect({
             cache: apolloClient.cache,

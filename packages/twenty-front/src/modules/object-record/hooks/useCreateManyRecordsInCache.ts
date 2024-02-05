@@ -22,7 +22,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectMetadataItem,
   });
 
-  const createManyRecordsInCache = async (data: Partial<T>[]) => {
+  const createManyRecordsInCache = (data: Partial<T>[]) => {
     const recordsWithId = data.map((record) => ({
       ...record,
       id: (record.id as string) ?? v4(),

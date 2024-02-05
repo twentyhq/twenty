@@ -10,6 +10,7 @@ import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH as CORE_OBJECT_N
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
@@ -28,6 +29,13 @@ export const triggerUpdateRelationsOptimisticEffect = ({
 }) =>
   relationSourceObjectMetadataItem.fields.forEach(
     (relationSourceFieldMetadataItem) => {
+      const isNotARelationField =
+        relationSourceFieldMetadataItem.type !== FieldMetadataType.Relation;
+
+      if (isNotARelationField) {
+        return;
+      }
+
       const updatedRelationSourceRecordDoesNotHaveThisField =
         isDefined(updatedRelationSourceRecord) &&
         !(relationSourceFieldMetadataItem.name in updatedRelationSourceRecord);
@@ -41,7 +49,9 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         objectMetadataItems,
       });
 
-      if (!relationTarget) return;
+      if (!relationTarget) {
+        return;
+      }
 
       const {
         relationTargetObjectMetadataItem,
@@ -95,16 +105,17 @@ export const triggerUpdateRelationsOptimisticEffect = ({
             )
           : [updatedRelationSourceFieldValue].filter(isDefined);
 
-      if (
-        currentRelationSourceRecord &&
-        relationTargetRecordsToDetachFrom.length
-      ) {
-        const shouldDeleteRelationTargetRecordsFromCache =
+      const shouldDetachSourceFromAllTargets =
+        isDefined(currentRelationSourceRecord) &&
+        relationTargetRecordsToDetachFrom.length > 0;
+
+      if (shouldDetachSourceFromAllTargets) {
+        const shouldStartByDeletingRelationTargetRecordsFromCache =
           CORE_OBJECT_NAMES_TO_DELETE_ON_OPTIMISTIC_RELATION_DETACH.includes(
             relationTargetObjectMetadataItem.nameSingular as CoreObjectNameSingular,
           );
 
-        if (shouldDeleteRelationTargetRecordsFromCache) {
+        if (shouldStartByDeletingRelationTargetRecordsFromCache) {
           triggerDeleteRecordsOptimisticEffect({
             cache,
             objectMetadataItem: relationTargetObjectMetadataItem,
@@ -129,10 +140,22 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         }
       }
 
-      if (
-        updatedRelationSourceRecord &&
-        relationTargetRecordsToAttachTo.length
-      ) {
+      const shouldAttachSourceToAllTargets =
+        updatedRelationSourceRecord && relationTargetRecordsToAttachTo.length;
+
+      console.log({
+        relationSourceObjectMetadataItem,
+        relationTargetObjectMetadataItem,
+        relationTargetFieldMetadataItem,
+        currentRelationSourceFieldValue,
+        updatedRelationSourceFieldValue,
+        relationTargetRecordsToDetachFrom,
+        relationTargetRecordsToAttachTo,
+        shouldDetachSourceFromAllTargets,
+        shouldAttachSourceToAllTargets,
+      });
+
+      if (shouldAttachSourceToAllTargets) {
         relationTargetRecordsToAttachTo.forEach(
           (relationTargetRecordToAttachTo) =>
             triggerAttachRelationSourceToRelationTargetOptimisticEffect({

@@ -76,10 +76,10 @@ export const triggerUpdateRecordOptimisticEffect = ({
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
         const rootQueryLimit = rootQueryVariables?.first;
 
-        const shouldTestIfUpdatedRecordMatchesThisRootQueryFilter =
+        const shouldTestThatUpdatedRecordMatchesThisRootQueryFilter =
           isDefined(rootQueryFilter);
 
-        if (shouldTestIfUpdatedRecordMatchesThisRootQueryFilter) {
+        if (shouldTestThatUpdatedRecordMatchesThisRootQueryFilter) {
           const updatedRecordMatchesThisRootQueryFilter =
             isRecordMatchingFilter({
               record: updatedRecord,
@@ -159,6 +159,9 @@ export const triggerUpdateRecordOptimisticEffect = ({
           // In this case, invalidate the cache entry so it can be re-fetched.
           const rootQueryCurrentCachedRecordEdgesLengthIsAtLimit =
             rootQueryCurrentCachedRecordEdges.length === rootQueryLimit;
+
+          // If next edges length is under limit, then we can wait for the network response and merge the result
+          //   then in the merge function we could implement this mechanism to limit the number of edges in the cache
           const rootQueryNextCachedRecordEdgesLengthIsUnderLimit =
             rootQueryNextCachedRecordEdges.length < rootQueryLimit;
 

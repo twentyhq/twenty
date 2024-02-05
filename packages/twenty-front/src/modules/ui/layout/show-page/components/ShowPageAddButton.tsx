@@ -23,12 +23,14 @@ export const ShowPageAddButton = ({
   activityTargetObject: ActivityTargetableObject;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
-  const openCreateActivity = useOpenCreateActivityDrawerV2({
-    targetableObject: activityTargetObject,
-  });
+  const openCreateActivity = useOpenCreateActivityDrawerV2();
 
   const handleSelect = (type: ActivityType) => {
-    openCreateActivity({ type, targetableObjects: [activityTargetObject] });
+    openCreateActivity({
+      type,
+      targetableObjects: [activityTargetObject],
+      timelineTargetableObject: activityTargetObject,
+    });
     closeDropdown();
   };
 

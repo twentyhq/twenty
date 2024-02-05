@@ -73,10 +73,17 @@ export const triggerCreateRecordsOptimisticEffect = ({
             if (recordToCreate.id) {
               const recordToCreateReference = toReference(recordToCreate);
 
+              if (!recordToCreateReference) {
+                throw new Error(
+                  `Failed to create reference for record with id: ${recordToCreate.id}`,
+                );
+              }
+
               const recordAlreadyInCache = rootQueryCachedRecordEdges?.some(
                 (cachedEdge) => {
                   return (
-                    recordToCreateReference?.__ref === cachedEdge.node.__ref
+                    cache.identify(recordToCreateReference) ===
+                    cache.identify(cachedEdge.node)
                   );
                 },
               );

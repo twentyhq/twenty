@@ -10,11 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useOverwriteFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useOverwriteFindManyRecordsQueryInCache';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 
-export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = ({
-  targetableObject,
-}: {
-  targetableObject: ActivityTargetableObject;
-}) => {
+export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -53,9 +49,11 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = ({
   const injectIntoTimelineActivitiesQueryAfterDrawerMount = ({
     activityToInject,
     activityTargetsToInject,
+    timelineTargetableObject,
   }: {
     activityToInject: Activity;
     activityTargetsToInject: ActivityTarget[];
+    timelineTargetableObject: ActivityTargetableObject;
   }) => {
     const newActivity = {
       ...activityToInject,
@@ -63,13 +61,13 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = ({
     };
 
     const targetObjectFieldName = getActivityTargetObjectFieldIdName({
-      nameSingular: targetableObject.targetObjectNameSingular,
+      nameSingular: timelineTargetableObject.targetObjectNameSingular,
     });
 
     const activitiyTargetsForTargetableObjectQueryVariables = {
       filter: {
         [targetObjectFieldName]: {
-          eq: targetableObject.id,
+          eq: timelineTargetableObject.id,
         },
       },
     };

@@ -6,6 +6,7 @@ import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { useCreateActivityFromEditor } from '@/activities/hooks/useCreateActivityFromEditor';
+import { useDeleteActivityInCacheFromEditor } from '@/activities/hooks/useDeleteActivityInCacheFromEditor';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -16,6 +17,8 @@ import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { debounce } from '~/utils/debounce';
 
@@ -92,7 +95,9 @@ export const ActivityEditor = ({
       clearable: true,
     });
 
-  const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
+  const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
+    isCreatingActivityState,
+  );
 
   const { createActivity } = useCreateActivityFromEditor();
 
@@ -102,6 +107,8 @@ export const ActivityEditor = ({
         ...activity,
         title: newTitle ?? '',
       });
+
+      setIsCreatingActivity(false);
     } else {
       updateOneActivity?.({
         idToUpdate: activity.id,
@@ -134,6 +141,23 @@ export const ActivityEditor = ({
       debouncedUpdateTitle(parsedTitle);
     }
   };
+
+  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
+    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
+  const { deleteActivityFromCache: deleteActivity } =
+    useDeleteActivityInCacheFromEditor();
+
+  useRegisterClickOutsideListenerCallback({
+    callbackId: 'activity-editor',
+    callbackFunction: () => {
+      if (isCreatingActivity) {
+        setIsCreatingActivity(false);
+        deleteActivity(activity);
+      }
+    },
+  });
 
   if (!activity) {
     return <></>;

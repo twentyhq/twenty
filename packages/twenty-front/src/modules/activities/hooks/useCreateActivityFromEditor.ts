@@ -1,8 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useSetRecoilState } from 'recoil';
 
 import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
@@ -11,8 +9,6 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 export const useCreateActivityFromEditor = () => {
-  const setIsCreatingActivity = useSetRecoilState(isCreatingActivityState);
-
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
@@ -29,7 +25,7 @@ export const useCreateActivityFromEditor = () => {
 
   const createActivity = async (activityToCreate: ActivityForEditor) => {
     const { activityWithConnection } = makeActivityWithConnection(
-      activityToCreate as any,
+      activityToCreate as any, // TODO: fix type
     );
 
     console.log('before createOneActivity', {
@@ -54,12 +50,11 @@ export const useCreateActivityFromEditor = () => {
       });
     }
 
+    // TODO: replace by trigger optimistic effect
     modifyActivityTargetsOnActivityCache({
       activityId: activityToCreate.id,
       activityTargets: activityTargetsToCreate,
     });
-
-    setIsCreatingActivity(false);
   };
 
   return {
