@@ -109,14 +109,22 @@ export default async function ({ params }: { params: { slug: string } }) {
          authorId,
          COUNT(*) FILTER (WHERE mergedAt IS NOT NULL) as merged_count
        FROM 
-         pullRequests
+         pullRequests pr
+      JOIN 
+         users u ON pr.authorId = u.id
+       WHERE 
+         u.isEmployee = FALSE
        GROUP BY 
          authorId
       ) AS merged_pr_counts
     CROSS JOIN 
       (
        SELECT COUNT(DISTINCT authorId) as total_authors
-       FROM pullRequests
+       FROM pullRequests pr
+       JOIN 
+          users u ON pr.authorId = u.id
+      WHERE 
+          u.isEmployee = FALSE
       ) AS author_counts
       ) WHERE authorId = (SELECT id FROM users WHERE login = :user_id)
   `,
@@ -140,7 +148,10 @@ export default async function ({ params }: { params: { slug: string } }) {
         />
         <ProfileInfo
           mergedPRsCount={mergedPullRequests[0].merged_count}
-          rank={Number(mergedPullRequests[0].rank_percentage).toFixed(2)}
+          rank={
+            'Top ' +
+            (100 - Number(mergedPullRequests[0].rank_percentage)).toFixed(0)
+          }
           activeDays={pullRequestActivity.length}
         />
         <ActivityLog data={pullRequestActivity} />

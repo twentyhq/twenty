@@ -17,16 +17,19 @@ const Contributors = async () => {
   const contributors = db
     .prepare(
       `SELECT 
-          u.login,
-          u.avatarUrl, 
-          COUNT(pr.id) AS pullRequestCount
-        FROM 
+        u.login,
+        u.avatarUrl, 
+        COUNT(pr.id) AS pullRequestCount
+      FROM 
           users u
-        JOIN 
+      JOIN 
           pullRequests pr ON u.id = pr.authorId
-        GROUP BY 
+      WHERE 
+          u.isEmployee = FALSE
+      AND u.login NOT IN ('dependabot', 'cyborch', 'emilienchvt', 'Samox')
+      GROUP BY 
           u.id
-        ORDER BY 
+      ORDER BY 
           pullRequestCount DESC;
         `,
     )
