@@ -6,9 +6,9 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
-  StyledErrorContainer,
-  StyledErrorSubTitle,
-  StyledErrorTitle,
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorSubTitle,
+  AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 
 const StyledBackDrop = styled.div`
@@ -36,14 +36,16 @@ export const NotFound = () => {
   return (
     <>
       <StyledBackDrop>
-        <StyledErrorContainer>
+        <AnimatedPlaceholderErrorContainer>
           <AnimatedPlaceholder type="error404" />
           <AnimatedPlaceholderEmptyTextContainer>
-            <StyledErrorTitle>Off the beaten path</StyledErrorTitle>
-            <StyledErrorSubTitle>
+            <AnimatedPlaceholderErrorTitle>
+              Off the beaten path
+            </AnimatedPlaceholderErrorTitle>
+            <AnimatedPlaceholderErrorSubTitle>
               The page you're seeking is either gone or never was. Let's get you
               back on track
-            </StyledErrorSubTitle>
+            </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
             <MainButton
@@ -52,7 +54,7 @@ export const NotFound = () => {
               onClick={() => navigate('/')}
             />
           </StyledButtonContainer>
-        </StyledErrorContainer>
+        </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>
       <SignInBackgroundMockPage />
     </>
