@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
@@ -9,6 +9,7 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
 type RecordIndexBoardContainerEffectProps = {
   objectNameSingular: string;
@@ -32,6 +33,15 @@ export const RecordIndexBoardContainerEffect = ({
     setFieldDefinitions,
     getOnFetchMoreVisibilityChangeState,
   } = useRecordBoard(recordBoardId);
+
+  const { currentViewSelector } = useViewScopedStates({
+    viewScopeId: viewBarId,
+  });
+  const currentView = useRecoilValue(currentViewSelector);
+  const { getIsCompactModeActiveState } = useRecordBoard(recordBoardId);
+  const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(
+    getIsCompactModeActiveState(),
+  );
 
   const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
     objectNameSingular,
@@ -97,6 +107,15 @@ export const RecordIndexBoardContainerEffect = ({
     setActionBarEntries?.();
     setContextMenuEntries?.();
   }, [setActionBarEntries, setContextMenuEntries]);
+
+  useEffect(() => {
+    if (currentView?.isCompactView !== isCompactModeActive) {
+      setIsCompactModeActive(!!currentView?.isCompactView);
+    }
+    // We don't want to re-run this effect when the state changes.
+    // We only want to make sure that the state reflects the current view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentView]);
 
   return <></>;
 };
