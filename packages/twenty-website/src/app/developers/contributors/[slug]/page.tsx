@@ -148,10 +148,9 @@ export default async function ({ params }: { params: { slug: string } }) {
         />
         <ProfileInfo
           mergedPRsCount={mergedPullRequests[0].merged_count}
-          rank={
-            'Top ' +
-            (100 - Number(mergedPullRequests[0].rank_percentage)).toFixed(0)
-          }
+          rank={(100 - Number(mergedPullRequests[0].rank_percentage)).toFixed(
+            0,
+          )}
           activeDays={pullRequestActivity.length}
         />
         <ActivityLog data={pullRequestActivity} />

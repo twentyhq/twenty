@@ -122,12 +122,11 @@ export const HeaderDesktop = () => {
       <LinkList>
         <ListItem href="/pricing">Pricing</ListItem>
         <ListItem href="/story">Story</ListItem>
-        <ListItem href="/developers/contributors">Contributors</ListItem>
         <ListItem href="https://docs.twenty.com">
           Docs <ExternalArrow />
         </ListItem>
         <ListItem href="https://github.com/twentyhq/twenty">
-          <GithubIcon color="rgb(71,71,71)" /> 5.7k <ExternalArrow />
+          <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
         </ListItem>
       </LinkList>
       <CallToAction />
