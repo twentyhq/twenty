@@ -36,6 +36,7 @@ import {
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { ValidationHandlerFactory } from 'src/workspace/workspace-query-runner/validation-handler/factories/validation-handler.factory';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -53,6 +54,7 @@ export class WorkspaceQueryRunnerService {
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly validationHandlerFactory: ValidationHandlerFactory,
   ) {}
 
   async findMany<
@@ -70,6 +72,19 @@ export class WorkspaceQueryRunnerService {
       args,
       options,
     );
+
+    const validationHandler = await this.validationHandlerFactory.create(
+      options.objectMetadataItem.nameSingular,
+    );
+
+    const validatedRequest = await validationHandler.validate(
+      args,
+      workspaceId,
+    );
+
+    if (!validatedRequest) {
+      throw new BadRequestException('Invalid request');
+    }
 
     const result = await this.execute(query, workspaceId);
     const end = performance.now();
