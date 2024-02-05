@@ -12,6 +12,8 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
+import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -48,12 +50,14 @@ export const CreateWorkspace = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
 
   const [createWorkspace] = useCreateWorkspaceMutation();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   // Form
   const {
@@ -102,6 +106,9 @@ export const CreateWorkspace = () => {
           },
           avatarUrl: result.data?.createWorkspace?.workspaceMember?.avatarUrl,
         });
+        await apolloMetadataClient?.refetchQueries({
+          include: [FIND_MANY_OBJECT_METADATA_ITEMS],
+        });
 
         if (result.errors || !result.data?.createWorkspace) {
           throw result.errors ?? new Error('Unknown error');
@@ -119,6 +126,7 @@ export const CreateWorkspace = () => {
     [
       enqueueSnackBar,
       navigate,
+      apolloMetadataClient,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
       createWorkspace,

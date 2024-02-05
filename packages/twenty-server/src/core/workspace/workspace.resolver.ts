@@ -12,9 +12,9 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/user/user.entity';
 import { CreateWorkspaceInput } from 'src/core/workspace/dtos/create-workspace-input';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 
 import { Workspace } from './workspace.entity';
 
