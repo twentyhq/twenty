@@ -15,7 +15,7 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
 
 const workspaceMember: Omit<
   WorkspaceMember,
-  'createdAt' | 'updatedAt' | 'userId'
+  'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
 > = {
   id: 'id',
   name: {

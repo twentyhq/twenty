@@ -21,12 +21,12 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsRatingFieldTypeEnabled,
+        key: FeatureFlagKeys.IsWorkspaceCleanable,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsWorkspaceCleanable,
+        key: FeatureFlagKeys.IsNewRecordBoardEnabled,
         workspaceId: workspaceId,
         value: true,
       },
