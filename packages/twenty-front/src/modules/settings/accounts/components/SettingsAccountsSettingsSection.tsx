@@ -12,6 +12,10 @@ const StyledCardsContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
+const StyledSettingsNavigationCard = styled(SettingsNavigationCard)`
+  color: ${({ theme }) => theme.font.color.extraLight};
+`;
+
 export const SettingsAccountsSettingsSection = () => {
   const navigate = useNavigate();
 
@@ -29,14 +33,14 @@ export const SettingsAccountsSettingsSection = () => {
         >
           Set email visibility, manage your blocklist and more.
         </SettingsNavigationCard>
-        <SettingsNavigationCard
+        <StyledSettingsNavigationCard
           Icon={IconCalendarEvent}
           title="Calendar"
           disabled
           hasSoonPill
         >
           Configure and customize your calendar preferences.
-        </SettingsNavigationCard>
+        </StyledSettingsNavigationCard>
       </StyledCardsContainer>
     </Section>
   );

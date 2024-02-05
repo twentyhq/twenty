@@ -46,6 +46,7 @@ const workspaceMember: WorkspaceMember = {
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
+  userEmail: 'charles@test.com',
 };
 
 export const mockedUsersData: Array<MockedUser> = [

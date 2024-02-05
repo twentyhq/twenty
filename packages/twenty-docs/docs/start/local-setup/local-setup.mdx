@@ -1,0 +1,45 @@
+---
+title: Local Setup
+sidebar_position: 0
+sidebar_custom_props:
+  icon: TbDeviceDesktop
+---
+import DocCardList from '@theme/DocCardList';
+
+
+
+Twenty aims for developer-friendliness, and your local installation should be up and running in just a bit.
+
+<DocCardList/>
+
+## Discord
+
+If you have any questions or need help, you can join Twenty's [Discord](https://discord.gg/cx5n4Jzs57) server.
+
+## MacOS and Linux users
+
+It's better to use [yarn installation](/start/local-setup/yarn-setup) as this is the easiest way to get started.
+But there's also an easy way to run the project with [Docker](/start/local-setup/docker-setup) that you can use if you are familiar with containerized environments.
+
+## Windows users
+
+Windows users can install the project through WSL2. [This guide](/start/local-setup/yarn-setup) can help you get started.
+
+## Project structure
+
+The repository has the following structure:
+```
+twenty
+└───packages // contains this documentation
+└───twenty-front // contains the frontend code for the application
+└───twenty-server // contains the backend code for the application
+└───twenty-docker // contains docker configurations for development and production build
+└───many other packages you are invited to discover such as twenty-docs, twenty-ui, eslint-rules, twenty-zapier...
+```
+
+## IDE Setup
+
+Once Twenty is running on your computer, you will get the best experience by using an IDE that supports TypeScript and ESLint.
+You will find a guide for [VSCode](/start/local-setup/ide-setup) further in the documentation.
+___
+
