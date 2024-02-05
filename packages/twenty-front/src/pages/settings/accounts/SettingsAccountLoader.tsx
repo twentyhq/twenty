@@ -6,12 +6,12 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
-export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
+export const SettingsAccountLoader = () => (
   <AnimatedPlaceholderEmptyContainer>
     <AnimatedPlaceholder type="loadingMessages" />
     <AnimatedPlaceholderEmptyTextContainer>
       <AnimatedPlaceholderEmptyTitle>
-        {loadingText || 'Loading emails'}
+        {'Loading account(s)'}
       </AnimatedPlaceholderEmptyTitle>
       <Loader />
     </AnimatedPlaceholderEmptyTextContainer>

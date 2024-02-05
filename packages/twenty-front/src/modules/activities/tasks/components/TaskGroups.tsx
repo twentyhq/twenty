@@ -9,10 +9,10 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
@@ -58,14 +58,14 @@ export const TaskGroups = ({
     (activeTabId === 'done' && completedTasks?.length === 0)
   ) {
     return (
-      <StyledEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>No Task</StyledEmptyTitle>
-          <StyledEmptySubTitle>
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>No Task</AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
             There are no tasks for this user filter
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
           title="New task"
@@ -77,7 +77,7 @@ export const TaskGroups = ({
             })
           }
         />
-      </StyledEmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 

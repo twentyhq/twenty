@@ -5,10 +5,10 @@ import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineAc
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -46,16 +46,18 @@ export const Timeline = ({
 
   if (showEmptyState) {
     return (
-      <StyledEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>Add your first Activity</StyledEmptyTitle>
-          <StyledEmptySubTitle>
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            Add your first Activity
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
             There are no activities associated with this record.{' '}
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
         <TimelineCreateButtonGroup targetableObject={targetableObject} />
-      </StyledEmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 

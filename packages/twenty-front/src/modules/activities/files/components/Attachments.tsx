@@ -11,10 +11,10 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledAttachmentsContainer = styled.div`
@@ -66,14 +66,16 @@ export const Attachments = ({
             onUploadFile={onUploadFile}
           />
         ) : (
-          <StyledEmptyContainer>
+          <AnimatedPlaceholderEmptyContainer>
             <AnimatedPlaceholder type="noFile" />
-            <StyledEmptyTextContainer>
-              <StyledEmptyTitle>No Files</StyledEmptyTitle>
-              <StyledEmptySubTitle>
+            <AnimatedPlaceholderEmptyTextContainer>
+              <AnimatedPlaceholderEmptyTitle>
+                No Files
+              </AnimatedPlaceholderEmptyTitle>
+              <AnimatedPlaceholderEmptySubTitle>
                 There are no associated files with this record.
-              </StyledEmptySubTitle>
-            </StyledEmptyTextContainer>
+              </AnimatedPlaceholderEmptySubTitle>
+            </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
               ref={inputFileRef}
               onChange={handleFileChange}
@@ -85,7 +87,7 @@ export const Attachments = ({
               variant="secondary"
               onClick={handleUploadFileClick}
             />
-          </StyledEmptyContainer>
+          </AnimatedPlaceholderEmptyContainer>
         )}
       </StyledDropZoneContainer>
     );

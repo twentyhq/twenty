@@ -20,10 +20,10 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -155,15 +155,17 @@ export const EmailThreads = ({
 
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
-      <StyledEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyInbox" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>Empty Inbox</StyledEmptyTitle>
-          <StyledEmptySubTitle>
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            Empty Inbox
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
             No email exchange has occurred with this record yet.
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
-      </StyledEmptyContainer>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 

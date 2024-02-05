@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
   StyledErrorContainer,
   StyledErrorSubTitle,
@@ -38,13 +38,13 @@ export const NotFound = () => {
       <StyledBackDrop>
         <StyledErrorContainer>
           <AnimatedPlaceholder type="error404" />
-          <StyledEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTextContainer>
             <StyledErrorTitle>Off the beaten path</StyledErrorTitle>
             <StyledErrorSubTitle>
               The page you're seeking is either gone or never was. Let's get you
               back on track
             </StyledErrorSubTitle>
-          </StyledEmptyTextContainer>
+          </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
             <MainButton
               title="Back to content"
