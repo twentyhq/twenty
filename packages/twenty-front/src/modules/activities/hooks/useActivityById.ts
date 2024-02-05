@@ -28,11 +28,6 @@ export const useActivityById = ({ activityId }: { activityId: string }) => {
 
   const { activity } = makeActivityWithoutConnection(activityWithConnections);
 
-  console.log('in useActivityById', {
-    activityWithConnections,
-    activity,
-  });
-
   return {
     activity,
   };

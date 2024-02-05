@@ -28,10 +28,6 @@ export const useCreateActivityFromEditor = () => {
       activityToCreate as any, // TODO: fix type
     );
 
-    console.log('before createOneActivity', {
-      activityWithConnection,
-    });
-
     await createOneActivity?.(
       {
         ...activityWithConnection,

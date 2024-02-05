@@ -52,10 +52,6 @@ export const useCreateOneRecord = <
         ...sanitizedCreateOneRecordInput,
       });
 
-    console.log({
-      optimisticallyCreatedRecord,
-    });
-
     const mutationResponseField =
       getCreateOneRecordMutationResponseField(objectNameSingular);
 

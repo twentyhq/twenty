@@ -143,18 +143,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       const shouldAttachSourceToAllTargets =
         updatedRelationSourceRecord && relationTargetRecordsToAttachTo.length;
 
-      console.log({
-        relationSourceObjectMetadataItem,
-        relationTargetObjectMetadataItem,
-        relationTargetFieldMetadataItem,
-        currentRelationSourceFieldValue,
-        updatedRelationSourceFieldValue,
-        relationTargetRecordsToDetachFrom,
-        relationTargetRecordsToAttachTo,
-        shouldDetachSourceFromAllTargets,
-        shouldAttachSourceToAllTargets,
-      });
-
       if (shouldAttachSourceToAllTargets) {
         relationTargetRecordsToAttachTo.forEach(
           (relationTargetRecordToAttachTo) =>

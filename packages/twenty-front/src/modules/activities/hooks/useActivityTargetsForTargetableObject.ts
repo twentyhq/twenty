@@ -32,17 +32,6 @@ export const useActivityTargetsForTargetableObject = ({
       },
     });
 
-  console.log({
-    activityTargets,
-    loadingActivityTargets,
-    initialized,
-    filter: {
-      [targetObjectFieldName]: {
-        eq: targetableObject.id,
-      },
-    },
-  });
-
   return {
     activityTargets: activityTargets as ActivityTarget[],
     loadingActivityTargets,

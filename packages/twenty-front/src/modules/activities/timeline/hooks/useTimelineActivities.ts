@@ -21,12 +21,6 @@ export const useTimelineActivities = ({
     targetableObject,
   });
 
-  console.log({
-    activityTargets,
-    loadingActivityTargets,
-    initializedActivityTargets,
-  });
-
   const [initialized, setInitialized] = useState(false);
 
   const activityIds = activityTargets
@@ -51,12 +45,6 @@ export const useTimelineActivities = ({
         }
       },
     });
-
-  console.log({
-    activities,
-    loadingActivities,
-    initialized,
-  });
 
   const noActivityTargets =
     initializedActivityTargets && !isNonEmptyArray(activityTargets);

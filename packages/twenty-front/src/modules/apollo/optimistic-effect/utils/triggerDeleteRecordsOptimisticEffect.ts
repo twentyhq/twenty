@@ -65,7 +65,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
           isDefined(rootQueryVariables?.first) &&
           cachedEdges?.length === rootQueryVariables.first
         ) {
-          //return DELETE;
+          return DELETE;
         }
 
         return {
