@@ -100,8 +100,8 @@ export const useAuth = () => {
       setCurrentUser(user);
       if (workspaceMember) {
         setCurrentWorkspaceMember(workspaceMember);
-        setCurrentWorkspace(workspace);
       }
+      setCurrentWorkspace(workspace);
       return {
         user,
         workspaceMember,

@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
@@ -10,7 +10,7 @@ export const useObjectNamePluralFromSingular = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -20,7 +20,7 @@ export const useObjectNamePluralFromSingular = ({
     }),
   );
 
-  if (!currentWorkspace) {
+  if (!currentWorkspaceMember) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
