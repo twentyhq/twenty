@@ -32,7 +32,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.workspaceManagerService.init(user.defaultWorkspace.id);
     await this.userService.createWorkspaceMember(user);
 
-    return await this.userService.getUser(user.id);
+    return user.defaultWorkspace;
   }
 
   async deleteWorkspace(id: string) {

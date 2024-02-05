@@ -235,7 +235,7 @@ export type Mutation = {
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createWorkspace: User;
+  createWorkspace: Workspace;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;
@@ -747,6 +747,8 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
+export type TimelineThreadFragment = { __typename?: 'TimelineThread', id: string, subject: string, lastMessageReceivedAt: string };
+
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
   data: Scalars['JSON'];
@@ -877,7 +879,7 @@ export type CreateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'User', id: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
+export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -941,6 +943,13 @@ export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
   }
 }
     ${TimelineThreadFragmentFragmentDoc}`;
+export const TimelineThreadFragmentDoc = gql`
+    fragment timelineThread on TimelineThread {
+  id
+  subject
+  lastMessageReceivedAt
+}
+    `;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -1692,31 +1701,6 @@ export const CreateWorkspaceDocument = gql`
     mutation CreateWorkspace($input: CreateWorkspaceInput!) {
   createWorkspace(data: $input) {
     id
-    workspaceMember {
-      id
-      name {
-        firstName
-        lastName
-      }
-      colorScheme
-      avatarUrl
-      locale
-    }
-    defaultWorkspace {
-      id
-      displayName
-      logo
-      domainName
-      inviteHash
-      allowImpersonation
-      subscriptionStatus
-      featureFlags {
-        id
-        key
-        value
-        workspaceId
-      }
-    }
   }
 }
     `;

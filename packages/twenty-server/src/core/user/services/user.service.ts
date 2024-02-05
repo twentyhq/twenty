@@ -97,13 +97,6 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async getUser(userId: string): Promise<User> {
-    return await this.userRepository.findOneOrFail({
-      where: { id: userId },
-      relations: ['defaultWorkspace'],
-    });
-  }
-
   async deleteUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOneBy({
       id: userId,

@@ -82,7 +82,7 @@ export const CreateWorkspace = () => {
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
         });
 
-        if (result.errors || !result.data?.createWorkspace) {
+        if (result.errors) {
           throw result.errors ?? new Error('Unknown error');
         }
 

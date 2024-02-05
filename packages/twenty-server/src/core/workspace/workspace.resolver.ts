@@ -38,7 +38,7 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => User)
+  @Mutation(() => Workspace)
   @UseGuards(JwtAuthGuard)
   async createWorkspace(
     @Args('data') data: CreateWorkspaceInput,
