@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler/dist';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 import { getRequest } from 'src/utils/extract-request';
 

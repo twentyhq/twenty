@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import {
   ThrottlerOptionsFactory,
   ThrottlerModuleOptions,
-} from '@nestjs/throttler/dist';
+} from '@nestjs/throttler';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { getRequest } from 'src/utils/extract-request';

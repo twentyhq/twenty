@@ -43062,6 +43062,7 @@ __metadata:
     "@nestjs/serve-static": "npm:^3.0.0"
     "@nestjs/terminus": "npm:^9.2.2"
     "@nestjs/testing": "npm:^9.0.0"
+    "@nestjs/throttler": "npm:^5.1.1"
     "@nestjs/typeorm": "npm:^10.0.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
