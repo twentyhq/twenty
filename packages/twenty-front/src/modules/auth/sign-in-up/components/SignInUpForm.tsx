@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -132,8 +133,12 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
-  }, [signInUpMode, signInUpStep]);
+    return signInUpMode === SignInUpMode.SignIn
+      ? 'Sign in'
+      : isSubmitting
+        ? 'Creating workspace'
+        : 'Sign up';
+  }, [signInUpMode, signInUpStep, isSubmitting]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
@@ -262,6 +267,7 @@ export const SignInUpForm = () => {
               setShowErrors(true);
               handleSubmit(submitCredentials)();
             }}
+            Icon={() => isSubmitting && <Loader />}
             disabled={
               SignInUpStep.Init
                 ? false
