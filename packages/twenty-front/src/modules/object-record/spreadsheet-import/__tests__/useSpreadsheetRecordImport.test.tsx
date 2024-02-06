@@ -4,10 +4,11 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { useSpreadsheetCompanyImport } from '../useSpreadsheetCompanyImport';
+import { useSpreadsheetRecordImport } from '../useSpreadsheetRecordImport';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
@@ -32,11 +33,11 @@ const companyMocks = [
       variables: {
         data: [
           {
-            name: 'Example Company',
+            address: 'test',
             domainName: 'example.com',
+            employees: 0,
             idealCustomerProfile: true,
-            address: undefined,
-            employees: undefined,
+            name: 'Example Company',
             id: companyId,
           },
         ],
@@ -75,21 +76,23 @@ describe('useSpreadsheetCompanyImport', () => {
     const { result } = renderHook(
       () => {
         const spreadsheetImport = useRecoilValue(spreadsheetImportState);
-        const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
-        return { openCompanySpreadsheetImport, spreadsheetImport };
+        const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
+          CoreObjectNameSingular.Company,
+        );
+        return { openRecordSpreadsheetImport, spreadsheetImport };
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    const { spreadsheetImport, openCompanySpreadsheetImport } = result.current;
+    const { spreadsheetImport, openRecordSpreadsheetImport } = result.current;
 
     expect(spreadsheetImport.isOpen).toBe(false);
     expect(spreadsheetImport.options).toBeNull();
 
     await act(async () => {
-      openCompanySpreadsheetImport();
+      openRecordSpreadsheetImport();
     });
 
     const { spreadsheetImport: updatedImport } = result.current;
@@ -109,8 +112,8 @@ describe('useSpreadsheetCompanyImport', () => {
               name: 'Example Company',
               domainName: 'example.com',
               idealCustomerProfile: true,
-              address: undefined,
-              employees: undefined,
+              address: 'test',
+              employees: '0',
             },
           ],
           invalidData: [],
@@ -121,8 +124,8 @@ describe('useSpreadsheetCompanyImport', () => {
               domainName: 'example.com',
               __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
               idealCustomerProfile: true,
-              address: undefined,
-              employees: undefined,
+              address: 'test',
+              employees: '0',
             },
           ],
         },

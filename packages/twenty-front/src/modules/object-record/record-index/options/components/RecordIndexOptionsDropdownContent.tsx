@@ -5,8 +5,8 @@ import { Key } from 'ts-key-enum';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
-import { useRecordIndexOptionsImport } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsImport';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
@@ -116,7 +116,8 @@ export const RecordIndexOptionsDropdownContent = ({
       ? handleBoardFieldVisibilityChange
       : handleColumnVisibilityChange;
 
-  const { handleImport } = useRecordIndexOptionsImport({ objectNameSingular });
+  const { openRecordSpreadsheetImport } =
+    useSpreadsheetRecordImport(objectNameSingular);
 
   return (
     <>
@@ -141,13 +142,11 @@ export const RecordIndexOptionsDropdownContent = ({
               LeftIcon={IconTag}
               text="Fields"
             />
-            {handleImport && (
-              <MenuItem
-                onClick={() => handleImport()}
-                LeftIcon={IconFileImport}
-                text="Import"
-              />
-            )}
+            <MenuItem
+              onClick={() => openRecordSpreadsheetImport()}
+              LeftIcon={IconFileImport}
+              text="Import"
+            />
           </DropdownMenuItemsContainer>
         </>
       )}
