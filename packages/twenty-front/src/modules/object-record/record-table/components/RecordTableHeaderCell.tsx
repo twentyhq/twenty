@@ -81,10 +81,10 @@ export const RecordTableHeaderCell = ({
   createRecord: () => void;
 }) => {
   const {
+    getLabelIdentifierTableColumnSelector,
     getResizeFieldOffsetState,
-    getTableColumnsState,
     getTableColumnsByKeySelector,
-    getVisibleTableColumnsSelector,
+    getTableColumnsState,
   } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
@@ -93,7 +93,9 @@ export const RecordTableHeaderCell = ({
 
   const tableColumns = useRecoilValue(getTableColumnsState());
   const tableColumnsByKey = useRecoilValue(getTableColumnsByKeySelector());
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const labelIdentifierColumn = useRecoilValue(
+    getLabelIdentifierTableColumnSelector(),
+  );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
@@ -107,10 +109,6 @@ export const RecordTableHeaderCell = ({
   }, []);
 
   const [iconVisibility, setIconVisibility] = useState(false);
-
-  const primaryColumn = visibleTableColumns.find(
-    (column) => column.position === 0,
-  );
 
   const handleResizeHandlerMove = useCallback(
     (positionX: number) => {
@@ -167,6 +165,9 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
+  const isLabelIdentifierColumn =
+    labelIdentifierColumn?.fieldMetadataId === column.fieldMetadataId;
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -182,13 +183,8 @@ export const RecordTableHeaderCell = ({
         onMouseEnter={() => setIconVisibility(true)}
         onMouseLeave={() => setIconVisibility(false)}
       >
-        <ColumnHeadWithDropdown
-          column={column}
-          isFirstColumn={column.position === 1}
-          isLastColumn={column.position === visibleTableColumns.length - 1}
-          primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
-        />
-        {iconVisibility && column.position === 0 && (
+        <ColumnHeadWithDropdown column={column} />
+        {iconVisibility && isLabelIdentifierColumn && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}
