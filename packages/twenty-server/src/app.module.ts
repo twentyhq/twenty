@@ -1,19 +1,16 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
-import { GraphQLConfigService } from 'src/graphql-config.service';
-import { ThrottlerConfigService } from 'src/throttler-config.service';
-import { GqlHttpThrottlerGuard } from 'src/guards/gql-http-throttler.guard';
+import { GraphQLConfigService } from 'src/graphql-config/graphql-config.service';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
 import { HealthModule } from './health/health.module';
 import { WorkspaceModule } from './workspace/workspace.module';
+import { GraphQLConfigModule } from './graphql-config/graphql-config.module';
 
 @Module({
   imports: [
@@ -22,22 +19,13 @@ import { WorkspaceModule } from './workspace/workspace.module';
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [CoreModule],
+      imports: [CoreModule, GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
     HealthModule,
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,
-    ThrottlerModule.forRootAsync({
-      useClass: ThrottlerConfigService,
-    }),
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: GqlHttpThrottlerGuard,
-    },
   ],
 })
 export class AppModule {}
