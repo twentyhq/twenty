@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
-import { useGenerateCachedObjectRecord } from '@/object-record/cache/hooks/useGenerateCachedObjectRecord';
+import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type useCreateOneRecordInCacheProps = {
@@ -14,19 +14,18 @@ export const useCreateOneRecordInCache = <T>({
     objectNameSingular,
   });
 
-  const { generateCachedObjectRecord } = useGenerateCachedObjectRecord({
-    objectMetadataItem,
-  });
+  const { generateObjectRecordOptimisticResponse } =
+    useGenerateObjectRecordOptimisticResponse({
+      objectMetadataItem,
+    });
 
   const addRecordInCache = useAddRecordInCache({
     objectMetadataItem,
   });
 
   const createOneRecordInCache = async (input: ObjectRecord) => {
-    const generatedCachedObjectRecord = generateCachedObjectRecord({
-      createdAt: new Date().toISOString(),
-      ...input,
-    });
+    const generatedCachedObjectRecord =
+      generateObjectRecordOptimisticResponse(input);
 
     addRecordInCache(generatedCachedObjectRecord);
 

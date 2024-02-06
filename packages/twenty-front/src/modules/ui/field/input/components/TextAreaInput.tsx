@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
@@ -53,6 +53,15 @@ export const TextAreaInput = ({
   };
 
   const wrapperRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (wrapperRef.current) {
+      wrapperRef.current.setSelectionRange(
+        wrapperRef.current.value.length,
+        wrapperRef.current.value.length,
+      );
+    }
+  }, []);
 
   useRegisterInputEvents({
     inputRef: wrapperRef,

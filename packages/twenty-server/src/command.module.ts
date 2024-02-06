@@ -6,10 +6,13 @@ import { StartCleanInactiveWorkspacesCronCommand } from 'src/workspace/cron/clea
 import { StopCleanInactiveWorkspacesCronCommand } from 'src/workspace/cron/clean-inactive-workspaces/commands/stop-clean-inactive-workspaces.cron.command';
 import { CleanInactiveWorkspacesCommand } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
 import { WorkspaceHealthCommandModule } from 'src/workspace/workspace-health/commands/workspace-health-command.module';
+import { StartFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/start-fetch-all-workspaces-messages.cron.command';
+import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/stop-fetch-all-workspaces-messages.cron.command';
 
 import { AppModule } from './app.module';
 
 import { WorkspaceSyncMetadataCommandsModule } from './workspace/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-migration-runner/commands/workspace-sync-metadata-commands.module';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { WorkspaceSyncMetadataCommandsModule } from './workspace/workspace-sync-
     StopCleanInactiveWorkspacesCronCommand,
     CleanInactiveWorkspacesCommand,
     WorkspaceHealthCommandModule,
+    WorkspaceMigrationRunnerCommandsModule,
+    StartFetchAllWorkspacesMessagesCronCommand,
+    StopFetchAllWorkspacesMessagesCronCommand,
   ],
 })
 export class CommandModule {}

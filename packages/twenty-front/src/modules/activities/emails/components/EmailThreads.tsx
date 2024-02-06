@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
@@ -148,6 +149,10 @@ export const EmailThreads = ({
   const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
     data?.[queryName] ?? [];
 
+  if (firstQueryLoading) {
+    return <EmailLoader />;
+  }
+
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
       <StyledEmptyContainer>
@@ -180,7 +185,7 @@ export const EmailThreads = ({
                 key={index}
                 divider={index < timelineThreads.length - 1}
                 thread={thread}
-                onClick={() => openEmailThread(thread)}
+                onClick={() => openEmailThread(thread.id)}
               />
             ))}
           </Card>

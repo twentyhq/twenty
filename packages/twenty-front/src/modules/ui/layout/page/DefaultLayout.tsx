@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -15,9 +15,11 @@ import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { AppPath } from '@/types/AppPath';
 import { desktopNavDrawerWidths } from '@/ui/navigation/navigation-drawer/constants';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -71,6 +73,15 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
+  const isMatchingLocation = useIsMatchingLocation();
+
+  const showAuthModal = useMemo(() => {
+    return (
+      (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) ||
+      isMatchingLocation(AppPath.ResetPassword)
+    );
+  }, [isMatchingLocation, onboardingStatus]);
+
   return (
     <>
       <Global
@@ -99,8 +110,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         >
           <StyledAppNavigationDrawer />
           <StyledMainContainer>
-            {onboardingStatus &&
-            onboardingStatus !== OnboardingStatus.Completed ? (
+            {showAuthModal ? (
               <>
                 <SignInBackgroundMockPage />
                 <AnimatePresence mode="wait">

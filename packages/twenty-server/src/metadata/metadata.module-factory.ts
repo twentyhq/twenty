@@ -1,17 +1,17 @@
 import { YogaDriverConfig } from '@graphql-yoga/nestjs';
-import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { maskError } from 'graphql-yoga';
 
-import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import { TokenService } from 'src/core/auth/services/token.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
+import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { MetadataModule } from 'src/metadata/metadata.module';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
+  tokenService: TokenService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     context: ({ req }) => ({ req }),
@@ -21,20 +21,13 @@ export const metadataModuleFactory = async (
       return renderApolloPlayground({ path: 'metadata' });
     },
     resolvers: { JSON: GraphQLJSON },
-    plugins: [],
+    plugins: [
+      useExceptionHandler({
+        exceptionHandlerService,
+        tokenService,
+      }),
+    ],
     path: '/metadata',
-    maskedErrors: {
-      maskError(error: GraphQLError, message, isDev) {
-        if (error.originalError) {
-          return handleExceptionAndConvertToGraphQLError(
-            error.originalError,
-            exceptionHandlerService,
-          );
-        }
-
-        return maskError(error, message, isDev);
-      },
-    },
   };
 
   if (environmentService.isDebugMode()) {

@@ -1,18 +1,19 @@
 import { useRecoilState } from 'recoil';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
-import { viewableEmailThreadState } from '@/activities/emails/state/viewableEmailThreadState';
-import { TimelineThread } from '~/generated/graphql';
+import { viewableEmailThreadIdState } from '@/activities/emails/state/viewableEmailThreadIdState';
 
 export const useEmailThread = () => {
-  const [, setViewableEmailThread] = useRecoilState(viewableEmailThreadState);
+  const [, setViewableEmailThreadId] = useRecoilState(
+    viewableEmailThreadIdState,
+  );
 
   const openEmailThredRightDrawer = useOpenEmailThreadRightDrawer();
 
-  const openEmailThread = (thread: TimelineThread) => {
+  const openEmailThread = (threadId: string) => {
     openEmailThredRightDrawer();
 
-    setViewableEmailThread(thread);
+    setViewableEmailThreadId(threadId);
   };
 
   return {

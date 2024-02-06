@@ -1,5 +1,6 @@
-import App from '../index';
 import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
+
+import App from '../index';
 import getBundle from '../utils/getBundle';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb from '../utils/requestDb';
@@ -43,7 +44,7 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundle);
     } catch (error: any) {
-      expect(error.message).toContain('Unauthorized');
+      expect(error.message).toContain('Unauthenticated');
       return;
     }
     throw new Error('appTester should have thrown');
@@ -70,7 +71,7 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundleWithExpiredApiKey);
     } catch (error: any) {
-      expect(error.message).toContain('Unauthorized');
+      expect(error.message).toContain('Unauthenticated');
       return;
     }
     throw new Error('appTester should have thrown');

@@ -6,6 +6,7 @@ import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metad
 // TODO: implement dry-run
 interface RunWorkspaceMigrationsOptions {
   workspaceId: string;
+  dryRun?: boolean;
 }
 
 @Command({
@@ -35,6 +36,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         workspaceId: options.workspaceId,
         dataSourceId: dataSourceMetadata.id,
       },
+      { dryRun: options.dryRun },
     );
   }
 
@@ -45,5 +47,14 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
   })
   parseWorkspaceId(value: string): string {
     return value;
+  }
+
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Dry run without applying changes',
+    required: false,
+  })
+  dryRun(): boolean {
+    return true;
   }
 }

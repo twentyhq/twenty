@@ -5,7 +5,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 
-const DEBUG_HOTKEY_SCOPE = true;
+const DEBUG_HOTKEY_SCOPE = false;
 
 export const useScopedHotkeyCallback = () =>
   useRecoilCallback(

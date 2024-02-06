@@ -1,13 +1,9 @@
 import { useApolloClient } from '@apollo/client';
 
-import { isObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isObjectRecordConnection';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
-import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -19,12 +15,12 @@ type useDeleteOneRecordProps = {
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteOneRecordProps) => {
+  const apolloClient = useApolloClient();
+
   const { objectMetadataItem, deleteManyRecordsMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
   const getRelationMetadata = useGetRelationMetadata();
-
-  const apolloClient = useApolloClient();
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -47,49 +43,15 @@ export const useDeleteManyRecords = ({
 
         if (!records?.length) return;
 
-        objectMetadataItem.fields.forEach((fieldMetadataItem) => {
-          const relationMetadata = getRelationMetadata({ fieldMetadataItem });
-
-          if (!relationMetadata) return;
-
-          const { relationObjectMetadataItem, relationFieldMetadataItem } =
-            relationMetadata;
-
-          records.forEach((record) => {
-            const cachedRecord = getRecordFromCache(record.id, cache);
-
-            if (!cachedRecord) return;
-
-            const previousFieldValue:
-              | ObjectRecordConnection
-              | ObjectRecord
-              | null = cachedRecord[fieldMetadataItem.name];
-
-            const relationRecordIds = isObjectRecordConnection(
-              relationObjectMetadataItem.nameSingular,
-              previousFieldValue,
-            )
-              ? previousFieldValue.edges.map(({ node }) => node.id)
-              : [previousFieldValue?.id].filter(isDefined);
-
-            relationRecordIds.forEach((relationRecordId) =>
-              triggerDetachRelationOptimisticEffect({
-                cache,
-                objectNameSingular,
-                recordId: record.id,
-                relationObjectMetadataNameSingular:
-                  relationObjectMetadataItem.nameSingular,
-                relationFieldName: relationFieldMetadataItem.name,
-                relationRecordId,
-              }),
-            );
-          });
-        });
+        const cachedRecords = records
+          .map((record) => getRecordFromCache(record.id, cache))
+          .filter(isDefined);
 
         triggerDeleteRecordsOptimisticEffect({
           cache,
           objectMetadataItem,
-          records: records,
+          records: cachedRecords,
+          getRelationMetadata,
         });
       },
     });
