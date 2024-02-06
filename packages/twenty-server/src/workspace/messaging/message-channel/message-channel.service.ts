@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
@@ -11,27 +13,28 @@ export class MessageChannelService {
   ) {}
 
   public async getByConnectedAccountId(
-    workspaceId: string,
     connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
       [connectedAccountId],
+      workspaceId,
+      transactionManager,
     );
   }
 
   public async getFirstByConnectedAccountIdOrFail(
-    workspaceId: string,
     connectedAccountId: string,
+    workspaceId: string,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata>> {
     const messageChannels = await this.getByConnectedAccountId(
-      workspaceId,
       connectedAccountId,
+      workspaceId,
     );
 
     if (!messageChannels || messageChannels.length === 0) {

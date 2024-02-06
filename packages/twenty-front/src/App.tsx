@@ -1,19 +1,19 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
+import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -38,20 +38,15 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
-import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
-  const { pathname } = useLocation();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
-
-  const pageTitle = getPageTitleFromPath(pathname);
   const isNewRecordBoardEnabled = useIsFeatureEnabled(
     'IS_NEW_RECORD_BOARD_ENABLED',
   );
 
   return (
     <>
-      <PageTitle title={pageTitle} />
+      <DefaultPageTitle />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
       <DefaultLayout>
@@ -64,7 +59,7 @@ export const App = () => {
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
-          <Route path="/" element={<Navigate to={defaultHomePagePath} />} />
+          <Route path="/" element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 

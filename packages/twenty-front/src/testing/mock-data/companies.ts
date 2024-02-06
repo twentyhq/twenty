@@ -42,6 +42,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
       updatedAt: '2023-04-26T10:23:42.33625+00:00',
       createdAt: '2023-04-26T10:23:42.33625+00:00',
       userId: mockedUsersData[0].id,
+      userEmail: 'charles@test.com',
     },
   },
   {
