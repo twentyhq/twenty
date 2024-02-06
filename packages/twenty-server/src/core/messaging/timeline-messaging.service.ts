@@ -321,7 +321,7 @@ export class TimelineMessagingService {
       `
       SELECT
           "messageThread".id,
-          "messageThread".visibility
+          "messageChannel".visibility
       FROM
           ${dataSourceMetadata.schema}."messageThread" "messageThread"
       LEFT JOIN
@@ -336,20 +336,16 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
-    const visibilityValues = new Map<string, number>([
-      ['metadata', 0],
-      ['subject', 1],
-      ['share_everything', 2],
-    ]);
+    const visibilityValues = ['metadata', 'subject', 'share_everything'];
 
     const threadVisibilityByThreadId: {
       [key: string]: string;
     } = threadVisibility?.reduce((threadVisibilityAcc, threadVisibility) => {
       threadVisibilityAcc[threadVisibility.id] =
-        visibilityValues.keys[
+        visibilityValues[
           Math.max(
-            visibilityValues.get(threadVisibility.visibility) ?? 0,
-            visibilityValues.get(threadVisibilityAcc[threadVisibility.id]) ?? 0,
+            visibilityValues.indexOf(threadVisibility.visibility),
+            visibilityValues.indexOf('share_everything'),
           )
         ];
 
