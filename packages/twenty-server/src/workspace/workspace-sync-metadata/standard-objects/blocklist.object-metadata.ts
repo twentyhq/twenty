@@ -4,7 +4,7 @@ import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.deco
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'blocklists',
@@ -28,10 +28,10 @@ export class BlocklistObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Channel',
-    description: 'Message Channel',
+    label: 'WorkspaceMember',
+    description: 'WorkspaceMember',
     icon: 'IconCircleUser',
-    joinColumn: 'messageChannelId',
+    joinColumn: 'workspaceMemberId',
   })
-  messageChannel: MessageChannelObjectMetadata;
+  workspaceMember: WorkspaceMemberObjectMetadata;
 }
