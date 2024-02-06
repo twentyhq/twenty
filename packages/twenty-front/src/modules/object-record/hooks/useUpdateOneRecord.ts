@@ -4,6 +4,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
@@ -19,8 +20,10 @@ export const useUpdateOneRecord = <
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
-  const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem, updateOneRecordMutation } = useObjectMetadataItem(
+    { objectNameSingular },
+  );
+  const getRecordFromCache = useGetRecordFromCache();
 
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({
@@ -36,7 +39,10 @@ export const useUpdateOneRecord = <
     idToUpdate: string;
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
   }) => {
-    const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
+    const cachedRecord = getRecordFromCache<UpdatedObjectRecord>({
+      recordId: idToUpdate,
+      objectMetadataItem,
+    });
 
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,

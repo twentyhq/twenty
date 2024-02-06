@@ -1,11 +1,13 @@
+import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
-import { z } from 'zod';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
-import { capitalize } from '~/utils/string/capitalize';
+import { generateObjectRecordSchema } from '@/object-record/utils/generateObjectRecordSchema';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useGenerateObjectRecordOptimisticResponse = ({
   objectMetadataItem,
@@ -13,58 +15,60 @@ export const useGenerateObjectRecordOptimisticResponse = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const getRelationMetadata = useGetRelationMetadata();
+  const getRecordFromCache = useGetRecordFromCache();
 
-  const generateObjectRecordOptimisticResponse = <
-    GeneratedObjectRecord extends ObjectRecord,
-  >(
-    input: Record<string, unknown>,
-  ) => {
-    const recordSchema = z.object(
-      Object.fromEntries(
-        objectMetadataItem.fields.map((fieldMetadataItem) => [
-          fieldMetadataItem.name,
-          z.unknown().default(generateEmptyFieldValue(fieldMetadataItem)),
-        ]),
-      ),
-    );
+  const generateObjectRecordOptimisticResponse = useRecoilCallback(
+    ({ snapshot }) =>
+      <GeneratedObjectRecord extends ObjectRecord>(
+        input: Record<string, unknown>,
+      ) => {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .valueOrThrow();
+        const recordSchema = generateObjectRecordSchema<GeneratedObjectRecord>({
+          objectMetadataItem,
+          objectMetadataItems,
+        });
 
-    const inputWithRelationFields = objectMetadataItem.fields.reduce(
-      (result, fieldMetadataItem) => {
-        const relationIdFieldName = `${fieldMetadataItem.name}Id`;
+        const relationFields = objectMetadataItem.fields.reduce<
+          Record<string, { id: string } | null>
+        >((result, fieldMetadataItem) => {
+          const relationFieldName = fieldMetadataItem.name;
+          const relationIdFieldName = `${relationFieldName}Id`;
 
-        if (!(relationIdFieldName in input)) return result;
+          if (
+            fieldMetadataItem.type !== FieldMetadataType.Relation ||
+            !(relationIdFieldName in input)
+          ) {
+            return result;
+          }
 
-        const relationMetadata = getRelationMetadata({ fieldMetadataItem });
+          const relationRecordId = input[relationIdFieldName] as string | null;
+          const relationMetadata = getRelationMetadata({ fieldMetadataItem });
 
-        if (!relationMetadata) return result;
+          if (!relationMetadata) return result;
 
-        const relationRecordTypeName = capitalize(
-          relationMetadata.relationObjectMetadataItem.nameSingular,
-        );
-        const relationRecordId = result[relationIdFieldName] as string | null;
+          return {
+            ...result,
+            [relationFieldName]: relationRecordId
+              ? getRecordFromCache({
+                  recordId: relationRecordId,
+                  objectMetadataItem:
+                    relationMetadata.relationObjectMetadataItem,
+                })
+              : null,
+          };
+        }, {});
 
-        return {
-          ...result,
-          [fieldMetadataItem.name]: relationRecordId
-            ? {
-                __typename: relationRecordTypeName,
-                id: relationRecordId,
-              }
-            : null,
-        };
+        return recordSchema.parse({
+          id: v4(),
+          createdAt: new Date().toISOString(),
+          ...input,
+          ...relationFields,
+        });
       },
-      input,
-    );
-
-    return {
-      __typename: capitalize(objectMetadataItem.nameSingular),
-      ...recordSchema.parse({
-        id: v4(),
-        createdAt: new Date().toISOString(),
-        ...inputWithRelationFields,
-      }),
-    } as GeneratedObjectRecord & { __typename: string };
-  };
+    [getRecordFromCache, getRelationMetadata, objectMetadataItem],
+  );
 
   return {
     generateObjectRecordOptimisticResponse,

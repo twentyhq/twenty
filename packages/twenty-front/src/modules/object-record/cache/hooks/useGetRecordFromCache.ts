@@ -1,22 +1,23 @@
-import { gql, useApolloClient } from '@apollo/client';
+import { ApolloCache, gql, useApolloClient } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useGetRecordFromCache = ({
-  objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+export const useGetRecordFromCache = () => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
 
-  return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
-    recordId: string,
+  return <CachedObjectRecord extends ObjectRecord = ObjectRecord>({
+    recordId,
     cache = apolloClient.cache,
-  ) => {
+    objectMetadataItem,
+  }: {
+    recordId: string;
+    cache?: ApolloCache<unknown>;
+    objectMetadataItem: ObjectMetadataItem;
+  }) => {
     if (!objectMetadataItem) {
       return null;
     }

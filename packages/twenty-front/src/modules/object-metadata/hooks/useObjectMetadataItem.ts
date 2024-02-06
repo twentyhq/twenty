@@ -10,7 +10,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
@@ -76,10 +75,6 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
-  });
-
   const modifyRecordFromCache = useModifyRecordFromCache({
     objectMetadataItem,
   });
@@ -132,7 +127,6 @@ export const useObjectMetadataItem = (
     labelIdentifierFieldMetadata,
     basePathToShowPage,
     objectMetadataItem,
-    getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,
     findOneRecordQuery,

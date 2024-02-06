@@ -4,6 +4,7 @@ import { useApolloClient } from '@apollo/client';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -17,8 +18,10 @@ export const useDeleteOneRecord = ({
 }: useDeleteOneRecordProps) => {
   const apolloClient = useApolloClient();
 
-  const { objectMetadataItem, deleteOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem, deleteOneRecordMutation } = useObjectMetadataItem(
+    { objectNameSingular },
+  );
+  const getRecordFromCache = useGetRecordFromCache();
 
   const getRelationMetadata = useGetRelationMetadata();
 
@@ -41,7 +44,11 @@ export const useDeleteOneRecord = ({
 
           if (!record) return;
 
-          const cachedRecord = getRecordFromCache(record.id, cache);
+          const cachedRecord = getRecordFromCache({
+            recordId: record.id,
+            cache,
+            objectMetadataItem,
+          });
 
           if (!cachedRecord) return;
 
