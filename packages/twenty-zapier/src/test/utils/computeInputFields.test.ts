@@ -43,16 +43,6 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'RELATION',
-              name: 'company',
-              label: 'Company',
-              description: 'Contact’s company',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
               type: 'DATE_TIME',
               name: 'updatedAt',
               label: 'Update date',
@@ -91,18 +81,6 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'TEXT',
-              name: 'city',
-              label: 'City',
-              description: 'Contact’s city',
-              isNullable: false,
-              defaultValue: {
-                value: '',
-              },
-            },
-          },
-          {
-            node: {
               type: 'NUMBER',
               name: 'recordPosition',
               label: 'RecordPosition',
@@ -123,28 +101,6 @@ describe('computeInputFields', () => {
           },
           {
             node: {
-              type: 'LINK',
-              name: 'linkedinLink',
-              label: 'Linkedin',
-              description: 'Contact’s Linkedin account',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: 'TEXT',
-              name: 'avatarUrl',
-              label: 'Avatar',
-              description: 'Contact’s avatar',
-              isNullable: false,
-              defaultValue: {
-                value: '',
-              },
-            },
-          },
-          {
-            node: {
               type: 'EMAIL',
               name: 'email',
               label: 'Email',
@@ -161,60 +117,6 @@ describe('computeInputFields', () => {
               name: 'companyId',
               label: 'Company id (foreign key)',
               description: 'Contact’s company id foreign key',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: 'RELATION',
-              name: 'attachments',
-              label: 'Attachments',
-              description: 'Attachments linked to the contact.',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: 'RELATION',
-              name: 'activityTargets',
-              label: 'Activities',
-              description: 'Activities tied to the contact',
-              isNullable: true,
-              defaultValue: null,
-            },
-          },
-          {
-            node: {
-              type: 'DATE_TIME',
-              name: 'createdAt',
-              label: 'Creation date',
-              description: null,
-              isNullable: false,
-              defaultValue: {
-                type: 'now',
-              },
-            },
-          },
-          {
-            node: {
-              type: 'TEXT',
-              name: 'phone',
-              label: 'Phone',
-              description: 'Contact’s phone number',
-              isNullable: false,
-              defaultValue: {
-                value: '',
-              },
-            },
-          },
-          {
-            node: {
-              type: 'RELATION',
-              name: 'pointOfContactForOpportunities',
-              label: 'POC for Opportunities',
-              description: 'Point of Contact for Opportunities',
               isNullable: true,
               defaultValue: null,
             },
@@ -268,13 +170,6 @@ describe('computeInputFields', () => {
         required: false,
       },
       {
-        key: 'city',
-        label: 'City',
-        type: 'string',
-        helpText: 'Contact’s city',
-        required: false,
-      },
-      {
         key: 'recordPosition',
         label: 'RecordPosition',
         type: 'integer',
@@ -296,27 +191,6 @@ describe('computeInputFields', () => {
         required: false,
       },
       {
-        key: 'linkedinLink__url',
-        label: 'Linkedin: Url',
-        type: 'string',
-        helpText: 'Contact’s Linkedin account: Link Url',
-        required: false,
-      },
-      {
-        key: 'linkedinLink__label',
-        label: 'Linkedin: Label',
-        type: 'string',
-        helpText: 'Contact’s Linkedin account: Link Label',
-        required: false,
-      },
-      {
-        key: 'avatarUrl',
-        label: 'Avatar',
-        type: 'string',
-        helpText: 'Contact’s avatar',
-        required: false,
-      },
-      {
         key: 'email',
         label: 'Email',
         type: 'string',
@@ -328,20 +202,6 @@ describe('computeInputFields', () => {
         label: 'Company id (foreign key)',
         type: 'string',
         helpText: 'Contact’s company id foreign key',
-        required: false,
-      },
-      {
-        key: 'createdAt',
-        label: 'Creation date',
-        type: 'datetime',
-        helpText: null,
-        required: false,
-      },
-      {
-        key: 'phone',
-        label: 'Phone',
-        type: 'string',
-        helpText: 'Contact’s phone number',
         required: false,
       },
     ];
