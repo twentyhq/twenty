@@ -10,6 +10,7 @@ import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/Tabl
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
+  IconFileExport,
   IconFileImport,
   IconTag,
 } from '@/ui/display/icon';
@@ -118,6 +119,8 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const { handleImport } = useRecordIndexOptionsImport({ objectNameSingular });
 
+  const handleExport = () => {};
+
   return (
     <>
       {!currentMenu && (
@@ -148,6 +151,11 @@ export const RecordIndexOptionsDropdownContent = ({
                 text="Import"
               />
             )}
+            <MenuItem
+              onClick={() => handleExport()}
+              LeftIcon={IconFileExport}
+              text="Export"
+            />
           </DropdownMenuItemsContainer>
         </>
       )}
