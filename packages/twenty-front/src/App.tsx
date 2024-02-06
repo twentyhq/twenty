@@ -33,6 +33,7 @@ import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
+import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
@@ -144,6 +145,10 @@ export const App = () => {
                       <Route
                         path={SettingsPath.DevelopersNewWebhook}
                         element={<SettingsDevelopersWebhooksNew />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersNewWebhookDetail}
+                        element={<SettingsDevelopersWebhooksDetail />}
                       />
                     </Routes>
                   }
