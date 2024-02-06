@@ -203,6 +203,11 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'blocklist',
+    inverseSideFieldName: 'workspaceMember',
   })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
+  })
+  @IsNullable()
   blocklist: BlocklistObjectMetadata[];
 }

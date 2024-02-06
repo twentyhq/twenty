@@ -11,7 +11,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
   labelSingular: 'Blocklist',
   labelPlural: 'Blocklists',
   description: 'Blocklist',
-  icon: 'IconMessage',
+  icon: 'IconForbid2',
 })
 @Gate({
   featureFlag: 'IS_MESSAGING_ENABLED',
