@@ -317,6 +317,45 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
+    const threadVisibility = await workspaceDataSource?.query(
+      `
+      SELECT
+          "messageThread".id,
+          "messageThread".visibility
+      FROM
+          ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."message" message ON "message"."messageThreadId" = "messageThread".id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannelMessageAssociation" "messageChannelMessageAssociation" ON "messageChannelMessageAssociation"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannel" "messageChannel" ON "messageChannel".id = "messageChannelMessageAssociation"."messageChannelId"
+      WHERE
+          "messageThread".id = ANY($1)
+      `,
+      [messageThreadIds],
+    );
+
+    const visibilityValues = new Map<string, number>([
+      ['metadata', 0],
+      ['subject', 1],
+      ['share_everything', 2],
+    ]);
+
+    const threadVisibilityByThreadId: {
+      [key: string]: string;
+    } = threadVisibility?.reduce((threadVisibilityAcc, threadVisibility) => {
+      threadVisibilityAcc[threadVisibility.id] =
+        visibilityValues.keys[
+          Math.max(
+            visibilityValues.get(threadVisibility.visibility) ?? 0,
+            visibilityValues.get(threadVisibilityAcc[threadVisibility.id]) ?? 0,
+          )
+        ];
+
+      return threadVisibilityAcc;
+    }, {});
+
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
@@ -364,7 +403,7 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility: 'share_everything',
+        visibility: threadVisibilityByThreadId[messageThreadId],
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,
