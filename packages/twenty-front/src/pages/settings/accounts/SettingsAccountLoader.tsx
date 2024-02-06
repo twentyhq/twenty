@@ -8,10 +8,10 @@ import {
 
 export const SettingsAccountLoader = () => (
   <AnimatedPlaceholderEmptyContainer>
-    <AnimatedPlaceholder type="loadingMessages" />
+    <AnimatedPlaceholder type="loadingAccounts" />
     <AnimatedPlaceholderEmptyTextContainer>
       <AnimatedPlaceholderEmptyTitle>
-        {'Loading account(s)'}
+        Loading account(s)
       </AnimatedPlaceholderEmptyTitle>
       <Loader />
     </AnimatedPlaceholderEmptyTextContainer>
