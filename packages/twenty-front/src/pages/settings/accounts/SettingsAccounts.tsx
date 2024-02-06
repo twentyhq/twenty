@@ -25,8 +25,15 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
+      <SettingsPageContainer
+        style={
+          loading
+            ? { height: '100%', boxSizing: 'border-box', width: '100%' }
+            : {}
+        }
+      >
         <Breadcrumb links={[{ children: 'Accounts' }]} />
+
         {loading ? (
           <SettingsAccountLoader />
         ) : (

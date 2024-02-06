@@ -11,7 +11,7 @@ const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-export const AnimatedPlaceholderErrorContainer = StyledErrorContainer;
+export { StyledErrorContainer as AnimatedPlaceholderErrorContainer };
 
 const StyledErrorTextContainer = styled.div`
   align-items: center;
@@ -23,7 +23,7 @@ const StyledErrorTextContainer = styled.div`
   width: 100%;
 `;
 
-export const AnimatedPlaceholderErrorTextContainer = StyledErrorTextContainer;
+export { StyledErrorTextContainer as AnimatedPlaceholderErrorTextContainer };
 
 const StyledErrorTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -32,7 +32,7 @@ const StyledErrorTitle = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export const AnimatedPlaceholderErrorTitle = StyledErrorTitle;
+export { StyledErrorTitle as AnimatedPlaceholderErrorTitle };
 
 const StyledErrorSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -43,4 +43,4 @@ const StyledErrorSubTitle = styled.div`
   overflow: hidden;
 `;
 
-export const AnimatedPlaceholderErrorSubTitle = StyledErrorSubTitle;
+export { StyledErrorSubTitle as AnimatedPlaceholderErrorSubTitle };

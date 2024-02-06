@@ -11,6 +11,7 @@ type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
   title: string;
   Icon: IconComponent;
+  className?: string;
 };
 
 const StyledContainer = styled.div<{ isMobile: boolean }>`
@@ -24,11 +25,12 @@ export const SubMenuTopBarContainer = ({
   children,
   title,
   Icon,
+  className,
 }: SubMenuTopBarContainerProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <StyledContainer isMobile={isMobile}>
+    <StyledContainer isMobile={isMobile} className={className}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
       <RightDrawerContainer>{children}</RightDrawerContainer>
     </StyledContainer>

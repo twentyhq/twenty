@@ -11,7 +11,7 @@ const StyledEmptyContainer = styled.div`
   text-align: center;
 `;
 
-export const AnimatedPlaceholderEmptyContainer = StyledEmptyContainer;
+export { StyledEmptyContainer as AnimatedPlaceholderEmptyContainer };
 
 const StyledEmptyTextContainer = styled.div`
   align-items: center;
@@ -23,7 +23,7 @@ const StyledEmptyTextContainer = styled.div`
   width: 100%;
 `;
 
-export const AnimatedPlaceholderEmptyTextContainer = StyledEmptyTextContainer;
+export { StyledEmptyTextContainer as AnimatedPlaceholderEmptyTextContainer };
 
 const StyledEmptyTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -31,7 +31,7 @@ const StyledEmptyTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export const AnimatedPlaceholderEmptyTitle = StyledEmptyTitle;
+export { StyledEmptyTitle as AnimatedPlaceholderEmptyTitle };
 
 const StyledEmptySubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -43,4 +43,4 @@ const StyledEmptySubTitle = styled.div`
   width: 50%;
 `;
 
-export const AnimatedPlaceholderEmptySubTitle = StyledEmptySubTitle;
+export { StyledEmptySubTitle as AnimatedPlaceholderEmptySubTitle };
