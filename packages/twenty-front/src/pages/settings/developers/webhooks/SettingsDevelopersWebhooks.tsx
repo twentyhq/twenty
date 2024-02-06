@@ -66,7 +66,6 @@ export const SettingsDevelopersWebhooks = () => {
           title="Create Webhook"
           size="small"
           variant="secondary"
-          soon={true}
           onClick={() => {
             navigate('/settings/developers/webhooks/new');
           }}
