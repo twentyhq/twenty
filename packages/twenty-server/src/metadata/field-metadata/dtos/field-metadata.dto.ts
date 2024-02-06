@@ -28,7 +28,6 @@ import {
 
 import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
 import { RelationMetadataDTO } from 'src/metadata/relation-metadata/dtos/relation-metadata.dto';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -132,8 +131,4 @@ export class FieldMetadataDTO<
   @IsDateString()
   @Field()
   updatedAt: Date;
-
-  @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
-  targetColumnMap?: FieldMetadataTargetColumnMap;
 }

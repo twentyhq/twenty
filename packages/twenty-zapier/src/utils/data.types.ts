@@ -2,21 +2,22 @@ export type InputData = { [x: string]: any };
 
 export type ObjectData = { id: string } | { [x: string]: any };
 
+export type NodeField = {
+  type: string;
+  name: string;
+  label: string;
+  description: string | null;
+  isNullable: boolean;
+  defaultValue: object | null;
+};
+
 export type Node = {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
   fields: {
     edges: {
-      node: {
-        type: string;
-        name: string;
-        label: string;
-        description: string | null;
-        targetColumnMap: object;
-        isNullable: boolean;
-        defaultValue: object | null;
-      };
+      node: NodeField;
     }[];
   };
 };

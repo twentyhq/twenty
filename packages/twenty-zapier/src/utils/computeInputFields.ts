@@ -1,5 +1,9 @@
-import { capitalize } from '../utils/capitalize';
-import { FieldMetadataType, InputField, Node } from '../utils/data.types';
+import {
+  FieldMetadataType,
+  InputField,
+  Node,
+  NodeField,
+} from '../utils/data.types';
 
 const getTypeFromFieldMetadataType = (
   fieldMetadataType: string,
@@ -26,6 +30,74 @@ const getTypeFromFieldMetadataType = (
   }
 };
 
+const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
+  switch (nodeField.type) {
+    case FieldMetadataType.FULL_NAME: {
+      const firstName: NodeField = {
+        type: 'TEXT',
+        name: 'firstName',
+        label: 'First Name',
+        description: 'First Name',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const lastName: NodeField = {
+        type: 'TEXT',
+        name: 'lastName',
+        label: 'Last Name',
+        description: 'Last Name',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [firstName, lastName];
+    }
+    case FieldMetadataType.LINK: {
+      const url: NodeField = {
+        type: 'TEXT',
+        name: 'url',
+        label: 'Url',
+        description: 'Link Url',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const label: NodeField = {
+        type: 'TEXT',
+        name: 'label',
+        label: 'Label',
+        description: 'Link Label',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [url, label];
+    }
+    case FieldMetadataType.CURRENCY: {
+      const amountMicros: NodeField = {
+        type: 'NUMBER',
+        name: 'amountMicros',
+        label: 'Amount Micros',
+        description: 'Amount Micros. eg: set 3210000 for 3.21$',
+        isNullable: true,
+        defaultValue: null,
+      };
+      const currencyCode: NodeField = {
+        type: 'TEXT',
+        name: 'currencyCode',
+        label: 'Currency Code',
+        description: 'Currency Code. eg: USD, EUR, etc...',
+        isNullable: true,
+        defaultValue: null,
+      };
+      return [amountMicros, currencyCode];
+    }
+    default:
+      throw new Error(`Unknown nodeField type: ${nodeField.type}`);
+  }
+};
+
+const isFieldRequired = (nodeField: NodeField): boolean => {
+  return !nodeField.isNullable && !nodeField.defaultValue;
+};
+
 export const computeInputFields = (
   node: Node,
   isRequired = false,
@@ -37,14 +109,14 @@ export const computeInputFields = (
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.LINK:
       case FieldMetadataType.CURRENCY:
-        for (const subField of Object.keys(nodeField.targetColumnMap)) {
+        for (const subNodeField of get_subfieldsFromField(nodeField)) {
           const field = {
-            key: `${nodeField.name}__${subField}`,
-            label: `${nodeField.label} (${capitalize(subField)})`,
-            type: 'string',
-            helpText: `${nodeField.description} (${subField})`,
-            required: false,
-          };
+            key: `${nodeField.name}__${subNodeField.name}`,
+            label: `${nodeField.label}: ${subNodeField.label}`,
+            type: getTypeFromFieldMetadataType(subNodeField.type),
+            helpText: `${nodeField.description}: ${subNodeField.description}`,
+            required: isFieldRequired(subNodeField),
+          } as InputField;
           result.push(field);
         }
         break;
@@ -64,7 +136,7 @@ export const computeInputFields = (
         }
         const required =
           (isRequired && nodeField.name === 'id') ||
-          (!isRequired && !nodeField.isNullable && !nodeField.defaultValue);
+          (!isRequired && isFieldRequired(nodeField));
         const field = {
           key: nodeField.name,
           label: nodeField.label,

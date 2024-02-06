@@ -20,7 +20,6 @@ export const requestSchema = async (
                 name
                 label
                 description
-                targetColumnMap
                 isNullable
                 defaultValue
               }

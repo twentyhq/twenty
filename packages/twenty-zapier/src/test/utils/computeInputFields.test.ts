@@ -15,7 +15,16 @@ describe('computeInputFields', () => {
               name: 'favorites',
               label: 'Favorites',
               description: 'Favorites linked to the contact',
-              targetColumnMap: {},
+              isNullable: true,
+              defaultValue: null,
+            },
+          },
+          {
+            node: {
+              type: 'CURRENCY',
+              name: 'annualSalary',
+              label: 'Annual Salary',
+              description: 'Annual Salary of the Person',
               isNullable: true,
               defaultValue: null,
             },
@@ -26,9 +35,6 @@ describe('computeInputFields', () => {
               name: 'jobTitle',
               label: 'Job Title',
               description: 'Contact’s job title',
-              targetColumnMap: {
-                value: 'jobTitle',
-              },
               isNullable: false,
               defaultValue: {
                 value: '',
@@ -41,7 +47,6 @@ describe('computeInputFields', () => {
               name: 'company',
               label: 'Company',
               description: 'Contact’s company',
-              targetColumnMap: {},
               isNullable: true,
               defaultValue: null,
             },
@@ -52,9 +57,6 @@ describe('computeInputFields', () => {
               name: 'updatedAt',
               label: 'Update date',
               description: null,
-              targetColumnMap: {
-                value: 'updatedAt',
-              },
               isNullable: false,
               defaultValue: {
                 type: 'now',
@@ -67,10 +69,6 @@ describe('computeInputFields', () => {
               name: 'name',
               label: 'Name',
               description: 'Contact’s name',
-              targetColumnMap: {
-                lastName: 'nameLastName',
-                firstName: 'nameFirstName',
-              },
               isNullable: true,
               defaultValue: {
                 lastName: '',
@@ -85,9 +83,6 @@ describe('computeInputFields', () => {
               label: 'Id',
               description: null,
               icon: null,
-              targetColumnMap: {
-                value: 'id',
-              },
               isNullable: false,
               defaultValue: {
                 type: 'uuid',
@@ -100,9 +95,6 @@ describe('computeInputFields', () => {
               name: 'city',
               label: 'City',
               description: 'Contact’s city',
-              targetColumnMap: {
-                value: 'city',
-              },
               isNullable: false,
               defaultValue: {
                 value: '',
@@ -115,9 +107,6 @@ describe('computeInputFields', () => {
               name: 'recordPosition',
               label: 'RecordPosition',
               description: 'Record Position',
-              targetColumnMap: {
-                value: 'recordPosition',
-              },
               isNullable: true,
               defaultValue: null,
             },
@@ -128,10 +117,6 @@ describe('computeInputFields', () => {
               name: 'xLink',
               label: 'X',
               description: 'Contact’s X/Twitter account',
-              targetColumnMap: {
-                url: 'xLinkUrl',
-                label: 'xLinkLabel',
-              },
               isNullable: true,
               defaultValue: null,
             },
@@ -142,10 +127,6 @@ describe('computeInputFields', () => {
               name: 'linkedinLink',
               label: 'Linkedin',
               description: 'Contact’s Linkedin account',
-              targetColumnMap: {
-                url: 'linkedinLinkUrl',
-                label: 'linkedinLinkLabel',
-              },
               isNullable: true,
               defaultValue: null,
             },
@@ -156,9 +137,6 @@ describe('computeInputFields', () => {
               name: 'avatarUrl',
               label: 'Avatar',
               description: 'Contact’s avatar',
-              targetColumnMap: {
-                value: 'avatarUrl',
-              },
               isNullable: false,
               defaultValue: {
                 value: '',
@@ -171,9 +149,6 @@ describe('computeInputFields', () => {
               name: 'email',
               label: 'Email',
               description: 'Contact’s Email',
-              targetColumnMap: {
-                value: 'email',
-              },
               isNullable: false,
               defaultValue: {
                 value: '',
@@ -186,9 +161,6 @@ describe('computeInputFields', () => {
               name: 'companyId',
               label: 'Company id (foreign key)',
               description: 'Contact’s company id foreign key',
-              targetColumnMap: {
-                value: 'companyId',
-              },
               isNullable: true,
               defaultValue: null,
             },
@@ -199,7 +171,6 @@ describe('computeInputFields', () => {
               name: 'attachments',
               label: 'Attachments',
               description: 'Attachments linked to the contact.',
-              targetColumnMap: {},
               isNullable: true,
               defaultValue: null,
             },
@@ -210,7 +181,6 @@ describe('computeInputFields', () => {
               name: 'activityTargets',
               label: 'Activities',
               description: 'Activities tied to the contact',
-              targetColumnMap: {},
               isNullable: true,
               defaultValue: null,
             },
@@ -221,9 +191,6 @@ describe('computeInputFields', () => {
               name: 'createdAt',
               label: 'Creation date',
               description: null,
-              targetColumnMap: {
-                value: 'createdAt',
-              },
               isNullable: false,
               defaultValue: {
                 type: 'now',
@@ -236,9 +203,6 @@ describe('computeInputFields', () => {
               name: 'phone',
               label: 'Phone',
               description: 'Contact’s phone number',
-              targetColumnMap: {
-                value: 'phone',
-              },
               isNullable: false,
               defaultValue: {
                 value: '',
@@ -251,7 +215,6 @@ describe('computeInputFields', () => {
               name: 'pointOfContactForOpportunities',
               label: 'POC for Opportunities',
               description: 'Point of Contact for Opportunities',
-              targetColumnMap: {},
               isNullable: true,
               defaultValue: null,
             },
@@ -260,6 +223,22 @@ describe('computeInputFields', () => {
       },
     };
     const baseExpectedResult: InputField[] = [
+      {
+        key: 'annualSalary__amountMicros',
+        label: 'Annual Salary: Amount Micros',
+        type: 'integer',
+        helpText:
+          'Annual Salary of the Person: Amount Micros. eg: set 3210000 for 3.21$',
+        required: false,
+      },
+      {
+        key: 'annualSalary__currencyCode',
+        label: 'Annual Salary: Currency Code',
+        type: 'string',
+        helpText:
+          'Annual Salary of the Person: Currency Code. eg: USD, EUR, etc...',
+        required: false,
+      },
       {
         key: 'jobTitle',
         label: 'Job Title',
@@ -275,17 +254,17 @@ describe('computeInputFields', () => {
         required: false,
       },
       {
-        key: 'name__lastName',
-        label: 'Name (LastName)',
+        key: 'name__firstName',
+        label: 'Name: First Name',
         type: 'string',
-        helpText: 'Contact’s name (lastName)',
+        helpText: 'Contact’s name: First Name',
         required: false,
       },
       {
-        key: 'name__firstName',
-        label: 'Name (FirstName)',
+        key: 'name__lastName',
+        label: 'Name: Last Name',
         type: 'string',
-        helpText: 'Contact’s name (firstName)',
+        helpText: 'Contact’s name: Last Name',
         required: false,
       },
       {
@@ -304,30 +283,30 @@ describe('computeInputFields', () => {
       },
       {
         key: 'xLink__url',
-        label: 'X (Url)',
+        label: 'X: Url',
         type: 'string',
-        helpText: 'Contact’s X/Twitter account (url)',
+        helpText: 'Contact’s X/Twitter account: Link Url',
         required: false,
       },
       {
         key: 'xLink__label',
-        label: 'X (Label)',
+        label: 'X: Label',
         type: 'string',
-        helpText: 'Contact’s X/Twitter account (label)',
+        helpText: 'Contact’s X/Twitter account: Link Label',
         required: false,
       },
       {
         key: 'linkedinLink__url',
-        label: 'Linkedin (Url)',
+        label: 'Linkedin: Url',
         type: 'string',
-        helpText: 'Contact’s Linkedin account (url)',
+        helpText: 'Contact’s Linkedin account: Link Url',
         required: false,
       },
       {
         key: 'linkedinLink__label',
-        label: 'Linkedin (Label)',
+        label: 'Linkedin: Label',
         type: 'string',
-        helpText: 'Contact’s Linkedin account (label)',
+        helpText: 'Contact’s Linkedin account: Link Label',
         required: false,
       },
       {
