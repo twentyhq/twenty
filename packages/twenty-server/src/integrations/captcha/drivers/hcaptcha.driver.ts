@@ -2,7 +2,10 @@ import axios, { AxiosInstance } from 'axios';
 
 import { CaptchaDriver } from 'src/integrations/captcha/drivers/interfaces/captcha-driver.interface';
 
-import { CaptchaDriverOptions } from 'src/integrations/captcha/interfaces';
+import {
+  CaptchaDriverOptions,
+  CaptchaValidateResult,
+} from 'src/integrations/captcha/interfaces';
 
 export type HCaptchaRecatpchaServerResponse = {
   success: boolean;
@@ -23,19 +26,22 @@ export class HCaptchaDriver implements CaptchaDriver {
     });
   }
 
-  async validate(token: string): Promise<boolean> {
-    const formData = {
+  async validate(token: string): Promise<CaptchaValidateResult> {
+    const formData = new URLSearchParams({
       secret: this.secretKey,
       response: token,
       siteKey: this.siteKey,
+    });
+
+    const response = await this.httpService.post('', formData);
+
+    const responseData = response.data as HCaptchaRecatpchaServerResponse;
+
+    return {
+      success: responseData.success,
+      ...(!responseData.success && {
+        error: responseData['error-codes']?.[0] ?? 'Captcha Error',
+      }),
     };
-    const response: HCaptchaRecatpchaServerResponse =
-      await this.httpService.post('/', formData);
-
-    if (!response.success) {
-      throw new Error(response['error-codes']?.[0] ?? 'Captcha Error');
-    }
-
-    return response.success;
   }
 }

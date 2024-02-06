@@ -2,7 +2,10 @@ import axios, { AxiosInstance } from 'axios';
 
 import { CaptchaDriver } from 'src/integrations/captcha/drivers/interfaces/captcha-driver.interface';
 
-import { CaptchaDriverOptions } from 'src/integrations/captcha/interfaces';
+import {
+  CaptchaDriverOptions,
+  CaptchaValidateResult,
+} from 'src/integrations/captcha/interfaces';
 
 export type GoogleRecatpchaServerResponse = {
   success: boolean;
@@ -23,20 +26,20 @@ export class GoogleRecaptchaDriver implements CaptchaDriver {
     });
   }
 
-  async validate(token: string): Promise<boolean> {
-    const formData = {
+  async validate(token: string): Promise<CaptchaValidateResult> {
+    const formData = new URLSearchParams({
       secret: this.secretKey,
       response: token,
+    });
+
+    const response = await this.httpService.post('', formData);
+    const responseData = response.data as GoogleRecatpchaServerResponse;
+
+    return {
+      success: responseData.success,
+      ...(!responseData.success && {
+        error: responseData['error-codes']?.[0] ?? 'Captcha Error',
+      }),
     };
-    const response: GoogleRecatpchaServerResponse = await this.httpService.post(
-      '/',
-      formData,
-    );
-
-    if (!response.success) {
-      throw new Error(response['error-codes']?.[0] ?? 'Captcha Error');
-    }
-
-    return response.success;
   }
 }
