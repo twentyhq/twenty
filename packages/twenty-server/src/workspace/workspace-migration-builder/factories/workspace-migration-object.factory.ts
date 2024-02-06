@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
+
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import {
@@ -12,40 +14,23 @@ import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/work
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 @Injectable()
-export class ObjectWorkspaceMigrationFactory {
+export class WorkspaceMigrationObjectFactory {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {}
 
   async create(
-    createObjectMetadataCollection: ObjectMetadataEntity[],
-    deleteObjectMetadataCollection: ObjectMetadataEntity[],
+    objectMetadataCollection: ObjectMetadataEntity[],
+    action: WorkspaceMigrationBuilderAction,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-
-    /**
-     * Create object migrations
-     */
-    if (createObjectMetadataCollection.length > 0) {
-      const createObjectWorkspaceMigrations = await this.createObjectMigration(
-        createObjectMetadataCollection,
-      );
-
-      workspaceMigrations.push(...createObjectWorkspaceMigrations);
+    switch (action) {
+      case WorkspaceMigrationBuilderAction.CREATE:
+        return this.createObjectMigration(objectMetadataCollection);
+      case WorkspaceMigrationBuilderAction.DELETE:
+        return this.deleteObjectMigration(objectMetadataCollection);
+      default:
+        return [];
     }
-
-    /**
-     * Delete object migrations
-     */
-    if (deleteObjectMetadataCollection.length > 0) {
-      const deleteObjectWorkspaceMigrations = await this.deleteObjectMigration(
-        deleteObjectMetadataCollection,
-      );
-
-      workspaceMigrations.push(...deleteObjectWorkspaceMigrations);
-    }
-
-    return workspaceMigrations;
   }
 
   private async createObjectMigration(

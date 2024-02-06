@@ -2,6 +2,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
 
 import { WorkspaceHealthMode } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
+import { WorkspaceHealthFixKind } from 'src/workspace/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
 
@@ -9,6 +10,7 @@ interface WorkspaceHealthCommandOptions {
   workspaceId: string;
   verbose?: boolean;
   mode?: WorkspaceHealthMode;
+  fix?: WorkspaceHealthFixKind;
 }
 
 @Command({
@@ -56,6 +58,19 @@ export class WorkspaceHealthCommand extends CommandRunner {
   }
 
   @Option({
+    flags: '-f, --fix [kind]',
+    description: 'fix issues',
+    required: false,
+  })
+  fix(value: string): WorkspaceHealthFixKind {
+    if (!(value in WorkspaceHealthFixKind)) {
+      throw new Error(`Invalid fix kind ${value}`);
+    }
+
+    return value as WorkspaceHealthFixKind;
+  }
+
+  @Option({
     flags: '-v, --verbose',
     description: 'Detailed output',
     required: false,
@@ -71,6 +86,10 @@ export class WorkspaceHealthCommand extends CommandRunner {
     defaultValue: WorkspaceHealthMode.All,
   })
   parseMode(value: string): WorkspaceHealthMode {
+    if (!(value in WorkspaceHealthMode)) {
+      throw new Error(`Invalid mode ${value}`);
+    }
+
     return value as WorkspaceHealthMode;
   }
 }

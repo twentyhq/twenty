@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
 import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -14,7 +15,7 @@ import { WorkspaceRelationComparator } from 'src/workspace/workspace-sync-metada
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
-import { RelationWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/relation-workspace-migration.factory';
+import { WorkspaceMigrationRelationFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-relation.factory';
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
@@ -26,7 +27,7 @@ export class WorkspaceSyncRelationMetadataService {
     private readonly standardRelationFactory: StandardRelationFactory,
     private readonly workspaceRelationComparator: WorkspaceRelationComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
-    private readonly relationWorkspaceMigrationFactory: RelationWorkspaceMigrationFactory,
+    private readonly workspaceMigrationRelationFactory: WorkspaceMigrationRelationFactory,
   ) {}
 
   async synchronize(
@@ -95,12 +96,13 @@ export class WorkspaceSyncRelationMetadataService {
       );
 
     // Create migrations
-    const workspaceRelationMigrations =
-      await this.relationWorkspaceMigrationFactory.create(
+    const createRelationWorkspaceMigrations =
+      await this.workspaceMigrationRelationFactory.create(
         originalObjectMetadataCollection,
         metadataRelationUpdaterResult.createdRelationMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    return workspaceRelationMigrations;
+    return createRelationWorkspaceMigrations;
   }
 }

@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import { WorkspaceHealthIssue } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import {
   WorkspaceHealthMode,
   WorkspaceHealthOptions,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
+import { WorkspaceHealthFixKind } from 'src/workspace/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
@@ -15,10 +19,14 @@ import { FieldMetadataHealthService } from 'src/workspace/workspace-health/servi
 import { RelationMetadataHealthService } from 'src/workspace/workspace-health/services/relation-metadata.health.service';
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
 export class WorkspaceHealthService {
   constructor(
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly objectMetadataService: ObjectMetadataService,
@@ -27,6 +35,7 @@ export class WorkspaceHealthService {
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
     private readonly relationMetadataHealthService: RelationMetadataHealthService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {}
 
   async healthCheck(
@@ -105,5 +114,55 @@ export class WorkspaceHealthService {
     }
 
     return issues;
+  }
+
+  async fixIssues(
+    workspaceId: string,
+    issues: WorkspaceHealthIssue[],
+    type: WorkspaceHealthFixKind,
+  ): Promise<void> {
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
+
+    try {
+      const workspaceMigrationRepository = manager.getRepository(
+        WorkspaceMigrationEntity,
+      );
+      const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+      // const objectMetadataCollection =
+      //   await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+      switch (type) {
+        case WorkspaceHealthFixKind.Nullable:
+          /**
+           * We should create the migration to fix the nullable issues
+           * For something more readable, we should create a service for each kind of fix
+           */
+          console.log('Fixing nullable issues');
+          break;
+        default:
+          throw new Error(`Invalid fix kind ${type}`);
+      }
+
+      // Save workspace migrations into the database
+      await workspaceMigrationRepository.save(workspaceMigrations);
+
+      // Commit the transaction
+      await queryRunner.commitTransaction();
+
+      // Apply pending migrations
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error('Fix of issues failed with:', error);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
