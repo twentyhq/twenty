@@ -364,6 +364,7 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
+        visibility: 'share_everything',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,
