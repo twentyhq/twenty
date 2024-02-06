@@ -18,7 +18,13 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const fields = objectMetadataItem.fields
-    .filter((x) => x.isActive && !x.isSystem && x.name !== 'createdAt')
+    .filter(
+      (x) =>
+        x.isActive &&
+        !x.isSystem &&
+        x.name !== 'createdAt' &&
+        (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const templateFields: {
@@ -39,16 +45,22 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         fieldType: {
           type: 'input',
         },
-        validations: getSpreadSheetValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(
+          field.type,
+          `${firstName} (${field.label})`,
+        ),
       });
       templateFields.push({
         icon: getIcon(field.icon),
-        label: `${firstName} (${field.label})`,
-        key: `${firstName} (${field.name})`,
+        label: `${lastName} (${field.label})`,
+        key: `${lastName} (${field.name})`,
         fieldType: {
           type: 'input',
         },
-        validations: getSpreadSheetValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(
+          field.type,
+          `${lastName} (${field.label})`,
+        ),
       });
     } else if (field.type === FieldMetadataType.Relation) {
       templateFields.push({
@@ -58,6 +70,10 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         fieldType: {
           type: 'input',
         },
+        validations: getSpreadSheetValidation(
+          field.type,
+          field.label + ' (ID)',
+        ),
       });
     } else {
       templateFields.push({
@@ -67,7 +83,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         fieldType: {
           type: 'input',
         },
-        validations: getSpreadSheetValidation(field.type, field.name),
+        validations: getSpreadSheetValidation(field.type, field.label),
       });
     }
   }
@@ -96,16 +112,20 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 fieldMapping[field.name] = Number(value);
                 break;
               case FieldMetadataType.Currency:
-                fieldMapping[field.name] = {
-                  amountMicros: value !== undefined ? Number(value) : null,
-                  currencyCode: 'USD',
-                };
+                if (value !== undefined) {
+                  fieldMapping[field.name] = {
+                    amountMicros: Number(value),
+                    currencyCode: 'USD',
+                  };
+                }
                 break;
               case FieldMetadataType.Link:
-                fieldMapping[field.name] = {
-                  label: field.name,
-                  url: value || null,
-                };
+                if (value !== undefined) {
+                  fieldMapping[field.name] = {
+                    label: field.name,
+                    url: value || null,
+                  };
+                }
                 break;
               case FieldMetadataType.Relation:
                 if (value) {
@@ -113,10 +133,15 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 }
                 break;
               case FieldMetadataType.FullName:
-                fieldMapping[field.name] = {
-                  firstName: record[`${firstName} (${field.name})`] || '',
-                  lastName: record[`${lastName} (${field.name})`] || '',
-                };
+                if (
+                  record[`${firstName} (${field.name})`] ||
+                  record[`${lastName} (${field.name})`]
+                ) {
+                  fieldMapping[field.name] = {
+                    firstName: record[`${firstName} (${field.name})`] || '',
+                    lastName: record[`${lastName} (${field.name})`] || '',
+                  };
+                }
                 break;
               default:
                 fieldMapping[field.name] = value;

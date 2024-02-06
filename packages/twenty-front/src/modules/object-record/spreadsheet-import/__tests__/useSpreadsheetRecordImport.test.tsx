@@ -34,13 +34,10 @@ const companyMocks = [
         data: [
           {
             address: 'test',
-            annualRecurringRevenue: { amountMicros: null, currencyCode: 'USD' },
             domainName: 'example.com',
             employees: 0,
             idealCustomerProfile: true,
-            linkedinLink: { label: 'linkedinLink', url: null },
             name: 'Example Company',
-            xLink: { label: 'xLink', url: null },
             id: companyId,
           },
         ],
