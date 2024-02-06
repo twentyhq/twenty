@@ -1,5 +1,5 @@
-import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
-import { ApiKey } from '@/settings/developers/types/ApiKey';
+import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
+import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { beautifyDateDiff } from '~/utils/date-utils';
 
 export const formatExpiration = (

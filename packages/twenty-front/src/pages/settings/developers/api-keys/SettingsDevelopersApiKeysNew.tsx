@@ -9,7 +9,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
-import { ApiKey } from '@/settings/developers/types/ApiKey';
+import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
