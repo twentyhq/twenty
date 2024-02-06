@@ -293,13 +293,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           {
             type: FieldMetadataType.NUMBER,
-            name: 'recordPosition',
-            label: 'Record position',
+            name: 'position',
+            label: 'Position',
             targetColumnMap: {
-              value: 'recordPosition',
+              value: 'position',
             },
             icon: 'IconHierarchy2',
-            description: 'Record position',
+            description: 'Position',
             isNullable: true,
             isActive: true,
             isCustom: false,
@@ -397,7 +397,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: 'recordPosition',
+              columnName: 'position',
               columnType: 'float',
               isNullable: true,
             } satisfies WorkspaceMigrationColumnCreate,

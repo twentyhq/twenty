@@ -97,13 +97,13 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.NUMBER,
-    label: 'RecordPosition',
-    description: 'Record Position',
+    label: 'Position',
+    description: 'Position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()
   @IsNullable()
-  recordPosition: number;
+  position: number;
 
   // Relations
   @FieldMetadata({
