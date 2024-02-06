@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
@@ -20,13 +20,13 @@ export const useTableColumns = (props?: useRecordTableProps) => {
   const {
     getAvailableTableColumnsState,
     getTableColumnsState,
-    visibleTableColumnsSelector,
+    getVisibleTableColumnsSelector,
   } = useRecordTableStates(props?.recordTableId);
 
   const availableTableColumns = useRecoilValue(getAvailableTableColumnsState());
 
   const tableColumns = useRecoilValue(getTableColumnsState());
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
 
   const { handleColumnMove } = useMoveViewColumns();
 

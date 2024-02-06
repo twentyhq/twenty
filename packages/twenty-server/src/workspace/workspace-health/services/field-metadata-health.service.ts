@@ -117,9 +117,13 @@ export class FieldMetadataHealthService {
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
+
     const dataType = this.databaseStructureService.getPostgresDataType(
       fieldMetadata.type,
+      fieldMetadata.name,
+      fieldMetadata.object?.nameSingular,
     );
+
     const defaultValue = this.databaseStructureService.getPostgresDefault(
       fieldMetadata.type,
       fieldMetadata.defaultValue,
@@ -155,7 +159,9 @@ export class FieldMetadataHealthService {
         type: WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
         fieldMetadata,
         columnStructure,
-        message: `Column ${columnName} is not nullable as expected`,
+        message: `Column ${columnName} is expected to be ${
+          fieldMetadata.isNullable ? 'nullable' : 'not nullable'
+        } but is ${columnStructure.isNullable ? 'nullable' : 'not nullable'}`,
       });
     }
 

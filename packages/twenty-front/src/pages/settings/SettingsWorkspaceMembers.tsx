@@ -39,10 +39,9 @@ export const SettingsWorkspaceMembers = () => {
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const { deleteOneRecord: deleteOneWorkspaceMember } =
-    useDeleteOneRecord<WorkspaceMember>({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    });
+  const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 

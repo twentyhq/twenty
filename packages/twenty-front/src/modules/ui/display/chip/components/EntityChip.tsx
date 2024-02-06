@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
@@ -18,6 +17,7 @@ export type EntityChipProps = {
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
+  maxWidth?: number;
 };
 
 export enum EntityChipVariant {
@@ -34,6 +34,7 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
+  maxWidth,
 }: EntityChipProps) => {
   const navigate = useNavigate();
 
@@ -48,33 +49,32 @@ export const EntityChip = ({
   };
 
   return (
-    isNonEmptyString(name) && (
-      <Chip
-        label={name}
-        variant={
-          linkToEntity
-            ? variant === EntityChipVariant.Regular
-              ? ChipVariant.Highlighted
-              : ChipVariant.Regular
-            : ChipVariant.Transparent
-        }
-        leftComponent={
-          LeftIcon ? (
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-          ) : (
-            <Avatar
-              avatarUrl={avatarUrl}
-              colorId={entityId}
-              placeholder={name}
-              size="sm"
-              type={avatarType}
-            />
-          )
-        }
-        clickable={!!linkToEntity}
-        onClick={handleLinkClick}
-        className={className}
-      />
-    )
+    <Chip
+      label={name}
+      variant={
+        linkToEntity
+          ? variant === EntityChipVariant.Regular
+            ? ChipVariant.Highlighted
+            : ChipVariant.Regular
+          : ChipVariant.Transparent
+      }
+      leftComponent={
+        LeftIcon ? (
+          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        ) : (
+          <Avatar
+            avatarUrl={avatarUrl}
+            entityId={entityId}
+            placeholder={name}
+            size="sm"
+            type={avatarType}
+          />
+        )
+      }
+      clickable={!!linkToEntity}
+      onClick={handleLinkClick}
+      className={className}
+      maxWidth={maxWidth}
+    />
   );
 };

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
@@ -21,13 +21,14 @@ export class GoogleGmailService {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  providerName = 'google';
+
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
     const {
       handle,
       workspaceId,
-      provider,
       accessToken,
       refreshToken,
       workspaceMemberId,
@@ -43,13 +44,11 @@ export class GoogleGmailService {
 
     const connectedAccount = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
-      [handle, provider, workspaceMemberId],
+      [handle, this.providerName, workspaceMemberId],
     );
 
     if (connectedAccount.length > 0) {
-      console.log('This account is already connected to your workspace.');
-
-      return;
+      throw new ConflictException('Connected account already exists');
     }
 
     const connectedAccountId = v4();
@@ -60,7 +59,7 @@ export class GoogleGmailService {
         [
           connectedAccountId,
           handle,
-          provider,
+          this.providerName,
           accessToken,
           refreshToken,
           workspaceMemberId,
@@ -69,7 +68,7 @@ export class GoogleGmailService {
 
       await manager.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3, $4)`,
-        ['share_everything', handle, connectedAccountId, 'gmail'],
+        ['share_everything', handle, connectedAccountId, 'email'],
       );
     });
 

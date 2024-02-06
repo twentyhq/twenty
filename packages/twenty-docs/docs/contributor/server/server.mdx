@@ -1,12 +1,91 @@
 ---
 title: Backend Development
-displayed_sidebar: backendSidebar
 sidebar_position: 0
 sidebar_custom_props:
   icon: TbTerminal
-  isSidebarRoot: true
 ---
 
-Welcome to the Backend Development section of the documentation.
 
-Here you will find information about the development process, the recommended tools, and the best practices you should follow.
+import DocCardList from '@theme/DocCardList';
+
+
+<DocCardList />
+
+## Useful commands
+
+### First time setup
+
+```
+yarn prisma:migrate # run migrations
+yarn prisma:generate # generate prisma and nestjs-graphql schemas
+yarn prisma:seed # provision database with seeds
+
+# alternatively, you can run
+yarn prisma:reset # all-in-one command to reset, migrate, seed and generate schemas
+```
+
+###  Starting the app
+
+```
+nx prisma:migrate twenty-server
+nx prisma:generate twenty-server 
+nx start:dev twenty-server
+```
+
+### Lint
+
+```
+nx lint twenty-server
+```
+
+### Test
+
+```
+nx test twenty-server
+```
+
+### Resetting the database
+
+If you want to reset the database, you can run the following command:
+
+```bash
+nx database:reset twenty-server
+```
+
+:::warning
+
+This will drop the database and re-run the migrations and seed.
+
+Make sure to back up any data you want to keep before running this command.
+
+:::
+
+## Tech Stack
+
+Twenty primarily uses NestJS for the backend. 
+
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM. 
+
+Here's what the tech stack now looks like. 
+
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/) 

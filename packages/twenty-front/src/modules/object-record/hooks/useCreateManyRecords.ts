@@ -1,77 +1,74 @@
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
+import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { capitalize } from '~/utils/string/capitalize';
+import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
-export const useCreateManyRecords = <T extends ObjectRecord>({
+export const useCreateManyRecords = <
+  CreatedObjectRecord extends ObjectRecord = ObjectRecord,
+>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular,
-  });
+  const apolloClient = useApolloClient();
 
   const { objectMetadataItem, createManyRecordsMutation } =
     useObjectMetadataItem({
       objectNameSingular,
     });
 
-  const { generateEmptyRecord } = useGenerateEmptyRecord({
-    objectMetadataItem,
-  });
-
-  const apolloClient = useApolloClient();
-
-  const createManyRecords = async (data: Partial<T>[]) => {
-    const withIds = data.map((record) => ({
-      ...record,
-      id: (record.id as string) ?? v4(),
-    }));
-
-    withIds.forEach((record) => {
-      const emptyRecord: T | undefined = generateEmptyRecord({
-        id: record.id,
-      } as T);
-
-      if (emptyRecord) {
-        triggerOptimisticEffects({
-          typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-          createdRecords: [emptyRecord],
-        });
-      }
+  const { generateObjectRecordOptimisticResponse } =
+    useGenerateObjectRecordOptimisticResponse({
+      objectMetadataItem,
     });
+
+  const getRelationMetadata = useGetRelationMetadata();
+
+  const createManyRecords = async (data: Partial<CreatedObjectRecord>[]) => {
+    const sanitizedCreateManyRecordsInput = data.map((input) =>
+      sanitizeRecordInput({
+        objectMetadataItem,
+        recordInput: { ...input, id: v4() },
+      }),
+    );
+
+    const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
+      (record) =>
+        generateObjectRecordOptimisticResponse<CreatedObjectRecord>(record),
+    );
+
+    const mutationResponseField = getCreateManyRecordsMutationResponseField(
+      objectMetadataItem.namePlural,
+    );
 
     const createdObjects = await apolloClient.mutate({
       mutation: createManyRecordsMutation,
       variables: {
-        data: withIds,
+        data: sanitizedCreateManyRecordsInput,
       },
       optimisticResponse: {
-        [`create${capitalize(objectMetadataItem.namePlural)}`]: withIds.map(
-          (record) => generateEmptyRecord({ id: record.id }),
-        ),
+        [mutationResponseField]: optimisticallyCreatedRecords,
+      },
+      update: (cache, { data }) => {
+        const records = data?.[mutationResponseField];
+
+        if (!records?.length) return;
+
+        triggerCreateRecordsOptimisticEffect({
+          cache,
+          objectMetadataItem,
+          records,
+          getRelationMetadata,
+        });
       },
     });
 
-    if (!createdObjects.data) {
-      return null;
-    }
-
-    const createdRecords =
-      createdObjects.data[
-        `create${capitalize(objectMetadataItem.namePlural)}`
-      ] ?? [];
-
-    triggerOptimisticEffects({
-      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      createdRecords,
-    });
-
-    return createdRecords as T[];
+    return createdObjects.data?.[mutationResponseField] ?? [];
   };
 
   return { createManyRecords };

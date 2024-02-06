@@ -25,7 +25,7 @@ type ChipProps = {
   disabled?: boolean;
   clickable?: boolean;
   label: string;
-  maxWidth?: string;
+  maxWidth?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
   leftComponent?: ReactNode;
@@ -70,11 +70,18 @@ const StyledContainer = styled.div<Partial<ChipProps>>`
   gap: ${({ theme }) => theme.spacing(1)};
 
   height: ${({ size }) => (size === ChipSize.Large ? '16px' : '12px')};
-  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '200px')};
+  --chip-horizontal-padding: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? theme.spacing(2) : theme.spacing(1)};
+  max-width: ${({ maxWidth }) =>
+    maxWidth
+      ? `calc( ${maxWidth}px - 2*var(--chip-horizontal-padding))`
+      : '200px'};
+
+  --chip-vertical-padding: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? '3px' : theme.spacing(1)};
 
   overflow: hidden;
-  padding: ${({ theme, variant }) =>
-    variant === ChipVariant.Rounded ? '3px 8px' : theme.spacing(1)};
+  padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
 
   :hover {

@@ -1,4 +1,4 @@
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';

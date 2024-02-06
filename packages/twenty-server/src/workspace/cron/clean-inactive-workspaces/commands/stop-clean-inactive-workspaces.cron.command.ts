@@ -8,7 +8,7 @@ import { cleanInactiveWorkspaceCronPattern } from 'src/workspace/cron/clean-inac
 import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.job';
 
 @Command({
-  name: 'clean-inactive-workspace:cron:stop',
+  name: 'clean-inactive-workspaces:cron:stop',
   description: 'Stops the clean inactive workspaces cron job',
 })
 export class StopCleanInactiveWorkspacesCronCommand extends CommandRunner {

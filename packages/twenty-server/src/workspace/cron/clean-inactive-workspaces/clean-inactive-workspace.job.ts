@@ -2,7 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import {
+  CleanInactiveWorkspaceEmail,
+  DeleteInactiveWorkspaceEmail,
+} from 'twenty-emails';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -12,20 +16,26 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
-import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspaces.email';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
-import DeleteInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/delete-inactive-workspaces.email';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
+type WorkspaceToDeleteData = {
+  workspaceId: string;
+  daysSinceInactive: number;
+};
+
 @Injectable()
-export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
+export class CleanInactiveWorkspaceJob
+  implements MessageQueueJob<CleanInactiveWorkspacesCommandOptions>
+{
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
   private readonly inactiveDaysBeforeDelete;
   private readonly inactiveDaysBeforeEmail;
@@ -46,7 +56,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       this.environmentService.getInactiveDaysBeforeEmail();
   }
 
-  async getmostRecentUpdatedAt(
+  async getMostRecentUpdatedAt(
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
   ): Promise<Date> {
@@ -87,6 +97,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   async warnWorkspaceUsers(
     dataSource: DataSourceEntity,
     daysSinceInactive: number,
+    isDryRun: boolean,
   ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(dataSource);
@@ -101,12 +112,16 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     )?.[0].displayName;
 
     this.logger.log(
-      `Sending workspace ${
+      `${this.getDryRunLogHeader(isDryRun)}Sending workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.email)
         .join(', ')}']`,
     );
+
+    if (isDryRun) {
+      return;
+    }
 
     workspaceMembers.forEach((workspaceMember) => {
       const emailData = {
@@ -124,60 +139,13 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
       this.emailService.send({
         to: workspaceMember.email,
+        bcc: this.environmentService.getEmailSystemAddress(),
         from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
         subject: 'Action Needed to Prevent Workspace Deletion',
         html,
         text,
       });
     });
-  }
-
-  async deleteWorkspace(
-    dataSource: DataSourceEntity,
-    daysSinceInactive: number,
-  ): Promise<void> {
-    this.logger.log(
-      `Sending email to delete workspace ${dataSource.workspaceId} inactive since ${daysSinceInactive} days`,
-    );
-
-    const emailData = {
-      daysSinceDead: daysSinceInactive - this.inactiveDaysBeforeDelete,
-      workspaceId: `${dataSource.workspaceId}`,
-    };
-    const emailTemplate = DeleteInactiveWorkspaceEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
-
-    const text = `Workspace '${dataSource.workspaceId}' should be deleted as inactive since ${daysSinceInactive} days`;
-
-    await this.emailService.send({
-      to: this.environmentService.getEmailSystemAddress(),
-      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
-      subject: 'Action Needed to Delete Workspace',
-      html,
-      text,
-    });
-  }
-
-  async processWorkspace(
-    dataSource: DataSourceEntity,
-    objectsMetadata: ObjectMetadataEntity[],
-  ): Promise<void> {
-    const mostRecentUpdatedAt = await this.getmostRecentUpdatedAt(
-      dataSource,
-      objectsMetadata,
-    );
-    const daysSinceInactive = Math.floor(
-      (new Date().getTime() - mostRecentUpdatedAt.getTime()) /
-        MILLISECONDS_IN_ONE_DAY,
-    );
-
-    if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
-      await this.deleteWorkspace(dataSource, daysSinceInactive);
-    } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
-      await this.warnWorkspaceUsers(dataSource, daysSinceInactive);
-    }
   }
 
   async isWorkspaceCleanable(dataSource: DataSourceEntity): Promise<boolean> {
@@ -194,8 +162,61 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     );
   }
 
-  async handle(): Promise<void> {
-    this.logger.log('Job running...');
+  getDryRunLogHeader(isDryRun: boolean): string {
+    return isDryRun ? 'Dry-run mode: ' : '';
+  }
+
+  chunkArray(array: any[], chunkSize = 6): any[][] {
+    const chunkedArray: any[][] = [];
+    let index = 0;
+
+    while (index < array.length) {
+      chunkedArray.push(array.slice(index, index + chunkSize));
+      index += chunkSize;
+    }
+
+    return chunkedArray;
+  }
+
+  async sendDeleteWorkspaceEmail(
+    workspacesToDelete: WorkspaceToDeleteData[],
+    isDryRun: boolean,
+  ): Promise<void> {
+    this.logger.log(
+      `${this.getDryRunLogHeader(
+        isDryRun,
+      )}Sending email to delete workspaces "${workspacesToDelete
+        .map((workspaceToDelete) => workspaceToDelete.workspaceId)
+        .join('", "')}"`,
+    );
+
+    if (isDryRun || workspacesToDelete.length === 0) {
+      return;
+    }
+
+    const emailTemplate = DeleteInactiveWorkspaceEmail(workspacesToDelete);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    await this.emailService.send({
+      to: this.environmentService.getEmailSystemAddress(),
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      subject: 'Action Needed to Delete Workspaces',
+      html,
+      text,
+    });
+  }
+
+  async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
+    const isDryRun = data.dryRun || false;
+
+    const workspacesToDelete: WorkspaceToDeleteData[] = [];
+
+    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
         `'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION' and 'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
@@ -203,20 +224,67 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
       return;
     }
+
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
 
-    const objectsMetadata = await this.objectMetadataService.findMany();
+    const dataSourcesChunks = this.chunkArray(dataSources);
 
-    for (const dataSource of dataSources) {
-      if (!(await this.isWorkspaceCleanable(dataSource))) {
-        continue;
+    this.logger.log(
+      `${this.getDryRunLogHeader(isDryRun)}On ${
+        dataSources.length
+      } workspaces divided in ${dataSourcesChunks.length} chunks...`,
+    );
+
+    for (const dataSourcesChunk of dataSourcesChunks) {
+      const objectsMetadata = await this.objectMetadataService.findMany({
+        where: {
+          dataSourceId: In(dataSourcesChunk.map((dataSource) => dataSource.id)),
+        },
+      });
+
+      for (const dataSource of dataSourcesChunk) {
+        if (!(await this.isWorkspaceCleanable(dataSource))) {
+          this.logger.log(
+            `${this.getDryRunLogHeader(isDryRun)}Workspace ${
+              dataSource.workspaceId
+            } not cleanable`,
+          );
+          continue;
+        }
+
+        this.logger.log(
+          `${this.getDryRunLogHeader(isDryRun)}Cleaning Workspace ${
+            dataSource.workspaceId
+          }`,
+        );
+
+        const mostRecentUpdatedAt = await this.getMostRecentUpdatedAt(
+          dataSource,
+          objectsMetadata,
+        );
+        const daysSinceInactive = Math.floor(
+          (new Date().getTime() - mostRecentUpdatedAt.getTime()) /
+            MILLISECONDS_IN_ONE_DAY,
+        );
+
+        if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
+          workspacesToDelete.push({
+            daysSinceInactive: daysSinceInactive,
+            workspaceId: `${dataSource.workspaceId}`,
+          });
+        } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
+          await this.warnWorkspaceUsers(
+            dataSource,
+            daysSinceInactive,
+            isDryRun,
+          );
+        }
       }
-
-      this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
-      await this.processWorkspace(dataSource, objectsMetadata);
     }
 
-    this.logger.log('job done!');
+    await this.sendDeleteWorkspaceEmail(workspacesToDelete, isDryRun);
+
+    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}job done!`);
   }
 }

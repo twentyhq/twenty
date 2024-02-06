@@ -63,7 +63,10 @@ export class DatabaseStructureService {
           c.table_schema AS "tableSchema",
           c.table_name AS "tableName",
           c.column_name AS "columnName",
-          c.data_type AS "dataType",
+          CASE 
+            WHEN (c.data_type = 'USER-DEFINED') THEN c.udt_name 
+            ELSE data_type
+          END AS "dataType",
           c.is_nullable AS "isNullable",
           c.column_default AS "columnDefault",
           CASE
@@ -84,10 +87,13 @@ export class DatabaseStructureService {
           information_schema.constraint_column_usage AS ccu
           ON c.column_name = ccu.column_name
           AND c.table_name = ccu.table_name
+          AND c.table_schema = ccu.table_schema
         LEFT JOIN
           information_schema.table_constraints AS pk
           ON pk.constraint_name = ccu.constraint_name
           AND pk.constraint_type = 'PRIMARY KEY'
+          AND pk.table_name = c.table_name
+          AND pk.table_schema = c.table_schema
         LEFT JOIN
           foreign_keys AS fk
           ON c.table_schema = fk.schema_name
@@ -116,9 +122,18 @@ export class DatabaseStructureService {
     }));
   }
 
-  getPostgresDataType(fieldMetadataType: FieldMetadataType): string {
+  getPostgresDataType(
+    fieldMetadataType: FieldMetadataType,
+    fieldMetadataName: string,
+    objectMetadataNameSingular: string,
+  ): string {
     const typeORMType = fieldMetadataTypeToColumnType(fieldMetadataType);
     const mainDataSource = this.typeORMService.getMainDataSource();
+
+    // TODO: remove special case for enum type, should we include this to fieldMetadataTypeToColumnType?
+    if (typeORMType === 'enum') {
+      return `${objectMetadataNameSingular}_${fieldMetadataName}_enum`;
+    }
 
     return mainDataSource.driver.normalizeType({
       type: typeORMType,

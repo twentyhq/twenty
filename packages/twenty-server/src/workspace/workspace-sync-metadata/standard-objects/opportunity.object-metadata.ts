@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
@@ -53,8 +54,38 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconProgressCheck',
     defaultValue: { value: '0' },
   })
-  @IsNullable()
   probability: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.SELECT,
+    label: 'Stage',
+    description: 'Opportunity stage',
+    icon: 'IconProgressCheck',
+    options: [
+      { value: 'new', label: 'New', position: 0, color: 'red' },
+      { value: 'screening', label: 'Screening', position: 1, color: 'purple' },
+      { value: 'meeting', label: 'Meeting', position: 2, color: 'sky' },
+      {
+        value: 'proposal',
+        label: 'Proposal',
+        position: 3,
+        color: 'turquoise',
+      },
+      { value: 'customer', label: 'Customer', position: 4, color: 'yellow' },
+    ],
+    defaultValue: { value: 'new' },
+  })
+  stage: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.NUMBER,
+    label: 'RecordPosition',
+    description: 'Record Position',
+    icon: 'IconHierarchy2',
+  })
+  @IsSystem()
+  @IsNullable()
+  recordPosition: number;
 
   // Relations
   @FieldMetadata({

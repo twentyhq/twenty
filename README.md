@@ -6,7 +6,7 @@
   </a>
 </p>
 
-<h2 align="center" >A Modern Open Source CRM </h3>
+<h2 align="center" >The #1 Open-Source CRM </h3>
 <p align="center">Tailored to your unique business needs</p>
 
 <p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-docs/static/img/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-docs/static/img/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
@@ -26,7 +26,7 @@
 
 We’ve spent thousands of hours grappling with traditional CRMs like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated — customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
-We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you win more deals. 
+We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
 
 <br>
 

@@ -40,7 +40,7 @@ export const WorkspaceMemberCard = ({
   <StyledContainer>
     <Avatar
       avatarUrl={workspaceMember.avatarUrl}
-      colorId={workspaceMember.id}
+      entityId={workspaceMember.id}
       placeholder={workspaceMember.name.firstName || ''}
       type="squared"
       size="xl"
@@ -51,9 +51,7 @@ export const WorkspaceMemberCard = ({
           workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName
         }
       />
-      <StyledEmailText>
-        {workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName}
-      </StyledEmailText>
+      <StyledEmailText>{workspaceMember.userEmail}</StyledEmailText>
     </StyledContent>
 
     {accessory}

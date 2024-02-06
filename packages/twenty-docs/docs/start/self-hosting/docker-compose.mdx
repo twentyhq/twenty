@@ -1,0 +1,62 @@
+---
+title: Docker Compose
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbBrandDocker
+---
+
+## Production docker containers
+
+Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
+
+You will need to set environment variables, a example configuration can be found [here](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/.env.example).
+
+## Docker Compose file
+
+We will soon update the documentation with an up-to-date docker compose file.
+Here is one that was proposed on Discord by a community member:
+
+
+```yaml
+version: "3.9"
+services:
+
+  twenty:
+    image: twentycrm/twenty-front:${TAG}
+    ports:
+      - 3001:3000
+    environment:
+      - SIGN_IN_PREFILLED=${SIGN_IN_PREFILLED}
+      - REACT_APP_SERVER_BASE_URL=${LOCAL_SERVER_URL}
+      - REACT_APP_SERVER_AUTH_URL=${LOCAL_SERVER_URL}/auth
+      - REACT_APP_SERVER_FILES_URL ${LOCAL_SERVER_URL}/files
+    depends_on:
+      - backend
+
+  backend:
+    image: twentycrm/twenty-server:${TAG}
+    ports:
+      - 3000:3000
+    environment:
+      - SIGN_IN_PREFILLED=${SIGN_IN_PREFILLED}
+      - PG_DATABASE_URL=${PG_DATABASE_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
+      - PORT=3000
+      - STORAGE_TYPE=local
+      - STORAGE_LOCAL_PATH=.local-storage
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - LOGIN_TOKEN_SECRET=${LOGIN_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+    depends_on:
+      - db
+
+  db:
+    image: twentycrm/twenty-postgres:${TAG}
+    volumes:
+      - twenty-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
+  
+volumes:
+  twenty-db-data:
+```

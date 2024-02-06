@@ -1,10 +1,22 @@
 import { useRecoilValue } from 'recoil';
 
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
 
-export const RecordBoardContextMenu = () => {
-  const { selectedCardIdsSelector } = useRecordBoardScopedStates();
-  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
-  return <ContextMenu selectedIds={selectedCardIds}></ContextMenu>;
+type RecordBoardContextMenuProps = {
+  recordBoardId: string;
+};
+
+export const RecordBoardContextMenu = ({
+  recordBoardId,
+}: RecordBoardContextMenuProps) => {
+  const { getSelectedRecordIdsSelector } = useRecordBoardStates(recordBoardId);
+
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+
+  if (!selectedRecordIds.length) {
+    return null;
+  }
+
+  return <ContextMenu />;
 };

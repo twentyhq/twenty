@@ -1,11 +1,11 @@
-import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
+import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 import { GraphQLView } from '@/views/types/GraphQLView';
 
 import { currentViewIdScopedState } from '../currentViewIdScopedState';
 
 import { viewsByIdScopedSelector } from './viewsByIdScopedSelector';
 
-export const currentViewScopedSelector = createSelectorScopeMap<
+export const currentViewScopedSelector = createSelectorReadOnlyScopeMap<
   GraphQLView | undefined
 >({
   key: 'currentViewScopedSelector',

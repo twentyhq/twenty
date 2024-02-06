@@ -1,11 +1,22 @@
-import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 
-export const RecordBoardActionBar = () => {
-  const { selectedCardIdsSelector } = useRecordBoardScopedStates();
-  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
-  return <ActionBar selectedIds={selectedCardIds}></ActionBar>;
+type RecordBoardActionBarProps = {
+  recordBoardId: string;
+};
+
+export const RecordBoardActionBar = ({
+  recordBoardId,
+}: RecordBoardActionBarProps) => {
+  const { getSelectedRecordIdsSelector } = useRecordBoardStates(recordBoardId);
+
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+
+  if (!selectedRecordIds.length) {
+    return null;
+  }
+
+  return <ActionBar />;
 };

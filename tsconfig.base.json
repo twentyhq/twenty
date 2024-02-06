@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "twenty-emails": ["packages/twenty-emails/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
