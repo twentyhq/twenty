@@ -11,6 +11,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
+import { AppPath } from '@/types/AppPath';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -49,7 +50,7 @@ export const RecordIndexPage = () => {
       !isNonEmptyString(objectNamePlural) &&
       onboardingStatus === OnboardingStatus.Completed
     ) {
-      navigate('/');
+      navigate(AppPath.Index);
     }
   }, [objectNamePlural, navigate, onboardingStatus]);
 

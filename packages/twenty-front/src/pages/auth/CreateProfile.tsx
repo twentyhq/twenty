@@ -15,6 +15,7 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -115,7 +116,7 @@ export const CreateProfile = () => {
             }) as any,
         );
 
-        navigate('/');
+        navigate(AppPath.Index);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: 'error',
