@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useOverwriteFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useOverwriteFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
@@ -14,8 +14,8 @@ export const useAppendToFindManyRecordsQueryInCache = ({
       objectMetadataItem,
     });
 
-  const { overwriteFindManyRecordsQueryInCache } =
-    useOverwriteFindManyRecordsQueryInCache({
+  const { upsertFindManyRecordsQueryInCache: overwriteFindManyRecordsQueryInCache } =
+    useUpsertFindManyRecordsQueryInCache({
       objectMetadataItem,
     });
 

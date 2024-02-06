@@ -1,7 +1,7 @@
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useOverwriteFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useOverwriteFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 
 export const useInjectIntoActivityTargetInlineCellCache = () => {
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
@@ -10,9 +10,9 @@ export const useInjectIntoActivityTargetInlineCellCache = () => {
     });
 
   const {
-    overwriteFindManyRecordsQueryInCache:
+    upsertFindManyRecordsQueryInCache:
       overwriteFindManyActivityTargetsQueryInCache,
-  } = useOverwriteFindManyRecordsQueryInCache({
+  } = useUpsertFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 

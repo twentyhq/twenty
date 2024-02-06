@@ -7,7 +7,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useOverwriteFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useOverwriteFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 
 export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
@@ -17,8 +17,8 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
     });
 
   const {
-    overwriteFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
-  } = useOverwriteFindManyRecordsQueryInCache({
+    upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
+  } = useUpsertFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivity,
   });
 
@@ -40,9 +40,9 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
   });
 
   const {
-    overwriteFindManyRecordsQueryInCache:
+    upsertFindManyRecordsQueryInCache:
       overwriteFindManyActivityTargetsQueryInCache,
-  } = useOverwriteFindManyRecordsQueryInCache({
+  } = useUpsertFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 

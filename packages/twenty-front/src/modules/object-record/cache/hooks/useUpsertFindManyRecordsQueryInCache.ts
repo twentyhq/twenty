@@ -8,7 +8,7 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 
-export const useOverwriteFindManyRecordsQueryInCache = ({
+export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -17,7 +17,7 @@ export const useOverwriteFindManyRecordsQueryInCache = ({
 
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
 
-  const overwriteFindManyRecordsQueryInCache = <
+  const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
@@ -46,6 +46,6 @@ export const useOverwriteFindManyRecordsQueryInCache = ({
   };
 
   return {
-    overwriteFindManyRecordsQueryInCache,
+    upsertFindManyRecordsQueryInCache,
   };
 };
