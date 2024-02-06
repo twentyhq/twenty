@@ -63,17 +63,9 @@ export class OpenApiService {
     return schema;
   }
 
-  async generateMetaDataSchema(request: Request): Promise<OpenAPIV3.Document> {
+  async generateMetaDataSchema(): Promise<OpenAPIV3.Document> {
+    //TODO Rest MetaData api?
     const schema = baseSchema();
-
-    // TODO MetaData Rest Api?
-    try {
-      const { workspace } = await this.tokenService.validateToken(request);
-
-      workspace;
-    } catch (err) {
-      return schema;
-    }
 
     return schema;
   }
