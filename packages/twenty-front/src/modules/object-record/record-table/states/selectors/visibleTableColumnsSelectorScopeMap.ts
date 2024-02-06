@@ -1,4 +1,4 @@
-import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
+import { availableTableColumnKeysSelectorScopeMap } from '@/object-record/record-table/states/selectors/availableTableColumnKeysSelectorScopeMap';
 import { tableLabelIdentifierColumnSelectorScopeMap } from '@/object-record/record-table/states/selectors/tableLabelIdentifierColumnSelectorScopeMap';
 import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
@@ -11,9 +11,8 @@ export const visibleTableColumnsSelectorScopeMap =
       ({ get }) => {
         const columns = get(tableColumnsStateScopeMap({ scopeId }));
         const availableColumnKeys = get(
-          availableTableColumnsStateScopeMap({ scopeId }),
-        ).map(({ fieldMetadataId }) => fieldMetadataId);
-
+          availableTableColumnKeysSelectorScopeMap({ scopeId }),
+        );
         const labelIdentifierColumn = get(
           tableLabelIdentifierColumnSelectorScopeMap({ scopeId }),
         );
