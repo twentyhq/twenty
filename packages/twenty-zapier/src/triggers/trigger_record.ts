@@ -29,7 +29,7 @@ export default {
         key: 'nameSingular',
         required: true,
         label: 'Record Name',
-        dynamic: `${findObjectNamesSingularKey}.nameSingular`,
+        dynamic: `${findObjectNamesSingularKey}.nameSingular.labelSingular`,
         altersDynamicFields: true,
       },
       {
