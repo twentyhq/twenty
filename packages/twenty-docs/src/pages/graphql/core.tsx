@@ -6,19 +6,19 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import Layout from '@theme/Layout';
 import { GraphiQL } from 'graphiql';
 
-import Playground from '../components/playground';
+import Playground from '../../components/playground';
 
 import explorerCss from '!css-loader!@graphiql/plugin-explorer/dist/style.css';
 import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
-const GraphQlComponent = ({ token }) => {
+const GraphQlComponent = ({ token, baseUrl }) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
 
   const fetcher = createGraphiQLFetcher({
-    url: 'https://api.twenty.com/graphql',
+    url: baseUrl + '/graphql',
   });
 
   // We load graphiql style using useEffect as it breaks remaining docs style
@@ -52,6 +52,7 @@ const GraphQlComponent = ({ token }) => {
 
 const graphQL = () => {
   const [token, setToken] = useState();
+  const [baseUrl, setBaseUrl] = useState();
   const { setTheme } = useTheme();
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const graphQL = () => {
     return () => window.removeEventListener('storage', handleThemeChange);
   }, []);
 
-  const children = <GraphQlComponent token={token} />;
+  const children = <GraphQlComponent token={token} baseUrl={baseUrl} />;
 
   return (
     <Layout
@@ -79,7 +80,14 @@ const graphQL = () => {
       description="GraphQL Playground for Twenty"
     >
       <BrowserOnly>
-        {() => <Playground children={children} setToken={setToken} />}
+        {() => (
+          <Playground
+            children={children}
+            setToken={setToken}
+            setBaseUrl={setBaseUrl}
+            subdocName="core"
+          />
+        )}
       </BrowserOnly>
     </Layout>
   );

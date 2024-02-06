@@ -24,7 +24,7 @@ export class OpenApiService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
-  async generateSchema(request: Request): Promise<OpenAPIV3.Document> {
+  async generateCoreSchema(request: Request): Promise<OpenAPIV3.Document> {
     const schema = baseSchema();
 
     let objectMetadataItems;
@@ -42,8 +42,8 @@ export class OpenApiService {
       return schema;
     }
     schema.paths = objectMetadataItems.reduce((paths, item) => {
-      paths[`/rest/${item.namePlural}`] = computeManyResultPath(item);
-      paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
+      paths[`/${item.namePlural}`] = computeManyResultPath(item);
+      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
     }, schema.paths as OpenAPIV3.PathsObject);
@@ -59,6 +59,21 @@ export class OpenApiService {
         '401': getErrorResponses('Unauthorized'),
       },
     };
+
+    return schema;
+  }
+
+  async generateMetaDataSchema(request: Request): Promise<OpenAPIV3.Document> {
+    const schema = baseSchema();
+
+    // TODO MetaData Rest Api?
+    try {
+      const { workspace } = await this.tokenService.validateToken(request);
+
+      workspace;
+    } catch (err) {
+      return schema;
+    }
 
     return schema;
   }

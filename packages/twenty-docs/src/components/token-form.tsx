@@ -7,17 +7,25 @@ import tokenForm from '!css-loader!./token-form.css';
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
+  setBaseUrl?: (baseUrl: string) => void;
   isTokenValid: boolean;
   setIsTokenValid: (boolean) => void;
+  subdocName?: string;
 };
 
 const TokenForm = ({
   setOpenApiJson,
   setToken,
+  setBaseUrl: submitBaseUrl,
   isTokenValid,
   setIsTokenValid,
+  subdocName,
 }: TokenFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [baseUrl, setBaseUrl] = useState(
+    parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
+      'https://api.twenty.com',
+  );
   const token =
     parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ??
     '';
@@ -30,12 +38,18 @@ const TokenForm = ({
     await submitToken(event.target.value);
   };
 
+  const updateBaseUrl = (baseUrl) => {
+    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: baseUrl }));
+    setBaseUrl(baseUrl);
+    submitBaseUrl?.(baseUrl);
+  };
+
   const validateToken = (openApiJson) => setIsTokenValid(!!openApiJson.tags);
 
   const getJson = async (token: string) => {
     setIsLoading(true);
 
-    return await fetch('https://api.twenty.com/open-api', {
+    return await fetch(baseUrl + '/open-api/' + subdocName, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -61,6 +75,7 @@ const TokenForm = ({
   useEffect(() => {
     (async () => {
       await submitToken(token);
+      submitBaseUrl?.(baseUrl);
     })();
   }, []);
 
@@ -109,6 +124,18 @@ const TokenForm = ({
                   className={`loader ${!isLoading && 'not-visible'}`}
                 />
               </div>
+            </p>
+            <label>Base Url</label>
+            <p>
+              <input
+                className={'input'}
+                type="text"
+                readOnly={isLoading}
+                placeholder="https://api.twenty.com"
+                defaultValue={baseUrl}
+                onChange={(event) => updateBaseUrl(event.target.value)}
+                onBlur={() => submitToken(token)}
+              />
             </p>
           </form>
         </div>
