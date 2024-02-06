@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -48,8 +47,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [generatedApiKey] = useRecoilState(
     generatedApiKeyFamilyState(apiKeyId),
   );
-  const { performOptimisticEvict } = useOptimisticEvict();
-
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
@@ -68,7 +65,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
       idToUpdate: apiKeyId,
       updateOneRecordInput: { revokedAt: DateTime.now().toString() },
     });
-    performOptimisticEvict('ApiKey', 'id', apiKeyId);
     if (redirect) {
       navigate('/settings/developers');
     }
