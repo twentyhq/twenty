@@ -17,6 +17,8 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { FetchAllWorkspacesMessagesJob } from 'src/workspace/cron/fetch-all-workspaces-messages/fetch-all-workspaces-messages.job';
+import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
     EnvironmentModule,
     TypeORMModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    ConnectedAccountModule,
   ],
   providers: [
     {
@@ -53,6 +56,10 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
       useClass: CleanInactiveWorkspaceJob,
     },
     { provide: EmailSenderJob.name, useClass: EmailSenderJob },
+    {
+      provide: FetchAllWorkspacesMessagesJob.name,
+      useClass: FetchAllWorkspacesMessagesJob,
+    },
   ],
 })
 export class JobsModule {

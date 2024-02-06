@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 
@@ -14,26 +13,25 @@ export type GmailFullSyncJobData = {
 
 @Injectable()
 export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
+  private readonly logger = new Logger(GmailFullSyncJob.name);
+
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly gmailRefreshAccessTokenService: GmailRefreshAccessTokenService,
-    private readonly fetchWorkspaceMessagesService: GmailFullSyncService,
+    private readonly gmailFullSyncService: GmailFullSyncService,
   ) {}
 
   async handle(data: GmailFullSyncJobData): Promise<void> {
-    console.log(
+    this.logger.log(
       `gmail full-sync for workspace ${data.workspaceId} and account ${
         data.connectedAccountId
-      } ${
-        data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''
-      } with ${this.environmentService.getMessageQueueDriverType()}`,
+      } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
     );
     await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
       data.workspaceId,
       data.connectedAccountId,
     );
 
-    await this.fetchWorkspaceMessagesService.fetchConnectedAccountThreads(
+    await this.gmailFullSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
       data.nextPageToken,
