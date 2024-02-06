@@ -80,4 +80,14 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   company: CompanyObjectMetadata;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Opportunity',
+    description: 'Attachment opportunity',
+    icon: 'IconBuildingSkyscraper',
+    joinColumn: 'opportunityId',
+  })
+  @IsNullable()
+  opportunity: CompanyObjectMetadata;
 }
