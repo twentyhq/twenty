@@ -1,4 +1,5 @@
 import { ComponentProps, ReactNode } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -71,26 +72,18 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledSkeletonLoader = styled.div`
-  width: 108px;
-  height: 24px;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.xl};
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  animation: loading ${({ theme }) => theme.animation.duration.normal}s infinite;
-
-  @keyframes loading {
-    0% {
-      opacity: 0.7;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.7;
-    }
-  }
-`;
+const StyledSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.quaternary}
+      highlightColor={theme.background.transparent.light}
+      borderRadius={50}
+    >
+      <Skeleton height={24} width={108} />
+    </SkeletonTheme>
+  );
+};
 
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
