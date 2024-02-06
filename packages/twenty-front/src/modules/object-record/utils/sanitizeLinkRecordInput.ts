@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-export const sanitizeLink = (url: string) => {
-  const hostname = getUrlHostName(url) || getUrlHostName(`https://${url}`);
-  return hostname.replace(/\/+$/, '').replace(/\?.*$/, '');
-};
+export const sanitizeLink = (url: string) =>
+  getUrlHostName(url) || getUrlHostName(`https://${url}`);
 
 const getUrlHostName = (url: string) => {
   const urlSchema = z.string().url();
