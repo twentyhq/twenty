@@ -86,7 +86,7 @@ export type CreateRefreshTokenInput = {
   expiresAt: Scalars['DateTime'];
 };
 
-export type CreateWorkspaceInput = {
+export type CreateWorkspaceSchemaInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   displayName?: InputMaybe<Scalars['String']>;
   domainName?: InputMaybe<Scalars['String']>;
@@ -235,7 +235,7 @@ export type Mutation = {
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createWorkspace: Workspace;
+  createWorkspaceSchema: Workspace;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;
@@ -273,8 +273,8 @@ export type MutationCreateOneRefreshTokenArgs = {
 };
 
 
-export type MutationCreateWorkspaceArgs = {
-  data: CreateWorkspaceInput;
+export type MutationCreateWorkspaceSchemaArgs = {
+  data: CreateWorkspaceSchemaInput;
 };
 
 
@@ -879,12 +879,12 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
 
-export type CreateWorkspaceMutationVariables = Exact<{
-  input: CreateWorkspaceInput;
+export type CreateWorkspaceSchemaMutationVariables = Exact<{
+  input: CreateWorkspaceSchemaInput;
 }>;
 
 
-export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string } };
+export type CreateWorkspaceSchemaMutation = { __typename?: 'Mutation', createWorkspaceSchema: { __typename?: 'Workspace', id: string } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1766,39 +1766,39 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export const CreateWorkspaceDocument = gql`
-    mutation CreateWorkspace($input: CreateWorkspaceInput!) {
-  createWorkspace(data: $input) {
+export const CreateWorkspaceSchemaDocument = gql`
+    mutation CreateWorkspaceSchema($input: CreateWorkspaceSchemaInput!) {
+  createWorkspaceSchema(data: $input) {
     id
   }
 }
     `;
-export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export type CreateWorkspaceSchemaMutationFn = Apollo.MutationFunction<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>;
 
 /**
- * __useCreateWorkspaceMutation__
+ * __useCreateWorkspaceSchemaMutation__
  *
- * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateWorkspaceSchemaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceSchemaMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ * const [createWorkspaceSchemaMutation, { data, loading, error }] = useCreateWorkspaceSchemaMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+export function useCreateWorkspaceSchemaMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
+        return Apollo.useMutation<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>(CreateWorkspaceSchemaDocument, options);
       }
-export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
-export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
-export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export type CreateWorkspaceSchemaMutationHookResult = ReturnType<typeof useCreateWorkspaceSchemaMutation>;
+export type CreateWorkspaceSchemaMutationResult = Apollo.MutationResult<CreateWorkspaceSchemaMutation>;
+export type CreateWorkspaceSchemaMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>;
 export const DeleteCurrentWorkspaceDocument = gql`
     mutation DeleteCurrentWorkspace {
   deleteCurrentWorkspace {

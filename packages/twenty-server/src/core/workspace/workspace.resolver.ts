@@ -13,8 +13,8 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
-import { CreateWorkspaceInput } from 'src/core/workspace/dtos/create-workspace-input';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
+import { CreateWorkspaceSchemaInput } from 'src/core/workspace/dtos/create-workspace-schema-input';
 
 import { Workspace } from './workspace.entity';
 
@@ -40,11 +40,11 @@ export class WorkspaceResolver {
 
   @Mutation(() => Workspace)
   @UseGuards(JwtAuthGuard)
-  async createWorkspace(
-    @Args('data') data: CreateWorkspaceInput,
+  async createWorkspaceSchema(
+    @Args('data') data: CreateWorkspaceSchemaInput,
     @AuthUser() user: User,
   ) {
-    return await this.workspaceService.createWorkspace(user, data);
+    return await this.workspaceService.createWorkspaceSchema(user, data);
   }
 
   @Mutation(() => Workspace)

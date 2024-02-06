@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @InputType()
-export class CreateWorkspaceInput {
+export class CreateWorkspaceSchemaInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()

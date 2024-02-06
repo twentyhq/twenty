@@ -20,7 +20,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { useCreateWorkspaceMutation } from '~/generated/graphql';
+import { useCreateWorkspaceSchemaMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -49,7 +49,7 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
 
-  const [createWorkspace] = useCreateWorkspaceMutation();
+  const [createWorkspaceSchema] = useCreateWorkspaceSchemaMutation();
   const apolloMetadataClient = useApolloMetadataClient();
 
   // Form
@@ -69,7 +69,7 @@ export const CreateWorkspace = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        const result = await createWorkspace({
+        const result = await createWorkspaceSchema({
           variables: {
             input: {
               displayName: data.name,
@@ -95,7 +95,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, apolloMetadataClient, createWorkspace],
+    [enqueueSnackBar, navigate, apolloMetadataClient, createWorkspaceSchema],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
