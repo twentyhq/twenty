@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/SettingsDevelopersApiKeys';
+import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
 import {
   PageDecorator,
   PageDecoratorArgs,

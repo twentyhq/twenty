@@ -2,8 +2,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/SettingsDevelopersApiKeys';
-import { SettingsDevelopersWebhooks } from '~/pages/settings/developers/SettingsDevelopersWebhooks';
+import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
+import { SettingsDevelopersWebhooks } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooks';
 
 export const SettingsDevelopers = () => {
   return (
