@@ -27,6 +27,14 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   }>({
     email: '',
   });
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      updateBlockedEmailList(formValues.email);
+      setFormValues({ email: '' });
+    }
+  };
+
   return (
     <StyledContainer>
       <StyledLinkContainer>
@@ -40,6 +48,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
             }));
           }}
           fullWidth
+          onKeyDown={handleKeyDown}
         />
       </StyledLinkContainer>
       <Button
