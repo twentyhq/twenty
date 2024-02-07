@@ -31,6 +31,7 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: space-between;
   overflow-y: auto;
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledUpperPartContainer = styled.div`
@@ -39,7 +40,6 @@ const StyledUpperPartContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-start;
 `;
 
