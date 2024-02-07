@@ -106,7 +106,7 @@ const TokenForm = ({
   return (
     <div className="form-container">
       <form className="form">
-        <div className="backButton" onClick={() => history.push('/')}>
+        <div className="backButton" onClick={() => history.goBack()}>
           <TbChevronLeft size={18} />
           <span>Back</span>
         </div>
@@ -143,7 +143,7 @@ const TokenForm = ({
             <select
               className="select"
               onChange={(event) =>
-                history.push(
+                history.replace(
                   '/' +
                     location.pathname.split('/').at(-2) +
                     '/' +

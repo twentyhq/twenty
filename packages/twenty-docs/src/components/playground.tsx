@@ -30,7 +30,7 @@ const Playground = ({
           style={{
             position: 'absolute',
             width: '100%',
-            height: 'calc(100% - 45px)',
+            height: 'calc(100vh - var(--ifm-navbar-height) - 45px)',
             top: '45px',
             display: 'flex',
             flexFlow: 'column',
