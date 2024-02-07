@@ -8,7 +8,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { RecordFieldInputScope, RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
+import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
