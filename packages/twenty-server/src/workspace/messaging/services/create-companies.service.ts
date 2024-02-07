@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
-
-import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
-import { Record } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
+import { EntityManager } from 'typeorm';
 
 import { capitalize } from 'src/utils/capitalize';
-import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 @Injectable()
 export class CreateCompaniesService {
   constructor(
@@ -16,60 +14,27 @@ export class CreateCompaniesService {
 
   async createCompanyFromDomainName(
     domainName: string,
-    workspaceId: string,
-    objectMetadataItemCollection: ObjectMetadataInterface[],
+    dataSourceMetadata: DataSourceEntity,
+    manager: EntityManager,
   ) {
     const companyName = capitalize(domainName.split('.')[0]);
 
-    const companyObjectMetadata = objectMetadataItemCollection.find(
-      (item) => item.nameSingular === 'company',
+    const companyId = v4();
+
+    const existingCompany = await manager.query(
+      `SELECT * FROM company WHERE domain_name = '${domainName}'`,
     );
 
-    if (!companyObjectMetadata) {
+    if (existingCompany.length > 0) {
       return;
     }
 
-    let relatedCompanyId = v4();
-
-    const existingCompany =
-      await this.workspaceQueryRunnunerService.executeAndParse<Record>(
-        `query {companyCollection(filter: {domainName: {eq: "${domainName}"}}) {
-                edges {
-                  node {
-                    id
-                  }
-                }
-              }
-            }
-          `,
-        companyObjectMetadata,
-        '',
-        workspaceId,
-      );
-
-    if (existingCompany.edges?.length) {
-      relatedCompanyId = existingCompany.edges[0].node.id;
-    }
-
-    await this.workspaceQueryRunnunerService.execute(
-      `mutation {
-          insertIntocompanyCollection(objects: ${stringifyWithoutKeyQuote([
-            {
-              id: relatedCompanyId,
-              name: companyName,
-              domainName: domainName,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          ])}) {
-            affectedCount
-            records {
-              id
-            }
-          }
-        }
-      `,
-      workspaceId,
+    await manager.query(
+      `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, domain_name)
+      VALUES ($1, $2, $3)`,
+      [companyId, companyName, domainName],
     );
+
+    return companyId;
   }
 }

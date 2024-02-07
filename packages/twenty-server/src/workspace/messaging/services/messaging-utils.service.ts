@@ -14,6 +14,7 @@ import { MessageService } from 'src/workspace/messaging/message/message.service'
 import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { CreateCompaniesService } from 'src/workspace/messaging/services/create-companies.service';
 
 @Injectable()
 export class MessagingUtilsService {
@@ -21,6 +22,7 @@ export class MessagingUtilsService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
     private readonly messageThreadService: MessageThreadService,
+    private readonly createCompaniesService: CreateCompaniesService,
   ) {}
 
   public createQueriesFromMessageIds(
@@ -200,6 +202,16 @@ export class MessagingUtilsService {
           participantPersonId,
           participantWorkspaceMemberId,
         ],
+      );
+
+      const companyDomainName = participant.handle
+        .split('@')?.[1]
+        .toLowerCase();
+
+      await this.createCompaniesService.createCompanyFromDomainName(
+        companyDomainName,
+        dataSourceMetadata,
+        manager,
       );
     }
   }
