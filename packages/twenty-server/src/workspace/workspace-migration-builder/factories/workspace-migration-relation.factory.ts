@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
+
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import {
   WorkspaceMigrationColumnActionType,
@@ -15,7 +17,7 @@ import { camelCase } from 'src/utils/camel-case';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 @Injectable()
-export class RelationWorkspaceMigrationFactory {
+export class WorkspaceMigrationRelationFactory {
   constructor() {}
 
   /**
@@ -23,9 +25,9 @@ export class RelationWorkspaceMigrationFactory {
    */
   async create(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
-    createRelationMetadataCollection: RelationMetadataEntity[],
+    relationMetadataCollection: RelationMetadataEntity[],
+    action: WorkspaceMigrationBuilderAction,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
     const originalObjectMetadataMap = originalObjectMetadataCollection.reduce(
       (result, currentObject) => {
         result[currentObject.id] = currentObject;
@@ -35,17 +37,15 @@ export class RelationWorkspaceMigrationFactory {
       {} as Record<string, ObjectMetadataEntity>,
     );
 
-    if (createRelationMetadataCollection.length > 0) {
-      const createRelationWorkspaceMigrations =
-        await this.createRelationMigration(
+    switch (action) {
+      case WorkspaceMigrationBuilderAction.CREATE:
+        return this.createRelationMigration(
           originalObjectMetadataMap,
-          createRelationMetadataCollection,
+          relationMetadataCollection,
         );
-
-      workspaceMigrations.push(...createRelationWorkspaceMigrations);
+      default:
+        return [];
     }
-
-    return workspaceMigrations;
   }
 
   private async createRelationMigration(
