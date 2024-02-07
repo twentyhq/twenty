@@ -85,7 +85,6 @@ export const RecordIndexOptionsDropdownContent = ({
     handleReorderColumns,
     visibleTableColumns,
     hiddenTableColumns,
-    labelIdentifierTableColumn,
   } = useRecordIndexOptionsForTable(recordIndexId);
 
   const {
@@ -106,9 +105,6 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const hiddenRecordFields =
     viewType === ViewType.Kanban ? hiddenBoardFields : hiddenTableColumns;
-
-  const labelIdentifierField =
-    viewType === ViewType.Kanban ? null : labelIdentifierTableColumn;
 
   const handleReorderFields =
     viewType === ViewType.Kanban
@@ -162,7 +158,6 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuSeparator />
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
-            isFirstFieldEditable={!labelIdentifierField}
             fields={visibleRecordFields}
             isDraggable
             onDragEnd={handleReorderFields}

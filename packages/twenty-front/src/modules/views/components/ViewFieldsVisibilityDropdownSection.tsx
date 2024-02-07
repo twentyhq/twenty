@@ -24,7 +24,6 @@ import { isDefined } from '~/utils/isDefined';
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];
   isDraggable: boolean;
-  isFirstFieldEditable?: boolean;
   onDragEnd?: OnDragEndResponder;
   onVisibilityChange: (
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
@@ -35,7 +34,6 @@ type ViewFieldsVisibilityDropdownSectionProps = {
 export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   isDraggable,
-  isFirstFieldEditable = true,
   onDragEnd,
   onVisibilityChange,
   title,
@@ -64,7 +62,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             isActive: openToolTipIndex === index,
           }
         : null,
-      !isFirstFieldEditable && index === 0
+      index === 0
         ? null
         : {
             Icon: field.isVisible ? IconMinus : IconPlus,
@@ -84,13 +82,9 @@ export const ViewFieldsVisibilityDropdownSection = ({
     },
   });
 
-  const draggableItems = isDraggable ? [...fields] : [];
-  const nonDraggableItems = isDraggable ? [] : [...fields];
-
-  if (isDraggable && !isFirstFieldEditable) {
-    draggableItems.shift();
-    nonDraggableItems.push(fields[0]);
-  }
+  const [firstField, ...otherFields] = fields;
+  const nonDraggableItems = isDraggable ? [firstField] : fields;
+  const draggableItems = isDraggable ? otherFields : [];
 
   return (
     <div ref={ref}>

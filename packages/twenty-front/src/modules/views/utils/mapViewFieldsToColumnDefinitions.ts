@@ -1,33 +1,88 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewField } from '../types/ViewField';
 
-export const mapViewFieldsToColumnDefinitions = (
-  viewFields: ViewField[],
-  fieldsMetadata: ColumnDefinition<FieldMetadata>[],
-): ColumnDefinition<FieldMetadata>[] => {
-  return viewFields
-    .map((viewField) => {
-      const correspondingFieldMetadata = fieldsMetadata.find(
-        ({ fieldMetadataId }) => viewField.fieldMetadataId === fieldMetadataId,
-      );
+export const mapViewFieldsToColumnDefinitions = ({
+  columnDefinitions,
+  objectMetadataItem,
+  viewFields,
+}: {
+  columnDefinitions: ColumnDefinition<FieldMetadata>[];
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'labelIdentifierFieldMetadataId'
+  >;
+  viewFields: ViewField[];
+}): ColumnDefinition<FieldMetadata>[] => {
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+  const labelIdentifierFieldMetadataId = labelIdentifierFieldMetadataItem?.id;
 
-      return correspondingFieldMetadata
-        ? {
-            fieldMetadataId: viewField.fieldMetadataId,
-            label: correspondingFieldMetadata.label,
-            metadata: correspondingFieldMetadata.metadata,
-            infoTooltipContent: correspondingFieldMetadata.infoTooltipContent,
-            iconName: correspondingFieldMetadata.iconName,
-            type: correspondingFieldMetadata.type,
-            position: viewField.position,
-            size: viewField.size ?? correspondingFieldMetadata.size,
-            isVisible: viewField.isVisible,
-            viewFieldId: viewField.id,
-          }
-        : null;
+  const columnDefinitionsByFieldMetadataId = mapArrayToObject(
+    columnDefinitions,
+    ({ fieldMetadataId }) => fieldMetadataId,
+  );
+
+  let labelIdentifierIndex = -1;
+
+  const columnDefinitionsFromViewFields = viewFields
+    .map((viewField, index) => {
+      const correspondingColumnDefinition =
+        columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
+
+      if (!correspondingColumnDefinition) return null;
+
+      const isLabelIdentifier =
+        viewField.fieldMetadataId === labelIdentifierFieldMetadataId;
+
+      if (isLabelIdentifier) {
+        labelIdentifierIndex = index;
+      }
+
+      return {
+        fieldMetadataId: viewField.fieldMetadataId,
+        label: correspondingColumnDefinition.label,
+        metadata: correspondingColumnDefinition.metadata,
+        infoTooltipContent: correspondingColumnDefinition.infoTooltipContent,
+        iconName: correspondingColumnDefinition.iconName,
+        type: correspondingColumnDefinition.type,
+        position: isLabelIdentifier ? 0 : viewField.position,
+        size: viewField.size ?? correspondingColumnDefinition.size,
+        isVisible: isLabelIdentifier || viewField.isVisible,
+        viewFieldId: viewField.id,
+      };
     })
     .filter(assertNotNull);
+
+  // No label identifier set for this object
+  if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;
+
+  // Label identifier field found in view fields
+  // => move it to the start of the list
+  if (labelIdentifierIndex > -1) {
+    return moveArrayItem(columnDefinitionsFromViewFields, {
+      fromIndex: labelIdentifierIndex,
+      toIndex: 0,
+    });
+  }
+
+  // Label identifier field not found in view fields
+  // => create column definition and add it at the start of the list
+  const labelIdentifierColumnDefinition =
+    columnDefinitionsByFieldMetadataId[labelIdentifierFieldMetadataId];
+
+  return [
+    {
+      ...labelIdentifierColumnDefinition,
+      position: 0,
+      isVisible: true,
+    },
+    ...columnDefinitionsFromViewFields,
+  ];
 };

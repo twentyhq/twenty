@@ -1,5 +1,3 @@
-import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
-import { tableLabelIdentifierColumnSelectorScopeMap } from '@/object-record/record-table/states/selectors/tableLabelIdentifierColumnSelectorScopeMap';
 import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
@@ -10,28 +8,8 @@ export const visibleTableColumnsSelectorScopeMap =
       ({ scopeId }) =>
       ({ get }) => {
         const columns = get(tableColumnsStateScopeMap({ scopeId }));
-        const availableColumnKeys = get(
-          availableTableColumnsStateScopeMap({ scopeId }),
-        ).map(({ fieldMetadataId }) => fieldMetadataId);
-        const labelIdentifierColumn = get(
-          tableLabelIdentifierColumnSelectorScopeMap({ scopeId }),
-        );
-
-        const sortedVisibleColumns = columns
-          .filter(
-            (column) =>
-              column.isVisible &&
-              column.fieldMetadataId !==
-                labelIdentifierColumn?.fieldMetadataId &&
-              availableColumnKeys.includes(column.fieldMetadataId),
-          )
+        return columns
+          .filter((column) => column.isVisible)
           .sort((columnA, columnB) => columnA.position - columnB.position);
-
-        return labelIdentifierColumn
-          ? [
-              { ...labelIdentifierColumn, isVisible: true },
-              ...sortedVisibleColumns,
-            ]
-          : sortedVisibleColumns;
       },
   });

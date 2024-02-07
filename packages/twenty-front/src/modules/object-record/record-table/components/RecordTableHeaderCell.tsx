@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
@@ -10,6 +10,7 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 
@@ -80,21 +81,18 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
 }) => {
-  const {
-    getLabelIdentifierTableColumnSelector,
-    getResizeFieldOffsetState,
-    getTableColumnsByKeySelector,
-    getTableColumnsState,
-  } = useRecordTableStates();
+  const { getResizeFieldOffsetState, getTableColumnsState } =
+    useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     getResizeFieldOffsetState(),
   );
 
   const tableColumns = useRecoilValue(getTableColumnsState());
-  const tableColumnsByKey = useRecoilValue(getTableColumnsByKeySelector());
-  const labelIdentifierColumn = useRecoilValue(
-    getLabelIdentifierTableColumnSelector(),
+  const tableColumnsByKey = useMemo(
+    () =>
+      mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
+    [tableColumns],
   );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
@@ -165,9 +163,6 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const isLabelIdentifierColumn =
-    labelIdentifierColumn?.fieldMetadataId === column.fieldMetadataId;
-
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -184,7 +179,7 @@ export const RecordTableHeaderCell = ({
         onMouseLeave={() => setIconVisibility(false)}
       >
         <ColumnHeadWithDropdown column={column} />
-        {iconVisibility && isLabelIdentifierColumn && (
+        {iconVisibility && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}

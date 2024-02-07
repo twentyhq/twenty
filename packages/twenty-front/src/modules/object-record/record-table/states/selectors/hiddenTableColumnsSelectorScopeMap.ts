@@ -1,7 +1,7 @@
 import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
-import { tableColumnsByKeySelectorScopeMap } from '@/object-record/record-table/states/selectors/tableColumnsByKeySelectorScopeMap';
-import { visibleTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/visibleTableColumnsSelectorScopeMap';
+import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 export const hiddenTableColumnsSelectorScopeMap =
   createSelectorReadOnlyScopeMap({
@@ -9,26 +9,22 @@ export const hiddenTableColumnsSelectorScopeMap =
     get:
       ({ scopeId }) =>
       ({ get }) => {
-        const columnsByKey = get(
-          tableColumnsByKeySelectorScopeMap({ scopeId }),
-        );
+        const tableColumns = get(tableColumnsStateScopeMap({ scopeId }));
         const availableColumns = get(
           availableTableColumnsStateScopeMap({ scopeId }),
         );
-        const visibleColumnKeys = get(
-          visibleTableColumnsSelectorScopeMap({ scopeId }),
-        ).map(({ fieldMetadataId }) => fieldMetadataId);
+        const tableColumnsByKey = mapArrayToObject(
+          tableColumns,
+          ({ fieldMetadataId }) => fieldMetadataId,
+        );
 
         const hiddenColumns = availableColumns
           .filter(
             ({ fieldMetadataId }) =>
-              !visibleColumnKeys.includes(fieldMetadataId),
+              !(fieldMetadataId in tableColumnsByKey) ||
+              !tableColumnsByKey[fieldMetadataId].isVisible,
           )
-          .map((availableColumn) => ({
-            ...(columnsByKey[availableColumn.fieldMetadataId] ??
-              availableColumn),
-            isVisible: false,
-          }));
+          .map((hiddenColumn) => ({ ...hiddenColumn, isVisible: false }));
 
         return hiddenColumns;
       },

@@ -65,10 +65,11 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableTableColumns(availableTableColumns);
 
     setTableColumns(
-      mapViewFieldsToColumnDefinitions(
-        signInBackgroundMockViewFields,
-        signInBackgroundMockColumnDefinitions,
-      ),
+      mapViewFieldsToColumnDefinitions({
+        viewFields: signInBackgroundMockViewFields,
+        columnDefinitions: signInBackgroundMockColumnDefinitions,
+        objectMetadataItem,
+      }),
     );
   }, [
     setViewObjectMetadataId,

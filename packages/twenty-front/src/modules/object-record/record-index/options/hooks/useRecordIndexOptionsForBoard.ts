@@ -14,6 +14,7 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useViews } from '@/views/hooks/internal/useViews';
 import { GraphQLView } from '@/views/types/GraphQLView';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -102,11 +103,11 @@ export const useRecordIndexOptionsForBoard = ({
         return;
       }
 
-      const reorderFields = [...recordIndexFieldDefinitions];
-      const [removed] = reorderFields.splice(result.source.index - 1, 1);
-      reorderFields.splice(result.destination.index - 1, 0, removed);
-
-      const updatedFields = reorderFields.map((field, index) => ({
+      const reorderedFields = moveArrayItem(recordIndexFieldDefinitions, {
+        fromIndex: result.source.index - 1,
+        toIndex: result.destination.index - 1,
+      });
+      const updatedFields = reorderedFields.map((field, index) => ({
         ...field,
         position: index,
       }));

@@ -17,18 +17,10 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const {
-    getLabelIdentifierTableColumnSelector,
-    getVisibleTableColumnsSelector,
-  } = useRecordTableStates();
+  const { getVisibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-  const labelIdentifierColumn = useRecoilValue(
-    getLabelIdentifierTableColumnSelector(),
-  );
 
-  const isLabelIdentifierColumn =
-    labelIdentifierColumn?.fieldMetadataId === column.fieldMetadataId;
   const secondVisibleColumn = visibleTableColumns[1];
   const isSecondVisibleColumn =
     column.fieldMetadataId === secondVisibleColumn?.fieldMetadataId;
@@ -36,9 +28,9 @@ export const RecordTableColumnDropdownMenu = ({
   const isLastVisibleColumn =
     column.fieldMetadataId === lastVisibleColumn?.fieldMetadataId;
 
-  const canHide = !isLabelIdentifierColumn;
-  const canMoveLeft = !isLabelIdentifierColumn && !isSecondVisibleColumn;
-  const canMoveRight = !isLabelIdentifierColumn && !isLastVisibleColumn;
+  const canHide = !column.isLabelIdentifier;
+  const canMoveLeft = !column.isLabelIdentifier && !isSecondVisibleColumn;
+  const canMoveRight = !column.isLabelIdentifier && !isLastVisibleColumn;
 
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();

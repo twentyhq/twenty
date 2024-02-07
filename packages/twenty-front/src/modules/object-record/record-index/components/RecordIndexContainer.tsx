@@ -74,18 +74,18 @@ export const RecordIndexContainer = ({
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewFields: ViewField[]) => {
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-        );
+        const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
+          viewFields,
+          columnDefinitions,
+          objectMetadataItem,
+        });
+
+        setTableColumns(newFieldDefinitions);
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
 
-        const newFieldDefinitions = mapViewFieldsToColumnDefinitions(
-          viewFields,
-          columnDefinitions,
-        );
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
@@ -94,7 +94,7 @@ export const RecordIndexContainer = ({
         )
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
       },
-    [columnDefinitions, setTableColumns],
+    [columnDefinitions, objectMetadataItem, setTableColumns],
   );
 
   return (
