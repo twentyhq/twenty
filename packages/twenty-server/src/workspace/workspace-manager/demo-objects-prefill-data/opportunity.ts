@@ -74,13 +74,18 @@ export const seedDemoOpportunity = async (
       'amountCurrencyCode',
       'closeDate',
       'stage',
-      'position',
       'probability',
       'pipelineStepId',
       'pointOfContactId',
       'companyId',
+      'position',
     ])
     .orIgnore()
-    .values(opportunities)
+    .values(
+      opportunities.map((opportunity, index) => ({
+        ...opportunity,
+        position: index,
+      })),
+    )
     .execute();
 };

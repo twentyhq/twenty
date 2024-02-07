@@ -19,7 +19,7 @@ export const personPrefillData = async (
     jobTitle: person.jobTitle,
     city: person.city,
     avatarUrl: person.avatarUrl,
-    position: null,
+    position: index,
     companyId: companies[Math.floor(index / 2)].id,
   }));
 
