@@ -18,7 +18,7 @@ export class CaptchaGuard implements CanActivate {
 
     const { token } = ctx.getArgs();
 
-    const result = await this.captchaService.validate(token);
+    const result = await this.captchaService.validate(token || '');
 
     if (result.success) return true;
     else
