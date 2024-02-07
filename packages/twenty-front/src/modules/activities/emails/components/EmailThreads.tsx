@@ -186,6 +186,8 @@ export const EmailThreads = ({
                 divider={index < timelineThreads.length - 1}
                 thread={thread}
                 onClick={() => openEmailThread(thread.id)}
+                // visibility={thread.visibility}
+                visibility="metadata"
               />
             ))}
           </Card>
