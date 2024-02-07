@@ -58,6 +58,10 @@ export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
   const theme = useTheme();
+  const openLinkInTab = (link: string) => {
+    window.open(link);
+  };
+
   return (
     <StyledContainer>
       <StyledSection>
@@ -77,7 +81,7 @@ export const SettingsIntegrationComponent = ({
       {integration.type === IntegrationType.Soon ? (
         <StyledSoonPill />
       ) : (
-        <StyledButton>
+        <StyledButton onClick={() => openLinkInTab(integration.link)}>
           {integration.type === IntegrationType.Use ? (
             <IconBolt size={theme.icon.size.md} />
           ) : (

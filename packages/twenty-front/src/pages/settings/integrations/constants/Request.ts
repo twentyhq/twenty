@@ -10,7 +10,7 @@ const requestIntegrations: IntegrationCategory = {
       to: null,
       type: IntegrationType.Goto,
       text: 'Request an integration on Github conversations',
-      link: '',
+      link: 'https://github.com/twentyhq/twenty/issues/new/choose',
       linkText: 'Go to GitHub',
     },
   ],

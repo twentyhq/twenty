@@ -10,7 +10,7 @@ const windmillIntegrations: IntegrationCategory = {
       to: null,
       type: IntegrationType.Goto,
       text: 'Create a workflow with Windmill',
-      link: '',
+      link: 'https://www.windmill.dev',
       linkText: 'Go to Windmill',
     },
   ],

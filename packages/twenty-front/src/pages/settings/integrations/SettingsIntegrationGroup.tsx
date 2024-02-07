@@ -35,12 +35,17 @@ const StyledIntegrationsSection = styled.div`
 export const SettingsIntegrationGroup = ({
   integrationGroup,
 }: SettingsIntegrationGroupProps) => {
+  const openLinkInTab = (link: string) => {
+    window.open(link);
+  };
   return (
     <Section>
       <StyledIntegrationGroupHeader>
         <H2Title title={integrationGroup.title} />
         {integrationGroup.hyperlink && (
-          <StyledGroupLink>
+          <StyledGroupLink
+            onClick={() => openLinkInTab(integrationGroup.hyperlink ?? '')}
+          >
             <div>{integrationGroup.hyperlinkText}</div>
             <div>→</div>
           </StyledGroupLink>

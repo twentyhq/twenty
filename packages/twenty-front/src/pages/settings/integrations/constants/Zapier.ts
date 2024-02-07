@@ -4,14 +4,14 @@ const zapierIntegrations: IntegrationCategory = {
   key: 'zapier',
   title: 'With Zapier',
   hyperlinkText: 'See all zaps',
-  hyperlink: 'https://example.com/zapier',
+  hyperlink: 'https://zapier.com/apps/twenty/integrations',
   integrations: [
     {
       from: { key: 'twenty', image: '/images/integrations/Twenty.png' },
       to: { key: 'mailchimp', image: '/images/integrations/MailChimp.png' },
       type: IntegrationType.Use,
       text: 'Send new leads to Mailchimp',
-      link: '',
+      link: 'https://zapier.com/apps/twenty/integrations/mailchimp',
     },
     {
       from: { key: 'twenty', image: '/images/integrations/Twenty.png' },
@@ -26,7 +26,7 @@ const zapierIntegrations: IntegrationCategory = {
       type: IntegrationType.Soon,
       linkText: 'Use',
       text: 'Send new submissions to Twenty',
-      link: '',
+      link: 'https://zapier.com/apps/twenty/integrations/tally',
     },
   ],
 };
