@@ -19,7 +19,7 @@ export const personPrefillData = async (
     jobTitle: person.jobTitle,
     city: person.city,
     avatarUrl: person.avatarUrl,
-    recordPosition: null,
+    position: index,
     companyId: companies[Math.floor(index / 2)].id,
   }));
 
@@ -34,7 +34,7 @@ export const personPrefillData = async (
       'jobTitle',
       'city',
       'avatarUrl',
-      'recordPosition',
+      'position',
       'companyId',
     ])
     .orIgnore()

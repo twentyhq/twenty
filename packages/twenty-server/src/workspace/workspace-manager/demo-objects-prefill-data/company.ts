@@ -15,9 +15,12 @@ export const companyPrefillData = async (
       'address',
       'employees',
       'linkedinLinkUrl',
+      'position',
     ])
     .orIgnore()
-    .values(companiesDemo)
+    .values(
+      companiesDemo.map((company, index) => ({ ...company, position: index })),
+    )
     .returning('*')
     .execute();
 };
