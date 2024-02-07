@@ -143,12 +143,12 @@ export class WorkspaceMigrationEnumService {
     }
 
     await queryRunner.query(`
-    UPDATE "${schemaName}"."${tableName}"
-    SET "${columnDefinition.columnName}" = ${defaultValue}
-    WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
-      .map((e) => `'${e}'`)
-      .join(', ')})
-  `);
+      UPDATE "${schemaName}"."${tableName}"
+      SET "${columnDefinition.columnName}" = ${defaultValue}
+      WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
+        .map((e) => `'${e}'`)
+        .join(', ')})
+    `);
   }
 
   private async updateColumnToNewEnum(
