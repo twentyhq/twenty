@@ -12,9 +12,9 @@ import { mapObjectMetadataByUniqueIdentifier } from 'src/workspace/workspace-syn
 import { StandardRelationFactory } from 'src/workspace/workspace-sync-metadata/factories/standard-relation.factory';
 import { WorkspaceRelationComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-relation.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { WorkspaceSyncFactory } from 'src/workspace/workspace-sync-metadata/factories/workspace-sync.factory';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
+import { RelationWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/relation-workspace-migration.factory';
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
@@ -26,7 +26,7 @@ export class WorkspaceSyncRelationMetadataService {
     private readonly standardRelationFactory: StandardRelationFactory,
     private readonly workspaceRelationComparator: WorkspaceRelationComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
-    private readonly workspaceSyncFactory: WorkspaceSyncFactory,
+    private readonly relationWorkspaceMigrationFactory: RelationWorkspaceMigrationFactory,
   ) {}
 
   async synchronize(
@@ -34,12 +34,9 @@ export class WorkspaceSyncRelationMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<WorkspaceMigrationEntity[]> {
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
-    const workspaceMigrationRepository = manager.getRepository(
-      WorkspaceMigrationEntity,
-    );
 
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
@@ -99,17 +96,11 @@ export class WorkspaceSyncRelationMetadataService {
 
     // Create migrations
     const workspaceRelationMigrations =
-      await this.workspaceSyncFactory.createRelationMigration(
+      await this.relationWorkspaceMigrationFactory.create(
         originalObjectMetadataCollection,
         metadataRelationUpdaterResult.createdRelationMetadataCollection,
-        storage.relationMetadataDeleteCollection,
       );
 
-    // Save migrations into DB
-    const workspaceMigrations = await workspaceMigrationRepository.save(
-      workspaceRelationMigrations,
-    );
-
-    return workspaceMigrations;
+    return workspaceRelationMigrations;
   }
 }

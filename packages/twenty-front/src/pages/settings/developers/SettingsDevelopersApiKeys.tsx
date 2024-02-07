@@ -36,7 +36,6 @@ export const SettingsDevelopersApiKeys = () => {
   const { records: apiKeys } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
     filter: { revokedAt: { is: 'NULL' } },
-    orderBy: {},
   });
 
   return (
