@@ -19,15 +19,23 @@ import { ExceptionHandlerService } from 'src/integrations/exception-handler/exce
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
+import { User } from 'src/core/user/user.entity';
+import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
 
-import { useExceptionHandler } from './integrations/exception-handler/hooks/use-exception-handler.hook';
-import { User } from './core/user/user.entity';
+import { CreateContextFactory } from './factories/create-context.factory';
+
+export interface GraphQLContext extends YogaDriverServerContext<'express'> {
+  user?: User;
+  workspace?: Workspace;
+}
 
 @Injectable()
 export class GraphQLConfigService
   implements GqlOptionsFactory<YogaDriverConfig<'express'>>
 {
   constructor(
+    private readonly createContextFactory: CreateContextFactory,
     private readonly tokenService: TokenService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly environmentService: EnvironmentService,
@@ -37,7 +45,7 @@ export class GraphQLConfigService
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode = this.environmentService.isDebugMode();
     const config: YogaDriverConfig = {
-      context: ({ req }) => ({ req }),
+      context: (context) => this.createContextFactory.create(context),
       autoSchemaFile: true,
       include: [CoreModule],
       conditionalSchema: async (context) => {
@@ -93,9 +101,15 @@ export class GraphQLConfigService
       },
       resolvers: { JSON: GraphQLJSON },
       plugins: [
+        useThrottler({
+          ttl: this.environmentService.getApiRateLimitingTtl(),
+          limit: this.environmentService.getApiRateLimitingLimit(),
+          identifyFn: (context) => {
+            return context.user?.id ?? context.req.ip ?? 'anonymous';
+          },
+        }),
         useExceptionHandler({
           exceptionHandlerService: this.exceptionHandlerService,
-          tokenService: this.tokenService,
         }),
       ],
     };
