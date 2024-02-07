@@ -18,7 +18,14 @@ const RestApiComponent = ({ openApiJson }) => {
   }, []);
 
   return (
-    <API apiDescriptionDocument={JSON.stringify(openApiJson)} router="hash" />
+    <div
+      style={{
+        height: 'calc(100vh - var(--ifm-navbar-height) - 45px)',
+        overflow: 'auto',
+      }}
+    >
+      <API apiDescriptionDocument={JSON.stringify(openApiJson)} router="hash" />
+    </div>
   );
 };
 
