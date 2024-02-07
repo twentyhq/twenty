@@ -104,7 +104,13 @@ export const EmailThreadPreview = ({
         ];
 
   return (
-    <StyledCardContent onClick={() => onClick()} divider={divider}>
+    <StyledCardContent
+      onClick={() => onClick()}
+      divider={divider}
+      style={
+        thread.visibility === 'share_everything' ? {} : { cursor: 'default' }
+      }
+    >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
