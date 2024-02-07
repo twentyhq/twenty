@@ -18,8 +18,8 @@
 }
 
 .link {
-    color: #a3c0f8;
-    text-decoration: none;
+    color: white;
+    text-decoration: underline;
     position: relative;
     font-weight: bold;
     transition: color 0.3s ease;
