@@ -4,13 +4,10 @@ import { v4 } from 'uuid';
 import { EntityManager } from 'typeorm';
 
 import { capitalize } from 'src/utils/capitalize';
-import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 @Injectable()
 export class CreateCompaniesService {
-  constructor(
-    private readonly workspaceQueryRunnunerService: WorkspaceQueryRunnerService,
-  ) {}
+  constructor() {}
 
   async createCompanyFromDomainName(
     domainName: string,
@@ -22,15 +19,15 @@ export class CreateCompaniesService {
     const companyId = v4();
 
     const existingCompany = await manager.query(
-      `SELECT * FROM company WHERE domain_name = '${domainName}'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = '${domainName}'`,
     );
 
     if (existingCompany.length > 0) {
-      return;
+      return existingCompany[0].id;
     }
 
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, domain_name)
+      `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, "domainName")
       VALUES ($1, $2, $3)`,
       [companyId, companyName, domainName],
     );
