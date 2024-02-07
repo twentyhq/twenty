@@ -3,7 +3,7 @@ import React from 'react';
 import GraphQlPlayground from '../../components/graphql-playground';
 
 const CoreGraphql = () => {
-  return <GraphQlPlayground path={'metadata'} subdocName={'metadata'} />;
+  return <GraphQlPlayground subDoc={'metadata'} />;
 };
 
 export default CoreGraphql;

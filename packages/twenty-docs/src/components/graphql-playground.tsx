@@ -11,6 +11,11 @@ import Playground from './playground';
 import explorerCss from '!css-loader!@graphiql/plugin-explorer/dist/style.css';
 import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
+const SubDocToPath = {
+  core: 'graphql',
+  metadata: 'metadata',
+};
+
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
 const GraphQlComponent = ({ token, baseUrl, path }) => {
   const explorer = explorerPlugin({
@@ -53,13 +58,7 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   );
 };
 
-const GraphQlPlayground = ({
-  path,
-  subdocName,
-}: {
-  path: string;
-  subdocName: string;
-}) => {
+const GraphQlPlayground = ({ subDoc }: { subDoc: 'core' | 'metadata' }) => {
   const [token, setToken] = useState();
   const [baseUrl, setBaseUrl] = useState();
   const { setTheme } = useTheme();
@@ -82,7 +81,11 @@ const GraphQlPlayground = ({
   }, []);
 
   const children = (
-    <GraphQlComponent token={token} baseUrl={baseUrl} path={path} />
+    <GraphQlComponent
+      token={token}
+      baseUrl={baseUrl}
+      path={SubDocToPath[subDoc]}
+    />
   );
 
   return (
@@ -96,7 +99,7 @@ const GraphQlPlayground = ({
             children={children}
             setToken={setToken}
             setBaseUrl={setBaseUrl}
-            subdocName={subdocName}
+            subdocName={subDoc}
           />
         )}
       </BrowserOnly>

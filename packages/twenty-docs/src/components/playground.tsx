@@ -8,9 +8,9 @@ const Playground = ({
   setOpenApiJson,
   setToken,
   setBaseUrl,
-  subdocName,
+  subDoc,
 }: Partial<React.PropsWithChildren | TokenFormProps> & {
-  subdocName: string;
+  subDoc: string;
 }) => {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,7 @@ const Playground = ({
         setBaseUrl={setBaseUrl}
         isTokenValid={isTokenValid}
         setIsTokenValid={setIsTokenValid}
-        subdocName={subdocName}
+        subDoc={subDoc}
         setLoadingState={setIsLoading}
       />
       {!isTokenValid && (

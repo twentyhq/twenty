@@ -12,7 +12,7 @@ export type TokenFormProps = {
   isTokenValid: boolean;
   setIsTokenValid: (boolean) => void;
   setLoadingState: (boolean) => void;
-  subdocName?: string;
+  subDoc?: string;
 };
 
 const TokenForm = ({
@@ -21,7 +21,7 @@ const TokenForm = ({
   setBaseUrl: submitBaseUrl,
   isTokenValid,
   setIsTokenValid,
-  subdocName,
+  subDoc,
   setLoadingState,
 }: TokenFormProps) => {
   const history = useHistory();
@@ -55,14 +55,13 @@ const TokenForm = ({
   };
 
   const validateToken = (openApiJson) => {
-    console.log(!!openApiJson.tags);
     setIsTokenValid(!!openApiJson.tags);
   };
 
   const getJson = async (token: string) => {
     updateLoading(true);
 
-    return await fetch(baseUrl + '/open-api/' + subdocName, {
+    return await fetch(baseUrl + '/open-api/' + subDoc, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

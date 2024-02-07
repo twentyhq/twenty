@@ -37,7 +37,7 @@ const restApi = () => {
           <Playground
             children={children}
             setOpenApiJson={setOpenApiJson}
-            subdocName="core"
+            subDoc="core"
           />
         )}
       </BrowserOnly>
