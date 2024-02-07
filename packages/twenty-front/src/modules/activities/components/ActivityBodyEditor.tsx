@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
@@ -14,7 +13,6 @@ import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotk
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -210,8 +208,12 @@ export const ActivityBodyEditor = ({
         keyboardEvent.stopImmediatePropagation();
 
         const blockIdentifier = editor.getTextCursorPosition().block;
+        const currentBlockContent = blockIdentifier?.content?.[0];
+        const currentTextInsideTheBlock =
+          currentBlockContent?.type === 'text' ? currentBlockContent?.text : '';
+
         editor.updateBlock(blockIdentifier, {
-          content: keyboardEvent.key,
+          content: currentTextInsideTheBlock + keyboardEvent.key,
         });
         editor.setTextCursorPosition(blockIdentifier, 'end');
         editor.focus();
