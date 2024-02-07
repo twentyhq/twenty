@@ -317,7 +317,12 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
-    const threadVisibility = await workspaceDataSource?.query(
+    const threadVisibility:
+      | {
+          id: string;
+          visibility: 'metadata' | 'subject' | 'share_everything';
+        }[]
+      | undefined = await workspaceDataSource?.query(
       `
       SELECT
           "messageThread".id,
@@ -338,21 +343,26 @@ export class TimelineMessagingService {
 
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
 
-    const threadVisibilityByThreadId: {
-      [key: string]: 'metadata' | 'subject' | 'share_everything';
-    } = threadVisibility?.reduce((threadVisibilityAcc, threadVisibility) => {
-      threadVisibilityAcc[threadVisibility.id] =
-        visibilityValues[
-          Math.max(
-            visibilityValues.indexOf(threadVisibility.visibility),
-            visibilityValues.indexOf(
-              threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
-            ),
-          )
-        ];
+    const threadVisibilityByThreadId:
+      | {
+          [key: string]: 'metadata' | 'subject' | 'share_everything';
+        }
+      | undefined = threadVisibility?.reduce(
+      (threadVisibilityAcc, threadVisibility) => {
+        threadVisibilityAcc[threadVisibility.id] =
+          visibilityValues[
+            Math.max(
+              visibilityValues.indexOf(threadVisibility.visibility),
+              visibilityValues.indexOf(
+                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+              ),
+            )
+          ];
 
-      return threadVisibilityAcc;
-    }, {});
+        return threadVisibilityAcc;
+      },
+      {},
+    );
 
     console.log('threadVisibilityByThreadId', threadVisibilityByThreadId);
 
@@ -403,7 +413,7 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility: threadVisibilityByThreadId[messageThreadId],
+        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,
