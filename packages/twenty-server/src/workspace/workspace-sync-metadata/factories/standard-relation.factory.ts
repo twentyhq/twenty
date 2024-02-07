@@ -4,7 +4,7 @@ import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/inte
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
+import { standardObjectMetadataCollection } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { assert } from 'src/utils/assert';
@@ -18,7 +18,7 @@ export class StandardRelationFactory {
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
-    return standardObjectMetadata.flatMap((standardObjectMetadata) =>
+    return standardObjectMetadataCollection.flatMap((standardObjectMetadata) =>
       this.createRelationMetadata(
         standardObjectMetadata,
         context,

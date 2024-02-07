@@ -11,6 +11,7 @@ import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceLogsService } from 'src/workspace/workspace-sync-metadata/services/workspace-logs.service';
+import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -48,6 +49,9 @@ export class WorkspaceSyncMetadataService {
 
     try {
       const storage = new WorkspaceSyncStorage();
+      const workspaceMigrationRepository = manager.getRepository(
+        WorkspaceMigrationEntity,
+      );
 
       // Retrieve feature flags
       const workspaceFeatureFlagsMap =
@@ -71,13 +75,14 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
+      // Save workspace migrations into the database
+      const workspaceMigrations = await workspaceMigrationRepository.save([
+        ...workspaceObjectMigrations,
+        ...workspaceRelationMigrations,
+      ]);
+
       // If we're running a dry run, rollback the transaction and do not execute migrations
       if (options?.dryRun) {
-        const workspaceMigrations = [
-          ...workspaceObjectMigrations,
-          ...workspaceRelationMigrations,
-        ];
-
         this.logger.log('Running in dry run mode, rolling back transaction');
 
         await queryRunner.rollbackTransaction();

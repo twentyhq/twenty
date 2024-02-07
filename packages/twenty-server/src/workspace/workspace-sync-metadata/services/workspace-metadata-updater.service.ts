@@ -162,6 +162,7 @@ export class WorkspaceMetadataUpdaterService {
     const relationMetadataRepository = manager.getRepository(
       RelationMetadataEntity,
     );
+    const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
 
     /**
      * Create relation metadata
@@ -179,6 +180,20 @@ export class WorkspaceMetadataUpdaterService {
         storage.relationMetadataDeleteCollection.map(
           (relationMetadata) => relationMetadata.id,
         ),
+      );
+    }
+
+    /**
+     * Delete related field metadata
+     */
+    const fieldMetadataDeleteCollectionOnlyRelation =
+      storage.fieldMetadataDeleteCollection.filter(
+        (field) => field.type === FieldMetadataType.RELATION,
+      );
+
+    if (fieldMetadataDeleteCollectionOnlyRelation.length > 0) {
+      await fieldMetadataRepository.delete(
+        fieldMetadataDeleteCollectionOnlyRelation.map((field) => field.id),
       );
     }
 
