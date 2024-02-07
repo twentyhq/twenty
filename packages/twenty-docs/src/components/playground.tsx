@@ -15,7 +15,7 @@ const Playground = ({
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   return (
-    <>
+    <div style={{ position: 'relative' }}>
       <TokenForm
         setOpenApiJson={setOpenApiJson}
         setToken={setToken}
@@ -25,34 +25,49 @@ const Playground = ({
         subdocName={subdocName}
         setLoadingState={setIsLoading}
       />
-      {!isTokenValid && !isLoading && (
+      {!isTokenValid && (
         <div
           style={{
+            position: 'absolute',
+            width: '100%',
+            height: 'calc(100% - 45px)',
+            top: '45px',
             display: 'flex',
+            flexFlow: 'column',
             alignItems: 'center',
-            flex: 1,
             justifyContent: 'center',
+            zIndex: 2,
+            background: 'rgba(23,23,23, 0.2)',
           }}
         >
-          <label>
-            To load your playground schema,{' '}
+          <div
+            style={{
+              width: '50%',
+              background: 'rgba(23,23,23, 0.8)',
+              color: 'white',
+              padding: '16px',
+              borderRadius: '8px',
+            }}
+          >
+            A token is required as APIs are dynamically generated for each
+            workspace based on their unique metadata. <br /> Generate your token
+            under{' '}
             <a
               className="link"
               href="https://app.twenty.com/settings/developers"
             >
-              generate an API key
-            </a>{' '}
-            or use your own tenant.
-          </label>
+              Settings &gt; Developers
+            </a>
+          </div>
+          {isLoading && (
+            <div className="loader-container">
+              <TbLoader2 className="loader" />
+            </div>
+          )}
         </div>
       )}
-      {!isTokenValid && isLoading && (
-        <div className="loader-container">
-          <TbLoader2 className="loader" />
-        </div>
-      )}
-      {isTokenValid && children}
-    </>
+      {children}
+    </div>
   );
 };
 

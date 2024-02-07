@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from '@docusaurus/router';
+import { useHistory, useLocation } from '@docusaurus/router';
 import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
 
@@ -25,6 +25,7 @@ const TokenForm = ({
   setLoadingState,
 }: TokenFormProps) => {
   const history = useHistory();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState(
     parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
@@ -48,12 +49,15 @@ const TokenForm = ({
   };
 
   const updateBaseUrl = (baseUrl) => {
-    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: baseUrl }));
     setBaseUrl(baseUrl);
     submitBaseUrl?.(baseUrl);
+    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: baseUrl }));
   };
 
-  const validateToken = (openApiJson) => setIsTokenValid(!!openApiJson.tags);
+  const validateToken = (openApiJson) => {
+    console.log(!!openApiJson.tags);
+    setIsTokenValid(!!openApiJson.tags);
+  };
 
   const getJson = async (token: string) => {
     updateLoading(true);
@@ -68,7 +72,10 @@ const TokenForm = ({
 
         return result;
       })
-      .catch(() => updateLoading(false));
+      .catch(() => {
+        updateLoading(false);
+        setIsTokenValid(false);
+      });
   };
 
   const submitToken = async (token) => {
@@ -83,8 +90,8 @@ const TokenForm = ({
 
   useEffect(() => {
     (async () => {
+      updateBaseUrl(baseUrl);
       await submitToken(token);
-      submitBaseUrl?.(baseUrl);
     })();
   }, []);
 
@@ -100,7 +107,7 @@ const TokenForm = ({
   return (
     <div className="form-container">
       <form className="form">
-        <div className="backButton" onClick={() => history.goBack()}>
+        <div className="backButton" onClick={() => history.push('/')}>
           <TbChevronLeft size={18} />
           <span>Back</span>
         </div>
@@ -132,6 +139,25 @@ const TokenForm = ({
             onBlur={() => submitToken(token)}
           />
         </div>
+        {!location.pathname.includes('rest-api') && (
+          <div className="inputWrapper" style={{ maxWidth: '100px' }}>
+            <select
+              className="select"
+              onChange={(event) =>
+                history.push(
+                  '/' +
+                    location.pathname.split('/').at(-2) +
+                    '/' +
+                    event.target.value,
+                )
+              }
+              value={location.pathname.split('/').at(-1)}
+            >
+              <option value="core">Core</option>
+              <option value="metadata">Metadata</option>
+            </select>
+          </div>
+        )}
       </form>
     </div>
   );

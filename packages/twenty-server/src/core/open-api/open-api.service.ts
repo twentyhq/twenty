@@ -67,6 +67,8 @@ export class OpenApiService {
     //TODO Add once Rest MetaData api is ready
     const schema = baseSchema();
 
+    schema.tags = [{ name: 'placeholder' }];
+
     return schema;
   }
 }

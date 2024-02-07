@@ -16,6 +16,9 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
+  if (!baseUrl || !token) {
+    return <></>;
+  }
 
   const fetcher = createGraphiQLFetcher({
     url: baseUrl + '/' + path,
