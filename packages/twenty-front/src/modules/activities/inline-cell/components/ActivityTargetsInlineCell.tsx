@@ -67,7 +67,7 @@ export const ActivityTargetsInlineCell = ({
               activityId={activity?.id ?? ''}
               activityTargetObjectRecords={activityTargetObjectRecords as any}
               onBlur={onBlur}
-          />
+            />
           }
           label="Relations"
           displayModeContent={
@@ -77,7 +77,7 @@ export const ActivityTargetsInlineCell = ({
           }
           isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
           onInlineCellClick={onFocus}
-      />
+        />
       </FieldContextProvider>
     </RecordFieldInputScope>
   );
