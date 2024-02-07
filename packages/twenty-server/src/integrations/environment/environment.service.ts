@@ -288,11 +288,11 @@ export class EnvironmentService {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
 
-  getLoggedInLongTtl(): number {
-    return this.configService.get<number>('LOGGED_IN_LONG_TTL') ?? 3000;
+  getApiRateLimitingTtl(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_TTL') ?? 100;
   }
 
-  getLoggedInLongLimit(): number {
-    return this.configService.get<number>('LOGGED_IN_LONG_LIMIT') ?? 20;
+  getApiRateLimitingLimit(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 200;
   }
 }

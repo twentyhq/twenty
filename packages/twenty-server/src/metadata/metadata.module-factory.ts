@@ -26,8 +26,8 @@ export const metadataModuleFactory = async (
     resolvers: { JSON: GraphQLJSON },
     plugins: [
       useThrottler({
-        ttl: environmentService.getLoggedInLongTtl(),
-        limit: environmentService.getLoggedInLongLimit(),
+        ttl: environmentService.getApiRateLimitingTtl(),
+        limit: environmentService.getApiRateLimitingLimit(),
         identifyFn: (context) => {
           return context.user?.id ?? context.req.ip ?? 'anonymous';
         },

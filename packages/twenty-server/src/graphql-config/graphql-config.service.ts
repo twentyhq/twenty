@@ -102,8 +102,8 @@ export class GraphQLConfigService
       resolvers: { JSON: GraphQLJSON },
       plugins: [
         useThrottler({
-          ttl: this.environmentService.getLoggedInLongTtl(),
-          limit: this.environmentService.getLoggedInLongLimit(),
+          ttl: this.environmentService.getApiRateLimitingTtl(),
+          limit: this.environmentService.getApiRateLimitingLimit(),
           identifyFn: (context) => {
             return context.user?.id ?? context.req.ip ?? 'anonymous';
           },
