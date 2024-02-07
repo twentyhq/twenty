@@ -135,7 +135,7 @@ export class WorkspaceMigrationEnumService {
     if (columnDefinition.defaultValue) {
       if (Array.isArray(columnDefinition.defaultValue)) {
         defaultValue = `ARRAY[${columnDefinition.defaultValue
-          .map((e) => this.getStringifyValue(e))
+          .map((e) => `'${e}'`)
           .join(', ')}]`;
       } else {
         defaultValue = this.getStringifyValue(columnDefinition.defaultValue);
