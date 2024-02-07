@@ -9,7 +9,7 @@ import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-w
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.job';
+import { CleanInactiveWorkspaceJob } from 'src/workspace/workspace-cleaner/cron/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-sync.job';

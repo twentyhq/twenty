@@ -23,7 +23,7 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
-import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
+import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
