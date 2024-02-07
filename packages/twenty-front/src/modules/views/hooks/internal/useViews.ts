@@ -54,7 +54,7 @@ export const useViews = (scopeId: string) => {
         input: {
           id: view.id,
           name: view.name,
-          isCompactView: view.isCompactView,
+          isCompact: view.isCompact,
         },
       },
       refetchQueries: [findManyQuery],

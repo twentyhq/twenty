@@ -109,8 +109,8 @@ export const RecordIndexBoardContainerEffect = ({
   }, [setActionBarEntries, setContextMenuEntries]);
 
   useEffect(() => {
-    if (currentView?.isCompactView !== isCompactModeActive) {
-      setIsCompactModeActive(!!currentView?.isCompactView);
+    if (currentView?.isCompact !== isCompactModeActive) {
+      setIsCompactModeActive(!!currentView?.isCompact);
     }
     // We don't want to re-run this effect when the state changes.
     // We only want to make sure that the state reflects the current view.

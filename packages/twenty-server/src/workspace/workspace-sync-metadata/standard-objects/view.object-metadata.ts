@@ -47,7 +47,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     description: 'Describes if the view is in compact mode',
     defaultValue: { value: false },
   })
-  isCompactView: boolean;
+  isCompact: boolean;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
