@@ -1,6 +1,6 @@
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { availableTableColumnKeysSelectorScopeMap } from '@/object-record/record-table/states/selectors/availableTableColumnKeysSelectorScopeMap';
+import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
 import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
 
@@ -26,8 +26,8 @@ export const tableLabelIdentifierColumnSelectorScopeMap =
         if (!objectMetadataItem) return null;
 
         const availableColumnKeys = get(
-          availableTableColumnKeysSelectorScopeMap({ scopeId }),
-        );
+          availableTableColumnsStateScopeMap({ scopeId }),
+        ).map(({ fieldMetadataId }) => fieldMetadataId);
 
         const labelIdentifierTableColumn = columns.find(
           (column) =>
