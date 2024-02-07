@@ -35,7 +35,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'Webhooks', href: '/settings/developers' },
+                  { children: 'Developers', href: '/settings/developers' },
                   { children: 'Webhook' },
                 ]}
               />

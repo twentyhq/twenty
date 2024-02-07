@@ -66,8 +66,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/developers' },
-              { children: 'New' },
+              { children: 'Developers', href: '/settings/developers' },
+              { children: 'New API Key' },
             ]}
           />
           <SaveAndCancelButtons

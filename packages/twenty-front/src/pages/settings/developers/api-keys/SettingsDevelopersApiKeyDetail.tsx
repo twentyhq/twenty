@@ -127,8 +127,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'APIs', href: '/settings/developers' },
-                  { children: apiKeyData.name },
+                  { children: 'Developers', href: '/settings/developers' },
+                  { children: `${apiKeyData.name} API Key` },
                 ]}
               />
             </SettingsHeaderContainer>

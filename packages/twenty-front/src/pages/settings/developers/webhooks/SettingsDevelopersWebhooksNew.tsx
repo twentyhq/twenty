@@ -40,8 +40,8 @@ export const SettingsDevelopersWebhooksNew = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Webhooks', href: '/settings/developers' },
-              { children: 'New' },
+              { children: 'Developers', href: '/settings/developers' },
+              { children: 'New webhook' },
             ]}
           />
           <SaveAndCancelButtons
