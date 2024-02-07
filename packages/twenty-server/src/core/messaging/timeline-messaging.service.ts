@@ -364,8 +364,6 @@ export class TimelineMessagingService {
       {},
     );
 
-    console.log('threadVisibilityByThreadId', threadVisibilityByThreadId);
-
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 

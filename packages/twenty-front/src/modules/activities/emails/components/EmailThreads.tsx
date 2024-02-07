@@ -167,7 +167,6 @@ export const EmailThreads = ({
     );
   }
 
-  console.log(timelineThreads);
   return (
     <StyledContainer>
       <Section>
