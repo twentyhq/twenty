@@ -9,32 +9,13 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-
-const StyledTaskGroupEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-  height: 100%;
-`;
-
-const StyledEmptyTaskGroupTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyTaskGroupSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptyContainer,
+  StyledEmptySubTitle,
+  StyledEmptyTextContainer,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -85,23 +66,26 @@ export const Attachments = ({
             onUploadFile={onUploadFile}
           />
         ) : (
-          <StyledTaskGroupEmptyContainer>
+          <StyledEmptyContainer>
+            <AnimatedPlaceholder type="noFile" />
+            <StyledEmptyTextContainer>
+              <StyledEmptyTitle>No Files</StyledEmptyTitle>
+              <StyledEmptySubTitle>
+                There are no associated files with this record.
+              </StyledEmptySubTitle>
+            </StyledEmptyTextContainer>
             <StyledFileInput
               ref={inputFileRef}
               onChange={handleFileChange}
               type="file"
             />
-            <StyledEmptyTaskGroupTitle>No files yet</StyledEmptyTaskGroupTitle>
-            <StyledEmptyTaskGroupSubTitle>
-              Upload one:
-            </StyledEmptyTaskGroupSubTitle>
             <Button
               Icon={IconPlus}
               title="Add file"
               variant="secondary"
               onClick={handleUploadFileClick}
             />
-          </StyledTaskGroupEmptyContainer>
+          </StyledEmptyContainer>
         )}
       </StyledDropZoneContainer>
     );

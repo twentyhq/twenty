@@ -10,6 +10,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
@@ -17,8 +19,6 @@ import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-recor
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
-import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 

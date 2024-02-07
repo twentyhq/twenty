@@ -1,6 +1,7 @@
-import * as React from 'react';
+import { ReactNode } from 'react';
 import { Button } from '@react-email/button';
 import { emailTheme } from 'src/common-style';
+
 const callToActionStyle = {
   display: 'flex',
   padding: '8px 32px',
@@ -13,7 +14,12 @@ const callToActionStyle = {
   fontWeight: emailTheme.font.weight.bold,
 };
 
-export const CallToAction = ({ value, href }) => {
+type CallToActionProps = {
+  href: string;
+  value: ReactNode;
+};
+
+export const CallToAction = ({ value, href }: CallToActionProps) => {
   return (
     <Button href={href} style={callToActionStyle}>
       {value}

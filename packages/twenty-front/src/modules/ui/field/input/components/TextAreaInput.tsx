@@ -2,7 +2,7 @@ import { ChangeEvent, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
-import { useRegisterInputEvents } from '@/object-record/field/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
 export type TextAreaInputProps = {

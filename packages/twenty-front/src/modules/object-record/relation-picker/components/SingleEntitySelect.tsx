@@ -13,15 +13,17 @@ export type SingleEntitySelectProps = {
 } & SingleEntitySelectMenuItemsWithSearchProps;
 
 export const SingleEntitySelect = ({
-  EmptyIcon,
   disableBackgroundBlur = false,
+  EmptyIcon,
   emptyLabel,
-  entitiesToSelect,
-  loading,
+  excludedRelationRecordIds,
   onCancel,
   onCreate,
   onEntitySelected,
+  relationObjectNameSingular,
+  relationPickerScopeId,
   selectedEntity,
+  selectedRelationRecordIds,
   width = 200,
 }: SingleEntitySelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -52,12 +54,14 @@ export const SingleEntitySelect = ({
         {...{
           EmptyIcon,
           emptyLabel,
-          entitiesToSelect,
-          loading,
+          excludedRelationRecordIds,
           onCancel,
           onCreate,
           onEntitySelected,
+          relationObjectNameSingular,
+          relationPickerScopeId,
           selectedEntity,
+          selectedRelationRecordIds,
         }}
       />
     </DropdownMenu>

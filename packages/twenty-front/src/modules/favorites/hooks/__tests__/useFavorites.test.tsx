@@ -7,14 +7,15 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 import {
   favoriteId,
+  favoriteTargetObjectRecord,
   initialFavorites,
   mockId,
-  mockRecord,
   mocks,
   mockWorkspaceMember,
   sortedFavorites,
@@ -84,7 +85,10 @@ describe('useFavorites', () => {
       },
     );
 
-    result.current.createFavorite(mockRecord, 'favorites');
+    result.current.createFavorite(
+      favoriteTargetObjectRecord,
+      CoreObjectNameSingular.Person,
+    );
 
     await waitFor(() => {
       expect(mocks[0].result).toHaveBeenCalled();

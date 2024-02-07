@@ -113,6 +113,9 @@ export class WorkspaceMigrationRunnerService {
           tableMigration?.columns,
         );
         break;
+      case 'drop':
+        await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
+        break;
       default:
         throw new Error(
           `Migration table action ${tableMigration.action} not supported`,

@@ -14,7 +14,6 @@ const StyledHeader = styled.div`
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  height: 24px;
   justify-content: left;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
@@ -31,7 +30,7 @@ const StyledNumChildren = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.rounded};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  height: 20px;
+  height: 24px;
   justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;

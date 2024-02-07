@@ -3,7 +3,12 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 export const computeObjectTargetTable = (
   objectMetadata: ObjectMetadataInterface,
 ) => {
-  const prefix = objectMetadata.isCustom ? '_' : '';
+  return computeCustomName(
+    objectMetadata.nameSingular,
+    objectMetadata.isCustom,
+  );
+};
 
-  return `${prefix}${objectMetadata.nameSingular}`;
+export const computeCustomName = (name: string, isCustom: boolean) => {
+  return isCustom ? `_${name}` : name;
 };

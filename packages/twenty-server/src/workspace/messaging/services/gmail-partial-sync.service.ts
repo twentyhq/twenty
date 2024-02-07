@@ -28,11 +28,14 @@ export class GmailPartialSyncService {
     lastSyncHistoryId: string,
     maxResults: number,
   ) {
-    const { connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
+    const { workspaceDataSource, dataSourceMetadata } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+
+    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const gmailClient = await this.gmailClientProvider.getGmailClient(
       connectedAccount.refreshToken,
@@ -53,17 +56,19 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
+    const { workspaceDataSource, dataSourceMetadata } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+
+    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
     if (!lastSyncHistoryId) {
       // Fall back to full sync
-
       await this.messageQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         { workspaceId, connectedAccountId },

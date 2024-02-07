@@ -5,9 +5,7 @@ import { NewButton } from '@/object-record/record-board-deprecated/components/Ne
 import { BoardColumnContext } from '@/object-record/record-board-deprecated/contexts/BoardColumnContext';
 import { useCreateOpportunity } from '@/object-record/record-board-deprecated/hooks/internal/useCreateOpportunity';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
@@ -52,30 +50,16 @@ export const NewOpportunityButton = () => {
     setIsCreatingCard(false);
   };
 
-  const { relationPickerSearchFilter, searchQuery } = useRelationPicker();
-
-  const filteredSearchEntityResults = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: [],
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
-
   return (
     <>
       {isCreatingCard ? (
         <SingleEntitySelect
           disableBackgroundBlur
-          entitiesToSelect={filteredSearchEntityResults.entitiesToSelect}
-          loading={filteredSearchEntityResults.loading}
           onCancel={handleCancel}
           onEntitySelected={handleEntitySelect}
-          selectedEntity={filteredSearchEntityResults.selectedEntities[0]}
+          relationObjectNameSingular={CoreObjectNameSingular.Company}
+          relationPickerScopeId="relation-picker"
+          selectedRelationRecordIds={[]}
         />
       ) : (
         <NewButton onClick={handleNewClick} />

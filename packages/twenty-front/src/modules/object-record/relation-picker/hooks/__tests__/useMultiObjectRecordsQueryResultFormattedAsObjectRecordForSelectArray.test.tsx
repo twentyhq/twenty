@@ -81,7 +81,7 @@ describe('useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray'
     );
     expect(opportunityRecordForSelect.record.id).toBe(opportunityId);
     expect(opportunityRecordForSelect.recordIdentifier.linkToShowPage).toBe(
-      `/opportunities/${opportunityId}`,
+      `/object/opportunity/${opportunityId}`,
     );
 
     expect(personRecordForSelect.objectMetadataItem.namePlural).toBe('people');

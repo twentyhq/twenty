@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useRecordBoardDeprecated } from '@/object-record/record-board-deprecated/hooks/useRecordBoardDeprecated';
 import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
 type RecordBoardDeprecatedEffectProps = {
   recordBoardId: string;

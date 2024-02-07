@@ -12,5 +12,9 @@ export const RecordTableContextMenu = ({
 
   const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
 
-  return <ContextMenu selectedIds={selectedRowIds} />;
+  if (!selectedRowIds.length) {
+    return null;
+  }
+
+  return <ContextMenu />;
 };

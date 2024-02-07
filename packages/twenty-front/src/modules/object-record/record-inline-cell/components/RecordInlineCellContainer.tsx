@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import kebabCase from 'lodash.kebabcase';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -113,6 +113,7 @@ export const RecordInlineCellContainer = ({
   disableHoverEffect,
   onInlineCellClick,
 }: RecordInlineCellContainerProps) => {
+  const { entityId, fieldDefinition } = useContext(FieldContext);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
@@ -139,6 +140,7 @@ export const RecordInlineCellContainer = ({
     buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
   const theme = useTheme();
+  const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
 
   return (
     <StyledInlineCellBaseContainer
@@ -146,7 +148,7 @@ export const RecordInlineCellContainer = ({
       onMouseLeave={handleContainerMouseLeave}
     >
       {(!!IconLabel || !!label) && (
-        <StyledLabelAndIconContainer id={kebabCase(label)}>
+        <StyledLabelAndIconContainer id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
@@ -157,9 +159,10 @@ export const RecordInlineCellContainer = ({
               <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
             </StyledLabelContainer>
           )}
-          {!showLabel && (
+          {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
+          {!showLabel && !fieldDefinition?.disableTooltip && (
             <StyledTooltip
-              anchorSelect={`#${kebabCase(label)}`}
+              anchorSelect={`#${labelId}`}
               content={label}
               clickable
               noArrow

@@ -22,6 +22,10 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(12)};
   min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
+
+  &:last-child {
+    border-bottom: 0;
+  }
 `;
 
 const StyledTaskBody = styled.div`

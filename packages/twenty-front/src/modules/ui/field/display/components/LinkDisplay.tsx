@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { FieldLinkValue } from '@/object-record/field/types/FieldMetadata';
+import { FieldLinkValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,

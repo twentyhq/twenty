@@ -28,7 +28,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         cachedConnection,
-        { INVALIDATE, readField, storeFieldName, toReference },
+        { DELETE, readField, storeFieldName, toReference },
       ) => {
         if (
           !isCachedObjectConnection(
@@ -93,7 +93,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
             cachedEdges?.length === variables.first &&
             nextCachedEdges.length < variables.first
           ) {
-            return INVALIDATE;
+            return DELETE;
           }
 
           // If next edges length exceeds the required limit,

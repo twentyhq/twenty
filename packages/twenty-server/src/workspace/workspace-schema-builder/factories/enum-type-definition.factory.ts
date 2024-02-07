@@ -8,8 +8,8 @@ import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/f
 
 import { pascalCase } from 'src/utils/pascal-case';
 import {
-  FieldMetadataComplexOptions,
-  FieldMetadataDefaultOptions,
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
 } from 'src/metadata/field-metadata/dtos/options.input';
 import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 
@@ -54,7 +54,7 @@ export class EnumTypeDefinitionFactory {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
     const enumOptions = fieldMetadata.options as Array<
-      FieldMetadataDefaultOptions | FieldMetadataComplexOptions
+      FieldMetadataDefaultOption | FieldMetadataComplexOption
     >;
 
     if (!enumOptions) {
@@ -74,6 +74,7 @@ export class EnumTypeDefinitionFactory {
       description: fieldMetadata.description,
       values: enumOptions.reduce(
         (acc, enumOption) => {
+          // Key must match this regex: /^[_A-Za-z][_0-9A-Za-z]+$/
           acc[enumOption.value] = {
             value: enumOption.value,
             description: enumOption.label,

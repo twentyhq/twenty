@@ -1,44 +1,33 @@
 import { useContext } from 'react';
 
-import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
-import { FieldInput } from '@/object-record/field/components/FieldInput';
-import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
-import { FieldInputEvent } from '@/object-record/field/types/FieldInputEvent';
-import { ColumnIndexContext } from '@/object-record/record-table/contexts/ColumnIndexContext';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
+import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
-import { useRecordTable } from '../../hooks/useRecordTable';
-import { useTableCell } from '../hooks/useTableCell';
-
-import { TableCellContainer } from './RecordTableCellContainer';
 
 export const RecordTableCell = ({
   customHotkeyScope,
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const { closeTableCell } = useTableCell();
+  const { closeTableCell } = useCloseRecordTableCell();
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const { moveLeft, moveRight, moveDown } = useRecordTable();
-
-  const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
-  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
-
-  const skipFieldPersist = isFirstColumnCell && isEditModeValueEmpty;
+  const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
     moveDown();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
   };
@@ -48,44 +37,37 @@ export const RecordTableCell = ({
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
     moveRight();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    if (!skipFieldPersist) {
-      persistField();
-    }
+    persistField();
 
     closeTableCell();
     moveLeft();
   };
 
   return (
-    <TableCellContainer
+    <RecordTableCellContainer
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
+          recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
           onCancel={handleCancel}
           onClickOutside={handleClickOutside}
           onEnter={handleEnter}

@@ -92,6 +92,7 @@ export const RecordShowPage = () => {
               entity={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
+                targetObjectRecord: record,
               }}
             />
             <ShowPageMoreButton

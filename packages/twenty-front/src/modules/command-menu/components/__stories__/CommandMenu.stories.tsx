@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockDefaultWorkspace } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
@@ -27,7 +26,6 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
         useCommandMenu();
-      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
       setCurrentWorkspace(mockDefaultWorkspace);
 
@@ -54,16 +52,10 @@ const meta: Meta<typeof CommandMenu> = {
         openCommandMenu();
       }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
 
-      return objectMetadataItems.length ? <Story /> : <></>;
+      return <Story />;
     },
     ObjectMetadataItemsDecorator,
-    (Story) => (
-      <RecoilRoot>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <Story />
-        </SnackBarProviderScope>
-      </RecoilRoot>
-    ),
+    SnackBarDecorator,
     ComponentWithRouterDecorator,
   ],
   parameters: {

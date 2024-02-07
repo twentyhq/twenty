@@ -7,7 +7,6 @@ import { isSoftFocusActiveStateScopeMap } from '@/object-record/record-table/sta
 import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/record-table/states/isSoftFocusOnTableCellFamilyStateScopeMap';
 import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
 import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
-import { objectMetadataConfigStateScopeMap } from '@/object-record/record-table/states/objectMetadataConfigStateScopeMap';
 import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
 import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
 import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
@@ -26,7 +25,7 @@ import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tab
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
@@ -44,10 +43,7 @@ export const useRecordTableStates = (recordTableId?: string) => {
     getTableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
     getTableSortsState: getState(tableSortsStateScopeMap, scopeId),
     getTableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
-    getObjectMetadataConfigState: getState(
-      objectMetadataConfigStateScopeMap,
-      scopeId,
-    ),
+
     getOnColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
     getOnEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,
@@ -94,27 +90,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    getAllRowsSelectedStatusSelector: getSelector(
+    getAllRowsSelectedStatusSelector: getSelectorReadOnly(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,
     ),
-    getHiddenTableColumnsSelector: getSelector(
+    getHiddenTableColumnsSelector: getSelectorReadOnly(
       hiddenTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    getNumberOfTableColumnsSelector: getSelector(
+    getNumberOfTableColumnsSelector: getSelectorReadOnly(
       numberOfTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    getSelectedRowIdsSelector: getSelector(
+    getSelectedRowIdsSelector: getSelectorReadOnly(
       selectedRowIdsSelectorScopeMap,
       scopeId,
     ),
-    getTableColumnsByKeySelector: getSelector(
+    getTableColumnsByKeySelector: getSelectorReadOnly(
       tableColumnsByKeySelectorScopeMap,
       scopeId,
     ),
-    getVisibleTableColumnsSelector: getSelector(
+    getVisibleTableColumnsSelector: getSelectorReadOnly(
       visibleTableColumnsSelectorScopeMap,
       scopeId,
     ),

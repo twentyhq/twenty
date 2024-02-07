@@ -5,7 +5,7 @@ export const query = gql`
     $filter: PersonFilterInput
     $orderBy: PersonOrderByInput
     $lastCursor: String
-    $limit: Float = 30
+    $limit: Float
   ) {
     people(
       filter: $filter

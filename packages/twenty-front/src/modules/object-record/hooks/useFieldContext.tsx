@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
-} from '@/object-record/field/contexts/FieldContext';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+} from '@/object-record/record-field/contexts/FieldContext';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 
 export const useFieldContext = ({

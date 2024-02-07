@@ -42,7 +42,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
       objectNameSingular: 'opportunity',
     });
 
-    expect(result.current.linkToShowPage).toBe('/opportunities/recordId');
+    expect(result.current.linkToShowPage).toBe('/object/opportunity/recordId');
 
     rerender({
       record: {

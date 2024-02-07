@@ -1,5 +1,5 @@
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewField } from '../types/ViewField';

@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   CurrencyFilter,
   DateFilter,
@@ -10,9 +8,10 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
-import { andFilterVariables } from '@/object-record/utils/andFilterVariables';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
@@ -37,6 +36,10 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       throw new Error(
         `Could not find field ${rawUIFilter.fieldMetadataId} in metadata object`,
       );
+    }
+
+    if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
+      return undefined;
     }
 
     switch (rawUIFilter.definition.type) {
@@ -111,10 +114,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'RELATION': {
-        if (!isNonEmptyString(rawUIFilter.value)) {
-          break;
-        }
-
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -260,5 +259,5 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return andFilterVariables(objectRecordFilters);
+  return makeAndFilterVariables(objectRecordFilters);
 };

@@ -20,7 +20,7 @@ export const useGenerateFindManyRecordsQuery = () => {
       objectMetadataItem.nameSingular,
     )}FilterInput, $orderBy: ${capitalize(
       objectMetadataItem.nameSingular,
-    )}OrderByInput, $lastCursor: String, $limit: Float = 60) {
+    )}OrderByInput, $lastCursor: String, $limit: Float) {
       ${
         objectMetadataItem.namePlural
       }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){

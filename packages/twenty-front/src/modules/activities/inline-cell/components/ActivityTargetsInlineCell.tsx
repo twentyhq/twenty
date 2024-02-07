@@ -6,12 +6,13 @@ import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/compo
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { RecordFieldInputScope, RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 type ActivityTargetsInlineCellProps = {
   activity?: Pick<GraphQLActivity, 'id'> & {
@@ -43,30 +44,41 @@ export const ActivityTargetsInlineCell = ({
     ActivityEditorHotkeyScope.ActivityTargets,
   );
 
+  const { FieldContextProvider } = useFieldContext({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectRecordId: activity?.id ?? '',
+    fieldMetadataName: 'activityTargets',
+    fieldPosition: 2,
+  });
+
+  if (!FieldContextProvider) return null;
+
   return (
-    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <RecordInlineCellContainer
-        buttonIcon={IconPencil}
-        customEditHotkeyScope={{
-          scope: ActivityEditorHotkeyScope.ActivityTargets,
-        }}
-        IconLabel={IconArrowUpRight}
-        editModeContent={
-          <ActivityTargetInlineCellEditMode
-            activityId={activity?.id ?? ''}
-            activityTargetObjectRecords={activityTargetObjectRecords as any}
-            onBlur={onBlur}
+    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
+      <FieldContextProvider>
+        <RecordInlineCellContainer
+          buttonIcon={IconPencil}
+          customEditHotkeyScope={{
+            scope: ActivityEditorHotkeyScope.ActivityTargets,
+          }}
+          IconLabel={IconArrowUpRight}
+          editModeContent={
+            <ActivityTargetInlineCellEditMode
+              activityId={activity?.id ?? ''}
+              activityTargetObjectRecords={activityTargetObjectRecords as any}
+              onBlur={onBlur}
           />
-        }
-        label="Relations"
-        displayModeContent={
-          <ActivityTargetChips
-            activityTargetObjectRecords={activityTargetObjectRecords}
-          />
-        }
-        isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
-        onInlineCellClick={onFocus}
+          }
+          label="Relations"
+          displayModeContent={
+            <ActivityTargetChips
+              activityTargetObjectRecords={activityTargetObjectRecords}
+            />
+          }
+          isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
+          onInlineCellClick={onFocus}
       />
-    </RecoilScope>
+      </FieldContextProvider>
+    </RecordFieldInputScope>
   );
 };

@@ -1,8 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { isDefined } from '~/utils/isDefined';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -27,21 +29,35 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
           getSelectedRowIdsSelector(),
         );
 
-        let activityTargetableEntityArray: ActivityTargetableObject[] =
-          selectedRowIds.map((id: string) => ({
-            type: 'Custom',
-            targetObjectNameSingular: objectNameSingular,
-            id,
-          }));
+        let activityTargetableObjectArray: ActivityTargetableObject[] =
+          selectedRowIds
+            .map((recordId: string) => {
+              const targetObjectRecord = getSnapshotValue(
+                snapshot,
+                recordStoreFamilyState(recordId),
+              );
+
+              if (!targetObjectRecord) {
+                return null;
+              }
+
+              return {
+                type: 'Custom',
+                targetObjectNameSingular: objectNameSingular,
+                id: recordId,
+                targetObjectRecord,
+              };
+            })
+            .filter(isDefined);
 
         if (relatedEntities) {
-          activityTargetableEntityArray =
-            activityTargetableEntityArray.concat(relatedEntities);
+          activityTargetableObjectArray =
+            activityTargetableObjectArray.concat(relatedEntities);
         }
 
         openCreateActivityDrawer({
           type,
-          targetableObjects: activityTargetableEntityArray,
+          targetableObjects: activityTargetableObjectArray,
         });
       },
     [openCreateActivityDrawer, getSelectedRowIdsSelector],

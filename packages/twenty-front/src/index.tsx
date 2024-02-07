@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
@@ -35,6 +36,7 @@ root.render(
   <RecoilRoot>
     <AppErrorBoundary>
       <RecoilDebugObserverEffect />
+      <ApolloDevLogEffect />
       <BrowserRouter>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
           <IconsProvider>
