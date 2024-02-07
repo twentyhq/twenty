@@ -8,7 +8,7 @@ import { CleanInactiveWorkspacesCommand } from 'src/workspace/cron/clean-inactiv
 import { WorkspaceHealthCommandModule } from 'src/workspace/workspace-health/commands/workspace-health-command.module';
 import { StartFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/start-fetch-all-workspaces-messages.cron.command';
 import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/stop-fetch-all-workspaces-messages.cron.command';
-import { DeleteIncompleteWorkspacesCommand } from 'src/workspace/workspace-cleaner/commands/delete-incomplete-workspaces.command';
+import { DeleteIncompleteWorkspacesCommandsModule } from 'src/workspace/workspace-cleaner/commands/delete-incomplete-workspaces-commands.module';
 
 import { AppModule } from './app.module';
 
@@ -24,7 +24,7 @@ import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-mi
     StartCleanInactiveWorkspacesCronCommand,
     StopCleanInactiveWorkspacesCronCommand,
     CleanInactiveWorkspacesCommand,
-    DeleteIncompleteWorkspacesCommand,
+    DeleteIncompleteWorkspacesCommandsModule,
     WorkspaceHealthCommandModule,
     WorkspaceMigrationRunnerCommandsModule,
     StartFetchAllWorkspacesMessagesCronCommand,
