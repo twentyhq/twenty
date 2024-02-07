@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
@@ -49,7 +49,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     _passedParam: string[],
     options: DeleteIncompleteWorkspacesCommandOptions,
   ): Promise<void> {
-    const where: { subscriptionStatus: 'incomplete'; id?: string } = {
+    const where: FindOptionsWhere<Workspace> = {
       subscriptionStatus: 'incomplete',
     };
 
@@ -65,7 +65,10 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
         } name: '${incompleteWorkspace.displayName}'`,
       );
       if (!options.dryRun) {
-        await this.workspaceService.deleteWorkspace(incompleteWorkspace.id);
+        await this.workspaceService.deleteWorkspace(
+          incompleteWorkspace.id,
+          false,
+        );
       }
     }
   }
