@@ -339,18 +339,22 @@ export class TimelineMessagingService {
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
 
     const threadVisibilityByThreadId: {
-      [key: string]: string;
+      [key: string]: 'metadata' | 'subject' | 'share_everything';
     } = threadVisibility?.reduce((threadVisibilityAcc, threadVisibility) => {
       threadVisibilityAcc[threadVisibility.id] =
         visibilityValues[
           Math.max(
             visibilityValues.indexOf(threadVisibility.visibility),
-            visibilityValues.indexOf('share_everything'),
+            visibilityValues.indexOf(
+              threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+            ),
           )
         ];
 
       return threadVisibilityAcc;
     }, {});
+
+    console.log('threadVisibilityByThreadId', threadVisibilityByThreadId);
 
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
