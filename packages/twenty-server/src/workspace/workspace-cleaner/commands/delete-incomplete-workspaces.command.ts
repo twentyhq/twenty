@@ -39,7 +39,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
-    required: true,
+    required: false,
   })
   parseWorkspaceId(value: string): string {
     return value;
@@ -59,14 +59,14 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
 
     for (const incompleteWorkspace of incompleteWorkspaces) {
+      this.logger.log(
+        `${getDryRunLogHeader(options.dryRun)}Deleting workspace ${
+          incompleteWorkspace.id
+        } name: '${incompleteWorkspace.displayName}'`,
+      );
       if (!options.dryRun) {
         await this.workspaceService.deleteWorkspace(incompleteWorkspace.id);
       }
-      this.logger.log(
-        `${getDryRunLogHeader(options.dryRun)}Workspace ${
-          incompleteWorkspace.id
-        } deleted`,
-      );
     }
   }
 }
