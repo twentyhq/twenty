@@ -21,6 +21,7 @@ import { DatabaseStructureService } from 'src/workspace/workspace-health/service
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceFixService } from 'src/workspace/workspace-health/services/workspace-fix.service';
 
 @Injectable()
 export class WorkspaceHealthService {
@@ -36,6 +37,7 @@ export class WorkspaceHealthService {
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
     private readonly relationMetadataHealthService: RelationMetadataHealthService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceFixService: WorkspaceFixService,
   ) {}
 
   async healthCheck(
@@ -132,21 +134,15 @@ export class WorkspaceHealthService {
       const workspaceMigrationRepository = manager.getRepository(
         WorkspaceMigrationEntity,
       );
-      const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-      // const objectMetadataCollection =
-      //   await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+      const objectMetadataCollection =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-      switch (type) {
-        case WorkspaceHealthFixKind.Nullable:
-          /**
-           * We should create the migration to fix the nullable issues
-           * For something more readable, we should create a service for each kind of fix
-           */
-          console.log('Fixing nullable issues');
-          break;
-        default:
-          throw new Error(`Invalid fix kind ${type}`);
-      }
+      const workspaceMigrations = await this.workspaceFixService.fix(
+        manager,
+        objectMetadataCollection,
+        type,
+        issues,
+      );
 
       // Save workspace migrations into the database
       await workspaceMigrationRepository.save(workspaceMigrations);

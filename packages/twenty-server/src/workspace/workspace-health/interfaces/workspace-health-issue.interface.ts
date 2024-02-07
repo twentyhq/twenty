@@ -31,19 +31,31 @@ export enum WorkspaceHealthIssueType {
   RELATION_TYPE_NOT_VALID = 'RELATION_TYPE_NOT_VALID',
 }
 
-export interface WorkspaceHealthTableIssue {
-  type:
+type ConditionalType<
+  T extends WorkspaceHealthIssueType | null,
+  U,
+> = T extends WorkspaceHealthIssueType ? T : U;
+
+export interface WorkspaceHealthTableIssue<
+  T extends WorkspaceHealthIssueType | null = null,
+> {
+  type: ConditionalType<
+    T,
     | WorkspaceHealthIssueType.MISSING_TABLE
     | WorkspaceHealthIssueType.TABLE_NAME_SHOULD_BE_CUSTOM
     | WorkspaceHealthIssueType.TABLE_TARGET_TABLE_NAME_NOT_VALID
     | WorkspaceHealthIssueType.TABLE_DATA_SOURCE_ID_NOT_VALID
-    | WorkspaceHealthIssueType.TABLE_NAME_NOT_VALID;
+    | WorkspaceHealthIssueType.TABLE_NAME_NOT_VALID
+  >;
   objectMetadata: ObjectMetadataEntity;
   message: string;
 }
 
-export interface WorkspaceHealthColumnIssue {
-  type:
+export interface WorkspaceHealthColumnIssue<
+  T extends WorkspaceHealthIssueType | null = null,
+> {
+  type: ConditionalType<
+    T,
     | WorkspaceHealthIssueType.MISSING_COLUMN
     | WorkspaceHealthIssueType.MISSING_INDEX
     | WorkspaceHealthIssueType.MISSING_FOREIGN_KEY
@@ -57,19 +69,24 @@ export interface WorkspaceHealthColumnIssue {
     | WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT
     | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT
     | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID
-    | WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID;
+    | WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID
+  >;
   fieldMetadata: FieldMetadataEntity;
   columnStructure?: WorkspaceTableStructure;
   message: string;
 }
 
-export interface WorkspaceHealthRelationIssue {
-  type:
+export interface WorkspaceHealthRelationIssue<
+  T extends WorkspaceHealthIssueType | null = null,
+> {
+  type: ConditionalType<
+    T,
     | WorkspaceHealthIssueType.RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID
     | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID
     | WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT
     | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_CONFLICT
-    | WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID;
+    | WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID
+  >;
   fromFieldMetadata: FieldMetadataEntity | undefined;
   toFieldMetadata: FieldMetadataEntity | undefined;
   relationMetadata: RelationMetadataEntity;

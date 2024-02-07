@@ -5,6 +5,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
+import { WorkspaceHealthModule } from 'src/workspace/workspace-health/workspace-health.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
 
@@ -15,6 +16,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     ObjectMetadataModule,
     DataSourceModule,
     WorkspaceSyncMetadataModule,
+    WorkspaceHealthModule,
   ],
   exports: [WorkspaceManagerService],
   providers: [WorkspaceManagerService],

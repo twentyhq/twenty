@@ -46,6 +46,14 @@ export class WorkspaceHealthCommand extends CommandRunner {
         console.groupEnd();
       }
     }
+
+    if (options.fix) {
+      await this.workspaceHealthService.fixIssues(
+        options.workspaceId,
+        issues,
+        options.fix,
+      );
+    }
   }
 
   @Option({
@@ -63,7 +71,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
     required: false,
   })
   fix(value: string): WorkspaceHealthFixKind {
-    if (!(value in WorkspaceHealthFixKind)) {
+    if (!Object.values(WorkspaceHealthFixKind).includes(value as any)) {
       throw new Error(`Invalid fix kind ${value}`);
     }
 
@@ -86,7 +94,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
     defaultValue: WorkspaceHealthMode.All,
   })
   parseMode(value: string): WorkspaceHealthMode {
-    if (!(value in WorkspaceHealthMode)) {
+    if (!Object.values(WorkspaceHealthMode).includes(value as any)) {
       throw new Error(`Invalid mode ${value}`);
     }
 
