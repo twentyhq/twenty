@@ -287,4 +287,12 @@ export class EnvironmentService {
   isSignUpDisabled(): boolean {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
+
+  getApiRateLimitingTtl(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_TTL') ?? 100;
+  }
+
+  getApiRateLimitingLimit(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 200;
+  }
 }

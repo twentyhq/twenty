@@ -4,8 +4,8 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import { cleanInactiveWorkspaceCronPattern } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.cron.pattern';
-import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.job';
+import { cleanInactiveWorkspaceCronPattern } from 'src/workspace/workspace-cleaner/crons/clean-inactive-workspace.cron.pattern';
+import { CleanInactiveWorkspaceJob } from 'src/workspace/workspace-cleaner/crons/clean-inactive-workspace.job';
 
 @Command({
   name: 'clean-inactive-workspaces:cron:stop',

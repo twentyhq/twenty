@@ -23,7 +23,8 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
-import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
+import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/workspace-cleaner/commands/clean-inactive-workspaces.command';
+import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -112,7 +113,7 @@ export class CleanInactiveWorkspaceJob
     )?.[0].displayName;
 
     this.logger.log(
-      `${this.getDryRunLogHeader(isDryRun)}Sending workspace ${
+      `${getDryRunLogHeader(isDryRun)}Sending workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.email)
@@ -162,10 +163,6 @@ export class CleanInactiveWorkspaceJob
     );
   }
 
-  getDryRunLogHeader(isDryRun: boolean): string {
-    return isDryRun ? 'Dry-run mode: ' : '';
-  }
-
   chunkArray(array: any[], chunkSize = 6): any[][] {
     const chunkedArray: any[][] = [];
     let index = 0;
@@ -183,7 +180,7 @@ export class CleanInactiveWorkspaceJob
     isDryRun: boolean,
   ): Promise<void> {
     this.logger.log(
-      `${this.getDryRunLogHeader(
+      `${getDryRunLogHeader(
         isDryRun,
       )}Sending email to delete workspaces "${workspacesToDelete
         .map((workspaceToDelete) => workspaceToDelete.workspaceId)
@@ -216,7 +213,7 @@ export class CleanInactiveWorkspaceJob
 
     const workspacesToDelete: WorkspaceToDeleteData[] = [];
 
-    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}Job running...`);
+    this.logger.log(`${getDryRunLogHeader(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
         `'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION' and 'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
@@ -231,7 +228,7 @@ export class CleanInactiveWorkspaceJob
     const dataSourcesChunks = this.chunkArray(dataSources);
 
     this.logger.log(
-      `${this.getDryRunLogHeader(isDryRun)}On ${
+      `${getDryRunLogHeader(isDryRun)}On ${
         dataSources.length
       } workspaces divided in ${dataSourcesChunks.length} chunks...`,
     );
@@ -246,7 +243,7 @@ export class CleanInactiveWorkspaceJob
       for (const dataSource of dataSourcesChunk) {
         if (!(await this.isWorkspaceCleanable(dataSource))) {
           this.logger.log(
-            `${this.getDryRunLogHeader(isDryRun)}Workspace ${
+            `${getDryRunLogHeader(isDryRun)}Workspace ${
               dataSource.workspaceId
             } not cleanable`,
           );
@@ -254,7 +251,7 @@ export class CleanInactiveWorkspaceJob
         }
 
         this.logger.log(
-          `${this.getDryRunLogHeader(isDryRun)}Cleaning Workspace ${
+          `${getDryRunLogHeader(isDryRun)}Cleaning Workspace ${
             dataSource.workspaceId
           }`,
         );
@@ -285,6 +282,6 @@ export class CleanInactiveWorkspaceJob
 
     await this.sendDeleteWorkspaceEmail(workspacesToDelete, isDryRun);
 
-    this.logger.log(`${this.getDryRunLogHeader(isDryRun)}job done!`);
+    this.logger.log(`${getDryRunLogHeader(isDryRun)}job done!`);
   }
 }

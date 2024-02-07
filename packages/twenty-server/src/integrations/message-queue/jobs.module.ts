@@ -9,7 +9,7 @@ import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-w
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.job';
+import { CleanInactiveWorkspaceJob } from 'src/workspace/workspace-cleaner/crons/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
@@ -17,7 +17,7 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { FetchAllWorkspacesMessagesJob } from 'src/workspace/cron/fetch-all-workspaces-messages/fetch-all-workspaces-messages.job';
+import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
 
 @Module({
