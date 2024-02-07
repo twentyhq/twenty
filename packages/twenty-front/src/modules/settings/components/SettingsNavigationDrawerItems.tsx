@@ -4,6 +4,7 @@ import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import {
+  IconApps,
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
@@ -133,6 +134,17 @@ export const SettingsNavigationDrawerItems = () => {
           active={
             !!useMatch({
               path: useResolvedPath('/settings/developers').pathname,
+              end: true,
+            })
+          }
+        />
+        <NavigationDrawerItem
+          label="Integrations"
+          to="/settings/integrations"
+          Icon={IconApps}
+          active={
+            !!useMatch({
+              path: useResolvedPath('/settings/integrations').pathname,
               end: true,
             })
           }
