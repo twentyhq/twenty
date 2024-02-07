@@ -21,6 +21,7 @@ export {
   TbCheck,
   TbCheckbox,
   TbChecklist,
+  TbChevronLeft,
   TbCircleCheckFilled,
   TbCircleDot,
   TbCloud,

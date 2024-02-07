@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { TbLoader2 } from 'react-icons/tb';
+import { useHistory } from '@docusaurus/router';
+import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
 
 import tokenForm from '!css-loader!./token-form.css';
@@ -10,6 +11,7 @@ export type TokenFormProps = {
   setBaseUrl?: (baseUrl: string) => void;
   isTokenValid: boolean;
   setIsTokenValid: (boolean) => void;
+  setLoadingState: (boolean) => void;
   subdocName?: string;
 };
 
@@ -20,7 +22,9 @@ const TokenForm = ({
   isTokenValid,
   setIsTokenValid,
   subdocName,
+  setLoadingState,
 }: TokenFormProps) => {
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [baseUrl, setBaseUrl] = useState(
     parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
@@ -29,6 +33,11 @@ const TokenForm = ({
   const token =
     parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ??
     '';
+
+  const updateLoading = (loading: boolean) => {
+    setIsLoading(loading);
+    setLoadingState(loading);
+  };
 
   const updateToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem(
@@ -47,7 +56,7 @@ const TokenForm = ({
   const validateToken = (openApiJson) => setIsTokenValid(!!openApiJson.tags);
 
   const getJson = async (token: string) => {
-    setIsLoading(true);
+    updateLoading(true);
 
     return await fetch(baseUrl + '/open-api/' + subdocName, {
       headers: { Authorization: `Bearer ${token}` },
@@ -55,11 +64,11 @@ const TokenForm = ({
       .then((res) => res.json())
       .then((result) => {
         validateToken(result);
-        setIsLoading(false);
+        updateLoading(false);
 
         return result;
       })
-      .catch(() => setIsLoading(false));
+      .catch(() => updateLoading(false));
   };
 
   const submitToken = async (token) => {
@@ -89,58 +98,42 @@ const TokenForm = ({
   }, []);
 
   return (
-    !isTokenValid && (
-      <div>
-        <div className="container">
-          <form className="form">
-            <label>
-              To load your playground schema,{' '}
-              <a
-                className="link"
-                href="https://app.twenty.com/settings/developers"
-              >
-                generate an API key
-              </a>{' '}
-              and paste it here:
-            </label>
-            <p>
-              <input
-                className={token && !isLoading ? 'input invalid' : 'input'}
-                type="text"
-                readOnly={isLoading}
-                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD..."
-                defaultValue={token}
-                onChange={updateToken}
-              />
-              <span
-                className={`token-invalid ${
-                  (!token || isLoading) && 'not-visible'
-                }`}
-              >
-                Token invalid
-              </span>
-              <div className="loader-container">
-                <TbLoader2
-                  className={`loader ${!isLoading && 'not-visible'}`}
-                />
-              </div>
-            </p>
-            <label>Base Url</label>
-            <p>
-              <input
-                className={'input'}
-                type="text"
-                readOnly={isLoading}
-                placeholder="https://api.twenty.com"
-                defaultValue={baseUrl}
-                onChange={(event) => updateBaseUrl(event.target.value)}
-                onBlur={() => submitToken(token)}
-              />
-            </p>
-          </form>
+    <div className="form-container">
+      <form className="form">
+        <div className="backButton" onClick={() => history.goBack()}>
+          <TbChevronLeft size={18} />
+          <span>Back</span>
         </div>
-      </div>
-    )
+
+        <div className="inputWrapper">
+          <div className="inputIcon" title="Api Key">
+            <TbApi size={20} />
+          </div>
+          <input
+            className={!isTokenValid && !isLoading ? 'input invalid' : 'input'}
+            type="text"
+            readOnly={isLoading}
+            placeholder="API Key"
+            defaultValue={token}
+            onChange={updateToken}
+          />
+        </div>
+        <div className="inputWrapper">
+          <div className="inputIcon" title="Base URL">
+            <TbLink size={20} />
+          </div>
+          <input
+            className={'input'}
+            type="text"
+            readOnly={isLoading}
+            placeholder="Base URL"
+            defaultValue={baseUrl}
+            onChange={(event) => updateBaseUrl(event.target.value)}
+            onBlur={() => submitToken(token)}
+          />
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -64,7 +64,7 @@ export class OpenApiService {
   }
 
   async generateMetaDataSchema(): Promise<OpenAPIV3.Document> {
-    //TODO Rest MetaData api?
+    //TODO Add once Rest MetaData api is ready
     const schema = baseSchema();
 
     return schema;
