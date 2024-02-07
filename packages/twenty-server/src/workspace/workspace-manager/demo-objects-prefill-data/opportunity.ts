@@ -38,7 +38,6 @@ const generateOpportunities = (
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
-    position: null,
     probability: getRandomProbability(),
     pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,
