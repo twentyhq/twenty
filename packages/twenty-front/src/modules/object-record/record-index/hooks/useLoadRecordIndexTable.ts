@@ -1,7 +1,6 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
@@ -15,8 +14,9 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
 
-  const onboardingStatus = useOnboardingStatus();
-
+  const isCurrentWorkspaceActive = useRecoilValue(
+    isCurrentWorkspaceActiveSelector,
+  );
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -53,10 +53,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     });
 
   return {
-    records:
-      onboardingStatus === OnboardingStatus.Completed
-        ? records
-        : signInBackgroundMockCompanies,
+    records: isCurrentWorkspaceActive ? records : signInBackgroundMockCompanies,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

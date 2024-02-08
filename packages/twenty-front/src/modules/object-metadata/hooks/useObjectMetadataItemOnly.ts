@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -13,7 +12,9 @@ import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentif
 export const useObjectMetadataItemOnly = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const onboardingStatus = useOnboardingStatus();
+  const isCurrentWorkspaceActive = useRecoilValue(
+    isCurrentWorkspaceActiveSelector,
+  );
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -25,7 +26,7 @@ export const useObjectMetadataItemOnly = ({
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (onboardingStatus !== OnboardingStatus.Completed) {
+  if (!isCurrentWorkspaceActive) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
