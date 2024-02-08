@@ -7,7 +7,8 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
-export const useDeleteActivityInCacheFromEditor = () => {
+// TODO: this should be useDeleteRecordFromCache
+export const useDeleteActivityFromCache = () => {
   const { makeActivityWithConnection } = useActivityConnectionUtils();
 
   const apolloClient = useApolloClient();

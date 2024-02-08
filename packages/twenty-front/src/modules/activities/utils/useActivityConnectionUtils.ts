@@ -30,6 +30,12 @@ export const useActivityConnectionUtils = () => {
         })
       : [];
 
+    console.log({
+      activityWithConnections,
+      activityTargets,
+      comments,
+    });
+
     const activity: Activity = {
       ...activityWithConnections,
       activityTargets,

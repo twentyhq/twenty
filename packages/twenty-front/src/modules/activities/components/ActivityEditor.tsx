@@ -5,8 +5,8 @@ import { useRecoilState } from 'recoil';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityFromEditor';
-import { useDeleteActivityInCacheFromEditor } from '@/activities/hooks/useDeleteActivityInCacheFromEditor';
+import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
+import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -147,7 +147,7 @@ export const ActivityEditor = ({
   };
 
   // TODO: remove
-  const { deleteActivityFromCache } = useDeleteActivityInCacheFromEditor();
+  const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',

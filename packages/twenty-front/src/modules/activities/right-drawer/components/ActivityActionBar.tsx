@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useDeleteActivityInCacheFromEditor } from '@/activities/hooks/useDeleteActivityInCacheFromEditor';
+import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
@@ -22,7 +22,7 @@ export const ActivityActionBar = () => {
   const [temporaryActivityForEditor, setTemporaryActivityForEditor] =
     useRecoilState(temporaryActivityForEditorState);
 
-  const { deleteActivityFromCache } = useDeleteActivityInCacheFromEditor();
+  const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
   const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
 
