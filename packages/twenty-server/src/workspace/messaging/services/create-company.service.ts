@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
 @Injectable()
-export class CreateCompaniesService {
+export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
   constructor() {
