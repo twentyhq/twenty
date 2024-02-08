@@ -293,7 +293,7 @@ export class WorkspaceQueryRunnerService {
     const sanitizedRecord = {};
 
     for (const [key, value] of Object.entries(record)) {
-      if (typeof value === 'object') {
+      if (value && typeof value === 'object' && value['edges']) {
         continue;
       }
 
