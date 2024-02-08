@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { capitalize } from 'src/utils/capitalize';
 @Injectable()
 export class CreateContactService {
   constructor() {}
@@ -13,8 +14,12 @@ export class CreateContactService {
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ): Promise<void> {
+    if (!handle) {
+      return;
+    }
+
     const existingContact = await manager.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}.person WHERE handle = $1`,
+      `SELECT * FROM ${dataSourceMetadata.schema}.person WHERE email = $1`,
       [handle],
     );
 
@@ -22,12 +27,24 @@ export class CreateContactService {
       return existingContact[0];
     }
 
-    const contactFirstName = displayName.split(' ')[0];
-    const contactLastName = displayName.split(' ')[1];
+    const contactFirstName = capitalize(displayName.split(' ')[0]);
+    const contactLastName = capitalize(displayName.split(' ')[1]);
+
+    const contactFullNameFromHandle = handle.split('@')[0];
+    const contactFirstNameFromHandle = capitalize(
+      contactFullNameFromHandle.split('.')[0],
+    );
+    const contactLastNameFromHandle = capitalize(
+      contactFullNameFromHandle.split('.')[1],
+    );
 
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.person (email, nameFirstName, nameLastName) VALUES ($1, $2, $3)`,
-      [handle, contactFirstName, contactLastName],
+      `INSERT INTO ${dataSourceMetadata.schema}.person (email, "nameFirstName", "nameLastName") VALUES ($1, $2, $3)`,
+      [
+        handle,
+        contactFirstName || contactFirstNameFromHandle || '',
+        contactLastName || contactLastNameFromHandle || '',
+      ],
     );
   }
 }

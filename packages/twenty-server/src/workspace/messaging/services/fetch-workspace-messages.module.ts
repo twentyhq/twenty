@@ -7,6 +7,7 @@ import { MessageChannelModule } from 'src/workspace/messaging/message-channel/me
 import { MessageThreadModule } from 'src/workspace/messaging/message-thread/message-thread.module';
 import { MessageModule } from 'src/workspace/messaging/message/message.module';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
+import { CreateContactService } from 'src/workspace/messaging/services/create-contact.service';
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
@@ -31,6 +32,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
     GmailRefreshAccessTokenService,
     MessagingUtilsService,
     GmailClientProvider,
+    CreateContactService,
   ],
   exports: [
     GmailPartialSyncService,
