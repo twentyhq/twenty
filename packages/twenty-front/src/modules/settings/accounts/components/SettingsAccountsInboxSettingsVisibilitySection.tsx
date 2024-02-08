@@ -23,6 +23,11 @@ const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+  }
 `;
 
 const StyledCardMedia = styled(SettingsAccountsInboxSettingsCardMedia)`
@@ -122,6 +127,7 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
           <StyledCardContent
             key={optionValue}
             divider={index < inboxSettingsVisibilityOptions.length - 1}
+            onClick={() => onChange(optionValue)}
           >
             <StyledCardMedia>
               <StyledMetadataSkeleton isActive={visibleElements.metadata} />
