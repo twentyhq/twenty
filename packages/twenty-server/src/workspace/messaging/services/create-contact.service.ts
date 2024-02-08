@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
@@ -13,18 +14,9 @@ export class CreateContactService {
     displayName: string,
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     if (!handle) {
       return;
-    }
-
-    const existingContact = await manager.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}.person WHERE email = $1`,
-      [handle],
-    );
-
-    if (existingContact.length > 0) {
-      return existingContact[0];
     }
 
     const contactFirstName = displayName.split(' ')[0];
@@ -34,13 +26,18 @@ export class CreateContactService {
     const contactFirstNameFromHandle = contactFullNameFromHandle.split('.')[0];
     const contactLastNameFromHandle = contactFullNameFromHandle.split('.')[1];
 
+    const id = v4();
+
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.person (email, "nameFirstName", "nameLastName") VALUES ($1, $2, $3)`,
+      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName") VALUES ($1, $2, $3, $4)`,
       [
+        id,
         handle,
         capitalize(contactFirstName || contactFirstNameFromHandle || ''),
         capitalize(contactLastName || contactLastNameFromHandle || ''),
       ],
     );
+
+    return id;
   }
 }

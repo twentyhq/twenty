@@ -180,7 +180,7 @@ export class MessagingUtilsService {
         [participant.handle],
       );
 
-      const participantPersonId = participantPerson[0]?.id;
+      let participantPersonId = participantPerson[0]?.id;
 
       const workspaceMember = await manager.query(
         `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
@@ -192,6 +192,16 @@ export class MessagingUtilsService {
 
       const participantWorkspaceMemberId = workspaceMember[0]?.id;
 
+      if (!participantPersonId && !participantWorkspaceMemberId) {
+        participantPersonId =
+          await this.createContactService.createContactFromHandleAndDisplayName(
+            participant.handle,
+            participant.displayName,
+            dataSourceMetadata,
+            manager,
+          );
+      }
+
       await manager.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
         [
@@ -202,13 +212,6 @@ export class MessagingUtilsService {
           participantPersonId,
           participantWorkspaceMemberId,
         ],
-      );
-
-      await this.createContactService.createContactFromHandleAndDisplayName(
-        participant.handle,
-        participant.displayName,
-        dataSourceMetadata,
-        manager,
       );
     }
   }
