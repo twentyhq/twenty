@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
@@ -8,21 +7,14 @@ import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 
-const dynamicStyle = ({
-  visibility,
-}: {
-  visibility: 'metadata' | 'subject' | 'share_everything';
-}) => css`
-  cursor: ${visibility === 'share_everything' ? 'pointer' : 'default'};
-`;
-
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)<{ visibility: string }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(0, 4)};
-  ${dynamicStyle}
+  cursor: ${({ visibility }) =>
+    visibility === 'share_everything' ? 'pointer' : 'default'};
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
