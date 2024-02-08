@@ -54,6 +54,6 @@ export const useCreateActivityInDB = () => {
   };
 
   return {
-    createActivity: createActivityInDB,
+    createActivityInDB,
   };
 };

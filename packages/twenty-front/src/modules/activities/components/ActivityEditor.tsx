@@ -1,20 +1,21 @@
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
+import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { Activity } from '@/activities/types/Activity';
-import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import {
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
@@ -58,7 +59,7 @@ const StyledTopContainer = styled.div`
 `;
 
 type ActivityEditorProps = {
-  activity: ActivityForEditor;
+  activity: Activity;
   showComment?: boolean;
   autoFillTitle?: boolean;
 };
@@ -74,13 +75,20 @@ export const ActivityEditor = ({
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-  });
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
+
+  const { upsertActivity } = useUpsertActivity();
+
+  const useUpsertOneActivityMutation: RecordUpdateHook = () => {
+    const upsertActivityMutation = ({ variables }: RecordUpdateHookParams) => {
+      upsertActivity({ activity, input: variables.updateOneRecordInput });
+    };
+
+    return [upsertActivityMutation, { loading: false }];
+  };
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -88,6 +96,7 @@ export const ActivityEditor = ({
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
     clearable: true,
+    customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
   });
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
@@ -97,43 +106,30 @@ export const ActivityEditor = ({
       fieldMetadataName: 'assignee',
       fieldPosition: 1,
       clearable: true,
+      customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
 
   const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
     isCreatingActivityState,
   );
 
-  const { createActivity } = useCreateActivityInDB();
-
   const updateTitle = (newTitle: string) => {
-    if (isCreatingActivity) {
-      createActivity({
-        ...activity,
+    upsertActivity({
+      activity,
+      input: {
         title: newTitle ?? '',
-      });
-
-      setIsCreatingActivity(false);
-    } else {
-      updateOneActivity?.({
-        idToUpdate: activity.id,
-        updateOneRecordInput: {
-          title: newTitle ?? '',
-        },
-      });
-    }
+      },
+    });
   };
 
-  const handleActivityCompletionChange = useCallback(
-    (value: boolean) => {
-      updateOneActivity?.({
-        idToUpdate: activity.id,
-        updateOneRecordInput: {
-          completedAt: value ? new Date().toISOString() : null,
-        },
-      });
-    },
-    [activity.id, updateOneActivity],
-  );
+  const handleActivityCompletionChange = (value: boolean) => {
+    upsertActivity({
+      activity,
+      input: {
+        completedAt: value ? new Date().toISOString() : null,
+      },
+    });
+  };
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
 
@@ -192,9 +188,7 @@ export const ActivityEditor = ({
                   </AssigneeFieldContextProvider>
                 </>
               )}
-            <ActivityTargetsInlineCell
-              activity={activity as unknown as GraphQLActivity}
-            />
+            <ActivityTargetsInlineCell activity={activity} />
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
