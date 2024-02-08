@@ -20,7 +20,7 @@ export class CreateCompanyService {
     domainName: string,
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
-  ) {
+  ): Promise<string> {
     const existingCompany = await manager.query(
       `SELECT * FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = '${domainName}'`,
     );
