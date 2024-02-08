@@ -13,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
-import { ApiKey } from '@/settings/developers/types/ApiKey';
+import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
@@ -127,8 +127,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'APIs', href: '/settings/developers' },
-                  { children: apiKeyData.name },
+                  { children: 'Developers', href: '/settings/developers' },
+                  { children: `${apiKeyData.name} API Key` },
                 ]}
               />
             </SettingsHeaderContainer>
