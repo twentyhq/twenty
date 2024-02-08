@@ -6,7 +6,7 @@ const requestIntegrations: IntegrationCategory = {
   hyperlink: null,
   integrations: [
     {
-      from: { key: 'github', image: '/images/integrations/Github.png' },
+      from: { key: 'github', image: '/images/integrations/GitHub.png' },
       to: null,
       type: IntegrationType.Goto,
       text: 'Request an integration on Github conversations',

@@ -54,6 +54,11 @@ const StyledSoonPill = styled(SoonPill)`
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledLogo = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
@@ -66,11 +71,11 @@ export const SettingsIntegrationComponent = ({
     <StyledContainer>
       <StyledSection>
         <StyledIntegrationLogo>
-          <img src={integration.from.image} alt={integration.from.key} />
+          <StyledLogo src={integration.from.image} alt={integration.from.key} />
           {integration.to ? (
             <>
               <div>→</div>
-              <img src={integration.to.image} alt={integration.to.key} />
+              <StyledLogo src={integration.to.image} alt={integration.to.key} />
             </>
           ) : (
             <></>
