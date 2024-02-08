@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
@@ -7,13 +8,21 @@ import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 
+const dynamicStyle = ({
+  visibility,
+}: {
+  visibility: 'metadata' | 'subject' | 'share_everything';
+}) => css`
+  cursor: ${visibility === 'share_everything' ? 'pointer' : 'default'};
+`;
+
 const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(0, 4)};
-  cursor: pointer;
+  ${dynamicStyle}
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
@@ -107,9 +116,7 @@ export const EmailThreadPreview = ({
     <StyledCardContent
       onClick={() => onClick()}
       divider={divider}
-      style={
-        thread.visibility === 'share_everything' ? {} : { cursor: 'default' }
-      }
+      visibility={visibility}
     >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
