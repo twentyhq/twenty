@@ -114,7 +114,7 @@ export const CreateWorkspace = () => {
     [onSubmit],
   );
 
-  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
+  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceActivation) {
     return null;
   }
 

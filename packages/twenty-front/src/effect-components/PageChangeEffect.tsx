@@ -88,7 +88,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace)
     ) {
       navigate(AppPath.CreateWorkspace);

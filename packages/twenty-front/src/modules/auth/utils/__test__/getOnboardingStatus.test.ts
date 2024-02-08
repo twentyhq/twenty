@@ -20,18 +20,12 @@ describe('getOnboardingStatus', () => {
       } as CurrentWorkspace,
     });
 
-    const ongoingWorkspaceCreation = getOnboardingStatus({
+    const ongoingWorkspaceActivationPreviouslyActive = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
+      currentWorkspaceMember: null,
       currentWorkspace: {
         id: '1',
-        displayName: null,
+        displayName: 'My Workspace',
       } as CurrentWorkspace,
     });
 
@@ -114,7 +108,9 @@ describe('getOnboardingStatus', () => {
 
     expect(ongoingUserCreation).toBe('ongoing_user_creation');
     expect(ongoingWorkspaceActivation).toBe('ongoing_workspace_activation');
-    expect(ongoingWorkspaceCreation).toBe('ongoing_workspace_creation');
+    expect(ongoingWorkspaceActivationPreviouslyActive).toBe(
+      'ongoing_workspace_activation',
+    );
     expect(ongoingProfileCreation).toBe('ongoing_profile_creation');
     expect(completed).toBe('completed');
     expect(incomplete).toBe('incomplete');

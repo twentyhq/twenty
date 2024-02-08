@@ -5,7 +5,6 @@ export enum OnboardingStatus {
   Incomplete = 'incomplete',
   Canceled = 'canceled',
   OngoingUserCreation = 'ongoing_user_creation',
-  OngoingWorkspaceCreation = 'ongoing_workspace_creation',
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
   Completed = 'completed',
@@ -42,10 +41,6 @@ export const getOnboardingStatus = ({
 
   if (!currentWorkspaceMember) {
     return OnboardingStatus.OngoingWorkspaceActivation;
-  }
-
-  if (!currentWorkspace?.displayName) {
-    return OnboardingStatus.OngoingWorkspaceCreation;
   }
 
   if (
