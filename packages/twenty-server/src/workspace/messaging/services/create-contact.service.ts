@@ -27,23 +27,19 @@ export class CreateContactService {
       return existingContact[0];
     }
 
-    const contactFirstName = capitalize(displayName.split(' ')[0]);
-    const contactLastName = capitalize(displayName.split(' ')[1]);
+    const contactFirstName = displayName.split(' ')[0];
+    const contactLastName = displayName.split(' ')[1];
 
     const contactFullNameFromHandle = handle.split('@')[0];
-    const contactFirstNameFromHandle = capitalize(
-      contactFullNameFromHandle.split('.')[0],
-    );
-    const contactLastNameFromHandle = capitalize(
-      contactFullNameFromHandle.split('.')[1],
-    );
+    const contactFirstNameFromHandle = contactFullNameFromHandle.split('.')[0];
+    const contactLastNameFromHandle = contactFullNameFromHandle.split('.')[1];
 
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}.person (email, "nameFirstName", "nameLastName") VALUES ($1, $2, $3)`,
       [
         handle,
-        contactFirstName || contactFirstNameFromHandle || '',
-        contactLastName || contactLastNameFromHandle || '',
+        capitalize(contactFirstName || contactFirstNameFromHandle || ''),
+        capitalize(contactLastName || contactLastNameFromHandle || ''),
       ],
     );
   }
