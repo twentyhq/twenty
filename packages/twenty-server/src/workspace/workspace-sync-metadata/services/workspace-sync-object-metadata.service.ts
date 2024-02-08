@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
@@ -13,8 +14,9 @@ import { StandardObjectFactory } from 'src/workspace/workspace-sync-metadata/fac
 import { WorkspaceObjectComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-object.comparator';
 import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-field.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { WorkspaceSyncFactory } from 'src/workspace/workspace-sync-metadata/factories/workspace-sync.factory';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
+import { WorkspaceMigrationObjectFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-object.factory';
+import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -25,7 +27,8 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceObjectComparator: WorkspaceObjectComparator,
     private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
-    private readonly workspaceSyncFactory: WorkspaceSyncFactory,
+    private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
+    private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {}
 
   async synchronize(
@@ -33,17 +36,18 @@ export class WorkspaceSyncObjectMetadataService {
     manager: EntityManager,
     storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<void> {
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
-    const workspaceMigrationRepository = manager.getRepository(
-      WorkspaceMigrationEntity,
-    );
 
     // Retrieve object metadata collection from DB
     const originalObjectMetadataCollection =
       await objectMetadataRepository.find({
-        where: { workspaceId: context.workspaceId, isCustom: false },
+        where: {
+          workspaceId: context.workspaceId,
+          isCustom: false,
+          fields: { isCustom: false },
+        },
         relations: ['dataSource', 'fields'],
       });
 
@@ -137,18 +141,39 @@ export class WorkspaceSyncObjectMetadataService {
     this.logger.log('Generating migrations');
 
     // Create migrations
-    const workspaceObjectMigrations =
-      await this.workspaceSyncFactory.createObjectMigration(
-        originalObjectMetadataCollection,
+    const createObjectWorkspaceMigrations =
+      await this.workspaceMigrationObjectFactory.create(
         metadataObjectUpdaterResult.createdObjectMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
+      );
+
+    const deleteObjectWorkspaceMigrations =
+      await this.workspaceMigrationObjectFactory.create(
         storage.objectMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
+      );
+
+    const createFieldWorkspaceMigrations =
+      await this.workspaceMigrationFieldFactory.create(
+        originalObjectMetadataCollection,
         metadataFieldUpdaterResult.createdFieldMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
+      );
+
+    const deleteFieldWorkspaceMigrations =
+      await this.workspaceMigrationFieldFactory.create(
+        originalObjectMetadataCollection,
         storage.fieldMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
       );
 
     this.logger.log('Saving migrations');
 
-    // Save migrations into DB
-    await workspaceMigrationRepository.save(workspaceObjectMigrations);
+    return [
+      ...createObjectWorkspaceMigrations,
+      ...deleteObjectWorkspaceMigrations,
+      ...createFieldWorkspaceMigrations,
+      ...deleteFieldWorkspaceMigrations,
+    ];
   }
 }

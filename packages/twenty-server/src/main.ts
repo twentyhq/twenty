@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
+import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
@@ -15,13 +16,15 @@ import { EnvironmentService } from './integrations/environment/environment.servi
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    logger: process.env.DEBUG_MODE
-      ? ['error', 'warn', 'log', 'verbose', 'debug']
-      : ['error', 'warn', 'log'],
+    bufferLogs: true,
   });
+  const logger = app.get(LoggerService);
 
   // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  // Use our logger
+  app.useLogger(logger);
 
   // Apply validation pipes globally
   app.useGlobalPipes(

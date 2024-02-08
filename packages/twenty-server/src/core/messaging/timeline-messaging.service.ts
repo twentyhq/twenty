@@ -317,6 +317,53 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
+    const threadVisibility:
+      | {
+          id: string;
+          visibility: 'metadata' | 'subject' | 'share_everything';
+        }[]
+      | undefined = await workspaceDataSource?.query(
+      `
+      SELECT
+          "messageThread".id,
+          "messageChannel".visibility
+      FROM
+          ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."message" message ON "message"."messageThreadId" = "messageThread".id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannelMessageAssociation" "messageChannelMessageAssociation" ON "messageChannelMessageAssociation"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannel" "messageChannel" ON "messageChannel".id = "messageChannelMessageAssociation"."messageChannelId"
+      WHERE
+          "messageThread".id = ANY($1)
+      `,
+      [messageThreadIds],
+    );
+
+    const visibilityValues = ['metadata', 'subject', 'share_everything'];
+
+    const threadVisibilityByThreadId:
+      | {
+          [key: string]: 'metadata' | 'subject' | 'share_everything';
+        }
+      | undefined = threadVisibility?.reduce(
+      (threadVisibilityAcc, threadVisibility) => {
+        threadVisibilityAcc[threadVisibility.id] =
+          visibilityValues[
+            Math.max(
+              visibilityValues.indexOf(threadVisibility.visibility),
+              visibilityValues.indexOf(
+                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+              ),
+            )
+          ];
+
+        return threadVisibilityAcc;
+      },
+      {},
+    );
+
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
@@ -364,6 +411,7 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
+        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,

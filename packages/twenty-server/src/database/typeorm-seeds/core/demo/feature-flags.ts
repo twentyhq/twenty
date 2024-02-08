@@ -16,7 +16,7 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsRatingFieldTypeEnabled,
+        key: FeatureFlagKeys.IsNewRecordBoardEnabled,
         workspaceId: workspaceId,
         value: false,
       },

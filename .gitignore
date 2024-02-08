@@ -18,3 +18,5 @@
 !.yarn/versions
 coverage
 .vercel
+
+**/**/logs/**

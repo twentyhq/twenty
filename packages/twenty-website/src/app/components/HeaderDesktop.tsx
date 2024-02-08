@@ -2,11 +2,10 @@
 
 import styled from '@emotion/styled';
 import { IBM_Plex_Mono } from 'next/font/google';
-import { usePathname } from 'next/navigation';
 
 import { ExternalArrow } from '@/app/components/ExternalArrow';
 
-import { DiscordIcon, GithubIcon, GithubIcon2, XIcon } from './Icons';
+import { GithubIcon } from './Icons';
 import { Logo } from './Logo';
 
 const IBMPlexMono = IBM_Plex_Mono({
@@ -102,88 +101,34 @@ const LinkNextToCTA = styled.a`
 `;
 
 const CallToAction = () => {
-  const path = usePathname();
-  const isTwentyDev = path.includes('developers');
-
   return (
     <CallToActionContainer>
-      {isTwentyDev ? (
-        <>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              gap: '10px',
-            }}
-          >
-            <a href="https://x.com/twentycrm" target="_blank" rel="noreferrer">
-              <XIcon size="M" />
-            </a>
-            <a
-              href="https://github.com/twentyhq/twenty"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <GithubIcon2 size="M" />
-            </a>
-            <a
-              href="https://discord.gg/UfGNZJfAG6"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <DiscordIcon size="M" />
-            </a>
-          </div>
-        </>
-      ) : (
-        <>
-          <LinkNextToCTA href="https://github.com/twentyhq/twenty">
-            Sign in
-          </LinkNextToCTA>
-          <a href="https://twenty.com/stripe-redirection">
-            <StyledButton>Get Started</StyledButton>
-          </a>
-        </>
-      )}
+      <LinkNextToCTA href="https://github.com/twentyhq/twenty">
+        Sign in
+      </LinkNextToCTA>
+      <a href="https://twenty.com/stripe-redirection">
+        <StyledButton>Get Started</StyledButton>
+      </a>
     </CallToActionContainer>
   );
 };
 
 export const HeaderDesktop = () => {
-  const path = usePathname();
-  const isTwentyDev = path.includes('developers');
-
   return (
     <Nav>
       <LogoContainer>
         <Logo />
-        {isTwentyDev && (
-          <LogoAddon className={IBMPlexMono.className}>
-            for Developers
-          </LogoAddon>
-        )}
       </LogoContainer>
-      {isTwentyDev ? (
-        <LinkList>
-          <ListItem href="/developers/docs">Docs</ListItem>
-          <ListItem href="/developers/contributors">Contributors</ListItem>
-          <ListItem href="/">
-            Cloud <ExternalArrow />
-          </ListItem>
-        </LinkList>
-      ) : (
-        <LinkList>
-          <ListItem href="/pricing">Pricing</ListItem>
-          <ListItem href="/story">Story</ListItem>
-          <ListItem href="https://docs.twenty.com">
-            Docs <ExternalArrow />
-          </ListItem>
-          <ListItem href="https://github.com/twentyhq/twenty">
-            <GithubIcon color="rgb(71,71,71)" /> 5.7k <ExternalArrow />
-          </ListItem>
-        </LinkList>
-      )}
+      <LinkList>
+        <ListItem href="/pricing">Pricing</ListItem>
+        <ListItem href="/story">Story</ListItem>
+        <ListItem href="https://docs.twenty.com">
+          Docs <ExternalArrow />
+        </ListItem>
+        <ListItem href="https://github.com/twentyhq/twenty">
+          <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
+        </ListItem>
+      </LinkList>
       <CallToAction />
     </Nav>
   );

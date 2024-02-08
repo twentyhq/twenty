@@ -32,6 +32,9 @@ export type ViewBarProps = {
   onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
   onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
   onViewTypeChange?: (viewType: ViewType) => void | Promise<void>;
+  onViewCompactModeChange?: (
+    isCompactModeActive: boolean,
+  ) => void | Promise<void>;
 };
 
 export const ViewBar = ({
@@ -43,6 +46,7 @@ export const ViewBar = ({
   onViewFiltersChange,
   onViewSortsChange,
   onViewTypeChange,
+  onViewCompactModeChange,
 }: ViewBarProps) => {
   const { openDropdown: openOptionsDropdownButton } = useDropdown(
     optionsDropdownScopeId,
@@ -62,6 +66,7 @@ export const ViewBar = ({
       onViewFiltersChange={onViewFiltersChange}
       onViewSortsChange={onViewSortsChange}
       onViewTypeChange={onViewTypeChange}
+      onViewCompactModeChange={onViewCompactModeChange}
     >
       <ViewBarEffect />
       <ViewBarFilterEffect

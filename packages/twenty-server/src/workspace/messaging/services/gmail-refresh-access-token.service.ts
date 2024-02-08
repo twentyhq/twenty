@@ -3,38 +3,25 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
 
 @Injectable()
 export class GmailRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly connectedAccountService: ConnectedAccountService,
   ) {}
 
   async refreshAndSaveAccessToken(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google' AND "id" = $1`,
-      [connectedAccountId],
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+      connectedAccountId,
+      workspaceId,
     );
 
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const refreshToken = connectedAccounts[0]?.refreshToken;
+    const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
@@ -42,9 +29,10 @@ export class GmailRefreshAccessTokenService {
 
     const accessToken = await this.refreshAccessToken(refreshToken);
 
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "accessToken" = $1 WHERE "id" = $2`,
-      [accessToken, connectedAccounts[0].id],
+    await this.connectedAccountService.updateAccessToken(
+      accessToken,
+      connectedAccountId,
+      workspaceId,
     );
   }
 

@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-const StyledThreadMessageBody = styled.div`
+import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+
+const StyledThreadMessageBody = styled(motion.div)`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: column;
@@ -12,10 +15,16 @@ const StyledThreadMessageBody = styled.div`
 
 type EmailThreadMessageBodyProps = {
   body: string;
+  isDisplayed: boolean;
 };
 
 export const EmailThreadMessageBody = ({
   body,
+  isDisplayed,
 }: EmailThreadMessageBodyProps) => {
-  return <StyledThreadMessageBody>{body}</StyledThreadMessageBody>;
+  return (
+    <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
+      <StyledThreadMessageBody>{body}</StyledThreadMessageBody>
+    </AnimatedEaseInOut>
+  );
 };

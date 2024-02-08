@@ -1,9 +1,11 @@
 import { useApolloClient } from '@apollo/client';
+import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useGenerateCachedObjectRecord } from '@/object-record/cache/hooks/useGenerateCachedObjectRecord';
+import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
@@ -13,27 +15,31 @@ export const useCreateManyRecords = <
 >({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
+  const apolloClient = useApolloClient();
+
   const { objectMetadataItem, createManyRecordsMutation } =
     useObjectMetadataItem({
       objectNameSingular,
     });
 
-  const { generateCachedObjectRecord } = useGenerateCachedObjectRecord({
-    objectMetadataItem,
-  });
+  const { generateObjectRecordOptimisticResponse } =
+    useGenerateObjectRecordOptimisticResponse({
+      objectMetadataItem,
+    });
 
-  const apolloClient = useApolloClient();
+  const getRelationMetadata = useGetRelationMetadata();
 
   const createManyRecords = async (data: Partial<CreatedObjectRecord>[]) => {
-    const optimisticallyCreatedRecords = data.map((record) =>
-      generateCachedObjectRecord<CreatedObjectRecord>(record),
-    );
-
-    const sanitizedCreateManyRecordsInput = data.map((input, index) =>
+    const sanitizedCreateManyRecordsInput = data.map((input) =>
       sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: { ...input, id: optimisticallyCreatedRecords[index].id },
+        recordInput: { ...input, id: v4() },
       }),
+    );
+
+    const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
+      (record) =>
+        generateObjectRecordOptimisticResponse<CreatedObjectRecord>(record),
     );
 
     const mutationResponseField = getCreateManyRecordsMutationResponseField(
@@ -57,6 +63,7 @@ export const useCreateManyRecords = <
           cache,
           objectMetadataItem,
           records,
+          getRelationMetadata,
         });
       },
     });

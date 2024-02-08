@@ -39,8 +39,11 @@ export class WorkspaceFieldComparator {
       string,
       Partial<PartialFieldMetadata>
     > = {};
+    // Double security to only compare non-custom fields
+    const filteredOriginalFieldCollection =
+      originalObjectMetadata.fields.filter((field) => !field.isCustom);
     const originalFieldMetadataMap = transformMetadataForComparison(
-      originalObjectMetadata.fields,
+      filteredOriginalFieldCollection,
       {
         propertiesToIgnore: fieldPropertiesToIgnore,
         propertiesToStringify: fieldPropertiesToStringify,

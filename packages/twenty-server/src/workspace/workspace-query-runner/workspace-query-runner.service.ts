@@ -3,8 +3,8 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -34,11 +34,12 @@ import {
   CallWebhookJobsJobOperation,
 } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
-import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 
-import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
+import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
@@ -46,14 +47,12 @@ import {
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
-  private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
-
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findMany<
@@ -64,37 +63,28 @@ export class WorkspaceQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const start = performance.now();
+    const { workspaceId, objectMetadataItem } = options;
+    const start = performance.now();
 
-      const query = await this.workspaceQueryBuilderFactory.findMany(
-        args,
-        options,
-      );
+    const query = await this.workspaceQueryBuilderFactory.findMany(
+      args,
+      options,
+    );
 
-      const result = await this.execute(query, workspaceId);
-      const end = performance.now();
+    const result = await this.execute(query, workspaceId);
+    const end = performance.now();
 
-      console.log(
-        `query time: ${end - start} ms on query ${
-          options.objectMetadataItem.nameSingular
-        }`,
-      );
+    console.log(
+      `query time: ${end - start} ms on query ${
+        options.objectMetadataItem.nameSingular
+      }`,
+    );
 
-      return this.parseResult<IConnection<Record>>(
-        result,
-        objectMetadataItem,
-        '',
-      );
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
-
-      return Promise.reject(error);
-    }
+    return this.parseResult<IConnection<Record>>(
+      result,
+      objectMetadataItem,
+      '',
+    );
   }
 
   async findOne<
@@ -104,67 +94,56 @@ export class WorkspaceQueryRunnerService {
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    try {
-      if (!args.filter || Object.keys(args.filter).length === 0) {
-        throw new BadRequestException('Missing filter argument');
-      }
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.findOne(
-        args,
-        options,
-      );
-      const result = await this.execute(query, workspaceId);
-      const parsedResult = this.parseResult<IConnection<Record>>(
-        result,
-        objectMetadataItem,
-        '',
-      );
-
-      return parsedResult?.edges?.[0]?.node;
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
-
-      return Promise.reject(error);
+    if (!args.filter || Object.keys(args.filter).length === 0) {
+      throw new BadRequestException('Missing filter argument');
     }
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.findOne(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
+    const parsedResult = this.parseResult<IConnection<Record>>(
+      result,
+      objectMetadataItem,
+      '',
+    );
+
+    return parsedResult?.edges?.[0]?.node;
   }
 
   async createMany<Record extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.createMany(
-        args,
-        options,
-      );
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.createMany(
+      args,
+      options,
+    );
 
-      const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, workspaceId);
 
-      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-        result,
-        objectMetadataItem,
-        'insertInto',
-      )?.records;
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'insertInto',
+    )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.create,
-        options,
-      );
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.create,
+      options,
+    );
 
-      return parsedResults;
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
+    parsedResults.forEach((record) => {
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        workspaceId,
+        createdRecord: [this.removeNestedProperties(record)],
+      } satisfies ObjectRecordCreateEvent<any>);
+    });
 
-      return Promise.reject(error);
-    }
+    return parsedResults;
   }
 
   async createOne<Record extends IRecord = IRecord>(
@@ -180,105 +159,65 @@ export class WorkspaceQueryRunnerService {
     args: UpdateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.updateOne(
-        args,
-        options,
-      );
-      const result = await this.execute(query, workspaceId);
+    const { workspaceId, objectMetadataItem } = options;
 
-      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-        result,
-        objectMetadataItem,
-        'update',
-      )?.records;
+    const existingRecord = await this.findOne(
+      { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
+      options,
+    );
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.update,
-        options,
-      );
+    const query = await this.workspaceQueryBuilderFactory.updateOne(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
 
-      return parsedResults?.[0];
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'update',
+    )?.records;
 
-      return Promise.reject(error);
-    }
-  }
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.update,
+      options,
+    );
 
-  async deleteOne<Record extends IRecord = IRecord>(
-    args: DeleteOneResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.deleteOne(
-        args,
-        options,
-      );
-      const result = await this.execute(query, workspaceId);
+    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+      workspaceId,
+      previousRecord: this.removeNestedProperties(existingRecord as Record),
+      updatedRecord: this.removeNestedProperties(parsedResults?.[0]),
+    } satisfies ObjectRecordUpdateEvent<any>);
 
-      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-        result,
-        objectMetadataItem,
-        'deleteFrom',
-      )?.records;
-
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.delete,
-        options,
-      );
-
-      return parsedResults?.[0];
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
-
-      return Promise.reject(error);
-    }
+    return parsedResults?.[0];
   }
 
   async updateMany<Record extends IRecord = IRecord>(
     args: UpdateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.updateMany(
-        args,
-        options,
-      );
-      const result = await this.execute(query, workspaceId);
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      args,
+      options,
+    );
 
-      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-        result,
-        objectMetadataItem,
-        'update',
-      )?.records;
+    const result = await this.execute(query, workspaceId);
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.update,
-        options,
-      );
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'update',
+    )?.records;
 
-      return parsedResults;
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.update,
+      options,
+    );
 
-      return Promise.reject(error);
-    }
+    return parsedResults;
   }
 
   async deleteMany<
@@ -288,35 +227,80 @@ export class WorkspaceQueryRunnerService {
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    try {
-      const { workspaceId, objectMetadataItem } = options;
-      const query = await this.workspaceQueryBuilderFactory.deleteMany(
-        args,
-        options,
-      );
-      const result = await this.execute(query, workspaceId);
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
 
-      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-        result,
-        objectMetadataItem,
-        'deleteFrom',
-      )?.records;
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'deleteFrom',
+    )?.records;
 
-      await this.triggerWebhooks<Record>(
-        parsedResults,
-        CallWebhookJobsJobOperation.delete,
-        options,
-      );
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
 
-      return parsedResults;
-    } catch (exception) {
-      const error = handleExceptionAndConvertToGraphQLError(
-        exception,
-        this.exceptionHandlerService,
-      );
+    parsedResults.forEach((record) => {
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+        workspaceId,
+        deletedRecord: [this.removeNestedProperties(record)],
+      } satisfies ObjectRecordDeleteEvent<any>);
+    });
 
-      return Promise.reject(error);
+    return parsedResults;
+  }
+
+  async deleteOne<Record extends IRecord = IRecord>(
+    args: DeleteOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record | undefined> {
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.deleteOne(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
+
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'deleteFrom',
+    )?.records;
+
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+      workspaceId,
+      deletedRecord: this.removeNestedProperties(parsedResults?.[0]),
+    } satisfies ObjectRecordDeleteEvent<any>);
+
+    return parsedResults?.[0];
+  }
+
+  private removeNestedProperties<Record extends IRecord = IRecord>(
+    record: Record,
+  ) {
+    const sanitizedRecord = {};
+
+    for (const [key, value] of Object.entries(record)) {
+      if (value && typeof value === 'object' && value['edges']) {
+        continue;
+      }
+
+      sanitizedRecord[key] = value;
     }
+
+    return sanitizedRecord;
   }
 
   async execute(

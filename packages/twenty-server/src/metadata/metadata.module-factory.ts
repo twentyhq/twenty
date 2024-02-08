@@ -1,40 +1,42 @@
 import { YogaDriverConfig } from '@graphql-yoga/nestjs';
-import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { maskError } from 'graphql-yoga';
 
-import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import { CreateContextFactory } from 'src/graphql-config/factories/create-context.factory';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
+import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
+import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
 import { MetadataModule } from 'src/metadata/metadata.module';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
+  createContextFactory: CreateContextFactory,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
-    context: ({ req }) => ({ req }),
+    context(context) {
+      return createContextFactory.create(context);
+    },
     autoSchemaFile: true,
     include: [MetadataModule],
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });
     },
     resolvers: { JSON: GraphQLJSON },
-    plugins: [],
+    plugins: [
+      useThrottler({
+        ttl: environmentService.getApiRateLimitingTtl(),
+        limit: environmentService.getApiRateLimitingLimit(),
+        identifyFn: (context) => {
+          return context.user?.id ?? context.req.ip ?? 'anonymous';
+        },
+      }),
+      useExceptionHandler({
+        exceptionHandlerService,
+      }),
+    ],
     path: '/metadata',
-    maskedErrors: {
-      maskError(error: GraphQLError, message, isDev) {
-        if (error.originalError) {
-          return handleExceptionAndConvertToGraphQLError(
-            error.originalError,
-            exceptionHandlerService,
-          );
-        }
-
-        return maskError(error, message, isDev);
-      },
-    },
   };
 
   if (environmentService.isDebugMode()) {

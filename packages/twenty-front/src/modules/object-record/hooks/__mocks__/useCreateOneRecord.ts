@@ -67,10 +67,6 @@ export const query = gql`
   }
 `;
 
-export const variables = {
-  input: { id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9' },
-};
-
 export const responseData = {
   opportunities: {
     edges: [],

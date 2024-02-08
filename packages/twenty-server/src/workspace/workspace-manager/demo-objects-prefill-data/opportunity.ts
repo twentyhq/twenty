@@ -77,8 +77,14 @@ export const seedDemoOpportunity = async (
       'pipelineStepId',
       'pointOfContactId',
       'companyId',
+      'position',
     ])
     .orIgnore()
-    .values(opportunities)
+    .values(
+      opportunities.map((opportunity, index) => ({
+        ...opportunity,
+        position: index,
+      })),
+    )
     .execute();
 };
