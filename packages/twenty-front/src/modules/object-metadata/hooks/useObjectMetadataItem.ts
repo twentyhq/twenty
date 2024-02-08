@@ -1,7 +1,8 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { isWorkspaceSchemaCreatedState } from '@/auth/states/isWorkspaceSchemaCreated';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
@@ -40,9 +41,7 @@ export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
 ) => {
-  const isWorkspaceSchemaCreated = useRecoilValue(
-    isWorkspaceSchemaCreatedState,
-  );
+  const onboardingStatus = useOnboardingStatus();
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -54,7 +53,7 @@ export const useObjectMetadataItem = (
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!isWorkspaceSchemaCreated) {
+  if (onboardingStatus !== OnboardingStatus.Completed) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>

@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
-import { isWorkspaceSchemaCreatedState } from '@/auth/states/isWorkspaceSchemaCreated';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
@@ -10,9 +11,7 @@ export const useObjectNamePluralFromSingular = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const isWorkspaceSchemaCreated = useRecoilValue(
-    isWorkspaceSchemaCreatedState,
-  );
+  const onboardingStatus = useOnboardingStatus();
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -22,7 +21,7 @@ export const useObjectNamePluralFromSingular = ({
     }),
   );
 
-  if (!isWorkspaceSchemaCreated) {
+  if (onboardingStatus !== OnboardingStatus.Completed) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
