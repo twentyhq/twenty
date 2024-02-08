@@ -9,7 +9,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
-import { ApiKey } from '@/settings/developers/types/ApiKey';
+import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
@@ -35,7 +35,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
-  const onSave = async () => {
+  const handleSave = async () => {
     const expiresAt = DateTime.now()
       .plus({ days: formValues.expirationDate ?? 30 })
       .toString();
@@ -66,8 +66,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/developers' },
-              { children: 'New' },
+              { children: 'Developers', href: '/settings/developers' },
+              { children: 'New API Key' },
             ]}
           />
           <SaveAndCancelButtons
@@ -75,7 +75,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             onCancel={() => {
               navigate('/settings/developers');
             }}
-            onSave={onSave}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <Section>

@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/testing/sleep';
 
 import { IconPicker } from '../IconPicker';
@@ -9,7 +10,7 @@ import { IconPicker } from '../IconPicker';
 const meta: Meta<typeof IconPicker> = {
   title: 'UI/Input/IconPicker/IconPicker',
   component: IconPicker,
-  decorators: [ComponentDecorator],
+  decorators: [IconsProviderDecorator, ComponentDecorator],
 };
 
 export default meta;
