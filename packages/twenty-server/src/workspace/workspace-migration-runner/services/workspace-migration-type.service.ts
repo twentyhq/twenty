@@ -28,7 +28,7 @@ export class WorkspaceMigrationTypeService {
     if (columnDefinition.defaultValue) {
       await queryRunner.query(`
         ALTER TABLE "${schemaName}"."${tableName}"
-        ALTER COLUMN "body" SET DEFAULT ${columnDefinition.defaultValue}::${columnDefinition.columnType};
+        ALTER COLUMN "${columnDefinition.columnName}" SET DEFAULT ${columnDefinition.defaultValue}::${columnDefinition.columnType};
       `);
     }
   }
