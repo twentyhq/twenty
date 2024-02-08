@@ -5,3 +5,9 @@ export const isWorkspaceHealthNullableIssue = (
 ): type is WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT => {
   return type === WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT;
 };
+
+export const isWorkspaceHealthTypeIssue = (
+  type: WorkspaceHealthIssueType,
+): type is WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT => {
+  return type === WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT;
+};

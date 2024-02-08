@@ -22,6 +22,7 @@ import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-versi
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
+import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -30,6 +31,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
+    private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
   ) {}
 
   /**
@@ -273,6 +275,23 @@ export class WorkspaceMigrationRunnerService {
         tableName,
         migrationColumn,
       );
+    }
+
+    if (
+      migrationColumn.currentColumnDefinition.columnType !==
+      migrationColumn.alteredColumnDefinition.columnType
+    ) {
+      await this.workspaceMigrationTypeService.alterType(
+        queryRunner,
+        schemaName,
+        tableName,
+        migrationColumn,
+      );
+
+      migrationColumn.currentColumnDefinition.columnType =
+        migrationColumn.alteredColumnDefinition.columnType;
+
+      return;
     }
 
     await queryRunner.changeColumn(
