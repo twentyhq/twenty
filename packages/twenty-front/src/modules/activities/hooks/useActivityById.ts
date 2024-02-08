@@ -21,21 +21,12 @@ export const useActivityById = ({ activityId }: { activityId: string }) => {
         activityWithConnections,
       );
 
-      console.log({
-        activity,
-        activityWithConnections,
-      });
-
       setEntityFields(activity ?? {});
     },
     depth: QUERY_DEPTH_TO_GET_ACTIVITY_TARGET_RELATIONS,
   });
 
   const { activity } = makeActivityWithoutConnection(activityWithConnections);
-
-  console.log({
-    activity,
-  });
 
   return {
     activity,
