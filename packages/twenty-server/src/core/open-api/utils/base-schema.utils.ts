@@ -21,7 +21,7 @@ export const baseSchema = (): OpenAPIV3.Document => {
     // Testing purposes
     servers: [
       {
-        url: 'https://api.twenty.com/',
+        url: 'https://api.twenty.com/rest',
         description: 'Production Development',
       },
     ],
