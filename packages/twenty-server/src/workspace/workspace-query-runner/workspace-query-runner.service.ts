@@ -27,12 +27,13 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { CallWebhookJobsJobOperation } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { WebhooksService } from 'src/core/webhooks/webhooks.service';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -48,8 +49,8 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @Inject(MessageQueue.webhookQueue)
-    private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly webhooksService: WebhooksService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -147,6 +148,12 @@ export class WorkspaceQueryRunnerService {
         'insertInto',
       )?.records;
 
+      await this.webhooksService.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.create,
+        options,
+      );
+
       this.eventEmitter.emit('createMany', parsedResults);
 
       return parsedResults;
@@ -189,6 +196,12 @@ export class WorkspaceQueryRunnerService {
 
       this.eventEmitter.emit('updateOne', parsedResults);
 
+      await this.webhooksService.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.update,
+        options,
+      );
+
       return parsedResults?.[0];
     } catch (exception) {
       const error = handleExceptionAndConvertToGraphQLError(
@@ -220,6 +233,12 @@ export class WorkspaceQueryRunnerService {
 
       this.eventEmitter.emit('deleteOne', parsedResults);
 
+      await this.webhooksService.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.delete,
+        options,
+      );
+
       return parsedResults?.[0];
     } catch (exception) {
       const error = handleExceptionAndConvertToGraphQLError(
@@ -250,6 +269,12 @@ export class WorkspaceQueryRunnerService {
       )?.records;
 
       this.eventEmitter.emit('udpateMany', parsedResults);
+
+      await this.webhooksService.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.update,
+        options,
+      );
 
       return parsedResults;
     } catch (exception) {
@@ -284,6 +309,12 @@ export class WorkspaceQueryRunnerService {
       )?.records;
 
       this.eventEmitter.emit('deleteMany', parsedResults);
+
+      await this.webhooksService.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.delete,
+        options,
+      );
 
       return parsedResults;
     } catch (exception) {

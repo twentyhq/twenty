@@ -6,7 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
-import { WorkspaceQueryListener } from 'src/workspace/workspace-query-runner/workspace-query-runner-listener.service';
+import { WorkspaceQueryListener } from 'src/core/webhooks/webhooks-listener.service';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
