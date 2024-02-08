@@ -11,7 +11,7 @@ type MockedUser = Pick<
   | '__typename'
   | 'supportUserHash'
 > & {
-  workspaceMember: WorkspaceMember;
+  workspaceMember: WorkspaceMember | null;
   locale: string;
   defaultWorkspace: Workspace;
 };
@@ -116,7 +116,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     firstName: '',
     lastName: '',
     canImpersonate: false,
-    workspaceMember: mockedWorkspaceMemberData,
+    workspaceMember: null,
     defaultWorkspace: {
       ...mockDefaultWorkspace,
       displayName: '',
