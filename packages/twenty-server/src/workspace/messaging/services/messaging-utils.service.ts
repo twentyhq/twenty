@@ -206,6 +206,9 @@ export class MessagingUtilsService {
 
       const companyDomainName = participant.handle
         .split('@')?.[1]
+        .split('.')
+        .slice(-2)
+        .join('.')
         .toLowerCase();
 
       await this.createCompaniesService.createCompanyFromDomainName(
