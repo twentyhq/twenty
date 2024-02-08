@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
-export const useCreateActivityFromEditor = () => {
+export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
@@ -23,7 +23,7 @@ export const useCreateActivityFromEditor = () => {
   const { modifyActivityTargetsOnActivityCache } =
     useModifyActivityTargetsOnActivityCache();
 
-  const createActivity = async (activityToCreate: ActivityForEditor) => {
+  const createActivityInDB = async (activityToCreate: ActivityForEditor) => {
     const { activityWithConnection } = makeActivityWithConnection(
       activityToCreate as any, // TODO: fix type
     );
@@ -54,6 +54,6 @@ export const useCreateActivityFromEditor = () => {
   };
 
   return {
-    createActivity,
+    createActivity: createActivityInDB,
   };
 };

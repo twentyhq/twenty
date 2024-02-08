@@ -6,7 +6,7 @@ import {
   ClickOutsideListenerProps,
   useListenClickOutsideV2,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
-import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/states/clickOutsideListenerCallbacksStateScopeMap';
+import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
@@ -56,7 +56,7 @@ export const useClickOutsideListener = (componentId: string) => {
     [getClickOutsideListenerIsActivatedState],
   );
 
-  const registerClickOutsideListenerCallback = useRecoilCallback(
+  const registerOnClickOutsideCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       ({ callbackFunction, callbackId }: ClickOutsideListenerCallback) => {
         const existingCallbacks = snapshot
@@ -103,7 +103,7 @@ export const useClickOutsideListener = (componentId: string) => {
     [getClickOutsideListenerCallbacksState],
   );
 
-  const unregisterClickOutsideListenerCallback = useRecoilCallback(
+  const unregisterOnClickOutsideCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       ({ callbackId }: { callbackId: string }) => {
         const existingCallbacks = snapshot
@@ -133,10 +133,10 @@ export const useClickOutsideListener = (componentId: string) => {
     callback: ClickOutsideListenerCallback,
   ) => {
     useEffect(() => {
-      registerClickOutsideListenerCallback(callback);
+      registerOnClickOutsideCallback(callback);
 
       return () => {
-        unregisterClickOutsideListenerCallback({
+        unregisterOnClickOutsideCallback({
           callbackId: callback.callbackId,
         });
       };

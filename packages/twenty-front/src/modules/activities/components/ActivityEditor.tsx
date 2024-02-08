@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { useCreateActivityFromEditor } from '@/activities/hooks/useCreateActivityFromEditor';
+import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityFromEditor';
 import { useDeleteActivityInCacheFromEditor } from '@/activities/hooks/useDeleteActivityInCacheFromEditor';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
@@ -78,6 +78,10 @@ export const ActivityEditor = ({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
+  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
+    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activity.id,
@@ -99,7 +103,7 @@ export const ActivityEditor = ({
     isCreatingActivityState,
   );
 
-  const { createActivity } = useCreateActivityFromEditor();
+  const { createActivity } = useCreateActivityInDB();
 
   const updateTitle = (newTitle: string) => {
     if (isCreatingActivity) {
@@ -142,19 +146,15 @@ export const ActivityEditor = ({
     }
   };
 
-  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
-    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
-  );
-
-  const { deleteActivityFromCache: deleteActivity } =
-    useDeleteActivityInCacheFromEditor();
+  // TODO: remove
+  const { deleteActivityFromCache } = useDeleteActivityInCacheFromEditor();
 
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
     callbackFunction: () => {
       if (isCreatingActivity) {
         setIsCreatingActivity(false);
-        deleteActivity(activity);
+        deleteActivityFromCache(activity);
       }
     },
   });

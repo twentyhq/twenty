@@ -1,10 +1,5 @@
-import { ClickOutsideListenerCallbackFunction } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallbackFunction';
+import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
-
-export type ClickOutsideListenerCallback = {
-  callbackId: string;
-  callbackFunction: ClickOutsideListenerCallbackFunction;
-};
 
 export const clickOutsideListenerCallbacksStateScopeMap = createStateScopeMap<
   ClickOutsideListenerCallback[]

@@ -6,20 +6,20 @@ import {
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
-export const getRelationTargetFromRelationSource = ({
+export const getRelationDefinition = ({
   objectMetadataItems,
-  relationSourceFieldMetadataItem,
+  fieldMetadataItem,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
-  relationSourceFieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItem: FieldMetadataItem;
 }) => {
-  if (relationSourceFieldMetadataItem.type !== FieldMetadataType.Relation) {
+  if (fieldMetadataItem.type !== FieldMetadataType.Relation) {
     return null;
   }
 
   const relationMetadataItem =
-    relationSourceFieldMetadataItem.fromRelationMetadata ||
-    relationSourceFieldMetadataItem.toRelationMetadata;
+    fieldMetadataItem.fromRelationMetadata ||
+    fieldMetadataItem.toRelationMetadata;
 
   if (!relationMetadataItem) return null;
 
@@ -33,7 +33,7 @@ export const getRelationTargetFromRelationSource = ({
   // TODO: precise naming, is it relationTypeFromTargetPointOfView or relationTypeFromSourcePointOfView ?
   const relationType =
     relationMetadataItem.relationType === RelationMetadataType.OneToMany &&
-    relationSourceFieldMetadataItem.toRelationMetadata
+    fieldMetadataItem.toRelationMetadata
       ? ('MANY_TO_ONE' satisfies RelationType)
       : (relationMetadataItem.relationType as RelationType);
 
