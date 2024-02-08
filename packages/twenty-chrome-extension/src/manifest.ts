@@ -30,7 +30,7 @@ export default defineManifest({
     },
   ],
 
-  permissions: ['tabs', 'activeTab', 'scripting', 'storage'],
+  permissions: ['activeTab', 'storage'],
 
   host_permissions: ['https://www.linkedin.com/*'],
 });
