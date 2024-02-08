@@ -34,10 +34,6 @@ export class User {
   @Column()
   email: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  defaultAvatarUrl: string;
-
   @Field()
   @Column({ default: false })
   emailVerified: boolean;
