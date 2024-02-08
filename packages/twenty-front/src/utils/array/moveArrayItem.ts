@@ -2,7 +2,7 @@ export const moveArrayItem = <Item>(
   array: Item[],
   { fromIndex, toIndex }: { fromIndex: number; toIndex: number },
 ) => {
-  if (fromIndex < 0 || toIndex > array.length - 1 || fromIndex === toIndex) {
+  if (!(fromIndex in array) || !(toIndex in array) || fromIndex === toIndex) {
     return array;
   }
 

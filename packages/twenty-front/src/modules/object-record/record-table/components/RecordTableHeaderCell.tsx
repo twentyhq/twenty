@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -178,7 +179,11 @@ export const RecordTableHeaderCell = ({
         onMouseEnter={() => setIconVisibility(true)}
         onMouseLeave={() => setIconVisibility(false)}
       >
-        <ColumnHeadWithDropdown column={column} />
+        {column.isLabelIdentifier ? (
+          <ColumnHead column={column} />
+        ) : (
+          <ColumnHeadWithDropdown column={column} />
+        )}
         {iconVisibility && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton

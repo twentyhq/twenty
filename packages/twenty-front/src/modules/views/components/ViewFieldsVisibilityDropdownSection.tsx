@@ -19,6 +19,7 @@ import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/Sty
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
@@ -62,7 +63,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             isActive: openToolTipIndex === index,
           }
         : null,
-      index === 0
+      field.isLabelIdentifier
         ? null
         : {
             Icon: field.isVisible ? IconMinus : IconPlus,
@@ -82,9 +83,11 @@ export const ViewFieldsVisibilityDropdownSection = ({
     },
   });
 
-  const [firstField, ...otherFields] = fields;
-  const nonDraggableItems = isDraggable ? [firstField] : fields;
-  const draggableItems = isDraggable ? otherFields : [];
+  const { nonDraggableItems = [], draggableItems = [] } = isDraggable
+    ? groupArrayItemsBy(fields, ({ isLabelIdentifier }) =>
+        isLabelIdentifier ? 'nonDraggableItems' : 'draggableItems',
+      )
+    : { nonDraggableItems: fields, draggableItems: [] };
 
   return (
     <div ref={ref}>

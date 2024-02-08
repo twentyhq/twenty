@@ -29,10 +29,8 @@ export const mapViewFieldsToColumnDefinitions = ({
     ({ fieldMetadataId }) => fieldMetadataId,
   );
 
-  let labelIdentifierIndex = -1;
-
   const columnDefinitionsFromViewFields = viewFields
-    .map((viewField, index) => {
+    .map((viewField) => {
       const correspondingColumnDefinition =
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
@@ -40,10 +38,6 @@ export const mapViewFieldsToColumnDefinitions = ({
 
       const isLabelIdentifier =
         viewField.fieldMetadataId === labelIdentifierFieldMetadataId;
-
-      if (isLabelIdentifier) {
-        labelIdentifierIndex = index;
-      }
 
       return {
         fieldMetadataId: viewField.fieldMetadataId,
@@ -54,6 +48,7 @@ export const mapViewFieldsToColumnDefinitions = ({
         type: correspondingColumnDefinition.type,
         position: isLabelIdentifier ? 0 : viewField.position,
         size: viewField.size ?? correspondingColumnDefinition.size,
+        isLabelIdentifier,
         isVisible: isLabelIdentifier || viewField.isVisible,
         viewFieldId: viewField.id,
       };
@@ -62,6 +57,10 @@ export const mapViewFieldsToColumnDefinitions = ({
 
   // No label identifier set for this object
   if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;
+
+  const labelIdentifierIndex = columnDefinitionsFromViewFields.findIndex(
+    ({ fieldMetadataId }) => fieldMetadataId === labelIdentifierFieldMetadataId,
+  );
 
   // Label identifier field found in view fields
   // => move it to the start of the list
@@ -80,6 +79,7 @@ export const mapViewFieldsToColumnDefinitions = ({
   return [
     {
       ...labelIdentifierColumnDefinition,
+      isLabelIdentifier: true,
       position: 0,
       isVisible: true,
     },
