@@ -35,7 +35,7 @@ export class CreateCompaniesService {
 
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, "domainName", address)
-      VALUES ($1, $2, $3)`,
+      VALUES ($1, $2, $3, $4)`,
       [companyId, name, domainName, city],
     );
 
