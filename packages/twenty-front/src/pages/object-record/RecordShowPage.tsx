@@ -42,7 +42,7 @@ export const RecordShowPage = () => {
     recordStoreFamilyState(objectRecordId),
   );
 
-  const { record } = useFindOneRecord({
+  const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
   });
@@ -80,6 +80,7 @@ export const RecordShowPage = () => {
         title={pageName ?? ''}
         hasBackButton
         Icon={IconBuildingSkyscraper}
+        loading={loading}
       >
         {record && (
           <>

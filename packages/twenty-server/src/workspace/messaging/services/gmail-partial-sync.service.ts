@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
@@ -17,6 +17,8 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 
 @Injectable()
 export class GmailPartialSyncService {
+  private readonly logger = new Logger(GmailPartialSyncService.name);
+
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
@@ -77,6 +79,10 @@ export class GmailPartialSyncService {
     }
 
     if (newHistoryId === lastSyncHistoryId) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
+      );
+
       return;
     }
 
@@ -126,6 +132,10 @@ export class GmailPartialSyncService {
       newHistoryId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    this.logger.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done.`,
     );
   }
 

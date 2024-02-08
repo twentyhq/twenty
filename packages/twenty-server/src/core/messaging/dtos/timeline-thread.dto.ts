@@ -13,6 +13,9 @@ export class TimelineThread {
   read: boolean;
 
   @Field()
+  visibility: string;
+
+  @Field()
   firstParticipant: TimelineThreadParticipant;
 
   @Field(() => [TimelineThreadParticipant])
