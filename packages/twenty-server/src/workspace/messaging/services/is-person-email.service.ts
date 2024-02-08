@@ -4,10 +4,14 @@ import { Injectable } from '@nestjs/common';
 export class IsPersonEmailService {
   constructor() {}
 
-  isPersonEmail(email: string): boolean {
+  isPersonEmail(email: string | undefined): boolean {
+    if (!email) return false;
+
     const nonPersonalPatterns = [
       /noreply/,
       /no-reply/,
+      /do_not_reply/,
+      /no.reply/,
       /^info@/,
       /^admin@/,
       /^contact@/,
@@ -20,8 +24,6 @@ export class IsPersonEmailService {
       /^mailer-daemon/,
       /^notifications?/,
       /^digest/,
-      /^do_not_reply/,
-      /^no.reply/,
       /^auto/,
       /^apps/,
       /^assign/,

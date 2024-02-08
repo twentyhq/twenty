@@ -12,6 +12,7 @@ import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
 import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { IsPersonEmailService } from 'src/workspace/messaging/services/is-person-email.service';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
@@ -33,6 +34,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
     MessagingUtilsService,
     GmailClientProvider,
     CreateContactService,
+    IsPersonEmailService,
   ],
   exports: [
     GmailPartialSyncService,
