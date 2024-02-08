@@ -58,8 +58,10 @@ export const RecordIndexContainer = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+  const { columnDefinitions } = useColumnDefinitionsFromFieldMetadata(
+    objectMetadataItem,
+    recordIndexViewType,
+  );
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);

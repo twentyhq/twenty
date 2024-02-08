@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { ViewType } from '@/views/types/ViewType';
 import { Nullable } from '~/types/Nullable';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
@@ -11,6 +14,7 @@ import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldM
 
 export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem?: Nullable<ObjectMetadataItem>,
+  viewType: ViewType = ViewType.Table,
 ) => {
   const activeFieldMetadataItems = useMemo(
     () =>
@@ -22,19 +26,32 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(
-    () =>
-      objectMetadataItem
-        ? activeFieldMetadataItems.map((field, index) =>
-            formatFieldMetadataItemAsColumnDefinition({
-              position: index,
-              field,
+  const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(() => {
+    if (!objectMetadataItem) return [];
+
+    const columnDefinitionsFromFieldMetadata = activeFieldMetadataItems.map(
+      (field, index) =>
+        formatFieldMetadataItemAsColumnDefinition({
+          position: index,
+          field,
+          objectMetadataItem,
+        }),
+    );
+
+    return viewType === ViewType.Kanban
+      ? columnDefinitionsFromFieldMetadata.filter(
+          (columnDefinition) =>
+            filterAvailableTableColumns(columnDefinition) &&
+            !isLabelIdentifierField({
+              fieldMetadataItem: {
+                id: columnDefinition.fieldMetadataId,
+                name: columnDefinition.metadata.fieldName,
+              },
               objectMetadataItem,
             }),
-          )
-        : [],
-    [activeFieldMetadataItems, objectMetadataItem],
-  );
+        )
+      : columnDefinitionsFromFieldMetadata;
+  }, [activeFieldMetadataItems, objectMetadataItem, viewType]);
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: activeFieldMetadataItems,

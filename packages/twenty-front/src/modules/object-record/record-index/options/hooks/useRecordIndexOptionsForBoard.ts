@@ -5,18 +5,17 @@ import { useRecoilState } from 'recoil';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
-import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useViews } from '@/views/hooks/internal/useViews';
 import { GraphQLView } from '@/views/types/GraphQLView';
-import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
+import { ViewType } from '@/views/types/ViewType';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -44,26 +43,10 @@ export const useRecordIndexOptionsForBoard = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+  const { columnDefinitions: availableColumnDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem, ViewType.Kanban);
 
-  const boardFields = useMemo(
-    () =>
-      columnDefinitions.filter(
-        (columnDefinition) =>
-          filterAvailableTableColumns(columnDefinition) &&
-          !isLabelIdentifierField({
-            fieldMetadataItem: {
-              id: columnDefinition.fieldMetadataId,
-              name: columnDefinition.metadata.fieldName,
-            },
-            objectMetadataItem,
-          }),
-      ),
-    [columnDefinitions, objectMetadataItem],
-  );
-
-  const recordIndexFieldDefinitionsByFieldMetadataId = useMemo(
+  const recordIndexFieldDefinitionsByKey = useMemo(
     () =>
       mapArrayToObject(
         recordIndexFieldDefinitions,
@@ -72,51 +55,56 @@ export const useRecordIndexOptionsForBoard = ({
     [recordIndexFieldDefinitions],
   );
 
-  const { visibleBoardFields = [], hiddenBoardFields = [] } = useMemo(() => {
-    const boardFieldsWithVisibility = boardFields.map((boardField) => {
-      const existingRecordFieldDefinition =
-        recordIndexFieldDefinitionsByFieldMetadataId[
-          boardField.fieldMetadataId
-        ];
+  const visibleBoardFields = useMemo(
+    () =>
+      recordIndexFieldDefinitions
+        .filter((boardField) => boardField.isVisible)
+        .sort(
+          (boardFieldA, boardFieldB) =>
+            boardFieldA.position - boardFieldB.position,
+        ),
+    [recordIndexFieldDefinitions],
+  );
 
-      // Make sure non-existing field definitions are set to "not visible"
-      return {
-        ...boardField,
-        isVisible: !!existingRecordFieldDefinition?.isVisible,
-      };
-    });
-
-    return groupArrayItemsBy(boardFieldsWithVisibility, ({ isVisible }) =>
-      isVisible ? 'visibleBoardFields' : 'hiddenBoardFields',
-    );
-  }, [boardFields, recordIndexFieldDefinitionsByFieldMetadataId]);
+  const hiddenBoardFields = useMemo(
+    () =>
+      availableColumnDefinitions
+        .filter(
+          ({ fieldMetadataId }) =>
+            !(fieldMetadataId in recordIndexFieldDefinitionsByKey) ||
+            !recordIndexFieldDefinitionsByKey[fieldMetadataId].isVisible,
+        )
+        .map((hiddenColumn) => ({ ...hiddenColumn, isVisible: false })),
+    [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
+  );
 
   const handleReorderBoardFields: OnDragEndResponder = useCallback(
     (result) => {
-      if (
-        !result.destination ||
-        result.destination.index === 1 ||
-        result.source.index === 1
-      ) {
+      if (!result.destination) {
         return;
       }
 
-      const reorderedFields = moveArrayItem(recordIndexFieldDefinitions, {
+      const reorderedVisibleBoardFields = moveArrayItem(visibleBoardFields, {
         fromIndex: result.source.index - 1,
         toIndex: result.destination.index - 1,
       });
-      const updatedFields = reorderedFields.map((field, index) => ({
-        ...field,
-        position: index,
-      }));
+
+      if (isDeeplyEqual(visibleBoardFields, reorderedVisibleBoardFields))
+        return;
+
+      const updatedFields = [
+        ...reorderedVisibleBoardFields,
+        ...hiddenBoardFields,
+      ].map((field, index) => ({ ...field, position: index }));
 
       setRecordIndexFieldDefinitions(updatedFields);
       persistViewFields(mapBoardFieldDefinitionsToViewFields(updatedFields));
     },
     [
+      hiddenBoardFields,
       persistViewFields,
-      recordIndexFieldDefinitions,
       setRecordIndexFieldDefinitions,
+      visibleBoardFields,
     ],
   );
 
@@ -129,36 +117,43 @@ export const useRecordIndexOptionsForBoard = ({
         'size' | 'position'
       >,
     ) => {
-      const isNewViewField = !recordIndexFieldDefinitions.some(
-        (fieldDefinition) =>
-          fieldDefinition.fieldMetadataId ===
-          updatedFieldDefinition.fieldMetadataId,
+      const isNewViewField = !(
+        updatedFieldDefinition.fieldMetadataId in
+        recordIndexFieldDefinitionsByKey
       );
 
       let updatedFieldsDefinitions: ColumnDefinition<FieldMetadata>[];
 
       if (isNewViewField) {
-        const correspondingFieldDefinition = boardFields.find(
-          (availableTableColumn) =>
-            availableTableColumn.fieldMetadataId ===
+        const correspondingFieldDefinition = availableColumnDefinitions.find(
+          (availableColumnDefinition) =>
+            availableColumnDefinition.fieldMetadataId ===
             updatedFieldDefinition.fieldMetadataId,
         );
+
         if (!correspondingFieldDefinition) return;
+
+        const lastVisibleBoardField =
+          visibleBoardFields[visibleBoardFields.length - 1];
 
         updatedFieldsDefinitions = [
           ...recordIndexFieldDefinitions,
-          { ...correspondingFieldDefinition, isVisible: true },
+          {
+            ...correspondingFieldDefinition,
+            position: lastVisibleBoardField.position + 1,
+            isVisible: true,
+          },
         ];
       } else {
         updatedFieldsDefinitions = recordIndexFieldDefinitions.map(
-          (exitingFieldDefinition) =>
-            exitingFieldDefinition.fieldMetadataId ===
+          (existingFieldDefinition) =>
+            existingFieldDefinition.fieldMetadataId ===
             updatedFieldDefinition.fieldMetadataId
               ? {
-                  ...exitingFieldDefinition,
-                  isVisible: !exitingFieldDefinition.isVisible,
+                  ...existingFieldDefinition,
+                  isVisible: !existingFieldDefinition.isVisible,
                 }
-              : exitingFieldDefinition,
+              : existingFieldDefinition,
         );
       }
 
@@ -169,10 +164,12 @@ export const useRecordIndexOptionsForBoard = ({
       );
     },
     [
-      recordIndexFieldDefinitions,
+      recordIndexFieldDefinitionsByKey,
       setRecordIndexFieldDefinitions,
       persistViewFields,
-      boardFields,
+      availableColumnDefinitions,
+      visibleBoardFields,
+      recordIndexFieldDefinitions,
     ],
   );
 
