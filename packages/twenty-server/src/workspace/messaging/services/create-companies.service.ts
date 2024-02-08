@@ -12,7 +12,7 @@ export class CreateCompaniesService {
 
   constructor() {
     this.httpService = axios.create({
-      baseURL: 'https://companies.twenty.com/',
+      baseURL: 'https://companies.twenty.com',
     });
   }
 
@@ -33,14 +33,10 @@ export class CreateCompaniesService {
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
-    const companyNameFromDomainName = capitalize(domainName.split('.')[0]);
-
-    const companyName = name || companyNameFromDomainName;
-
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, "domainName", address)
       VALUES ($1, $2, $3)`,
-      [companyId, companyName, domainName, city],
+      [companyId, name, domainName, city],
     );
 
     return companyId;
@@ -50,13 +46,20 @@ export class CreateCompaniesService {
     name: string;
     city: string;
   }> {
-    const response = await this.httpService.get(`/${domainName}`);
+    try {
+      const response = await this.httpService.get(`/${domainName}`);
 
-    const data = response.data;
+      const data = response.data;
 
-    return {
-      name: data.name,
-      city: data.city,
-    };
+      return {
+        name: data.name,
+        city: data.city,
+      };
+    } catch (e) {
+      return {
+        name: capitalize(domainName.split('.')[0]),
+        city: '',
+      };
+    }
   }
 }
