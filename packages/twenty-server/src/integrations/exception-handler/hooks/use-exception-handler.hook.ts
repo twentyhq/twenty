@@ -1,5 +1,4 @@
 import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
-import * as express from 'express';
 import {
   getDocumentString,
   handleStreamOrSingleExecutionResult,
@@ -7,10 +6,9 @@ import {
   Plugin,
 } from '@envelop/core';
 
-import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { GraphQLContext } from 'src/graphql-config/interfaces/graphql-context.interface';
 
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { TokenService } from 'src/core/auth/services/token.service';
 import {
   convertExceptionToGraphQLError,
   filterException,
@@ -18,13 +16,9 @@ import {
 
 export type ExceptionHandlerPluginOptions = {
   /**
-   * The driver to use to handle exceptions.
+   * The exception handler service to use.
    */
   exceptionHandlerService: ExceptionHandlerService;
-  /**
-   * The token service to use to get the token from the request.
-   */
-  tokenService: TokenService;
   /**
    * The key of the event id in the error's extension. `null` to disable.
    * @default exceptionEventId
@@ -32,13 +26,9 @@ export type ExceptionHandlerPluginOptions = {
   eventIdKey?: string | null;
 };
 
-export const useExceptionHandler = <
-  PluginContext extends Record<string, any> = object,
->(
+export const useExceptionHandler = <PluginContext extends GraphQLContext>(
   options: ExceptionHandlerPluginOptions,
 ): Plugin<PluginContext> => {
-  const exceptionHandlerService = options.exceptionHandlerService;
-  const tokenService = options.tokenService;
   const eventIdKey = options.eventIdKey === null ? null : 'exceptionEventId';
 
   function addEventId(
@@ -54,28 +44,17 @@ export const useExceptionHandler = <
 
   return {
     async onExecute({ args }) {
+      const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
         (o) => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
+      const user = args.contextValue.user;
       const document = getDocumentString(args.document, print);
-      const request = args.contextValue.req as express.Request;
       const opName =
         args.operationName ||
         rootOperation.name?.value ||
         'Anonymous Operation';
-      let user: ExceptionHandlerUser | undefined;
-
-      if (tokenService.isTokenPresent(request)) {
-        try {
-          const data = await tokenService.validateToken(request);
-
-          user = {
-            id: data.user?.id,
-            email: data.user?.email,
-          };
-        } catch {}
-      }
 
       return {
         onExecuteDone(payload) {

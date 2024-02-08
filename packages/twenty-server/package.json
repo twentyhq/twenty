@@ -36,6 +36,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.363.0",
     "@aws-sdk/credential-providers": "^3.363.0",
+    "@envelop/on-resolve": "^4.1.0",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
     "@nestjs/apollo": "^11.0.5",
     "@nestjs/axios": "^3.0.1",
@@ -70,6 +71,8 @@
     "googleapis": "105",
     "graphql": "^16.8.1",
     "graphql-fields": "^2.0.3",
+    "graphql-middleware": "^6.1.35",
+    "graphql-rate-limit": "^3.3.0",
     "graphql-subscriptions": "2.0.0",
     "graphql-tag": "^2.12.6",
     "graphql-type-json": "^0.3.2",

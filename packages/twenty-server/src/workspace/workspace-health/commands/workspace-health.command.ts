@@ -2,6 +2,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
 
 import { WorkspaceHealthMode } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
+import { WorkspaceHealthFixKind } from 'src/workspace/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
 
@@ -9,6 +10,7 @@ interface WorkspaceHealthCommandOptions {
   workspaceId: string;
   verbose?: boolean;
   mode?: WorkspaceHealthMode;
+  fix?: WorkspaceHealthFixKind;
 }
 
 @Command({
@@ -44,6 +46,14 @@ export class WorkspaceHealthCommand extends CommandRunner {
         console.groupEnd();
       }
     }
+
+    if (options.fix) {
+      await this.workspaceHealthService.fixIssues(
+        options.workspaceId,
+        issues,
+        options.fix,
+      );
+    }
   }
 
   @Option({
@@ -53,6 +63,19 @@ export class WorkspaceHealthCommand extends CommandRunner {
   })
   parseWorkspaceId(value: string): string {
     return value;
+  }
+
+  @Option({
+    flags: '-f, --fix [kind]',
+    description: 'fix issues',
+    required: false,
+  })
+  fix(value: string): WorkspaceHealthFixKind {
+    if (!Object.values(WorkspaceHealthFixKind).includes(value as any)) {
+      throw new Error(`Invalid fix kind ${value}`);
+    }
+
+    return value as WorkspaceHealthFixKind;
   }
 
   @Option({
@@ -71,6 +94,10 @@ export class WorkspaceHealthCommand extends CommandRunner {
     defaultValue: WorkspaceHealthMode.All,
   })
   parseMode(value: string): WorkspaceHealthMode {
+    if (!Object.values(WorkspaceHealthMode).includes(value as any)) {
+      throw new Error(`Invalid mode ${value}`);
+    }
+
     return value as WorkspaceHealthMode;
   }
 }

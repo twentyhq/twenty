@@ -33,7 +33,6 @@ export const SettingsDevelopersWebhooks = () => {
 
   const { records: webhooks } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Webhook,
-    orderBy: {},
   });
 
   return (
