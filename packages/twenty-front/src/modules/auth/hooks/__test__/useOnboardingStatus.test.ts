@@ -66,16 +66,6 @@ describe('useOnboardingStatus', () => {
     expect(result.current.onboardingStatus).toBe('ongoing_user_creation');
   });
 
-  it('should return undefined when currentWorkspaceMember in undefined', async () => {
-    const { result } = renderHooks();
-
-    act(() => {
-      result.current.setTokenPair(tokenPair);
-    });
-
-    expect(result.current.onboardingStatus).toBe(undefined);
-  });
-
   it('should return "incomplete"', async () => {
     const { result } = renderHooks();
     const {
@@ -120,6 +110,25 @@ describe('useOnboardingStatus', () => {
     expect(result.current.onboardingStatus).toBe('canceled');
   });
 
+  it('should return "ongoing_workspace_activation"', async () => {
+    const { result } = renderHooks();
+    const { setTokenPair, setBilling, setCurrentWorkspace } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        displayName: '',
+        subscriptionStatus: 'active',
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe(
+      'ongoing_workspace_activation',
+    );
+  });
+
   it('should return "ongoing_workspace_creation"', async () => {
     const { result } = renderHooks();
     const {
@@ -135,7 +144,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         displayName: '',
-        subscriptionStatus: 'completed',
+        subscriptionStatus: 'active',
       });
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
@@ -157,7 +166,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentWorkspace({
         ...currentWorkspace,
-        subscriptionStatus: 'completed',
+        subscriptionStatus: 'active',
       });
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
@@ -179,7 +188,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentWorkspace({
         ...currentWorkspace,
-        subscriptionStatus: 'completed',
+        subscriptionStatus: 'active',
       });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,

@@ -40,12 +40,12 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Canceled;
   }
 
-  if (!currentWorkspace?.displayName) {
-    return OnboardingStatus.OngoingWorkspaceCreation;
-  }
-
   if (!currentWorkspaceMember) {
     return OnboardingStatus.OngoingWorkspaceActivation;
+  }
+
+  if (!currentWorkspace?.displayName) {
+    return OnboardingStatus.OngoingWorkspaceCreation;
   }
 
   if (
