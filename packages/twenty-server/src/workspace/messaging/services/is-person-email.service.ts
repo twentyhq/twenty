@@ -12,6 +12,7 @@ export class IsPersonEmailService {
       /no-reply/,
       /do_not_reply/,
       /no.reply/,
+      /^accounts@/,
       /^info@/,
       /^admin@/,
       /^contact@/,
