@@ -5,12 +5,14 @@ import { WorkspaceHealthMode } from 'src/workspace/workspace-health/interfaces/w
 import { WorkspaceHealthFixKind } from 'src/workspace/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
+import { CommandLogger } from 'src/commands/command-logger';
 
 interface WorkspaceHealthCommandOptions {
   workspaceId: string;
   verbose?: boolean;
   mode?: WorkspaceHealthMode;
   fix?: WorkspaceHealthFixKind;
+  dryRun?: boolean;
 }
 
 @Command({
@@ -18,6 +20,10 @@ interface WorkspaceHealthCommandOptions {
   description: 'Check health of the given workspace.',
 })
 export class WorkspaceHealthCommand extends CommandRunner {
+  private readonly commandLogger = new CommandLogger(
+    WorkspaceHealthCommand.name,
+  );
+
   constructor(private readonly workspaceHealthService: WorkspaceHealthService) {
     super();
   }
@@ -48,11 +54,29 @@ export class WorkspaceHealthCommand extends CommandRunner {
     }
 
     if (options.fix) {
-      await this.workspaceHealthService.fixIssues(
+      console.log(chalk.yellow('Fixing issues'));
+
+      const workspaceMigrations = await this.workspaceHealthService.fixIssues(
         options.workspaceId,
         issues,
-        options.fix,
+        {
+          type: options.fix,
+          applyChanges: !options.dryRun,
+        },
       );
+
+      if (options.dryRun) {
+        await this.commandLogger.writeLog(
+          `workspace-health-${options.fix}-migrations`,
+          workspaceMigrations,
+        );
+      } else {
+        console.log(
+          chalk.green(
+            `Fixed ${workspaceMigrations.length}/${issues.length} issues`,
+          ),
+        );
+      }
     }
   }
 
@@ -99,5 +123,14 @@ export class WorkspaceHealthCommand extends CommandRunner {
     }
 
     return value as WorkspaceHealthMode;
+  }
+
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Dry run without applying changes',
+    required: false,
+  })
+  dryRun(): boolean {
+    return true;
   }
 }

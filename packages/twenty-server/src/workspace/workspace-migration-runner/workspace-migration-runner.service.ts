@@ -78,6 +78,7 @@ export class WorkspaceMigrationRunnerService {
 
       await queryRunner.commitTransaction();
     } catch (error) {
+      console.error('Error executing migration', error);
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {

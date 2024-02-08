@@ -121,8 +121,16 @@ export class WorkspaceHealthService {
   async fixIssues(
     workspaceId: string,
     issues: WorkspaceHealthIssue[],
-    type: WorkspaceHealthFixKind,
-  ): Promise<void> {
+    options: {
+      type: WorkspaceHealthFixKind;
+      applyChanges?: boolean;
+    },
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    let workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+    // Set default options
+    options.applyChanges ??= true;
+
     const queryRunner = this.metadataDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -137,15 +145,24 @@ export class WorkspaceHealthService {
       const objectMetadataCollection =
         await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-      const workspaceMigrations = await this.workspaceFixService.fix(
+      workspaceMigrations = await this.workspaceFixService.fix(
         manager,
         objectMetadataCollection,
-        type,
+        options.type,
         issues,
       );
 
       // Save workspace migrations into the database
       await workspaceMigrationRepository.save(workspaceMigrations);
+
+      if (!options.applyChanges) {
+        // Rollback transactions
+        await queryRunner.rollbackTransaction();
+
+        await queryRunner.release();
+
+        return workspaceMigrations;
+      }
 
       // Commit the transaction
       await queryRunner.commitTransaction();
@@ -160,5 +177,7 @@ export class WorkspaceHealthService {
     } finally {
       await queryRunner.release();
     }
+
+    return workspaceMigrations;
   }
 }
