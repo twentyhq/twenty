@@ -14,6 +14,8 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useViews } from '@/views/hooks/internal/useViews';
 import { GraphQLView } from '@/views/types/GraphQLView';
+import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type useRecordIndexOptionsForBoardParams = {
@@ -61,37 +63,33 @@ export const useRecordIndexOptionsForBoard = ({
     [columnDefinitions, objectMetadataItem],
   );
 
-  const visibleBoardFields = useMemo(
+  const recordIndexFieldDefinitionsByFieldMetadataId = useMemo(
     () =>
-      boardFields.filter((columnDefinition) => {
-        return recordIndexFieldDefinitions.some(
-          (existingRecordFieldDefinition) => {
-            return (
-              columnDefinition.fieldMetadataId ===
-                existingRecordFieldDefinition.fieldMetadataId &&
-              existingRecordFieldDefinition.isVisible
-            );
-          },
-        );
-      }),
-    [boardFields, recordIndexFieldDefinitions],
+      mapArrayToObject(
+        recordIndexFieldDefinitions,
+        ({ fieldMetadataId }) => fieldMetadataId,
+      ),
+    [recordIndexFieldDefinitions],
   );
 
-  const hiddenBoardFields = useMemo(
-    () =>
-      boardFields.filter((columnDefinition) => {
-        return !recordIndexFieldDefinitions.some(
-          (existingRecordFieldDefinition) => {
-            return (
-              columnDefinition.fieldMetadataId ===
-                existingRecordFieldDefinition.fieldMetadataId &&
-              existingRecordFieldDefinition.isVisible
-            );
-          },
-        );
-      }),
-    [boardFields, recordIndexFieldDefinitions],
-  );
+  const { visibleBoardFields = [], hiddenBoardFields = [] } = useMemo(() => {
+    const boardFieldsWithVisibility = boardFields.map((boardField) => {
+      const existingRecordFieldDefinition =
+        recordIndexFieldDefinitionsByFieldMetadataId[
+          boardField.fieldMetadataId
+        ];
+
+      // Make sure non-existing field definitions are set to "not visible"
+      return {
+        ...boardField,
+        isVisible: !!existingRecordFieldDefinition?.isVisible,
+      };
+    });
+
+    return groupArrayItemsBy(boardFieldsWithVisibility, ({ isVisible }) =>
+      isVisible ? 'visibleBoardFields' : 'hiddenBoardFields',
+    );
+  }, [boardFields, recordIndexFieldDefinitionsByFieldMetadataId]);
 
   const handleReorderBoardFields: OnDragEndResponder = useCallback(
     (result) => {
