@@ -11,6 +11,8 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useViews } from '@/views/hooks/internal/useViews';
+import { GraphQLView } from '@/views/types/GraphQLView';
 
 type useRecordIndexOptionsForBoardParams = {
   objectNameSingular: string;
@@ -27,6 +29,7 @@ export const useRecordIndexOptionsForBoard = ({
     useRecoilState(recordIndexFieldDefinitionsState);
 
   const { persistViewFields } = useViewFields(viewBarId);
+  const { updateView } = useViews(viewBarId);
   const { getIsCompactModeActiveState } = useRecordBoard(recordBoardId);
 
   const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(
@@ -164,12 +167,24 @@ export const useRecordIndexOptionsForBoard = ({
     ],
   );
 
+  const setAndPersistIsCompactModeActive = useCallback(
+    (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
+      if (!view) return;
+      setIsCompactModeActive(isCompactModeActive);
+      updateView({
+        ...view,
+        isCompact: isCompactModeActive,
+      });
+    },
+    [setIsCompactModeActive, updateView],
+  );
+
   return {
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
     visibleBoardFields,
     hiddenBoardFields,
     isCompactModeActive,
-    setIsCompactModeActive,
+    setAndPersistIsCompactModeActive,
   };
 };
