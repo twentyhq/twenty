@@ -26,7 +26,7 @@ export const SettingsDevelopersWebhooksNew = () => {
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
-  const onSave = async () => {
+  const handleSave = async () => {
     const newWebhook = await createOneWebhook?.(formValues);
     if (!newWebhook) {
       return;
@@ -49,7 +49,7 @@ export const SettingsDevelopersWebhooksNew = () => {
             onCancel={() => {
               navigate('/settings/developers');
             }}
-            onSave={onSave}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <Section>

@@ -35,7 +35,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
-  const onSave = async () => {
+  const handleSave = async () => {
     const expiresAt = DateTime.now()
       .plus({ days: formValues.expirationDate ?? 30 })
       .toString();
@@ -75,7 +75,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             onCancel={() => {
               navigate('/settings/developers');
             }}
-            onSave={onSave}
+            onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <Section>
