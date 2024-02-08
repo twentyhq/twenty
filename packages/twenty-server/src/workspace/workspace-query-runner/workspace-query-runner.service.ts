@@ -3,8 +3,8 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -34,10 +34,12 @@ import {
   CallWebhookJobsJobOperation,
 } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
-import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 
-import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
+import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
@@ -45,14 +47,12 @@ import {
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
-  private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
-
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findMany<
@@ -136,6 +136,13 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    parsedResults.forEach((record) => {
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        workspaceId,
+        createdRecord: [this.removeNestedProperties(record)],
+      } satisfies ObjectRecordCreateEvent<any>);
+    });
+
     return parsedResults;
   }
 
@@ -153,6 +160,12 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, objectMetadataItem } = options;
+
+    const existingRecord = await this.findOne(
+      { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
+      options,
+    );
+
     const query = await this.workspaceQueryBuilderFactory.updateOne(
       args,
       options,
@@ -171,31 +184,11 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    return parsedResults?.[0];
-  }
-
-  async deleteOne<Record extends IRecord = IRecord>(
-    args: DeleteOneResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
-    const query = await this.workspaceQueryBuilderFactory.deleteOne(
-      args,
-      options,
-    );
-    const result = await this.execute(query, workspaceId);
-
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'deleteFrom',
-    )?.records;
-
-    await this.triggerWebhooks<Record>(
-      parsedResults,
-      CallWebhookJobsJobOperation.delete,
-      options,
-    );
+    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+      workspaceId,
+      previousRecord: this.removeNestedProperties(existingRecord as Record),
+      updatedRecord: this.removeNestedProperties(parsedResults?.[0]),
+    } satisfies ObjectRecordUpdateEvent<any>);
 
     return parsedResults?.[0];
   }
@@ -209,6 +202,7 @@ export class WorkspaceQueryRunnerService {
       args,
       options,
     );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
@@ -252,7 +246,61 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    parsedResults.forEach((record) => {
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+        workspaceId,
+        deletedRecord: [this.removeNestedProperties(record)],
+      } satisfies ObjectRecordDeleteEvent<any>);
+    });
+
     return parsedResults;
+  }
+
+  async deleteOne<Record extends IRecord = IRecord>(
+    args: DeleteOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record | undefined> {
+    const { workspaceId, objectMetadataItem } = options;
+    const query = await this.workspaceQueryBuilderFactory.deleteOne(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
+
+    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      objectMetadataItem,
+      'deleteFrom',
+    )?.records;
+
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+      workspaceId,
+      deletedRecord: this.removeNestedProperties(parsedResults?.[0]),
+    } satisfies ObjectRecordDeleteEvent<any>);
+
+    return parsedResults?.[0];
+  }
+
+  private removeNestedProperties<Record extends IRecord = IRecord>(
+    record: Record,
+  ) {
+    const sanitizedRecord = {};
+
+    for (const [key, value] of Object.entries(record)) {
+      if (value && typeof value === 'object' && value['edges']) {
+        continue;
+      }
+
+      sanitizedRecord[key] = value;
+    }
+
+    return sanitizedRecord;
   }
 
   async execute(
