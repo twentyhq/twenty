@@ -61,7 +61,7 @@ const TokenForm = ({
   const getJson = async (token: string) => {
     updateLoading(true);
 
-    return await fetch(baseUrl + '/open-api/' + subDoc, {
+    return await fetch(baseUrl + '/open-api/' + (subDoc ?? 'core'), {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
