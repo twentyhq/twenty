@@ -1,7 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -28,10 +27,6 @@ export const RecordIndexPage = () => {
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
-
-  const onboardingStatus = useOnboardingStatus();
-
-  const navigate = useNavigate();
 
   const { findObjectMetadataItemByNamePlural } =
     useObjectMetadataItemForSettings();
