@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const CREATE_WORKSPACE_SCHEMA = gql`
-  mutation CreateWorkspaceSchema($input: CreateWorkspaceSchemaInput!) {
-    createWorkspaceSchema(data: $input) {
+export const ACTIVATE_WORKSPACE = gql`
+  mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
+    activateWorkspace(data: $input) {
       id
     }
   }

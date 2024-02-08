@@ -10,7 +10,7 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { UserService } from 'src/core/user/services/user.service';
-import { CreateWorkspaceSchemaInput } from 'src/core/workspace/dtos/create-workspace-schema-input';
+import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -22,7 +22,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     super(workspaceRepository);
   }
 
-  async createWorkspaceSchema(user: User, data: CreateWorkspaceSchemaInput) {
+  async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
     if (!data.displayName || !data.displayName.length) {
       throw new BadRequestException("'displayName' not provided");
     }

@@ -19,6 +19,10 @@ export type Scalars = {
   Upload: any;
 };
 
+export type ActivateWorkspaceInput = {
+  displayName?: InputMaybe<Scalars['String']>;
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -75,23 +79,6 @@ export type ClientConfig = {
   signUpDisabled: Scalars['Boolean'];
   support: Support;
   telemetry: Telemetry;
-};
-
-export type CreateOneRefreshTokenInput = {
-  /** The record to create */
-  refreshToken: CreateRefreshTokenInput;
-};
-
-export type CreateRefreshTokenInput = {
-  expiresAt: Scalars['DateTime'];
-};
-
-export type CreateWorkspaceSchemaInput = {
-  allowImpersonation?: InputMaybe<Scalars['Boolean']>;
-  displayName?: InputMaybe<Scalars['String']>;
-  domainName?: InputMaybe<Scalars['String']>;
-  inviteHash?: InputMaybe<Scalars['String']>;
-  logo?: InputMaybe<Scalars['String']>;
 };
 
 export type CursorPaging = {
@@ -231,11 +218,11 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateWorkspace: Workspace;
   challenge: LoginToken;
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createWorkspaceSchema: Workspace;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;
@@ -256,6 +243,11 @@ export type Mutation = {
 };
 
 
+export type MutationActivateWorkspaceArgs = {
+  data: ActivateWorkspaceInput;
+};
+
+
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -265,16 +257,6 @@ export type MutationChallengeArgs = {
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
-};
-
-
-export type MutationCreateOneRefreshTokenArgs = {
-  input: CreateOneRefreshTokenInput;
-};
-
-
-export type MutationCreateWorkspaceSchemaArgs = {
-  data: CreateWorkspaceSchemaInput;
 };
 
 
@@ -750,8 +732,6 @@ export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTim
 
 export type TimelineThreadFragment = { __typename?: 'TimelineThread', id: string, subject: string, lastMessageReceivedAt: string };
 
-export type TimelineThreadFragment = { __typename?: 'TimelineThread', id: string, subject: string, lastMessageReceivedAt: string };
-
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
   data: Scalars['JSON'];
@@ -882,12 +862,12 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
 
-export type CreateWorkspaceSchemaMutationVariables = Exact<{
-  input: CreateWorkspaceSchemaInput;
+export type ActivateWorkspaceMutationVariables = Exact<{
+  input: ActivateWorkspaceInput;
 }>;
 
 
-export type CreateWorkspaceSchemaMutation = { __typename?: 'Mutation', createWorkspaceSchema: { __typename?: 'Workspace', id: string } };
+export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: string } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1770,39 +1750,39 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
-export const CreateWorkspaceSchemaDocument = gql`
-    mutation CreateWorkspaceSchema($input: CreateWorkspaceSchemaInput!) {
-  createWorkspaceSchema(data: $input) {
+export const ActivateWorkspaceDocument = gql`
+    mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
+  activateWorkspace(data: $input) {
     id
   }
 }
     `;
-export type CreateWorkspaceSchemaMutationFn = Apollo.MutationFunction<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>;
+export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
 
 /**
- * __useCreateWorkspaceSchemaMutation__
+ * __useActivateWorkspaceMutation__
  *
- * To run a mutation, you first call `useCreateWorkspaceSchemaMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceSchemaMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useActivateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateWorkspaceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createWorkspaceSchemaMutation, { data, loading, error }] = useCreateWorkspaceSchemaMutation({
+ * const [activateWorkspaceMutation, { data, loading, error }] = useActivateWorkspaceMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateWorkspaceSchemaMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>) {
+export function useActivateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>(CreateWorkspaceSchemaDocument, options);
+        return Apollo.useMutation<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>(ActivateWorkspaceDocument, options);
       }
-export type CreateWorkspaceSchemaMutationHookResult = ReturnType<typeof useCreateWorkspaceSchemaMutation>;
-export type CreateWorkspaceSchemaMutationResult = Apollo.MutationResult<CreateWorkspaceSchemaMutation>;
-export type CreateWorkspaceSchemaMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceSchemaMutation, CreateWorkspaceSchemaMutationVariables>;
+export type ActivateWorkspaceMutationHookResult = ReturnType<typeof useActivateWorkspaceMutation>;
+export type ActivateWorkspaceMutationResult = Apollo.MutationResult<ActivateWorkspaceMutation>;
+export type ActivateWorkspaceMutationOptions = Apollo.BaseMutationOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
 export const DeleteCurrentWorkspaceDocument = gql`
     mutation DeleteCurrentWorkspace {
   deleteCurrentWorkspace {
