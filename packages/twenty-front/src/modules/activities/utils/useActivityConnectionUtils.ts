@@ -18,11 +18,6 @@ export const useActivityConnectionUtils = () => {
       activityWithConnections?.activityTargets,
     );
 
-    console.log({
-      activityWithConnections,
-      hasActivityTargetsConnection,
-    });
-
     const activityTargets: ActivityTarget[] = [];
 
     if (hasActivityTargetsConnection) {

@@ -128,11 +128,6 @@ export const ActivityTargetInlineCellEditMode = ({
         );
       }
 
-      console.log({
-        activity,
-        activityTargetObjectRecords,
-        selectedRecords,
-      });
       injectIntoActivityTargetInlineCellCache({
         activityId: activity.id,
         activityTargetsToInject: activityTargetsForCreation,
