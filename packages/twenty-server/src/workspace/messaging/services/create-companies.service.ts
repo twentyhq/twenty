@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { v4 } from 'uuid';
 import { EntityManager } from 'typeorm';
 import axios, { AxiosInstance } from 'axios';
+import { v4 } from 'uuid';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
@@ -21,8 +21,6 @@ export class CreateCompaniesService {
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ) {
-    const companyId = v4();
-
     const existingCompany = await manager.query(
       `SELECT * FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = '${domainName}'`,
     );
@@ -30,6 +28,8 @@ export class CreateCompaniesService {
     if (existingCompany.length > 0) {
       return existingCompany[0].id;
     }
+
+    const companyId = v4();
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
