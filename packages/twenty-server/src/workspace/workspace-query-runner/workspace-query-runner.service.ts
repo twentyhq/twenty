@@ -139,7 +139,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
-        createdRecord: [this.sanitizeRecord(record)],
+        createdRecord: [this.removeNestedProperties(record)],
       } satisfies ObjectRecordCreateEvent<any>);
     });
 
@@ -186,8 +186,8 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       workspaceId,
-      previousRecord: this.sanitizeRecord(existingRecord as Record),
-      updatedRecord: this.sanitizeRecord(parsedResults?.[0]),
+      previousRecord: this.removeNestedProperties(existingRecord as Record),
+      updatedRecord: this.removeNestedProperties(parsedResults?.[0]),
     } satisfies ObjectRecordUpdateEvent<any>);
 
     return parsedResults?.[0];
@@ -249,7 +249,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         workspaceId,
-        deletedRecord: [this.sanitizeRecord(record)],
+        deletedRecord: [this.removeNestedProperties(record)],
       } satisfies ObjectRecordDeleteEvent<any>);
     });
 
@@ -281,13 +281,15 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
-      deletedRecord: this.sanitizeRecord(parsedResults?.[0]),
+      deletedRecord: this.removeNestedProperties(parsedResults?.[0]),
     } satisfies ObjectRecordDeleteEvent<any>);
 
     return parsedResults?.[0];
   }
 
-  private sanitizeRecord<Record extends IRecord = IRecord>(record: Record) {
+  private removeNestedProperties<Record extends IRecord = IRecord>(
+    record: Record,
+  ) {
     const sanitizedRecord = {};
 
     for (const [key, value] of Object.entries(record)) {

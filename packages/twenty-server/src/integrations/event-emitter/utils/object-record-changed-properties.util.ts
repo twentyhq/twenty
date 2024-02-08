@@ -1,9 +1,11 @@
+import deepEqual from 'deep-equal';
+
 export const objectRecordChangedProperties = (
   oldRecord: Record<string, any>,
   newRecord: Record<string, any>,
 ) => {
   const changedProperties = Object.keys(newRecord).filter(
-    (key) => oldRecord[key] !== newRecord[key],
+    (key) => !deepEqual(oldRecord[key], newRecord[key]),
   );
 
   return changedProperties;

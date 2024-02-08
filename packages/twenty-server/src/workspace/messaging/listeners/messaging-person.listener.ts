@@ -37,6 +37,13 @@ export class MessagingPersonListener {
 
   @OnEvent('person.updated')
   handleUpdatedEvent(payload: ObjectRecordUpdateEvent<PersonObjectMetadata>) {
+    console.log(
+      objectRecordUpdateEventChangedProperties(
+        payload.previousRecord,
+        payload.updatedRecord,
+      ),
+    );
+
     if (
       objectRecordUpdateEventChangedProperties(
         payload.previousRecord,

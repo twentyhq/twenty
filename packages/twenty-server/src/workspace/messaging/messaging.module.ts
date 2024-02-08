@@ -15,7 +15,7 @@ import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-
 import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
-import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listing';
+import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 
 @Module({
   imports: [
