@@ -33,9 +33,9 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
   triggerUpdateRelationsOptimisticEffect({
     cache,
-    relationSourceObjectMetadataItem: objectMetadataItem,
-    currentRelationSourceRecord: currentRecord,
-    updatedRelationSourceRecord: updatedRecord,
+    sourceObjectMetadataItem: objectMetadataItem,
+    currentSourceRecord: currentRecord,
+    updatedSourceRecord: updatedRecord,
     objectMetadataItems,
   });
 

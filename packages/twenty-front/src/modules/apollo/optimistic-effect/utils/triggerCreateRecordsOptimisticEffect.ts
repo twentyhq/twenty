@@ -15,12 +15,12 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  records: recordsToCreate,
+  recordsToCreate,
   objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  records: CachedObjectRecord[];
+  recordsToCreate: CachedObjectRecord[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   const objectEdgeTypeName = getEdgeTypename({
@@ -30,9 +30,9 @@ export const triggerCreateRecordsOptimisticEffect = ({
   recordsToCreate.forEach((record) =>
     triggerUpdateRelationsOptimisticEffect({
       cache,
-      relationSourceObjectMetadataItem: objectMetadataItem,
-      currentRelationSourceRecord: null,
-      updatedRelationSourceRecord: record,
+      sourceObjectMetadataItem: objectMetadataItem,
+      currentSourceRecord: null,
+      updatedSourceRecord: record,
       objectMetadataItems,
     }),
   );
@@ -48,13 +48,12 @@ export const triggerCreateRecordsOptimisticEffect = ({
           toReference,
         },
       ) => {
-        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
-          !isCachedObjectRecordConnection(
-            objectMetadataItem.nameSingular,
-            rootQueryCachedResponse,
-          );
+        const shouldSkip = !isCachedObjectRecordConnection(
+          objectMetadataItem.nameSingular,
+          rootQueryCachedResponse,
+        );
 
-        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
+        if (shouldSkip) {
           return rootQueryCachedResponse;
         }
 

@@ -7,73 +7,64 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const triggerAttachRelationOptimisticEffect = ({
   cache,
-  relationSourceObjectNameSingular,
-  relationSourceRecordIdToAttach,
-  relationTargetObjectNameSingular,
-  relationTargetFieldName,
-  relationTargetRecordId,
+  sourceObjectNameSingular,
+  sourceRecordId,
+  targetObjectNameSingular,
+  fieldNameOnTargetRecord,
+  targetRecordId,
 }: {
   cache: ApolloCache<unknown>;
-  relationSourceObjectNameSingular: string;
-  relationSourceRecordIdToAttach: string;
-  relationTargetObjectNameSingular: string;
-  relationTargetFieldName: string;
-  relationTargetRecordId: string;
+  sourceObjectNameSingular: string;
+  sourceRecordId: string;
+  targetObjectNameSingular: string;
+  fieldNameOnTargetRecord: string;
+  targetRecordId: string;
 }) => {
-  const relationSourceRecordTypeName = capitalize(
-    relationSourceObjectNameSingular,
-  );
-  const relationTargetRecordTypeName = capitalize(
-    relationTargetObjectNameSingular,
-  );
+  const sourceRecordTypeName = capitalize(sourceObjectNameSingular);
+  const targetRecordTypeName = capitalize(targetObjectNameSingular);
 
-  const relationTargetRecordCacheId = cache.identify({
-    id: relationTargetRecordId,
-    __typename: relationTargetRecordTypeName,
+  const targetRecordCacheId = cache.identify({
+    id: targetRecordId,
+    __typename: targetRecordTypeName,
   });
 
   cache.modify<StoreObject>({
-    id: relationTargetRecordCacheId,
+    id: targetRecordCacheId,
     fields: {
-      [relationTargetFieldName]: (
-        relationTargetFieldValuePointingToSource,
-        { toReference },
-      ) => {
-        const isRelationTargetFieldPointingToSourceAnObjectRecordConnection =
+      [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
+        const fieldValueIsCachedObjectRecordConnection =
           isCachedObjectRecordConnection(
-            relationSourceObjectNameSingular,
-            relationTargetFieldValuePointingToSource,
+            sourceObjectNameSingular,
+            targetRecordFieldValue,
           );
 
-        const relationSourceRecordReference = toReference({
-          id: relationSourceRecordIdToAttach,
-          __typename: relationSourceRecordTypeName,
+        const sourceRecordReference = toReference({
+          id: sourceRecordId,
+          __typename: sourceRecordTypeName,
         });
 
-        if (!isDefined(relationSourceRecordReference)) {
-          return relationTargetFieldValuePointingToSource;
+        if (!isDefined(sourceRecordReference)) {
+          return targetRecordFieldValue;
         }
 
-        if (isRelationTargetFieldPointingToSourceAnObjectRecordConnection) {
-          const relationTargetFieldEdgesPointingToSourceWithRelationSourceRecordToAttach: CachedObjectRecordEdge[] =
-            [
-              ...relationTargetFieldValuePointingToSource.edges,
-              {
-                __typename: `${relationSourceRecordTypeName}Edge`,
-                node: relationSourceRecordReference,
-                cursor: '',
-              },
-            ];
+        if (fieldValueIsCachedObjectRecordConnection) {
+          const nextEdges: CachedObjectRecordEdge[] = [
+            ...targetRecordFieldValue.edges,
+            {
+              __typename: `${sourceRecordTypeName}Edge`,
+              node: sourceRecordReference,
+              cursor: '',
+            },
+          ];
 
           return {
-            ...relationTargetFieldValuePointingToSource,
-            edges:
-              relationTargetFieldEdgesPointingToSourceWithRelationSourceRecordToAttach,
+            ...targetRecordFieldValue,
+            edges: nextEdges,
           };
+        } else {
+          // To one object => attach next relation record
+          return sourceRecordReference;
         }
-
-        // To one object => attach next relation record
-        return relationSourceRecordReference;
       },
     },
   });

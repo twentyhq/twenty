@@ -8,18 +8,18 @@ import {
 
 export const getRelationDefinition = ({
   objectMetadataItems,
-  fieldMetadataItem,
+  fieldMetadataItemOnSourceRecord,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
-  fieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItemOnSourceRecord: FieldMetadataItem;
 }) => {
-  if (fieldMetadataItem.type !== FieldMetadataType.Relation) {
+  if (fieldMetadataItemOnSourceRecord.type !== FieldMetadataType.Relation) {
     return null;
   }
 
   const relationMetadataItem =
-    fieldMetadataItem.fromRelationMetadata ||
-    fieldMetadataItem.toRelationMetadata;
+    fieldMetadataItemOnSourceRecord.fromRelationMetadata ||
+    fieldMetadataItemOnSourceRecord.toRelationMetadata;
 
   if (!relationMetadataItem) return null;
 
@@ -33,31 +33,30 @@ export const getRelationDefinition = ({
   // TODO: precise naming, is it relationTypeFromTargetPointOfView or relationTypeFromSourcePointOfView ?
   const relationType =
     relationMetadataItem.relationType === RelationMetadataType.OneToMany &&
-    fieldMetadataItem.toRelationMetadata
+    fieldMetadataItemOnSourceRecord.toRelationMetadata
       ? ('MANY_TO_ONE' satisfies RelationType)
       : (relationMetadataItem.relationType as RelationType);
 
-  const relationTargetObjectMetadataNameSingular =
+  const targetObjectMetadataNameSingular =
     'toObjectMetadata' in relationMetadataItem
       ? relationMetadataItem.toObjectMetadata.nameSingular
       : relationMetadataItem.fromObjectMetadata.nameSingular;
 
-  const relationTargetObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.nameSingular === relationTargetObjectMetadataNameSingular,
+  const targetObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === targetObjectMetadataNameSingular,
   );
 
-  if (!relationTargetObjectMetadataItem) return null;
+  if (!targetObjectMetadataItem) return null;
 
-  const relationTargetFieldMetadataItem =
-    relationTargetObjectMetadataItem.fields.find(
-      (field) => field.id === relationSourceFieldMetadataItemId,
-    );
+  const fieldMetadataItemOnTargetRecord = targetObjectMetadataItem.fields.find(
+    (field) => field.id === relationSourceFieldMetadataItemId,
+  );
 
-  if (!relationTargetFieldMetadataItem) return null;
+  if (!fieldMetadataItemOnTargetRecord) return null;
 
   return {
-    relationTargetFieldMetadataItem,
-    relationTargetObjectMetadataItem,
+    fieldMetadataItemOnTargetRecord,
+    targetObjectMetadataItem,
     relationType,
   };
 };

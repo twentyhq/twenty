@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache } from '@/activities/hooks/useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache';
+import { useAttachRelationInBothDirections } from '@/activities/hooks/useAttachRelationInBothDirections';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { useInjectIntoTimelineActivitiesQueryAfterDrawerMount } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueryAfterDrawerMount';
 import { Activity, ActivityType } from '@/activities/types/Activity';
@@ -41,9 +41,9 @@ export const useCreateActivityInCache = () => {
     useInjectIntoActivityTargetInlineCellCache();
 
   const {
-    attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache,
-  } =
-    useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache();
+    attachRelationInBothDirections:
+      attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache,
+  } = useAttachRelationInBothDirections();
 
   const createActivityInCache = ({
     type,
@@ -92,12 +92,12 @@ export const useCreateActivityInCache = () => {
     });
 
     attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache({
-      relationSourceRecord: createdActivityInCache,
-      relationSourceFieldName: 'activityTargets',
-      relationSourceNameSingular: CoreObjectNameSingular.Activity,
-      relationTargetFieldName: 'activity',
-      relationTargetNameSingular: CoreObjectNameSingular.ActivityTarget,
-      relationTargetRecords: createdActivityTargetsInCache,
+      sourceRecord: createdActivityInCache,
+      fieldNameOnSourceRecord: 'activityTargets',
+      sourceObjectNameSingular: CoreObjectNameSingular.Activity,
+      fieldNameOnTargetRecord: 'activity',
+      targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      targetRecords: createdActivityTargetsInCache,
     });
 
     return {

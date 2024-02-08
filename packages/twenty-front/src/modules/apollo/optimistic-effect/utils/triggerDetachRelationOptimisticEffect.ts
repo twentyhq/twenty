@@ -3,65 +3,62 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const triggerDetachRelationSourceFromRelationTargetOptimisticEffect = ({
+export const triggerDetachRelationOptimisticEffect = ({
   cache,
-  relationSourceObjectNameSingular,
-  relationSourceRecordIdToDetach,
-  relationTargetObjectNameSingular,
-  relationTargetFieldName,
-  relationTargetRecordId,
+  sourceObjectNameSingular,
+  sourceRecordId,
+  targetObjectNameSingular,
+  fieldNameOnTargetRecord,
+  targetRecordId,
 }: {
   cache: ApolloCache<unknown>;
-  relationSourceObjectNameSingular: string;
-  relationSourceRecordIdToDetach: string;
-  relationTargetObjectNameSingular: string;
-  relationTargetFieldName: string;
-  relationTargetRecordId: string;
+  sourceObjectNameSingular: string;
+  sourceRecordId: string;
+  targetObjectNameSingular: string;
+  fieldNameOnTargetRecord: string;
+  targetRecordId: string;
 }) => {
-  const relationTargetRecordTypeName = capitalize(
-    relationTargetObjectNameSingular,
-  );
+  const targetRecordTypeName = capitalize(targetObjectNameSingular);
 
-  const relationTargetRecordCacheId = cache.identify({
-    id: relationTargetRecordId,
-    __typename: relationTargetRecordTypeName,
+  const targetRecordCacheId = cache.identify({
+    id: targetRecordId,
+    __typename: targetRecordTypeName,
   });
 
   cache.modify<StoreObject>({
-    id: relationTargetRecordCacheId,
+    id: targetRecordCacheId,
     fields: {
-      [relationTargetFieldName]: (
-        relationTargetFieldValue,
+      [fieldNameOnTargetRecord]: (
+        targetRecordFieldValue,
         { isReference, readField },
       ) => {
         const isRelationTargetFieldAnObjectRecordConnection =
           isCachedObjectRecordConnection(
-            relationSourceObjectNameSingular,
-            relationTargetFieldValue,
+            sourceObjectNameSingular,
+            targetRecordFieldValue,
           );
 
         if (isRelationTargetFieldAnObjectRecordConnection) {
           const relationTargetFieldEdgesWithoutRelationSourceRecordToDetach =
-            relationTargetFieldValue.edges.filter(
-              ({ node }) =>
-                readField('id', node) !== relationSourceRecordIdToDetach,
+            targetRecordFieldValue.edges.filter(
+              ({ node }) => readField('id', node) !== sourceRecordId,
             );
 
           return {
-            ...relationTargetFieldValue,
+            ...targetRecordFieldValue,
             edges: relationTargetFieldEdgesWithoutRelationSourceRecordToDetach,
           };
         }
 
         const isRelationTargetFieldASingleObjectRecord = isReference(
-          relationTargetFieldValue,
+          targetRecordFieldValue,
         );
 
         if (isRelationTargetFieldASingleObjectRecord) {
           return null;
         }
 
-        return relationTargetFieldValue;
+        return targetRecordFieldValue;
       },
     },
   });

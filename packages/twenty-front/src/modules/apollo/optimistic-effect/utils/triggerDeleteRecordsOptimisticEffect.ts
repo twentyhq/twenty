@@ -79,9 +79,9 @@ export const triggerDeleteRecordsOptimisticEffect = ({
   recordsToDelete.forEach((recordToDelete) => {
     triggerUpdateRelationsOptimisticEffect({
       cache,
-      relationSourceObjectMetadataItem: objectMetadataItem,
-      currentRelationSourceRecord: recordToDelete,
-      updatedRelationSourceRecord: null,
+      sourceObjectMetadataItem: objectMetadataItem,
+      currentSourceRecord: recordToDelete,
+      updatedSourceRecord: null,
       objectMetadataItems,
     });
 

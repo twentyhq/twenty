@@ -77,7 +77,7 @@ export const useCreateManyRecords = <
             triggerCreateRecordsOptimisticEffect({
               cache,
               objectMetadataItem,
-              records,
+              recordsToCreate: records,
               objectMetadataItems,
             });
           },
