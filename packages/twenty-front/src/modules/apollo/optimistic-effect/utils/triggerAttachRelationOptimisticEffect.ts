@@ -5,7 +5,7 @@ import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const triggerAttachRelationSourceToRelationTargetOptimisticEffect = ({
+export const triggerAttachRelationOptimisticEffect = ({
   cache,
   relationSourceObjectNameSingular,
   relationSourceRecordIdToAttach,

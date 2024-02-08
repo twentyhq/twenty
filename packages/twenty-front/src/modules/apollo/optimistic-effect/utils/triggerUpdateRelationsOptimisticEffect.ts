@@ -1,8 +1,8 @@
 import { ApolloCache } from '@apollo/client';
 
-import { getRelationTargetFromRelationSource } from '@/apollo/optimistic-effect/utils/getRelationTargetFromRelationSource';
+import { getRelationDefinition } from '@/apollo/optimistic-effect/utils/getRelationTargetFromRelationSource';
 import { isObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isObjectRecordConnection';
-import { triggerAttachRelationSourceToRelationTargetOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
+import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationSourceFromRelationTargetOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
@@ -44,8 +44,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         return;
       }
 
-      const relationTarget = getRelationTargetFromRelationSource({
-        relationSourceFieldMetadataItem,
+      const relationTarget = getRelationDefinition({
+        fieldMetadataItem: relationSourceFieldMetadataItem,
         objectMetadataItems,
       });
 
@@ -146,7 +146,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       if (shouldAttachSourceToAllTargets) {
         relationTargetRecordsToAttachTo.forEach(
           (relationTargetRecordToAttachTo) =>
-            triggerAttachRelationSourceToRelationTargetOptimisticEffect({
+            triggerAttachRelationOptimisticEffect({
               cache,
               relationSourceObjectNameSingular:
                 relationSourceObjectMetadataItem.nameSingular,

@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 import { StringKeyOf } from 'type-fest';
 
-import { getRelationTargetFromRelationSource } from '@/apollo/optimistic-effect/utils/getRelationTargetFromRelationSource';
-import { triggerAttachRelationSourceToRelationTargetOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
+import { getRelationDefinition } from '@/apollo/optimistic-effect/utils/getRelationTargetFromRelationSource';
+import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectMetadataItemByNameSingular } from '@/object-metadata/utils/getObjectMetadataItemBySingularName';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -56,8 +56,8 @@ export const useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersa
           );
         }
 
-        const relationTargetMetadata = getRelationTargetFromRelationSource({
-          relationSourceFieldMetadataItem,
+        const relationTargetMetadata = getRelationDefinition({
+          fieldMetadataItem: relationSourceFieldMetadataItem,
           objectMetadataItems,
         });
 
@@ -69,7 +69,7 @@ export const useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersa
 
         // TODO: could we use triggerUpdateRelationsOptimisticEffect here?
         relationTargetRecords.forEach((relationTargetRecord) => {
-          triggerAttachRelationSourceToRelationTargetOptimisticEffect({
+          triggerAttachRelationOptimisticEffect({
             cache: apolloClient.cache,
             relationSourceObjectNameSingular:
               relationSourceObjectMetadataItem.nameSingular,
@@ -80,7 +80,7 @@ export const useAttachRelationSourceRecordToItsRelationTargetRecordsAndViceVersa
             relationTargetRecordId: relationTargetRecord.id,
           });
 
-          triggerAttachRelationSourceToRelationTargetOptimisticEffect({
+          triggerAttachRelationOptimisticEffect({
             cache: apolloClient.cache,
             relationSourceObjectNameSingular:
               relationTargetObjectMetadataItem.nameSingular,
