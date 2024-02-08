@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { Key } from 'ts-key-enum';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === Key.Enter) {
       updateBlockedEmailList(formValues.email);
       setFormValues({ email: '' });
     }
