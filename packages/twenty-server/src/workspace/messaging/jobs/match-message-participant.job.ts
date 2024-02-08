@@ -6,8 +6,9 @@ import { MessageParticipantService } from 'src/workspace/messaging/message-parti
 
 export type MatchMessageParticipantsJobData = {
   workspaceId: string;
-  updatedPersonId: string;
-  updatedEmail: string;
+  email: string;
+  personId?: string;
+  workspaceMemberId?: string;
 };
 
 @Injectable()
@@ -19,22 +20,28 @@ export class MatchMessageParticipantJob
   ) {}
 
   async handle(data: MatchMessageParticipantsJobData): Promise<void> {
-    const { workspaceId, updatedPersonId, updatedEmail } = data;
+    const { workspaceId, personId, workspaceMemberId, email } = data;
 
     const messageParticipantsToUpdate =
-      await this.messageParticipantService.getByHandles(
-        [updatedEmail],
-        workspaceId,
-      );
+      await this.messageParticipantService.getByHandles([email], workspaceId);
 
     const messageParticipantIdsToUpdate = messageParticipantsToUpdate.map(
       (participant) => participant.id,
     );
 
-    await this.messageParticipantService.updateParticipantsPersonId(
-      messageParticipantIdsToUpdate,
-      updatedPersonId,
-      workspaceId,
-    );
+    if (personId) {
+      await this.messageParticipantService.updateParticipantsPersonId(
+        messageParticipantIdsToUpdate,
+        personId,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.messageParticipantService.updateParticipantsWorkspaceMemberId(
+        messageParticipantIdsToUpdate,
+        workspaceMemberId,
+        workspaceId,
+      );
+    }
   }
 }

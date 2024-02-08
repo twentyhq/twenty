@@ -12,7 +12,7 @@ export class MessageParticipantService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  async getByHandles(
+  public async getByHandles(
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -28,7 +28,7 @@ export class MessageParticipantService {
     );
   }
 
-  async updateParticipantsPersonId(
+  public async updateParticipantsPersonId(
     participantIds: string[],
     personId: string,
     workspaceId: string,
@@ -40,6 +40,23 @@ export class MessageParticipantService {
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = $1 WHERE "id" = ANY($2)`,
       [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsWorkspaceMemberId(
+    participantIds: string[],
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "workspaceMemberId" = $1 WHERE "id" = ANY($2)`,
+      [workspaceMemberId, participantIds],
       workspaceId,
       transactionManager,
     );

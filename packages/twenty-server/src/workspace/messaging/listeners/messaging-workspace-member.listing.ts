@@ -10,18 +10,20 @@ import {
   MatchMessageParticipantJob,
   MatchMessageParticipantsJobData,
 } from 'src/workspace/messaging/jobs/match-message-participant.job';
-import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
-export class MessagingPersonListener {
+export class MessagingWorkspaceMemberListener {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('person.created')
-  handleCreatedEvent(payload: ObjectRecordCreateEvent<PersonObjectMetadata>) {
-    if (payload.createdRecord.email === null) {
+  @OnEvent('workspaceMember.created')
+  handleCreatedEvent(
+    payload: ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>,
+  ) {
+    if (payload.createdRecord.userEmail === null) {
       return;
     }
 
@@ -29,26 +31,28 @@ export class MessagingPersonListener {
       MatchMessageParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        email: payload.createdRecord.email,
-        personId: payload.createdRecord.id,
+        email: payload.createdRecord.userEmail,
+        workspaceMemberId: payload.createdRecord.id,
       },
     );
   }
 
-  @OnEvent('person.updated')
-  handleUpdatedEvent(payload: ObjectRecordUpdateEvent<PersonObjectMetadata>) {
+  @OnEvent('workspaceMember.updated')
+  handleUpdatedEvent(
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberObjectMetadata>,
+  ) {
     if (
       objectRecordUpdateEventChangedProperties(
         payload.previousRecord,
         payload.updatedRecord,
-      ).includes('email')
+      ).includes('userEmail')
     ) {
       this.messageQueueService.add<MatchMessageParticipantsJobData>(
         MatchMessageParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: payload.updatedRecord.email,
-          personId: payload.updatedRecord.id,
+          email: payload.updatedRecord.userEmail,
+          workspaceMemberId: payload.updatedRecord.id,
         },
       );
     }
