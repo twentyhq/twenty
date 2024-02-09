@@ -1,41 +1,89 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
+.form-container {
+    height: 45px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--ifm-color-secondary-light);
+    position: sticky;
+    top: var(--ifm-navbar-height);
+    padding: 0px 8px;
+    background: var(--ifm-color-secondary-contrast-background);
+    z-index: 2;
 }
 
 .form {
-    text-align: center;
-    padding: 50px;
+    display: flex;
+    height: 45px;
+    gap: 10px;
+    width: 50%;
+    margin-left: auto;
 }
 
 .link {
-    color: #16233f;
-    text-decoration: none;
+    color: white;
+    text-decoration: underline;
     position: relative;
     font-weight: bold;
     transition: color 0.3s ease;
-}
 
-[data-theme='dark'] .link {
-    color: #a3c0f8;
+    &:hover {
+        color: #ddd;
+    }
 }
 
 .input {
     padding: 6px;
-    margin: 20px 0 5px 0;
+    margin: 5px 0 5px 0;
     max-width: 460px;
     width: 100%;
     box-sizing: border-box;
     background-color: #f3f3f3;
     border: 1px solid #ddd;
     border-radius: 4px;
+    padding-left:30px;
+    height: 32px;
 }
 
 [data-theme='dark'] .input {
     background-color: #16233f;
 }
+
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.inputIcon {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: 5px;
+    color: #B3B3B3;
+}
+
+[data-theme='dark'] .inputIcon {
+    color: white;
+}
+
+.select {
+    padding: 6px;
+    margin: 5px 0 5px 0;
+    max-width: 460px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 32px;
+    flex: 1;
+}
+
+[data-theme='dark'] .select {
+    background-color: #16233f;
+}
+
 
 .invalid {
     border: 1px solid #f83e3e;
@@ -74,4 +122,19 @@
     justify-content: center;
     align-items: center;
     height: 50px;
+}
+
+
+.backButton {
+    position: absolute;
+    display: flex;
+    left: 8px;
+    height: 100%;
+    align-items: center;
+    cursor: pointer;  
+    color: #999999; 
+
+    &:hover {
+        color: #16233f;
+    }
 }

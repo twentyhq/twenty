@@ -3,6 +3,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 
+import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
+
 // TODO: implement dry-run
 interface RunWorkspaceMigrationsOptions {
   workspaceId: string;
@@ -17,6 +19,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
   constructor(
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly dataSourceService: DataSourceService,
+    private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
   ) {
     super();
   }
@@ -31,13 +34,21 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         options.workspaceId,
       );
 
-    await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      {
-        workspaceId: options.workspaceId,
-        dataSourceId: dataSourceMetadata.id,
-      },
-      { dryRun: options.dryRun },
-    );
+    const { storage, workspaceMigrations } =
+      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+        {
+          workspaceId: options.workspaceId,
+          dataSourceId: dataSourceMetadata.id,
+        },
+        { applyChanges: !options.dryRun },
+      );
+
+    if (options.dryRun) {
+      await this.syncWorkspaceLoggerService.saveLogs(
+        storage,
+        workspaceMigrations,
+      );
+    }
   }
 
   @Option({

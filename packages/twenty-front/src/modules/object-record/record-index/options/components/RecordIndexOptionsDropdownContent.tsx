@@ -93,7 +93,7 @@ export const RecordIndexOptionsDropdownContent = ({
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
     isCompactModeActive,
-    setIsCompactModeActive,
+    setAndPersistIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
     objectNameSingular,
     recordBoardId: recordIndexId,
@@ -184,7 +184,12 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuItemsContainer>
             <MenuItemToggle
               LeftIcon={IconBaselineDensitySmall}
-              onToggleChange={setIsCompactModeActive}
+              onToggleChange={() =>
+                setAndPersistIsCompactModeActive(
+                  !isCompactModeActive,
+                  currentView,
+                )
+              }
               toggled={isCompactModeActive}
               text="Compact view"
               toggleSize="small"

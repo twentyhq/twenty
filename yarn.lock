@@ -7338,6 +7338,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/event-emitter@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@nestjs/event-emitter@npm:2.0.3"
+  dependencies:
+    eventemitter2: "npm:6.4.9"
+  peerDependencies:
+    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+    reflect-metadata: ^0.1.12
+  checksum: 22fdbe4b68f9a4f25be8b2cc72afa5f4956b07f3b646befa263a0c112eee200de553a0ed1804090430002dcc6139b4cb20451dabe5c9dde140dc12469489c547
+  languageName: node
+  linkType: hard
+
 "@nestjs/graphql@npm:12.0.8":
   version: 12.0.8
   resolution: "@nestjs/graphql@npm:12.0.8"
@@ -24363,6 +24376,13 @@ __metadata:
     "@types/node": "npm:*"
     require-like: "npm:>= 0.1.1"
   checksum: 258e700bff09e3ce3344273d5b6691b8ec5b043538d84f738f14d8b0aded33d64c00c15b380de725b1401b15f428ab35a9e7ca19a7d25f162c4f877c71586be9
+  languageName: node
+  linkType: hard
+
+"eventemitter2@npm:6.4.9":
+  version: 6.4.9
+  resolution: "eventemitter2@npm:6.4.9"
+  checksum: b2adf7d9f1544aa2d95ee271b0621acaf1e309d85ebcef1244fb0ebc7ab0afa6ffd5e371535d0981bc46195ad67fd6ff57a8d1db030584dee69aa5e371a27ea7
   languageName: node
   linkType: hard
 
@@ -43324,6 +43344,7 @@ __metadata:
     "@nestjs/common": "npm:^9.0.0"
     "@nestjs/config": "npm:^2.3.2"
     "@nestjs/core": "npm:^9.0.0"
+    "@nestjs/event-emitter": "npm:^2.0.3"
     "@nestjs/jwt": "npm:^10.0.3"
     "@nestjs/passport": "npm:^9.0.3"
     "@nestjs/platform-express": "npm:^9.0.0"

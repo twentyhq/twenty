@@ -185,7 +185,18 @@ export const EmailThreads = ({
                 key={index}
                 divider={index < timelineThreads.length - 1}
                 thread={thread}
-                onClick={() => openEmailThread(thread.id)}
+                onClick={
+                  thread.visibility === 'share_everything'
+                    ? () => openEmailThread(thread.id)
+                    : () => {}
+                }
+                visibility={
+                  // TODO: Fix typing for visibility
+                  thread.visibility as
+                    | 'metadata'
+                    | 'subject'
+                    | 'share_everything'
+                }
               />
             ))}
           </Card>

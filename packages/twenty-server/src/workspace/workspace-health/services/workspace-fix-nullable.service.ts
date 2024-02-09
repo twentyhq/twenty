@@ -5,29 +5,69 @@ import { EntityManager } from 'typeorm';
 import {
   WorkspaceHealthColumnIssue,
   WorkspaceHealthIssueType,
-  WorkspaceHealthRelationIssue,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 type WorkspaceHealthNullableIssue =
-  | WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>
-  | WorkspaceHealthRelationIssue<WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT>;
+  WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>;
 
 @Injectable()
 export class WorkspaceFixNullableService {
-  constructor() {}
+  constructor(
+    private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
+  ) {}
 
   async fix(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     manager: EntityManager,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     objectMetadataCollection: ObjectMetadataEntity[],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     issues: WorkspaceHealthNullableIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    // TODO: Implement nullable fix
-    return [];
+    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+    for (const issue of issues) {
+      switch (issue.type) {
+        case WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT: {
+          const columnNullabilityWorkspaceMigrations =
+            await this.fixColumnNullabilityIssues(
+              objectMetadataCollection,
+              issues.filter(
+                (issue) =>
+                  issue.type ===
+                  WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
+              ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
+            );
+
+          workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
+          break;
+        }
+      }
+    }
+
+    return workspaceMigrations;
+  }
+
+  private async fixColumnNullabilityIssues(
+    objectMetadataCollection: ObjectMetadataEntity[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    const fieldMetadataUpdateCollection = issues.map((issue) => {
+      return {
+        current: {
+          ...issue.fieldMetadata,
+          isNullable: issue.columnStructure?.isNullable ?? false,
+        },
+        altered: issue.fieldMetadata,
+      };
+    });
+
+    return this.workspaceMigrationFieldFactory.create(
+      objectMetadataCollection,
+      fieldMetadataUpdateCollection,
+      WorkspaceMigrationBuilderAction.UPDATE,
+    );
   }
 }

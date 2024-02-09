@@ -250,7 +250,7 @@ li.coming-soon a::after {
 }
 
 .fullHeightPlayground {
-  height: calc(100vh - var(--ifm-navbar-height));
+  height: calc(100vh - var(--ifm-navbar-height) - 45px);
 }
 
 .display-none {

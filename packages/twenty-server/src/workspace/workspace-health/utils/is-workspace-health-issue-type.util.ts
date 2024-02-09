@@ -2,11 +2,12 @@ import { WorkspaceHealthIssueType } from 'src/workspace/workspace-health/interfa
 
 export const isWorkspaceHealthNullableIssue = (
   type: WorkspaceHealthIssueType,
-): type is
-  | WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT
-  | WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT => {
-  return type === WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT ||
-    type === WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT
-    ? true
-    : false;
+): type is WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT => {
+  return type === WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT;
+};
+
+export const isWorkspaceHealthTypeIssue = (
+  type: WorkspaceHealthIssueType,
+): type is WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT => {
+  return type === WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT;
 };
