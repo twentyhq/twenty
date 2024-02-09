@@ -4,7 +4,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import {
   signInBackgroundMockColumnDefinitions,
   signInBackgroundMockFilterDefinitions,
@@ -57,17 +56,13 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFilterDefinitions?.(signInBackgroundMockFilterDefinitions);
     setAvailableFieldDefinitions?.(signInBackgroundMockColumnDefinitions);
 
-    const availableTableColumns = signInBackgroundMockColumnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableTableColumns(availableTableColumns);
+    setAvailableTableColumns(signInBackgroundMockColumnDefinitions);
 
     setTableColumns(
-      mapViewFieldsToColumnDefinitions(
-        signInBackgroundMockViewFields,
-        signInBackgroundMockColumnDefinitions,
-      ),
+      mapViewFieldsToColumnDefinitions({
+        viewFields: signInBackgroundMockViewFields,
+        columnDefinitions: signInBackgroundMockColumnDefinitions,
+      }),
     );
   }, [
     setViewObjectMetadataId,

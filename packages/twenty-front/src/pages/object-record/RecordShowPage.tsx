@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
@@ -14,9 +15,8 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
-
-import { useFindOneRecord } from '../../modules/object-record/hooks/useFindOneRecord';
 
 export const RecordShowPage = () => {
   const { objectNameSingular, objectRecordId } = useParams<{
@@ -32,9 +32,8 @@ export const RecordShowPage = () => {
     throw new Error(`Record id is not defined`);
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { labelIdentifierFieldMetadata, objectMetadataItem } =
+    useObjectMetadataItem({ objectNameSingular });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
@@ -68,10 +67,15 @@ export const RecordShowPage = () => {
     }
   };
 
+  const labelIdentifierFieldValue =
+    record?.[labelIdentifierFieldMetadata?.name ?? ''];
   const pageName =
-    objectNameSingular === 'person'
-      ? record?.name.firstName + ' ' + record?.name.lastName
-      : record?.name;
+    labelIdentifierFieldMetadata?.type === FieldMetadataType.FullName
+      ? [
+          labelIdentifierFieldValue?.firstName,
+          labelIdentifierFieldValue?.lastName,
+        ].join(' ')
+      : labelIdentifierFieldValue;
 
   return (
     <PageContainer>
