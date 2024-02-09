@@ -12,14 +12,12 @@ import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-met
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
-import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageService: MessageService,
     private readonly messageThreadService: MessageThreadService,
     private readonly messageParticipantService: MessageParticipantService,
   ) {}
@@ -156,7 +154,7 @@ export class MessageService {
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {
-    const existingMessage = await this.messageService.getFirstByHeaderMessageId(
+    const existingMessage = await this.getFirstByHeaderMessageId(
       message.headerMessageId,
       workspaceId,
     );
@@ -195,14 +193,6 @@ export class MessageService {
     );
 
     return Promise.resolve(newMessageId);
-  }
-
-  public createQueriesFromMessageIds(
-    messageExternalIds: string[],
-  ): MessageQuery[] {
-    return messageExternalIds.map((messageId) => ({
-      uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
-    }));
   }
 
   public async deleteMessages(
@@ -259,11 +249,7 @@ export class MessageService {
             ),
         );
 
-      await this.messageService.deleteByIds(
-        messageIdsToDelete,
-        workspaceId,
-        manager,
-      );
+      await this.deleteByIds(messageIdsToDelete, workspaceId, manager);
 
       const messageThreadIdsFromMessageChannelMessageAssociationsToDelete =
         messageChannelMessageAssociationsToDelete.map(
@@ -271,12 +257,11 @@ export class MessageService {
             messageChannelMessageAssociationToDelete.messageThreadId,
         );
 
-      const messagesByThreadIds =
-        await this.messageService.getByMessageThreadIds(
-          messageThreadIdsFromMessageChannelMessageAssociationsToDelete,
-          workspaceId,
-          manager,
-        );
+      const messagesByThreadIds = await this.getByMessageThreadIds(
+        messageThreadIdsFromMessageChannelMessageAssociationsToDelete,
+        workspaceId,
+        manager,
+      );
 
       const threadIdsToDelete =
         messageThreadIdsFromMessageChannelMessageAssociationsToDelete.filter(

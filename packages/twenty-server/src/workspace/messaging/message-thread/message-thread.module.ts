@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 
+import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-assocation.module';
 import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
 @Module({
-  imports: [WorkspaceDataSourceModule],
+  imports: [WorkspaceDataSourceModule, MessageChannelMessageAssociationModule],
   providers: [MessageThreadService],
   exports: [MessageThreadService],
 })

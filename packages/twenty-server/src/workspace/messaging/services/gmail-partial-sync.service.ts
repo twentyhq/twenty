@@ -14,6 +14,7 @@ import { ConnectedAccountService } from 'src/workspace/messaging/connected-accou
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -28,6 +29,7 @@ export class GmailPartialSyncService {
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageService: MessageService,
+    private readonly createQueriesFromMessageIdsService: CreateQueriesFromMessageIdsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -98,7 +100,9 @@ export class GmailPartialSyncService {
       await this.getMessageIdsFromHistory(history);
 
     const messageQueries =
-      this.messageService.createQueriesFromMessageIds(messagesAdded);
+      this.createQueriesFromMessageIdsService.createQueriesFromMessageIds(
+        messagesAdded,
+      );
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(

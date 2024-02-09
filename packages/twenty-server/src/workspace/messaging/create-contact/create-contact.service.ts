@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
-import { CreateCompanyService } from 'src/workspace/messaging/services/create-company.service';
+import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
 @Injectable()
 export class CreateContactService {
   constructor(private readonly createCompaniesService: CreateCompanyService) {}
