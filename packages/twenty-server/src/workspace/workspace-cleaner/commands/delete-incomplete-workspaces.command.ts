@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
@@ -11,7 +11,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 
 type DeleteIncompleteWorkspacesCommandOptions = {
   dryRun?: boolean;
-  workspaceId?: string;
+  workspaceIds?: string[];
 };
 
 @Command({
@@ -39,12 +39,12 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id',
+    flags: '-w, --workspace-ids [workspace_ids]',
+    description: 'comma separated workspace ids',
     required: false,
   })
-  parseWorkspaceId(value: string): string {
-    return value;
+  parseWorkspaceIds(value: string): string[] {
+    return value.split(',');
   }
 
   async run(
@@ -55,9 +55,10 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
       subscriptionStatus: 'incomplete',
     };
 
-    if (options.workspaceId) {
-      where.id = options.workspaceId;
+    if (options.workspaceIds) {
+      where.id = In(options.workspaceIds);
     }
+
     const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
