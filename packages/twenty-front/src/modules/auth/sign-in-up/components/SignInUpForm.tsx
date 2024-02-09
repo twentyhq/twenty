@@ -4,14 +4,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -73,8 +72,7 @@ export const SignInUpForm = () => {
     workspace,
   } = useSignInUp();
 
-  const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
-  const { enqueueSnackBar } = useSnackBar();
+  const { handleResetPassword } = useHandleResetPassword();
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -88,39 +86,6 @@ export const SignInUpForm = () => {
         setShowErrors(true);
         handleSubmit(submitCredentials)();
       }
-    }
-  };
-
-  const handleResetPasswordClick = async () => {
-    const emailInput = getValues('email');
-
-    if (!emailInput) {
-      enqueueSnackBar('Invalid email', {
-        variant: 'error',
-      });
-      return;
-    }
-
-    try {
-      const { data } = await emailPasswordResetLink({
-        variables: {
-          email: emailInput,
-        },
-      });
-
-      if (data?.emailPasswordResetLink?.success) {
-        enqueueSnackBar('Password reset link has been sent to the email', {
-          variant: 'success',
-        });
-      } else {
-        enqueueSnackBar('There was some issue', {
-          variant: 'error',
-        });
-      }
-    } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: 'error',
-      });
     }
   };
 
@@ -283,7 +248,7 @@ export const SignInUpForm = () => {
         <StyledForgotPasswordButton
           title="Forgot your password?"
           variant="secondary"
-          onClick={handleResetPasswordClick}
+          onClick={handleResetPassword(getValues('email'))}
         />
       ) : (
         <StyledFooterNote>
