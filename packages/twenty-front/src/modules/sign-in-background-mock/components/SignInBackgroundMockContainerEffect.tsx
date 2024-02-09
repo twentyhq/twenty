@@ -28,7 +28,6 @@ export const SignInBackgroundMockContainerEffect = ({
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    setRecordTableData,
     setTableColumns,
     resetTableRowSelection,
   } = useRecordTable({
@@ -77,7 +76,6 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFieldDefinitions,
     objectMetadataItem,
     setAvailableTableColumns,
-    setRecordTableData,
     setTableColumns,
   ]);
 

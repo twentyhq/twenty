@@ -6,8 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-
-import { AppPath } from '../../modules/types/AppPath';
+import { AppPath } from '@/types/AppPath';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();

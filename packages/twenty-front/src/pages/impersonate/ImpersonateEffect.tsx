@@ -6,9 +6,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { AppPath } from '@/types/AppPath';
 import { useImpersonateMutation } from '~/generated/graphql';
-
-import { AppPath } from '../../modules/types/AppPath';
 
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
