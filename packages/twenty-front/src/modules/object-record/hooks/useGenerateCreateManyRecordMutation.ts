@@ -31,7 +31,11 @@ export const useGenerateCreateManyRecordMutation = ({
       ${mutationResponseField}(data: $data) { 
         id
         ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field))
+          .map((field) =>
+            mapFieldMetadataToGraphQLQuery({
+              field,
+            }),
+          )
           .join('\n')}
     }
   }`;

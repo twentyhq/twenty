@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
@@ -20,7 +20,7 @@ export const useDeleteManyRecords = ({
   const { objectMetadataItem, deleteManyRecordsMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
-  const getRelationMetadata = useGetRelationMetadata();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -50,8 +50,8 @@ export const useDeleteManyRecords = ({
         triggerDeleteRecordsOptimisticEffect({
           cache,
           objectMetadataItem,
-          records: cachedRecords,
-          getRelationMetadata,
+          recordsToDelete: cachedRecords,
+          objectMetadataItems,
         });
       },
     });

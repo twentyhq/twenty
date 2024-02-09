@@ -93,7 +93,7 @@ export const RecordIndexOptionsDropdownContent = ({
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
     isCompactModeActive,
-    setIsCompactModeActive,
+    setAndPersistIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
     objectNameSingular,
     recordBoardId: recordIndexId,
@@ -159,10 +159,9 @@ export const RecordIndexOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleRecordFields}
-            isVisible={true}
-            onVisibilityChange={handleChangeFieldVisibility}
-            isDraggable={true}
+            isDraggable
             onDragEnd={handleReorderFields}
+            onVisibilityChange={handleChangeFieldVisibility}
           />
           {hiddenRecordFields.length > 0 && (
             <>
@@ -170,9 +169,8 @@ export const RecordIndexOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
-                isVisible={false}
-                onVisibilityChange={handleChangeFieldVisibility}
                 isDraggable={false}
+                onVisibilityChange={handleChangeFieldVisibility}
               />
             </>
           )}
@@ -184,7 +182,12 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuItemsContainer>
             <MenuItemToggle
               LeftIcon={IconBaselineDensitySmall}
-              onToggleChange={setIsCompactModeActive}
+              onToggleChange={() =>
+                setAndPersistIsCompactModeActive(
+                  !isCompactModeActive,
+                  currentView,
+                )
+              }
               toggled={isCompactModeActive}
               text="Compact view"
               toggleSize="small"

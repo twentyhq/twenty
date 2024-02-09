@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -12,7 +12,9 @@ import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentif
 export const useObjectMetadataItemOnly = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const isCurrentWorkspaceActive = useRecoilValue(
+    isCurrentWorkspaceActiveSelector,
+  );
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -24,7 +26,7 @@ export const useObjectMetadataItemOnly = ({
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!currentWorkspace) {
+  if (!isCurrentWorkspaceActive) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>

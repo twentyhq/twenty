@@ -2,12 +2,8 @@ import { Module } from '@nestjs/common';
 
 import { DatabaseCommandModule } from 'src/database/commands/database-command.module';
 import { FetchWorkspaceMessagesCommandsModule } from 'src/workspace/messaging/commands/fetch-workspace-messages-commands.module';
-import { StartCleanInactiveWorkspacesCronCommand } from 'src/workspace/cron/clean-inactive-workspaces/commands/start-clean-inactive-workspaces.cron.command';
-import { StopCleanInactiveWorkspacesCronCommand } from 'src/workspace/cron/clean-inactive-workspaces/commands/stop-clean-inactive-workspaces.cron.command';
-import { CleanInactiveWorkspacesCommand } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
 import { WorkspaceHealthCommandModule } from 'src/workspace/workspace-health/commands/workspace-health-command.module';
-import { StartFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/start-fetch-all-workspaces-messages.cron.command';
-import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/cron/fetch-all-workspaces-messages/commands/stop-fetch-all-workspaces-messages.cron.command';
+import { WorkspaceCleanerModule } from 'src/workspace/workspace-cleaner/workspace-cleaner.module';
 
 import { AppModule } from './app.module';
 
@@ -20,13 +16,9 @@ import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-mi
     WorkspaceSyncMetadataCommandsModule,
     DatabaseCommandModule,
     FetchWorkspaceMessagesCommandsModule,
-    StartCleanInactiveWorkspacesCronCommand,
-    StopCleanInactiveWorkspacesCronCommand,
-    CleanInactiveWorkspacesCommand,
+    WorkspaceCleanerModule,
     WorkspaceHealthCommandModule,
     WorkspaceMigrationRunnerCommandsModule,
-    StartFetchAllWorkspacesMessagesCronCommand,
-    StopFetchAllWorkspacesMessagesCronCommand,
   ],
 })
 export class CommandModule {}
