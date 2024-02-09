@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
@@ -56,6 +57,9 @@ const StyledForgotPasswordButton = styled(Button)`
 export const SignInUpForm = () => {
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
+  const { handleResetPassword } = useHandleResetPassword();
+  const workspace = useWorkspaceFromInviteHash();
+
   const {
     signInWithGoogle,
     signInUpStep,
@@ -70,10 +74,7 @@ export const SignInUpForm = () => {
       getValues,
       formState: { isSubmitting },
     },
-    workspace,
   } = useSignInUp();
-
-  const { handleResetPassword } = useHandleResetPassword();
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {

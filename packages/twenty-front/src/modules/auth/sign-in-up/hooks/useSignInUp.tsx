@@ -11,7 +11,6 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -61,10 +60,6 @@ export const useSignInUp = () => {
     return isMatchingLocation(AppPath.SignIn)
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
-  });
-
-  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
-    variables: { inviteHash: workspaceInviteHash || '' },
   });
 
   const form = useForm<Form>({
@@ -194,6 +189,5 @@ export const useSignInUp = () => {
     continueWithEmail,
     submitCredentials,
     form,
-    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
   };
 };
