@@ -68,6 +68,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch",
     "date-fns": "^2.30.0",
+    "deep-equal": "^2.2.2",
     "file-type": "16.5.4",
     "googleapis": "105",
     "graphql": "^16.8.1",
