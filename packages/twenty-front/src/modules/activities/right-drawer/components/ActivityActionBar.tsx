@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -26,6 +27,8 @@ export const ActivityActionBar = () => {
 
   const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
 
+  const apolloClient = useApolloClient();
+
   const deleteActivity = () => {
     if (viewableActivityId) {
       if (isCreatingActivity && isDefined(temporaryActivityForEditor)) {
@@ -33,6 +36,10 @@ export const ActivityActionBar = () => {
         setTemporaryActivityForEditor(null);
       } else {
         deleteOneActivity?.(viewableActivityId);
+        // TODO: find a better way to do this with custom optimistic rendering for activities
+        apolloClient.refetchQueries({
+          include: ['FindManyActivityTargets'],
+        });
       }
     }
 
