@@ -14,6 +14,7 @@ import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
+import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -62,6 +63,9 @@ export const RecordIndexContainer = ({
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
+  const setRecordIndexIsCompactModeActive = useSetRecoilState(
+    recordIndexIsCompactModeActiveState,
+  );
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableId: recordIndexId,
@@ -70,25 +74,29 @@ export const RecordIndexContainer = ({
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewFields: ViewField[]) => {
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+        const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
+          viewFields,
+          columnDefinitions,
+        });
+
+        setTableColumns(newFieldDefinitions);
+
+        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
+          (boardField) => !boardField.isLabelIdentifier,
         );
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
 
-        const newFieldDefinitions = mapViewFieldsToColumnDefinitions(
-          viewFields,
-          columnDefinitions,
-        );
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newFieldDefinitions,
+            newRecordIndexFieldDefinitions,
           )
-        )
-          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+        ) {
+          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+        }
       },
     [columnDefinitions, setTableColumns],
   );
@@ -117,6 +125,9 @@ export const RecordIndexContainer = ({
           }}
           onViewTypeChange={(viewType: ViewType) => {
             setRecordIndexViewType(viewType);
+          }}
+          onViewCompactModeChange={(isCompactModeActive: boolean) => {
+            setRecordIndexIsCompactModeActive(isCompactModeActive);
           }}
         />
         <RecordIndexViewBarEffect

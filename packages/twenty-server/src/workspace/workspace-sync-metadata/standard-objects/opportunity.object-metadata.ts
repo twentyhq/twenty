@@ -7,6 +7,7 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
+import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
@@ -62,18 +63,18 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     description: 'Opportunity stage',
     icon: 'IconProgressCheck',
     options: [
-      { value: 'new', label: 'New', position: 0, color: 'red' },
-      { value: 'screening', label: 'Screening', position: 1, color: 'purple' },
-      { value: 'meeting', label: 'Meeting', position: 2, color: 'sky' },
+      { value: 'NEW', label: 'New', position: 0, color: 'red' },
+      { value: 'SCREENING', label: 'Screening', position: 1, color: 'purple' },
+      { value: 'MEETING', label: 'Meeting', position: 2, color: 'sky' },
       {
-        value: 'proposal',
+        value: 'PROPOSAL',
         label: 'Proposal',
         position: 3,
         color: 'turquoise',
       },
-      { value: 'customer', label: 'Customer', position: 4, color: 'yellow' },
+      { value: 'CUSTOMER', label: 'Customer', position: 4, color: 'yellow' },
     ],
-    defaultValue: { value: 'new' },
+    defaultValue: { value: 'NEW' },
   })
   stage: string;
 
@@ -143,4 +144,17 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Attachments',
+    description: 'Attachments linked to the opportunity.',
+    icon: 'IconFileImport',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'attachment',
+  })
+  @IsNullable()
+  attachments: AttachmentObjectMetadata[];
 }

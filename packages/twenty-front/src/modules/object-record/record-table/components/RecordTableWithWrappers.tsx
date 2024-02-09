@@ -11,10 +11,10 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -110,23 +110,23 @@ export const RecordTableWithWrappers = ({
                 tableBodyRef={tableBodyRef}
               />
               {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <StyledEmptyContainer>
+                <AnimatedPlaceholderEmptyContainer>
                   <AnimatedPlaceholder type="noRecord" />
-                  <StyledEmptyTextContainer>
-                    <StyledEmptyTitle>
+                  <AnimatedPlaceholderEmptyTextContainer>
+                    <AnimatedPlaceholderEmptyTitle>
                       Add your first {objectLabel}
-                    </StyledEmptyTitle>
-                    <StyledEmptySubTitle>
+                    </AnimatedPlaceholderEmptyTitle>
+                    <AnimatedPlaceholderEmptySubTitle>
                       Use our API or add your first {objectLabel} manually
-                    </StyledEmptySubTitle>
-                  </StyledEmptyTextContainer>
+                    </AnimatedPlaceholderEmptySubTitle>
+                  </AnimatedPlaceholderEmptyTextContainer>
                   <Button
                     Icon={IconPlus}
                     title={`Add a ${objectLabel}`}
                     variant={'secondary'}
                     onClick={createRecord}
                   />
-                </StyledEmptyContainer>
+                </AnimatedPlaceholderEmptyContainer>
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>

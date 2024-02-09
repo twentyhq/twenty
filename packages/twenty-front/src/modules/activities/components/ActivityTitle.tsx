@@ -1,11 +1,20 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
-import { ActivityType } from '@/activities/types/Activity';
+import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
+import { Activity } from '@/activities/types/Activity';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
@@ -39,36 +48,83 @@ const StyledContainer = styled.div`
 `;
 
 type ActivityTitleProps = {
-  title: string;
-  type: ActivityType;
-  completed: boolean;
-  onTitleChange: (title: string) => void;
-  onCompletionChange: (value: boolean) => void;
+  activity: Activity;
 };
 
-export const ActivityTitle = ({
-  title,
-  completed,
-  type,
-  onTitleChange,
-  onCompletionChange,
-}: ActivityTitleProps) => (
-  <StyledContainer>
-    {type === 'Task' && (
-      <Checkbox
-        size={CheckboxSize.Large}
-        shape={CheckboxShape.Rounded}
-        checked={completed}
-        onCheckedChange={(value) => onCompletionChange(value)}
+export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
+  const [internalTitle, setInternalTitle] = useState(activity.title);
+
+  const { upsertActivity } = useUpsertActivity();
+
+  const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
+    activityTitleHasBeenSetFamilyState({
+      activityId: activity.id,
+    }),
+  );
+
+  const { objectMetadataItem: objectMetadataItemActivity } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+    });
+
+  const modifyActivityFromCache = useModifyRecordFromCache({
+    objectMetadataItem: objectMetadataItemActivity,
+  });
+
+  const persistTitleDebounced = useDebouncedCallback((newTitle: string) => {
+    upsertActivity({
+      activity,
+      input: {
+        title: newTitle,
+      },
+    });
+
+    if (!activityTitleHasBeenSet) {
+      setActivityTitleHasBeenSet(true);
+    }
+  }, 500);
+
+  const handleTitleChange = (newTitle: string) => {
+    setInternalTitle(newTitle);
+
+    modifyActivityFromCache(activity.id, {
+      title: () => {
+        return newTitle;
+      },
+    });
+
+    persistTitleDebounced(newTitle);
+  };
+
+  const handleActivityCompletionChange = (value: boolean) => {
+    upsertActivity({
+      activity,
+      input: {
+        completedAt: value ? new Date().toISOString() : null,
+      },
+    });
+  };
+
+  const completed = isDefined(activity.completedAt);
+
+  return (
+    <StyledContainer>
+      {activity.type === 'Task' && (
+        <Checkbox
+          size={CheckboxSize.Large}
+          shape={CheckboxShape.Rounded}
+          checked={completed}
+          onCheckedChange={(value) => handleActivityCompletionChange(value)}
+        />
+      )}
+      <StyledEditableTitleInput
+        autoComplete="off"
+        autoFocus
+        placeholder={`${activity.type} title`}
+        onChange={(event) => handleTitleChange(event.target.value)}
+        value={internalTitle}
+        completed={completed}
       />
-    )}
-    <StyledEditableTitleInput
-      autoComplete="off"
-      autoFocus
-      placeholder={`${type} title`}
-      onChange={(event) => onTitleChange(event.target.value)}
-      value={title}
-      completed={completed}
-    />
-  </StyledContainer>
-);
+    </StyledContainer>
+  );
+};

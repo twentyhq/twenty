@@ -14,9 +14,9 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 10,
-      lines: 10,
-      functions: 7,
+      statements: 70,
+      lines: 70,
+      functions: 60,
     },
   },
   collectCoverage: true,

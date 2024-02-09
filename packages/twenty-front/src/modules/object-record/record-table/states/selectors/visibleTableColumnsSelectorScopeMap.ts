@@ -1,7 +1,5 @@
-import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
+import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
 import { createSelectorReadOnlyScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorReadOnlyScopeMap';
-
-import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
 export const visibleTableColumnsSelectorScopeMap =
   createSelectorReadOnlyScopeMap({
@@ -10,16 +8,8 @@ export const visibleTableColumnsSelectorScopeMap =
       ({ scopeId }) =>
       ({ get }) => {
         const columns = get(tableColumnsStateScopeMap({ scopeId }));
-        const availableColumnKeys = get(
-          availableTableColumnsStateScopeMap({ scopeId }),
-        ).map(({ fieldMetadataId }) => fieldMetadataId);
-
-        return [...columns]
-          .filter(
-            (column) =>
-              column.isVisible &&
-              availableColumnKeys.includes(column.fieldMetadataId),
-          )
-          .sort((a, b) => a.position - b.position);
+        return columns
+          .filter((column) => column.isVisible)
+          .sort((columnA, columnB) => columnA.position - columnB.position);
       },
   });

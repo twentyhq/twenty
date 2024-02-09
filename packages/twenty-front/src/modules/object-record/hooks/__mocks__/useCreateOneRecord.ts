@@ -7,6 +7,7 @@ export const query = gql`
       opportunities {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -19,12 +20,14 @@ export const query = gql`
       pointOfContactForOpportunities {
         edges {
           node {
+            __typename
             id
           }
         }
       }
       createdAt
       company {
+        __typename
         id
       }
       city
@@ -32,6 +35,7 @@ export const query = gql`
       activityTargets {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -40,6 +44,7 @@ export const query = gql`
       favorites {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -47,6 +52,7 @@ export const query = gql`
       attachments {
         edges {
           node {
+            __typename
             id
           }
         }
