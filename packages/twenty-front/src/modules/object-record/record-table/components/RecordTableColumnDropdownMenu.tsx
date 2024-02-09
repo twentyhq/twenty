@@ -1,8 +1,15 @@
 import { useRecoilValue } from 'recoil';
 
+import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -20,7 +27,6 @@ export const RecordTableColumnDropdownMenu = ({
   const { getVisibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-
   const secondVisibleColumn = visibleTableColumns[1];
   const canMoveLeft =
     column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId;
@@ -55,6 +61,13 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
+  const { toggleSortDropdown } = useObjectSortDropdown();
+
+  const handleSortClick = () => {
+    closeDropdown();
+    toggleSortDropdown();
+  };
+
   return (
     <DropdownMenuItemsContainer>
       {canMoveLeft && (
@@ -75,6 +88,16 @@ export const RecordTableColumnDropdownMenu = ({
         LeftIcon={IconEyeOff}
         onClick={handleColumnVisibility}
         text="Hide"
+      />
+      <MenuItem
+        LeftIcon={IconFilter}
+        onClick={handleColumnVisibility}
+        text="Filter"
+      />
+      <MenuItem
+        LeftIcon={IconSortDescending}
+        onClick={handleSortClick}
+        text="Sort"
       />
     </DropdownMenuItemsContainer>
   );

@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-
+import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
@@ -9,13 +8,12 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { SortDefinition } from '../types/SortDefinition';
-import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
+import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;
@@ -26,26 +24,21 @@ export const ObjectSortDropdownButton = ({
   sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
-  const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
-    useState(false);
-
-  const [selectedSortDirection, setSelectedSortDirection] =
-    useState<SortDirection>('asc');
-
-  const resetState = useCallback(() => {
-    setIsSortDirectionMenuUnfolded(false);
-    setSelectedSortDirection('asc');
-  }, []);
+  const {
+    isSortDirectionMenuUnfolded,
+    setIsSortDirectionMenuUnfolded,
+    selectedSortDirection,
+    setSelectedSortDirection,
+    toggleSortDropdown,
+    resetState,
+  } = useObjectSortDropdown();
 
   const { isSortSelected } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
 
-  const { toggleDropdown } = useDropdown(ObjectSortDropdownId);
-
   const handleButtonClick = () => {
-    toggleDropdown();
-    resetState();
+    toggleSortDropdown();
   };
 
   const { availableSortDefinitions, onSortSelect } = useSortDropdown({
@@ -53,7 +46,7 @@ export const ObjectSortDropdownButton = ({
   });
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
-    toggleDropdown();
+    toggleSortDropdown();
     onSortSelect?.({
       fieldMetadataId: selectedSortDefinition.fieldMetadataId,
       direction: selectedSortDirection,
