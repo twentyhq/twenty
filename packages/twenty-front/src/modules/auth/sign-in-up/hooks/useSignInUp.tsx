@@ -80,7 +80,6 @@ export const useSignInUp = () => {
   const {
     signInWithCredentials,
     signUpWithCredentials,
-    signInWithGoogle,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
@@ -182,7 +181,6 @@ export const useSignInUp = () => {
   );
 
   return {
-    signInWithGoogle: () => signInWithGoogle(workspaceInviteHash),
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
