@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { animate } from 'framer-motion';
-import { useTheme } from '@emotion/react';
 
 import {
   Background,
   DarkBackground,
-  MovingImage,
   DarkMovingImage,
+  MovingImage,
 } from '@/ui/layout/animated-placeholder/constants/AnimatedImages';
 
 const StyledContainer = styled.div`
