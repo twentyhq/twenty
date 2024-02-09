@@ -1,10 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
+import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { Button } from '@/ui/input/button/components/Button';
@@ -52,13 +54,12 @@ const StyledForgotPasswordButton = styled(Button)`
 `;
 
 export const SignInUpForm = () => {
+  const [authProviders] = useRecoilState(authProvidersState);
+  const [showErrors, setShowErrors] = useState(false);
   const {
-    authProviders,
     signInWithGoogle,
     signInUpStep,
     signInUpMode,
-    showErrors,
-    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,

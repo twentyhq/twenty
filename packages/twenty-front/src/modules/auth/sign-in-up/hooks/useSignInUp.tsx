@@ -2,10 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
@@ -47,7 +46,6 @@ export const useSignInUp = () => {
   const { enqueueSnackBar } = useSnackBar();
   const isMatchingLocation = useIsMatchingLocation();
 
-  const [authProviders] = useRecoilState(authProvidersState);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const billing = useRecoilValue(billingState);
 
@@ -64,7 +62,6 @@ export const useSignInUp = () => {
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
-  const [showErrors, setShowErrors] = useState(false);
 
   const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
     variables: { inviteHash: workspaceInviteHash || '' },
@@ -190,12 +187,9 @@ export const useSignInUp = () => {
   );
 
   return {
-    authProviders,
     signInWithGoogle: () => signInWithGoogle(workspaceInviteHash),
     signInUpStep,
     signInUpMode,
-    showErrors,
-    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
