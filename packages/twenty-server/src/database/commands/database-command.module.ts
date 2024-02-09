@@ -11,7 +11,6 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
-import { MigrateOpportunityStageValuesCommand } from 'src/database/commands/migrate-stage-enum-values.command';
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { MigrateOpportunityStageValuesCommand } from 'src/database/commands/migr
     DataSeedWorkspaceCommand,
     DataSeedDemoWorkspaceCommand,
     WorkspaceAddTotalCountCommand,
-    MigrateOpportunityStageValuesCommand,
     ConfirmationQuestion,
   ],
 })

@@ -297,6 +297,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
     };
 
     if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
