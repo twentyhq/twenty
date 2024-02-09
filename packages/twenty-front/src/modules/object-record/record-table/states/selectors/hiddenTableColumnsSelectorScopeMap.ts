@@ -21,10 +21,17 @@ export const hiddenTableColumnsSelectorScopeMap =
         const hiddenColumns = availableColumns
           .filter(
             ({ fieldMetadataId }) =>
-              !(fieldMetadataId in tableColumnsByKey) ||
-              !tableColumnsByKey[fieldMetadataId].isVisible,
+              !tableColumnsByKey[fieldMetadataId]?.isVisible,
           )
-          .map((hiddenColumn) => ({ ...hiddenColumn, isVisible: false }));
+          .map((availableColumn) => {
+            const { fieldMetadataId } = availableColumn;
+            const existingTableColumn = tableColumnsByKey[fieldMetadataId];
+
+            return {
+              ...(existingTableColumn || availableColumn),
+              isVisible: false,
+            };
+          });
 
         return hiddenColumns;
       },
