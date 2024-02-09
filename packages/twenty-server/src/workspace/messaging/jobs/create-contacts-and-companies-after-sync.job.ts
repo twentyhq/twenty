@@ -21,5 +21,20 @@ export class CreateContactsAndCompaniesAfterSyncJob
     data: CreateContactsAndCompaniesAfterSyncJobData,
   ): Promise<void> {
     const { workspaceId, messageChannelId } = data;
+
+    const messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId =
+      await this.messageParticipantService.getIdsByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+        messageChannelId,
+        workspaceId,
+      );
+
+    if (messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId.length === 0) {
+      return;
+    }
+
+    for (const messageParticipantId of messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId) {
+      // Create contacts and companies
+      // Update message participant with personIds
+    }
   }
 }
