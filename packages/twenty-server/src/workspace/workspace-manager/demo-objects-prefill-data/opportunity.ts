@@ -38,7 +38,6 @@ const generateOpportunities = (
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
-    recordPosition: null,
     probability: getRandomProbability(),
     pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,
@@ -74,13 +73,18 @@ export const seedDemoOpportunity = async (
       'amountCurrencyCode',
       'closeDate',
       'stage',
-      'recordPosition',
       'probability',
       'pipelineStepId',
       'pointOfContactId',
       'companyId',
+      'position',
     ])
     .orIgnore()
-    .values(opportunities)
+    .values(
+      opportunities.map((opportunity, index) => ({
+        ...opportunity,
+        position: index,
+      })),
+    )
     .execute();
 };

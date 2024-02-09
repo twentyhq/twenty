@@ -8,20 +8,25 @@ import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/works
 import { metadataModuleFactory } from 'src/metadata/metadata.module-factory';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { TokenService } from 'src/core/auth/services/token.service';
-import { AuthModule } from 'src/core/auth/auth.module';
+import { GraphQLConfigModule } from 'src/graphql-config/graphql-config.module';
+import { CreateContextFactory } from 'src/graphql-config/factories/create-context.factory';
 
 import { DataSourceModule } from './data-source/data-source.module';
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from './object-metadata/object-metadata.module';
 import { RelationMetadataModule } from './relation-metadata/relation-metadata.module';
+
 @Module({
   imports: [
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
       useFactory: metadataModuleFactory,
-      imports: [AuthModule],
-      inject: [EnvironmentService, ExceptionHandlerService, TokenService],
+      imports: [GraphQLConfigModule],
+      inject: [
+        EnvironmentService,
+        ExceptionHandlerService,
+        CreateContextFactory,
+      ],
     }),
     DataSourceModule,
     FieldMetadataModule,

@@ -1,18 +1,20 @@
 import styled from '@emotion/styled';
 
+import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { grayScale } from '@/ui/theme/constants/colors';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)<{ visibility: string }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(0, 4)};
-  cursor: pointer;
+  cursor: ${({ visibility }) =>
+    visibility === 'share_everything' ? 'pointer' : 'default'};
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
@@ -43,6 +45,7 @@ const StyledThreadCount = styled.span`
 `;
 
 const StyledSubjectAndBody = styled.div`
+  align-items: center;
   display: flex;
   flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -74,12 +77,14 @@ type EmailThreadPreviewProps = {
   divider?: boolean;
   thread: TimelineThread;
   onClick: () => void;
+  visibility: 'metadata' | 'subject' | 'share_everything';
 };
 
 export const EmailThreadPreview = ({
   divider,
   thread,
   onClick,
+  visibility,
 }: EmailThreadPreviewProps) => {
   const senderNames =
     thread.firstParticipant.displayName +
@@ -100,7 +105,11 @@ export const EmailThreadPreview = ({
         ];
 
   return (
-    <StyledCardContent onClick={() => onClick()} divider={divider}>
+    <StyledCardContent
+      onClick={() => onClick()}
+      divider={divider}
+      visibility={visibility}
+    >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
@@ -131,8 +140,13 @@ export const EmailThreadPreview = ({
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        <StyledSubject>{thread.subject}</StyledSubject>
-        <StyledBody>{thread.lastMessageBody}</StyledBody>
+        {visibility !== 'metadata' && (
+          <StyledSubject>{thread.subject}</StyledSubject>
+        )}
+        {visibility === 'share_everything' && (
+          <StyledBody>{thread.lastMessageBody}</StyledBody>
+        )}
+        {visibility !== 'share_everything' && <EmailThreadNotShared />}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
         {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
