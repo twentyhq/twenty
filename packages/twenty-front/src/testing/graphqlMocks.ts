@@ -26,18 +26,6 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           currentUser: mockedUsersData[0],
-          views: {
-            edges: mockedViewsData.map((view) => ({
-              node: view,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
         },
       });
     }),
