@@ -21,7 +21,7 @@ export const useActivityById = ({ activityId }: { activityId: string }) => {
         activityWithConnections,
       );
 
-      setEntityFields(activity ?? {});
+      setEntityFields(activity);
     },
     depth: QUERY_DEPTH_TO_GET_ACTIVITY_TARGET_RELATIONS,
   });

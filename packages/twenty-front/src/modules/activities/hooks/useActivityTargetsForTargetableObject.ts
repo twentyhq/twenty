@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -17,9 +18,14 @@ export const useActivityTargetsForTargetableObject = ({
 
   const [initialized, setInitialized] = useState(false);
 
+  const targetableObjectId = targetableObject.id;
+
+  const skipRequest = !isNonEmptyString(targetableObjectId);
+
   const { records: activityTargets, loading: loadingActivityTargets } =
     useFindManyRecords({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      skip: skipRequest,
       filter: {
         [targetObjectFieldName]: {
           eq: targetableObject.id,

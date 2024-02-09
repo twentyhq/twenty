@@ -8,11 +8,16 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { isDefined } from '~/utils/isDefined';
 
 export const useActivityConnectionUtils = () => {
   const mapConnectionToRecords = useMapConnectionToRecords();
 
   const makeActivityWithoutConnection = (activityWithConnections: any) => {
+    if (!isDefined(activityWithConnections)) {
+      return { activity: null };
+    }
+
     const hasActivityTargetsConnection = isObjectRecordConnection(
       CoreObjectNameSingular.ActivityTarget,
       activityWithConnections?.activityTargets,
