@@ -22,15 +22,16 @@ export const ObjectMetadataNavItems = () => {
     queryMethodName: QueryMethodName.FindMany,
   });
 
-  console.log(cachedRootQuery);
-
   const { records } = useFindManyRecords({
     skip: cachedRootQuery?.views,
     objectNameSingular: CoreObjectNameSingular.View,
     useRecordsWithoutConnection: true,
   });
 
-  const views = cachedRootQuery?.views?.edges?.map((edge: any) => edge?.node);
+  const views =
+    records.length > 0
+      ? records
+      : cachedRootQuery?.views?.edges?.map((edge: any) => edge?.node);
 
   return (
     <>

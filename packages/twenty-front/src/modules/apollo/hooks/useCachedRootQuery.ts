@@ -36,6 +36,7 @@ export const useCachedRootQuery = ({
         ${QueryMethodName.FindMany === queryMethodName ? 'edges { node { ' : ''}
             ${buildRecordFieldsFragment()}
         ${QueryMethodName.FindMany === queryMethodName ? '}}' : ''}
+
       }
     }
   `;
