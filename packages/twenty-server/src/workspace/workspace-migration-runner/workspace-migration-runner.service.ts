@@ -275,6 +275,8 @@ export class WorkspaceMigrationRunnerService {
         tableName,
         migrationColumn,
       );
+
+      return;
     }
 
     if (
