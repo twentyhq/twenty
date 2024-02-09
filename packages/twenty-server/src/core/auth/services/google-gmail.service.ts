@@ -67,8 +67,8 @@ export class GoogleGmailService {
       );
 
       await manager.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3, $4)`,
-        ['share_everything', handle, connectedAccountId, 'email'],
+        `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type", "isContactAutoCreationEnabled") VALUES ($1, $2, $3, $4, $5)`,
+        ['share_everything', handle, connectedAccountId, 'email', true],
       );
     });
 
