@@ -4,7 +4,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
@@ -42,14 +41,12 @@ export const ContextMenu = () => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
-  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [wrapperRef],
     callback: () => {
       setContextMenuOpenState(false);
-      setActionBarOpenState(true);
     },
   });
 

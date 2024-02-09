@@ -1,13 +1,12 @@
 import { useApolloClient } from '@apollo/client';
 
-import { useGetRelationFieldsToOptimisticallyUpdate } from '@/apollo/optimistic-effect/hooks/useGetRelationFieldsToOptimisticallyUpdate';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { triggerUpdateRelationFieldOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationFieldOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
@@ -18,13 +17,17 @@ export const useUpdateOneRecord = <
 >({
   objectNameSingular,
 }: useUpdateOneRecordProps) => {
+  const apolloClient = useApolloClient();
+
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
-  const getRelationFieldsToOptimisticallyUpdate =
-    useGetRelationFieldsToOptimisticallyUpdate();
+  const { generateObjectRecordOptimisticResponse } =
+    useGenerateObjectRecordOptimisticResponse({
+      objectMetadataItem,
+    });
 
-  const apolloClient = useApolloClient();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -40,21 +43,11 @@ export const useUpdateOneRecord = <
       recordInput: updateOneRecordInput,
     });
 
-    const optimisticallyUpdatedRecord = {
+    const optimisticallyUpdatedRecord = generateObjectRecordOptimisticResponse({
       ...(cachedRecord ?? {}),
-      ...updateOneRecordInput,
       ...sanitizedUpdateOneRecordInput,
-      __typename: capitalize(objectNameSingular),
       id: idToUpdate,
-    };
-
-    const updatedRelationFields = cachedRecord
-      ? getRelationFieldsToOptimisticallyUpdate({
-          cachedRecord,
-          objectMetadataItem,
-          updateRecordInput: updateOneRecordInput,
-        })
-      : [];
+    });
 
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
@@ -71,31 +64,15 @@ export const useUpdateOneRecord = <
       update: (cache, { data }) => {
         const record = data?.[mutationResponseField];
 
-        if (!record) return;
+        if (!record || !cachedRecord) return;
 
         triggerUpdateRecordOptimisticEffect({
           cache,
           objectMetadataItem,
-          record,
+          currentRecord: cachedRecord,
+          updatedRecord: record,
+          objectMetadataItems,
         });
-
-        updatedRelationFields.forEach(
-          ({
-            relationObjectMetadataNameSingular,
-            relationFieldName,
-            previousRelationRecord,
-            nextRelationRecord,
-          }) =>
-            triggerUpdateRelationFieldOptimisticEffect({
-              cache,
-              objectNameSingular,
-              record,
-              relationObjectMetadataNameSingular,
-              relationFieldName,
-              previousRelationRecord,
-              nextRelationRecord,
-            }),
-        );
       },
     });
 

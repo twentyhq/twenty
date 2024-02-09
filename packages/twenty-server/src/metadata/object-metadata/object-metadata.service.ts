@@ -35,6 +35,7 @@ import {
 } from 'src/workspace/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/metadata/relation-metadata/types/relation-to-delete';
+import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -152,6 +153,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
       if (relationToDelete.direction === 'from') {
         await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `delete-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
+          ),
           workspaceId,
           [
             {
@@ -178,12 +182,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
     // DROP TABLE
-    await this.workspaceMigrationService.createCustomMigration(workspaceId, [
-      {
-        name: computeObjectTargetTable(objectMetadata),
-        action: 'drop',
-      },
-    ]);
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`delete-${objectMetadata.nameSingular}`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(objectMetadata),
+          action: 'drop',
+        },
+      ],
+    );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
@@ -283,6 +291,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { type: 'now' },
           },
+          {
+            type: FieldMetadataType.NUMBER,
+            name: 'position',
+            label: 'Position',
+            targetColumnMap: {
+              value: 'position',
+            },
+            icon: 'IconHierarchy2',
+            description: 'Position',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            isSystem: true,
+            workspaceId: objectMetadataInput.workspaceId,
+            defaultValue: null,
+          },
         ],
     });
 
@@ -298,6 +322,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
       [
         {
@@ -366,6 +391,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
           ],
         },
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE,
+              columnName: 'position',
+              columnType: 'float',
+              isNullable: true,
+            } satisfies WorkspaceMigrationColumnCreate,
+          ],
+        } satisfies WorkspaceMigrationTableAction,
         // This is temporary until we implement mainIdentifier
         {
           name: computeObjectTargetTable(createdObjectMetadata),

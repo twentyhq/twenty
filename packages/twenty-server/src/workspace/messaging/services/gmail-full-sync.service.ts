@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
@@ -9,15 +9,25 @@ import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
+import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class GmailFullSyncService {
+  private readonly logger = new Logger(GmailFullSyncService.name);
+
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly messageChannelService: MessageChannelService,
+    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -25,13 +35,14 @@ export class GmailFullSyncService {
     connectedAccountId: string,
     nextPageToken?: string,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
 
-    const connectedAccount = await this.utils.getConnectedAcountByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
     );
 
     const accessToken = connectedAccount.accessToken;
@@ -41,18 +52,13 @@ export class GmailFullSyncService {
       throw new Error('No refresh token found');
     }
 
-    const gmailMessageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
-      [connectedAccountId],
-    );
-
-    if (!gmailMessageChannel.length) {
-      throw new Error(
-        `No gmail message channel found for connected account ${connectedAccountId}`,
+    const gmailMessageChannel =
+      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+        connectedAccountId,
+        workspaceId,
       );
-    }
 
-    const gmailMessageChannelId = gmailMessageChannel[0].id;
+    const gmailMessageChannelId = gmailMessageChannel.id;
 
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
@@ -74,11 +80,10 @@ export class GmailFullSyncService {
     }
 
     const existingMessageChannelMessageAssociations =
-      await this.utils.getMessageChannelMessageAssociations(
+      await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
         gmailMessageChannelId,
-        dataSourceMetadata,
-        workspaceDataSource,
+        workspaceId,
       );
 
     const existingMessageChannelMessageAssociationsExternalIds =
@@ -113,6 +118,7 @@ export class GmailFullSyncService {
       workspaceDataSource,
       connectedAccount,
       gmailMessageChannelId,
+      workspaceId,
     );
 
     if (errors.length) throw new Error('Error fetching messages');
@@ -125,11 +131,16 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
-    await this.utils.saveLastSyncHistoryId(
+    await this.connectedAccountService.updateLastSyncHistoryId(
       historyId,
       connectedAccount.id,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
+    );
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
+        nextPageToken ? `and ${nextPageToken} pageToken` : ''
+      }done.`,
     );
 
     if (messages.data.nextPageToken) {

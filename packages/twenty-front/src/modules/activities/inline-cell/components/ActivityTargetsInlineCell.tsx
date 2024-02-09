@@ -3,9 +3,8 @@ import { Key } from 'ts-key-enum';
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
+import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
@@ -15,15 +14,9 @@ import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
-  activity?: Pick<GraphQLActivity, 'id'> & {
-    activityTargets?: {
-      edges: Array<{
-        node: Pick<ActivityTarget, 'id'>;
-      }> | null;
-    };
-  };
   onFocus?: () => void;
   onBlur?: () => void;
+  activity: Activity;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -64,8 +57,8 @@ export const ActivityTargetsInlineCell = ({
           IconLabel={IconArrowUpRight}
           editModeContent={
             <ActivityTargetInlineCellEditMode
-              activityId={activity?.id ?? ''}
-              activityTargetObjectRecords={activityTargetObjectRecords as any}
+              activity={activity}
+              activityTargetObjectRecords={activityTargetObjectRecords}
               onBlur={onBlur}
             />
           }

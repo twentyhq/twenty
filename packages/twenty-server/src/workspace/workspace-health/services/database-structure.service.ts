@@ -140,6 +140,27 @@ export class DatabaseStructureService {
     });
   }
 
+  getFieldMetadataTypeFromPostgresDataType(
+    postgresDataType: string,
+  ): FieldMetadataType | null {
+    const mainDataSource = this.typeORMService.getMainDataSource();
+
+    for (const type in FieldMetadataType) {
+      const typeORMType = fieldMetadataTypeToColumnType(
+        FieldMetadataType[type],
+      ) as ColumnType;
+      const dataType = mainDataSource.driver.normalizeType({
+        type: typeORMType,
+      });
+
+      if (postgresDataType === dataType) {
+        return FieldMetadataType[type];
+      }
+    }
+
+    return null;
+  }
+
   getPostgresDefault(
     fieldMetadataType: FieldMetadataType,
     defaultValue: FieldMetadataDefaultValue | null,

@@ -1,10 +1,11 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectConnection';
+import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
+import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { capitalize } from '~/utils/string/capitalize';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -14,20 +15,32 @@ import { capitalize } from '~/utils/string/capitalize';
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  records,
+  recordsToCreate,
+  objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  records: CachedObjectRecord[];
+  recordsToCreate: CachedObjectRecord[];
+  objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = `${capitalize(
-    objectMetadataItem.nameSingular,
-  )}Edge`;
+  const objectEdgeTypeName = getEdgeTypename({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
+  recordsToCreate.forEach((record) =>
+    triggerUpdateRelationsOptimisticEffect({
+      cache,
+      sourceObjectMetadataItem: objectMetadataItem,
+      currentSourceRecord: null,
+      updatedSourceRecord: record,
+      objectMetadataItems,
+    }),
+  );
 
   cache.modify<StoreObject>({
     fields: {
       [objectMetadataItem.namePlural]: (
-        cachedConnection,
+        rootQueryCachedResponse,
         {
           DELETE: _DELETE,
           readField,
@@ -35,42 +48,49 @@ export const triggerCreateRecordsOptimisticEffect = ({
           toReference,
         },
       ) => {
-        if (
-          !isCachedObjectConnection(
-            objectMetadataItem.nameSingular,
-            cachedConnection,
-          )
-        )
-          return cachedConnection;
-
-        /* const { variables } =
-          parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
-            storeFieldName,
-          ); */
-
-        const cachedEdges = readField<CachedObjectRecordEdge[]>(
-          'edges',
-          cachedConnection,
+        const shouldSkip = !isCachedObjectRecordConnection(
+          objectMetadataItem.nameSingular,
+          rootQueryCachedResponse,
         );
-        const nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
 
-        const hasAddedRecords = records
-          .map((record) => {
-            /* const matchesFilter =
-              !variables?.filter ||
-              isRecordMatchingFilter({
-                record,
-                filter: variables.filter,
-                objectMetadataItem,
-              }); */
+        if (shouldSkip) {
+          return rootQueryCachedResponse;
+        }
 
-            if (/* matchesFilter && */ record.id) {
-              const nodeReference = toReference(record);
+        const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-              if (nodeReference) {
-                nextCachedEdges.unshift({
+        const rootQueryCachedRecordEdges = readField<CachedObjectRecordEdge[]>(
+          'edges',
+          rootQueryCachedObjectRecordConnection,
+        );
+        const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
+          ? [...rootQueryCachedRecordEdges]
+          : [];
+
+        const hasAddedRecords = recordsToCreate
+          .map((recordToCreate) => {
+            if (recordToCreate.id) {
+              const recordToCreateReference = toReference(recordToCreate);
+
+              if (!recordToCreateReference) {
+                throw new Error(
+                  `Failed to create reference for record with id: ${recordToCreate.id}`,
+                );
+              }
+
+              const recordAlreadyInCache = rootQueryCachedRecordEdges?.some(
+                (cachedEdge) => {
+                  return (
+                    cache.identify(recordToCreateReference) ===
+                    cache.identify(cachedEdge.node)
+                  );
+                },
+              );
+
+              if (recordToCreateReference && !recordAlreadyInCache) {
+                nextRootQueryCachedRecordEdges.unshift({
                   __typename: objectEdgeTypeName,
-                  node: nodeReference,
+                  node: recordToCreateReference,
                   cursor: '',
                 });
 
@@ -82,30 +102,14 @@ export const triggerCreateRecordsOptimisticEffect = ({
           })
           .some((hasAddedRecord) => hasAddedRecord);
 
-        if (!hasAddedRecords) return cachedConnection;
-
-        /* if (variables?.orderBy) {
-          nextCachedEdges = sortCachedObjectEdges({
-            edges: nextCachedEdges,
-            orderBy: variables.orderBy,
-            readCacheField: readField,
-          });
+        if (!hasAddedRecords) {
+          return rootQueryCachedObjectRecordConnection;
         }
 
-        if (isDefined(variables?.first)) {
-          if (
-            cachedEdges?.length === variables.first &&
-            nextCachedEdges.length < variables.first
-          ) {
-            return DELETE;
-          }
-
-          if (nextCachedEdges.length > variables.first) {
-            nextCachedEdges.splice(variables.first);
-          }
-        } */
-
-        return { ...cachedConnection, edges: nextCachedEdges };
+        return {
+          ...rootQueryCachedObjectRecordConnection,
+          edges: nextRootQueryCachedRecordEdges,
+        };
       },
     },
   });

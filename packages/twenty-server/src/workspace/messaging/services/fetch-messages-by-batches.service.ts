@@ -7,9 +7,9 @@ import planer from 'planer';
 import {
   GmailMessage,
   Participant,
-} from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
-import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
+} from 'src/workspace/messaging/types/gmail-message';
+import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
+import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
 
 @Injectable()
 export class FetchMessagesByBatchesService {

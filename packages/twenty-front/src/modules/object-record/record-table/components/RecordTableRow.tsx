@@ -18,8 +18,8 @@ type RecordTableRowProps = {
   rowIndex: number;
 };
 
-const StyledPlaceholder = styled.td`
-  height: 30px;
+const StyledTd = styled.td`
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
@@ -52,31 +52,25 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
         data-testid={`row-id-${recordId}`}
         data-selectable-id={recordId}
       >
-        {inView ? (
-          <>
-            <td>
-              <CheckboxCell />
-            </td>
-            {[...visibleTableColumns]
-              .sort((columnA, columnB) => columnA.position - columnB.position)
-              .map((column, columnIndex) => {
-                return (
-                  <RecordTableCellContext.Provider
-                    value={{
-                      columnDefinition: column,
-                      columnIndex,
-                    }}
-                    key={column.fieldMetadataId}
-                  >
-                    <RecordTableCellContainer />
-                  </RecordTableCellContext.Provider>
-                );
-              })}
-            <td></td>
-          </>
-        ) : (
-          <StyledPlaceholder />
+        <StyledTd>
+          <CheckboxCell />
+        </StyledTd>
+        {visibleTableColumns.map((column, columnIndex) =>
+          inView ? (
+            <RecordTableCellContext.Provider
+              value={{
+                columnDefinition: column,
+                columnIndex,
+              }}
+              key={column.fieldMetadataId}
+            >
+              <RecordTableCellContainer />
+            </RecordTableCellContext.Provider>
+          ) : (
+            <td key={column.fieldMetadataId}></td>
+          ),
         )}
+        <td></td>
       </tr>
     </RecordTableRowContext.Provider>
   );

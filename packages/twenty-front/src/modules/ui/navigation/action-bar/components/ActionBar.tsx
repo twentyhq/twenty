@@ -5,8 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 
-import { actionBarOpenState } from '../states/actionBarIsOpenState';
-
 import { ActionBarItem } from './ActionBarItem';
 
 const StyledContainerActionBar = styled.div`
@@ -30,12 +28,11 @@ const StyledContainerActionBar = styled.div`
 `;
 
 export const ActionBar = () => {
-  const actionBarOpen = useRecoilValue(actionBarOpenState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  if (!actionBarOpen || contextMenuIsOpen) {
+  if (contextMenuIsOpen) {
     return null;
   }
 

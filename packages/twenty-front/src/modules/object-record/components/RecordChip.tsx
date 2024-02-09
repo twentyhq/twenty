@@ -9,12 +9,14 @@ export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   maxWidth?: number;
+  className?: string;
 };
 
 export const RecordChip = ({
   objectNameSingular,
   record,
   maxWidth,
+  className,
 }: RecordChipProps) => {
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
@@ -34,6 +36,7 @@ export const RecordChip = ({
       avatarUrl={objectRecordIdentifier.avatarUrl}
       linkToEntity={objectRecordIdentifier.linkToShowPage}
       maxWidth={maxWidth}
+      className={className}
     />
   );
 };

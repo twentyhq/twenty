@@ -114,7 +114,7 @@ export const Submenu: Story = {
             />
             <NavigationDrawerItem
               level={2}
-              label="Calendars"
+              label="Calendar"
               Icon={IconCalendarEvent}
               soon
             />

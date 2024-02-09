@@ -9,17 +9,20 @@ export function RelationMetadata(
   params: RelationMetadataDecoratorParams,
 ): PropertyDecorator {
   return (target: object, fieldKey: string) => {
-    const existingRelationMetadata =
-      TypedReflect.getMetadata('relationMetadata', target.constructor) ?? [];
+    const relationMetadataCollection =
+      TypedReflect.getMetadata(
+        'relationMetadataCollection',
+        target.constructor,
+      ) ?? [];
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
     const objectName = convertClassNameToObjectMetadataName(
       target.constructor.name,
     );
 
     Reflect.defineMetadata(
-      'relationMetadata',
+      'relationMetadataCollection',
       [
-        ...existingRelationMetadata,
+        ...relationMetadataCollection,
         {
           type: params.type,
           fromObjectNameSingular: objectName,

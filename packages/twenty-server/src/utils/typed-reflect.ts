@@ -7,8 +7,8 @@ import { ReflectRelationMetadata } from 'src/workspace/workspace-sync-metadata/i
 
 export interface ReflectMetadataTypeMap {
   objectMetadata: ReflectObjectMetadata;
-  fieldMetadata: ReflectFieldMetadata;
-  relationMetadata: ReflectRelationMetadata[];
+  fieldMetadataMap: ReflectFieldMetadata;
+  relationMetadataCollection: ReflectRelationMetadata[];
   gate: GateDecoratorParams;
   isNullable: true;
   isSystem: true;

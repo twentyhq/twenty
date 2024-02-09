@@ -1,0 +1,197 @@
+---
+title: Yarn Setup
+sidebar_position: 1
+description: |
+  Set up the project with Yarn
+sidebar_custom_props:
+  icon: TbScript
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+In this document, you'll learn how to install the project using yarn. You should use this method since it's the easiest way to get started but you can also run the project with [Docker](/start/local-setup/docker-setup).  
+
+:::info
+`npm` does not support local packages well, opt for `yarn` instead.
+:::
+
+## Prerequisites
+
+<Tabs>
+<TabItem value="yarn" label="Linux and MacOS" default>
+
+Before you can install and use Twenty, make sure you install the following on your computer:
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v18](https://nodejs.org/en/download) 
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+:::info Note
+Yarn is now shipped with Node.js nowadays, so you don't need to install it separately.
+You should only have to run `corepack enable` to enable Yarn if you haven't done it yet.
+:::
+
+</TabItem>
+
+<TabItem value="wsl" label="Windows (WSL)" >
+
+1. Install WSL
+Open PowerShell as Administrator and run:
+
+```powershell
+wsl --install
+```
+You should now see a prompt to restart your computer. If not, restart it manually.
+
+Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
+You'll see a prompt to create a username and password for your Ubuntu installation.
+
+2. Install and configure git
+
+```bash
+sudo apt-get install git
+git config --global user.name "Your Name"
+git config --global user.email "youremail@domain.com"
+```
+
+3. Install Node.js, nvm, yarn
+```bash
+sudo apt-get install curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+corepack enable
+```
+Close and reopen your terminal to start using nvm. 
+
+:::caution Note
+
+Avoid using Docker on WSL as it adds an extra layer of complexity.
+
+:::
+
+</TabItem>
+</Tabs>
+
+---
+
+## Step 1: Git Clone
+
+In your terminal, run the following command. 
+
+:::info Note
+
+It's better to use SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+
+:::
+
+<Tabs>
+<TabItem value="ssh" label="SSH (Recommended)" default>
+
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</TabItem>
+<TabItem value="https" label="HTTPS" >
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</TabItem>
+</Tabs>
+
+## Step 2: Place yourself at the root of the project
+
+```bash
+cd twenty
+```
+
+All commands in the following steps should be run from the root of the project.
+
+
+## Step 3: Set up PostgreSQL Database
+To install PostgreSQL with a `default` and a `test` database, and provision these databases with a user `twenty` (password: `twenty`), follow the steps below:
+
+<Tabs>
+<TabItem value="linux" label="Linux" default>
+<b>Option 1:</b> To provision your database locally:
+```bash
+make postgres-on-linux
+```
+
+<b>Option 2:</b> If you have docker installed:
+```bash
+make postgres-on-docker
+```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+You can access this using `twenty` postgres user (password: `twenty`)
+  </TabItem>
+  <TabItem value="mac-os" label="Mac OS" default>
+
+<b>Option 1:</b> To provision your database locally:
+```bash
+make postgres-on-macos-intel #for intel architecture
+make postgres-on-macos-arm #for M1/M2/M3 architecture
+```
+
+<b>Option 2:</b> If you have docker installed:
+```bash
+make postgres-on-docker
+```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+You can access this using `twenty` postgres user (password: `twenty`)
+
+  </TabItem>
+  <TabItem value="wsl" label="Windows (WSL)">
+
+It's better to provision your database locally:
+```bash
+make postgres-on-linux
+```
+This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+You can access this using `twenty` postgres user (password: `twenty`)
+  </TabItem>
+</Tabs>
+
+
+## Step 4: Setup environment variables
+
+Twenty requires you to set some environment variables. Locally, you should set them through a `.env` file.
+
+To do so, make copies of the `.env.example` files in `/front` and `/server`:
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## Step 5: Installing dependencies
+
+:::info
+
+Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
+
+:::
+
+To build Twenty server and seed some data into your database, run the following commands:
+```bash
+nvm install #recommended
+nvm use #recommended
+
+yarn
+```
+
+## Step 6: Running the project
+
+Setup your database with the following command:
+```bash
+yarn nx database:init twenty-server
+```
+
+Start the server and the frontend:
+```bash
+yarn nx start:dev twenty-server
+yarn nx start twenty-front
+```
+
+Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just login using the seeded demo account: `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
+

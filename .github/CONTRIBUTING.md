@@ -22,7 +22,7 @@ Good first issues are a great way to start contributing to the project and get f
 2. Use the "Labels" filter and select "[Good First Issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue)" to see a list of beginner-friendly tasks.
 3. Choose an issue that interests you, fork the project, and start working on it. Once you solve and test the issue, open a PR for review.
 
-Note: We are aware that having multiple contributors address the same issue can cause frustration. To prevent this, we adhere to a specific guideline: if a core team member has assigned an issue to a contributor, either as the issue assignee or through explicit assignment in the issue comments within the past three days, that contributor's pull request takes precedence. Otherwise, the first PR submitted will be given priority. 
+Note: We are aware that having multiple contributors address the same issue can cause frustration. To prevent this, we adhere to a specific guideline: if a core team member has assigned an issue to a contributor, either as the issue assignee or through explicit assignment in the issue comments within the past three days, that contributor's pull request takes precedence. Otherwise, the first PR submitted will be given priority. This delay is reduced to one day for PR tagged with "size: minutes" and extended to a week for PR tagged "size: days".
 
 Therefore, ensure you are assigned to an issue before beginning work on it.
 

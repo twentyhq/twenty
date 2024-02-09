@@ -133,7 +133,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
       },
     ];
 
-    const fieldsMetadata: ColumnDefinition<FieldMetadata>[] = [
+    const columnDefinitions: ColumnDefinition<FieldMetadata>[] = [
       {
         fieldMetadataId: '1',
         label: 'label 1',
@@ -183,10 +183,10 @@ describe('mapViewFieldsToColumnDefinitions', () => {
       },
     ];
 
-    const actualColumnDefinitions = mapViewFieldsToColumnDefinitions(
+    const actualColumnDefinitions = mapViewFieldsToColumnDefinitions({
+      columnDefinitions,
       viewFields,
-      fieldsMetadata,
-    );
+    });
 
     expect(actualColumnDefinitions).toEqual(expectedColumnDefinitions);
   });

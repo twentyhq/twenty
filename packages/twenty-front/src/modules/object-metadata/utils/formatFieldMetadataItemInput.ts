@@ -5,8 +5,19 @@ import { Field } from '~/generated-metadata/graphql';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
-const getOptionValueFromLabel = (label: string) =>
-  toSnakeCase(label.trim()).toUpperCase();
+export const getOptionValueFromLabel = (label: string) => {
+  // Remove accents
+  const unaccentedLabel = label
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  // Remove special characters
+  const noSpecialCharactersLabel = unaccentedLabel.replace(
+    /[^a-zA-Z0-9 ]/g,
+    '',
+  );
+
+  return toSnakeCase(noSpecialCharactersLabel).toUpperCase();
+};
 
 export const formatFieldMetadataItemInput = (
   input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {

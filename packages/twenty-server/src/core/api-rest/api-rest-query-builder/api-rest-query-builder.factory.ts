@@ -40,7 +40,7 @@ export class ApiRestQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const workspace = await this.tokenService.validateToken(request);
+    const { workspace } = await this.tokenService.validateToken(request);
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

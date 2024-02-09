@@ -70,7 +70,7 @@ describe('usePipelineSteps', () => {
     );
 
     const boardColumn: BoardColumnDefinition = {
-      id: 'columnId',
+      id: mockId,
       title: 'Column Title',
       colorCode: 'yellow',
       position: 1,

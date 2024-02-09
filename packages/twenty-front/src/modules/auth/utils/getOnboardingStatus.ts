@@ -5,7 +5,7 @@ export enum OnboardingStatus {
   Incomplete = 'incomplete',
   Canceled = 'canceled',
   OngoingUserCreation = 'ongoing_user_creation',
-  OngoingWorkspaceCreation = 'ongoing_workspace_creation',
+  OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
   Completed = 'completed',
 }
@@ -19,18 +19,13 @@ export const getOnboardingStatus = ({
   isLoggedIn: boolean;
   currentWorkspaceMember: Omit<
     WorkspaceMember,
-    'createdAt' | 'updatedAt' | 'userId'
+    'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
   > | null;
   currentWorkspace: CurrentWorkspace | null;
   isBillingEnabled?: boolean;
 }) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
-  }
-
-  // if the user has not been fetched yet, we can't know the onboarding status
-  if (!currentWorkspaceMember) {
-    return undefined;
   }
 
   if (
@@ -44,9 +39,10 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Canceled;
   }
 
-  if (!currentWorkspace?.displayName) {
-    return OnboardingStatus.OngoingWorkspaceCreation;
+  if (!currentWorkspaceMember) {
+    return OnboardingStatus.OngoingWorkspaceActivation;
   }
+
   if (
     !currentWorkspaceMember.name.firstName ||
     !currentWorkspaceMember.name.lastName

@@ -94,7 +94,7 @@ export const DoubleTextInput = ({
   );
 
   useScopedHotkeys(
-    Key.Escape,
+    [Key.Escape],
     () => {
       onEscape({
         firstValue: firstInternalValue,

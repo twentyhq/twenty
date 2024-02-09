@@ -8,13 +8,13 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
 
 interface GmailFullSyncOptions {
   workspaceId: string;
@@ -26,11 +26,11 @@ interface GmailFullSyncOptions {
 })
 export class GmailFullSyncCommand extends CommandRunner {
   constructor(
-    private readonly utils: MessagingUtilsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly connectedAccountService: ConnectedAccountService,
   ) {
     super();
   }
@@ -64,13 +64,8 @@ export class GmailFullSyncCommand extends CommandRunner {
   }
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadata(workspaceId);
-
-    const connectedAccounts = await this.utils.getConnectedAccounts(
-      dataSourceMetadata,
-      workspaceDataSource,
-    );
+    const connectedAccounts =
+      await this.connectedAccountService.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
       await this.messageQueueService.add<GmailFullSyncJobData>(

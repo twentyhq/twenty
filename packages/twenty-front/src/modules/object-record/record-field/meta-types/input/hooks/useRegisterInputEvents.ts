@@ -1,3 +1,5 @@
+import { Key } from 'ts-key-enum';
+
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
@@ -41,7 +43,7 @@ export const useRegisterInputEvents = <T>({
   );
 
   useScopedHotkeys(
-    'esc',
+    [Key.Escape],
     () => {
       onEscape?.(inputValue);
     },

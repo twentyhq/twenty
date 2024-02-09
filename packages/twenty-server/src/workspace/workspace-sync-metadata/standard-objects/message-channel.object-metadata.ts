@@ -82,5 +82,5 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageChannelMessageAssociation',
   })
   @IsNullable()
-  messageChannelMessageAssociation: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
 }

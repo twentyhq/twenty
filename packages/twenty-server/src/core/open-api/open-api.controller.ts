@@ -8,9 +8,22 @@ import { OpenApiService } from 'src/core/open-api/open-api.service';
 export class OpenApiController {
   constructor(private readonly openApiService: OpenApiService) {}
 
-  @Get()
-  async generateOpenApiSchema(@Req() request: Request, @Res() res: Response) {
-    const data = await this.openApiService.generateSchema(request);
+  @Get('core')
+  async generateOpenApiSchemaCore(
+    @Req() request: Request,
+    @Res() res: Response,
+  ) {
+    const data = await this.openApiService.generateCoreSchema(request);
+
+    res.send(data);
+  }
+
+  @Get('metadata')
+  async generateOpenApiSchemaMetaData(
+    @Req() request: Request,
+    @Res() res: Response,
+  ) {
+    const data = await this.openApiService.generateMetaDataSchema();
 
     res.send(data);
   }
