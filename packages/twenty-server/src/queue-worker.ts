@@ -39,7 +39,17 @@ async function bootstrap() {
           .select(JobsModule)
           .get(jobClassName, { strict: true });
 
-        await job.handle(jobData.data);
+        try {
+          await job.handle(jobData.data);
+        } catch (err) {
+          if (
+            !jobData?.opts?.attempts ||
+            jobData.attemptsMade >= jobData.opts.attempts
+          ) {
+            exceptionHandlerService?.captureExceptions([err]);
+          }
+          throw err;
+        }
       });
     }
   } catch (err) {
