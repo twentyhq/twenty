@@ -56,9 +56,10 @@ export class WorkspaceFixDefaultValueService {
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const fieldMetadataUpdateCollection = issues.map((issue) => {
-      const oldDefaultValue = this.createDefaultValueFromColumnDefault(
-        issue.columnStructure?.columnDefault,
-      );
+      const oldDefaultValue =
+        this.computeFieldMetadataDefaultValueFromColumnDefault(
+          issue.columnStructure?.columnDefault,
+        );
 
       return {
         current: {
@@ -76,7 +77,7 @@ export class WorkspaceFixDefaultValueService {
     );
   }
 
-  private createDefaultValueFromColumnDefault(
+  private computeFieldMetadataDefaultValueFromColumnDefault(
     columnDefault: string | undefined,
   ): FieldMetadataDefaultValue<'default'> {
     if (
