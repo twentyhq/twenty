@@ -7,55 +7,9 @@ export class IsPersonEmailService {
   isPersonEmail(email: string | undefined): boolean {
     if (!email) return false;
 
-    const nonPersonalPatterns = [
-      /noreply/,
-      /no-reply/,
-      /do_not_reply/,
-      /no.reply/,
-      /^accounts@/,
-      /^info@/,
-      /^admin@/,
-      /^contact@/,
-      /^hello@/,
-      /^support@/,
-      /^sales@/,
-      /^feedback@/,
-      /^service@/,
-      /^help@/,
-      /^mailer-daemon/,
-      /^notifications?/,
-      /^digest/,
-      /^auto/,
-      /^apps/,
-      /^assign/,
-      /^comments/,
-      /^customer-success/,
-      /^enterprise/,
-      /^esign/,
-      /^express/,
-      /^forum/,
-      /^gc@/,
-      /^learn/,
-      /^mailer/,
-      /^marketing/,
-      /^messages/,
-      /^news/,
-      /^notification/,
-      /^payments/,
-      /^receipts/,
-      /^recrutement/,
-      /^security/,
-      /^service/,
-      /^support/,
-      /^team/,
-    ];
+    const nonPersonalPattern =
+      /noreply|no-reply|do_not_reply|no\.reply|^(accounts@|info@|admin@|contact@|hello@|support@|sales@|feedback@|service@|help@|mailer-daemon|notifications?|digest|auto|apps|assign|comments|customer-success|enterprise|esign|express|forum|gc@|learn|mailer|marketing|messages|news|notification|payments|receipts|recrutement|security|service|support|team)/;
 
-    for (const pattern of nonPersonalPatterns) {
-      if (pattern.test(email)) {
-        return false;
-      }
-    }
-
-    return true;
+    return nonPersonalPattern.test(email);
   }
 }
