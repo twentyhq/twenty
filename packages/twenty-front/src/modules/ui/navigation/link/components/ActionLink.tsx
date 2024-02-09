@@ -17,16 +17,15 @@ const StyledButtonLink = styled.a`
   }
 `;
 
-export const LinkButton = ({
-  onClick,
-  href,
-  target,
-  rel,
-  children,
-}: React.ComponentProps<'a'>) => {
+export const ActionLink = (props: React.ComponentProps<'a'>) => {
   return (
-    <StyledButtonLink href={href} onClick={onClick} target={target} rel={rel}>
-      {children}
+    <StyledButtonLink
+      href={props.href}
+      onClick={props.onClick}
+      target={props.target}
+      rel={props.rel}
+    >
+      {props.children}
     </StyledButtonLink>
   );
 };

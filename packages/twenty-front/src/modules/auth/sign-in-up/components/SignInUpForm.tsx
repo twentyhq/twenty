@@ -12,9 +12,9 @@ import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspace
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { LinkButton } from '@/ui/input/button/components/LinkButton.tsx';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
@@ -238,9 +238,9 @@ export const SignInUpForm = () => {
         </StyledForm>
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password ? (
-        <LinkButton onClick={handleResetPassword(form.getValues('email'))}>
+        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
-        </LinkButton>
+        </ActionLink>
       ) : (
         <StyledFooterNote>
           By using Twenty, you agree to the Terms of Service and Data Processing
