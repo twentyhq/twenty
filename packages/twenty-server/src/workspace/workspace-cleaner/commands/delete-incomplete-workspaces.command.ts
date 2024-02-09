@@ -7,6 +7,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 type DeleteIncompleteWorkspacesCommandOptions = {
   dryRun?: boolean;
@@ -23,6 +24,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     private readonly workspaceService: WorkspaceService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly dataSourceService: DataSourceService,
   ) {
     super();
   }
@@ -57,8 +59,23 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
       where.id = options.workspaceId;
     }
     const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
+    const dataSources =
+      await this.dataSourceService.getManyDataSourceMetadata();
+    const workspaceIdsWithSchema = dataSources.map(
+      (dataSource) => dataSource.workspaceId,
+    );
+    const incompleteWorkspacesToDelete = incompleteWorkspaces.filter(
+      (incompleteWorkspace) =>
+        workspaceIdsWithSchema.includes(incompleteWorkspace.id),
+    );
 
-    for (const incompleteWorkspace of incompleteWorkspaces) {
+    if (incompleteWorkspacesToDelete.length) {
+      this.logger.log(
+        `Running Deleting incomplete workspaces on ${incompleteWorkspacesToDelete.length} workspaces`,
+      );
+    }
+
+    for (const incompleteWorkspace of incompleteWorkspacesToDelete) {
       this.logger.log(
         `${getDryRunLogHeader(options.dryRun)}Deleting workspace ${
           incompleteWorkspace.id
