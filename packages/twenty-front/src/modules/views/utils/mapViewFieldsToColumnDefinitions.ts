@@ -1,5 +1,3 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -10,19 +8,12 @@ import { ViewField } from '../types/ViewField';
 
 export const mapViewFieldsToColumnDefinitions = ({
   columnDefinitions,
-  objectMetadataItem,
   viewFields,
 }: {
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
-  objectMetadataItem: Pick<
-    ObjectMetadataItem,
-    'fields' | 'labelIdentifierFieldMetadataId'
-  >;
   viewFields: ViewField[];
 }): ColumnDefinition<FieldMetadata>[] => {
-  const labelIdentifierFieldMetadataItem =
-    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-  const labelIdentifierFieldMetadataId = labelIdentifierFieldMetadataItem?.id;
+  let labelIdentifierFieldMetadataId = '';
 
   const columnDefinitionsByFieldMetadataId = mapArrayToObject(
     columnDefinitions,
@@ -36,8 +27,12 @@ export const mapViewFieldsToColumnDefinitions = ({
 
       if (!correspondingColumnDefinition) return null;
 
-      const isLabelIdentifier =
-        viewField.fieldMetadataId === labelIdentifierFieldMetadataId;
+      const { isLabelIdentifier } = correspondingColumnDefinition;
+
+      if (isLabelIdentifier) {
+        labelIdentifierFieldMetadataId =
+          correspondingColumnDefinition.fieldMetadataId;
+      }
 
       return {
         fieldMetadataId: viewField.fieldMetadataId,
@@ -64,25 +59,8 @@ export const mapViewFieldsToColumnDefinitions = ({
 
   // Label identifier field found in view fields
   // => move it to the start of the list
-  if (labelIdentifierIndex > -1) {
-    return moveArrayItem(columnDefinitionsFromViewFields, {
-      fromIndex: labelIdentifierIndex,
-      toIndex: 0,
-    });
-  }
-
-  // Label identifier field not found in view fields
-  // => create column definition and add it at the start of the list
-  const labelIdentifierColumnDefinition =
-    columnDefinitionsByFieldMetadataId[labelIdentifierFieldMetadataId];
-
-  return [
-    {
-      ...labelIdentifierColumnDefinition,
-      isLabelIdentifier: true,
-      position: 0,
-      isVisible: true,
-    },
-    ...columnDefinitionsFromViewFields,
-  ];
+  return moveArrayItem(columnDefinitionsFromViewFields, {
+    fromIndex: labelIdentifierIndex,
+    toIndex: 0,
+  });
 };

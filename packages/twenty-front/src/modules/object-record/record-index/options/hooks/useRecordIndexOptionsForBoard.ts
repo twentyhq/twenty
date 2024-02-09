@@ -12,7 +12,6 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useViews } from '@/views/hooks/internal/useViews';
 import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewType } from '@/views/types/ViewType';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -43,8 +42,14 @@ export const useRecordIndexOptionsForBoard = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions: availableColumnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem, ViewType.Kanban);
+  const { columnDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+
+  const availableColumnDefinitions = useMemo(
+    () =>
+      columnDefinitions.filter(({ isLabelIdentifier }) => !isLabelIdentifier),
+    [columnDefinitions],
+  );
 
   const recordIndexFieldDefinitionsByKey = useMemo(
     () =>
@@ -71,10 +76,18 @@ export const useRecordIndexOptionsForBoard = ({
       availableColumnDefinitions
         .filter(
           ({ fieldMetadataId }) =>
-            !(fieldMetadataId in recordIndexFieldDefinitionsByKey) ||
-            !recordIndexFieldDefinitionsByKey[fieldMetadataId].isVisible,
+            !recordIndexFieldDefinitionsByKey[fieldMetadataId]?.isVisible,
         )
-        .map((hiddenColumn) => ({ ...hiddenColumn, isVisible: false })),
+        .map((availableColumnDefinition) => {
+          const { fieldMetadataId } = availableColumnDefinition;
+          const existingBoardField =
+            recordIndexFieldDefinitionsByKey[fieldMetadataId];
+
+          return {
+            ...(existingBoardField || availableColumnDefinition),
+            isVisible: false,
+          };
+        }),
     [availableColumnDefinitions, recordIndexFieldDefinitionsByKey],
   );
 

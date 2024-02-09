@@ -185,7 +185,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
 
     const actualColumnDefinitions = mapViewFieldsToColumnDefinitions({
       columnDefinitions,
-      objectMetadataItem: { fields: [] },
       viewFields,
     });
 

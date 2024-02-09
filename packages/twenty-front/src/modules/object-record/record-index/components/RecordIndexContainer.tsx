@@ -58,10 +58,8 @@ export const RecordIndexContainer = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } = useColumnDefinitionsFromFieldMetadata(
-    objectMetadataItem,
-    recordIndexViewType,
-  );
+  const { columnDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
@@ -79,10 +77,13 @@ export const RecordIndexContainer = ({
         const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
           viewFields,
           columnDefinitions,
-          objectMetadataItem,
         });
 
         setTableColumns(newFieldDefinitions);
+
+        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
+          (boardField) => !boardField.isLabelIdentifier,
+        );
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
@@ -91,12 +92,13 @@ export const RecordIndexContainer = ({
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newFieldDefinitions,
+            newRecordIndexFieldDefinitions,
           )
-        )
-          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+        ) {
+          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+        }
       },
-    [columnDefinitions, objectMetadataItem, setTableColumns],
+    [columnDefinitions, setTableColumns],
   );
 
   return (

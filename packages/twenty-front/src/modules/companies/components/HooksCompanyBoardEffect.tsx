@@ -9,7 +9,6 @@ import { availableRecordBoardDeprecatedCardFieldsScopedState } from '@/object-re
 import { recordBoardCardFieldsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedCardFieldsScopedState';
 import { recordBoardFiltersScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedFiltersScopedState';
 import { recordBoardSortsScopedState } from '@/object-record/record-board-deprecated/states/recordBoardDeprecatedSortsScopedState';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -61,11 +60,7 @@ export const HooksCompanyBoardEffect = ({
   ]);
 
   useEffect(() => {
-    const availableTableColumns = columnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableBoardCardFields(availableTableColumns);
+    setAvailableBoardCardFields(columnDefinitions);
   }, [columnDefinitions, setAvailableBoardCardFields]);
 
   useEffect(() => {
