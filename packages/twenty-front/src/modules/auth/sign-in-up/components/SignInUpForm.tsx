@@ -12,7 +12,7 @@ import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspace
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { Button } from '@/ui/input/button/components/Button';
+import { LinkButton } from '@/ui/input/button/components/LinkButton.tsx';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
@@ -47,13 +47,6 @@ const StyledFullWidthMotionDiv = styled(motion.div)`
 
 const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledForgotPasswordButton = styled(Button)`
-  border: none;
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: 400;
 `;
 
 export const SignInUpForm = () => {
@@ -245,11 +238,9 @@ export const SignInUpForm = () => {
         </StyledForm>
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password ? (
-        <StyledForgotPasswordButton
-          title="Forgot your password?"
-          variant="secondary"
-          onClick={handleResetPassword(form.getValues('email'))}
-        />
+        <LinkButton onClick={handleResetPassword(form.getValues('email'))}>
+          Forgot your password?
+        </LinkButton>
       ) : (
         <StyledFooterNote>
           By using Twenty, you agree to the Terms of Service and Data Processing
