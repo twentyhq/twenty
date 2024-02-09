@@ -9,6 +9,7 @@ import { EnvironmentModule } from 'src/integrations/environment/environment.modu
 import { MessagingPersonListener } from 'src/workspace/messaging/listeners/messaging-person.listener';
 import { MessageModule } from 'src/workspace/messaging/message/message.module';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
+import { CreateCompanyService } from 'src/workspace/messaging/services/create-company.service';
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
@@ -35,6 +36,7 @@ import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listen
     GmailRefreshAccessTokenService,
     MessagingUtilsService,
     GmailClientProvider,
+    CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
   ],
