@@ -194,7 +194,7 @@ export class MessagingUtilsService {
 
       if (!participantPersonId && !participantWorkspaceMemberId) {
         participantPersonId =
-          await this.createContactService.createContactFromHandleAndDisplayName(
+          await this.createContactService.createContactAndCompanyFromHandleAndDisplayName(
             participant.handle,
             participant.displayName,
             dataSourceMetadata,

@@ -10,7 +10,7 @@ import { CreateCompanyService } from 'src/workspace/messaging/services/create-co
 export class CreateContactService {
   constructor(private readonly createCompaniesService: CreateCompanyService) {}
 
-  async createContactFromHandleAndDisplayName(
+  async createContactAndCompanyFromHandleAndDisplayName(
     handle: string,
     displayName: string,
     dataSourceMetadata: DataSourceEntity,
