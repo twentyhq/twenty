@@ -7,9 +7,14 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { CleanInactiveWorkspacesCommand } from 'src/workspace/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { StartCleanInactiveWorkspacesCronCommand } from 'src/workspace/workspace-cleaner/commands/start-clean-inactive-workspaces.cron.command';
 import { StopCleanInactiveWorkspacesCronCommand } from 'src/workspace/workspace-cleaner/commands/stop-clean-inactive-workspaces.cron.command';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workspace], 'core'), WorkspaceModule],
+  imports: [
+    TypeOrmModule.forFeature([Workspace], 'core'),
+    WorkspaceModule,
+    DataSourceModule,
+  ],
   providers: [
     DeleteIncompleteWorkspacesCommand,
     CleanInactiveWorkspacesCommand,

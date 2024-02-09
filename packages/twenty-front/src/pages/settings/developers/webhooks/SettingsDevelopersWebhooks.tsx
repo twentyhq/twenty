@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
-import { WebhookFieldItem } from '@/settings/developers/types/WebhookFieldItem';
+import { WebhookFieldItem } from '@/settings/developers/types/webhook/WebhookFieldItem';
 import { IconPlus } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
@@ -66,7 +66,6 @@ export const SettingsDevelopersWebhooks = () => {
           title="Create Webhook"
           size="small"
           variant="secondary"
-          soon={true}
           onClick={() => {
             navigate('/settings/developers/webhooks/new');
           }}

@@ -14,6 +14,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migratio
 
 import { WorkspaceFixService } from './services/workspace-fix.service';
 import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.service';
+import { WorkspaceFixTypeService } from './services/workspace-fix-type.service';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.s
     FieldMetadataHealthService,
     RelationMetadataHealthService,
     WorkspaceFixNullableService,
+    WorkspaceFixTypeService,
     WorkspaceFixService,
   ],
   exports: [WorkspaceHealthService],

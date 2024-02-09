@@ -8,6 +8,7 @@ export type GraphQLView = {
   name: string;
   type: ViewType;
   objectMetadataId: string;
+  isCompact: boolean;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
   viewSorts: ViewSort[];

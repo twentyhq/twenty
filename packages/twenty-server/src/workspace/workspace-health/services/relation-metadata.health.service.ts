@@ -188,16 +188,6 @@ export class RelationMetadataHealthService {
       });
     }
 
-    if (relationColumn.isNullable !== relationFieldMetadata.isNullable) {
-      issues.push({
-        type: WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT,
-        fromFieldMetadata,
-        toFieldMetadata,
-        relationMetadata,
-        message: `Relation ${relationMetadata.id} foreign key is not properly set`,
-      });
-    }
-
     if (
       relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE &&
       !relationColumn.isUnique

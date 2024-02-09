@@ -101,6 +101,10 @@ export class AuthResolver {
     @AuthUser() user: User,
   ): Promise<TransientToken | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (!workspaceMember) {
+      return;
+    }
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
       user.defaultWorkspace.id,

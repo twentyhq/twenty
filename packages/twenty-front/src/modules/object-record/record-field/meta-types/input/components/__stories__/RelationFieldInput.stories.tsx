@@ -10,6 +10,7 @@ import {
 } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -17,7 +18,10 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockDefaultWorkspace } from '~/testing/mock-data/users';
+import {
+  mockDefaultWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import {
@@ -27,10 +31,14 @@ import {
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   useEffect(() => {
     setCurrentWorkspace(mockDefaultWorkspace);
-  }, [setCurrentWorkspace]);
+    setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+  }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
 
   return <></>;
 };
