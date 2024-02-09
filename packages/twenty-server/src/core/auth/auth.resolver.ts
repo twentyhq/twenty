@@ -24,6 +24,7 @@ import { ValidatePasswordResetTokenInput } from 'src/core/auth/dto/validate-pass
 import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-password-via-reset-token.input';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
+import { EmailPasswordResetLinkInput } from 'src/core/auth/dto/email-password-reset-link.input';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -162,17 +163,17 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
-    @AuthUser() { email }: User,
+    @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
   ): Promise<EmailPasswordResetLink> {
-    const resetToken =
-      await this.tokenService.generatePasswordResetToken(email);
+    const resetToken = await this.tokenService.generatePasswordResetToken(
+      emailPasswordResetInput.email,
+    );
 
     return await this.tokenService.sendEmailPasswordResetLink(
       resetToken,
-      email,
+      emailPasswordResetInput.email,
     );
   }
 

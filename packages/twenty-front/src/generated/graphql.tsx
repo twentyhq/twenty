@@ -265,6 +265,11 @@ export type MutationDeleteOneObjectArgs = {
 };
 
 
+export type MutationEmailPasswordResetLinkArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
@@ -752,7 +757,9 @@ export type ChallengeMutationVariables = Exact<{
 
 export type ChallengeMutation = { __typename?: 'Mutation', challenge: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
-export type EmailPasswordResetLinkMutationVariables = Exact<{ [key: string]: never; }>;
+export type EmailPasswordResetLinkMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
 
 
 export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
@@ -1143,8 +1150,8 @@ export type ChallengeMutationHookResult = ReturnType<typeof useChallengeMutation
 export type ChallengeMutationResult = Apollo.MutationResult<ChallengeMutation>;
 export type ChallengeMutationOptions = Apollo.BaseMutationOptions<ChallengeMutation, ChallengeMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
-    mutation EmailPasswordResetLink {
-  emailPasswordResetLink {
+    mutation EmailPasswordResetLink($email: String!) {
+  emailPasswordResetLink(email: $email) {
     success
   }
 }
@@ -1164,6 +1171,7 @@ export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<EmailPass
  * @example
  * const [emailPasswordResetLinkMutation, { data, loading, error }] = useEmailPasswordResetLinkMutation({
  *   variables: {
+ *      email: // value for 'email'
  *   },
  * });
  */
