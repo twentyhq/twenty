@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
@@ -61,6 +62,7 @@ export const SignInUpForm = () => {
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
+  const { form } = useSignInUpForm();
 
   const {
     signInUpStep,
@@ -68,14 +70,7 @@ export const SignInUpForm = () => {
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
-    form: {
-      control,
-      watch,
-      handleSubmit,
-      getValues,
-      formState: { isSubmitting },
-    },
-  } = useSignInUp();
+  } = useSignInUp(form);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -87,7 +82,7 @@ export const SignInUpForm = () => {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
-        handleSubmit(submitCredentials)();
+        form.handleSubmit(submitCredentials)();
       }
     }
   };
@@ -103,10 +98,10 @@ export const SignInUpForm = () => {
 
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in'
-      : isSubmitting
+      : form.formState.isSubmitting
         ? 'Creating workspace'
         : 'Sign up';
-  }, [signInUpMode, signInUpStep, isSubmitting]);
+  }, [signInUpMode, signInUpStep, form.formState.isSubmitting]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
@@ -156,7 +151,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="email"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -195,7 +190,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="password"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -233,15 +228,17 @@ export const SignInUpForm = () => {
                 return;
               }
               setShowErrors(true);
-              handleSubmit(submitCredentials)();
+              form.handleSubmit(submitCredentials)();
             }}
-            Icon={() => isSubmitting && <Loader />}
+            Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
               SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
-                  ? !watch('email')
-                  : !watch('email') || !watch('password') || isSubmitting
+                  ? !form.watch('email')
+                  : !form.watch('email') ||
+                    !form.watch('password') ||
+                    form.formState.isSubmitting
             }
             fullWidth
           />
@@ -251,7 +248,7 @@ export const SignInUpForm = () => {
         <StyledForgotPasswordButton
           title="Forgot your password?"
           variant="secondary"
-          onClick={handleResetPassword(getValues('email'))}
+          onClick={handleResetPassword(form.getValues('email'))}
         />
       ) : (
         <StyledFooterNote>

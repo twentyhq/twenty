@@ -1,12 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useCallback, useState } from 'react';
+import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
-import { z } from 'zod';
 
+import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { billingState } from '@/client-config/states/billingState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,7 +12,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
-import { PASSWORD_REGEX } from '../../utils/passwordRegex';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',
@@ -28,26 +25,11 @@ export enum SignInUpStep {
   Password = 'password',
 }
 
-const validationSchema = z
-  .object({
-    exist: z.boolean(),
-    email: z.string().trim().email('Email must be a valid email'),
-    password: z
-      .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
-  })
-  .required();
-
-type Form = z.infer<typeof validationSchema>;
-
-export const useSignInUp = () => {
+export const useSignInUp = (form: UseFormReturn<Form>) => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const isMatchingLocation = useIsMatchingLocation();
-
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const billing = useRecoilValue(billingState);
-
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
@@ -61,22 +43,6 @@ export const useSignInUp = () => {
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
-
-  const form = useForm<Form>({
-    mode: 'onChange',
-    defaultValues: {
-      exist: false,
-    },
-    resolver: zodResolver(validationSchema),
-  });
-
-  useEffect(() => {
-    if (isSignInPrefilled) {
-      form.setValue('email', 'tim@apple.dev');
-      form.setValue('password', 'Applecar2025');
-    }
-  }, [form, isSignInPrefilled]);
-
   const {
     signInWithCredentials,
     signUpWithCredentials,
@@ -186,6 +152,5 @@ export const useSignInUp = () => {
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
-    form,
   };
 };
