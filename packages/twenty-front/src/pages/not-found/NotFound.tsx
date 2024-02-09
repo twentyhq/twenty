@@ -5,11 +5,11 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
-  StyledErrorContainer,
-  StyledErrorSubTitle,
-  StyledErrorTitle,
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorSubTitle,
+  AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 
 const StyledBackDrop = styled.div`
@@ -37,15 +37,17 @@ export const NotFound = () => {
   return (
     <>
       <StyledBackDrop>
-        <StyledErrorContainer>
+        <AnimatedPlaceholderErrorContainer>
           <AnimatedPlaceholder type="error404" />
-          <StyledEmptyTextContainer>
-            <StyledErrorTitle>Off the beaten path</StyledErrorTitle>
-            <StyledErrorSubTitle>
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderErrorTitle>
+              Off the beaten path
+            </AnimatedPlaceholderErrorTitle>
+            <AnimatedPlaceholderErrorSubTitle>
               The page you're seeking is either gone or never was. Let's get you
               back on track
-            </StyledErrorSubTitle>
-          </StyledEmptyTextContainer>
+            </AnimatedPlaceholderErrorSubTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
             <MainButton
               title="Back to content"
@@ -53,7 +55,7 @@ export const NotFound = () => {
               onClick={() => navigate(AppPath.Index)}
             />
           </StyledButtonContainer>
-        </StyledErrorContainer>
+        </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>
       <SignInBackgroundMockPage />
     </>
