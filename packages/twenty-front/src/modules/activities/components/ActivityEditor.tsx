@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -21,7 +21,6 @@ import { PropertyBox } from '@/object-record/record-inline-cell/property-box/com
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { debounce } from '~/utils/debounce';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -61,19 +60,14 @@ const StyledTopContainer = styled.div`
 type ActivityEditorProps = {
   activity: Activity;
   showComment?: boolean;
-  autoFillTitle?: boolean;
+  fillTitleFromBody?: boolean;
 };
 
 export const ActivityEditor = ({
   activity,
   showComment = true,
-  autoFillTitle = false,
+  fillTitleFromBody = false,
 }: ActivityEditorProps) => {
-  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
-    useState<boolean>(false);
-
-  const [title, setTitle] = useState<string | null>(activity.title ?? '');
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
@@ -81,6 +75,7 @@ export const ActivityEditor = ({
   );
 
   const { upsertActivity } = useUpsertActivity();
+  const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
   const useUpsertOneActivityMutation: RecordUpdateHook = () => {
     const upsertActivityMutation = ({ variables }: RecordUpdateHookParams) => {
@@ -113,37 +108,7 @@ export const ActivityEditor = ({
     isCreatingActivityState,
   );
 
-  const updateTitle = (newTitle: string) => {
-    upsertActivity({
-      activity,
-      input: {
-        title: newTitle ?? '',
-      },
-    });
-  };
-
-  const handleActivityCompletionChange = (value: boolean) => {
-    upsertActivity({
-      activity,
-      input: {
-        completedAt: value ? new Date().toISOString() : null,
-      },
-    });
-  };
-
-  const debouncedUpdateTitle = debounce(updateTitle, 200);
-
-  const updateTitleFromBody = (body: string) => {
-    const blockBody = JSON.parse(body);
-    const parsedTitle = blockBody[0]?.content?.[0]?.text;
-    if (!hasUserManuallySetTitle && autoFillTitle) {
-      setTitle(parsedTitle);
-      debouncedUpdateTitle(parsedTitle);
-    }
-  };
-
   // TODO: remove
-  const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
@@ -164,17 +129,7 @@ export const ActivityEditor = ({
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <ActivityTypeDropdown activity={activity} />
-          <ActivityTitle
-            title={title ?? ''}
-            completed={!!activity.completedAt}
-            type={activity.type}
-            onTitleChange={(newTitle) => {
-              setTitle(newTitle);
-              setHasUserManuallySetTitle(true);
-              debouncedUpdateTitle(newTitle);
-            }}
-            onCompletionChange={handleActivityCompletionChange}
-          />
+          <ActivityTitle activity={activity} />
           <PropertyBox>
             {activity.type === 'Task' &&
               DueAtFieldContextProvider &&
@@ -193,7 +148,7 @@ export const ActivityEditor = ({
         </StyledTopContainer>
         <ActivityBodyEditor
           activity={activity}
-          onChange={updateTitleFromBody}
+          fillTitleFromBody={fillTitleFromBody}
         />
       </StyledUpperPartContainer>
       {showComment && (

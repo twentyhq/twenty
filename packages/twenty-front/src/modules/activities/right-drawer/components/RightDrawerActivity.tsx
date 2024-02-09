@@ -16,13 +16,13 @@ const StyledContainer = styled.div`
 type RightDrawerActivityProps = {
   activityId: string;
   showComment?: boolean;
-  autoFillTitle?: boolean;
+  fillTitleFromBody?: boolean;
 };
 
 export const RightDrawerActivity = ({
   activityId,
   showComment = true,
-  autoFillTitle = false,
+  fillTitleFromBody = false,
 }: RightDrawerActivityProps) => {
   const { activity } = useActivityById({
     activityId,
@@ -37,7 +37,7 @@ export const RightDrawerActivity = ({
       <ActivityEditor
         activity={activity}
         showComment={showComment}
-        autoFillTitle={autoFillTitle}
+        fillTitleFromBody={fillTitleFromBody}
       />
     </StyledContainer>
   );

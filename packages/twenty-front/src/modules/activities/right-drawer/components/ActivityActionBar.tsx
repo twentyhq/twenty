@@ -38,7 +38,7 @@ export const ActivityActionBar = () => {
         deleteOneActivity?.(viewableActivityId);
         // TODO: find a better way to do this with custom optimistic rendering for activities
         apolloClient.refetchQueries({
-          include: ['FindManyActivityTargets'],
+          include: ['FindManyActivities'],
         });
       }
     }
