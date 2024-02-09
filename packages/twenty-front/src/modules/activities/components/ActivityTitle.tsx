@@ -54,16 +54,9 @@ const StyledContainer = styled.div`
 
 type ActivityTitleProps = {
   activity: Activity;
-
-  onFocus?: () => void;
-  onBlur?: () => void;
 };
 
-export const ActivityTitle = ({
-  activity,
-  onFocus,
-  onBlur,
-}: ActivityTitleProps) => {
+export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
   const [internalTitle, setInternalTitle] = useState(activity.title);
 
   const { upsertActivity } = useUpsertActivity();
@@ -84,14 +77,14 @@ export const ActivityTitle = ({
 
   const handleBlur = () => {
     goBackToPreviousHotkeyScope();
-    onBlur?.();
+    // onBlur?.();
   };
 
   const handleFocus = () => {
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityTitle,
     );
-    onFocus?.();
+    // onFocus?.();
   };
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(

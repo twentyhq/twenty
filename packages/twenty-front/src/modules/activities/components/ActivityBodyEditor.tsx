@@ -268,6 +268,7 @@ export const ActivityBodyEditor = ({
         keyboardEvent.stopImmediatePropagation();
 
         const blockIdentifier = editor.getTextCursorPosition().block;
+        // TODO: fix typing
         const currentBlockContent = blockIdentifier?.content?.[0];
         const currentTextInsideTheBlock =
           currentBlockContent?.type === 'text' ? currentBlockContent?.text : '';
@@ -286,11 +287,13 @@ export const ActivityBodyEditor = ({
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityBody,
     );
+    // Use recoil state here
     // onFocus?.();
   };
 
   const handlerBlockEditorBlur = () => {
     goBackToPreviousHotkeyScope();
+    // Use recoil state here
     // onBlur?.();
   };
 

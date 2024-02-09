@@ -76,6 +76,7 @@ export const ActivityEditor = ({
   showComment = true,
   fillTitleFromBody = false,
 }: ActivityEditorProps) => {
+  // Use this directly in components : ActivityTitle, ActivityBodyEditor, ActivityComments
   const [, setActivityEditorAnyFieldInFocus] = useRecoilState(
     activityEditorAnyFieldInFocusState,
   );
@@ -119,8 +120,6 @@ export const ActivityEditor = ({
   const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
     isCreatingActivityState,
   );
-
-  // TODO: remove
 
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
