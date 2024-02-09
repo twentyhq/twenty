@@ -10,6 +10,7 @@ export const query = gql`
       opportunities {
         edges {
           node {
+            __typename
             id
           }
         }
