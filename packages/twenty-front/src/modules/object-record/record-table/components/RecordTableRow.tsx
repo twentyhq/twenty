@@ -55,23 +55,21 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
         <StyledTd>
           <CheckboxCell />
         </StyledTd>
-        {[...visibleTableColumns]
-          .sort((columnA, columnB) => columnA.position - columnB.position)
-          .map((column, columnIndex) => {
-            return inView ? (
-              <RecordTableCellContext.Provider
-                value={{
-                  columnDefinition: column,
-                  columnIndex,
-                }}
-                key={column.fieldMetadataId}
-              >
-                <RecordTableCellContainer />
-              </RecordTableCellContext.Provider>
-            ) : (
-              <td key={column.fieldMetadataId}></td>
-            );
-          })}
+        {visibleTableColumns.map((column, columnIndex) =>
+          inView ? (
+            <RecordTableCellContext.Provider
+              value={{
+                columnDefinition: column,
+                columnIndex,
+              }}
+              key={column.fieldMetadataId}
+            >
+              <RecordTableCellContainer />
+            </RecordTableCellContext.Provider>
+          ) : (
+            <td key={column.fieldMetadataId}></td>
+          ),
+        )}
         <td></td>
       </tr>
     </RecordTableRowContext.Provider>

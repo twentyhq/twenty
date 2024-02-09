@@ -1,6 +1,6 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
@@ -13,8 +13,10 @@ import { useFindManyRecords } from '../../hooks/useFindManyRecords';
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
+  const isCurrentWorkspaceActive = useRecoilValue(
+    isCurrentWorkspaceActiveSelector,
+  );
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -51,7 +53,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     });
 
   return {
-    records: currentWorkspace ? records : signInBackgroundMockCompanies,
+    records: isCurrentWorkspaceActive ? records : signInBackgroundMockCompanies,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

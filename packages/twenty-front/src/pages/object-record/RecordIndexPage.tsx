@@ -1,10 +1,6 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -32,10 +28,6 @@ export const RecordIndexPage = () => {
     objectNamePlural,
   });
 
-  const onboardingStatus = useOnboardingStatus();
-
-  const navigate = useNavigate();
-
   const { findObjectMetadataItemByNamePlural } =
     useObjectMetadataItemForSettings();
 
@@ -43,15 +35,6 @@ export const RecordIndexPage = () => {
   const Icon = getIcon(
     findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
   );
-
-  useEffect(() => {
-    if (
-      !isNonEmptyString(objectNamePlural) &&
-      onboardingStatus === OnboardingStatus.Completed
-    ) {
-      navigate('/');
-    }
-  }, [objectNamePlural, navigate, onboardingStatus]);
 
   const { createOneRecord: createOneObject } = useCreateOneRecord({
     objectNameSingular,

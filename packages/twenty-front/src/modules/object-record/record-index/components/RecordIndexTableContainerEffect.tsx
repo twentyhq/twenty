@@ -5,7 +5,6 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 type RecordIndexTableContainerEffectProps = {
@@ -32,7 +31,7 @@ export const RecordIndexTableContainerEffect = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+  const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { setEntityCountInCurrentView } = useViewBar({
@@ -40,18 +39,8 @@ export const RecordIndexTableContainerEffect = ({
   });
 
   useEffect(() => {
-    const availableTableColumns = columnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableTableColumns(availableTableColumns);
-  }, [
-    columnDefinitions,
-    objectMetadataItem,
-    sortDefinitions,
-    filterDefinitions,
-    setAvailableTableColumns,
-  ]);
+    setAvailableTableColumns(columnDefinitions);
+  }, [columnDefinitions, setAvailableTableColumns]);
 
   const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
 
