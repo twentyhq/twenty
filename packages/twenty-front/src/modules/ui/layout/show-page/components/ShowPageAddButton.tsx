@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
 import { ActivityType } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -19,17 +19,19 @@ const StyledContainer = styled.div`
 `;
 
 export const ShowPageAddButton = ({
-  entity,
+  activityTargetObject,
 }: {
-  entity: ActivityTargetableObject;
+  activityTargetObject: ActivityTargetableObject;
 }) => {
-  const { closeDropdown, toggleDropdown } = useDropdown(
-    SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID,
-  );
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
+  const openCreateActivity = useOpenCreateActivityDrawerV2();
 
   const handleSelect = (type: ActivityType) => {
-    openCreateActivity({ type, targetableObjects: [entity] });
+    openCreateActivity({
+      type,
+      targetableObjects: [activityTargetObject],
+      timelineTargetableObject: activityTargetObject,
+    });
     closeDropdown();
   };
 

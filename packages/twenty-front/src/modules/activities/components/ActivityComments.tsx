@@ -67,6 +67,7 @@ export const ActivityComments = ({
 
   const { records: comments } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Comment,
+    skip: !isNonEmptyString(activity?.id),
     filter: {
       activityId: {
         eq: activity?.id ?? '',

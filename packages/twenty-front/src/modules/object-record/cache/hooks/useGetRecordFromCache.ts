@@ -27,7 +27,7 @@ export const useGetRecordFromCache = ({
       fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} {
         id
         ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field))
+          .map((field) => mapFieldMetadataToGraphQLQuery({ field }))
           .join('\n')}
       }
     `;

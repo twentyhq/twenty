@@ -24,13 +24,17 @@ export const getActivityTargetsToCreateFromTargetableObjects = ({
         nameSingular: targetableObject.targetObjectNameSingular,
       });
 
-      return {
+      const activityTarget = {
         [targetableObject.targetObjectNameSingular]:
           targetableObject.targetObjectRecord,
         [targetableObjectFieldIdName]: targetableObject.id,
         activityId,
         id: v4(),
-      };
+        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+      } as Partial<ActivityTarget>;
+
+      return activityTarget;
     },
   );
 

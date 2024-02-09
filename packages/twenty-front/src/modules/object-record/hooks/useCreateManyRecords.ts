@@ -2,13 +2,17 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+
+type CreateManyRecordsOptions = {
+  skipOptimisticEffect?: boolean;
+};
 
 export const useCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
@@ -27,15 +31,22 @@ export const useCreateManyRecords = <
       objectMetadataItem,
     });
 
-  const getRelationMetadata = useGetRelationMetadata();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const createManyRecords = async (data: Partial<CreatedObjectRecord>[]) => {
-    const sanitizedCreateManyRecordsInput = data.map((input) =>
-      sanitizeRecordInput({
+  const createManyRecords = async (
+    data: Partial<CreatedObjectRecord>[],
+    options?: CreateManyRecordsOptions,
+  ) => {
+    const sanitizedCreateManyRecordsInput = data.map((input) => {
+      const idForCreation = input.id ?? v4();
+
+      const sanitizedRecordInput = sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: { ...input, id: v4() },
-      }),
-    );
+        recordInput: { ...input, id: idForCreation },
+      });
+
+      return sanitizedRecordInput;
+    });
 
     const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
       (record) =>
@@ -51,21 +62,25 @@ export const useCreateManyRecords = <
       variables: {
         data: sanitizedCreateManyRecordsInput,
       },
-      optimisticResponse: {
-        [mutationResponseField]: optimisticallyCreatedRecords,
-      },
-      update: (cache, { data }) => {
-        const records = data?.[mutationResponseField];
+      optimisticResponse: options?.skipOptimisticEffect
+        ? undefined
+        : {
+            [mutationResponseField]: optimisticallyCreatedRecords,
+          },
+      update: options?.skipOptimisticEffect
+        ? undefined
+        : (cache, { data }) => {
+            const records = data?.[mutationResponseField];
 
-        if (!records?.length) return;
+            if (!records?.length) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          records,
-          getRelationMetadata,
-        });
-      },
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToCreate: records,
+              objectMetadataItems,
+            });
+          },
     });
 
     return createdObjects.data?.[mutationResponseField] ?? [];

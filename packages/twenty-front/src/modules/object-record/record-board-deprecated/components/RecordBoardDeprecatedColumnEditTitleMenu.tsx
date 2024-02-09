@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import debounce from 'lodash.debounce';
 
 import { IconTrash } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -8,7 +9,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
-import { debounce } from '~/utils/debounce';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useRecordBoardDeprecated } from '../hooks/useRecordBoardDeprecated';
