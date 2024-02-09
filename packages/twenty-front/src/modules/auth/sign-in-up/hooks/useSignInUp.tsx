@@ -170,10 +170,6 @@ export const useSignInUp = () => {
     ],
   );
 
-  const goBackToEmailStep = useCallback(() => {
-    setSignInUpStep(SignInUpStep.Email);
-  }, [setSignInUpStep]);
-
   useScopedHotkeys(
     'enter',
     () => {
@@ -202,7 +198,6 @@ export const useSignInUp = () => {
     setShowErrors,
     continueWithCredentials,
     continueWithEmail,
-    goBackToEmailStep,
     submitCredentials,
     form,
     workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
