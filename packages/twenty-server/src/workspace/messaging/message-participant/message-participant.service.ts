@@ -5,11 +5,15 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { Participant } from 'src/workspace/messaging/types/gmail-message';
+import { CreateContactService } from 'src/workspace/messaging/services/create-contact.service';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly createContactService: CreateContactService,
   ) {}
 
   public async getByHandles(
@@ -60,5 +64,55 @@ export class MessageParticipantService {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async saveMessageParticipants(
+    participants: Participant[],
+    messageId: string,
+    dataSourceMetadata: DataSourceEntity,
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!participants) return;
+
+    for (const participant of participants) {
+      const participantPerson = await manager.query(
+        `SELECT "person"."id" FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1 LIMIT 1`,
+        [participant.handle],
+      );
+
+      let participantPersonId = participantPerson[0]?.id;
+
+      const workspaceMember = await manager.query(
+        `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
+          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1
+          LIMIT 1`,
+        [participant.handle],
+      );
+
+      const participantWorkspaceMemberId = workspaceMember[0]?.id;
+
+      if (!participantPersonId && !participantWorkspaceMemberId) {
+        participantPersonId =
+          await this.createContactService.createContactAndCompanyFromHandleAndDisplayName(
+            participant.handle,
+            participant.displayName,
+            dataSourceMetadata,
+            manager,
+          );
+      }
+
+      await manager.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          messageId,
+          participant.role,
+          participant.handle,
+          participant.displayName,
+          participantPersonId,
+          participantWorkspaceMemberId,
+        ],
+      );
+    }
   }
 }
