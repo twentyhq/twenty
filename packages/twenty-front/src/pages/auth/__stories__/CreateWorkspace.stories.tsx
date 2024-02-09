@@ -6,7 +6,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AppPath } from '@/types/AppPath';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -31,13 +31,16 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-          return HttpResponse.json({
-            data: {
-              currentUser: mockedOnboardingUsersData[1],
-            },
-          });
-        }),
+        graphql.query(
+          getOperationName(GET_CURRENT_USER_AND_VIEWS) ?? '',
+          () => {
+            return HttpResponse.json({
+              data: {
+                currentUser: mockedOnboardingUsersData[1],
+              },
+            });
+          },
+        ),
         graphqlMocks.handlers,
       ],
     },

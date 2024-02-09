@@ -19,7 +19,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -75,7 +75,7 @@ export const CreateWorkspace = () => {
               displayName: data.name,
             },
           },
-          refetchQueries: [GET_CURRENT_USER],
+          refetchQueries: [GET_CURRENT_USER_AND_VIEWS],
         });
 
         await apolloMetadataClient?.refetchQueries({

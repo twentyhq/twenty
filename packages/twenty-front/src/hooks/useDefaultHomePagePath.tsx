@@ -11,6 +11,7 @@ export const useDefaultHomePagePath = () => {
   const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.View,
   });
+
   const { cachedRootQuery } = useCachedRootQuery({
     objectMetadataItem: viewObjectMetadataItem,
     queryMethodName: QueryMethodName.FindMany,
