@@ -5,9 +5,10 @@ import { v4 } from 'uuid';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { CreateCompanyService } from 'src/workspace/messaging/services/create-company.service';
 @Injectable()
 export class CreateContactService {
-  constructor() {}
+  constructor(private readonly createCompaniesService: CreateCompanyService) {}
 
   async createContactFromHandleAndDisplayName(
     handle: string,
@@ -28,13 +29,28 @@ export class CreateContactService {
 
     const id = v4();
 
+    const companyDomainName = handle
+      .split('@')?.[1]
+      .split('.')
+      .slice(-2)
+      .join('.')
+      .toLowerCase();
+
+    const companyId =
+      await this.createCompaniesService.createCompanyFromDomainName(
+        companyDomainName,
+        dataSourceMetadata,
+        manager,
+      );
+
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName") VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ($1, $2, $3, $4, $5)`,
       [
         id,
         handle,
         capitalize(contactFirstName || contactFirstNameFromHandle || ''),
         capitalize(contactLastName || contactLastNameFromHandle || ''),
+        companyId,
       ],
     );
 
