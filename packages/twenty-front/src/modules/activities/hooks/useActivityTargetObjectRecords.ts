@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
@@ -17,6 +18,7 @@ export const useActivityTargetObjectRecords = ({
   const { records: activityTargets, loading: loadingActivityTargets } =
     useFindManyRecords({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      skip: !isNonEmptyString(activityId),
       filter: {
         activityId: {
           eq: activityId,

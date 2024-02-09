@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
@@ -54,7 +53,6 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
-  const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -114,8 +112,6 @@ export const CreateProfile = () => {
               colorScheme: 'System',
             }) as any,
         );
-
-        navigate('/');
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: 'error',
@@ -125,7 +121,6 @@ export const CreateProfile = () => {
     [
       currentWorkspaceMember?.id,
       enqueueSnackBar,
-      navigate,
       setCurrentWorkspaceMember,
       updateOneRecord,
     ],

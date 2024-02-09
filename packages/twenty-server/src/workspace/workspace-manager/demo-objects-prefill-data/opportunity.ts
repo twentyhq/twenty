@@ -13,7 +13,7 @@ const getRandomPipelineStepId = (pipelineStepIds: { id: string }[]) =>
   pipelineStepIds[Math.floor(Math.random() * pipelineStepIds.length)].id;
 
 const getRandomStage = () => {
-  const stages = ['new', 'screening', 'meeting', 'proposal', 'customer'];
+  const stages = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
 
   return stages[Math.floor(Math.random() * stages.length)];
 };
@@ -38,7 +38,6 @@ const generateOpportunities = (
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
-    position: null,
     probability: getRandomProbability(),
     pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,

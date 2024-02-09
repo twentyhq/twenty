@@ -8,10 +8,15 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const useMapFieldMetadataToGraphQLQuery = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const mapFieldMetadataToGraphQLQuery = (
-    field: FieldMetadataItem,
-    maxDepthForRelations: number = 2,
-  ): any => {
+  const mapFieldMetadataToGraphQLQuery = ({
+    field,
+    maxDepthForRelations = 2,
+    onlyTypenameAndIdOnDeepestRelationFields = false,
+  }: {
+    field: FieldMetadataItem;
+    maxDepthForRelations?: number;
+    onlyTypenameAndIdOnDeepestRelationFields?: boolean;
+  }): any => {
     if (maxDepthForRelations <= 0) {
       return '';
     }
@@ -45,14 +50,25 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
+      let subfieldQuery = '';
+
+      if (maxDepthForRelations > 0) {
+        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
+          .map((field) =>
+            mapFieldMetadataToGraphQLQuery({
+              field,
+              maxDepthForRelations: maxDepthForRelations - 1,
+              onlyTypenameAndIdOnDeepestRelationFields,
+            }),
+          )
+          .join('\n')}`;
+      }
+
       return `${field.name}
     {
+      __typename
       id
-      ${(relationMetadataItem?.fields ?? [])
-        .map((field) =>
-          mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
-        )
-        .join('\n')}
+      ${subfieldQuery}
     }`;
     } else if (
       fieldType === 'RELATION' &&
@@ -64,14 +80,25 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
+      let subfieldQuery = '';
+
+      if (maxDepthForRelations > 0) {
+        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
+          .map((field) =>
+            mapFieldMetadataToGraphQLQuery({
+              field,
+              maxDepthForRelations: maxDepthForRelations - 1,
+              onlyTypenameAndIdOnDeepestRelationFields,
+            }),
+          )
+          .join('\n')}`;
+      }
+
       return `${field.name}
     {
+      __typename
       id
-      ${(relationMetadataItem?.fields ?? [])
-        .map((field) =>
-          mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
-        )
-        .join('\n')}
+      ${subfieldQuery}
     }`;
     } else if (
       fieldType === 'RELATION' &&
@@ -83,16 +110,27 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
       );
 
+      let subfieldQuery = '';
+
+      if (maxDepthForRelations > 0) {
+        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
+          .map((field) =>
+            mapFieldMetadataToGraphQLQuery({
+              field,
+              maxDepthForRelations: maxDepthForRelations - 1,
+              onlyTypenameAndIdOnDeepestRelationFields,
+            }),
+          )
+          .join('\n')}`;
+      }
+
       return `${field.name}
       {
         edges {
           node {
+            __typename
             id
-            ${(relationMetadataItem?.fields ?? [])
-              .map((field) =>
-                mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
-              )
-              .join('\n')}
+            ${subfieldQuery}
           }
         }
       }`;

@@ -138,13 +138,13 @@ export class WorkspaceMigrationEnumService {
           .map((e) => `'${e}'`)
           .join(', ')}]`;
       } else {
-        defaultValue = `'${columnDefinition.defaultValue}'`;
+        defaultValue = this.getStringifyValue(columnDefinition.defaultValue);
       }
     }
 
     await queryRunner.query(`
       UPDATE "${schemaName}"."${tableName}"
-      SET "${columnDefinition.columnName}" = ${defaultValue}
+      SET "${columnDefinition.columnName}" = '${defaultValue}'
       WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
         .map((e) => `'${e}'`)
         .join(', ')})
@@ -159,7 +159,7 @@ export class WorkspaceMigrationEnumService {
     newEnumTypeName: string,
   ) {
     await queryRunner.query(
-      `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" TYPE "${schemaName}"."${newEnumTypeName}" USING ("${columnName}"::text::"${schemaName}"."${newEnumTypeName}")`,
+      `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP DEFAULT, ALTER COLUMN "${columnName}" TYPE "${schemaName}"."${newEnumTypeName}" USING ("${columnName}"::text::"${schemaName}"."${newEnumTypeName}")`,
     );
   }
 
@@ -183,5 +183,9 @@ export class WorkspaceMigrationEnumService {
       ALTER TYPE "${schemaName}"."${newEnumTypeName}"
       RENAME TO "${oldEnumTypeName}"
     `);
+  }
+
+  private getStringifyValue(value: any) {
+    return typeof value === 'string' ? value : `'${value}'`;
   }
 }

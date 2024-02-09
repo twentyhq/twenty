@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { mapObjectMetadataByUniqueIdentifier } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
@@ -14,8 +15,8 @@ import { WorkspaceObjectComparator } from 'src/workspace/workspace-sync-metadata
 import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-field.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
-import { ObjectWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/object-workspace-migration.factory';
-import { FieldWorkspaceMigrationFactory } from 'src/workspace/workspace-sync-metadata/factories/field-workspace-migration.factory';
+import { WorkspaceMigrationObjectFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-object.factory';
+import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -26,8 +27,8 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceObjectComparator: WorkspaceObjectComparator,
     private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
-    private readonly objectWorkspaceMigrationFactory: ObjectWorkspaceMigrationFactory,
-    private readonly fieldWorkspaceMigrationFactory: FieldWorkspaceMigrationFactory,
+    private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
+    private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {}
 
   async synchronize(
@@ -140,21 +141,39 @@ export class WorkspaceSyncObjectMetadataService {
     this.logger.log('Generating migrations');
 
     // Create migrations
-    const objectWorkspaceMigrations =
-      await this.objectWorkspaceMigrationFactory.create(
+    const createObjectWorkspaceMigrations =
+      await this.workspaceMigrationObjectFactory.create(
         metadataObjectUpdaterResult.createdObjectMetadataCollection,
-        storage.objectMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    const fieldWorkspaceMigrations =
-      await this.fieldWorkspaceMigrationFactory.create(
+    const deleteObjectWorkspaceMigrations =
+      await this.workspaceMigrationObjectFactory.create(
+        storage.objectMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
+      );
+
+    const createFieldWorkspaceMigrations =
+      await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
         metadataFieldUpdaterResult.createdFieldMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
+      );
+
+    const deleteFieldWorkspaceMigrations =
+      await this.workspaceMigrationFieldFactory.create(
+        originalObjectMetadataCollection,
         storage.fieldMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
       );
 
     this.logger.log('Saving migrations');
 
-    return [...objectWorkspaceMigrations, ...fieldWorkspaceMigrations];
+    return [
+      ...createObjectWorkspaceMigrations,
+      ...deleteObjectWorkspaceMigrations,
+      ...createFieldWorkspaceMigrations,
+      ...deleteFieldWorkspaceMigrations,
+    ];
   }
 }

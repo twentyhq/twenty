@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ExceptionHandlerModule } from 'src/integrations/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/integrations/exception-handler/exception-handler.module-factory';
@@ -38,6 +39,7 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       useFactory: emailModuleFactory,
       inject: [EnvironmentService],
     }),
+    EventEmitterModule.forRoot(),
   ],
   exports: [],
   providers: [],

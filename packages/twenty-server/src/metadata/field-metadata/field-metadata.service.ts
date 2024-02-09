@@ -186,15 +186,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new NotFoundException('Field does not exist');
     }
 
-    if (existingFieldMetadata.isCustom === false) {
-      // We can only update the isActive field for standard fields
-      fieldMetadataInput = {
-        id: fieldMetadataInput.id,
-        isActive: fieldMetadataInput.isActive,
-        workspaceId: fieldMetadataInput.workspaceId,
-      };
-    }
-
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
         fieldMetadataInput.workspaceId,
@@ -217,7 +208,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new BadRequestException('Cannot deactivate label identifier field');
     }
 
-    // Check if the id of the options has been provided
     if (fieldMetadataInput.options) {
       for (const option of fieldMetadataInput.options) {
         if (!option.id) {
@@ -226,9 +216,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    const updatedFieldMetadata = await super.updateOne(id, fieldMetadataInput);
+    const updatableFieldInput =
+      existingFieldMetadata.isCustom === false
+        ? this.buildUpdatableStandardFieldInput(
+            fieldMetadataInput,
+            existingFieldMetadata,
+          )
+        : fieldMetadataInput;
 
-    if (fieldMetadataInput.options || fieldMetadataInput.defaultValue) {
+    const updatedFieldMetadata = await super.updateOne(id, updatableFieldInput);
+
+    if (updatableFieldInput.options || updatableFieldInput.defaultValue) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`update-${updatedFieldMetadata.name}`),
         existingFieldMetadata.workspaceId,
@@ -287,5 +285,28 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   public async deleteFieldsMetadata(workspaceId: string) {
     await this.fieldMetadataRepository.delete({ workspaceId });
+  }
+
+  private buildUpdatableStandardFieldInput(
+    fieldMetadataInput: UpdateFieldInput,
+    existingFieldMetadata: FieldMetadataEntity,
+  ) {
+    let fieldMetadataInputOverrided = {};
+
+    fieldMetadataInputOverrided = {
+      id: fieldMetadataInput.id,
+      isActive: fieldMetadataInput.isActive,
+      workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
+    };
+
+    if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
+      fieldMetadataInputOverrided = {
+        ...fieldMetadataInputOverrided,
+        options: fieldMetadataInput.options,
+      };
+    }
+
+    return fieldMetadataInputOverrided as UpdateFieldInput;
   }
 }
