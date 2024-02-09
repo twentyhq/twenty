@@ -293,6 +293,6 @@ export class EnvironmentService {
   }
 
   getApiRateLimitingLimit(): number {
-    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 200;
+    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 500;
   }
 }
