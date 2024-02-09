@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -27,6 +28,14 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   }>({
     email: '',
   });
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === Key.Enter) {
+      updateBlockedEmailList(formValues.email);
+      setFormValues({ email: '' });
+    }
+  };
+
   return (
     <StyledContainer>
       <StyledLinkContainer>
@@ -40,6 +49,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
             }));
           }}
           fullWidth
+          onKeyDown={handleKeyDown}
         />
       </StyledLinkContainer>
       <Button
