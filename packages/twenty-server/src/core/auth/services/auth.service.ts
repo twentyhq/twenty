@@ -7,11 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 
-import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import { render } from '@react-email/components';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
+import FileType from 'file-type';
 
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
@@ -29,11 +29,11 @@ import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
-import { getImageBufferFromUrl } from 'src/utils/image';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
+import { getImageBufferFromUrl } from 'src/utils/image';
 
 import { TokenService } from './token.service';
 
@@ -135,18 +135,8 @@ export class AuthService {
       });
 
       workspace = await this.workspaceRepository.save(workspaceToCreate);
-      await this.workspaceManagerService.init(workspace.id);
     }
 
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      canImpersonate: false,
-      passwordHash,
-      defaultWorkspace: workspace,
-    });
-    const user = await this.userRepository.save(userToCreate);
     let imagePath: string | undefined = undefined;
 
     if (picture) {
@@ -166,9 +156,18 @@ export class AuthService {
 
       imagePath = paths[0];
     }
-    await this.userService.createWorkspaceMember(user, imagePath);
 
-    return user;
+    const userToCreate = this.userRepository.create({
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      defaultAvatarUrl: imagePath,
+      canImpersonate: false,
+      passwordHash,
+      defaultWorkspace: workspace,
+    });
+
+    return await this.userRepository.save(userToCreate);
   }
 
   async verify(email: string): Promise<Verify> {
@@ -189,7 +188,11 @@ export class AuthService {
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
-    user.workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember) {
+      user.workspaceMember = workspaceMember;
+    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

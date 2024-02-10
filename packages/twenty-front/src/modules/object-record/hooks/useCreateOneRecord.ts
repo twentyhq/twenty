@@ -2,8 +2,8 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -11,6 +11,10 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
+};
+
+type CreateOneRecordOptions = {
+  skipOptimisticEffect?: boolean;
 };
 
 export const useCreateOneRecord = <
@@ -29,12 +33,17 @@ export const useCreateOneRecord = <
       objectMetadataItem,
     });
 
-  const getRelationMetadata = useGetRelationMetadata();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+  const createOneRecord = async (
+    input: Partial<CreatedObjectRecord>,
+    options?: CreateOneRecordOptions,
+  ) => {
+    const idForCreation = input.id ?? v4();
+
     const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: { ...input, id: v4() },
+      recordInput: { ...input, id: idForCreation },
     });
 
     const optimisticallyCreatedRecord =
@@ -51,21 +60,25 @@ export const useCreateOneRecord = <
       variables: {
         input: sanitizedCreateOneRecordInput,
       },
-      optimisticResponse: {
-        [mutationResponseField]: optimisticallyCreatedRecord,
-      },
-      update: (cache, { data }) => {
-        const record = data?.[mutationResponseField];
+      optimisticResponse: options?.skipOptimisticEffect
+        ? undefined
+        : {
+            [mutationResponseField]: optimisticallyCreatedRecord,
+          },
+      update: options?.skipOptimisticEffect
+        ? undefined
+        : (cache, { data }) => {
+            const record = data?.[mutationResponseField];
 
-        if (!record) return;
+            if (!record) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          records: [record],
-          getRelationMetadata,
-        });
-      },
+            triggerCreateRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToCreate: [record],
+              objectMetadataItems,
+            });
+          },
     });
 
     return createdObject.data?.[mutationResponseField] ?? null;

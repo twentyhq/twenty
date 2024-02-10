@@ -13,7 +13,7 @@ export const RightDrawerCreateActivity = () => {
         <RightDrawerActivity
           activityId={viewableActivityId}
           showComment={false}
-          autoFillTitle={true}
+          fillTitleFromBody={true}
         />
       )}
     </>

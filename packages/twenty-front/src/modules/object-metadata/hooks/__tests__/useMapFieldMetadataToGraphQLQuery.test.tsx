@@ -21,6 +21,7 @@ const getOneToManyRelation = () => {
     field: objectMetadataItem.fields.find((field) => field.name === 'company')!,
     res: `company
     {
+      __typename
       id
       xLink
       {
@@ -29,6 +30,7 @@ const getOneToManyRelation = () => {
       }
 accountOwner
     {
+      __typename
       id
     }
       linkedinLink
@@ -40,6 +42,7 @@ attachments
       {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -49,6 +52,7 @@ opportunities
       {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -65,6 +69,7 @@ activityTargets
       {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -73,6 +78,7 @@ favorites
       {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -81,6 +87,7 @@ people
       {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -129,12 +136,14 @@ const getOneToManyFromRelationField = () => {
       {
         edges {
           node {
+            __typename
             id
             personId
 pointOfContactId
 updatedAt
 company
     {
+      __typename
       id
     }
 companyId
@@ -142,6 +151,7 @@ pipelineStepId
 probability
 pipelineStep
     {
+      __typename
       id
     }
 closeDate
@@ -154,10 +164,12 @@ id
 createdAt
 pointOfContact
     {
+      __typename
       id
     }
 person
     {
+      __typename
       id
     }
           }
@@ -201,9 +213,9 @@ describe('useMapFieldMetadataToGraphQLQuery', () => {
 
     const { mapFieldMetadataToGraphQLQuery } = result.current;
 
-    const oneToManyRelationFieldRes = mapFieldMetadataToGraphQLQuery(
-      oneToManyRelation.field,
-    );
+    const oneToManyRelationFieldRes = mapFieldMetadataToGraphQLQuery({
+      field: oneToManyRelation.field,
+    });
 
     expect(formatGQLString(oneToManyRelationFieldRes)).toEqual(
       oneToManyRelation.res,
@@ -211,26 +223,27 @@ describe('useMapFieldMetadataToGraphQLQuery', () => {
 
     const oneToOneRelation = getOneToOneRelationField();
 
-    const oneToOneRelationFieldRes =
-      mapFieldMetadataToGraphQLQuery(oneToOneRelation);
+    const oneToOneRelationFieldRes = mapFieldMetadataToGraphQLQuery({
+      field: oneToOneRelation,
+    });
 
     expect(formatGQLString(oneToOneRelationFieldRes)).toEqual(
       oneToManyRelation.res,
     );
 
     const oneToManyFromRelation = getOneToManyFromRelationField();
-    const oneToManyFromRelationFieldRes = mapFieldMetadataToGraphQLQuery(
-      oneToManyFromRelation.field,
-    );
+    const oneToManyFromRelationFieldRes = mapFieldMetadataToGraphQLQuery({
+      field: oneToManyFromRelation.field,
+    });
 
     expect(formatGQLString(oneToManyFromRelationFieldRes)).toEqual(
       oneToManyFromRelation.res,
     );
 
     const fullNameRelation = getFullNameRelation();
-    const fullNameFieldRes = mapFieldMetadataToGraphQLQuery(
-      fullNameRelation.field,
-    );
+    const fullNameFieldRes = mapFieldMetadataToGraphQLQuery({
+      field: fullNameRelation.field,
+    });
 
     expect(fullNameFieldRes).toEqual(fullNameRelation.res);
   });

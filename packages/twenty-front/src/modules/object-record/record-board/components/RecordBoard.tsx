@@ -9,6 +9,7 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -48,8 +49,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const { getColumnIdsState, columnsFamilySelector } =
-    useRecordBoardStates(recordBoardId);
+  const {
+    getColumnIdsState,
+    columnsFamilySelector,
+    recordIdsByColumnIdFamilyState,
+  } = useRecordBoardStates(recordBoardId);
 
   const columnIds = useRecoilValue(getColumnIdsState());
 
@@ -66,34 +70,69 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
 
   const onDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
-      async (result) => {
+      (result) => {
+        if (!result.destination) return;
+
         const draggedRecordId = result.draggableId;
-        const destinationColumnId = result.destination?.droppableId;
+        const sourceColumnId = result.source.droppableId;
+        const destinationColumnId = result.destination.droppableId;
+        const destinationIndexInColumn = result.destination.index;
 
-        if (!destinationColumnId) {
-          return;
-        }
+        if (!destinationColumnId || !selectFieldMetadataItem) return;
 
-        const column = await snapshot
+        const column = snapshot
           .getLoadable(columnsFamilySelector(destinationColumnId))
           .getValue();
 
-        if (!column) {
-          return;
-        }
+        if (!column) return;
 
-        if (!selectFieldMetadataItem) {
-          return;
-        }
+        const destinationColumnRecordIds = snapshot
+          .getLoadable(recordIdsByColumnIdFamilyState(destinationColumnId))
+          .getValue();
+        const otherRecordsInDestinationColumn =
+          sourceColumnId === destinationColumnId
+            ? destinationColumnRecordIds.filter(
+                (recordId) => recordId !== draggedRecordId,
+              )
+            : destinationColumnRecordIds;
+
+        const recordBeforeId =
+          otherRecordsInDestinationColumn[destinationIndexInColumn - 1];
+        const recordBefore = recordBeforeId
+          ? snapshot
+              .getLoadable(recordStoreFamilyState(recordBeforeId))
+              .getValue()
+          : null;
+        const recordBeforePosition: number | undefined = recordBefore?.position;
+
+        const recordAfterId =
+          otherRecordsInDestinationColumn[destinationIndexInColumn];
+        const recordAfter = recordAfterId
+          ? snapshot
+              .getLoadable(recordStoreFamilyState(recordAfterId))
+              .getValue()
+          : null;
+        const recordAfterPosition: number | undefined = recordAfter?.position;
+
+        const beforeBoundary = recordBeforePosition ?? 0;
+        const afterBoundary = recordAfterPosition ?? beforeBoundary + 1;
+
+        const draggedRecordPosition = (beforeBoundary + afterBoundary) / 2;
 
         updateOneRecord({
           idToUpdate: draggedRecordId,
           updateOneRecordInput: {
             [selectFieldMetadataItem.name]: column.value,
+            position: draggedRecordPosition,
           },
         });
       },
-    [columnsFamilySelector, selectFieldMetadataItem, updateOneRecord],
+    [
+      columnsFamilySelector,
+      recordIdsByColumnIdFamilyState,
+      selectFieldMetadataItem,
+      updateOneRecord,
+    ],
   );
 
   return (

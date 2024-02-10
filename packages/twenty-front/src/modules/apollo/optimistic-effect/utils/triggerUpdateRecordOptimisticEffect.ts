@@ -6,124 +6,185 @@ import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effe
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
-import { capitalize } from '~/utils/string/capitalize';
 
+// TODO: add extensive unit tests for this function
+// That will also serve as documentation
 export const triggerUpdateRecordOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  previousRecord,
-  nextRecord,
-  getRelationMetadata,
+  currentRecord,
+  updatedRecord,
+  objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  previousRecord: CachedObjectRecord;
-  nextRecord: CachedObjectRecord;
-  getRelationMetadata: ReturnType<typeof useGetRelationMetadata>;
+  currentRecord: CachedObjectRecord;
+  updatedRecord: CachedObjectRecord;
+  objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = `${capitalize(
-    objectMetadataItem.nameSingular,
-  )}Edge`;
+  const objectEdgeTypeName = getEdgeTypename({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
   triggerUpdateRelationsOptimisticEffect({
     cache,
-    objectMetadataItem,
-    previousRecord,
-    nextRecord,
-    getRelationMetadata,
+    sourceObjectMetadataItem: objectMetadataItem,
+    currentSourceRecord: currentRecord,
+    updatedSourceRecord: updatedRecord,
+    objectMetadataItems,
   });
 
-  // Optimistically update record lists
   cache.modify<StoreObject>({
     fields: {
       [objectMetadataItem.namePlural]: (
-        cachedConnection,
+        rootQueryCachedResponse,
         { DELETE, readField, storeFieldName, toReference },
       ) => {
-        if (
+        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
           !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
-            cachedConnection,
-          )
-        )
-          return cachedConnection;
+            rootQueryCachedResponse,
+          );
 
-        const { variables } =
+        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
+          return rootQueryCachedResponse;
+        }
+
+        const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
+
+        const { fieldArguments: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
 
-        const cachedEdges = readField<CachedObjectRecordEdge[]>(
-          'edges',
-          cachedConnection,
-        );
-        let nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
+        const rootQueryCurrentCachedRecordEdges =
+          readField<CachedObjectRecordEdge[]>(
+            'edges',
+            rootQueryCachedObjectRecordConnection,
+          ) ?? [];
 
-        // Test if the record matches this list's filters
-        if (variables?.filter) {
-          const matchesFilter = isRecordMatchingFilter({
-            record: nextRecord,
-            filter: variables.filter,
-            objectMetadataItem,
-          });
-          const recordIndex = nextCachedEdges.findIndex(
-            (cachedEdge) => readField('id', cachedEdge.node) === nextRecord.id,
-          );
+        let rootQueryNextCachedRecordEdges = [
+          ...rootQueryCurrentCachedRecordEdges,
+        ];
 
-          // If after update, the record matches this list's filters, then add it to the list
-          if (matchesFilter && recordIndex === -1) {
-            const nodeReference = toReference(nextRecord);
-            nodeReference &&
-              nextCachedEdges.push({
+        const rootQueryFilter = rootQueryVariables?.filter;
+        const rootQueryOrderBy = rootQueryVariables?.orderBy;
+        const rootQueryLimit = rootQueryVariables?.first;
+
+        const shouldTestThatUpdatedRecordMatchesThisRootQueryFilter =
+          isDefined(rootQueryFilter);
+
+        if (shouldTestThatUpdatedRecordMatchesThisRootQueryFilter) {
+          const updatedRecordMatchesThisRootQueryFilter =
+            isRecordMatchingFilter({
+              record: updatedRecord,
+              filter: rootQueryFilter,
+              objectMetadataItem,
+            });
+
+          const updatedRecordIndexInRootQueryEdges =
+            rootQueryCurrentCachedRecordEdges.findIndex(
+              (cachedEdge) =>
+                readField('id', cachedEdge.node) === updatedRecord.id,
+            );
+
+          const updatedRecordShouldBeAddedToRootQueryEdges =
+            updatedRecordMatchesThisRootQueryFilter &&
+            updatedRecordIndexInRootQueryEdges === -1;
+
+          const updatedRecordShouldBeRemovedFromRootQueryEdges =
+            updatedRecordMatchesThisRootQueryFilter &&
+            updatedRecordIndexInRootQueryEdges === -1;
+
+          if (updatedRecordShouldBeAddedToRootQueryEdges) {
+            const updatedRecordNodeReference = toReference(updatedRecord);
+
+            if (isDefined(updatedRecordNodeReference)) {
+              rootQueryNextCachedRecordEdges.push({
                 __typename: objectEdgeTypeName,
-                node: nodeReference,
+                node: updatedRecordNodeReference,
                 cursor: '',
               });
+            }
           }
 
-          // If after update, the record does not match this list's filters anymore, then remove it from the list
-          if (!matchesFilter && recordIndex > -1) {
-            nextCachedEdges.splice(recordIndex, 1);
+          if (updatedRecordShouldBeRemovedFromRootQueryEdges) {
+            rootQueryNextCachedRecordEdges.splice(
+              updatedRecordIndexInRootQueryEdges,
+              1,
+            );
           }
         }
 
-        // Sort updated list
-        if (variables?.orderBy) {
-          nextCachedEdges = sortCachedObjectEdges({
-            edges: nextCachedEdges,
-            orderBy: variables.orderBy,
+        const nextRootQueryEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
+
+        if (nextRootQueryEdgesShouldBeSorted) {
+          rootQueryNextCachedRecordEdges = sortCachedObjectEdges({
+            edges: rootQueryNextCachedRecordEdges,
+            orderBy: rootQueryOrderBy,
             readCacheField: readField,
           });
         }
 
-        // Limit the updated list to the required size
-        if (isDefined(variables?.first)) {
+        const shouldLimitNextRootQueryEdges = isDefined(rootQueryLimit);
+
+        // TODO: not sure that we should trigger a DELETE here, as it will trigger a network request
+        // Is it the responsibility of this optimistic effect function to delete a root query that will trigger a network request ?
+        // Shouldn't we let the response from the network overwrite the cache and keep this util purely about cache updates ?
+        //
+        // Shoud we even apply the limit at all since with pagination we cannot really do optimistic rendering and should
+        // wait for the network response to update the cache
+        //
+        // Maybe we could apply a merging function instead and exclude limit from the caching field arguments ?
+        // Also we have a problem that is not yet present with this but may arise if we start
+        //   to use limit arguments, as for now we rely on the hard coded limit of 60 in pg_graphql.
+        // This is as if we had a { limit: 60 } argument in every query but we don't.
+        //   so Apollo correctly merges the return of fetchMore for now, because of this,
+        //   but wouldn't do it well like Thomas had the problem with mail threads
+        //   because he applied a limit of 2 and Apollo created one root query in the cache for each.
+        // In Thomas' case we should implement this because he use a hack to overwrite the first request with the return of the other.
+        // See: https://www.apollographql.com/docs/react/pagination/cursor-based/#relay-style-cursor-pagination
+        // See: https://www.apollographql.com/docs/react/pagination/core-api/#merging-queries
+        if (shouldLimitNextRootQueryEdges) {
           // If previous edges length was exactly at the required limit,
           // but after update next edges length is under the limit,
           // we cannot for sure know if re-fetching the query
           // would return more edges, so we cannot optimistically deduce
           // the query's result.
           // In this case, invalidate the cache entry so it can be re-fetched.
-          if (
-            cachedEdges?.length === variables.first &&
-            nextCachedEdges.length < variables.first
-          ) {
+          const rootQueryCurrentCachedRecordEdgesLengthIsAtLimit =
+            rootQueryCurrentCachedRecordEdges.length === rootQueryLimit;
+
+          // If next edges length is under limit, then we can wait for the network response and merge the result
+          //   then in the merge function we could implement this mechanism to limit the number of edges in the cache
+          const rootQueryNextCachedRecordEdgesLengthIsUnderLimit =
+            rootQueryNextCachedRecordEdges.length < rootQueryLimit;
+
+          const shouldDeleteRootQuerySoItCanBeRefetched =
+            rootQueryCurrentCachedRecordEdgesLengthIsAtLimit &&
+            rootQueryNextCachedRecordEdgesLengthIsUnderLimit;
+
+          if (shouldDeleteRootQuerySoItCanBeRefetched) {
             return DELETE;
           }
 
-          // If next edges length exceeds the required limit,
-          // trim the next edges array to the correct length.
-          if (nextCachedEdges.length > variables.first) {
-            nextCachedEdges.splice(variables.first);
+          const rootQueryNextCachedRecordEdgesLengthIsAboveRootQueryLimit =
+            rootQueryNextCachedRecordEdges.length > rootQueryLimit;
+
+          if (rootQueryNextCachedRecordEdgesLengthIsAboveRootQueryLimit) {
+            rootQueryNextCachedRecordEdges.splice(rootQueryLimit);
           }
         }
 
-        return { ...cachedConnection, edges: nextCachedEdges };
+        return {
+          ...rootQueryCachedObjectRecordConnection,
+          edges: rootQueryNextCachedRecordEdges,
+        };
       },
     },
   });
