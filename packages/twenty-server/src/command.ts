@@ -18,7 +18,7 @@ async function bootstrap() {
   };
 
   const app = await CommandFactory.createWithoutRunning(CommandModule, {
-    bufferLogs: true,
+    bufferLogs: false,
     errorHandler,
     serviceErrorHandler: errorHandler,
   });
