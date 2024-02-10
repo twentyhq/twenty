@@ -21,7 +21,7 @@ async function bootstrap() {
 
   try {
     const app = await NestFactory.createApplicationContext(QueueWorkerModule, {
-      bufferLogs: true,
+      bufferLogs: false,
     });
 
     loggerService = app.get(LoggerService);
