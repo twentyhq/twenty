@@ -1,8 +1,11 @@
 import { useRecoilValue } from 'recoil';
 
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -13,6 +16,7 @@ import {
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -62,10 +66,44 @@ export const RecordTableColumnDropdownMenu = ({
   };
 
   const { toggleSortDropdown } = useObjectSortDropdown();
-
+  const {
+    setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
+    setObjectFilterDropdownSearchInput,
+    availableFilterDefinitions,
+    selectFilter,
+    setIsObjectFilterDropdownOperandSelectUnfolded,
+    setSelectedFilter,
+  } = useFilterDropdown({ filterDropdownId: 'view-filter' });
   const handleSortClick = () => {
     closeDropdown();
     toggleSortDropdown();
+  };
+  const setHotkeyScope = useSetHotkeyScope();
+
+  const handleFilterClick = () => {
+    closeDropdown();
+    const filterDefinition = availableFilterDefinitions.find(
+      (definition) => definition.fieldMetadataId === column.fieldMetadataId,
+    );
+    if (filterDefinition) {
+      selectFilter?.({
+        fieldMetadataId: column.fieldMetadataId,
+        value: '',
+        operand: getOperandsForFilterType(filterDefinition.type)?.[0],
+        displayValue: '',
+        definition: filterDefinition,
+      });
+      setIsObjectFilterDropdownOperandSelectUnfolded(false);
+      setFilterDefinitionUsedInDropdown(filterDefinition);
+      if (filterDefinition.type === 'RELATION') {
+        setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+      }
+      setSelectedOperandInDropdown(
+        getOperandsForFilterType(filterDefinition.type)?.[0],
+      );
+      setObjectFilterDropdownSearchInput('');
+    }
   };
 
   return (
@@ -91,7 +129,7 @@ export const RecordTableColumnDropdownMenu = ({
       />
       <MenuItem
         LeftIcon={IconFilter}
-        onClick={handleColumnVisibility}
+        onClick={handleFilterClick}
         text="Filter"
       />
       <MenuItem
