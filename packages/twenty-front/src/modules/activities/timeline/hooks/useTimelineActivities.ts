@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
+import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -17,13 +17,11 @@ export const useTimelineActivities = ({
     activityTargets,
     loadingActivityTargets,
     initialized: initializedActivityTargets,
-  } = useActivityTargets({
+  } = useActivityTargetsForTargetableObject({
     targetableObject,
   });
 
   const [initialized, setInitialized] = useState(false);
-
-  const [activities, setActivities] = useState<Activity[]>([]);
 
   const activityIds = activityTargets
     ?.map((activityTarget) => activityTarget.activityId)
@@ -35,7 +33,7 @@ export const useTimelineActivities = ({
     },
   );
 
-  const { records: activitiesFromRequest, loading: loadingActivities } =
+  const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: loadingActivityTargets || !isNonEmptyArray(activityTargets),
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -47,12 +45,6 @@ export const useTimelineActivities = ({
         }
       },
     });
-
-  useEffect(() => {
-    if (!loadingActivities) {
-      setActivities(activitiesFromRequest);
-    }
-  }, [activitiesFromRequest, loadingActivities]);
 
   const noActivityTargets =
     initializedActivityTargets && !isNonEmptyArray(activityTargets);

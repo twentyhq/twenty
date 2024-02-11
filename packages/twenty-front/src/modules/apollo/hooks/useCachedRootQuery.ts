@@ -22,7 +22,7 @@ export const useCachedRootQuery = ({
   const buildRecordFieldsFragment = () => {
     return objectMetadataItem.fields
       .filter((field) => field.type !== 'RELATION')
-      .map((field) => mapFieldMetadataToGraphQLQuery(field))
+      .map((field) => mapFieldMetadataToGraphQLQuery({ field }))
       .join(' \n');
   };
 

@@ -67,6 +67,10 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
+const StyledPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 export const TaskRow = ({
   task,
 }: {
@@ -100,7 +104,7 @@ export const TaskRow = ({
         />
       </div>
       <StyledTaskTitle completed={task.completedAt !== null}>
-        {task.title ?? 'Task Title'}
+        {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
       </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />

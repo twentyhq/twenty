@@ -36,6 +36,7 @@ const LinkList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: center;
 `;
 
 const ListItem = styled.a`
@@ -45,7 +46,7 @@ const ListItem = styled.a`
   gap: 4px;
   align-items: center;
   border-radius: 8px;
-  height: 40px;
+  height: 48px;
   padding-left: 16px;
   padding-right: 16px;
   &:hover {
@@ -174,6 +175,9 @@ const NavOpen = styled.div`
   gap: 33px;
   padding-top: 32px;
   z-index: 100;
+  transition: transform 0.2s ease-in;
+  display: flex;
+  transform-origin: top;
 `;
 
 const MobileMenu = styled.div`
@@ -208,15 +212,19 @@ export const HeaderMobile = () => {
           <HamburgerLine2 id="line2" />
         </HamburgerContainer>
       </Nav>
-      <NavOpen style={{ display: menuOpen ? 'flex' : 'none' }}>
+      <NavOpen
+        style={{
+          transform: `scaleY(${menuOpen ? '1' : '0'})`,
+        }}
+      >
         <LinkList>
-          <ListItem href="/pricing">Pricing</ListItem>
           <ListItem href="/story">Story</ListItem>
+          <ListItem href="/pricing">Pricing</ListItem>
           <ListItem href="https://docs.twenty.com">
             Docs <ExternalArrow />
           </ListItem>
           <ListItem href="https://github.com/twentyhq/twenty">
-            <GithubIcon color="rgb(71,71,71)" /> 5.7k <ExternalArrow />
+            <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
           </ListItem>
         </LinkList>
         <CallToAction />

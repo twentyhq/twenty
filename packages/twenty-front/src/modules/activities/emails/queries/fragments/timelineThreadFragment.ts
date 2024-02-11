@@ -6,6 +6,7 @@ export const timelineThreadFragment = gql`
   fragment TimelineThreadFragment on TimelineThread {
     id
     read
+    visibility
     firstParticipant {
       ...ParticipantFragment
     }

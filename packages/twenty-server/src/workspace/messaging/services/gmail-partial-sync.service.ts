@@ -1,10 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
@@ -12,11 +11,14 @@ import {
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
-import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 @Injectable()
 export class GmailPartialSyncService {
+  private readonly logger = new Logger(GmailPartialSyncService.name);
+
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
@@ -77,6 +79,10 @@ export class GmailPartialSyncService {
     }
 
     if (newHistoryId === lastSyncHistoryId) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
+      );
+
       return;
     }
 
@@ -126,6 +132,10 @@ export class GmailPartialSyncService {
       newHistoryId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    this.logger.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done.`,
     );
   }
 

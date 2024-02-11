@@ -1,13 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import debounce from 'lodash.debounce';
+import { useRecoilState } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
+import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { Activity } from '@/activities/types/Activity';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
@@ -16,43 +20,106 @@ import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
 
+import '@blocknote/react/style.css';
+
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
 type ActivityBodyEditorProps = {
-  activity: Pick<Activity, 'id' | 'body'>;
-  onChange?: (activityBody: string) => void;
+  activity: Activity;
+  fillTitleFromBody: boolean;
 };
 
 export const ActivityBodyEditor = ({
   activity,
-  onChange,
+  fillTitleFromBody,
 }: ActivityBodyEditorProps) => {
-  const [body, setBody] = useState<string | null>(null);
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+  const [stringifiedBodyFromEditor, setStringifiedBodyFromEditor] = useState<
+    string | null
+  >(activity.body);
+
+  const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
+    activityTitleHasBeenSetFamilyState({
+      activityId: activity.id,
+    }),
+  );
+
+  const { objectMetadataItem: objectMetadataItemActivity } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+    });
+
+  const modifyActivityFromCache = useModifyRecordFromCache({
+    objectMetadataItem: objectMetadataItemActivity,
   });
 
-  useEffect(() => {
-    if (body) {
-      onChange?.(body);
-    }
-  }, [body, onChange]);
+  const { upsertActivity } = useUpsertActivity();
 
-  const debounceOnChange = useMemo(() => {
-    const onInternalChange = (activityBody: string) => {
-      setBody(activityBody);
-      updateOneRecord?.({
-        idToUpdate: activity.id,
-        updateOneRecordInput: {
-          body: activityBody,
+  const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
+    upsertActivity({
+      activity,
+      input: {
+        body: newBody,
+      },
+    });
+  }, 500);
+
+  const persistTitleAndBodyDebounced = useDebouncedCallback(
+    (newTitle: string, newBody: string) => {
+      upsertActivity({
+        activity,
+        input: {
+          title: newTitle,
+          body: newBody,
         },
       });
-    };
 
-    return debounce(onInternalChange, 200);
-  }, [updateOneRecord, activity.id]);
+      setActivityTitleHasBeenSet(true);
+    },
+    500,
+  );
+
+  const updateTitleAndBody = useCallback(
+    (newStringifiedBody: string) => {
+      const blockBody = JSON.parse(newStringifiedBody);
+      const newTitleFromBody = blockBody[0]?.content?.[0]?.text;
+
+      modifyActivityFromCache(activity.id, {
+        title: () => {
+          return newTitleFromBody;
+        },
+      });
+
+      persistTitleAndBodyDebounced(newTitleFromBody, newStringifiedBody);
+    },
+    [activity.id, modifyActivityFromCache, persistTitleAndBodyDebounced],
+  );
+
+  const handleBodyChange = useCallback(
+    (activityBody: string) => {
+      if (!activityTitleHasBeenSet && fillTitleFromBody) {
+        updateTitleAndBody(activityBody);
+      } else {
+        persistBodyDebounced(activityBody);
+      }
+    },
+    [
+      fillTitleFromBody,
+      persistBodyDebounced,
+      activityTitleHasBeenSet,
+      updateTitleAndBody,
+    ],
+  );
+
+  useEffect(() => {
+    if (
+      isNonEmptyString(stringifiedBodyFromEditor) &&
+      activity.body !== stringifiedBodyFromEditor
+    ) {
+      handleBodyChange(stringifiedBodyFromEditor);
+    }
+  }, [stringifiedBodyFromEditor, handleBodyChange, activity]);
 
   const slashMenuItems = getSlashMenu();
 
@@ -83,7 +150,7 @@ export const ActivityBodyEditor = ({
         : undefined,
     domAttributes: { editor: { class: 'editor' } },
     onEditorContentChange: (editor: BlockNoteEditor) => {
-      debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
+      setStringifiedBodyFromEditor(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
     slashMenuItems,
     blockSpecs: blockSpecs,

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
@@ -16,6 +16,8 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 
 @Injectable()
 export class GmailFullSyncService {
+  private readonly logger = new Logger(GmailFullSyncService.name);
+
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
@@ -135,7 +137,7 @@ export class GmailFullSyncService {
       workspaceId,
     );
 
-    console.log(
+    this.logger.log(
       `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
         nextPageToken ? `and ${nextPageToken} pageToken` : ''
       }done.`,

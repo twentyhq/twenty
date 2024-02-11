@@ -15,10 +15,12 @@ export const query = gql`
     ) {
       edges {
         node {
+          __typename
           id
           opportunities {
             edges {
               node {
+                __typename
                 id
                 personId
                 pointOfContactId
@@ -44,6 +46,7 @@ export const query = gql`
           pointOfContactForOpportunities {
             edges {
               node {
+                __typename
                 id
                 personId
                 pointOfContactId
@@ -63,6 +66,7 @@ export const query = gql`
           }
           createdAt
           company {
+            __typename
             id
             xLink {
               label
@@ -91,6 +95,7 @@ export const query = gql`
           activityTargets {
             edges {
               node {
+                __typename
                 id
                 updatedAt
                 createdAt
@@ -105,7 +110,7 @@ export const query = gql`
           favorites {
             edges {
               node {
-                id
+                __typename
                 id
                 companyId
                 createdAt
@@ -119,6 +124,7 @@ export const query = gql`
           attachments {
             edges {
               node {
+                __typename
                 id
                 updatedAt
                 createdAt

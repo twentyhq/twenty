@@ -236,7 +236,7 @@ export const useViewBar = (props?: UseViewProps) => {
       (viewId: string) => {
         setCurrentViewId?.(viewId);
 
-        const { currentView, onViewTypeChange } =
+        const { currentView, onViewTypeChange, onViewCompactModeChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId: scopeId,
@@ -248,6 +248,7 @@ export const useViewBar = (props?: UseViewProps) => {
         }
 
         onViewTypeChange?.(currentView.type);
+        onViewCompactModeChange?.(currentView.isCompact);
         loadViewFields(currentView.viewFields, viewId);
         loadViewFilters(currentView.viewFilters, viewId);
         loadViewSorts(currentView.viewSorts, viewId);

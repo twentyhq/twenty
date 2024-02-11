@@ -1,9 +1,0 @@
-{
-  "label": "Local setup",
-  "position": 1,
-  "collapsible": true,
-  "collapsed": true,
-  "customProps": {
-    "icon": "TbDeviceDesktop"
-  }
-}
