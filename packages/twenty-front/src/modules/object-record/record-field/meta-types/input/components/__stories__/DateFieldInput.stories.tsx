@@ -94,7 +94,14 @@ export default meta;
 
 type Story = StoryObj<typeof DateFieldInputWithContext>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const div = await canvas.findByText('Feb 1, 2022');
+
+    await expect(div.innerText).toContain('Feb 1, 2022');
+  },
+};
 
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
