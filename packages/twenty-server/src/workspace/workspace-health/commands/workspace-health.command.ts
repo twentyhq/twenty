@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
 
@@ -20,6 +22,7 @@ interface WorkspaceHealthCommandOptions {
   description: 'Check health of the given workspace.',
 })
 export class WorkspaceHealthCommand extends CommandRunner {
+  private readonly logger = new Logger(WorkspaceHealthCommand.name);
   private readonly commandLogger = new CommandLogger(
     WorkspaceHealthCommand.name,
   );
@@ -40,21 +43,23 @@ export class WorkspaceHealthCommand extends CommandRunner {
     );
 
     if (issues.length === 0) {
-      console.log(chalk.green('Workspace is healthy'));
+      this.logger.log(chalk.green('Workspace is healthy'));
     } else {
-      console.log(chalk.red('Workspace is not healthy'));
+      this.logger.log(
+        chalk.red(`Workspace is not healthy, found ${issues.length} issues`),
+      );
 
       if (options.verbose) {
-        console.group(chalk.red('Issues'));
-        issues.forEach((issue) => {
-          console.log(chalk.yellow(JSON.stringify(issue, null, 2)));
-        });
-        console.groupEnd();
+        await this.commandLogger.writeLog(
+          `workspace-health-issues-${options.workspaceId}`,
+          issues,
+        );
+        this.logger.log(chalk.yellow('Issues written to log'));
       }
     }
 
     if (options.fix) {
-      console.log(chalk.yellow('Fixing issues'));
+      this.logger.log(chalk.yellow('Fixing issues'));
 
       const workspaceMigrations = await this.workspaceHealthService.fixIssues(
         options.workspaceId,
@@ -71,7 +76,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
           workspaceMigrations,
         );
       } else {
-        console.log(
+        this.logger.log(
           chalk.green(
             `Fixed ${workspaceMigrations.length}/${issues.length} issues`,
           ),
