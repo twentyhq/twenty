@@ -129,8 +129,17 @@ export class MessageParticipantService {
         .id,
     ]);
 
+    const valuesString = messageParticipantsToSave
+      .map(
+        (_, index) =>
+          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${
+            index * 6 + 4
+          }, $${index * 6 + 5}), $${index * 6 + 6})`,
+      )
+      .join(', ');
+
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
       messageParticipantsToSave,
     );
   }
