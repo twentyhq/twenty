@@ -283,6 +283,7 @@
   "version": "0.2.1",
   "workspaces": {
     "packages": [
+      "packages/twenty-chrome-extension",
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
