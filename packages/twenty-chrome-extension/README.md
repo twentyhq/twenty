@@ -48,4 +48,4 @@ yarn nx start twenty-chrome-extension
    <img src="../twenty-chrome-extension/public/readme-images/05-img-five.png" width="600" />
 </p>
 
-To install the extension in production mode without hmr (hot module reload), replace the command in STEP 3 with `yarn nx build twenty-chrome-extension`.
+To install the extension in production mode without hmr (hot module reload), replace the command in STEP THREE with `yarn nx build twenty-chrome-extension`.
