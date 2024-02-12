@@ -76,25 +76,8 @@ export class MessageParticipantService {
   ): Promise<void> {
     if (!participants) return;
 
-    for (const participant of participants) {
-      const participantPerson = await manager.query(
-        `SELECT "person"."id" FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1 LIMIT 1`,
-        [participant.handle],
-      );
-
-      let participantPersonId = participantPerson[0]?.id;
-
-      const workspaceMember = await manager.query(
-        `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
-          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1
-          LIMIT 1`,
-        [participant.handle],
-      );
-
-      const participantWorkspaceMemberId = workspaceMember[0]?.id;
-
-      if (!participantPersonId && !participantWorkspaceMemberId) {
+    const contactsToCreate = await Promise.all(
+      participants.map(async (participant) => {
         const companyDomainName = participant.handle
           .split('@')?.[1]
           .split('.')
@@ -108,26 +91,47 @@ export class MessageParticipantService {
           manager,
         );
 
-        participantPersonId = await this.createContactService.createContact(
-          participant.handle,
-          participant.displayName,
+        return {
+          handle: participant.handle,
+          displayName: participant.displayName,
           companyId,
-          dataSourceMetadata,
-          manager,
-        );
-      }
+        };
+      }),
+    );
 
-      await manager.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-          messageId,
-          participant.role,
-          participant.handle,
-          participant.displayName,
-          participantPersonId,
-          participantWorkspaceMemberId,
-        ],
-      );
-    }
+    await this.createContactService.createContacts(
+      contactsToCreate,
+      dataSourceMetadata,
+      manager,
+    );
+
+    const handles = participants.map((participant) => participant.handle);
+
+    const participantPersonIds = await manager.query(
+      `SELECT id, email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
+      handles,
+    );
+
+    const participantWorkspaceMemberIds = await manager.query(
+      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceMetadata.schema}."workspaceMember"
+          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = ANY($1)`,
+      handles,
+    );
+
+    const messageParticipantsToSave = participants.map((participant) => [
+      messageId,
+      participant.role,
+      participant.handle,
+      participant.displayName,
+      participantPersonIds.find((e) => e.email === participant.handle).id,
+      participantWorkspaceMemberIds.find((e) => e.email === participant.handle)
+        .id,
+    ]);
+
+    await manager.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+      messageParticipantsToSave,
+    );
   }
 }
