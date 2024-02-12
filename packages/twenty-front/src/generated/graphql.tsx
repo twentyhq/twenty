@@ -577,6 +577,7 @@ export type Verify = {
 
 export type Workspace = {
   __typename?: 'Workspace';
+  activationStatus: Scalars['String'];
   allowImpersonation: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;

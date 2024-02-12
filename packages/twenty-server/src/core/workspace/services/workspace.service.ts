@@ -22,6 +22,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     super(workspaceRepository);
   }
 
+  async isWorkspaceActivated(id: string): Promise<boolean> {
+    return await this.workspaceManagerService.doesDataSourceExist(id);
+  }
+
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
     if (!data.displayName || !data.displayName.length) {
       throw new BadRequestException("'displayName' not provided");
