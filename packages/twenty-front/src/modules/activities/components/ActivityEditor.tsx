@@ -8,7 +8,6 @@ import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdo
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -76,11 +75,6 @@ export const ActivityEditor = ({
   showComment = true,
   fillTitleFromBody = false,
 }: ActivityEditorProps) => {
-  // Use this directly in components : ActivityTitle, ActivityBodyEditor, ActivityComments
-  const [, setActivityEditorAnyFieldInFocus] = useRecoilState(
-    activityEditorAnyFieldInFocusState,
-  );
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
@@ -131,14 +125,6 @@ export const ActivityEditor = ({
     },
   });
 
-  const handleActivityEditorFieldFocus = () => {
-    setActivityEditorAnyFieldInFocus(true);
-  };
-
-  const handleActivityEditorFieldBlur = () => {
-    setActivityEditorAnyFieldInFocus(false);
-  };
-
   if (!activity) {
     return <></>;
   }
@@ -155,16 +141,10 @@ export const ActivityEditor = ({
               AssigneeFieldContextProvider && (
                 <>
                   <DueAtFieldContextProvider>
-                    <RecordInlineCell
-                      onBlur={handleActivityEditorFieldBlur}
-                      onFocus={handleActivityEditorFieldFocus}
-                    />
+                    <RecordInlineCell />
                   </DueAtFieldContextProvider>
                   <AssigneeFieldContextProvider>
-                    <RecordInlineCell
-                      onBlur={handleActivityEditorFieldBlur}
-                      onFocus={handleActivityEditorFieldFocus}
-                    />
+                    <RecordInlineCell />
                   </AssigneeFieldContextProvider>
                 </>
               )}
@@ -182,8 +162,6 @@ export const ActivityEditor = ({
         <ActivityComments
           activity={activity}
           scrollableContainerRef={containerRef}
-          onBlur={handleActivityEditorFieldBlur}
-          onFocus={handleActivityEditorFieldFocus}
         />
       )}
     </StyledContainer>

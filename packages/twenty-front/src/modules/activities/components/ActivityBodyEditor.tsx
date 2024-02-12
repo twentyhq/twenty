@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
-import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
@@ -21,7 +20,6 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
@@ -64,14 +62,10 @@ export const ActivityBodyEditor = ({
   });
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const containerId = useId();
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
-  const activityEditorAnyFieldInFocus = useRecoilValue(
-    activityEditorAnyFieldInFocusState,
-  );
 
   const { upsertActivity } = useUpsertActivity();
 
@@ -231,18 +225,6 @@ export const ActivityBodyEditor = ({
     }
   };
 
-  useListenClickOutside({
-    refs: [editorRef],
-    callback: (event) => {
-      if (
-        (event.target as HTMLDivElement)?.id === containerId &&
-        !activityEditorAnyFieldInFocus
-      ) {
-        editor.focus();
-      }
-    },
-  });
-
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -311,7 +293,10 @@ export const ActivityBodyEditor = ({
   };
 
   return (
-    <StyledBlockNoteStyledContainer ref={containerRef} id={containerId}>
+    <StyledBlockNoteStyledContainer
+      ref={containerRef}
+      onClick={() => editor.focus()}
+    >
       <BlockEditor
         onFocus={handleBlockEditorFocus}
         onBlur={handlerBlockEditorBlur}
