@@ -76,27 +76,42 @@ export class MessageParticipantService {
   ): Promise<void> {
     if (!participants) return;
 
+    const alreadyCreatedContacts = await manager.query(
+      `SELECT email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
+      [participants.map((participant) => participant.handle)],
+    );
+
+    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
+      ({ email }) => email,
+    );
+
     const contactsToCreate = await Promise.all(
-      participants.map(async (participant) => {
-        const companyDomainName = participant.handle
-          .split('@')?.[1]
-          .split('.')
-          .slice(-2)
-          .join('.')
-          .toLowerCase();
+      participants
+        .filter(
+          (participant) =>
+            !alreadyCreatedContactEmails.includes(participant.handle) &&
+            participant.handle.includes('@'),
+        )
+        ?.map(async (participant) => {
+          const companyDomainName = participant.handle
+            .split('@')?.[1]
+            .split('.')
+            .slice(-2)
+            .join('.')
+            .toLowerCase();
 
-        const companyId = await this.createCompaniesService.createCompany(
-          companyDomainName,
-          dataSourceMetadata,
-          manager,
-        );
+          const companyId = await this.createCompaniesService.createCompany(
+            companyDomainName,
+            dataSourceMetadata,
+            manager,
+          );
 
-        return {
-          handle: participant.handle,
-          displayName: participant.displayName,
-          companyId,
-        };
-      }),
+          return {
+            handle: participant.handle,
+            displayName: participant.displayName,
+            companyId,
+          };
+        }),
     );
 
     await this.createContactService.createContacts(
@@ -109,14 +124,14 @@ export class MessageParticipantService {
 
     const participantPersonIds = await manager.query(
       `SELECT id, email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
-      handles,
+      [handles],
     );
 
     const participantWorkspaceMemberIds = await manager.query(
       `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceMetadata.schema}."workspaceMember"
           JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = ANY($1)`,
-      handles,
+      [handles],
     );
 
     const messageParticipantsToSave = participants.map((participant) => [
@@ -124,9 +139,9 @@ export class MessageParticipantService {
       participant.role,
       participant.handle,
       participant.displayName,
-      participantPersonIds.find((e) => e.email === participant.handle).id,
+      participantPersonIds.find((e) => e.email === participant.handle)?.id,
       participantWorkspaceMemberIds.find((e) => e.email === participant.handle)
-        .id,
+        ?.id,
     ]);
 
     const valuesString = messageParticipantsToSave
@@ -134,13 +149,15 @@ export class MessageParticipantService {
         (_, index) =>
           `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${
             index * 6 + 4
-          }, $${index * 6 + 5}), $${index * 6 + 6})`,
+          }, $${index * 6 + 5}, $${index * 6 + 6})`,
       )
       .join(', ');
 
+    if (messageParticipantsToSave.length === 0) return;
+
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
-      messageParticipantsToSave,
+      messageParticipantsToSave.flat(),
     );
   }
 }

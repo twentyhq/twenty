@@ -59,6 +59,8 @@ export class CreateContactService {
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ): Promise<void> {
+    if (contactsToCreate.length === 0) return;
+
     const formattedContacts = this.formatContacts(contactsToCreate);
 
     const valuesString = formattedContacts
@@ -72,13 +74,15 @@ export class CreateContactService {
 
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${valuesString}`,
-      formattedContacts.map((contact) => [
-        contact.id,
-        contact.handle,
-        contact.firstName,
-        contact.lastName,
-        contact.companyId,
-      ]),
+      formattedContacts
+        .map((contact) => [
+          contact.id,
+          contact.handle,
+          contact.firstName,
+          contact.lastName,
+          contact.companyId,
+        ])
+        .flat(),
     );
   }
 }
