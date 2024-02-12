@@ -85,6 +85,10 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadata of fieldMetadataCollection) {
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(
@@ -116,6 +120,10 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
+      if (fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(
