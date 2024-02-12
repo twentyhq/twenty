@@ -5,8 +5,10 @@ import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metada
 
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
+import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
+
 @Module({
   imports: [WorkspaceSyncMetadataModule, DataSourceModule],
-  providers: [SyncWorkspaceMetadataCommand],
+  providers: [SyncWorkspaceMetadataCommand, SyncWorkspaceLoggerService],
 })
 export class WorkspaceSyncMetadataCommandsModule {}

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/Account';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 import { Status } from '@/ui/display/status/components/Status';
@@ -18,24 +18,24 @@ const StyledRightContainer = styled.div`
 `;
 
 type SettingsAccountsEmailsCardProps = {
-  accounts: Account[];
+  messageChannels: MessageChannel[];
 };
 
 export const SettingsAccountsEmailsCard = ({
-  accounts,
+  messageChannels,
 }: SettingsAccountsEmailsCardProps) => {
   const navigate = useNavigate();
 
   return (
     <Card>
-      {accounts.map((account, index) => (
+      {messageChannels.map((messageChannel, index) => (
         <SettingsAccountRow
-          key={account.id}
+          key={messageChannel.id}
           LeftIcon={IconGmail}
-          account={account}
+          account={messageChannel}
           rightComponent={
             <StyledRightContainer>
-              {account.isSynced ? (
+              {messageChannel.isSynced ? (
                 <Status color="green" text="Synced" weight="medium" />
               ) : (
                 <Status color="gray" text="Not Synced" weight="medium" />
@@ -43,8 +43,10 @@ export const SettingsAccountsEmailsCard = ({
               <LightIconButton Icon={IconChevronRight} accent="tertiary" />
             </StyledRightContainer>
           }
-          onClick={() => navigate(`/settings/accounts/emails/${account.id}`)}
-          divider={index < accounts.length - 1}
+          onClick={() =>
+            navigate(`/settings/accounts/emails/${messageChannel.id}`)
+          }
+          divider={index < messageChannels.length - 1}
         />
       ))}
     </Card>

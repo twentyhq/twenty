@@ -1,24 +1,16 @@
-import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
+import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
-  const { objectMetadataItems: newObjectMetadataItems } =
-    useFindManyObjectMetadataItems();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
-    objectMetadataItemsState,
+  return (
+    <>
+      <ObjectMetadataItemsLoadEffect />
+      {!!objectMetadataItems.length && <Story />}
+    </>
   );
-
-  useEffect(() => {
-    if (!isDeeplyEqual(objectMetadataItems, newObjectMetadataItems)) {
-      setObjectMetadataItems(newObjectMetadataItems);
-    }
-  }, [newObjectMetadataItems, objectMetadataItems, setObjectMetadataItems]);
-
-  return <Story />;
 };

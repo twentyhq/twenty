@@ -1,19 +1,27 @@
 import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
+import { mocked } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { v4 } from 'uuid';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   query,
-  responseData,
+  response,
   variables,
 } from '@/object-record/hooks/__mocks__/useCreateManyRecords';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 
-const people = [
-  { id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9' },
-  { id: '37faabcd-cb39-4a0a-8618-7e3fda9afca0' },
-];
+jest.mock('uuid', () => ({
+  v4: jest.fn(),
+}));
+
+mocked(v4)
+  .mockReturnValueOnce(variables.data[0].id)
+  .mockReturnValueOnce(variables.data[1].id);
+
+const input = variables.data.map(({ id: _id, ...personInput }) => personInput);
 
 const mocks = [
   {
@@ -23,10 +31,7 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: {
-        createPeople: people.map((person) => ({
-          id: person.id,
-          ...responseData,
-        })),
+        createPeople: response,
       },
     })),
   },
@@ -43,19 +48,18 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 describe('useCreateManyRecords', () => {
   it('works as expected', async () => {
     const { result } = renderHook(
-      () => useCreateManyRecords({ objectNameSingular: 'person' }),
+      () =>
+        useCreateManyRecords({
+          objectNameSingular: CoreObjectNameSingular.Person,
+        }),
       {
         wrapper: Wrapper,
       },
     );
 
     await act(async () => {
-      const res = await result.current.createManyRecords(people);
-      expect(res).toBeDefined();
-      expect(Array.isArray(res)).toBe(true);
-      expect(res?.length).toBe(2);
-      expect(res?.[0].id).toBe(people[0].id);
-      expect(res?.[1].id).toBe(people[1].id);
+      const res = await result.current.createManyRecords(input);
+      expect(res).toEqual(response);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();

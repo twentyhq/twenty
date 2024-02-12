@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -133,16 +134,23 @@ export const SettingsObjectNewFieldStep1 = () => {
             </StyledObjectFieldTableRow>
             {!!activeMetadataFields.length && (
               <TableSection isInitiallyExpanded={false} title="Active">
-                {activeMetadataFields.map((field) => (
+                {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
-                    key={field.id}
-                    fieldMetadataItem={field}
+                    key={activeMetadataField.id}
+                    fieldMetadataItem={activeMetadataField}
                     ActionIcon={
-                      <LightIconButton
-                        Icon={IconMinus}
-                        accent="tertiary"
-                        onClick={() => handleToggleField(field.id)}
-                      />
+                      isLabelIdentifierField({
+                        fieldMetadataItem: activeMetadataField,
+                        objectMetadataItem: activeObjectMetadataItem,
+                      }) ? undefined : (
+                        <LightIconButton
+                          Icon={IconMinus}
+                          accent="tertiary"
+                          onClick={() =>
+                            handleToggleField(activeMetadataField.id)
+                          }
+                        />
+                      )
                     }
                   />
                 ))}
@@ -150,15 +158,17 @@ export const SettingsObjectNewFieldStep1 = () => {
             )}
             {!!disabledMetadataFields.length && (
               <TableSection title="Disabled">
-                {disabledMetadataFields.map((field) => (
+                {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
-                    key={field.name}
-                    fieldMetadataItem={field}
+                    key={disabledMetadataField.name}
+                    fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <LightIconButton
                         Icon={IconPlus}
                         accent="tertiary"
-                        onClick={() => handleToggleField(field.id)}
+                        onClick={() =>
+                          handleToggleField(disabledMetadataField.id)
+                        }
                       />
                     }
                   />

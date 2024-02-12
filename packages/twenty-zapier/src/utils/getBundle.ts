@@ -1,6 +1,8 @@
 import { Bundle } from 'zapier-platform-core';
 
-const getBundle = (inputData?: { [x: string]: any }): Bundle => {
+import { InputData } from '../utils/data.types';
+
+const getBundle = (inputData?: InputData): Bundle => {
   return {
     authData: { apiKey: String(process.env.API_KEY) },
     inputData: inputData || {},

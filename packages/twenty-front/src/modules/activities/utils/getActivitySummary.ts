@@ -1,9 +1,25 @@
+import { isArray } from '@sniptt/guards';
+
 export const getActivitySummary = (activityBody: string) => {
   const noteBody = activityBody ? JSON.parse(activityBody) : [];
 
-  return (
-    noteBody[0]?.content?.text ||
-    noteBody[0]?.content?.map((content: any) => content?.text).join(' ') ||
-    ''
-  );
+  if (!noteBody.length) {
+    return '';
+  }
+
+  const firstNoteBlockContent = noteBody[0].content;
+
+  if (!firstNoteBlockContent) {
+    return '';
+  }
+
+  if (firstNoteBlockContent.text) {
+    return noteBody[0].content.text;
+  }
+
+  if (isArray(firstNoteBlockContent)) {
+    return firstNoteBlockContent.map((content: any) => content.text).join(' ');
+  }
+
+  return '';
 };

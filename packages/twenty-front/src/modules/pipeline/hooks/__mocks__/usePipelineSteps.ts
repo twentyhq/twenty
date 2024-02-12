@@ -10,6 +10,7 @@ export const query = gql`
       opportunities {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -34,20 +35,13 @@ export const currentPipelineId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
 
 const data = {
   color: 'yellow',
-  id: 'columnId',
+  id: mockId,
   position: 1,
   name: 'Column Title',
-  pipeline: { connect: { id: currentPipelineId } },
-  type: 'ongoing',
 };
 
 export const variables = {
-  input: {
-    id: mockId,
-    variables: {
-      data,
-    },
-  },
+  input: data,
 };
 
 export const deleteVariables = { idToDelete: 'columnId' };

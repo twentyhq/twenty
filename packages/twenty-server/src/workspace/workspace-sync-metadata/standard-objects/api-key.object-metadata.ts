@@ -19,7 +19,6 @@ export class ApiKeyObjectMetadata extends BaseObjectMetadata {
     label: 'Name',
     description: 'ApiKey name',
     icon: 'IconLink',
-    defaultValue: { value: '' },
   })
   name: string;
 

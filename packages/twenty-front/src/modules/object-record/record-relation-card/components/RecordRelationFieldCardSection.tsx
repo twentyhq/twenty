@@ -1,33 +1,32 @@
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
-import { usePersistField } from '@/object-record/field/hooks/usePersistField';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
-import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
-import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useUpsertRecordFromState } from '@/object-record/hooks/useUpsertRecordFromState';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { IconForbid, IconPlus } from '@/ui/display/icon';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { IconForbid, IconPencil, IconPlus } from '@/ui/display/icon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -39,6 +38,7 @@ const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
   align-items: center;
   display: flex;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${() => (useIsMobile() ? '0 12px' : 'unset')};
 
   ${({ isDropdownOpen, theme }) =>
     isDropdownOpen
@@ -79,7 +79,22 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const StyledCardNoContent = styled.div`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.light};
+
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(10)};
+  padding: ${({ theme }) => theme.spacing(0, 2)};
+`;
+
 export const RecordRelationFieldCardSection = () => {
+  const theme = useTheme();
+
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -87,7 +102,7 @@ export const RecordRelationFieldCardSection = () => {
     relationObjectMetadataNameSingular,
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
-  const record = useRecoilValue(entityFieldsFamilyState(entityId));
+  const record = useRecoilValue(recordStoreFamilyState(entityId));
 
   const {
     labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
@@ -102,80 +117,23 @@ export const RecordRelationFieldCardSection = () => {
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | null
-  >(entityFieldsFamilySelector({ entityId, fieldName }));
+  >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
+  const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
 
-  const { record: relationRecordFromFieldValue } = useFindOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: fieldValue?.id,
-    skip: !relationLabelIdentifierFieldMetadata || !isToOneObject,
-  });
-
-  // ONE_TO_MANY records cannot be retrieved from the field value,
-  // as the record's field is an empty "Connection" object.
-  // TODO: maybe the backend could return an array of related records instead?
-  const { records: relationRecordsFromQuery } = useFindManyRecords({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    filter: {
-      // TODO: this won't work for MANY_TO_MANY relations.
-      [`${relationFieldMetadataItem?.name}Id`]: {
-        eq: entityId,
-      },
-    },
-    skip:
-      !relationLabelIdentifierFieldMetadata ||
-      !relationFieldMetadataItem?.name ||
-      isToOneObject,
-  });
-
-  const relationRecords = useMemo(
-    () =>
-      relationRecordFromFieldValue
-        ? [relationRecordFromFieldValue]
-        : relationRecordsFromQuery,
-    [relationRecordFromFieldValue, relationRecordsFromQuery],
-  );
-  const relationRecordIds = useMemo(
-    () => relationRecords.map(({ id }) => id),
-    [relationRecords],
-  );
-
-  const upsertRecordFromState = useUpsertRecordFromState();
-
-  useEffect(() => {
-    relationRecords.forEach((relationRecord) =>
-      upsertRecordFromState(relationRecord),
-    );
-  }, [relationRecords, upsertRecordFromState]);
+  const relationRecords: ObjectRecord[] =
+    fieldValue && isToOneObject
+      ? [fieldValue]
+      : fieldValue?.edges.map(({ node }: { node: ObjectRecord }) => node) ?? [];
+  const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
-  const {
-    identifiersMapper,
-    relationPickerSearchFilter,
-    searchQuery,
-    setRelationPickerSearchFilter,
-  } = useRelationPicker();
-
-  const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(
-            relationObjectMetadataNameSingular,
-          ) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    mappingFunction: (recordToMap: any) =>
-      identifiersMapper?.(recordToMap, relationObjectMetadataNameSingular),
-    selectedIds: relationRecordIds,
-    excludeEntityIds: relationRecordIds,
-    objectNameSingular: relationObjectMetadataNameSingular,
+  const { setRelationPickerSearchFilter } = useRelationPicker({
+    relationPickerScopeId: dropdownId,
   });
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
@@ -192,25 +150,20 @@ export const RecordRelationFieldCardSection = () => {
   ) => {
     closeDropdown();
 
-    if (!selectedRelationEntity?.id) return;
+    if (!selectedRelationEntity?.id || !relationFieldMetadataItem?.name) return;
 
     if (isToOneObject) {
       persistField(selectedRelationEntity.record);
       return;
     }
 
-    if (!relationFieldMetadataItem?.name) return;
-
     updateOneRelationRecord({
       idToUpdate: selectedRelationEntity.id,
       updateOneRecordInput: {
-        [`${relationFieldMetadataItem.name}Id`]: entityId,
         [relationFieldMetadataItem.name]: record,
       },
     });
   };
-
-  if (!relationLabelIdentifierFieldMetadata) return null;
 
   const filterQueryParams: FilterQueryParams = {
     filter: {
@@ -223,13 +176,15 @@ export const RecordRelationFieldCardSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
+  const { getIcon } = useIcons();
+  const Icon = getIcon(relationObjectMetadataItem.icon);
+
   return (
     <Section>
       <StyledHeader isDropdownOpen={isDropdownOpen}>
         <StyledTitle>
           <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
-          {parseFieldRelationType(relationFieldMetadataItem) ===
-            'TO_ONE_OBJECT' && (
+          {isFromManyObjects && (
             <StyledLink to={filterLinkHref}>
               All ({relationRecords.length})
             </StyledLink>
@@ -243,17 +198,22 @@ export const RecordRelationFieldCardSection = () => {
             clickableComponent={
               <LightIconButton
                 className="displayOnHover"
-                Icon={IconPlus}
+                Icon={isToOneObject ? IconPencil : IconPlus}
                 accent="tertiary"
               />
             }
             dropdownComponents={
-              <SingleEntitySelectMenuItemsWithSearch
-                EmptyIcon={IconForbid}
-                entitiesToSelect={entities.entitiesToSelect}
-                loading={entities.loading}
-                onEntitySelected={handleRelationPickerEntitySelected}
-              />
+              <RelationPickerScope relationPickerScopeId={dropdownId}>
+                <SingleEntitySelectMenuItemsWithSearch
+                  EmptyIcon={IconForbid}
+                  onEntitySelected={handleRelationPickerEntitySelected}
+                  selectedRelationRecordIds={relationRecordIds}
+                  relationObjectNameSingular={
+                    relationObjectMetadataNameSingular
+                  }
+                  relationPickerScopeId={dropdownId}
+                />
+              </RelationPickerScope>
             }
             dropdownHotkeyScope={{
               scope: dropdownId,
@@ -261,6 +221,12 @@ export const RecordRelationFieldCardSection = () => {
           />
         </DropdownScope>
       </StyledHeader>
+      {relationRecords.length === 0 && (
+        <StyledCardNoContent>
+          <Icon size={theme.icon.size.sm} />
+          <div>No {relationObjectMetadataItem.labelSingular}</div>
+        </StyledCardNoContent>
+      )}
       {!!relationRecords.length && (
         <Card>
           {relationRecords.slice(0, 5).map((relationRecord, index) => (

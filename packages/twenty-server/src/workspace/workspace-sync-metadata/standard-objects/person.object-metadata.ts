@@ -13,7 +13,7 @@ import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
-import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 
 @ObjectMetadata({
@@ -39,7 +39,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
-  @IsNullable()
   email: string;
 
   @FieldMetadata({
@@ -66,7 +65,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  @IsNullable()
   jobTitle: string;
 
   @FieldMetadata({
@@ -75,7 +73,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
-  @IsNullable()
   phone: string;
 
   @FieldMetadata({
@@ -84,7 +81,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s city',
     icon: 'IconMap',
   })
-  @IsNullable()
   city: string;
 
   @FieldMetadata({
@@ -94,8 +90,17 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconFileUpload',
   })
   @IsSystem()
-  @IsNullable()
   avatarUrl: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.NUMBER,
+    label: 'Position',
+    description: 'Record Position',
+    icon: 'IconHierarchy2',
+  })
+  @IsSystem()
+  @IsNullable()
+  position: number;
 
   // Relations
   @FieldMetadata({
@@ -137,19 +142,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Opportunities',
-    description: 'Opportunities linked to the contact.',
-    icon: 'IconTargetArrow',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
-  })
-  @IsNullable()
-  opportunities: OpportunityObjectMetadata[];
-
-  @FieldMetadata({
-    type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the contact',
     icon: 'IconHeart',
@@ -176,18 +168,18 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Recipients',
-    description: 'Message Recipients',
+    label: 'Message Participants',
+    description: 'Message Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageRecipient',
+    objectName: 'messageParticipant',
     inverseSideFieldName: 'person',
   })
   @Gate({
     featureFlag: 'IS_MESSAGING_ENABLED',
   })
   @IsNullable()
-  messageRecipients: MessageRecipientObjectMetadata[];
+  messageParticipants: MessageParticipantObjectMetadata[];
 }

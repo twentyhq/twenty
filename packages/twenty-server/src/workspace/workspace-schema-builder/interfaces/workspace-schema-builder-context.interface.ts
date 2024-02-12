@@ -3,7 +3,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 export interface WorkspaceSchemaBuilderContext {
   workspaceId: string;
-  targetTableName: string;
+  objectMetadataItem: ObjectMetadataInterface;
   fieldMetadataCollection: FieldMetadataInterface[];
   objectMetadataCollection: ObjectMetadataInterface[];
 }

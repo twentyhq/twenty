@@ -7,7 +7,15 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/workspace/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/workspace/workspace-health/services/object-metadata-health.service';
+import { RelationMetadataHealthService } from 'src/workspace/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
+import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migration-builder/workspace-migration-builder.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+
+import { WorkspaceFixService } from './services/workspace-fix.service';
+import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.service';
+import { WorkspaceFixTypeService } from './services/workspace-fix-type.service';
+import { WorkspaceFixDefaultValueService } from './services/workspace-fix-default-value.service';
 
 @Module({
   imports: [
@@ -15,12 +23,19 @@ import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace
     TypeORMModule,
     ObjectMetadataModule,
     WorkspaceDataSourceModule,
+    WorkspaceMigrationRunnerModule,
+    WorkspaceMigrationBuilderModule,
   ],
   providers: [
     WorkspaceHealthService,
     DatabaseStructureService,
     ObjectMetadataHealthService,
     FieldMetadataHealthService,
+    RelationMetadataHealthService,
+    WorkspaceFixNullableService,
+    WorkspaceFixTypeService,
+    WorkspaceFixDefaultValueService,
+    WorkspaceFixService,
   ],
   exports: [WorkspaceHealthService],
 })

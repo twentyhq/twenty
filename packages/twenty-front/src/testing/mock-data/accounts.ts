@@ -1,8 +1,8 @@
-import { Account } from '@/accounts/types/Account';
 import { BlockedEmail } from '@/accounts/types/BlockedEmail';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
 
-export const mockedAccounts: Account[] = [
+export const mockedAccounts: MessageChannel[] = [
   {
     handle: 'thomas@twenty.com',
     isSynced: true,

@@ -55,7 +55,6 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 
           const searchFilter =
             searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
-
           return [
             `filter${capitalize(nameSingular)}`,
             {

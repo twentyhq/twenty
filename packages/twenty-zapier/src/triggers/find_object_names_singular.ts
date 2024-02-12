@@ -1,10 +1,11 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
+
 import { requestSchema } from '../utils/requestDb';
 
 const objectListRequest = async (z: ZObject, bundle: Bundle) => {
   const schema = await requestSchema(z, bundle);
   return Object.keys(schema.components.schemas).map((schema) => {
-    return { id: schema, nameSingular: schema };
+    return { id: schema, nameSingular: schema.toLowerCase() };
   });
 };
 

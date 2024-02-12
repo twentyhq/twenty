@@ -32,7 +32,7 @@ export class FilterTypeFactory {
 
   public create(
     fieldMetadata: FieldMetadataInterface,
-    buildOtions: WorkspaceBuildSchemaOptions,
+    buildOptions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLInputType {
     const target = isCompositeFieldMetadataType(fieldMetadata.type)
@@ -46,8 +46,8 @@ export class FilterTypeFactory {
     } else {
       filterType = this.typeMapperService.mapToFilterType(
         fieldMetadata.type,
-        buildOtions.dateScalarMode,
-        buildOtions.numberScalarMode,
+        buildOptions.dateScalarMode,
+        buildOptions.numberScalarMode,
       );
 
       filterType ??= this.typeDefinitionsStorage.getInputTypeByKey(
@@ -59,7 +59,7 @@ export class FilterTypeFactory {
     if (!filterType) {
       this.logger.error(`Could not find a GraphQL type for ${target}`, {
         fieldMetadata,
-        buildOtions,
+        buildOptions,
         typeOptions,
       });
 

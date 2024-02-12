@@ -71,6 +71,9 @@ export const fullNameObjectDefinition = {
   fields: fullNameFields(),
   fromRelations: [],
   toRelations: [],
+  isActive: true,
+  isSystem: true,
+  isCustom: false,
 } satisfies ObjectMetadataInterface;
 
 export type FullNameMetadata = {

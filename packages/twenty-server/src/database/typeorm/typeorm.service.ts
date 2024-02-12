@@ -39,8 +39,6 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   ): Promise<DataSource | undefined> {
     const isMultiDatasourceEnabled = false;
 
-    console.log('Data sources number', this.dataSources.size);
-
     if (isMultiDatasourceEnabled) {
       // Wait for a bit before trying again if another initialization is in progress
       while (this.isDatasourceInitializing.get(dataSource.id)) {

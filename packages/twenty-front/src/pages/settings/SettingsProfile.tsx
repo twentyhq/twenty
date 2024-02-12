@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ChangePassword } from '@/settings/profile/components/ChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
@@ -17,7 +18,7 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsProfile = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    <SettingsPageContainer width={350}>
+    <SettingsPageContainer>
       <StyledH1Title title="Profile" />
       <Section>
         <H2Title title="Picture" />
@@ -33,6 +34,9 @@ export const SettingsProfile = () => (
           description="The email associated to your account"
         />
         <EmailField />
+      </Section>
+      <Section>
+        <ChangePassword />
       </Section>
       <Section>
         <DeleteAccount />

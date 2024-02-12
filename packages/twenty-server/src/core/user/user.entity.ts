@@ -34,6 +34,10 @@ export class User {
   @Column()
   email: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  defaultAvatarUrl: string;
+
   @Field()
   @Column({ default: false })
   emailVerified: boolean;
@@ -68,11 +72,19 @@ export class User {
   })
   defaultWorkspace: Workspace;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passwordResetToken: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passwordResetTokenExpiresAt: Date;
+
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: true,
   })
   refreshTokens: RefreshToken[];
 
-  @Field(() => WorkspaceMember, { nullable: false })
+  @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
 }

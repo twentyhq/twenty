@@ -26,7 +26,7 @@ export class UpdateOneResolverFactory
 
     return (_source, args, context, info) => {
       return this.workspaceQueryRunnerService.updateOne(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,

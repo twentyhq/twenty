@@ -29,14 +29,15 @@ const StyledContainer = styled.div`
   height: 40px;
   padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+  overflow: auto;
 `;
 
 export const TabList = ({ tabs, tabListId }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
-  const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
+  const { getActiveTabIdState, setActiveTabId } = useTabList(tabListId);
 
-  const activeTabId = useRecoilValue(activeTabIdState());
+  const activeTabId = useRecoilValue(getActiveTabIdState());
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);

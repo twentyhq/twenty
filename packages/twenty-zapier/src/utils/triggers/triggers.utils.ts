@@ -1,5 +1,6 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
+import { ObjectData } from '../../utils/data.types';
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, { requestDbViaRestApi } from '../../utils/requestDb';
 
@@ -16,7 +17,7 @@ export const subscribe = async (
 ) => {
   const data = {
     targetUrl: bundle.targetUrl,
-    operation: `${operation}.${bundle.inputData.namePlural}`,
+    operation: `${operation}.${bundle.inputData.nameSingular}`,
   };
   const result = await requestDb(
     z,
@@ -39,18 +40,65 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  return [bundle.cleanedRequest];
+  const record = bundle.cleanedRequest.record;
+  if (record.createdAt) {
+    record.createdAt = record.createdAt + 'Z';
+  }
+  if (record.updatedAt) {
+    record.updatedAt = record.updatedAt + 'Z';
+  }
+  if (record.revokedAt) {
+    record.revokedAt = record.revokedAt + 'Z';
+  }
+  if (record.expiresAt) {
+    record.expiresAt = record.expiresAt + 'Z';
+  }
+  return [record];
+};
+
+const getNamePluralFromNameSingular = async (
+  z: ZObject,
+  bundle: Bundle,
+  nameSingular: string,
+): Promise<string> => {
+  const result = await requestDb(
+    z,
+    bundle,
+    `query GetObjects {
+    objects(paging: {first: 1000}) {
+      edges {
+        node {
+          nameSingular
+          namePlural
+        }
+      }
+    }
+  }`,
+    'metadata',
+  );
+  for (const object of result.data.objects.edges) {
+    if (object.node.nameSingular === nameSingular) {
+      return object.node.namePlural;
+    }
+  }
+  throw new Error(`Unknown Object Name Singular ${nameSingular}`);
 };
 
 export const listSample = async (
   z: ZObject,
   bundle: Bundle,
   onlyIds = false,
-) => {
+): Promise<ObjectData[]> => {
+  const nameSingular = bundle.inputData.nameSingular;
+  const namePlural = await getNamePluralFromNameSingular(
+    z,
+    bundle,
+    nameSingular,
+  );
   const result: { [key: string]: string }[] = await requestDbViaRestApi(
     z,
     bundle,
-    bundle.inputData.namePlural,
+    namePlural,
   );
 
   if (onlyIds) {

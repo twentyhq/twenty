@@ -55,6 +55,7 @@ type RecordInlineCellDisplayModeProps = {
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
   isHovered?: boolean;
+  emptyPlaceholder?: string;
 };
 
 export const RecordInlineCellDisplayMode = ({
@@ -62,6 +63,7 @@ export const RecordInlineCellDisplayMode = ({
   isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
+  emptyPlaceholder = 'Empty',
   isHovered,
 }: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => (
   <StyledRecordInlineCellNormalModeOuterContainer
@@ -72,7 +74,7 @@ export const RecordInlineCellDisplayMode = ({
   >
     <StyledRecordInlineCellNormalModeInnerContainer>
       {isDisplayModeContentEmpty || !children ? (
-        <StyledEmptyField>{'Empty'}</StyledEmptyField>
+        <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
       ) : (
         children
       )}

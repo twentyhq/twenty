@@ -116,9 +116,12 @@ export const IconPicker = ({
         })
       : [];
 
+    const isSelectedIconMatchingFilter =
+      selectedIconKey && filteredIconKeys.includes(selectedIconKey);
+
     const uniqueFilteredIconKeys = [
       ...new Set(
-        selectedIconKey
+        selectedIconKey && isSelectedIconMatchingFilter
           ? [selectedIconKey, ...filteredIconKeys]
           : filteredIconKeys,
       ),

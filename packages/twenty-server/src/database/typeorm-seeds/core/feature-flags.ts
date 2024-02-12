@@ -16,27 +16,7 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsRelationFieldTypeEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsMessagingEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsNoteCreateImagesEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsSelectFieldTypeEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsRatingFieldTypeEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -46,7 +26,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: 'IS_RELATION_FIELD_CARD_ENABLED',
+        key: FeatureFlagKeys.IsNewRecordBoardEnabled,
         workspaceId: workspaceId,
         value: true,
       },

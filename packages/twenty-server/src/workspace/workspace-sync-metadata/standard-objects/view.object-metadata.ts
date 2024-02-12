@@ -23,7 +23,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'View name',
-    defaultValue: { value: '' },
   })
   name: string;
 
@@ -41,6 +40,14 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     defaultValue: { value: 'table' },
   })
   type: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Compact View',
+    description: 'Describes if the view is in compact mode',
+    defaultValue: { value: false },
+  })
+  isCompact: boolean;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,

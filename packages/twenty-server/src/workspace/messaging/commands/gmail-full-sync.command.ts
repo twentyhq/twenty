@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { Inject } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
@@ -7,8 +8,13 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
-import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import {
+  GmailFullSyncJobData,
+  GmailFullSyncJob,
+} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
 
 interface GmailFullSyncOptions {
   workspaceId: string;
@@ -20,11 +26,11 @@ interface GmailFullSyncOptions {
 })
 export class GmailFullSyncCommand extends CommandRunner {
   constructor(
-    private readonly messagingProducer: MessagingProducer,
-    private readonly utils: MessagingUtilsService,
-
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @Inject(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly connectedAccountService: ConnectedAccountService,
   ) {
     super();
   }
@@ -59,12 +65,19 @@ export class GmailFullSyncCommand extends CommandRunner {
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     const connectedAccounts =
-      await this.utils.getConnectedAccountsFromWorkspaceId(workspaceId);
+      await this.connectedAccountService.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
-      await this.messagingProducer.enqueueGmailFullSync(
-        { workspaceId, connectedAccountId: connectedAccount.id },
-        `${workspaceId}-${connectedAccount.id}`,
+      await this.messageQueueService.add<GmailFullSyncJobData>(
+        GmailFullSyncJob.name,
+        {
+          workspaceId,
+          connectedAccountId: connectedAccount.id,
+        },
+        {
+          id: `${workspaceId}-${connectedAccount.id}`,
+          retryLimit: 2,
+        },
       );
     }
   }

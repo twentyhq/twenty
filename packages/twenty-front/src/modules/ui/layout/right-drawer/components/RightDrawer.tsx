@@ -5,11 +5,10 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
@@ -53,9 +52,15 @@ export const RightDrawer = () => {
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
 
+  const { useListenClickOutside } = useClickOutsideListener(
+    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
   useListenClickOutside({
     refs: [rightDrawerRef],
-    callback: () => closeRightDrawer(),
+    callback: () => {
+      closeRightDrawer();
+    },
     mode: ClickOutsideMode.comparePixels,
   });
 
@@ -63,7 +68,10 @@ export const RightDrawer = () => {
 
   useScopedHotkeys(
     [Key.Escape],
-    () => closeRightDrawer(),
+
+    () => {
+      closeRightDrawer();
+    },
     RightDrawerHotkeyScope.RightDrawer,
     [setIsRightDrawerOpen],
   );
@@ -80,11 +88,23 @@ export const RightDrawer = () => {
     return <></>;
   }
 
+  const variants = {
+    fullScreen: {
+      width: '100%',
+    },
+    normal: {
+      width: rightDrawerWidth,
+    },
+    closed: {
+      width: 0,
+    },
+  };
+
   return (
     <StyledContainer
-      animate={{
-        width: rightDrawerWidth,
-      }}
+      initial="closed"
+      animate={isRightDrawerOpen ? 'normal' : 'closed'}
+      variants={variants}
       transition={{
         duration: theme.animation.duration.normal,
       }}

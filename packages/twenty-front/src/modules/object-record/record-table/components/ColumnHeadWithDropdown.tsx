@@ -1,18 +1,14 @@
 import styled from '@emotion/styled';
 
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-
-import { FieldMetadata } from '../../field/types/FieldMetadata';
-import { ColumnDefinition } from '../types/ColumnDefinition';
 
 import { ColumnHead } from './ColumnHead';
 import { RecordTableColumnDropdownMenu } from './RecordTableColumnDropdownMenu';
 
 type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  primaryColumnKey: string;
 };
 
 const StyledDropdown = styled(Dropdown)`
@@ -22,22 +18,12 @@ const StyledDropdown = styled(Dropdown)`
 
 export const ColumnHeadWithDropdown = ({
   column,
-  isFirstColumn,
-  isLastColumn,
-  primaryColumnKey,
 }: ColumnHeadWithDropdownProps) => {
   return (
     <StyledDropdown
       dropdownId={column.fieldMetadataId + '-header'}
       clickableComponent={<ColumnHead column={column} />}
-      dropdownComponents={
-        <RecordTableColumnDropdownMenu
-          column={column}
-          isFirstColumn={isFirstColumn}
-          isLastColumn={isLastColumn}
-          primaryColumnKey={primaryColumnKey}
-        />
-      }
+      dropdownComponents={<RecordTableColumnDropdownMenu column={column} />}
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
       dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}

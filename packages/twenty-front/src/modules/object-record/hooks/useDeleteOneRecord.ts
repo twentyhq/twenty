@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
+import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -12,57 +12,58 @@ type useDeleteOneRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-export const useDeleteOneRecord = <T>({
+export const useDeleteOneRecord = ({
   objectNameSingular,
-  refetchFindManyQuery = false,
 }: useDeleteOneRecordProps) => {
-  const { performOptimisticEvict } = useOptimisticEvict();
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular,
-  });
-
-  const { objectMetadataItem, deleteOneRecordMutation, findManyRecordsQuery } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
-
   const apolloClient = useApolloClient();
+
+  const { objectMetadataItem, deleteOneRecordMutation, getRecordFromCache } =
+    useObjectMetadataItem({ objectNameSingular });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const mutationResponseField =
+    getDeleteOneRecordMutationResponseField(objectNameSingular);
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      triggerOptimisticEffects({
-        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        deletedRecordIds: [idToDelete],
-      });
-
-      performOptimisticEvict(
-        capitalize(objectMetadataItem.nameSingular),
-        'id',
-        idToDelete,
-      );
-
       const deletedRecord = await apolloClient.mutate({
         mutation: deleteOneRecordMutation,
-        variables: {
-          idToDelete,
+        variables: { idToDelete },
+        optimisticResponse: {
+          [mutationResponseField]: {
+            __typename: capitalize(objectNameSingular),
+            id: idToDelete,
+          },
         },
-        refetchQueries: refetchFindManyQuery
-          ? [getOperationName(findManyRecordsQuery) ?? '']
-          : [],
+        update: (cache, { data }) => {
+          const record = data?.[mutationResponseField];
+
+          if (!record) return;
+
+          const cachedRecord = getRecordFromCache(record.id, cache);
+
+          if (!cachedRecord) return;
+
+          triggerDeleteRecordsOptimisticEffect({
+            cache,
+            objectMetadataItem,
+            recordsToDelete: [cachedRecord],
+            objectMetadataItems,
+          });
+        },
       });
 
-      return deletedRecord.data[
-        `delete${capitalize(objectMetadataItem.nameSingular)}`
-      ] as T;
+      return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
-      triggerOptimisticEffects,
-      objectMetadataItem.nameSingular,
-      performOptimisticEvict,
       apolloClient,
       deleteOneRecordMutation,
-      refetchFindManyQuery,
-      findManyRecordsQuery,
+      getRecordFromCache,
+      mutationResponseField,
+      objectMetadataItem,
+      objectNameSingular,
+      objectMetadataItems,
     ],
   );
 

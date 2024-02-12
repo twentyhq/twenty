@@ -9,21 +9,10 @@ const sortDefinition: SortDefinition = {
 };
 
 describe('turnSortsIntoOrderBy', () => {
-  it('should sort by createdAt if no sorts and createdAt field exists', () => {
+  it('should sort by recordPosition if no sorts', () => {
     const fields = [{ id: 'field1', name: 'createdAt' }];
     expect(turnSortsIntoOrderBy([], fields)).toEqual({
-      createdAt: 'DescNullsFirst',
-    });
-  });
-
-  it('should return empty OrderByField if no sorts and no createdAt field', () => {
-    expect(turnSortsIntoOrderBy([], [])).toEqual({});
-  });
-
-  it('should sort by first field if no sorts and createdAt field do not exists', () => {
-    const fields = [{ id: 'field1', name: 'field1' }];
-    expect(turnSortsIntoOrderBy([], fields)).toEqual({
-      field1: 'DescNullsFirst',
+      position: 'AscNullsFirst',
     });
   });
 
@@ -38,6 +27,7 @@ describe('turnSortsIntoOrderBy', () => {
     const fields = [{ id: 'field1', name: 'field1' }];
     expect(turnSortsIntoOrderBy(sorts, fields)).toEqual({
       field1: 'AscNullsFirst',
+      position: 'AscNullsFirst',
     });
   });
 
@@ -61,6 +51,7 @@ describe('turnSortsIntoOrderBy', () => {
     expect(turnSortsIntoOrderBy(sorts, fields)).toEqual({
       field1: 'AscNullsFirst',
       field2: 'DescNullsLast',
+      position: 'AscNullsFirst',
     });
   });
 

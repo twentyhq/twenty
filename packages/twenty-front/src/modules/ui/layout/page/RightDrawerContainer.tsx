@@ -19,8 +19,8 @@ const StyledMainContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   min-height: 0;
   padding-bottom: ${({ theme }) => theme.spacing(3)};
-  padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
+  padding-left: 0;
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {

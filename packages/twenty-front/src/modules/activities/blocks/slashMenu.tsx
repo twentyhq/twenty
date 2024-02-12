@@ -9,8 +9,8 @@ import { IconFile } from '@/ui/display/icon';
 
 import { blockSchema } from './schema';
 
-export const getSlashMenu = (imagesActivated: boolean) => {
-  let items = [
+export const getSlashMenu = () => {
+  const items = [
     ...getDefaultReactSlashMenuItems(blockSchema),
     {
       name: 'File',
@@ -40,10 +40,5 @@ export const getSlashMenu = (imagesActivated: boolean) => {
       },
     },
   ];
-
-  if (!imagesActivated) {
-    items = items.filter((x) => x.name !== 'Image');
-  }
-
   return items;
 };

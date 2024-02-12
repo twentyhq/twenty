@@ -19,6 +19,10 @@ export type Scalars = {
   Upload: any;
 };
 
+export type ActivateWorkspaceInput = {
+  displayName?: InputMaybe<Scalars['String']>;
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -77,15 +81,6 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
-export type CreateOneRefreshTokenInput = {
-  /** The record to create */
-  refreshToken: CreateRefreshTokenInput;
-};
-
-export type CreateRefreshTokenInput = {
-  expiresAt: Scalars['DateTime'];
-};
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -95,6 +90,17 @@ export type CursorPaging = {
   first?: InputMaybe<Scalars['Int']>;
   /** Paginate last */
   last?: InputMaybe<Scalars['Int']>;
+};
+
+export type DeleteOneObjectInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID'];
+};
+
+export type EmailPasswordResetLink = {
+  __typename?: 'EmailPasswordResetLink';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
 };
 
 export type FeatureFlag = {
@@ -199,6 +205,12 @@ export type IdFilterComparison = {
   notLike?: InputMaybe<Scalars['ID']>;
 };
 
+export type InvalidatePassword = {
+  __typename?: 'InvalidatePassword';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -206,25 +218,33 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateWorkspace: Workspace;
   challenge: LoginToken;
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   deleteCurrentWorkspace: Workspace;
-  deleteOneObject: ObjectDeleteResponse;
+  deleteOneObject: Object;
   deleteUser: User;
+  emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
   updateOneObject: Object;
+  updatePasswordViaResetToken: InvalidatePassword;
   updateWorkspace: Workspace;
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
+};
+
+
+export type MutationActivateWorkspaceArgs = {
+  data: ActivateWorkspaceInput;
 };
 
 
@@ -240,8 +260,13 @@ export type MutationCreateEventArgs = {
 };
 
 
-export type MutationCreateOneRefreshTokenArgs = {
-  input: CreateOneRefreshTokenInput;
+export type MutationDeleteOneObjectArgs = {
+  input: DeleteOneObjectInput;
+};
+
+
+export type MutationEmailPasswordResetLinkArgs = {
+  email: Scalars['String'];
 };
 
 
@@ -265,6 +290,12 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdatePasswordViaResetTokenArgs = {
+  newPassword: Scalars['String'];
+  passwordResetToken: Scalars['String'];
 };
 
 
@@ -309,25 +340,6 @@ export type ObjectConnection = {
   totalCount: Scalars['Int'];
 };
 
-export type ObjectDeleteResponse = {
-  __typename?: 'ObjectDeleteResponse';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  dataSourceId?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  icon?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['ID']>;
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  isCustom?: Maybe<Scalars['Boolean']>;
-  isSystem?: Maybe<Scalars['Boolean']>;
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
-  labelPlural?: Maybe<Scalars['String']>;
-  labelSingular?: Maybe<Scalars['String']>;
-  namePlural?: Maybe<Scalars['String']>;
-  nameSingular?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
 export type ObjectFieldsConnection = {
   __typename?: 'ObjectFieldsConnection';
   /** Array of edges. */
@@ -358,10 +370,11 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
-  getTimelineThreadsFromCompanyId: Array<TimelineThread>;
-  getTimelineThreadsFromPersonId: Array<TimelineThread>;
+  getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
+  getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
   objects: ObjectConnection;
+  validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
 
@@ -381,12 +394,21 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
-  companyId: Scalars['String'];
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
-  personId: Scalars['String'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  personId: Scalars['ID'];
+};
+
+
+export type QueryValidatePasswordResetTokenArgs = {
+  passwordResetToken: Scalars['String'];
 };
 
 export type RefreshToken = {
@@ -436,7 +458,7 @@ export enum RelationMetadataType {
 
 export type Sentry = {
   __typename?: 'Sentry';
-  dsn: Scalars['String'];
+  dsn?: Maybe<Scalars['String']>;
 };
 
 /** Sort Directions */
@@ -465,13 +487,33 @@ export type Telemetry = {
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
-  body: Scalars['String'];
+  firstParticipant: TimelineThreadParticipant;
+  id: Scalars['ID'];
+  lastMessageBody: Scalars['String'];
+  lastMessageReceivedAt: Scalars['DateTime'];
+  lastTwoParticipants: Array<TimelineThreadParticipant>;
   numberOfMessagesInThread: Scalars['Float'];
+  participantCount: Scalars['Float'];
   read: Scalars['Boolean'];
-  receivedAt: Scalars['DateTime'];
-  senderName: Scalars['String'];
-  senderPictureUrl: Scalars['String'];
   subject: Scalars['String'];
+  visibility: Scalars['String'];
+};
+
+export type TimelineThreadParticipant = {
+  __typename?: 'TimelineThreadParticipant';
+  avatarUrl: Scalars['String'];
+  displayName: Scalars['String'];
+  firstName: Scalars['String'];
+  handle: Scalars['String'];
+  lastName: Scalars['String'];
+  personId?: Maybe<Scalars['ID']>;
+  workspaceMemberId?: Maybe<Scalars['ID']>;
+};
+
+export type TimelineThreadsWithTotal = {
+  __typename?: 'TimelineThreadsWithTotal';
+  timelineThreads: Array<TimelineThread>;
+  totalNumberOfThreads: Scalars['Int'];
 };
 
 export type TransientToken = {
@@ -491,6 +533,7 @@ export type User = {
   __typename?: 'User';
   canImpersonate: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
+  defaultAvatarUrl?: Maybe<Scalars['String']>;
   defaultWorkspace: Workspace;
   deletedAt?: Maybe<Scalars['DateTime']>;
   disabled?: Maybe<Scalars['Boolean']>;
@@ -500,9 +543,11 @@ export type User = {
   id: Scalars['ID'];
   lastName: Scalars['String'];
   passwordHash?: Maybe<Scalars['String']>;
+  passwordResetToken?: Maybe<Scalars['String']>;
+  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  workspaceMember: WorkspaceMember;
+  workspaceMember?: Maybe<WorkspaceMember>;
 };
 
 export type UserEdge = {
@@ -516,6 +561,12 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   exists: Scalars['Boolean'];
+};
+
+export type ValidatePasswordResetToken = {
+  __typename?: 'ValidatePasswordResetToken';
+  email: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export type Verify = {
@@ -660,19 +711,31 @@ export type RelationEdge = {
   node: Relation;
 };
 
+export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+
+export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: string, read: boolean, visibility: string, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+
+export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, visibility: string, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['String'];
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, visibility: string, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['String'];
+  personId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: string, read: boolean, visibility: string, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type TimelineThreadFragment = { __typename?: 'TimelineThread', id: string, subject: string, lastMessageReceivedAt: string };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -694,6 +757,13 @@ export type ChallengeMutationVariables = Exact<{
 
 export type ChallengeMutation = { __typename?: 'Mutation', challenge: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
+export type EmailPasswordResetLinkMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
+
 export type GenerateApiKeyTokenMutationVariables = Exact<{
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
@@ -712,7 +782,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -730,12 +800,20 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
+export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
+  token: Scalars['String'];
+  newPassword: Scalars['String'];
+}>;
+
+
+export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
+
 export type VerifyMutationVariables = Exact<{
   loginToken: Scalars['String'];
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -744,10 +822,17 @@ export type CheckUserExistsQueryVariables = Exact<{
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean } };
 
+export type ValidatePasswordResetTokenQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
+
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn: string } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -765,7 +850,7 @@ export type UploadImageMutationVariables = Exact<{
 
 export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -782,7 +867,14 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
+
+export type ActivateWorkspaceMutationVariables = Exact<{
+  input: ActivateWorkspaceInput;
+}>;
+
+
+export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: string } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -810,6 +902,50 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const ParticipantFragmentFragmentDoc = gql`
+    fragment ParticipantFragment on TimelineThreadParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineThreadFragmentFragmentDoc = gql`
+    fragment TimelineThreadFragment on TimelineThread {
+  id
+  read
+  visibility
+  firstParticipant {
+    ...ParticipantFragment
+  }
+  lastTwoParticipants {
+    ...ParticipantFragment
+  }
+  lastMessageReceivedAt
+  lastMessageBody
+  subject
+  numberOfMessagesInThread
+  participantCount
+}
+    ${ParticipantFragmentFragmentDoc}`;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
+  totalNumberOfThreads
+  timelineThreads {
+    ...TimelineThreadFragment
+  }
+}
+    ${TimelineThreadFragmentFragmentDoc}`;
+export const TimelineThreadFragmentDoc = gql`
+    fragment timelineThread on TimelineThread {
+  id
+  subject
+  lastMessageReceivedAt
+}
+    `;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -862,18 +998,16 @@ export const UserQueryFragmentFragmentDoc = gql`
 }
     `;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
-    query GetTimelineThreadsFromCompanyId($companyId: String!) {
-  getTimelineThreadsFromCompanyId(companyId: $companyId) {
-    body
-    numberOfMessagesInThread
-    read
-    receivedAt
-    senderName
-    senderPictureUrl
-    subject
+    query GetTimelineThreadsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineThreadsFromCompanyId(
+    companyId: $companyId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineThreadsWithTotalFragment
   }
 }
-    `;
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromCompanyIdQuery__
@@ -888,6 +1022,8 @@ export const GetTimelineThreadsFromCompanyIdDocument = gql`
  * const { data, loading, error } = useGetTimelineThreadsFromCompanyIdQuery({
  *   variables: {
  *      companyId: // value for 'companyId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
@@ -903,18 +1039,16 @@ export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof u
 export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
 export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
 export const GetTimelineThreadsFromPersonIdDocument = gql`
-    query GetTimelineThreadsFromPersonId($personId: String!) {
-  getTimelineThreadsFromPersonId(personId: $personId) {
-    body
-    numberOfMessagesInThread
-    read
-    receivedAt
-    senderName
-    senderPictureUrl
-    subject
+    query GetTimelineThreadsFromPersonId($personId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineThreadsFromPersonId(
+    personId: $personId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineThreadsWithTotalFragment
   }
 }
-    `;
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
 
 /**
  * __useGetTimelineThreadsFromPersonIdQuery__
@@ -929,6 +1063,8 @@ export const GetTimelineThreadsFromPersonIdDocument = gql`
  * const { data, loading, error } = useGetTimelineThreadsFromPersonIdQuery({
  *   variables: {
  *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
  *   },
  * });
  */
@@ -1013,6 +1149,39 @@ export function useChallengeMutation(baseOptions?: Apollo.MutationHookOptions<Ch
 export type ChallengeMutationHookResult = ReturnType<typeof useChallengeMutation>;
 export type ChallengeMutationResult = Apollo.MutationResult<ChallengeMutation>;
 export type ChallengeMutationOptions = Apollo.BaseMutationOptions<ChallengeMutation, ChallengeMutationVariables>;
+export const EmailPasswordResetLinkDocument = gql`
+    mutation EmailPasswordResetLink($email: String!) {
+  emailPasswordResetLink(email: $email) {
+    success
+  }
+}
+    `;
+export type EmailPasswordResetLinkMutationFn = Apollo.MutationFunction<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>;
+
+/**
+ * __useEmailPasswordResetLinkMutation__
+ *
+ * To run a mutation, you first call `useEmailPasswordResetLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEmailPasswordResetLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [emailPasswordResetLinkMutation, { data, loading, error }] = useEmailPasswordResetLinkMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useEmailPasswordResetLinkMutation(baseOptions?: Apollo.MutationHookOptions<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>(EmailPasswordResetLinkDocument, options);
+      }
+export type EmailPasswordResetLinkMutationHookResult = ReturnType<typeof useEmailPasswordResetLinkMutation>;
+export type EmailPasswordResetLinkMutationResult = Apollo.MutationResult<EmailPasswordResetLinkMutation>;
+export type EmailPasswordResetLinkMutationOptions = Apollo.BaseMutationOptions<EmailPasswordResetLinkMutation, EmailPasswordResetLinkMutationVariables>;
 export const GenerateApiKeyTokenDocument = gql`
     mutation GenerateApiKeyToken($apiKeyId: String!, $expiresAt: String!) {
   generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
@@ -1196,6 +1365,43 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const UpdatePasswordViaResetTokenDocument = gql`
+    mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
+  updatePasswordViaResetToken(
+    passwordResetToken: $token
+    newPassword: $newPassword
+  ) {
+    success
+  }
+}
+    `;
+export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
+
+/**
+ * __useUpdatePasswordViaResetTokenMutation__
+ *
+ * To run a mutation, you first call `useUpdatePasswordViaResetTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePasswordViaResetTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePasswordViaResetTokenMutation, { data, loading, error }] = useUpdatePasswordViaResetTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      newPassword: // value for 'newPassword'
+ *   },
+ * });
+ */
+export function useUpdatePasswordViaResetTokenMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>(UpdatePasswordViaResetTokenDocument, options);
+      }
+export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<typeof useUpdatePasswordViaResetTokenMutation>;
+export type UpdatePasswordViaResetTokenMutationResult = Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
+export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
 export const VerifyDocument = gql`
     mutation Verify($loginToken: String!) {
   verify(loginToken: $loginToken) {
@@ -1270,6 +1476,42 @@ export function useCheckUserExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExistsQuery>;
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
+export const ValidatePasswordResetTokenDocument = gql`
+    query validatePasswordResetToken($token: String!) {
+  validatePasswordResetToken(passwordResetToken: $token) {
+    id
+    email
+  }
+}
+    `;
+
+/**
+ * __useValidatePasswordResetTokenQuery__
+ *
+ * To run a query within a React component, call `useValidatePasswordResetTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValidatePasswordResetTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useValidatePasswordResetTokenQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useValidatePasswordResetTokenQuery(baseOptions: Apollo.QueryHookOptions<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>(ValidatePasswordResetTokenDocument, options);
+      }
+export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>(ValidatePasswordResetTokenDocument, options);
+        }
+export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
+export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
+export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {
@@ -1455,10 +1697,40 @@ export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<Upl
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
-    ...UserQueryFragment
+    id
+    firstName
+    lastName
+    email
+    canImpersonate
+    supportUserHash
+    workspaceMember {
+      id
+      name {
+        firstName
+        lastName
+      }
+      colorScheme
+      avatarUrl
+      locale
+    }
+    defaultWorkspace {
+      id
+      displayName
+      logo
+      domainName
+      inviteHash
+      allowImpersonation
+      subscriptionStatus
+      featureFlags {
+        id
+        key
+        value
+        workspaceId
+      }
+    }
   }
 }
-    ${UserQueryFragmentFragmentDoc}`;
+    `;
 
 /**
  * __useGetCurrentUserQuery__
@@ -1486,6 +1758,39 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const ActivateWorkspaceDocument = gql`
+    mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
+  activateWorkspace(data: $input) {
+    id
+  }
+}
+    `;
+export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
+
+/**
+ * __useActivateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useActivateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateWorkspaceMutation, { data, loading, error }] = useActivateWorkspaceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useActivateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>(ActivateWorkspaceDocument, options);
+      }
+export type ActivateWorkspaceMutationHookResult = ReturnType<typeof useActivateWorkspaceMutation>;
+export type ActivateWorkspaceMutationResult = Apollo.MutationResult<ActivateWorkspaceMutation>;
+export type ActivateWorkspaceMutationOptions = Apollo.BaseMutationOptions<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
 export const DeleteCurrentWorkspaceDocument = gql`
     mutation DeleteCurrentWorkspace {
   deleteCurrentWorkspace {

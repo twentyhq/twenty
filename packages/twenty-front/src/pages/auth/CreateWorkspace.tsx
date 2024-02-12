@@ -3,22 +3,24 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
+import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
+import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -46,9 +48,9 @@ export const CreateWorkspace = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [activateWorkspace] = useActivateWorkspaceMutation();
+  const apolloMetadataClient = useApolloMetadataClient();
 
   // Form
   const {
@@ -67,28 +69,25 @@ export const CreateWorkspace = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        const result = await updateWorkspace({
+        const result = await activateWorkspace({
           variables: {
             input: {
               displayName: data.name,
             },
           },
-        });
-        setCurrentWorkspace({
-          id: result.data?.updateWorkspace?.id ?? '',
-          displayName: data.name,
-          subscriptionStatus:
-            result.data?.updateWorkspace?.subscriptionStatus ?? 'incomplete',
-          allowImpersonation:
-            result.data?.updateWorkspace?.allowImpersonation ?? false,
+          refetchQueries: [GET_CURRENT_USER],
         });
 
-        if (result.errors || !result.data?.updateWorkspace) {
+        await apolloMetadataClient?.refetchQueries({
+          include: [FIND_MANY_OBJECT_METADATA_ITEMS],
+        });
+
+        if (result.errors) {
           throw result.errors ?? new Error('Unknown error');
         }
 
         setTimeout(() => {
-          navigate('/create/profile');
+          navigate(AppPath.CreateProfile);
         }, 20);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
@@ -96,7 +95,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, setCurrentWorkspace, updateWorkspace],
+    [enqueueSnackBar, navigate, apolloMetadataClient, activateWorkspace],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -115,7 +114,7 @@ export const CreateWorkspace = () => {
     [onSubmit],
   );
 
-  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
+  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceActivation) {
     return null;
   }
 

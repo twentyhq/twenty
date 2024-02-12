@@ -3,6 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { DeleteOneResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+
 import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
@@ -23,7 +25,9 @@ export class DeleteOneQueryFactory {
 
     return `
       mutation {
-        deleteFrom${options.targetTableName}Collection(filter: { id: { eq: "${args.id}" } }) {
+        deleteFrom${computeObjectTargetTable(
+          options.objectMetadataItem,
+        )}Collection(filter: { id: { eq: "${args.id}" } }) {
           affectedCount
           records {
             ${fieldsString}

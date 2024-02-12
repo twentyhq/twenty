@@ -14,7 +14,9 @@ export enum SettingsPath {
   NewObject = 'objects/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
-  Developers = 'api-keys',
+  Developers = '',
   DevelopersNewApiKey = 'api-keys/new',
   DevelopersApiKeyDetail = 'api-keys/:apiKeyId',
+  DevelopersNewWebhook = 'webhooks/new',
+  DevelopersNewWebhookDetail = 'webhooks/:webhookId',
 }

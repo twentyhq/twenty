@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { Reference, useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -127,18 +127,22 @@ export const useViewFields = (viewScopeId: string) => {
         }
 
         modifyRecordFromCache(viewIdToPersist ?? '', {
-          viewFields: () => ({
-            edges: viewFieldsToPersist.map((viewField) => ({
-              node: viewField,
-              cursor: '',
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-              endCursor: '',
-            },
-          }),
+          viewFields: (viewFieldsRef, { readField }) => {
+            const edges = readField<{ node: Reference }[]>(
+              'edges',
+              viewFieldsRef,
+            );
+
+            if (!edges) return viewFieldsRef;
+
+            return {
+              ...viewFieldsRef,
+              edges: viewFieldsToPersist.map((viewField) => ({
+                node: viewField,
+                cursor: '',
+              })),
+            };
+          },
         });
 
         onViewFieldsChange?.(viewFieldsToPersist);

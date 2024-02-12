@@ -1,22 +1,16 @@
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
-import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 type ActivityTargetsInlineCellProps = {
-  activity?: Pick<GraphQLActivity, 'id'> & {
-    activityTargets?: {
-      edges: Array<{
-        node: Pick<ActivityTarget, 'id'>;
-      }> | null;
-    };
-  };
+  activity: Activity;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -26,28 +20,39 @@ export const ActivityTargetsInlineCell = ({
     activityId: activity?.id ?? '',
   });
 
+  const { FieldContextProvider } = useFieldContext({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectRecordId: activity?.id ?? '',
+    fieldMetadataName: 'activityTargets',
+    fieldPosition: 2,
+  });
+
+  if (!FieldContextProvider) return null;
+
   return (
-    <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
-      <RecordInlineCellContainer
-        buttonIcon={IconPencil}
-        customEditHotkeyScope={{
-          scope: RelationPickerHotkeyScope.RelationPicker,
-        }}
-        IconLabel={IconArrowUpRight}
-        editModeContent={
-          <ActivityTargetInlineCellEditMode
-            activityId={activity?.id ?? ''}
-            activityTargetObjectRecords={activityTargetObjectRecords as any}
-          />
-        }
-        label="Relations"
-        displayModeContent={
-          <ActivityTargetChips
-            activityTargetObjectRecords={activityTargetObjectRecords}
-          />
-        }
-        isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
-      />
-    </RecoilScope>
+    <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
+      <FieldContextProvider>
+        <RecordInlineCellContainer
+          buttonIcon={IconPencil}
+          customEditHotkeyScope={{
+            scope: RelationPickerHotkeyScope.RelationPicker,
+          }}
+          IconLabel={IconArrowUpRight}
+          editModeContent={
+            <ActivityTargetInlineCellEditMode
+              activity={activity}
+              activityTargetObjectRecords={activityTargetObjectRecords}
+            />
+          }
+          label="Relations"
+          displayModeContent={
+            <ActivityTargetChips
+              activityTargetObjectRecords={activityTargetObjectRecords}
+            />
+          }
+          isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
+        />
+      </FieldContextProvider>
+    </RecordFieldInputScope>
   );
 };

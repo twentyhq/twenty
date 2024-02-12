@@ -1,4 +1,4 @@
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 import { ViewField } from '../types/ViewField';

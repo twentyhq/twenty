@@ -7,6 +7,7 @@ import { Record as IRecord } from 'src/workspace/workspace-query-builder/interfa
 import { CreateManyResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsAliasFactory } from './args-alias.factory';
@@ -36,9 +37,9 @@ export class CreateManyQueryFactory {
 
     return `
       mutation {
-        insertInto${
-          options.targetTableName
-        }Collection(objects: ${stringifyWithoutKeyQuote(
+        insertInto${computeObjectTargetTable(
+          options.objectMetadataItem,
+        )}Collection(objects: ${stringifyWithoutKeyQuote(
           computedArgs.data.map((datum) => ({
             id: uuidv4(),
             ...datum,

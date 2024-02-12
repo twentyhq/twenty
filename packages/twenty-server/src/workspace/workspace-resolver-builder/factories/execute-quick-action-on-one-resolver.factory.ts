@@ -9,7 +9,7 @@ import {
 import { Record as IRecord } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/workspace/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
-import { WorkspaceQueryRunnerOptions } from 'src/workspace/workspace-query-runner/interfaces/query-runner-optionts.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/workspace/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
 import { QuickActionsService } from 'src/core/quick-actions/quick-actions.service';
@@ -32,7 +32,7 @@ export class ExecuteQuickActionOnOneResolverFactory
 
     return (_source, args, context, info) => {
       return this.executeQuickActionOnOne(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
@@ -45,11 +45,12 @@ export class ExecuteQuickActionOnOneResolverFactory
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    switch (options.targetTableName) {
+    switch (options.objectMetadataItem.nameSingular) {
       case 'company': {
         await this.quickActionsService.executeQuickActionOnCompany(
           args.id,
           options.workspaceId,
+          options.objectMetadataItem,
         );
         break;
       }
@@ -57,6 +58,7 @@ export class ExecuteQuickActionOnOneResolverFactory
         await this.quickActionsService.createCompanyFromPerson(
           args.id,
           options.workspaceId,
+          options.objectMetadataCollection,
         );
         break;
       }

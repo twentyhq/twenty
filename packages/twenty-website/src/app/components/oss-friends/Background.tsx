@@ -7,19 +7,20 @@ const BackgroundContainer = styled.div`
   top: 100%;
   left: 0px;
   width: 100%;
-  height: 200%;
+  height: 100%;
+  max-height: 200%;
   background-image: url(https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png);
   background-size: auto 20px;
   background-repeat: repeat;
   transform-origin: center center;
   z-index: -2;
-  }
 `;
 
 const Gradient = styled.div`
   position: absolute;
   width: 100%;
-  height: 200%;
+  height: 100%;
+  max-height: 200%;
   top: 100%;
   left: 0;
   right: 0;

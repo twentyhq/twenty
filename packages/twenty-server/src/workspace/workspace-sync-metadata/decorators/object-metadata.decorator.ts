@@ -16,7 +16,7 @@ export function ObjectMetadata(
       {
         nameSingular: objectName,
         ...params,
-        targetTableName: objectName,
+        targetTableName: 'DEPRECATED',
         isSystem,
         isCustom: false,
         description: params.description,

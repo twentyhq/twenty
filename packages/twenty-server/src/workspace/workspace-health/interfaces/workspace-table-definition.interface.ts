@@ -3,7 +3,13 @@ export interface WorkspaceTableStructure {
   tableName: string;
   columnName: string;
   dataType: string;
-  isNullable: string;
   columnDefault: string;
-  isPrimaryKey: string;
+  isNullable: boolean;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+  isUnique: boolean;
 }
+
+export type WorkspaceTableStructureResult = {
+  [P in keyof WorkspaceTableStructure]: string;
+};

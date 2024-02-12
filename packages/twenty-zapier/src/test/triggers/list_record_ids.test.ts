@@ -8,7 +8,7 @@ tools.env.inject();
 const appTester = createAppTester(App);
 describe('triggers.list_record_ids', () => {
   test('should run', async () => {
-    const bundle = getBundle({ namePlural: 'companies' });
+    const bundle = getBundle({ nameSingular: 'company' });
     const result = await appTester(
       App.triggers[listRecordIdsKey].operation.perform,
       bundle,

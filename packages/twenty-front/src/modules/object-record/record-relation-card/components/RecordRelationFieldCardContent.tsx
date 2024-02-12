@@ -4,12 +4,12 @@ import styled from '@emotion/styled';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
-import { usePersistField } from '@/object-record/field/hooks/usePersistField';
-import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -57,36 +57,27 @@ export const RecordRelationFieldCardContent = ({
   relationRecord,
 }: RecordRelationFieldCardContentProps) => {
   const { fieldDefinition } = useContext(FieldContext);
+
   const {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
+    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
+
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
-  const {
-    labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
-    objectMetadataItem: relationObjectMetadataItem,
-  } = useObjectMetadataItem({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationObjectMetadataNameSingular,
+    });
   const persistField = usePersistField();
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const { FieldContextProvider } = useFieldContext({
-    fieldMetadataName: relationLabelIdentifierFieldMetadata?.name || '',
-    fieldPosition: 0,
-    isLabelIdentifier: true,
-    objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: relationRecord.id,
-  });
-
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
-
-  if (!FieldContextProvider) return null;
 
   const handleDetach = () => {
     closeDropdown();
@@ -105,42 +96,52 @@ export const RecordRelationFieldCardContent = ({
     updateOneRelationRecord({
       idToUpdate: relationRecord.id,
       updateOneRecordInput: {
-        [`${relationFieldMetadataItem.name}Id`]: null,
         [relationFieldMetadataItem.name]: null,
       },
     });
   };
 
+  const isOpportunityCompanyRelation =
+    (objectMetadataNameSingular === CoreObjectNameSingular.Opportunity &&
+      relationObjectMetadataNameSingular === CoreObjectNameSingular.Company) ||
+    (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
+      relationObjectMetadataNameSingular ===
+        CoreObjectNameSingular.Opportunity);
+
   return (
     <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
-      <FieldContextProvider>
-        <FieldDisplay />
-      </FieldContextProvider>
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
-        <Dropdown
-          dropdownId={dropdownScopeId}
-          dropdownPlacement="right-start"
-          clickableComponent={
-            <LightIconButton
-              className="displayOnHover"
-              Icon={IconDotsVertical}
-              accent="tertiary"
-            />
-          }
-          dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={IconUnlink}
-                text="Detach"
-                onClick={handleDetach}
+      <RecordChip
+        record={relationRecord}
+        objectNameSingular={relationObjectMetadataItem.nameSingular}
+      />
+      {/* TODO: temporary to prevent removing a company from an opportunity */}
+      {!isOpportunityCompanyRelation && (
+        <DropdownScope dropdownScopeId={dropdownScopeId}>
+          <Dropdown
+            dropdownId={dropdownScopeId}
+            dropdownPlacement="right-start"
+            clickableComponent={
+              <LightIconButton
+                className="displayOnHover"
+                Icon={IconDotsVertical}
+                accent="tertiary"
               />
-            </DropdownMenuItemsContainer>
-          }
-          dropdownHotkeyScope={{
-            scope: dropdownScopeId,
-          }}
-        />
-      </DropdownScope>
+            }
+            dropdownComponents={
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconUnlink}
+                  text="Detach"
+                  onClick={handleDetach}
+                />
+              </DropdownMenuItemsContainer>
+            }
+            dropdownHotkeyScope={{
+              scope: dropdownScopeId,
+            }}
+          />
+        </DropdownScope>
+      )}
     </StyledCardContent>
   );
 };

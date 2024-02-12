@@ -5,12 +5,13 @@ WORKDIR /app
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
+COPY ./tsconfig.base.json .
+COPY ./nx.json .
 COPY ./.yarn/releases /app/.yarn/releases
-COPY ./tools/eslint-rules /app/tools/eslint-rules
+COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
-RUN yarn
-
-RUN yarn nx build twenty-server
+RUN yarn workspaces focus twenty-emails twenty-server
+RUN npx nx run twenty-server:build
 
 WORKDIR /app/packages/twenty-server
 

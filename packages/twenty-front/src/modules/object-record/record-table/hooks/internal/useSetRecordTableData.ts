@@ -1,8 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -15,9 +14,7 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
-
-  const { tableRowIdsState, numberOfTableRowsState } =
+  const { getTableRowIdsState, getNumberOfTableRowsState } =
     useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
@@ -26,31 +23,24 @@ export const useSetRecordTableData = ({
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
-            .getLoadable(entityFieldsFamilyState(entity.id))
+            .getLoadable(recordStoreFamilyState(entity.id))
             .valueOrThrow();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-            set(entityFieldsFamilyState(entity.id), entity);
+            set(recordStoreFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState());
+        const currentRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(tableRowIdsState(), entityIds);
+          set(getTableRowIdsState(), entityIds);
         }
 
-        resetTableRowSelection();
-
-        set(numberOfTableRowsState(), entityIds.length);
+        set(getNumberOfTableRowsState(), entityIds.length);
         onEntityCountChange(entityIds.length);
       },
-    [
-      numberOfTableRowsState,
-      onEntityCountChange,
-      resetTableRowSelection,
-      tableRowIdsState,
-    ],
+    [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
   );
 };

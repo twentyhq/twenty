@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
+import { RightDrawerEmailThreadTopBar } from '@/activities/emails/right-drawer/components/RightDrawerEmailThreadTopBar';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 
+import { RightDrawerActivityTopBar } from '../../../../activities/right-drawer/components/RightDrawerActivityTopBar';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
-
-import { RightDrawerTopBar } from './RightDrawerTopBar';
 
 const StyledRightDrawerPage = styled.div`
   display: flex;
@@ -30,13 +31,20 @@ export const RightDrawerRouter = () => {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
   let page = <></>;
+  let topBar = <></>;
 
   switch (rightDrawerPage) {
     case RightDrawerPages.CreateActivity:
       page = <RightDrawerCreateActivity />;
+      topBar = <RightDrawerActivityTopBar />;
       break;
     case RightDrawerPages.EditActivity:
       page = <RightDrawerEditActivity />;
+      topBar = <RightDrawerActivityTopBar />;
+      break;
+    case RightDrawerPages.ViewEmailThread:
+      page = <RightDrawerEmailThread />;
+      topBar = <RightDrawerEmailThreadTopBar />;
       break;
     default:
       break;
@@ -44,7 +52,7 @@ export const RightDrawerRouter = () => {
 
   return (
     <StyledRightDrawerPage>
-      <RightDrawerTopBar />
+      {topBar}
       <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
     </StyledRightDrawerPage>
   );

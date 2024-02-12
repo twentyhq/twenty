@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -14,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
-import { ApiKey } from '@/settings/developers/types/ApiKey';
+import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
@@ -48,8 +47,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const [generatedApiKey] = useRecoilState(
     generatedApiKeyFamilyState(apiKeyId),
   );
-  const { performOptimisticEvict } = useOptimisticEvict();
-
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
@@ -68,9 +65,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
       idToUpdate: apiKeyId,
       updateOneRecordInput: { revokedAt: DateTime.now().toString() },
     });
-    performOptimisticEvict('ApiKey', 'id', apiKeyId);
     if (redirect) {
-      navigate('/settings/developers/api-keys');
+      navigate('/settings/developers');
     }
   };
 
@@ -80,7 +76,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   ) => {
     const newApiKey = await createOneApiKey?.({
       name: name,
-      expiresAt: newExpiresAt,
+      expiresAt: newExpiresAt ?? '',
     });
 
     if (!newApiKey) {
@@ -131,8 +127,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <SettingsHeaderContainer>
               <Breadcrumb
                 links={[
-                  { children: 'APIs', href: '/settings/developers/api-keys' },
-                  { children: apiKeyData.name },
+                  { children: 'Developers', href: '/settings/developers' },
+                  { children: `${apiKeyData.name} API Key` },
                 ]}
               />
             </SettingsHeaderContainer>

@@ -59,7 +59,7 @@ describe('useFilterDropdown', () => {
 
     act(() => {
       result.current.setOnFilterSelect(
-        (_currVal?: Filter) => (_filter: Filter) => {},
+        (_currVal?: Filter | null) => (_filter: Filter | null) => {},
       );
     });
     await waitFor(() => {

@@ -1,0 +1,106 @@
+import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
+
+import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-field.comparator';
+
+describe('WorkspaceFieldComparator', () => {
+  let comparator: WorkspaceFieldComparator;
+
+  beforeEach(() => {
+    // Initialize the comparator before each test
+    comparator = new WorkspaceFieldComparator();
+  });
+
+  function createMockFieldMetadata(values: any) {
+    return {
+      workspaceId: 'some-workspace-id',
+      type: 'TEXT',
+      name: 'DefaultFieldName',
+      label: 'Default Field Label',
+      targetColumnMap: 'default_column',
+      defaultValue: null,
+      description: 'Default description',
+      isCustom: false,
+      isSystem: false,
+      isNullable: true,
+      ...values,
+    };
+  }
+
+  it('should generate CREATE action for new fields', () => {
+    const original = { fields: [] } as any;
+    const standard = {
+      fields: [createMockFieldMetadata({ name: 'New Field' })],
+    } as any;
+
+    const result = comparator.compare(original, standard);
+
+    expect(result).toEqual([
+      {
+        action: ComparatorAction.CREATE,
+        object: expect.objectContaining(standard.fields[0]),
+      },
+    ]);
+  });
+
+  it('should generate UPDATE action for modified fields', () => {
+    const original = {
+      fields: [
+        createMockFieldMetadata({
+          id: '1',
+          isNullable: true,
+        }),
+      ],
+    } as any;
+    const standard = {
+      fields: [
+        createMockFieldMetadata({
+          isNullable: false,
+        }),
+      ],
+    } as any;
+
+    const result = comparator.compare(original, standard);
+
+    expect(result).toEqual([
+      {
+        action: ComparatorAction.UPDATE,
+        object: expect.objectContaining({ id: '1', isNullable: false }),
+      },
+    ]);
+  });
+
+  it('should generate DELETE action for removed fields', () => {
+    const original = {
+      fields: [
+        createMockFieldMetadata({
+          id: '1',
+          name: 'Removed Field',
+          isActive: true,
+        }),
+      ],
+    } as any;
+    const standard = { fields: [] } as any;
+
+    const result = comparator.compare(original, standard);
+
+    expect(result).toEqual([
+      {
+        action: ComparatorAction.DELETE,
+        object: expect.objectContaining({ name: 'Removed Field' }),
+      },
+    ]);
+  });
+
+  it('should not generate any action for identical fields', () => {
+    const original = {
+      fields: [createMockFieldMetadata({ id: '1', isActive: true })],
+    } as any;
+    const standard = {
+      fields: [createMockFieldMetadata({})],
+    } as any;
+
+    const result = comparator.compare(original, standard);
+
+    expect(result).toHaveLength(0);
+  });
+});

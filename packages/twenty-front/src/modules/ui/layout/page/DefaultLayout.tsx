@@ -1,5 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import { AuthModal } from '@/auth/components/Modal';
@@ -10,8 +12,14 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { AppPath } from '@/types/AppPath';
+import { desktopNavDrawerWidths } from '@/ui/navigation/navigation-drawer/constants';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -38,7 +46,7 @@ const StyledLayout = styled.div`
   }
 `;
 
-const StyledPageContainer = styled.div`
+const StyledPageContainer = styled(motion.div)`
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
@@ -62,30 +70,62 @@ type DefaultLayoutProps = {
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
+  const theme = useTheme();
+  const widowsWidth = useScreenSize().width;
+  const isMatchingLocation = useIsMatchingLocation();
+
+  const showAuthModal = useMemo(() => {
+    return (
+      (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) ||
+      isMatchingLocation(AppPath.ResetPassword)
+    );
+  }, [isMatchingLocation, onboardingStatus]);
 
   return (
-    <StyledLayout>
-      <CommandMenu />
-      <KeyboardShortcutMenu />
-      <StyledPageContainer>
-        <StyledAppNavigationDrawer />
-        <StyledMainContainer>
-          {onboardingStatus &&
-          onboardingStatus !== OnboardingStatus.Completed ? (
-            <>
-              <SignInBackgroundMockPage />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>{children}</AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <AppErrorBoundary>{children}</AppErrorBoundary>
-          )}
-        </StyledMainContainer>
-      </StyledPageContainer>
-      {isMobile && <MobileNavigationBar />}
-    </StyledLayout>
+    <>
+      <Global
+        styles={css`
+          body {
+            background: ${theme.background.tertiary};
+          }
+        `}
+      />
+      <StyledLayout>
+        <CommandMenu />
+        <KeyboardShortcutMenu />
+
+        <StyledPageContainer
+          animate={{
+            marginLeft:
+              isSettingsPage && !isMobile
+                ? (widowsWidth -
+                    (objectSettingsWidth + desktopNavDrawerWidths.menu + 64)) /
+                  2
+                : 0,
+          }}
+          transition={{
+            duration: theme.animation.duration.normal,
+          }}
+        >
+          <StyledAppNavigationDrawer />
+          <StyledMainContainer>
+            {showAuthModal ? (
+              <>
+                <SignInBackgroundMockPage />
+                <AnimatePresence mode="wait">
+                  <LayoutGroup>
+                    <AuthModal>{children}</AuthModal>
+                  </LayoutGroup>
+                </AnimatePresence>
+              </>
+            ) : (
+              <AppErrorBoundary>{children}</AppErrorBoundary>
+            )}
+          </StyledMainContainer>
+        </StyledPageContainer>
+        {isMobile && <MobileNavigationBar />}
+      </StyledLayout>
+    </>
   );
 };

@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataResolver } from 'src/metadata/object-metadata/object-metadata.resolver';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -54,13 +55,13 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
           update: {
             many: { disabled: true },
           },
-          delete: { many: { disabled: true } },
+          delete: { disabled: true },
           guards: [JwtAuthGuard],
         },
       ],
     }),
   ],
-  providers: [ObjectMetadataService],
+  providers: [ObjectMetadataService, ObjectMetadataResolver],
   exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}

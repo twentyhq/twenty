@@ -1,1 +1,1 @@
-export const objectSettingsWidth = '512px';
+export const objectSettingsWidth = 512;

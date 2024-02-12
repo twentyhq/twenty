@@ -22,8 +22,6 @@ import { ViewScope } from '@/views/scopes/ViewScope';
 import { entityCountInCurrentViewScopedState } from '@/views/states/entityCountInCurrentViewScopedState';
 import { viewEditModeScopedState } from '@/views/states/viewEditModeScopedState';
 import { viewObjectMetadataIdScopeState } from '@/views/states/viewObjectMetadataIdScopeState';
-import { viewTypeScopedState } from '@/views/states/viewTypeScopedState';
-import { ViewType } from '@/views/types/ViewType';
 
 jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => {
   return {
@@ -223,25 +221,6 @@ describe('useViewBar', () => {
     });
 
     expect(result.current.metadataId).toBe('newId');
-  });
-
-  it('should update view type', async () => {
-    const { result } = renderHook(
-      () => ({
-        viewBar: useViewBar({ viewBarId }),
-        ViewType: useRecoilState(
-          getScopedStateDeprecated(viewTypeScopedState, viewBarId),
-        )[0],
-      }),
-      renderHookConfig,
-    );
-
-    expect(result.current.ViewType).toBe('table');
-    await act(async () => {
-      result.current.viewBar.setViewType(ViewType.Kanban);
-    });
-
-    expect(result.current.ViewType).toBe('kanban');
   });
 
   it('should update count in current view', async () => {

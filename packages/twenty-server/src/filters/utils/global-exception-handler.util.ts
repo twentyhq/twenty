@@ -1,11 +1,14 @@
 import { HttpException } from '@nestjs/common';
 
+import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+
 import {
   AuthenticationError,
   BaseGraphQLError,
   ForbiddenError,
   ValidationError,
   NotFoundError,
+  ConflictError,
 } from 'src/filters/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
@@ -14,25 +17,37 @@ const graphQLPredefinedExceptions = {
   401: AuthenticationError,
   403: ForbiddenError,
   404: NotFoundError,
+  409: ConflictError,
 };
 
 export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
+  user?: ExceptionHandlerUser,
 ): BaseGraphQLError => {
-  handleException(exception, exceptionHandlerService);
+  handleException(exception, exceptionHandlerService, user);
 
   return convertExceptionToGraphQLError(exception);
+};
+
+export const filterException = (exception: Error): boolean => {
+  if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return true;
+  }
+
+  return false;
 };
 
 export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
+  user?: ExceptionHandlerUser,
 ): void => {
-  if (exception instanceof HttpException && exception.getStatus() < 500) {
+  if (filterException(exception)) {
     return;
   }
-  exceptionHandlerService.captureException(exception);
+
+  exceptionHandlerService.captureExceptions([exception], { user });
 };
 
 export const convertExceptionToGraphQLError = (
@@ -50,9 +65,9 @@ export const convertHttpExceptionToGraphql = (exception: HttpException) => {
   let error: BaseGraphQLError;
 
   if (status in graphQLPredefinedExceptions) {
-    error = new graphQLPredefinedExceptions[exception.getStatus()](
-      exception.message,
-    );
+    const message = exception.getResponse()['message'] ?? exception.message;
+
+    error = new graphQLPredefinedExceptions[exception.getStatus()](message);
   } else {
     error = new BaseGraphQLError(
       'Internal Server Error',
@@ -60,8 +75,11 @@ export const convertHttpExceptionToGraphql = (exception: HttpException) => {
     );
   }
 
-  error.stack = exception.stack;
-  error.extensions['response'] = exception.getResponse();
+  // Only show the stack trace in development mode
+  if (process.env.NODE_ENV === 'development') {
+    error.stack = exception.stack;
+    error.extensions['response'] = exception.getResponse();
+  }
 
   return error;
 };

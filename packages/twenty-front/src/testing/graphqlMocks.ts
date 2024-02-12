@@ -244,9 +244,9 @@ export const graphqlMocks = {
             edges: mockWorkspaceMembers.map((member) => ({
               node: {
                 ...member,
-                messageRecipients: {
+                messageParticipants: {
                   edges: [],
-                  __typename: 'MessageRecipientConnection',
+                  __typename: 'MessageParticipantConnection',
                 },
                 authoredAttachments: {
                   edges: [],
