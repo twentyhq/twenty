@@ -61,25 +61,15 @@ export class CreateContactService {
   ): Promise<void> {
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    const values = formattedContacts.map((contact) => [
-      contact.id,
-      contact.handle,
-      contact.firstName,
-      contact.lastName,
-      contact.companyId,
-    ]);
-
-    const query = `INSERT INTO ${
-      dataSourceMetadata.schema
-    }.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${values
-      .map(
-        (_, index) =>
-          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
-            index * 5 + 4
-          }, $${index * 5 + 5})`,
-      )
-      .join(', ')}`;
-
-    await manager.query(query, values.flat());
+    await manager.query(
+      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ($1, $2, $3, $4, $5)`,
+      formattedContacts.map((contact) => [
+        contact.id,
+        contact.handle,
+        contact.firstName,
+        contact.lastName,
+        contact.companyId,
+      ]),
+    );
   }
 }
