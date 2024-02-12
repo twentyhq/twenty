@@ -2,10 +2,11 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
+import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityEditorAnyFieldInFocusState } from '@/activities/states/activityEditorFieldFocusState';
@@ -253,32 +254,48 @@ export const ActivityBodyEditor = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
-      if (keyboardEvent.key !== Key.Escape) {
-        const isWritingText =
-          !isNonTextWritingKey(keyboardEvent.key) &&
-          !keyboardEvent.ctrlKey &&
-          !keyboardEvent.metaKey;
-
-        if (!isWritingText) {
-          return;
-        }
-
-        keyboardEvent.preventDefault();
-        keyboardEvent.stopPropagation();
-        keyboardEvent.stopImmediatePropagation();
-
-        const blockIdentifier = editor.getTextCursorPosition().block;
-        // TODO: fix typing
-        const currentBlockContent = blockIdentifier?.content?.[0];
-        const currentTextInsideTheBlock =
-          currentBlockContent?.type === 'text' ? currentBlockContent?.text : '';
-
-        editor.updateBlock(blockIdentifier, {
-          content: currentTextInsideTheBlock + keyboardEvent.key,
-        });
-        editor.setTextCursorPosition(blockIdentifier, 'end');
-        editor.focus();
+      if (keyboardEvent.key === Key.Escape) {
+        return;
       }
+
+      const isWritingText =
+        !isNonTextWritingKey(keyboardEvent.key) &&
+        !keyboardEvent.ctrlKey &&
+        !keyboardEvent.metaKey;
+
+      if (!isWritingText) {
+        return;
+      }
+
+      keyboardEvent.preventDefault();
+      keyboardEvent.stopPropagation();
+      keyboardEvent.stopImmediatePropagation();
+
+      const blockIdentifier = editor.getTextCursorPosition().block;
+      const currentBlockContent = blockIdentifier?.content;
+
+      if (
+        currentBlockContent &&
+        isArray(currentBlockContent) &&
+        currentBlockContent[0] &&
+        currentBlockContent[0].type === 'text'
+      ) {
+        editor.updateBlock(blockIdentifier, {
+          content: currentBlockContent[0].text + keyboardEvent.key,
+        });
+        return;
+      }
+
+      const newBlockId = v4();
+      const newBlock = {
+        id: newBlockId,
+        type: 'paragraph',
+        content: keyboardEvent.key,
+      };
+      editor.insertBlocks([newBlock], blockIdentifier, 'after');
+
+      editor.setTextCursorPosition(newBlockId, 'end');
+      editor.focus();
     },
     RightDrawerHotkeyScope.RightDrawer,
   );
@@ -287,14 +304,10 @@ export const ActivityBodyEditor = ({
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityBody,
     );
-    // Use recoil state here
-    // onFocus?.();
   };
 
   const handlerBlockEditorBlur = () => {
     goBackToPreviousHotkeyScope();
-    // Use recoil state here
-    // onBlur?.();
   };
 
   return (
