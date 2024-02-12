@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
-import { id } from 'date-fns/locale';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
@@ -19,12 +18,6 @@ type FormattedContactToCreate = {
   firstName: string;
   lastName: string;
   companyId: string;
-};
-
-type CreateContactsType = {
-  contactsToCreate: ContactToCreate[];
-  dataSourceMetadata: DataSourceEntity;
-  manager: EntityManager;
 };
 
 @Injectable()
@@ -65,20 +58,22 @@ export class CreateContactService {
     contactsToCreate: ContactToCreate[],
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
-  ): Promise<string | undefined> {
+  ): Promise<void> {
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ($1, $2, $3, $4, $5)`,
-      [
-        id,
-        handle,
-        capitalize(contactFirstName || contactFirstNameFromHandle || ''),
-        capitalize(contactLastName || contactLastNameFromHandle || ''),
-        companyId,
-      ],
-    );
-
-    return id;
+    manager.transaction(async (entityManager) => {
+      for (const contact of formattedContacts) {
+        await entityManager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ($1, $2, $3, $4, $5)`,
+          [
+            contact.id,
+            contact.handle,
+            contact.firstName,
+            contact.lastName,
+            contact.companyId,
+          ],
+        );
+      }
+    });
   }
 }
