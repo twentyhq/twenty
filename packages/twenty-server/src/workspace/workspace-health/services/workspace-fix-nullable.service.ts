@@ -27,24 +27,19 @@ export class WorkspaceFixNullableService {
     issues: WorkspaceHealthNullableIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+    const nullabilityIssues = issues.filter(
+      (issue) =>
+        issue.type === WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
+    ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[];
 
-    for (const issue of issues) {
-      switch (issue.type) {
-        case WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT: {
-          const columnNullabilityWorkspaceMigrations =
-            await this.fixColumnNullabilityIssues(
-              objectMetadataCollection,
-              issues.filter(
-                (issue) =>
-                  issue.type ===
-                  WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
-              ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
-            );
+    if (nullabilityIssues.length > 0) {
+      const columnNullabilityWorkspaceMigrations =
+        await this.fixColumnNullabilityIssues(
+          objectMetadataCollection,
+          nullabilityIssues,
+        );
 
-          workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
-          break;
-        }
-      }
+      workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
     }
 
     return workspaceMigrations;

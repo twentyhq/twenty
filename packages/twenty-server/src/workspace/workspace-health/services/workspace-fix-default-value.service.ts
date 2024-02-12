@@ -28,24 +28,19 @@ export class WorkspaceFixDefaultValueService {
     issues: WorkspaceHealthDefaultValueIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+    const defaultValueIssues = issues.filter(
+      (issue) =>
+        issue.type === WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
+    ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[];
 
-    for (const issue of issues) {
-      switch (issue.type) {
-        case WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT: {
-          const columnNullabilityWorkspaceMigrations =
-            await this.fixColumnDefaultValueIssues(
-              objectMetadataCollection,
-              issues.filter(
-                (issue) =>
-                  issue.type ===
-                  WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
-              ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
-            );
+    if (defaultValueIssues.length > 0) {
+      const columnDefaultValueWorkspaceMigrations =
+        await this.fixColumnDefaultValueIssues(
+          objectMetadataCollection,
+          defaultValueIssues,
+        );
 
-          workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
-          break;
-        }
-      }
+      workspaceMigrations.push(...columnDefaultValueWorkspaceMigrations);
     }
 
     return workspaceMigrations;

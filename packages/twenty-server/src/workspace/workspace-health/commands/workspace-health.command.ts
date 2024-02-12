@@ -42,14 +42,16 @@ export class WorkspaceHealthCommand extends CommandRunner {
     if (issues.length === 0) {
       console.log(chalk.green('Workspace is healthy'));
     } else {
-      console.log(chalk.red('Workspace is not healthy'));
+      console.log(
+        chalk.red(`Workspace is not healthy, found ${issues.length} issues`),
+      );
 
       if (options.verbose) {
-        console.group(chalk.red('Issues'));
-        issues.forEach((issue) => {
-          console.log(chalk.yellow(JSON.stringify(issue, null, 2)));
-        });
-        console.groupEnd();
+        await this.commandLogger.writeLog(
+          `workspace-health-issues-${options.workspaceId}`,
+          issues,
+        );
+        console.log(chalk.yellow('Issues written to log'));
       }
     }
 
