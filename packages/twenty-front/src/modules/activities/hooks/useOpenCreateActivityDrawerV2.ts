@@ -1,6 +1,7 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
+import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
@@ -31,6 +32,8 @@ export const useOpenCreateActivityDrawerV2 = () => {
     temporaryActivityForEditorState,
   );
 
+  const setActivityInDrawer = useSetRecoilState(activityInDrawerState);
+
   const openCreateActivityDrawer = async ({
     type,
     targetableObjects,
@@ -49,6 +52,7 @@ export const useOpenCreateActivityDrawerV2 = () => {
       assigneeId,
     });
 
+    setActivityInDrawer(createdActivityInCache);
     setTemporaryActivityForEditor(createdActivityInCache);
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });

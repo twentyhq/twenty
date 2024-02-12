@@ -5,13 +5,16 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconPlus, IconTrash } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
@@ -24,6 +27,8 @@ const StyledButtonContainer = styled.div`
 
 export const ActivityActionBar = () => {
   const viewableActivityId = useRecoilValue(viewableActivityIdState);
+  const activityInDrawer = useRecoilValue(activityInDrawerState);
+
   const activityTargetableEntityArray = useRecoilValue(
     activityTargetableEntityArrayState,
   );
@@ -32,6 +37,13 @@ export const ActivityActionBar = () => {
     objectNameSingular: CoreObjectNameSingular.Activity,
     refetchFindManyQuery: true,
   });
+
+  const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
+    {
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      refetchFindManyQuery: true,
+    },
+  );
 
   const [temporaryActivityForEditor, setTemporaryActivityForEditor] =
     useRecoilState(temporaryActivityForEditorState);
@@ -49,6 +61,10 @@ export const ActivityActionBar = () => {
         deleteActivityFromCache(temporaryActivityForEditor);
         setTemporaryActivityForEditor(null);
       } else {
+        const activityTargetIdsToDelete =
+          activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
+
+        deleteManyActivityTargets(activityTargetIdsToDelete);
         deleteOneActivity?.(viewableActivityId);
         // TODO: find a better way to do this with custom optimistic rendering for activities
         apolloClient.refetchQueries({

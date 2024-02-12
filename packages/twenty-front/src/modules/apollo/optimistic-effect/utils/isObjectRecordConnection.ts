@@ -23,6 +23,7 @@ export const isObjectRecordConnection = (
       }),
     ),
   });
+
   const connectionValidation = objectConnectionSchema.safeParse(value);
 
   return connectionValidation.success;
