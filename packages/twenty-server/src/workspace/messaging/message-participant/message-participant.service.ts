@@ -62,21 +62,35 @@ export class MessageParticipantService {
     );
   }
 
-  public async getIdsByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageParticipantObjectMetadata>[]> {
+  ): Promise<
+    {
+      id: string;
+      handle: string;
+      displayName: string;
+    }[]
+  > {
+    if (!messageChannelId || !workspaceId) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const ids = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id FROM ${dataSourceSchema}."messageParticipant" WHERE "messageChannelId" = $1 AND "personId" IS NULL AND "workspaceMemberId" IS NULL`,
+    const messageParticipants: {
+      id: string;
+      handle: string;
+      displayName: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, handle FROM ${dataSourceSchema}."messageParticipant" WHERE "messageChannelId" = $1 AND "personId" IS NULL AND "workspaceMemberId" IS NULL`,
       [messageChannelId],
       workspaceId,
       transactionManager,
     );
 
-    return ids.map((id: { id: string }) => id.id);
+    return messageParticipants;
   }
 }

@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { CreateContactService } from 'packages/twenty-server/dist/src/workspace/messaging/create-contact/create-contact.service';
+
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 export type CreateContactsAndCompaniesAfterSyncJobData = {
   workspaceId: string;
@@ -15,6 +18,9 @@ export class CreateContactsAndCompaniesAfterSyncJob
 {
   constructor(
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly createCompaniesService: CreateCompaniesService,
+    private readonly createContactService: CreateContactService,
   ) {}
 
   async handle(
@@ -22,19 +28,50 @@ export class CreateContactsAndCompaniesAfterSyncJob
   ): Promise<void> {
     const { workspaceId, messageChannelId } = data;
 
-    const messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantService.getIdsByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
         messageChannelId,
         workspaceId,
       );
 
-    if (messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId.length === 0) {
+    if (messageParticipantsWithoutPersonIdAndWorkspaceMemberId.length === 0) {
       return;
     }
 
-    for (const messageParticipantId of messageParticipantIdsWithoutPersonIdAndWorkspaceMemberId) {
-      // Create contacts and companies
-      // Update message participant with personIds
-    }
+    const dataSourceMetadata =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    const manager = dataSourceMetadata.manager;
+
+    const companiesObject = await this.createCompaniesService.createCompanies(
+      domainNamesToCreate,
+      dataSourceMetadata,
+      manager,
+    );
+
+    const contactsToCreate = filteredParticipantsWihCompanyDomainNames.map(
+      (participant) => ({
+        handle: participant.handle,
+        displayName: participant.displayName,
+        companyId: companiesObject[participant.companyDomainName],
+      }),
+    );
+
+    const personIds = await this.createContactService.createContacts(
+      contactsToCreate,
+      dataSourceMetadata,
+      manager,
+    );
+
+    await this.messageParticipantService.updateParticipantsPersonIds(
+      messageParticipantsWithoutPersonIdAndWorkspaceMemberId.map(
+        (participant) => participant.id,
+      ),
+      personIds,
+      workspaceId,
+      manager,
+    );
   }
 }
