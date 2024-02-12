@@ -85,33 +85,41 @@ export class MessageParticipantService {
       ({ email }) => email,
     );
 
-    const contactsToCreate = await Promise.all(
-      participants
-        .filter(
-          (participant) =>
-            !alreadyCreatedContactEmails.includes(participant.handle) &&
-            participant.handle.includes('@'),
-        )
-        ?.map(async (participant) => {
-          const companyDomainName = participant.handle
-            .split('@')?.[1]
-            .split('.')
-            .slice(-2)
-            .join('.')
-            .toLowerCase();
+    const filteredParticipants = participants.filter(
+      (participant) =>
+        !alreadyCreatedContactEmails.includes(participant.handle) &&
+        participant.handle.includes('@'),
+    );
 
-          const companyId = await this.createCompaniesService.createCompany(
-            companyDomainName,
-            dataSourceMetadata,
-            manager,
-          );
+    const filteredParticipantsWihCompanyDomainNames = filteredParticipants?.map(
+      (participant) => ({
+        handle: participant.handle,
+        displayName: participant.displayName,
+        companyDomainName: participant.handle
+          .split('@')?.[1]
+          .split('.')
+          .slice(-2)
+          .join('.')
+          .toLowerCase(),
+      }),
+    );
 
-          return {
-            handle: participant.handle,
-            displayName: participant.displayName,
-            companyId,
-          };
-        }),
+    const domainNamesToCreate = filteredParticipantsWihCompanyDomainNames.map(
+      (participant) => participant.companyDomainName,
+    );
+
+    const companiesObject = await this.createCompaniesService.createCompanies(
+      domainNamesToCreate,
+      dataSourceMetadata,
+      manager,
+    );
+
+    const contactsToCreate = filteredParticipantsWihCompanyDomainNames.map(
+      (participant) => ({
+        handle: participant.handle,
+        displayName: participant.displayName,
+        companyId: companiesObject[participant.companyDomainName],
+      }),
     );
 
     await this.createContactService.createContacts(
