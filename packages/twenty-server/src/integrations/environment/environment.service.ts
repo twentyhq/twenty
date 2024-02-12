@@ -288,6 +288,10 @@ export class EnvironmentService {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
 
+  isTestEnv(): boolean {
+    return this.configService.get<string>('ENV') === 'test';
+  }
+
   getApiRateLimitingTtl(): number {
     return this.configService.get<number>('API_RATE_LIMITING_TTL') ?? 100;
   }

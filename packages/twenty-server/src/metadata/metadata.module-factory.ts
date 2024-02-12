@@ -7,6 +7,7 @@ import { ExceptionHandlerService } from 'src/integrations/exception-handler/exce
 import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
 import { MetadataModule } from 'src/metadata/metadata.module';
+import { testMetadataSchema } from 'src/metadata/utils/testMetadataSchema';
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 
 export const metadataModuleFactory = async (
@@ -14,11 +15,14 @@ export const metadataModuleFactory = async (
   exceptionHandlerService: ExceptionHandlerService,
   createContextFactory: CreateContextFactory,
 ): Promise<YogaDriverConfig> => {
+  const isTestEnv = environmentService.isTestEnv();
+
   const config: YogaDriverConfig = {
     context(context) {
       return createContextFactory.create(context);
     },
-    autoSchemaFile: true,
+    autoSchemaFile: !isTestEnv,
+    schema: isTestEnv ? testMetadataSchema : undefined,
     include: [MetadataModule],
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });

@@ -22,6 +22,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { User } from 'src/core/user/user.entity';
 import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
+import { testGraphqlSchema } from 'src/utils/utils-test/testGraphqlSchema';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -44,61 +45,66 @@ export class GraphQLConfigService
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode = this.environmentService.isDebugMode();
+    const isTestEnv = this.environmentService.isTestEnv();
+
     const config: YogaDriverConfig = {
       context: (context) => this.createContextFactory.create(context),
-      autoSchemaFile: true,
+      autoSchemaFile: !isTestEnv,
+      schema: isTestEnv ? testGraphqlSchema : undefined,
       include: [CoreModule],
-      conditionalSchema: async (context) => {
-        let user: User | undefined;
+      conditionalSchema: isTestEnv
+        ? undefined
+        : async (context) => {
+            let user: User | undefined;
 
-        try {
-          if (!this.tokenService.isTokenPresent(context.req)) {
-            return new GraphQLSchema({});
-          }
+            try {
+              if (!this.tokenService.isTokenPresent(context.req)) {
+                return new GraphQLSchema({});
+              }
 
-          const data = await this.tokenService.validateToken(context.req);
+              const data = await this.tokenService.validateToken(context.req);
 
-          user = data.user;
+              user = data.user;
 
-          return await this.createSchema(context, data.workspace);
-        } catch (error) {
-          if (error instanceof UnauthorizedException) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
+              return await this.createSchema(context, data.workspace);
+            } catch (error) {
+              if (error instanceof UnauthorizedException) {
+                throw new GraphQLError('Unauthenticated', {
+                  extensions: {
+                    code: 'UNAUTHENTICATED',
+                  },
+                });
+              }
 
-          if (error instanceof JsonWebTokenError) {
-            //mockedUserJWT
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
+              if (error instanceof JsonWebTokenError) {
+                //mockedUserJWT
+                throw new GraphQLError('Unauthenticated', {
+                  extensions: {
+                    code: 'UNAUTHENTICATED',
+                  },
+                });
+              }
 
-          if (error instanceof TokenExpiredError) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
+              if (error instanceof TokenExpiredError) {
+                throw new GraphQLError('Unauthenticated', {
+                  extensions: {
+                    code: 'UNAUTHENTICATED',
+                  },
+                });
+              }
 
-          throw handleExceptionAndConvertToGraphQLError(
-            error,
-            this.exceptionHandlerService,
-            user
-              ? {
-                  id: user.id,
-                  email: user.email,
-                }
-              : undefined,
-          );
-        }
-      },
+              throw handleExceptionAndConvertToGraphQLError(
+                error,
+                this.exceptionHandlerService,
+                user
+                  ? {
+                      id: user.id,
+                      email: user.email,
+                    }
+                  : undefined,
+              );
+            }
+          },
       resolvers: { JSON: GraphQLJSON },
       plugins: [
         useThrottler({

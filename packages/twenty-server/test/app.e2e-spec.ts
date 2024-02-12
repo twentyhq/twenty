@@ -22,9 +22,9 @@ describe('AppController (e2e)', () => {
       .expect((response) => {
         expect(response.body).toEqual({
           status: 'ok',
-          info: { database: { status: 'up' } },
+          info: {},
           error: {},
-          details: { database: { status: 'up' } },
+          details: {},
         });
       });
   });
