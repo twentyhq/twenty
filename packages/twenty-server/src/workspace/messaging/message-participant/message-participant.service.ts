@@ -8,12 +8,14 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
+import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly createContactService: CreateContactService,
+    private readonly createCompaniesService: CreateCompanyService,
   ) {}
 
   public async getByHandles(
@@ -93,13 +95,26 @@ export class MessageParticipantService {
       const participantWorkspaceMemberId = workspaceMember[0]?.id;
 
       if (!participantPersonId && !participantWorkspaceMemberId) {
-        participantPersonId =
-          await this.createContactService.createContactAndCompanyFromHandleAndDisplayName(
-            participant.handle,
-            participant.displayName,
-            dataSourceMetadata,
-            manager,
-          );
+        const companyDomainName = participant.handle
+          .split('@')?.[1]
+          .split('.')
+          .slice(-2)
+          .join('.')
+          .toLowerCase();
+
+        const companyId = await this.createCompaniesService.createCompany(
+          companyDomainName,
+          dataSourceMetadata,
+          manager,
+        );
+
+        participantPersonId = await this.createContactService.createContact(
+          participant.handle,
+          participant.displayName,
+          companyId,
+          dataSourceMetadata,
+          manager,
+        );
       }
 
       await manager.query(

@@ -16,7 +16,7 @@ export class CreateCompanyService {
     });
   }
 
-  async createCompanyFromDomainName(
+  async createCompany(
     domainName: string,
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,

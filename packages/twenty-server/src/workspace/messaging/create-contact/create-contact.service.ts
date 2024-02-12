@@ -2,46 +2,71 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
+import { id } from 'date-fns/locale';
 
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
+
+type ContactToCreate = {
+  handle: string;
+  displayName: string;
+  companyId: string;
+};
+
+type FormattedContactToCreate = {
+  id: string;
+  handle: string;
+  firstName: string;
+  lastName: string;
+  companyId: string;
+};
+
+type CreateContactsType = {
+  contactsToCreate: ContactToCreate[];
+  dataSourceMetadata: DataSourceEntity;
+  manager: EntityManager;
+};
+
 @Injectable()
 export class CreateContactService {
-  constructor(private readonly createCompaniesService: CreateCompanyService) {}
+  constructor() {}
 
-  async createContactAndCompanyFromHandleAndDisplayName(
-    handle: string,
-    displayName: string,
+  formatContacts(
+    contactsToCreate: ContactToCreate[],
+  ): FormattedContactToCreate[] {
+    return contactsToCreate.map((contact) => {
+      const { handle, displayName, companyId } = contact;
+
+      const contactFirstName = displayName.split(' ')[0];
+      const contactLastName = displayName.split(' ')[1];
+
+      const contactFullNameFromHandle = handle.split('@')[0];
+      const contactFirstNameFromHandle =
+        contactFullNameFromHandle.split('.')[0];
+      const contactLastNameFromHandle = contactFullNameFromHandle.split('.')[1];
+
+      const id = v4();
+
+      return {
+        id,
+        handle,
+        firstName: capitalize(
+          contactFirstName || contactFirstNameFromHandle || '',
+        ),
+        lastName: capitalize(
+          contactLastName || contactLastNameFromHandle || '',
+        ),
+        companyId,
+      };
+    });
+  }
+
+  async createContacts(
+    contactsToCreate: ContactToCreate[],
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ): Promise<string | undefined> {
-    if (!handle) {
-      return;
-    }
-
-    const contactFirstName = displayName.split(' ')[0];
-    const contactLastName = displayName.split(' ')[1];
-
-    const contactFullNameFromHandle = handle.split('@')[0];
-    const contactFirstNameFromHandle = contactFullNameFromHandle.split('.')[0];
-    const contactLastNameFromHandle = contactFullNameFromHandle.split('.')[1];
-
-    const id = v4();
-
-    const companyDomainName = handle
-      .split('@')?.[1]
-      .split('.')
-      .slice(-2)
-      .join('.')
-      .toLowerCase();
-
-    const companyId =
-      await this.createCompaniesService.createCompanyFromDomainName(
-        companyDomainName,
-        dataSourceMetadata,
-        manager,
-      );
+    const formattedContacts = this.formatContacts(contactsToCreate);
 
     await manager.query(
       `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ($1, $2, $3, $4, $5)`,
