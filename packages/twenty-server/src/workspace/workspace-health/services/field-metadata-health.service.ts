@@ -146,7 +146,7 @@ export class FieldMetadataHealthService {
       return issues;
     }
 
-    const columnDefault = columnStructure.columnDefault?.split('::')?.[0];
+    const columnDefaultValue = columnStructure.columnDefault?.split('::')?.[0];
 
     // Check if column data type is the same
     if (columnStructure.dataType !== dataType) {
@@ -169,28 +169,36 @@ export class FieldMetadataHealthService {
       });
     }
 
-    if (defaultValue && columnDefault) {
-      if (isEnumFieldMetadataType(fieldMetadata.type)) {
-        const enumValues = fieldMetadata.options?.map((option) =>
-          serializeDefaultValue(option.value),
-        );
+    if (
+      defaultValue &&
+      columnDefaultValue &&
+      isEnumFieldMetadataType(fieldMetadata.type)
+    ) {
+      const enumValues = fieldMetadata.options?.map((option) =>
+        serializeDefaultValue(option.value),
+      );
 
-        if (!enumValues.includes(columnDefault)) {
-          issues.push({
-            type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
-            fieldMetadata,
-            columnStructure,
-            message: `Column ${columnName} default value is not in the enum values "${columnDefault}" NOT IN "${enumValues}"`,
-          });
-        }
-      } else if (columnDefault !== defaultValue) {
+      if (!enumValues.includes(columnDefaultValue)) {
         issues.push({
-          type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
+          type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
           fieldMetadata,
           columnStructure,
-          message: `Column ${columnName} default value is not the same as the field metadata default value "${columnStructure.columnDefault}" !== "${defaultValue}"`,
+          message: `Column ${columnName} default value is not in the enum values "${columnDefaultValue}" NOT IN "${enumValues}"`,
         });
       }
+    }
+
+    if (
+      defaultValue &&
+      columnDefaultValue &&
+      columnDefaultValue !== defaultValue
+    ) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
+        fieldMetadata,
+        columnStructure,
+        message: `Column ${columnName} default value is not the same as the field metadata default value "${columnStructure.columnDefault}" !== "${defaultValue}"`,
+      });
     }
 
     return issues;
@@ -334,15 +342,15 @@ export class FieldMetadataHealthService {
       fieldMetadata.defaultValue
     ) {
       const enumValues = fieldMetadata.options?.map((option) => option.value);
-      const defaultValue = (
+      const metadataDefaultValue = (
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>
       )?.value;
 
-      if (defaultValue && !enumValues.includes(defaultValue)) {
+      if (metadataDefaultValue && !enumValues.includes(metadataDefaultValue)) {
         issues.push({
           type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
           fieldMetadata,
-          message: `Column default value is not in the enum values "${defaultValue}" NOT IN "${enumValues}"`,
+          message: `Column default value is not in the enum values "${metadataDefaultValue}" NOT IN "${enumValues}"`,
         });
       }
     }
