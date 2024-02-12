@@ -29,7 +29,6 @@ export class WorkspaceFixTypeService {
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthTypeIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    console.log('WorkspaceFixTypeService: ', issues.length);
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
     const columnTypeIssues = issues.filter(
       (issue) =>
