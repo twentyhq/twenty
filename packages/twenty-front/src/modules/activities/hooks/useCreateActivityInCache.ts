@@ -40,10 +40,8 @@ export const useCreateActivityInCache = () => {
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
-  const {
-    attachRelationInBothDirections:
-      attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache,
-  } = useAttachRelationInBothDirections();
+  const { attachRelationInBothDirections } =
+    useAttachRelationInBothDirections();
 
   const createActivityInCache = ({
     type,
@@ -91,7 +89,7 @@ export const useCreateActivityInCache = () => {
       activityTargetsToInject: createdActivityTargetsInCache,
     });
 
-    attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache({
+    attachRelationInBothDirections({
       sourceRecord: createdActivityInCache,
       fieldNameOnSourceRecord: 'activityTargets',
       sourceObjectNameSingular: CoreObjectNameSingular.Activity,
