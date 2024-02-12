@@ -24,7 +24,6 @@ export class WorkspaceFixTargetColumnMapService {
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthTargetColumnMapIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    console.log('WorkspaceFixTargetColumnMapService.fix: ', issues);
     const targetColumnMapIssues = issues.filter(
       (issue) =>
         issue.type ===
