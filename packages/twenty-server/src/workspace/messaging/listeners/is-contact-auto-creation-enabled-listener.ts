@@ -26,7 +26,8 @@ export class IsContactAutoCreationEnabledListener {
       objectRecordUpdateEventChangedProperties(
         payload.previousRecord,
         payload.updatedRecord,
-      ).includes('isContactAutoCreationEnabled')
+      ).includes('isContactAutoCreationEnabled') &&
+      payload.updatedRecord.isContactAutoCreationEnabled
     ) {
       this.messageQueueService.add<CreateContactsAndCompaniesAfterSyncJobData>(
         CreateContactsAndCompaniesAfterSyncJob.name,
