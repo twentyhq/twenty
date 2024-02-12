@@ -10,12 +10,14 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import {
   isWorkspaceHealthDefaultValueIssue,
   isWorkspaceHealthNullableIssue,
+  isWorkspaceHealthTargetColumnMapIssue,
   isWorkspaceHealthTypeIssue,
 } from 'src/workspace/workspace-health/utils/is-workspace-health-issue-type.util';
 
 import { WorkspaceFixNullableService } from './workspace-fix-nullable.service';
 import { WorkspaceFixTypeService } from './workspace-fix-type.service';
 import { WorkspaceFixDefaultValueService } from './workspace-fix-default-value.service';
+import { WorkspaceFixTargetColumnMapService } from './workspace-fix-target-column-map.service';
 
 @Injectable()
 export class WorkspaceFixService {
@@ -23,6 +25,7 @@ export class WorkspaceFixService {
     private readonly workspaceFixNullableService: WorkspaceFixNullableService,
     private readonly workspaceFixTypeService: WorkspaceFixTypeService,
     private readonly workspaceFixDefaultValueService: WorkspaceFixDefaultValueService,
+    private readonly workspaceFixTargetColumnMapService: WorkspaceFixTargetColumnMapService,
   ) {}
 
   async fix(
@@ -50,12 +53,19 @@ export class WorkspaceFixService {
           isWorkspaceHealthDefaultValueIssue(issue.type),
         ),
       },
+      [WorkspaceHealthFixKind.TargetColumnMap]: {
+        service: this.workspaceFixTargetColumnMapService,
+        issues: issues.filter((issue) =>
+          isWorkspaceHealthTargetColumnMapIssue(issue.type),
+        ),
+      },
     };
 
     return services[type].service.fix(
       manager,
       objectMetadataCollection,
-      services[type].issues,
+      // TODO: Refactor all of the issues filtering
+      services[type].issues as any[],
     );
   }
 }

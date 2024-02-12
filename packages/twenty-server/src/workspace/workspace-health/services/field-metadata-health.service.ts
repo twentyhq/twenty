@@ -213,14 +213,6 @@ export class FieldMetadataHealthService {
     const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
     const defaultValueIssues = this.defaultValueHealthCheck(fieldMetadata);
 
-    if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
-      issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
-        fieldMetadata,
-        message: `Column ${columnName} has more than one target column map, it should only contains "value"`,
-      });
-    }
-
     issues.push(...targetColumnMapIssues);
 
     if (fieldMetadata.isCustom && !columnName?.startsWith('_')) {
