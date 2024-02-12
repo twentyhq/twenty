@@ -42,12 +42,7 @@ async function bootstrap() {
         try {
           await job.handle(jobData.data);
         } catch (err) {
-          if (
-            !jobData?.opts?.attempts ||
-            jobData.attemptsMade >= jobData.opts.attempts
-          ) {
-            exceptionHandlerService?.captureExceptions([err]);
-          }
+          exceptionHandlerService?.captureExceptions([err]);
           throw err;
         }
       });
