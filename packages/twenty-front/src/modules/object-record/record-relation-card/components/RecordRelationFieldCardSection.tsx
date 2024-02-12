@@ -6,7 +6,6 @@ import qs from 'qs';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
@@ -19,7 +18,7 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { IconForbid, IconPlus } from '@/ui/display/icon';
+import { IconForbid, IconPencil, IconPlus } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
@@ -121,6 +120,7 @@ export const RecordRelationFieldCardSection = () => {
   >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
+  const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -184,13 +184,11 @@ export const RecordRelationFieldCardSection = () => {
       <StyledHeader isDropdownOpen={isDropdownOpen}>
         <StyledTitle>
           <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
-          {parseFieldRelationType(relationFieldMetadataItem) ===
-            'TO_ONE_OBJECT' &&
-            relationRecords.length > 0 && (
-              <StyledLink to={filterLinkHref}>
-                All ({relationRecords.length})
-              </StyledLink>
-            )}
+          {isFromManyObjects && (
+            <StyledLink to={filterLinkHref}>
+              All ({relationRecords.length})
+            </StyledLink>
+          )}
         </StyledTitle>
         <DropdownScope dropdownScopeId={dropdownId}>
           <StyledAddDropdown
@@ -200,7 +198,7 @@ export const RecordRelationFieldCardSection = () => {
             clickableComponent={
               <LightIconButton
                 className="displayOnHover"
-                Icon={IconPlus}
+                Icon={isToOneObject ? IconPencil : IconPlus}
                 accent="tertiary"
               />
             }

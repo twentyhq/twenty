@@ -159,10 +159,9 @@ export const RecordIndexOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleRecordFields}
-            isVisible={true}
-            onVisibilityChange={handleChangeFieldVisibility}
-            isDraggable={true}
+            isDraggable
             onDragEnd={handleReorderFields}
+            onVisibilityChange={handleChangeFieldVisibility}
           />
           {hiddenRecordFields.length > 0 && (
             <>
@@ -170,9 +169,8 @@ export const RecordIndexOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
-                isVisible={false}
-                onVisibilityChange={handleChangeFieldVisibility}
                 isDraggable={false}
+                onVisibilityChange={handleChangeFieldVisibility}
               />
             </>
           )}

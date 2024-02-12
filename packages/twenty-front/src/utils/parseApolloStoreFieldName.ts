@@ -16,11 +16,11 @@ export const parseApolloStoreFieldName = <
   const fieldName = matches[1] as string;
 
   try {
-    const variables = stringifiedVariables
+    const fieldArguments = stringifiedVariables
       ? (JSON.parse(stringifiedVariables) as Variables)
       : undefined;
 
-    return { fieldName, variables };
+    return { fieldName, fieldArguments };
   } catch {
     return { fieldName };
   }

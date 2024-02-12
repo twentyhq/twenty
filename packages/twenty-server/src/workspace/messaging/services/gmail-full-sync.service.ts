@@ -109,6 +109,10 @@ export class GmailFullSyncService {
       );
 
     if (messagesToSave.length === 0) {
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+      );
+
       return;
     }
 

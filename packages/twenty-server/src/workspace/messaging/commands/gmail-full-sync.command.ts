@@ -75,7 +75,6 @@ export class GmailFullSyncCommand extends CommandRunner {
           connectedAccountId: connectedAccount.id,
         },
         {
-          id: `${workspaceId}-${connectedAccount.id}`,
           retryLimit: 2,
         },
       );

@@ -1,8 +1,7 @@
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
@@ -11,13 +10,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 
 type ActivityTargetsInlineCellProps = {
-  activity?: Pick<GraphQLActivity, 'id'> & {
-    activityTargets?: {
-      edges: Array<{
-        node: Pick<ActivityTarget, 'id'>;
-      }> | null;
-    };
-  };
+  activity: Activity;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -47,8 +40,8 @@ export const ActivityTargetsInlineCell = ({
           IconLabel={IconArrowUpRight}
           editModeContent={
             <ActivityTargetInlineCellEditMode
-              activityId={activity?.id ?? ''}
-              activityTargetObjectRecords={activityTargetObjectRecords as any}
+              activity={activity}
+              activityTargetObjectRecords={activityTargetObjectRecords}
             />
           }
           label="Relations"

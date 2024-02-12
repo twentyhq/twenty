@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
@@ -65,12 +65,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   );
 
   const { enqueueSnackBar } = useSnackBar();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { data, loading, error, fetchMore } = useQuery<
     ObjectRecordQueryResult<T>
   >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem || !currentWorkspace,
+    skip: skip || !objectMetadataItem || !currentWorkspaceMember,
     variables: {
       filter,
       limit,
