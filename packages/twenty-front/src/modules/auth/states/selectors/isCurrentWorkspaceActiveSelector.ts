@@ -1,11 +1,11 @@
 import { selector } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 
 export const isCurrentWorkspaceActiveSelector = selector({
   key: 'isCurrentWorkspaceActiveSelector',
   get: ({ get }) => {
-    const currentWorkspaceMember = get(currentWorkspaceMemberState);
-    return !!currentWorkspaceMember;
+    const currentWorkspace = get(currentWorkspaceState);
+    return currentWorkspace?.activationStatus === 'active';
   },
 });
