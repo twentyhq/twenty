@@ -18,6 +18,7 @@ import { IsPersonEmailService } from 'src/workspace/messaging/services/is-person
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
+import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
 import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
 
@@ -43,6 +44,7 @@ import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/serv
     CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
+    MessagingMessageChannelListener,
     MessageService,
     CreateQueriesFromMessageIdsService,
   ],
