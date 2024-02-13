@@ -3,6 +3,7 @@ import { IconX } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { formatToHumanReadableDate } from '~/utils';
 
 type SettingsAccountsEmailsBlocklistTableRowProps = {
   blockListItem: BlockListItem;
@@ -16,7 +17,9 @@ export const SettingsAccountsEmailsBlocklistTableRow = ({
   return (
     <TableRow key={blockListItem.id}>
       <TableCell>{blockListItem.handle}</TableCell>
-      <TableCell>{blockListItem.createdAt}</TableCell>
+      <TableCell>
+        {formatToHumanReadableDate(blockListItem.createdAt)}
+      </TableCell>
       <TableCell align="right">
         <IconButton
           onClick={() => {
