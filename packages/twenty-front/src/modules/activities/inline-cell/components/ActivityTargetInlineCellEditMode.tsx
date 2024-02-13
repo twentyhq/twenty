@@ -73,7 +73,6 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
     closeEditableField();
-
     const activityTargetRecordsToDelete = activityTargetObjectRecords.filter(
       (activityTargetObjectRecord) =>
         !selectedRecords.some(
