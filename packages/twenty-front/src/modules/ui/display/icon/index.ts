@@ -16,6 +16,7 @@ export {
   IconAt,
   IconBaselineDensitySmall,
   IconBell,
+  IconBolt,
   IconBox,
   IconBrandGithub,
   IconBrandGoogle,
