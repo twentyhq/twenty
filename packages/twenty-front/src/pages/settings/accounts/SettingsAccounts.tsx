@@ -4,6 +4,7 @@ import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsConnectedAccountsSection } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsSection';
+import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistSection';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
@@ -39,6 +40,7 @@ export const SettingsAccounts = () => {
         ) : (
           <>
             <SettingsAccountsConnectedAccountsSection accounts={accounts} />
+            <SettingsAccountsEmailsBlocklistSection />
             <SettingsAccountsSettingsSection />
           </>
         )}
