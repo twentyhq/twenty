@@ -160,7 +160,6 @@ export class GmailFullSyncService {
           nextPageToken: messages.data.nextPageToken,
         },
         {
-          id: `${workspaceId}-${connectedAccountId}`,
           retryLimit: 2,
         },
       );
