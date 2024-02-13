@@ -268,7 +268,7 @@ export class FetchMessagesByBatchesService {
 
         return {
           role,
-          handle: address || '',
+          handle: address?.toLowerCase() || '',
           displayName: name || '',
         };
       });
