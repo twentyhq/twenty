@@ -11,6 +11,10 @@ COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn workspaces focus twenty-emails twenty-server
+RUN npx nx reset
+RUN npx nx run twenty-server:build:packageJson
+RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json
+RUN yarn workspaces focus twenty-emails twenty-server
 RUN npx nx run twenty-server:build
 
 WORKDIR /app/packages/twenty-server
