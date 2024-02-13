@@ -36,7 +36,7 @@ export const SocialLink = ({
 
   if (type === 'linkedin') {
     const matches = href.match(
-      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company)\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
+      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company)\/(.*)/,
     );
     if (matches && matches[1]) {
       displayValue = matches[1];

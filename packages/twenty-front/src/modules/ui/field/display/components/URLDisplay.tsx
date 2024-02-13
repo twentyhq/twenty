@@ -25,7 +25,7 @@ type URLDisplayProps = {
 
 const checkUrlType = (url: string) => {
   if (
-    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
+    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/(.*))?/.test(
       url,
     )
   ) {
