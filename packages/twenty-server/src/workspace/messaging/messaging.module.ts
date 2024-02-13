@@ -17,6 +17,7 @@ import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
+import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listen
     CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
+    MessagingMessageChannelListener,
   ],
   exports: [
     GmailPartialSyncService,
