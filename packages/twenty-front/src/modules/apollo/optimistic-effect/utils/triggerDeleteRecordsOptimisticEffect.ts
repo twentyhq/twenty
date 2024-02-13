@@ -5,7 +5,6 @@ import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effe
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
@@ -13,70 +12,79 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 export const triggerDeleteRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
-  records,
-  getRelationMetadata,
+  recordsToDelete,
+  objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  records: CachedObjectRecord[];
-  getRelationMetadata: ReturnType<typeof useGetRelationMetadata>;
+  recordsToDelete: CachedObjectRecord[];
+  objectMetadataItems: ObjectMetadataItem[];
 }) => {
   cache.modify<StoreObject>({
     fields: {
       [objectMetadataItem.namePlural]: (
-        cachedConnection,
+        rootQueryCachedResponse,
         { DELETE, readField, storeFieldName },
       ) => {
-        if (
+        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
           !isCachedObjectRecordConnection(
             objectMetadataItem.nameSingular,
-            cachedConnection,
-          )
-        ) {
-          return cachedConnection;
+            rootQueryCachedResponse,
+          );
+
+        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
+          return rootQueryCachedResponse;
         }
 
-        const { variables } =
+        const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
+
+        const { fieldArguments: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
 
-        const recordIds = records.map(({ id }) => id);
+        const recordIdsToDelete = recordsToDelete.map(({ id }) => id);
 
         const cachedEdges = readField<CachedObjectRecordEdge[]>(
           'edges',
-          cachedConnection,
+          rootQueryCachedObjectRecordConnection,
         );
+
         const nextCachedEdges =
           cachedEdges?.filter((cachedEdge) => {
             const nodeId = readField<string>('id', cachedEdge.node);
-            return nodeId && !recordIds.includes(nodeId);
+
+            return nodeId && !recordIdsToDelete.includes(nodeId);
           }) || [];
 
         if (nextCachedEdges.length === cachedEdges?.length)
-          return cachedConnection;
+          return rootQueryCachedObjectRecordConnection;
 
+        // TODO: same as in update, should we trigger DELETE ?
         if (
-          isDefined(variables?.first) &&
-          cachedEdges?.length === variables.first
+          isDefined(rootQueryVariables?.first) &&
+          cachedEdges?.length === rootQueryVariables.first
         ) {
           return DELETE;
         }
 
-        return { ...cachedConnection, edges: nextCachedEdges };
+        return {
+          ...rootQueryCachedObjectRecordConnection,
+          edges: nextCachedEdges,
+        };
       },
     },
   });
 
-  records.forEach((record) => {
+  recordsToDelete.forEach((recordToDelete) => {
     triggerUpdateRelationsOptimisticEffect({
       cache,
-      objectMetadataItem,
-      previousRecord: record,
-      nextRecord: null,
-      getRelationMetadata,
+      sourceObjectMetadataItem: objectMetadataItem,
+      currentSourceRecord: recordToDelete,
+      updatedSourceRecord: null,
+      objectMetadataItems,
     });
 
-    cache.evict({ id: cache.identify(record) });
+    cache.evict({ id: cache.identify(recordToDelete) });
   });
 };

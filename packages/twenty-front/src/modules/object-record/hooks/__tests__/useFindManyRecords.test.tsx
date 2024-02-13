@@ -3,7 +3,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import {
@@ -39,7 +39,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useFindManyRecords', () => {
-  it('should skip fetch if currentWorkspace is undefined', async () => {
+  it('should skip fetch if currentWorkspaceMember is undefined', async () => {
     const { result } = renderHook(
       () => useFindManyRecords({ objectNameSingular: 'person' }),
       {
@@ -56,12 +56,12 @@ describe('useFindManyRecords', () => {
 
     const { result } = renderHook(
       () => {
-        const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-        setCurrentWorkspace({
+        const setCurrentWorkspaceMember = useSetRecoilState(
+          currentWorkspaceMemberState,
+        );
+        setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
-          displayName: 'cool-workspace',
-          allowImpersonation: false,
-          subscriptionStatus: 'incomplete',
+          name: { firstName: 'John', lastName: 'Connor' },
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();

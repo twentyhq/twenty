@@ -11,3 +11,9 @@ export const isWorkspaceHealthTypeIssue = (
 ): type is WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT => {
   return type === WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT;
 };
+
+export const isWorkspaceHealthDefaultValueIssue = (
+  type: WorkspaceHealthIssueType,
+): type is WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT => {
+  return type === WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT;
+};

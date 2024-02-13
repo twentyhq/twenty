@@ -11,7 +11,7 @@ type MockedUser = Pick<
   | '__typename'
   | 'supportUserHash'
 > & {
-  workspaceMember: WorkspaceMember;
+  workspaceMember: WorkspaceMember | null;
   locale: string;
   defaultWorkspace: Workspace;
 };
@@ -34,7 +34,7 @@ export const mockDefaultWorkspace: Workspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
 };
 
-const workspaceMember: WorkspaceMember = {
+export const mockedWorkspaceMemberData: WorkspaceMember = {
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
   colorScheme: 'Light',
   avatarUrl,
@@ -59,7 +59,7 @@ export const mockedUsersData: Array<MockedUser> = [
     canImpersonate: false,
     supportUserHash:
       'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
-    workspaceMember,
+    workspaceMember: mockedWorkspaceMemberData,
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
   },
@@ -73,7 +73,7 @@ export const mockedUsersData: Array<MockedUser> = [
     supportUserHash:
       '54ac3986035961724cdb9a7a30c70e6463a4b68f0ecd2014c727171a82144b74',
     workspaceMember: {
-      ...workspaceMember,
+      ...mockedWorkspaceMemberData,
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
       name: {
         firstName: 'Felix',
@@ -97,7 +97,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     supportUserHash:
       '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
     workspaceMember: {
-      ...workspaceMember,
+      ...mockedWorkspaceMemberData,
       id: 'd454f075-c72f-4ebe-bac7-d28e75e74a23',
       name: {
         firstName: '',
@@ -116,7 +116,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     firstName: '',
     lastName: '',
     canImpersonate: false,
-    workspaceMember,
+    workspaceMember: null,
     defaultWorkspace: {
       ...mockDefaultWorkspace,
       displayName: '',

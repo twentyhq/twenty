@@ -21,7 +21,7 @@ async function bootstrap() {
 
   try {
     const app = await NestFactory.createApplicationContext(QueueWorkerModule, {
-      bufferLogs: true,
+      bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     });
 
     loggerService = app.get(LoggerService);
@@ -39,7 +39,12 @@ async function bootstrap() {
           .select(JobsModule)
           .get(jobClassName, { strict: true });
 
-        await job.handle(jobData.data);
+        try {
+          await job.handle(jobData.data);
+        } catch (err) {
+          exceptionHandlerService?.captureExceptions([err]);
+          throw err;
+        }
       });
     }
   } catch (err) {

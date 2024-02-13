@@ -9,9 +9,6 @@ import { RecordTableColumnDropdownMenu } from './RecordTableColumnDropdownMenu';
 
 type ColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  primaryColumnKey: string;
 };
 
 const StyledDropdown = styled(Dropdown)`
@@ -21,22 +18,12 @@ const StyledDropdown = styled(Dropdown)`
 
 export const ColumnHeadWithDropdown = ({
   column,
-  isFirstColumn,
-  isLastColumn,
-  primaryColumnKey,
 }: ColumnHeadWithDropdownProps) => {
   return (
     <StyledDropdown
       dropdownId={column.fieldMetadataId + '-header'}
       clickableComponent={<ColumnHead column={column} />}
-      dropdownComponents={
-        <RecordTableColumnDropdownMenu
-          column={column}
-          isFirstColumn={isFirstColumn}
-          isLastColumn={isLastColumn}
-          primaryColumnKey={primaryColumnKey}
-        />
-      }
+      dropdownComponents={<RecordTableColumnDropdownMenu column={column} />}
       dropdownOffset={{ x: -1 }}
       dropdownPlacement="bottom-start"
       dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}

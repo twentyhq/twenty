@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useRecordIndexOptionsForTable = (recordTableId: string) => {
   const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
@@ -26,11 +27,12 @@ export const useRecordIndexOptionsForTable = (recordTableId: string) => {
         return;
       }
 
-      const reorderFields = [...visibleTableColumns];
-      const [removed] = reorderFields.splice(result.source.index - 1, 1);
-      reorderFields.splice(result.destination.index - 1, 0, removed);
+      const reorderedFields = moveArrayItem(visibleTableColumns, {
+        fromIndex: result.source.index - 1,
+        toIndex: result.destination.index - 1,
+      });
 
-      handleColumnReorder(reorderFields);
+      handleColumnReorder(reorderedFields);
     },
     [visibleTableColumns, handleColumnReorder],
   );

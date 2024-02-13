@@ -17,6 +17,7 @@ export const useFieldContext = ({
   isLabelIdentifier = false,
   objectNameSingular,
   objectRecordId,
+  customUseUpdateOneObjectHook,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -24,6 +25,7 @@ export const useFieldContext = ({
   isLabelIdentifier?: boolean;
   objectNameSingular: string;
   objectRecordId: string;
+  customUseUpdateOneObjectHook?: RecordUpdateHook;
 }) => {
   const { basePathToShowPage, objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -65,7 +67,8 @@ export const useFieldContext = ({
                 position: fieldPosition,
                 objectMetadataItem,
               }),
-              useUpdateRecord: useUpdateOneObjectMutation,
+              useUpdateRecord:
+                customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
               clearable,
             }}

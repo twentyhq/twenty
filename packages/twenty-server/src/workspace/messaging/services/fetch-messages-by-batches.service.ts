@@ -189,7 +189,6 @@ export class FetchMessagesByBatchesService {
           } = parsed;
 
           if (!from) throw new Error('From value is missing');
-          if (!to) throw new Error('To value is missing');
 
           const participants = [
             ...this.formatAddressObjectAsParticipants(from, 'from'),
@@ -265,7 +264,7 @@ export class FetchMessagesByBatchesService {
 
         return {
           role,
-          handle: address || '',
+          handle: address?.toLowerCase() || '',
           displayName: name || '',
         };
       });

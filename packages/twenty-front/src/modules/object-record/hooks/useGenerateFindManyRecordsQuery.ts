@@ -28,7 +28,12 @@ export const useGenerateFindManyRecordsQuery = () => {
           node {
             id
             ${objectMetadataItem.fields
-              .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
+              .map((field) =>
+                mapFieldMetadataToGraphQLQuery({
+                  field,
+                  maxDepthForRelations: depth,
+                }),
+              )
               .join('\n')}
           }
           cursor

@@ -17,10 +17,10 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/crons/fetch-all-workspaces-messages.job';
-import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
+import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
+import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
-import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
+import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 
 @Module({
   imports: [

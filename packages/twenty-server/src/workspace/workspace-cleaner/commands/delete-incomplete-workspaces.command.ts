@@ -2,15 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 type DeleteIncompleteWorkspacesCommandOptions = {
   dryRun?: boolean;
-  workspaceId?: string;
+  workspaceIds?: string[];
 };
 
 @Command({
@@ -23,6 +24,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     private readonly workspaceService: WorkspaceService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly dataSourceService: DataSourceService,
   ) {
     super();
   }
@@ -37,12 +39,12 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id',
+    flags: '-w, --workspace-ids [workspace_ids]',
+    description: 'comma separated workspace ids',
     required: false,
   })
-  parseWorkspaceId(value: string): string {
-    return value;
+  parseWorkspaceIds(value: string): string[] {
+    return value.split(',');
   }
 
   async run(
@@ -53,12 +55,28 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
       subscriptionStatus: 'incomplete',
     };
 
-    if (options.workspaceId) {
-      where.id = options.workspaceId;
+    if (options.workspaceIds) {
+      where.id = In(options.workspaceIds);
     }
-    const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
 
-    for (const incompleteWorkspace of incompleteWorkspaces) {
+    const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
+    const dataSources =
+      await this.dataSourceService.getManyDataSourceMetadata();
+    const workspaceIdsWithSchema = dataSources.map(
+      (dataSource) => dataSource.workspaceId,
+    );
+    const incompleteWorkspacesToDelete = incompleteWorkspaces.filter(
+      (incompleteWorkspace) =>
+        workspaceIdsWithSchema.includes(incompleteWorkspace.id),
+    );
+
+    if (incompleteWorkspacesToDelete.length) {
+      this.logger.log(
+        `Running Deleting incomplete workspaces on ${incompleteWorkspacesToDelete.length} workspaces`,
+      );
+    }
+
+    for (const incompleteWorkspace of incompleteWorkspacesToDelete) {
       this.logger.log(
         `${getDryRunLogHeader(options.dryRun)}Deleting workspace ${
           incompleteWorkspace.id

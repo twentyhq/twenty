@@ -34,6 +34,10 @@ export class User {
   @Column()
   email: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  defaultAvatarUrl: string;
+
   @Field()
   @Column({ default: false })
   emailVerified: boolean;
@@ -81,6 +85,6 @@ export class User {
   })
   refreshTokens: RefreshToken[];
 
-  @Field(() => WorkspaceMember, { nullable: false })
+  @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
 }

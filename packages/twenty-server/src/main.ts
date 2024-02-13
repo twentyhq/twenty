@@ -16,7 +16,7 @@ import { EnvironmentService } from './integrations/environment/environment.servi
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    bufferLogs: true,
+    bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
   });
   const logger = app.get(LoggerService);
 
@@ -48,10 +48,6 @@ const bootstrap = async () => {
       maxFiles: 10,
     }),
   );
-  const loggerService = app.get(LoggerService);
-
-  app.useLogger(loggerService);
-  app.useLogger(app.get(EnvironmentService).getLogLevels());
 
   await app.listen(app.get(EnvironmentService).getPort());
 };

@@ -160,6 +160,13 @@ export class WorkspaceSyncObjectMetadataService {
         WorkspaceMigrationBuilderAction.CREATE,
       );
 
+    const updateFieldWorkspaceMigrations =
+      await this.workspaceMigrationFieldFactory.create(
+        originalObjectMetadataCollection,
+        metadataFieldUpdaterResult.updatedFieldMetadataCollection,
+        WorkspaceMigrationBuilderAction.UPDATE,
+      );
+
     const deleteFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
@@ -173,6 +180,7 @@ export class WorkspaceSyncObjectMetadataService {
       ...createObjectWorkspaceMigrations,
       ...deleteObjectWorkspaceMigrations,
       ...createFieldWorkspaceMigrations,
+      ...updateFieldWorkspaceMigrations,
       ...deleteFieldWorkspaceMigrations,
     ];
   }
