@@ -70,21 +70,20 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
   useScopedHotkeys(
     Key.Escape,
     () => {
-      titleInputRef.current?.blur();
+      handleBlur();
     },
     ActivityEditorHotkeyScope.ActivityTitle,
   );
 
   const handleBlur = () => {
     goBackToPreviousHotkeyScope();
-    // onBlur?.();
+    titleInputRef.current?.blur();
   };
 
   const handleFocus = () => {
     setHotkeyScopeAndMemorizePreviousScope(
       ActivityEditorHotkeyScope.ActivityTitle,
     );
-    // onFocus?.();
   };
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
@@ -151,6 +150,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
       <StyledEditableTitleInput
         autoComplete="off"
         autoFocus
+        ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
         value={internalTitle}

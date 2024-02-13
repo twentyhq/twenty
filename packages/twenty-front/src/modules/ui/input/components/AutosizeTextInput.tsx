@@ -168,6 +168,7 @@ export const AutosizeTextInput = ({
       event.preventDefault();
 
       setText('');
+      goBackToPreviousHotkeyScope();
       textInputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,

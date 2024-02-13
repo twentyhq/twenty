@@ -57,13 +57,6 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
-const StyledMiddleContainer = styled.div`
-  flex-grow: 2;
-  & > .editor-container {
-    height: 100%;
-  }
-`;
-
 type ActivityEditorProps = {
   activity: Activity;
   showComment?: boolean;
@@ -164,12 +157,10 @@ export const ActivityEditor = ({
           </PropertyBox>
         </StyledTopContainer>
       </StyledUpperPartContainer>
-      <StyledMiddleContainer>
-        <ActivityBodyEditor
-          activity={activity}
-          fillTitleFromBody={fillTitleFromBody}
-        />
-      </StyledMiddleContainer>
+      <ActivityBodyEditor
+        activity={activity}
+        fillTitleFromBody={fillTitleFromBody}
+      />
       {showComment && (
         <ActivityComments
           activity={activity}

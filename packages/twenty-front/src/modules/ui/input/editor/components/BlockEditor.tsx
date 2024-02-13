@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 
 interface BlockEditorProps {
   editor: BlockNoteEditor;
-  editorRef: React.RefObject<HTMLDivElement>;
   onFocus?: () => void;
   onBlur?: () => void;
 }
@@ -23,12 +22,7 @@ const StyledEditor = styled.div`
   }
 `;
 
-export const BlockEditor = ({
-  editor,
-  editorRef,
-  onFocus,
-  onBlur,
-}: BlockEditorProps) => {
+export const BlockEditor = ({ editor, onFocus, onBlur }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
 
@@ -41,7 +35,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor ref={editorRef}>
+    <StyledEditor>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}

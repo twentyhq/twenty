@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -60,8 +60,6 @@ export const ActivityBodyEditor = ({
   const modifyActivityFromCache = useModifyRecordFromCache({
     objectMetadataItem: objectMetadataItemActivity,
   });
-  const editorRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -259,9 +257,22 @@ export const ActivityBodyEditor = ({
       if (
         currentBlockContent &&
         isArray(currentBlockContent) &&
+        currentBlockContent.length === 0
+      ) {
+        // Empty block case
+        editor.updateBlock(blockIdentifier, {
+          content: keyboardEvent.key,
+        });
+        return;
+      }
+
+      if (
+        currentBlockContent &&
+        isArray(currentBlockContent) &&
         currentBlockContent[0] &&
         currentBlockContent[0].type === 'text'
       ) {
+        // Text block case
         editor.updateBlock(blockIdentifier, {
           content: currentBlockContent[0].text + keyboardEvent.key,
         });
@@ -293,14 +304,10 @@ export const ActivityBodyEditor = ({
   };
 
   return (
-    <StyledBlockNoteStyledContainer
-      ref={containerRef}
-      onClick={() => editor.focus()}
-    >
+    <StyledBlockNoteStyledContainer onClick={() => editor.focus()}>
       <BlockEditor
         onFocus={handleBlockEditorFocus}
         onBlur={handlerBlockEditorBlur}
-        editorRef={editorRef}
         editor={editor}
       />
     </StyledBlockNoteStyledContainer>
