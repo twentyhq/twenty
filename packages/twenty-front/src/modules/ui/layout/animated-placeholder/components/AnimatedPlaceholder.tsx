@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { animate } from 'framer-motion';
 
 import {
   Background,
+  DarkBackground,
+  DarkMovingImage,
   MovingImage,
 } from '@/ui/layout/animated-placeholder/constants/AnimatedImages';
 
@@ -40,6 +43,8 @@ interface AnimatedPlaceholderProps {
 }
 
 const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
+  const theme = useTheme();
+
   const x = useMotionValue(window.innerWidth / 2);
   const y = useMotionValue(window.innerHeight / 2);
 
@@ -84,12 +89,12 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   return (
     <StyledContainer>
       <StyledBackgroundImage
-        src={Background[type]}
+        src={theme.name === 'dark' ? DarkBackground[type] : Background[type]}
         alt="Background"
         type={type}
       />
       <StyledMovingImage
-        src={MovingImage[type]}
+        src={theme.name === 'dark' ? DarkMovingImage[type] : MovingImage[type]}
         alt="Moving"
         style={{ translateX, translateY }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}

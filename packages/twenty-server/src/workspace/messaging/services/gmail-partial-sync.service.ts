@@ -13,7 +13,8 @@ import {
 import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -22,12 +23,13 @@ export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
+    private readonly messageService: MessageService,
+    private readonly createQueriesFromMessageIdsService: CreateQueriesFromMessageIdsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -98,7 +100,9 @@ export class GmailPartialSyncService {
       await this.getMessageIdsFromHistory(history);
 
     const messageQueries =
-      this.utils.createQueriesFromMessageIds(messagesAdded);
+      this.createQueriesFromMessageIdsService.createQueriesFromMessageIds(
+        messagesAdded,
+      );
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -107,7 +111,7 @@ export class GmailPartialSyncService {
       );
 
     if (messagesToSave.length !== 0) {
-      await this.utils.saveMessages(
+      await this.messageService.saveMessages(
         messagesToSave,
         dataSourceMetadata,
         workspaceDataSource,
@@ -118,7 +122,7 @@ export class GmailPartialSyncService {
     }
 
     if (messagesDeleted.length !== 0) {
-      await this.utils.deleteMessages(
+      await this.messageService.deleteMessages(
         workspaceDataSource,
         messagesDeleted,
         gmailMessageChannelId,
