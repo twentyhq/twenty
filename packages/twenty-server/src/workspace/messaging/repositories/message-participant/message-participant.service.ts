@@ -7,8 +7,8 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
-import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
+import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
+import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 
 @Injectable()
 export class MessageParticipantService {

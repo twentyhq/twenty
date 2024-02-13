@@ -8,11 +8,11 @@ import {
 import { WorkspacePreQueryHook } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindManyResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
-import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { groupBy } from 'src/utils/group-by';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
-import { WorkspaceMemberService } from 'src/workspace/messaging/workspace-member/workspace-member.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
 
 @Injectable()
 export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
+import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 
 @Module({
   imports: [],

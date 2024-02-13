@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
+import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 
 @Injectable()
 export class MessageThreadService {

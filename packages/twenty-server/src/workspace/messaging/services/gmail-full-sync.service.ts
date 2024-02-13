@@ -1,18 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
-import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
+import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
-import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
+import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 
 @Injectable()
