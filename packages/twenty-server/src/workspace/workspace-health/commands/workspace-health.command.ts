@@ -61,25 +61,30 @@ export class WorkspaceHealthCommand extends CommandRunner {
     if (options.fix) {
       this.logger.log(chalk.yellow('Fixing issues'));
 
-      const workspaceMigrations = await this.workspaceHealthService.fixIssues(
-        options.workspaceId,
-        issues,
-        {
-          type: options.fix,
-          applyChanges: !options.dryRun,
-        },
-      );
+      const { workspaceMigrations, metadataEntities } =
+        await this.workspaceHealthService.fixIssues(
+          options.workspaceId,
+          issues,
+          {
+            type: options.fix,
+            applyChanges: !options.dryRun,
+          },
+        );
+      const totalCount = workspaceMigrations.length + metadataEntities.length;
 
       if (options.dryRun) {
         await this.commandLogger.writeLog(
           `workspace-health-${options.fix}-migrations`,
           workspaceMigrations,
         );
+
+        await this.commandLogger.writeLog(
+          `workspace-health-${options.fix}-metadata-entities`,
+          metadataEntities,
+        );
       } else {
         this.logger.log(
-          chalk.green(
-            `Fixed ${workspaceMigrations.length}/${issues.length} issues`,
-          ),
+          chalk.green(`Fixed ${totalCount}/${issues.length} issues`),
         );
       }
     }

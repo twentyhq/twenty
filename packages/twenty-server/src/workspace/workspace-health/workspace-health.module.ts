@@ -11,12 +11,10 @@ import { RelationMetadataHealthService } from 'src/workspace/workspace-health/se
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
 import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceFixTargetColumnMapService } from 'src/workspace/workspace-health/services/workspace-fix-target-column-map.service';
+
+import { workspaceFixers } from './fixer';
 
 import { WorkspaceFixService } from './services/workspace-fix.service';
-import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.service';
-import { WorkspaceFixTypeService } from './services/workspace-fix-type.service';
-import { WorkspaceFixDefaultValueService } from './services/workspace-fix-default-value.service';
 
 @Module({
   imports: [
@@ -28,15 +26,12 @@ import { WorkspaceFixDefaultValueService } from './services/workspace-fix-defaul
     WorkspaceMigrationBuilderModule,
   ],
   providers: [
+    ...workspaceFixers,
     WorkspaceHealthService,
     DatabaseStructureService,
     ObjectMetadataHealthService,
     FieldMetadataHealthService,
     RelationMetadataHealthService,
-    WorkspaceFixNullableService,
-    WorkspaceFixTypeService,
-    WorkspaceFixDefaultValueService,
-    WorkspaceFixTargetColumnMapService,
     WorkspaceFixService,
   ],
   exports: [WorkspaceHealthService],
