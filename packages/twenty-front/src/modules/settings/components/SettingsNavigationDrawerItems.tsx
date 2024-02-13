@@ -32,6 +32,12 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const isIntegrationsEnabled = useIsFeatureEnabled('IS_INTEGRATIONS_ENABLED');
+  const isIntegrationsItemActive = !!useMatch({
+    path: useResolvedPath('/settings/integrations').pathname,
+    end: true,
+  });
+
   const isAccountsItemActive = !!useMatch({
     path: useResolvedPath('/settings/accounts').pathname,
     end: true,
@@ -138,17 +144,14 @@ export const SettingsNavigationDrawerItems = () => {
             })
           }
         />
-        <NavigationDrawerItem
-          label="Integrations"
-          to="/settings/integrations"
-          Icon={IconApps}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/integrations').pathname,
-              end: true,
-            })
-          }
-        />
+        {isIntegrationsEnabled && (
+          <NavigationDrawerItem
+            label="Integrations"
+            to="/settings/integrations"
+            Icon={IconApps}
+            active={isIntegrationsItemActive}
+          />
+        )}
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
