@@ -12,8 +12,8 @@ import { ConnectedAccountService } from 'src/workspace/messaging/connected-accou
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -29,7 +29,6 @@ export class GmailFullSyncService {
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
-    private readonly createQueriesFromMessageIdsService: CreateQueriesFromMessageIdsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -101,10 +100,7 @@ export class GmailFullSyncService {
         ),
     );
 
-    const messageQueries =
-      this.createQueriesFromMessageIdsService.createQueriesFromMessageIds(
-        messagesToFetch,
-      );
+    const messageQueries = createQueriesFromMessageIds(messagesToFetch);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
