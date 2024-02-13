@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
@@ -27,6 +27,22 @@ export class ConnectedAccountService {
     );
   }
 
+  public async getByIds(
+    connectedAccountIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "id" = ANY($1)`,
+      [connectedAccountIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByIdOrFail(
     connectedAccountId: string,
     workspaceId: string,
@@ -44,7 +60,7 @@ export class ConnectedAccountService {
       );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
+      throw new NotFoundException('No connected account found');
     }
 
     return connectedAccounts[0];

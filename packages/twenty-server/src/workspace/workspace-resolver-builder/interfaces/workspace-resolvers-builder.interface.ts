@@ -73,3 +73,13 @@ export interface WorkspaceResolverBuilderMethods {
   readonly queries: readonly WorkspaceResolverBuilderQueryMethodNames[];
   readonly mutations: readonly WorkspaceResolverBuilderMutationMethodNames[];
 }
+
+export type ResolverArgs =
+  | CreateManyResolverArgs
+  | CreateOneResolverArgs
+  | DeleteManyResolverArgs
+  | DeleteOneResolverArgs
+  | FindManyResolverArgs
+  | FindOneResolverArgs
+  | UpdateManyResolverArgs
+  | UpdateOneResolverArgs;

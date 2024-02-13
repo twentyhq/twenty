@@ -19,6 +19,7 @@ import { MessageParticipantModule } from 'src/workspace/messaging/message-partic
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
+import { WorkspaceMemberModule } from 'src/workspace/messaging/workspace-member/workspace-member.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MessageService } from 'src/workspace/messaging/message/message.service'
     MessageModule,
     MessageThreadModule,
     MessageParticipantModule,
+    WorkspaceMemberModule,
   ],
   providers: [
     GmailFullSyncService,

@@ -154,4 +154,21 @@ export class MessageChannelMessageAssociationService {
       transactionManager,
     );
   }
+
+  public async getByMessageThreadId(
+    messageThreadId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannelMessageAssociation"
+    WHERE "messageThreadId" = $1`,
+      [messageThreadId],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }
