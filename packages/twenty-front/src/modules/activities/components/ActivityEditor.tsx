@@ -111,6 +111,14 @@ export const ActivityEditor = ({
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
 
+  const { FieldContextProvider: ActivityTargetsContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activity?.id ?? '',
+      fieldMetadataName: 'activityTargets',
+      fieldPosition: 2,
+    });
+
   const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
     isCreatingActivityState,
   );
@@ -148,7 +156,11 @@ export const ActivityEditor = ({
                   </AssigneeFieldContextProvider>
                 </>
               )}
-            <ActivityTargetsInlineCell activity={activity} />
+            {ActivityTargetsContextProvider && (
+              <ActivityTargetsContextProvider>
+                <ActivityTargetsInlineCell activity={activity} />
+              </ActivityTargetsContextProvider>
+            )}
           </PropertyBox>
         </StyledTopContainer>
       </StyledUpperPartContainer>

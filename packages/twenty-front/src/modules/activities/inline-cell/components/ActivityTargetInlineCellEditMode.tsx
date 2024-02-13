@@ -28,13 +28,11 @@ const StyledSelectContainer = styled.div`
 type ActivityTargetInlineCellEditModeProps = {
   activity: Activity;
   activityTargetObjectRecords: ActivityTargetObjectRecord[];
-  onBlur?: () => void;
 };
 
 export const ActivityTargetInlineCellEditMode = ({
   activity,
   activityTargetObjectRecords,
-  onBlur,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
 
@@ -75,7 +73,6 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
     closeEditableField();
-    onBlur?.();
     const activityTargetRecordsToDelete = activityTargetObjectRecords.filter(
       (activityTargetObjectRecord) =>
         !selectedRecords.some(
@@ -167,7 +164,6 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const handleCancel = () => {
     closeEditableField();
-    onBlur?.();
   };
 
   return (

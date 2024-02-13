@@ -5,7 +5,7 @@ import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButt
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -70,7 +70,7 @@ export const Tasks = () => {
                   filterDropdownId={filterDropdownId}
                   key="tasks-filter-dropdown-button"
                   hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectTasksAssigneeDropdownButton,
+                    scope: RelationPickerHotkeyScope.RelationPicker,
                   }}
                 />
               }
