@@ -146,6 +146,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               edges: newEdges,
               pageInfo:
                 fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+              totalCount:
+                fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
             });
 
             return Object.assign({}, prev, {
@@ -156,6 +158,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 edges: newEdges,
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                totalCount:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
             } as ObjectRecordQueryResult<T>);
           },
