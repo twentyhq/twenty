@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
@@ -13,6 +12,8 @@ import { ConnectedAccountService } from 'src/workspace/messaging/connected-accou
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
+import { MessageService } from 'src/workspace/messaging/message/message.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -21,13 +22,14 @@ export class GmailFullSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly messageService: MessageService,
+    private readonly createQueriesFromMessageIdsService: CreateQueriesFromMessageIdsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -100,7 +102,9 @@ export class GmailFullSyncService {
     );
 
     const messageQueries =
-      this.utils.createQueriesFromMessageIds(messagesToFetch);
+      this.createQueriesFromMessageIdsService.createQueriesFromMessageIds(
+        messagesToFetch,
+      );
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -116,7 +120,7 @@ export class GmailFullSyncService {
       return;
     }
 
-    await this.utils.saveMessages(
+    await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,

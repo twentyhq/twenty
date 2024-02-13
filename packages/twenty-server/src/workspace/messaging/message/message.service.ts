@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
+import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
+import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
+import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 
 @Injectable()
 export class MessageService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly messageThreadService: MessageThreadService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   public async getFirstByHeaderMessageId(
@@ -80,5 +90,192 @@ export class MessageService {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async saveMessages(
+    messages: GmailMessage[],
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    gmailMessageChannelId: string,
+    workspaceId: string,
+  ) {
+    for (const message of messages) {
+      await workspaceDataSource?.transaction(async (manager: EntityManager) => {
+        const existingMessageChannelMessageAssociationsCount =
+          await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
+            [message.externalId],
+            gmailMessageChannelId,
+            workspaceId,
+            manager,
+          );
+
+        if (existingMessageChannelMessageAssociationsCount > 0) {
+          return;
+        }
+
+        const savedOrExistingMessageThreadId =
+          await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+            message.messageThreadExternalId,
+            dataSourceMetadata,
+            workspaceId,
+            manager,
+          );
+
+        const savedOrExistingMessageId =
+          await this.saveMessageOrReturnExistingMessage(
+            message,
+            savedOrExistingMessageThreadId,
+            connectedAccount,
+            dataSourceMetadata,
+            workspaceId,
+            manager,
+          );
+
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+          [
+            gmailMessageChannelId,
+            savedOrExistingMessageId,
+            message.externalId,
+            savedOrExistingMessageThreadId,
+            message.messageThreadExternalId,
+          ],
+        );
+      });
+    }
+  }
+
+  private async saveMessageOrReturnExistingMessage(
+    message: GmailMessage,
+    messageThreadId: string,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceId: string,
+    manager: EntityManager,
+  ): Promise<string> {
+    const existingMessage = await this.getFirstByHeaderMessageId(
+      message.headerMessageId,
+      workspaceId,
+    );
+    const existingMessageId = existingMessage?.id;
+
+    if (existingMessageId) {
+      return Promise.resolve(existingMessageId);
+    }
+
+    const newMessageId = v4();
+
+    const messageDirection =
+      connectedAccount.handle === message.fromHandle ? 'outgoing' : 'incoming';
+
+    const receivedAt = new Date(parseInt(message.internalDate));
+
+    await manager.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text", "html") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        newMessageId,
+        message.headerMessageId,
+        message.subject,
+        receivedAt,
+        messageDirection,
+        messageThreadId,
+        message.text,
+        message.html,
+      ],
+    );
+
+    await this.messageParticipantService.saveMessageParticipants(
+      message.participants,
+      newMessageId,
+      dataSourceMetadata,
+      manager,
+    );
+
+    return Promise.resolve(newMessageId);
+  }
+
+  public async deleteMessages(
+    workspaceDataSource: DataSource,
+    messagesDeletedMessageExternalIds: string[],
+    gmailMessageChannelId: string,
+    workspaceId: string,
+  ) {
+    await workspaceDataSource?.transaction(async (manager: EntityManager) => {
+      const messageChannelMessageAssociationsToDelete =
+        await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
+          messagesDeletedMessageExternalIds,
+          gmailMessageChannelId,
+          workspaceId,
+          manager,
+        );
+
+      const messageChannelMessageAssociationIdsToDeleteIds =
+        messageChannelMessageAssociationsToDelete.map(
+          (messageChannelMessageAssociationToDelete) =>
+            messageChannelMessageAssociationToDelete.id,
+        );
+
+      await this.messageChannelMessageAssociationService.deleteByIds(
+        messageChannelMessageAssociationIdsToDeleteIds,
+        workspaceId,
+        manager,
+      );
+
+      const messageIdsFromMessageChannelMessageAssociationsToDelete =
+        messageChannelMessageAssociationsToDelete.map(
+          (messageChannelMessageAssociationToDelete) =>
+            messageChannelMessageAssociationToDelete.messageId,
+        );
+
+      const messageChannelMessageAssociationByMessageIds =
+        await this.messageChannelMessageAssociationService.getByMessageIds(
+          messageIdsFromMessageChannelMessageAssociationsToDelete,
+          workspaceId,
+          manager,
+        );
+
+      const messageIdsFromMessageChannelMessageAssociationByMessageIds =
+        messageChannelMessageAssociationByMessageIds.map(
+          (messageChannelMessageAssociation) =>
+            messageChannelMessageAssociation.messageId,
+        );
+
+      const messageIdsToDelete =
+        messageIdsFromMessageChannelMessageAssociationsToDelete.filter(
+          (messageId) =>
+            !messageIdsFromMessageChannelMessageAssociationByMessageIds.includes(
+              messageId,
+            ),
+        );
+
+      await this.deleteByIds(messageIdsToDelete, workspaceId, manager);
+
+      const messageThreadIdsFromMessageChannelMessageAssociationsToDelete =
+        messageChannelMessageAssociationsToDelete.map(
+          (messageChannelMessageAssociationToDelete) =>
+            messageChannelMessageAssociationToDelete.messageThreadId,
+        );
+
+      const messagesByThreadIds = await this.getByMessageThreadIds(
+        messageThreadIdsFromMessageChannelMessageAssociationsToDelete,
+        workspaceId,
+        manager,
+      );
+
+      const threadIdsToDelete =
+        messageThreadIdsFromMessageChannelMessageAssociationsToDelete.filter(
+          (threadId) =>
+            !messagesByThreadIds.find(
+              (message) => message.messageThreadId === threadId,
+            ),
+        );
+
+      await this.messageThreadService.deleteByIds(
+        threadIdsToDelete,
+        workspaceId,
+        manager,
+      );
+    });
   }
 }
