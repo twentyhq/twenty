@@ -16,19 +16,60 @@ export class CreateCompanyService {
     });
   }
 
-  async createCompanyFromDomainName(
+  async createCompanies(
+    domainNames: string[],
+    dataSourceMetadata: DataSourceEntity,
+    manager: EntityManager,
+  ): Promise<{
+    [domainName: string]: string;
+  }> {
+    const uniqueDomainNames = [...new Set(domainNames)];
+
+    const existingCompanies = await manager.query(
+      `SELECT id, "domainName" FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = ANY($1)`,
+      [uniqueDomainNames],
+    );
+
+    const companiesObject = existingCompanies.reduce(
+      (
+        acc: {
+          [domainName: string]: string;
+        },
+        company: {
+          domainName: string;
+          id: string;
+        },
+      ) => ({
+        ...acc,
+        [company.domainName]: company.id,
+      }),
+      {},
+    );
+
+    const filteredDomainNames = uniqueDomainNames.filter(
+      (domainName) =>
+        !existingCompanies.some(
+          (company: { domainName: string }) =>
+            company.domainName === domainName,
+        ),
+    );
+
+    for (const domainName of filteredDomainNames) {
+      companiesObject[domainName] = await this.createCompany(
+        domainName,
+        dataSourceMetadata,
+        manager,
+      );
+    }
+
+    return companiesObject;
+  }
+
+  async createCompany(
     domainName: string,
     dataSourceMetadata: DataSourceEntity,
     manager: EntityManager,
   ): Promise<string> {
-    const existingCompany = await manager.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = '${domainName}'`,
-    );
-
-    if (existingCompany.length > 0) {
-      return existingCompany[0].id;
-    }
-
     const companyId = v4();
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
