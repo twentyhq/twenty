@@ -19,7 +19,6 @@ export class CreateCompaniesAndContactsService {
 
   async createCompaniesAndContacts(
     participants: Participant[],
-    messageThreadIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {

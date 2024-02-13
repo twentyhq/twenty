@@ -12,6 +12,7 @@ import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-met
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/message-channel-message-association/message-channel-message-association.service';
 import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
+import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.service';
 
 @Injectable()
 export class MessageService {
@@ -20,6 +21,7 @@ export class MessageService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageThreadService: MessageThreadService,
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
   public async getFirstByHeaderMessageId(
@@ -183,6 +185,12 @@ export class MessageService {
         message.text,
         message.html,
       ],
+    );
+
+    await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+      message.participants,
+      workspaceId,
+      manager,
     );
 
     await this.messageParticipantService.saveMessageParticipants(
