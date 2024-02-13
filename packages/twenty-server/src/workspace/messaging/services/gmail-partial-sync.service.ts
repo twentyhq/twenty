@@ -3,17 +3,18 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { gmail_v1 } from 'googleapis';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
-import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
-import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
+import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
+import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -22,12 +23,12 @@ export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
+    private readonly messageService: MessageService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -97,8 +98,7 @@ export class GmailPartialSyncService {
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsFromHistory(history);
 
-    const messageQueries =
-      this.utils.createQueriesFromMessageIds(messagesAdded);
+    const messageQueries = createQueriesFromMessageIds(messagesAdded);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -107,7 +107,7 @@ export class GmailPartialSyncService {
       );
 
     if (messagesToSave.length !== 0) {
-      await this.utils.saveMessages(
+      await this.messageService.saveMessages(
         messagesToSave,
         dataSourceMetadata,
         workspaceDataSource,
@@ -118,7 +118,7 @@ export class GmailPartialSyncService {
     }
 
     if (messagesDeleted.length !== 0) {
-      await this.utils.deleteMessages(
+      await this.messageService.deleteMessages(
         workspaceDataSource,
         messagesDeleted,
         gmailMessageChannelId,
@@ -224,7 +224,6 @@ export class GmailPartialSyncService {
       GmailFullSyncJob.name,
       { workspaceId, connectedAccountId },
       {
-        id: `${workspaceId}-${connectedAccountId}`,
         retryLimit: 2,
       },
     );

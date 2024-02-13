@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Nullable } from '~/types/Nullable';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
@@ -25,13 +26,15 @@ export const useColumnDefinitionsFromFieldMetadata = (
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(
     () =>
       objectMetadataItem
-        ? activeFieldMetadataItems.map((field, index) =>
-            formatFieldMetadataItemAsColumnDefinition({
-              position: index,
-              field,
-              objectMetadataItem,
-            }),
-          )
+        ? activeFieldMetadataItems
+            .map((field, index) =>
+              formatFieldMetadataItemAsColumnDefinition({
+                position: index,
+                field,
+                objectMetadataItem,
+              }),
+            )
+            .filter(filterAvailableTableColumns)
         : [],
     [activeFieldMetadataItems, objectMetadataItem],
   );

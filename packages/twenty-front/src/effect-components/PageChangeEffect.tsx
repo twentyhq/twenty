@@ -88,7 +88,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace)
     ) {
       navigate(AppPath.CreateWorkspace);
@@ -101,7 +101,7 @@ export const PageChangeEffect = () => {
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute
     ) {
-      navigate('/');
+      navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
       const inviteHash =
         matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)

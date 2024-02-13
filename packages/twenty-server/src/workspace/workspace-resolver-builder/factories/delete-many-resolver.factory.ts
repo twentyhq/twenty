@@ -28,6 +28,7 @@ export class DeleteManyResolverFactory
       return this.workspaceQueryRunnerService.deleteMany(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,

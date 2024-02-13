@@ -14,7 +14,6 @@ import { allRowsSelectedStatusSelectorScopeMap } from '@/object-record/record-ta
 import { hiddenTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/hiddenTableColumnsSelectorScopeMap';
 import { numberOfTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/numberOfTableColumnsSelectorScopeMap';
 import { selectedRowIdsSelectorScopeMap } from '@/object-record/record-table/states/selectors/selectedRowIdsSelectorScopeMap';
-import { tableColumnsByKeySelectorScopeMap } from '@/object-record/record-table/states/selectors/tableColumnsByKeySelectorScopeMap';
 import { visibleTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/visibleTableColumnsSelectorScopeMap';
 import { softFocusPositionStateScopeMap } from '@/object-record/record-table/states/softFocusPositionStateScopeMap';
 import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
@@ -104,10 +103,6 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     getSelectedRowIdsSelector: getSelectorReadOnly(
       selectedRowIdsSelectorScopeMap,
-      scopeId,
-    ),
-    getTableColumnsByKeySelector: getSelectorReadOnly(
-      tableColumnsByKeySelectorScopeMap,
       scopeId,
     ),
     getVisibleTableColumnsSelector: getSelectorReadOnly(

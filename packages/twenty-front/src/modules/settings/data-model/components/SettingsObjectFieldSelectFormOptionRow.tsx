@@ -138,7 +138,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                   }}
                 />
               )}
-              {!!onRemove && (
+              {!!onRemove && !isDefault && (
                 <MenuItem
                   accent="danger"
                   LeftIcon={IconTrash}

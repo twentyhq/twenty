@@ -3,7 +3,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 
 export const getLabelIdentifierFieldMetadataItem = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'labelIdentifierFieldMetadataId'
+  >,
 ): FieldMetadataItem | undefined =>
   objectMetadataItem.fields.find((fieldMetadataItem) =>
     isLabelIdentifierField({

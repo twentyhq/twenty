@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StyledEmptyContainer = styled.div`
+const StyledEmptyContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
@@ -11,7 +11,9 @@ export const StyledEmptyContainer = styled.div`
   text-align: center;
 `;
 
-export const StyledEmptyTextContainer = styled.div`
+export { StyledEmptyContainer as AnimatedPlaceholderEmptyContainer };
+
+const StyledEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -21,13 +23,17 @@ export const StyledEmptyTextContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledEmptyTitle = styled.div`
+export { StyledEmptyTextContainer as AnimatedPlaceholderEmptyTextContainer };
+
+const StyledEmptyTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export const StyledEmptySubTitle = styled.div`
+export { StyledEmptyTitle as AnimatedPlaceholderEmptyTitle };
+
+const StyledEmptySubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -36,3 +42,5 @@ export const StyledEmptySubTitle = styled.div`
   overflow: hidden;
   width: 50%;
 `;
+
+export { StyledEmptySubTitle as AnimatedPlaceholderEmptySubTitle };

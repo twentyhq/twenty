@@ -30,9 +30,11 @@ import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObj
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
+import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
+import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
-import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/SettingsDevelopersApiKeyDetail';
-import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/SettingsDevelopersApiKeysNew';
+import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
+import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
@@ -140,6 +142,14 @@ export const App = () => {
                       <Route
                         path={SettingsPath.DevelopersApiKeyDetail}
                         element={<SettingsDevelopersApiKeyDetail />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersNewWebhook}
+                        element={<SettingsDevelopersWebhooksNew />}
+                      />
+                      <Route
+                        path={SettingsPath.DevelopersNewWebhookDetail}
+                        element={<SettingsDevelopersWebhooksDetail />}
                       />
                     </Routes>
                   }
