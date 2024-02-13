@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-assocation.module';
@@ -20,6 +21,7 @@ import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listen
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 @Module({
   imports: [
     EnvironmentModule,
@@ -31,6 +33,7 @@ import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/work
     MessageThreadModule,
     MessageParticipantModule,
     WorkspaceMemberModule,
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   providers: [
     GmailFullSyncService,
