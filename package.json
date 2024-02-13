@@ -65,6 +65,7 @@
     "bytes": "^3.1.2",
     "class-transformer": "^0.5.1",
     "clsx": "^1.2.1",
+    "cross-env": "^7.0.3",
     "danger-plugin-todos": "^1.3.1",
     "dataloader": "^2.2.2",
     "date-fns": "^2.30.0",
@@ -226,7 +227,7 @@
     "@typescript-eslint/utils": "^6.9.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "chromatic": "^6.18.0",
-    "concurrently": "^8.0.1",
+    "concurrently": "^8.2.2",
     "cross-var": "^1.1.0",
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
@@ -281,6 +282,9 @@
     "graphql": "16.8.0"
   },
   "version": "0.2.1",
+  "scripts": {
+    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start:dev twenty-server\" \"yarn nx start twenty-front\""
+  },
   "workspaces": {
     "packages": [
       "packages/twenty-chrome-extension",
