@@ -8,7 +8,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 16px;
 `;
 
 const StyledLinkContainer = styled.div`

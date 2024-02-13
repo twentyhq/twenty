@@ -11,6 +11,11 @@ type SettingsAccountsEmailsBlocklistTableProps = {
   blocklist: BlockListItem[];
   handleBlockedEmailRemove: (id: string) => void;
 };
+
+const StyledTable = styled(Table)`
+  margin-top: ${({ theme }) => theme.spacing(4)};
+`;
+
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
@@ -22,7 +27,7 @@ export const SettingsAccountsEmailsBlocklistTable = ({
   return (
     <>
       {blocklist.length > 0 && (
-        <Table>
+        <StyledTable>
           <TableRow>
             <TableHeader>Email/Domain</TableHeader>
             <TableHeader>Added to blocklist</TableHeader>
@@ -37,7 +42,7 @@ export const SettingsAccountsEmailsBlocklistTable = ({
               />
             ))}
           </StyledTableBody>
-        </Table>
+        </StyledTable>
       )}
     </>
   );
