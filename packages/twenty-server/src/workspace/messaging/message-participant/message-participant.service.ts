@@ -147,4 +147,49 @@ export class MessageParticipantService {
       messageParticipantsToSave.flat(),
     );
   }
+
+  public async updateMessageParticipantsAfterPeopleCreation(
+    participants: {
+      id: string;
+      handle: string;
+    }[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    if (!participants) return;
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const handles = participants.map((participant) => participant.handle);
+
+    const participantPersonIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    const messageParticipantsToUpdate = participants.map((participant) => ({
+      id: participant.id,
+      personId: participantPersonIds.find((e) => e.email === participant.handle)
+        ?.id,
+    }));
+
+    if (messageParticipantsToUpdate.length === 0) return;
+
+    const valuesString = messageParticipantsToUpdate
+      .map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2})`)
+      .join(', ');
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = data."personId"
+        FROM (VALUES ${valuesString}) AS data("id", "personId")
+        WHERE ${dataSourceSchema}."messageParticipant"."id" = data."id"`,
+      messageParticipantsToUpdate.flat(),
+      workspaceId,
+      transactionManager,
+    );
+  }
 }

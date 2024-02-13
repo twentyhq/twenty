@@ -55,6 +55,13 @@ export class CreateCompaniesAndContactsAfterSyncJob
       workspaceId,
     );
 
+    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+      //eslint-disable-next-line
+      //@ts-ignore
+      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+      workspaceId,
+    );
+
     this.logger.log(
       `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId} done`,
     );
