@@ -311,6 +311,9 @@ export class WorkspaceQueryRunnerService {
   private removeNestedProperties<Record extends IRecord = IRecord>(
     record: Record,
   ) {
+    if (!record) {
+      return;
+    }
     const sanitizedRecord = {};
 
     for (const [key, value] of Object.entries(record)) {
