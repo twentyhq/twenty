@@ -38,6 +38,7 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/object-record-delete.event';
 import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
+import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -53,6 +54,7 @@ export class WorkspaceQueryRunnerService {
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
   ) {}
 
   async findMany<
@@ -63,12 +65,20 @@ export class WorkspaceQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const start = performance.now();
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
       args,
       options,
+    );
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'findMany',
+      args,
     );
 
     const result = await this.execute(query, workspaceId);
@@ -97,11 +107,20 @@ export class WorkspaceQueryRunnerService {
     if (!args.filter || Object.keys(args.filter).length === 0) {
       throw new BadRequestException('Missing filter argument');
     }
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const query = await this.workspaceQueryBuilderFactory.findOne(
       args,
       options,
     );
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'findOne',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
     const parsedResult = this.parseResult<IConnection<Record>>(
       result,
@@ -170,6 +189,7 @@ export class WorkspaceQueryRunnerService {
       args,
       options,
     );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
@@ -232,6 +252,7 @@ export class WorkspaceQueryRunnerService {
       args,
       options,
     );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
@@ -338,7 +359,7 @@ export class WorkspaceQueryRunnerService {
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
-    if (!result) {
+    if (errors && errors.length > 0) {
       throw new InternalServerErrorException(
         `GraphQL errors on ${command}${
           objectMetadataItem.nameSingular

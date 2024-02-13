@@ -43532,6 +43532,7 @@ __metadata:
     graphql-yoga: "npm:^4.0.4"
     jest: "npm:29.7.0"
     lodash.camelcase: "npm:^4.3.0"
+    lodash.groupby: "npm:^4.6.0"
     lodash.isempty: "npm:^4.4.0"
     lodash.isobject: "npm:^3.0.2"
     lodash.kebabcase: "npm:^4.1.1"

@@ -28,6 +28,7 @@ export class CreateOneResolverFactory
       return this.workspaceQueryRunnerService.createOne(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,

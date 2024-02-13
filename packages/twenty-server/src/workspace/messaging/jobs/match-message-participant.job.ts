@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
+import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 
 export type MatchMessageParticipantsJobData = {
   workspaceId: string;

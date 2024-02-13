@@ -33,6 +33,7 @@ export class ExecuteQuickActionOnOneResolverFactory
     return (_source, args, context, info) => {
       return this.executeQuickActionOnOne(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
+        userId: internalContext.userId,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,

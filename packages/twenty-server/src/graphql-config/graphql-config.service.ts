@@ -22,6 +22,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { User } from 'src/core/user/user.entity';
 import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
+import { JwtData } from 'src/core/auth/types/jwt-data.type';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -60,7 +61,7 @@ export class GraphQLConfigService
 
           user = data.user;
 
-          return await this.createSchema(context, data.workspace);
+          return await this.createSchema(context, data);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -125,7 +126,7 @@ export class GraphQLConfigService
 
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
-    workspace: Workspace,
+    data: JwtData,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -142,6 +143,9 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(workspace.id);
+    return await workspaceFactory.createGraphQLSchema(
+      data.workspace.id,
+      data.user?.id,
+    );
   }
 }

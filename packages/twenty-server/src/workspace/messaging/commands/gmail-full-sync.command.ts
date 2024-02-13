@@ -14,7 +14,7 @@ import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 
 interface GmailFullSyncOptions {
   workspaceId: string;

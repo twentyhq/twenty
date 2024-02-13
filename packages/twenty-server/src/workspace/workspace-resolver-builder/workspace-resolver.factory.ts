@@ -39,6 +39,7 @@ export class WorkspaceResolverFactory {
 
   async create(
     workspaceId: string,
+    userId: string | undefined,
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
@@ -79,6 +80,7 @@ export class WorkspaceResolverFactory {
 
         resolvers.Query[resolverName] = resolverFactory.create({
           workspaceId,
+          userId,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,
@@ -102,6 +104,7 @@ export class WorkspaceResolverFactory {
 
         resolvers.Mutation[resolverName] = resolverFactory.create({
           workspaceId,
+          userId,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,
