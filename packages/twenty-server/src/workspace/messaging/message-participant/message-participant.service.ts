@@ -7,15 +7,11 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
-import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly createContactService: CreateContactService,
-    private readonly createCompaniesService: CreateCompanyService,
   ) {}
 
   public async getByHandles(
@@ -107,58 +103,6 @@ export class MessageParticipantService {
     manager: EntityManager,
   ): Promise<void> {
     if (!participants) return;
-
-    const alreadyCreatedContacts = await manager.query(
-      `SELECT email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
-      [participants.map((participant) => participant.handle)],
-    );
-
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ email }) => email,
-    );
-
-    const filteredParticipants = participants.filter(
-      (participant) =>
-        !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
-    );
-
-    const filteredParticipantsWihCompanyDomainNames = filteredParticipants?.map(
-      (participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyDomainName: participant.handle
-          .split('@')?.[1]
-          .split('.')
-          .slice(-2)
-          .join('.')
-          .toLowerCase(),
-      }),
-    );
-
-    const domainNamesToCreate = filteredParticipantsWihCompanyDomainNames.map(
-      (participant) => participant.companyDomainName,
-    );
-
-    const companiesObject = await this.createCompaniesService.createCompanies(
-      domainNamesToCreate,
-      dataSourceMetadata,
-      manager,
-    );
-
-    const contactsToCreate = filteredParticipantsWihCompanyDomainNames.map(
-      (participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyId: companiesObject[participant.companyDomainName],
-      }),
-    );
-
-    await this.createContactService.createContacts(
-      contactsToCreate,
-      dataSourceMetadata,
-      manager,
-    );
 
     const handles = participants.map((participant) => participant.handle);
 

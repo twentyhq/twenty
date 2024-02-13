@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { CreateCompanyModule } from 'src/workspace/messaging/create-company/create-company.module';
-import { CreateContactModule } from 'src/workspace/messaging/create-contact/create-contact.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.module';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
 @Module({
-  imports: [
-    WorkspaceDataSourceModule,
-    CreateContactModule,
-    CreateCompanyModule,
-  ],
+  imports: [WorkspaceDataSourceModule, CreateCompaniesAndContactsModule],
   providers: [MessageParticipantService],
   exports: [MessageParticipantService],
 })

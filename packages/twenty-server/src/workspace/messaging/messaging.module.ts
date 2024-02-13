@@ -21,6 +21,7 @@ import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listen
 import { IsContactAutoCreationEnabledListener } from 'src/workspace/messaging/listeners/is-contact-auto-creation-enabled-listener';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
 import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
+import { GetDomainNameFromHandleService } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/serv
     IsContactAutoCreationEnabledListener,
     MessageService,
     CreateQueriesFromMessageIdsService,
+    GetDomainNameFromHandleService,
   ],
   exports: [
     GmailPartialSyncService,

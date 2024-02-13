@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 type ContactToCreate = {
   handle: string;
@@ -22,7 +22,9 @@ type FormattedContactToCreate = {
 
 @Injectable()
 export class CreateContactService {
-  constructor() {}
+  constructor(
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+  ) {}
 
   formatContacts(
     contactsToCreate: ContactToCreate[],
@@ -56,10 +58,13 @@ export class CreateContactService {
 
   async createContacts(
     contactsToCreate: ContactToCreate[],
-    dataSourceMetadata: DataSourceEntity,
-    manager: EntityManager,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
     if (contactsToCreate.length === 0) return;
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const formattedContacts = this.formatContacts(contactsToCreate);
 
@@ -72,8 +77,8 @@ export class CreateContactService {
       )
       .join(', ');
 
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${valuesString}`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${valuesString}`,
       formattedContacts
         .map((contact) => [
           contact.id,
@@ -83,6 +88,8 @@ export class CreateContactService {
           contact.companyId,
         ])
         .flat(),
+      workspaceId,
+      transactionManager,
     );
   }
 }

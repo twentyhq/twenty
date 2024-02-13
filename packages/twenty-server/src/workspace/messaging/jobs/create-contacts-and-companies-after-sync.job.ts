@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateContactService } from 'packages/twenty-server/dist/src/workspace/messaging/create-contact/create-contact.service';
-
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
+import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
+import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
@@ -19,7 +19,7 @@ export class CreateContactsAndCompaniesAfterSyncJob
   constructor(
     private readonly messageParticipantService: MessageParticipantService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly createCompaniesService: CreateCompaniesService,
+    private readonly createCompaniesService: CreateCompanyService,
     private readonly createContactService: CreateContactService,
   ) {}
 

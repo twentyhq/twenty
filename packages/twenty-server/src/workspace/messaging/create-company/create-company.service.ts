@@ -4,13 +4,15 @@ import { EntityManager } from 'typeorm';
 import axios, { AxiosInstance } from 'axios';
 import { v4 } from 'uuid';
 
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
-  constructor() {
+  constructor(
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+  ) {
     this.httpService = axios.create({
       baseURL: 'https://companies.twenty.com',
     });
@@ -18,17 +20,23 @@ export class CreateCompanyService {
 
   async createCompanies(
     domainNames: string[],
-    dataSourceMetadata: DataSourceEntity,
-    manager: EntityManager,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<{
     [domainName: string]: string;
   }> {
     const uniqueDomainNames = [...new Set(domainNames)];
 
-    const existingCompanies = await manager.query(
-      `SELECT id, "domainName" FROM ${dataSourceMetadata.schema}.company WHERE "domainName" = ANY($1)`,
-      [uniqueDomainNames],
-    );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const existingCompanies =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, "domainName" FROM ${dataSourceSchema}.company WHERE "domainName" = ANY($1)`,
+        [uniqueDomainNames],
+        workspaceId,
+        transactionManager,
+      );
 
     const companiesObject = existingCompanies.reduce(
       (
@@ -57,8 +65,8 @@ export class CreateCompanyService {
     for (const domainName of filteredDomainNames) {
       companiesObject[domainName] = await this.createCompany(
         domainName,
-        dataSourceMetadata,
-        manager,
+        workspaceId,
+        transactionManager,
       );
     }
 
@@ -67,17 +75,22 @@ export class CreateCompanyService {
 
   async createCompany(
     domainName: string,
-    dataSourceMetadata: DataSourceEntity,
-    manager: EntityManager,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<string> {
     const companyId = v4();
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}.company (id, name, "domainName", address)
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}.company (id, name, "domainName", address)
       VALUES ($1, $2, $3, $4)`,
       [companyId, name, domainName, city],
+      workspaceId,
+      transactionManager,
     );
 
     return companyId;
