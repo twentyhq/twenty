@@ -1,4 +1,4 @@
-import { BlockListItem } from '@/accounts/types/BlockListItem';
+import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { IconX } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -6,24 +6,24 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils';
 
 type SettingsAccountsEmailsBlocklistTableRowProps = {
-  blockListItem: BlockListItem;
+  blocklistItem: BlocklistItem;
   onRemove: (id: string) => void;
 };
 
 export const SettingsAccountsEmailsBlocklistTableRow = ({
-  blockListItem,
+  blocklistItem,
   onRemove,
 }: SettingsAccountsEmailsBlocklistTableRowProps) => {
   return (
-    <TableRow key={blockListItem.id}>
-      <TableCell>{blockListItem.handle}</TableCell>
+    <TableRow key={blocklistItem.id}>
+      <TableCell>{blocklistItem.handle}</TableCell>
       <TableCell>
-        {formatToHumanReadableDate(blockListItem.createdAt)}
+        {formatToHumanReadableDate(blocklistItem.createdAt)}
       </TableCell>
       <TableCell align="right">
         <IconButton
           onClick={() => {
-            onRemove(blockListItem.id);
+            onRemove(blocklistItem.id);
           }}
           variant="tertiary"
           size="small"

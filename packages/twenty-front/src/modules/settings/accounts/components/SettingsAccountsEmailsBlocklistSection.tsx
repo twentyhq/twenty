@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { BlockListItem } from '@/accounts/types/BlockListItem';
+import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -14,25 +14,25 @@ import { Section } from '@/ui/layout/section/components/Section';
 export const SettingsAccountsEmailsBlocklistSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { records: blockList } = useFindManyRecords<BlockListItem>({
+  const { records: blocklist } = useFindManyRecords<BlocklistItem>({
     objectNameSingular: CoreObjectNameSingular.Blocklist,
   });
 
-  const { createOneRecord: createBlockListItem } =
-    useCreateOneRecord<BlockListItem>({
+  const { createOneRecord: createBlocklistItem } =
+    useCreateOneRecord<BlocklistItem>({
       objectNameSingular: CoreObjectNameSingular.Blocklist,
     });
 
-  const { deleteOneRecord: deleteBlockListItem } = useDeleteOneRecord({
+  const { deleteOneRecord: deleteBlocklistItem } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Blocklist,
   });
 
   const handleBlockedEmailRemove = (id: string) => {
-    deleteBlockListItem(id);
+    deleteBlocklistItem(id);
   };
 
   const updateBlockedEmailList = (handle: string) => {
-    createBlockListItem({
+    createBlocklistItem({
       handle,
       workspaceMemberId: currentWorkspaceMember?.id,
     });
@@ -48,7 +48,7 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
         updateBlockedEmailList={updateBlockedEmailList}
       />
       <SettingsAccountsEmailsBlocklistTable
-        blocklist={blockList}
+        blocklist={blocklist}
         handleBlockedEmailRemove={handleBlockedEmailRemove}
       />
     </Section>

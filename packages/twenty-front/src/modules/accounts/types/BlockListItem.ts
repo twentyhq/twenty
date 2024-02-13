@@ -1,4 +1,4 @@
-export type BlockListItem = {
+export type BlocklistItem = {
   id: string;
   handle: string;
   workspaceMemberId: string;
