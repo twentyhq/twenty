@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { CreateContactsAndCompaniesAfterSyncJobData } from 'packages/twenty-server/dist/src/workspace/messaging/jobs/create-contacts-and-companies-after-sync.job';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -6,15 +8,18 @@ import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/creat
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 
-export type CreateContactsAndCompaniesAfterSyncJobData = {
+export type CreateCompaniesAndContactsAfterSyncJobData = {
   workspaceId: string;
   messageChannelId: string;
 };
 
 @Injectable()
-export class CreateContactsAndCompaniesAfterSyncJob
-  implements MessageQueueJob<CreateContactsAndCompaniesAfterSyncJobData>
+export class CreateCompaniesAndContactsAfterSyncJob
+  implements MessageQueueJob<CreateCompaniesAndContactsAfterSyncJobData>
 {
+  private readonly logger = new Logger(
+    CreateCompaniesAndContactsAfterSyncJob.name,
+  );
   constructor(
     private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
     private readonly messageChannelService: MessageChannelService,
@@ -24,6 +29,9 @@ export class CreateContactsAndCompaniesAfterSyncJob
   async handle(
     data: CreateContactsAndCompaniesAfterSyncJobData,
   ): Promise<void> {
+    this.logger.log(
+      `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,
+    );
     const { workspaceId, messageChannelId } = data;
 
     const isContactAutoCreationEnabled =
@@ -45,6 +53,10 @@ export class CreateContactsAndCompaniesAfterSyncJob
     await this.createCompaniesAndContactsService.createCompaniesAndContacts(
       messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
+    );
+
+    this.logger.log(
+      `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId} done`,
     );
   }
 }

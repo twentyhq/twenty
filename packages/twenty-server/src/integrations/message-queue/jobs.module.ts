@@ -21,6 +21,9 @@ import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/crons/fet
 import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
 import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
+import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.module';
+import { MessageChannelModule } from 'src/workspace/messaging/message-channel/message-channel.module';
 
 @Module({
   imports: [
@@ -36,6 +39,8 @@ import { MessageParticipantModule } from 'src/workspace/messaging/message-partic
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     ConnectedAccountModule,
     MessageParticipantModule,
+    CreateCompaniesAndContactsModule,
+    MessageChannelModule,
   ],
   providers: [
     {
@@ -66,6 +71,10 @@ import { MessageParticipantModule } from 'src/workspace/messaging/message-partic
     {
       provide: MatchMessageParticipantJob.name,
       useClass: MatchMessageParticipantJob,
+    },
+    {
+      provide: CreateCompaniesAndContactsAfterSyncJob.name,
+      useClass: CreateCompaniesAndContactsAfterSyncJob,
     },
   ],
 })
