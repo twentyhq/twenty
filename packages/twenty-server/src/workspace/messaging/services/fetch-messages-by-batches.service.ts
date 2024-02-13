@@ -10,13 +10,12 @@ import {
 } from 'src/workspace/messaging/types/gmail-message';
 import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
-import { IsPersonEmailService } from 'src/workspace/messaging/services/is-person-email.service';
 
 @Injectable()
 export class FetchMessagesByBatchesService {
   private readonly httpService: AxiosInstance;
 
-  constructor(private readonly isPersonEmailService: IsPersonEmailService) {
+  constructor() {
     this.httpService = axios.create({
       baseURL: 'https://www.googleapis.com/batch/gmail/v1',
     });
@@ -190,8 +189,6 @@ export class FetchMessagesByBatchesService {
           } = parsed;
 
           if (!from) throw new Error('From value is missing');
-          if (!this.isPersonEmailService.isPersonEmail(from.value[0].address))
-            return;
           if (!to) throw new Error('To value is missing');
 
           const participants = [

@@ -14,13 +14,11 @@ import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
 import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
-import { IsPersonEmailService } from 'src/workspace/messaging/services/is-person-email.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
-import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
 
 @Module({
   imports: [
@@ -40,13 +38,11 @@ import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/serv
     GmailRefreshAccessTokenService,
     GmailClientProvider,
     CreateContactService,
-    IsPersonEmailService,
     CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
     MessagingMessageChannelListener,
     MessageService,
-    CreateQueriesFromMessageIdsService,
   ],
   exports: [
     GmailPartialSyncService,
