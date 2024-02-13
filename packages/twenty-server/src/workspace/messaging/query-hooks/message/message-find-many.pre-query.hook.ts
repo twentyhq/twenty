@@ -42,6 +42,18 @@ export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
       throw new NotFoundException();
     }
 
+    await this.canAccessMessageThread(
+      userId,
+      workspaceId,
+      messageChannelMessageAssociations,
+    );
+  }
+
+  private async canAccessMessageThread(
+    userId: string,
+    workspaceId: string,
+    messageChannelMessageAssociations: any[],
+  ) {
     const messageChannels = await this.messageChannelService.getByIds(
       messageChannelMessageAssociations.map(
         (association) => association.messageChannelId,
