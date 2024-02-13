@@ -10,7 +10,10 @@ import {
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { serializeTypeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-type-default-value.util';
 
@@ -122,17 +125,17 @@ export class DatabaseStructureService {
     }));
   }
 
-  getPostgresDataType(
-    fieldMetadataType: FieldMetadataType,
-    fieldMetadataName: string,
-    objectMetadataNameSingular: string,
-  ): string {
-    const typeORMType = fieldMetadataTypeToColumnType(fieldMetadataType);
+  getPostgresDataType(fieldMetadata: FieldMetadataEntity): string {
+    const typeORMType = fieldMetadataTypeToColumnType(fieldMetadata.type);
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    // TODO: remove special case for enum type, should we include this to fieldMetadataTypeToColumnType?
+    // Compute enum name to compare data type properly
     if (typeORMType === 'enum') {
-      return `${objectMetadataNameSingular}_${fieldMetadataName}_enum`;
+      const objectName = fieldMetadata.object?.nameSingular;
+      const prefix = fieldMetadata.isCustom ? '_' : '';
+      const fieldName = fieldMetadata.name;
+
+      return `${objectName}_${prefix}${fieldName}_enum`;
     }
 
     return mainDataSource.driver.normalizeType({

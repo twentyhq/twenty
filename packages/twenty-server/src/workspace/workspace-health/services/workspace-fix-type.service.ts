@@ -30,24 +30,19 @@ export class WorkspaceFixTypeService {
     issues: WorkspaceHealthTypeIssue[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+    const columnTypeIssues = issues.filter(
+      (issue) =>
+        issue.type === WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT,
+    ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[];
 
-    for (const issue of issues) {
-      switch (issue.type) {
-        case WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT: {
-          const columnNullabilityWorkspaceMigrations =
-            await this.fixColumnTypeIssues(
-              objectMetadataCollection,
-              issues.filter(
-                (issue) =>
-                  issue.type ===
-                  WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT,
-              ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[],
-            );
+    if (columnTypeIssues.length > 0) {
+      const columnNullabilityWorkspaceMigrations =
+        await this.fixColumnTypeIssues(
+          objectMetadataCollection,
+          columnTypeIssues,
+        );
 
-          workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
-          break;
-        }
-      }
+      workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
     }
 
     return workspaceMigrations;
