@@ -81,6 +81,7 @@
     "graphql-upload": "^13.0.0",
     "graphql-yoga": "^4.0.4",
     "lodash.camelcase": "^4.3.0",
+    "lodash.groupby": "^4.6.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isobject": "^3.0.2",
     "lodash.kebabcase": "^4.1.1",
