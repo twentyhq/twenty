@@ -43383,6 +43383,8 @@ __metadata:
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/react": "npm:^18.2.39"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
+    graphql-middleware: "npm:^6.1.35"
+    passport: "npm:^0.7.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
