@@ -190,7 +190,7 @@ export class MessageService {
     );
 
     const isContactAutoCreationEnabled =
-      await this.messageChannelService.isContactAutoCreationEnabled(
+      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
         connectedAccount.id,
         workspaceId,
       );

@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
-import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
-import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.service';
+import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 
 export type CreateContactsAndCompaniesAfterSyncJobData = {
   workspaceId: string;
@@ -17,10 +15,8 @@ export class CreateContactsAndCompaniesAfterSyncJob
   implements MessageQueueJob<CreateContactsAndCompaniesAfterSyncJobData>
 {
   constructor(
-    private readonly messageParticipantService: MessageParticipantService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly createCompaniesService: CreateCompanyService,
-    private readonly createContactService: CreateContactService,
+    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
+    private readonly messageChannelService: MessageChannelService,
   ) {}
 
   async handle(
@@ -28,48 +24,18 @@ export class CreateContactsAndCompaniesAfterSyncJob
   ): Promise<void> {
     const { workspaceId, messageChannelId } = data;
 
-    const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    const isContactAutoCreationEnabled =
+      await this.messageChannelService.getIsContactAutoCreationEnabledByMessageChannelId(
         messageChannelId,
         workspaceId,
       );
 
-    if (messageParticipantsWithoutPersonIdAndWorkspaceMemberId.length === 0) {
+    if (!isContactAutoCreationEnabled) {
       return;
     }
 
-    const dataSourceMetadata =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    const manager = dataSourceMetadata.manager;
-
-    const companiesObject = await this.createCompaniesService.createCompanies(
-      domainNamesToCreate,
-      dataSourceMetadata,
-      manager,
-    );
-
-    const contactsToCreate = filteredParticipantsWihCompanyDomainNames.map(
-      (participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyId: companiesObject[participant.companyDomainName],
-      }),
-    );
-
-    const personIds = await this.createContactService.createContacts(
-      contactsToCreate,
-      dataSourceMetadata,
-      manager,
-    );
-
-    await this.messageParticipantService.updateParticipantsPersonIds(
-      messageParticipantsWithoutPersonIdAndWorkspaceMemberId.map(
-        (participant) => participant.id,
-      ),
-      personIds,
+    await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+      message.participants,
       workspaceId,
       manager,
     );
