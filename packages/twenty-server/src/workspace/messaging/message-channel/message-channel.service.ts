@@ -43,4 +43,16 @@ export class MessageChannelService {
 
     return messageChannels[0];
   }
+
+  public async isContactAutoCreationEnabled(
+    connectedAccountId: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const messageChannel = await this.getFirstByConnectedAccountIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    return messageChannel.isContactAutoCreationEnabled;
+  }
 }

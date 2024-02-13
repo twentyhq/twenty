@@ -13,6 +13,7 @@ import { MessageChannelMessageAssociationService } from 'src/workspace/messaging
 import { MessageThreadService } from 'src/workspace/messaging/message-thread/message-thread.service';
 import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.service';
+import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
 
 @Injectable()
 export class MessageService {
@@ -21,6 +22,7 @@ export class MessageService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageThreadService: MessageThreadService,
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageChannelService: MessageChannelService,
     private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
@@ -187,11 +189,19 @@ export class MessageService {
       ],
     );
 
-    await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-      message.participants,
-      workspaceId,
-      manager,
-    );
+    const isContactAutoCreationEnabled =
+      await this.messageChannelService.isContactAutoCreationEnabled(
+        connectedAccount.id,
+        workspaceId,
+      );
+
+    if (isContactAutoCreationEnabled) {
+      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+        message.participants,
+        workspaceId,
+        manager,
+      );
+    }
 
     await this.messageParticipantService.saveMessageParticipants(
       message.participants,
