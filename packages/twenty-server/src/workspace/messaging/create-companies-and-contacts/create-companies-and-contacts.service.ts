@@ -6,7 +6,7 @@ import { CreateCompanyService } from 'src/workspace/messaging/create-company/cre
 import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
-import { GetDomainNameFromHandleService } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle.service';
+import { getDomainNameFromHandle } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
@@ -14,7 +14,6 @@ export class CreateCompaniesAndContactsService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    private readonly getDomainNameFromHandleService: GetDomainNameFromHandleService,
   ) {}
 
   async createCompaniesAndContacts(
@@ -47,10 +46,7 @@ export class CreateCompaniesAndContactsService {
       filteredParticipants?.map((participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
-        companyDomainName:
-          this.getDomainNameFromHandleService.getDomainNameFromHandle(
-            participant.handle,
-          ),
+        companyDomainName: getDomainNameFromHandle(participant.handle),
       }));
 
     const domainNamesToCreate = filteredParticipantsWithCompanyDomainNames.map(

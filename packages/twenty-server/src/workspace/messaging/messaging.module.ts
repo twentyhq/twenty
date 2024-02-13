@@ -20,8 +20,7 @@ import { MessageParticipantModule } from 'src/workspace/messaging/message-partic
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 import { IsContactAutoCreationEnabledListener } from 'src/workspace/messaging/listeners/is-contact-auto-creation-enabled-listener';
 import { MessageService } from 'src/workspace/messaging/message/message.service';
-import { CreateQueriesFromMessageIdsService } from 'src/workspace/messaging/services/utils/create-queries-from-message-ids.service';
-import { GetDomainNameFromHandleService } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle.service';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.module';
 
 @Module({
   imports: [
@@ -33,6 +32,7 @@ import { GetDomainNameFromHandleService } from 'src/workspace/messaging/services
     MessageModule,
     MessageThreadModule,
     MessageParticipantModule,
+    CreateCompaniesAndContactsModule,
   ],
   providers: [
     GmailFullSyncService,
@@ -47,8 +47,6 @@ import { GetDomainNameFromHandleService } from 'src/workspace/messaging/services
     MessagingWorkspaceMemberListener,
     IsContactAutoCreationEnabledListener,
     MessageService,
-    CreateQueriesFromMessageIdsService,
-    GetDomainNameFromHandleService,
   ],
   exports: [
     GmailPartialSyncService,
