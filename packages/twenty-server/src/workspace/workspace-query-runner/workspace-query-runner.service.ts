@@ -312,7 +312,7 @@ export class WorkspaceQueryRunnerService {
     record: Record,
   ) {
     if (!record) {
-      return record;
+      return;
     }
     const sanitizedRecord = {};
 
