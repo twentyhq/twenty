@@ -228,7 +228,6 @@ export class GmailPartialSyncService {
       GmailFullSyncJob.name,
       { workspaceId, connectedAccountId },
       {
-        id: `${workspaceId}-${connectedAccountId}`,
         retryLimit: 2,
       },
     );
