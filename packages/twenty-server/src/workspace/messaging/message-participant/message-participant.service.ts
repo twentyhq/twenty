@@ -68,13 +68,7 @@ export class MessageParticipantService {
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<
-    {
-      id: string;
-      handle: string;
-      displayName: string;
-    }[]
-  > {
+  ): Promise<Participant[]> {
     if (!messageChannelId || !workspaceId) {
       return [];
     }
@@ -82,16 +76,13 @@ export class MessageParticipantService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const messageParticipants: {
-      id: string;
-      handle: string;
-      displayName: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, handle FROM ${dataSourceSchema}."messageParticipant" WHERE "messageChannelId" = $1 AND "personId" IS NULL AND "workspaceMemberId" IS NULL`,
-      [messageChannelId],
-      workspaceId,
-      transactionManager,
-    );
+    const messageParticipants: Participant[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."messageParticipant" WHERE "messageChannelId" = $1 AND "personId" IS NULL AND "workspaceMemberId" IS NULL`,
+        [messageChannelId],
+        workspaceId,
+        transactionManager,
+      );
 
     return messageParticipants;
   }

@@ -4,6 +4,7 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.service';
 import { MessageChannelService } from 'src/workspace/messaging/message-channel/message-channel.service';
+import { MessageParticipantService } from 'src/workspace/messaging/message-participant/message-participant.service';
 
 export type CreateContactsAndCompaniesAfterSyncJobData = {
   workspaceId: string;
@@ -17,6 +18,7 @@ export class CreateContactsAndCompaniesAfterSyncJob
   constructor(
     private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
     private readonly messageChannelService: MessageChannelService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   async handle(
@@ -34,10 +36,15 @@ export class CreateContactsAndCompaniesAfterSyncJob
       return;
     }
 
+    const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+        messageChannelId,
+        workspaceId,
+      );
+
     await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-      message.participants,
+      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
-      manager,
     );
   }
 }
