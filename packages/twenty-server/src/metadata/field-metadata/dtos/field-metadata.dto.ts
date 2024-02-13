@@ -23,6 +23,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Validate,
 } from 'class-validator';
 
@@ -74,6 +75,7 @@ export class FieldMetadataDTO<
   @IsString()
   @IsNotEmpty()
   @Field()
+  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
   name: string;
 
   @IsString()

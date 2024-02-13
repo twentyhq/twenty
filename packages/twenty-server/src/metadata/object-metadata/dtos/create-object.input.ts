@@ -1,7 +1,13 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+} from 'class-validator';
 
 import { BeforeCreateOneObject } from 'src/metadata/object-metadata/hooks/before-create-one-object.hook';
 
@@ -11,11 +17,13 @@ export class CreateObjectInput {
   @IsString()
   @IsNotEmpty()
   @Field()
+  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
   nameSingular: string;
 
   @IsString()
   @IsNotEmpty()
   @Field()
+  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
   namePlural: string;
 
   @IsString()
