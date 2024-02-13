@@ -8,10 +8,10 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledNotesContainer = styled.div`
@@ -33,14 +33,16 @@ export const Notes = ({
 
   if (notes?.length === 0) {
     return (
-      <StyledEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noNote" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>No notes</StyledEmptyTitle>
-          <StyledEmptySubTitle>
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            No notes
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
             There are no associated notes with this record.
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
         <Button
           Icon={IconPlus}
           title="New note"
@@ -52,7 +54,7 @@ export const Notes = ({
             })
           }
         />
-      </StyledEmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 

@@ -7,13 +7,19 @@ import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration
 
 import { WorkspaceMigrationRunnerService } from './workspace-migration-runner.service';
 
+import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
+
 @Module({
   imports: [
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
     WorkspaceCacheVersionModule,
   ],
-  providers: [WorkspaceMigrationRunnerService, WorkspaceMigrationEnumService],
+  providers: [
+    WorkspaceMigrationRunnerService,
+    WorkspaceMigrationEnumService,
+    WorkspaceMigrationTypeService,
+  ],
   exports: [WorkspaceMigrationRunnerService],
 })
 export class WorkspaceMigrationRunnerModule {}

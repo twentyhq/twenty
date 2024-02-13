@@ -42,6 +42,14 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Compact View',
+    description: 'Describes if the view is in compact mode',
+    defaultValue: { value: false },
+  })
+  isCompact: boolean;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'View Fields',
     description: 'View Fields',

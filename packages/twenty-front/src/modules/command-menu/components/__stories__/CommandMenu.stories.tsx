@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
@@ -11,7 +12,10 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockDefaultWorkspace } from '~/testing/mock-data/users';
+import {
+  mockDefaultWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
@@ -24,10 +28,14 @@ const meta: Meta<typeof CommandMenu> = {
   decorators: [
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+      const setCurrentWorkspaceMember = useSetRecoilState(
+        currentWorkspaceMemberState,
+      );
       const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
         useCommandMenu();
 
       setCurrentWorkspace(mockDefaultWorkspace);
+      setCurrentWorkspaceMember(mockedWorkspaceMemberData);
 
       useEffect(() => {
         setToIntitialCommandMenu();

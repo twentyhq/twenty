@@ -6,6 +6,7 @@ import {
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfaces/workspace-table-definition.interface';
 import { WorkspaceHealthOptions } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   FieldMetadataEntity,
@@ -16,8 +17,12 @@ import { DatabaseStructureService } from 'src/workspace/workspace-health/service
 import { validName } from 'src/workspace/workspace-health/utils/valid-name.util';
 import { compositeDefinitions } from 'src/metadata/field-metadata/composite-types';
 import { validateDefaultValueForType } from 'src/metadata/field-metadata/utils/validate-default-value-for-type.util';
-import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
+import {
+  EnumFieldMetadataUnionType,
+  isEnumFieldMetadataType,
+} from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
+import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -118,11 +123,8 @@ export class FieldMetadataHealthService {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
 
-    const dataType = this.databaseStructureService.getPostgresDataType(
-      fieldMetadata.type,
-      fieldMetadata.name,
-      fieldMetadata.object?.nameSingular,
-    );
+    const dataType =
+      this.databaseStructureService.getPostgresDataType(fieldMetadata);
 
     const defaultValue = this.databaseStructureService.getPostgresDefault(
       fieldMetadata.type,
@@ -143,6 +145,8 @@ export class FieldMetadataHealthService {
 
       return issues;
     }
+
+    const columnDefaultValue = columnStructure.columnDefault?.split('::')?.[0];
 
     // Check if column data type is the same
     if (columnStructure.dataType !== dataType) {
@@ -167,8 +171,27 @@ export class FieldMetadataHealthService {
 
     if (
       defaultValue &&
-      columnStructure.columnDefault &&
-      !columnStructure.columnDefault.startsWith(defaultValue)
+      columnDefaultValue &&
+      isEnumFieldMetadataType(fieldMetadata.type)
+    ) {
+      const enumValues = fieldMetadata.options?.map((option) =>
+        serializeDefaultValue(option.value),
+      );
+
+      if (!enumValues.includes(columnDefaultValue)) {
+        issues.push({
+          type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+          fieldMetadata,
+          columnStructure,
+          message: `Column ${columnName} default value is not in the enum values "${columnDefaultValue}" NOT IN "${enumValues}"`,
+        });
+      }
+    }
+
+    if (
+      defaultValue &&
+      columnDefaultValue &&
+      columnDefaultValue !== defaultValue
     ) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
@@ -312,6 +335,24 @@ export class FieldMetadataHealthService {
         fieldMetadata,
         message: `Column default value for composite type ${fieldMetadata.type} is not well structured`,
       });
+    }
+
+    if (
+      isEnumFieldMetadataType(fieldMetadata.type) &&
+      fieldMetadata.defaultValue
+    ) {
+      const enumValues = fieldMetadata.options?.map((option) => option.value);
+      const metadataDefaultValue = (
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>
+      )?.value;
+
+      if (metadataDefaultValue && !enumValues.includes(metadataDefaultValue)) {
+        issues.push({
+          type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+          fieldMetadata,
+          message: `Column default value is not in the enum values "${metadataDefaultValue}" NOT IN "${enumValues}"`,
+        });
+      }
     }
 
     return issues;

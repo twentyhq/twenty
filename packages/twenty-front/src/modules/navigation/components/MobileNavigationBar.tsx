@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { AppPath } from '@/types/AppPath';
 import {
   IconCheckbox,
   IconList,
@@ -71,7 +72,7 @@ export const MobileNavigationBar = () => {
       onClick: () => {
         closeCommandMenu();
         setIsNavigationDrawerOpen(false);
-        navigate('/tasks');
+        navigate(AppPath.TasksPage);
       },
     },
     {

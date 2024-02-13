@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -10,6 +11,7 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 
@@ -80,20 +82,19 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
 }) => {
-  const {
-    getResizeFieldOffsetState,
-    getTableColumnsState,
-    getTableColumnsByKeySelector,
-    getVisibleTableColumnsSelector,
-  } = useRecordTableStates();
+  const { getResizeFieldOffsetState, getTableColumnsState } =
+    useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     getResizeFieldOffsetState(),
   );
 
   const tableColumns = useRecoilValue(getTableColumnsState());
-  const tableColumnsByKey = useRecoilValue(getTableColumnsByKeySelector());
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const tableColumnsByKey = useMemo(
+    () =>
+      mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
+    [tableColumns],
+  );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
@@ -107,10 +108,6 @@ export const RecordTableHeaderCell = ({
   }, []);
 
   const [iconVisibility, setIconVisibility] = useState(false);
-
-  const primaryColumn = visibleTableColumns.find(
-    (column) => column.position === 0,
-  );
 
   const handleResizeHandlerMove = useCallback(
     (positionX: number) => {
@@ -182,13 +179,12 @@ export const RecordTableHeaderCell = ({
         onMouseEnter={() => setIconVisibility(true)}
         onMouseLeave={() => setIconVisibility(false)}
       >
-        <ColumnHeadWithDropdown
-          column={column}
-          isFirstColumn={column.position === 1}
-          isLastColumn={column.position === visibleTableColumns.length - 1}
-          primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
-        />
-        {iconVisibility && column.position === 0 && (
+        {column.isLabelIdentifier ? (
+          <ColumnHead column={column} />
+        ) : (
+          <ColumnHeadWithDropdown column={column} />
+        )}
+        {iconVisibility && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}

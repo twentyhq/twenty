@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StyledErrorContainer = styled.div`
+const StyledErrorContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
@@ -11,7 +11,9 @@ export const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-export const StyledErrorTextContainer = styled.div`
+export { StyledErrorContainer as AnimatedPlaceholderErrorContainer };
+
+const StyledErrorTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -21,14 +23,18 @@ export const StyledErrorTextContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledErrorTitle = styled.div`
+export { StyledErrorTextContainer as AnimatedPlaceholderErrorTextContainer };
+
+const StyledErrorTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export const StyledErrorSubTitle = styled.div`
+export { StyledErrorTitle as AnimatedPlaceholderErrorTitle };
+
+const StyledErrorSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -36,3 +42,5 @@ export const StyledErrorSubTitle = styled.div`
   max-height: 2.4em;
   overflow: hidden;
 `;
+
+export { StyledErrorSubTitle as AnimatedPlaceholderErrorSubTitle };

@@ -51,13 +51,14 @@ const sidebars = {
             {
               type: 'link',
               label: 'Core API',
-              href: '/rest-api/',
+              href: '/rest-api/core',
             },
             {
               type: 'link',
               label: 'Metadata API',
               href: '#',
               className: 'coming-soon',
+              //href: '/rest-api/metadata',
             },
           ],
         },
@@ -73,13 +74,12 @@ const sidebars = {
             {
               type: 'link',
               label: 'Core API',
-              href: '/graphql/',
+              href: '/graphql/core',
             },
             {
               type: 'link',
               label: 'Metadata API',
-              href: '#',
-              className: 'coming-soon',
+              href: '/graphql/metadata',
             },
           ],
         },

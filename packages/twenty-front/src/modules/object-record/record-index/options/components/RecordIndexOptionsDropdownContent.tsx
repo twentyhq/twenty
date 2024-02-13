@@ -5,8 +5,8 @@ import { Key } from 'ts-key-enum';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
-import { useRecordIndexOptionsImport } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsImport';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
@@ -93,7 +93,7 @@ export const RecordIndexOptionsDropdownContent = ({
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
     isCompactModeActive,
-    setIsCompactModeActive,
+    setAndPersistIsCompactModeActive,
   } = useRecordIndexOptionsForBoard({
     objectNameSingular,
     recordBoardId: recordIndexId,
@@ -116,7 +116,8 @@ export const RecordIndexOptionsDropdownContent = ({
       ? handleBoardFieldVisibilityChange
       : handleColumnVisibilityChange;
 
-  const { handleImport } = useRecordIndexOptionsImport({ objectNameSingular });
+  const { openRecordSpreadsheetImport } =
+    useSpreadsheetRecordImport(objectNameSingular);
 
   return (
     <>
@@ -141,13 +142,11 @@ export const RecordIndexOptionsDropdownContent = ({
               LeftIcon={IconTag}
               text="Fields"
             />
-            {handleImport && (
-              <MenuItem
-                onClick={() => handleImport()}
-                LeftIcon={IconFileImport}
-                text="Import"
-              />
-            )}
+            <MenuItem
+              onClick={() => openRecordSpreadsheetImport()}
+              LeftIcon={IconFileImport}
+              text="Import"
+            />
           </DropdownMenuItemsContainer>
         </>
       )}
@@ -160,10 +159,9 @@ export const RecordIndexOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleRecordFields}
-            isVisible={true}
-            onVisibilityChange={handleChangeFieldVisibility}
-            isDraggable={true}
+            isDraggable
             onDragEnd={handleReorderFields}
+            onVisibilityChange={handleChangeFieldVisibility}
           />
           {hiddenRecordFields.length > 0 && (
             <>
@@ -171,9 +169,8 @@ export const RecordIndexOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
-                isVisible={false}
-                onVisibilityChange={handleChangeFieldVisibility}
                 isDraggable={false}
+                onVisibilityChange={handleChangeFieldVisibility}
               />
             </>
           )}
@@ -185,7 +182,12 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuItemsContainer>
             <MenuItemToggle
               LeftIcon={IconBaselineDensitySmall}
-              onToggleChange={setIsCompactModeActive}
+              onToggleChange={() =>
+                setAndPersistIsCompactModeActive(
+                  !isCompactModeActive,
+                  currentView,
+                )
+              }
               toggled={isCompactModeActive}
               text="Compact view"
               toggleSize="small"

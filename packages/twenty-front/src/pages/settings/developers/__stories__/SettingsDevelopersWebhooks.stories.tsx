@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SettingsDevelopersWebhooks } from '~/pages/settings/developers/SettingsDevelopersWebhooks';
+import { SettingsDevelopersWebhooks } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooks';
 import {
   PageDecorator,
   PageDecoratorArgs,
