@@ -39,7 +39,7 @@ password: Applecar2025
 
 See also:  
 🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)  
-🖥️ [Local Setup](https://docs.twenty.com/contributor/local-setup)  
+🖥️ [Local Setup](https://docs.twenty.com/start/local-setup)  
 
 # Why Choose Twenty?
 We understand that the CRM landscape is vast. So why should you choose us?

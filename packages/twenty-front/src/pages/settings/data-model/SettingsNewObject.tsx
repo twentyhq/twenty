@@ -24,7 +24,7 @@ export const SettingsNewObject = () => {
     icon: string;
     labelPlural: string;
     labelSingular: string;
-  }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
+  }>({ icon: 'IconListNumbers', labelPlural: '', labelSingular: '' });
 
   const canSave =
     !!customFormValues.labelPlural && !!customFormValues.labelSingular;

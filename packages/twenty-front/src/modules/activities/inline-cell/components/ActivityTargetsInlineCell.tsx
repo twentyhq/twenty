@@ -1,13 +1,15 @@
+import { Key } from 'ts-key-enum';
+
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { Activity } from '@/activities/types/Activity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
   activity: Activity;
@@ -19,40 +21,38 @@ export const ActivityTargetsInlineCell = ({
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
     activityId: activity?.id ?? '',
   });
+  const { closeInlineCell } = useInlineCell();
 
-  const { FieldContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    objectRecordId: activity?.id ?? '',
-    fieldMetadataName: 'activityTargets',
-    fieldPosition: 2,
-  });
-
-  if (!FieldContextProvider) return null;
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      closeInlineCell();
+    },
+    ActivityEditorHotkeyScope.ActivityTargets,
+  );
 
   return (
     <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
-      <FieldContextProvider>
-        <RecordInlineCellContainer
-          buttonIcon={IconPencil}
-          customEditHotkeyScope={{
-            scope: RelationPickerHotkeyScope.RelationPicker,
-          }}
-          IconLabel={IconArrowUpRight}
-          editModeContent={
-            <ActivityTargetInlineCellEditMode
-              activity={activity}
-              activityTargetObjectRecords={activityTargetObjectRecords}
-            />
-          }
-          label="Relations"
-          displayModeContent={
-            <ActivityTargetChips
-              activityTargetObjectRecords={activityTargetObjectRecords}
-            />
-          }
-          isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
-        />
-      </FieldContextProvider>
+      <RecordInlineCellContainer
+        buttonIcon={IconPencil}
+        customEditHotkeyScope={{
+          scope: ActivityEditorHotkeyScope.ActivityTargets,
+        }}
+        IconLabel={IconArrowUpRight}
+        editModeContent={
+          <ActivityTargetInlineCellEditMode
+            activity={activity}
+            activityTargetObjectRecords={activityTargetObjectRecords}
+          />
+        }
+        label="Relations"
+        displayModeContent={
+          <ActivityTargetChips
+            activityTargetObjectRecords={activityTargetObjectRecords}
+          />
+        }
+        isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
+      />
     </RecordFieldInputScope>
   );
 };

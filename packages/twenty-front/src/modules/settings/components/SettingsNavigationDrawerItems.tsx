@@ -4,6 +4,7 @@ import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import {
+  IconApps,
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
@@ -31,6 +32,12 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const isIntegrationsEnabled = useIsFeatureEnabled('IS_INTEGRATIONS_ENABLED');
+  const isIntegrationsItemActive = !!useMatch({
+    path: useResolvedPath('/settings/integrations').pathname,
+    end: true,
+  });
+
   const isAccountsItemActive = !!useMatch({
     path: useResolvedPath('/settings/accounts').pathname,
     end: true,
@@ -137,6 +144,14 @@ export const SettingsNavigationDrawerItems = () => {
             })
           }
         />
+        {isIntegrationsEnabled && (
+          <NavigationDrawerItem
+            label="Integrations"
+            to="/settings/integrations"
+            Icon={IconApps}
+            active={isIntegrationsItemActive}
+          />
+        )}
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
