@@ -12,6 +12,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { sortByAscString } from '~/utils/array/sortByAscString';
 import { isDefined } from '~/utils/isDefined';
 
 export const useTimelineActivities = ({
@@ -41,9 +42,18 @@ export const useTimelineActivities = ({
 
   const [initialized, setInitialized] = useState(false);
 
-  const activityIds = activityTargets
-    ?.map((activityTarget) => activityTarget.activityId)
-    .filter(isNonEmptyString);
+  console.log({
+    activityTargets,
+  });
+
+  const activityIds = Array.from(
+    new Set(
+      activityTargets
+        ?.map((activityTarget) => activityTarget.activityId)
+        .filter(isNonEmptyString)
+        .toSorted(sortByAscString),
+    ),
+  );
 
   const timelineActivitiesQueryVariables = makeTimelineActivitiesQueryVariables(
     {

@@ -84,6 +84,10 @@ export const ActivityEditor = ({
     const upsertActivityMutation = async ({
       variables,
     }: RecordUpdateHookParams) => {
+      console.log({
+        activity,
+        variables,
+      });
       await upsertActivity({ activity, input: variables.updateOneRecordInput });
     };
 
@@ -145,13 +149,18 @@ export const ActivityEditor = ({
 
         setIsActivityInCreateMode(false);
       } else {
-        upsertActivity({
-          activity,
-          input: {
-            title: activityFromStore.title,
-            body: activityFromStore.body,
-          },
-        });
+        if (
+          activityFromStore.title !== activity.title ||
+          activityFromStore.body !== activity.body
+        ) {
+          upsertActivity({
+            activity,
+            input: {
+              title: activityFromStore.title,
+              body: activityFromStore.body,
+            },
+          });
+        }
       }
     },
   });
