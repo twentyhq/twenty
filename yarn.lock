@@ -43385,6 +43385,7 @@ __metadata:
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
     passport: "npm:^0.7.0"
+    rimraf: "npm:^5.0.5"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
