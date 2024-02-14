@@ -22,7 +22,9 @@ export function generateMetadata({
 }
 
 export default async function ({ params }: { params: { slug: string } }) {
-  const contributor = (await findAll(userModel)).find(
+  const contributors = await findAll(userModel);
+
+  const contributor = contributors.find(
     (contributor) => contributor.id === params.slug,
   );
 
@@ -78,9 +80,12 @@ export default async function ({ params }: { params: { slug: string } }) {
     .sort((a, b) => b.value - a.value);
 
   const contributorRank =
-    mergedContributorPullRequestsByContributorArray.findIndex(
+    ((mergedContributorPullRequestsByContributorArray.findIndex(
       (contributor) => contributor.authorId === params.slug,
-    );
+    ) +
+      1) /
+      contributors.length) *
+    100;
 
   const pullRequestActivity = contributorPullRequests.reduce((acc, pr) => {
     const date = new Date(pr.createdAt).toISOString().split('T')[0];
@@ -100,11 +105,11 @@ export default async function ({ params }: { params: { slug: string } }) {
         <ProfileCard
           username={contributor.id}
           avatarUrl={contributor.avatarUrl}
-          firstContributionAt={pullRequestActivityArray[0].day}
+          firstContributionAt={pullRequestActivityArray[0]?.day}
         />
         <ProfileInfo
           mergedPRsCount={mergedContributorPullRequests.length}
-          rank={(100 - Number(contributorRank)).toFixed(0)}
+          rank={Math.ceil(Number(contributorRank)).toFixed(0)}
           activeDays={pullRequestActivityArray.length}
         />
         <ActivityLog data={pullRequestActivityArray} />

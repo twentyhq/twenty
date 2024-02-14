@@ -34,7 +34,8 @@ const Contributors = async () => {
 
       return contributor;
     })
-    .sort((a, b) => b.pullRequestCount - a.pullRequestCount);
+    .sort((a, b) => b.pullRequestCount - a.pullRequestCount)
+    .filter((contributor) => contributor.pullRequestCount > 0);
 
   return (
     <>
