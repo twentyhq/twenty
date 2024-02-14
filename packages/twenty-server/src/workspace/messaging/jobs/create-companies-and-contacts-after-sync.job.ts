@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CreateContactsAndCompaniesAfterSyncJobData } from 'packages/twenty-server/dist/src/workspace/messaging/jobs/create-contacts-and-companies-after-sync.job';
-
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
@@ -27,7 +25,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
   ) {}
 
   async handle(
-    data: CreateContactsAndCompaniesAfterSyncJobData,
+    data: CreateCompaniesAndContactsAfterSyncJobData,
   ): Promise<void> {
     this.logger.log(
       `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,

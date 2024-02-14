@@ -1,14 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { CreateContactsAndCompaniesAfterSyncJobData } from 'packages/twenty-server/dist/src/workspace/messaging/jobs/create-contacts-and-companies-after-sync.job';
-
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/integrations/event-emitter/utils/object-record-changed-properties.util';
-import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
+import {
+  CreateCompaniesAndContactsAfterSyncJob,
+  CreateCompaniesAndContactsAfterSyncJobData,
+} from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
 
 @Injectable()
 export class IsContactAutoCreationEnabledListener {
@@ -28,7 +29,7 @@ export class IsContactAutoCreationEnabledListener {
       ).includes('isContactAutoCreationEnabled') &&
       payload.updatedRecord.isContactAutoCreationEnabled
     ) {
-      this.messageQueueService.add<CreateContactsAndCompaniesAfterSyncJobData>(
+      this.messageQueueService.add<CreateCompaniesAndContactsAfterSyncJobData>(
         CreateCompaniesAndContactsAfterSyncJob.name,
         {
           workspaceId: payload.workspaceId,
