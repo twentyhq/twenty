@@ -19,11 +19,11 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 import { IsContactAutoCreationEnabledListener } from 'src/workspace/messaging/listeners/is-contact-auto-creation-enabled-listener';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/repositories/create-companies-and-contacts/create-companies-and-contacts.module';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/repositories/create-companies-and-contacts/create-companies-and-contacts.module';
 @Module({
   imports: [
     EnvironmentModule,
