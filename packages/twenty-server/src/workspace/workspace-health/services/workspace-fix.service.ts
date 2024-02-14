@@ -81,7 +81,7 @@ export class WorkspaceFixService {
         );
       }
       default: {
-        throw new Error('Unsupported fix type');
+        return [];
       }
     }
   }

@@ -23,6 +23,7 @@ import {
 } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
+import { computeCompositeFieldMetadata } from 'src/workspace/workspace-health/utils/compute-composite-field-metadata.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -67,7 +68,10 @@ export class FieldMetadataHealthService {
           const compositeFieldIssues = await this.healthCheckField(
             tableName,
             workspaceTableColumns,
-            compositeFieldMetadata as FieldMetadataEntity,
+            computeCompositeFieldMetadata(
+              compositeFieldMetadata,
+              fieldMetadata,
+            ),
             options,
           );
 
@@ -169,11 +173,7 @@ export class FieldMetadataHealthService {
       });
     }
 
-    if (
-      defaultValue &&
-      columnDefaultValue &&
-      isEnumFieldMetadataType(fieldMetadata.type)
-    ) {
+    if (columnDefaultValue && isEnumFieldMetadataType(fieldMetadata.type)) {
       const enumValues = fieldMetadata.options?.map((option) =>
         serializeDefaultValue(option.value),
       );
@@ -188,11 +188,7 @@ export class FieldMetadataHealthService {
       }
     }
 
-    if (
-      defaultValue &&
-      columnDefaultValue &&
-      columnDefaultValue !== defaultValue
-    ) {
+    if (columnDefaultValue !== defaultValue) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
         fieldMetadata,
