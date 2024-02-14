@@ -28,6 +28,7 @@ export const GET_CURRENT_USER = gql`
         inviteHash
         allowImpersonation
         subscriptionStatus
+        activationStatus
         featureFlags {
           id
           key
