@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
+import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
@@ -34,7 +34,7 @@ export const ActivityTargetInlineCellEditMode = ({
   activity,
   activityTargetObjectRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
-  const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
   const selectedObjectRecordIds = activityTargetObjectRecords.map(
     (activityTarget) => ({
@@ -92,7 +92,7 @@ export const ActivityTargetInlineCellEditMode = ({
         ),
     );
 
-    if (isCreatingActivity) {
+    if (isActivityInCreateMode) {
       let activityTargetsForCreation = activity.activityTargets;
 
       if (isNonEmptyArray(activityTargetsForCreation)) {

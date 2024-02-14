@@ -3,7 +3,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
 import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
+import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { ActivityType } from '@/activities/types/Activity';
@@ -26,13 +27,17 @@ export const useOpenCreateActivityDrawerV2 = () => {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  const setIsCreatingActivity = useSetRecoilState(isCreatingActivityState);
+  const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
 
   const setTemporaryActivityForEditor = useSetRecoilState(
     temporaryActivityForEditorState,
   );
 
   const setActivityInDrawer = useSetRecoilState(activityInDrawerState);
+
+  const [, setIsUpsertingActivityInDB] = useRecoilState(
+    isUpsertingActivityInDBState,
+  );
 
   const openCreateActivityDrawer = async ({
     type,
@@ -59,6 +64,7 @@ export const useOpenCreateActivityDrawerV2 = () => {
     setViewableActivityId(createdActivityInCache.id);
     setActivityTargetableEntityArray(targetableObjects ?? []);
     openRightDrawer(RightDrawerPages.CreateActivity);
+    setIsUpsertingActivityInDB(false);
   };
 
   return openCreateActivityDrawer;

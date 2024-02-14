@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
@@ -36,7 +37,9 @@ export const useOpenCreateActivityDrawer = () => {
     activityTargetableEntityArrayState,
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
-
+  const [, setIsUpsertingActivityInDB] = useRecoilState(
+    isUpsertingActivityInDBState,
+  );
   return useCallback(
     async ({
       type,
@@ -88,6 +91,7 @@ export const useOpenCreateActivityDrawer = () => {
       setViewableActivityId(createdActivity.id);
       setActivityTargetableEntityArray(targetableObjects ?? []);
       openRightDrawer(RightDrawerPages.CreateActivity);
+      setIsUpsertingActivityInDB(false);
     },
     [
       openRightDrawer,
@@ -97,6 +101,7 @@ export const useOpenCreateActivityDrawer = () => {
       createOneActivity,
       createManyActivityTargets,
       currentWorkspaceMember,
+      setIsUpsertingActivityInDB,
     ],
   );
 };

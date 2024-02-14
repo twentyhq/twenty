@@ -10,7 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 
-export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
+export const useInjectIntoTimelineActivitiesQueries = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -46,7 +46,7 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 
-  const injectIntoTimelineActivitiesQueryAfterDrawerMount = ({
+  const injectIntoTimelineActivitiesQueries = ({
     activityToInject,
     activityTargetsToInject,
     timelineTargetableObject,
@@ -119,6 +119,6 @@ export const useInjectIntoTimelineActivitiesQueryAfterDrawerMount = () => {
   };
 
   return {
-    injectIntoTimelineActivitiesQueryAfterDrawerMount,
+    injectIntoTimelineActivitiesQueries,
   };
 };

@@ -1,15 +1,17 @@
-import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
 import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
+import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+import { useRemoveFromTimelineActivitiesQueries } from '@/activities/timeline/hooks/useRemoveFromTimelineActivitiesQueries';
+import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -35,13 +37,13 @@ export const ActivityActionBar = () => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
-    refetchFindManyQuery: true,
+    // refetchFindManyQuery: true,
   });
 
   const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
     {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      refetchFindManyQuery: true,
+      // refetchFindManyQuery: true,
     },
   );
 
@@ -50,26 +52,39 @@ export const ActivityActionBar = () => {
 
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
-  const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const [isUpsertingActivityInDB] = useRecoilState(
+    isUpsertingActivityInDBState,
+  );
+  const timelineTargetableObject = useRecoilValue(
+    timelineTargetableObjectState,
+  );
+  const openCreateActivity = useOpenCreateActivityDrawerV2();
 
-  const apolloClient = useApolloClient();
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const { removeFromTimelineActivitiesQueries } =
+    useRemoveFromTimelineActivitiesQueries();
 
   const deleteActivity = () => {
     if (viewableActivityId) {
-      if (isCreatingActivity && isDefined(temporaryActivityForEditor)) {
+      if (isActivityInCreateMode && isDefined(temporaryActivityForEditor)) {
         deleteActivityFromCache(temporaryActivityForEditor);
         setTemporaryActivityForEditor(null);
       } else {
-        const activityTargetIdsToDelete =
-          activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
+        if (activityInDrawer) {
+          const activityTargetIdsToDelete =
+            activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
 
-        deleteManyActivityTargets(activityTargetIdsToDelete);
-        deleteOneActivity?.(viewableActivityId);
+          removeFromTimelineActivitiesQueries({
+            activityTargetsToRemove: activityInDrawer?.activityTargets ?? [],
+            activityIdToRemove: viewableActivityId,
+          });
+
+          deleteManyActivityTargets(activityTargetIdsToDelete);
+          deleteOneActivity?.(viewableActivityId);
+        }
+
+        // Call a hook to inject into activity timeline
         // TODO: find a better way to do this with custom optimistic rendering for activities
-        apolloClient.refetchQueries({
-          include: ['FindManyActivities'],
-        });
       }
     }
 
@@ -82,8 +97,9 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (record) {
+    if (record && timelineTargetableObject) {
       openCreateActivity({
+        timelineTargetableObject,
         type: record.type,
         assigneeId: isNonEmptyString(record.assigneeId)
           ? record.assigneeId
@@ -93,6 +109,8 @@ export const ActivityActionBar = () => {
     }
   };
 
+  const actionsAreDisabled = isUpsertingActivityInDB;
+
   return (
     <StyledButtonContainer>
       <IconButton
@@ -100,12 +118,14 @@ export const ActivityActionBar = () => {
         onClick={addActivity}
         size="medium"
         variant="secondary"
+        disabled={actionsAreDisabled}
       />
       <IconButton
         Icon={IconTrash}
         onClick={deleteActivity}
         size="medium"
         variant="secondary"
+        disabled={actionsAreDisabled}
       />
     </StyledButtonContainer>
   );
