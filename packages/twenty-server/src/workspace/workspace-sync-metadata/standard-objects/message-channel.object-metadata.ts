@@ -72,6 +72,14 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is Contact Auto Creation Enabled',
+    description: 'Is Contact Auto Creation Enabled',
+    icon: 'IconUserCircle',
+  })
+  isContactAutoCreationEnabled: boolean;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
