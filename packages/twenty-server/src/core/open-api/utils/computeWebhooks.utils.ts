@@ -12,7 +12,7 @@ export const computeWebhooks = (
       tags: [item.nameSingular],
       security: [],
       requestBody: {
-        description: `*${type}*.**${item.nameSingular}**, *&#42;*.**${item.nameSingular}**`,
+        description: `*${type}*.**${item.nameSingular}**, *&#42;*.**${item.nameSingular}**, *&#42;*.**&#42;**`,
         content: {
           'application/json': {
             schema: {
