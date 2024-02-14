@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
@@ -7,7 +7,7 @@ import { Conjunctions } from 'src/core/api-rest/api-rest-query-builder/factories
 import { DEFAULT_ORDER_DIRECTION } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
 import { DEFAULT_CONJUNCTION } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
 
-export const computeLimitParameters = (): OpenAPIV3.ParameterObject => {
+export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'limit',
     in: 'query',
@@ -22,7 +22,7 @@ export const computeLimitParameters = (): OpenAPIV3.ParameterObject => {
   };
 };
 
-export const computeOrderByParameters = (): OpenAPIV3.ParameterObject => {
+export const computeOrderByParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'order_by',
     in: 'query',
@@ -49,7 +49,7 @@ export const computeOrderByParameters = (): OpenAPIV3.ParameterObject => {
   };
 };
 
-export const computeDepthParameters = (): OpenAPIV3.ParameterObject => {
+export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'depth',
     in: 'query',
@@ -62,7 +62,7 @@ export const computeDepthParameters = (): OpenAPIV3.ParameterObject => {
   };
 };
 
-export const computeFilterParameters = (): OpenAPIV3.ParameterObject => {
+export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'filter',
     in: 'query',
@@ -95,7 +95,7 @@ export const computeFilterParameters = (): OpenAPIV3.ParameterObject => {
   };
 };
 
-export const computeLastCursorParameters = (): OpenAPIV3.ParameterObject => {
+export const computeLastCursorParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'last_cursor',
     in: 'query',
@@ -107,7 +107,7 @@ export const computeLastCursorParameters = (): OpenAPIV3.ParameterObject => {
   };
 };
 
-export const computeIdPathParameter = (): OpenAPIV3.ParameterObject => {
+export const computeIdPathParameter = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'id',
     in: 'path',
