@@ -39,7 +39,7 @@ export const isMatchingCurrencyFilter = ({
       }
       default: {
         throw new Error(
-          `Unexpected value for currency filter : ${JSON.stringify(
+          `Unexpected amountMicros for currency filter : ${JSON.stringify(
             currencyFilter.amountMicros,
           )}`,
         );
