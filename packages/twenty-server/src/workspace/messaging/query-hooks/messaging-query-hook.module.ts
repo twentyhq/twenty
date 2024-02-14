@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { MessageChannelMessageAssociationFindManyPostQueryHook } from 'src/workspace/messaging/query-hooks/message/message-channel-message-assocatiation-find-many.post-query-hook';
+import { MessageFindManyPostQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-many.post-query.hook';
 import { MessageFindManyPreQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-many.pre-query.hook';
 import { MessageFindOnePreQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-one.pre-query-hook';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
@@ -22,6 +24,14 @@ import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/work
     {
       provide: MessageFindManyPreQueryHook.name,
       useClass: MessageFindManyPreQueryHook,
+    },
+    {
+      provide: MessageFindManyPostQueryHook.name,
+      useClass: MessageFindManyPostQueryHook,
+    },
+    {
+      provide: MessageChannelMessageAssociationFindManyPostQueryHook.name,
+      useClass: MessageChannelMessageAssociationFindManyPostQueryHook,
     },
   ],
 })

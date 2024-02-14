@@ -38,7 +38,7 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/object-record-delete.event';
 import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
-import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
+import { WorkspaceQueryHookService as WorkspaceQueryHookService } from 'src/workspace/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -54,7 +54,7 @@ export class WorkspaceQueryRunnerService {
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
+    private readonly workspaceQueryHookService: WorkspaceQueryHookService,
   ) {}
 
   async findMany<
@@ -73,7 +73,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -90,11 +90,22 @@ export class WorkspaceQueryRunnerService {
       }`,
     );
 
-    return this.parseResult<IConnection<Record>>(
+    const parsedResult = this.parseResult<IConnection<Record>>(
       result,
       objectMetadataItem,
       '',
     );
+
+    const postHookResult =
+      await this.workspaceQueryHookService.executePostHooks(
+        userId,
+        workspaceId,
+        objectMetadataItem.nameSingular,
+        'findMany',
+        parsedResult,
+      );
+
+    return postHookResult;
   }
 
   async findOne<
@@ -113,7 +124,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -128,7 +139,16 @@ export class WorkspaceQueryRunnerService {
       '',
     );
 
-    return parsedResult?.edges?.[0]?.node;
+    const postHookResult =
+      await this.workspaceQueryHookService.executePostHooks(
+        userId,
+        workspaceId,
+        objectMetadataItem.nameSingular,
+        'findOne',
+        parsedResult,
+      );
+
+    return postHookResult?.edges?.[0]?.node;
   }
 
   async createMany<Record extends IRecord = IRecord>(

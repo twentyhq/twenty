@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceQueryBuilderModule } from 'src/workspace/workspace-query-builder/workspace-query-builder.module';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
-import { WorkspacePreQueryHookModule } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.module';
+import { WorkspaceQueryHookModule } from 'src/workspace/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
@@ -10,7 +10,7 @@ import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
   imports: [
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
-    WorkspacePreQueryHookModule,
+    WorkspaceQueryHookModule,
   ],
   providers: [WorkspaceQueryRunnerService],
   exports: [WorkspaceQueryRunnerService],

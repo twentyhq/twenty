@@ -7,7 +7,7 @@ import {
 
 import { groupBy } from 'lodash';
 
-import { WorkspacePreQueryHook } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
+import { WorkspacePreQueryHook } from 'src/workspace/workspace-query-runner/workspace-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindManyResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';

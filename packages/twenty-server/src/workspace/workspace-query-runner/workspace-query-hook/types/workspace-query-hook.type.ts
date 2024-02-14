@@ -9,7 +9,7 @@ import {
   UpdateOneResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-export type ExecutePreHookMethod =
+export type ExecuteHookMethod =
   | 'createMany'
   | 'createOne'
   | 'deleteMany'
@@ -25,11 +25,11 @@ export type HookName = string;
 
 export type WorkspaceQueryHook = {
   [key in ObjectName]: {
-    [key in ExecutePreHookMethod]?: HookName[];
+    [key in ExecuteHookMethod]?: HookName[];
   };
 };
 
-export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
+export type WorkspaceQueryHookPayload<T> = T extends 'createMany'
   ? CreateManyResolverArgs
   : T extends 'createOne'
     ? CreateOneResolverArgs
@@ -46,3 +46,14 @@ export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
               : T extends 'updateOne'
                 ? UpdateOneResolverArgs
                 : never;
+
+export const EMPTY_PAGE = {
+  pageInfo: {
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor: '',
+    endCursor: '',
+  },
+  edges: [],
+  totalCount: 0,
+};
