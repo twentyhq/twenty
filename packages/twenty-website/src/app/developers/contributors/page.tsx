@@ -14,6 +14,11 @@ const Contributors = async () => {
   const contributors = await findAll(userModel);
   const pullRequests = await findAll(pullRequestModel);
 
+  const pullRequestByAuthor = pullRequests.reduce((acc, pr) => {
+    acc[pr.authorId] = acc[pr.authorId] ? acc[pr.authorId] + 1 : 1;
+    return acc;
+  }, {});
+
   const fitlerContributors = contributors
     .filter((contributor) => contributor.isEmployee === '0')
     .filter(
@@ -28,9 +33,7 @@ const Contributors = async () => {
         ].includes(contributor.id),
     )
     .map((contributor) => {
-      contributor.pullRequestCount = pullRequests.filter(
-        (pr) => pr.authorId === contributor.id,
-      ).length;
+      contributor.pullRequestCount = pullRequestByAuthor[contributor.id] || 0;
 
       return contributor;
     })
