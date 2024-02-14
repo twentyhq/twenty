@@ -228,6 +228,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   return {
     objectMetadataItem,
     records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
+    totalCount: data?.[objectMetadataItem.namePlural].totalCount || 0,
     loading,
     error,
     fetchMoreRecords,
