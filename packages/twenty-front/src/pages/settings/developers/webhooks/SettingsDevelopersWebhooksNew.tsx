@@ -61,8 +61,7 @@ export const SettingsDevelopersWebhooksNew = () => {
             placeholder="URL"
             value={formValues.targetUrl}
             onKeyDown={(e) => {
-              if (e.key === 'Enter')
-                  handleSave();
+              if (e.key === 'Enter'){handleSave();}
             }}
             onChange={(value) => {
               setFormValues((prevState) => ({
