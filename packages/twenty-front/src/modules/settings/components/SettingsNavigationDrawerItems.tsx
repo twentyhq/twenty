@@ -8,8 +8,8 @@ import {
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
+  IconDoorEnter,
   IconHierarchy2,
-  IconLogout,
   IconMail,
   IconRobot,
   IconSettings,
@@ -159,7 +159,7 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerItem
           label="Logout"
           onClick={handleLogout}
-          Icon={IconLogout}
+          Icon={IconDoorEnter}
         />
       </NavigationDrawerSection>
     </>
