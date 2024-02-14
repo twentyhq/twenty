@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconTrash } from '@tabler/icons-react';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord.ts';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
@@ -75,6 +77,10 @@ export const RecordRelationFieldCardContent = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
+
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
@@ -99,6 +105,11 @@ export const RecordRelationFieldCardContent = ({
         [relationFieldMetadataItem.name]: null,
       },
     });
+  };
+
+  const handleDelete = async () => {
+    closeDropdown();
+    await deleteOneRecord(relationRecord.id);
   };
 
   const isOpportunityCompanyRelation =
@@ -133,6 +144,12 @@ export const RecordRelationFieldCardContent = ({
                   LeftIcon={IconUnlink}
                   text="Detach"
                   onClick={handleDetach}
+                />
+                <MenuItem
+                  LeftIcon={IconTrash}
+                  text="Delete"
+                  accent="danger"
+                  onClick={handleDelete}
                 />
               </DropdownMenuItemsContainer>
             }
