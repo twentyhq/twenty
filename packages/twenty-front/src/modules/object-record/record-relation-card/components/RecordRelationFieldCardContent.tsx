@@ -77,7 +77,7 @@ export const RecordRelationFieldCardContent = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const { deleteOneRecord } = useDeleteOneRecord({
+  const { deleteOneRecord: deleteOneRelationRecord } = useDeleteOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
@@ -109,7 +109,7 @@ export const RecordRelationFieldCardContent = ({
 
   const handleDelete = async () => {
     closeDropdown();
-    await deleteOneRecord(relationRecord.id);
+    await deleteOneRelationRecord(relationRecord.id);
   };
 
   const isOpportunityCompanyRelation =
@@ -118,6 +118,10 @@ export const RecordRelationFieldCardContent = ({
     (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
       relationObjectMetadataNameSingular ===
         CoreObjectNameSingular.Opportunity);
+
+  const isAccountOwnerRelation =
+    relationObjectMetadataNameSingular ===
+    CoreObjectNameSingular.WorkspaceMember;
 
   return (
     <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
@@ -145,12 +149,14 @@ export const RecordRelationFieldCardContent = ({
                   text="Detach"
                   onClick={handleDetach}
                 />
-                <MenuItem
-                  LeftIcon={IconTrash}
-                  text="Delete"
-                  accent="danger"
-                  onClick={handleDelete}
-                />
+                {!isAccountOwnerRelation && (
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Delete"
+                    accent="danger"
+                    onClick={handleDelete}
+                  />
+                )}
               </DropdownMenuItemsContainer>
             }
             dropdownHotkeyScope={{
