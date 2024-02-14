@@ -57,6 +57,16 @@ export class WorkspaceFixService {
           filteredIssues,
         );
       }
+      case WorkspaceHealthFixKind.TargetColumnMap: {
+        const filteredIssues =
+          this.workspaceTargetColumnMapFixer.filterIssues(issues);
+
+        return this.workspaceTargetColumnMapFixer.createWorkspaceMigrations(
+          manager,
+          objectMetadataCollection,
+          filteredIssues,
+        );
+      }
       default: {
         return [];
       }
