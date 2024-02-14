@@ -14,7 +14,7 @@ import { MessageChannelMessageAssociationService } from 'src/workspace/messaging
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/repositories/create-companies-and-contacts/create-companies-and-contacts.service';
+import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
 @Injectable()
 export class MessageService {
   constructor(

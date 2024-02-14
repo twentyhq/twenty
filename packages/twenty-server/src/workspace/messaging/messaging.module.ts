@@ -23,7 +23,8 @@ import { MessagingMessageChannelListener } from 'src/workspace/messaging/listene
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/repositories/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CompanyModule } from 'src/workspace/messaging/repositories/companies/company.module';
 @Module({
   imports: [
     EnvironmentModule,
@@ -37,6 +38,7 @@ import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/reposi
     CreateCompaniesAndContactsModule,
     WorkspaceMemberModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    CompanyModule,
   ],
   providers: [
     GmailFullSyncService,

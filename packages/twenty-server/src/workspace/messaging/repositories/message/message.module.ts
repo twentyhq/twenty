@@ -6,7 +6,7 @@ import { MessageParticipantModule } from 'src/workspace/messaging/repositories/m
 import { MessageThreadModule } from 'src/workspace/messaging/repositories/message-thread/message-thread.module';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/repositories/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 
 @Module({
   imports: [
