@@ -113,7 +113,7 @@ export const ActivityEditor = ({
     isActivityInCreateModeState,
   );
 
-  const [isUpsertingActivityInDB, setIsUpsertingActivityInDB] = useRecoilState(
+  const [isUpsertingActivityInDB] = useRecoilState(
     isUpsertingActivityInDBState,
   );
 
@@ -153,8 +153,6 @@ export const ActivityEditor = ({
           },
         });
       }
-
-      setIsUpsertingActivityInDB(false);
     },
   });
 

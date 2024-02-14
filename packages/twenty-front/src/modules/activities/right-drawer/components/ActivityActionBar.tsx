@@ -82,9 +82,6 @@ export const ActivityActionBar = () => {
           deleteManyActivityTargets(activityTargetIdsToDelete);
           deleteOneActivity?.(viewableActivityId);
         }
-
-        // Call a hook to inject into activity timeline
-        // TODO: find a better way to do this with custom optimistic rendering for activities
       }
     }
 
@@ -111,6 +108,8 @@ export const ActivityActionBar = () => {
 
   const actionsAreDisabled = isUpsertingActivityInDB;
 
+  const isCreateActionDisabled = isActivityInCreateMode;
+
   return (
     <StyledButtonContainer>
       <IconButton
@@ -118,7 +117,7 @@ export const ActivityActionBar = () => {
         onClick={addActivity}
         size="medium"
         variant="secondary"
-        disabled={actionsAreDisabled}
+        disabled={actionsAreDisabled || isCreateActionDisabled}
       />
       <IconButton
         Icon={IconTrash}
