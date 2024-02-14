@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { CreateCompanyService } from 'src/workspace/messaging/create-company/create-company.service';
-import { CreateContactService } from 'src/workspace/messaging/create-contact/create-contact.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle';
+import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
+import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
