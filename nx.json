@@ -53,7 +53,7 @@
     }
   },
   "installation": {
-    "version": "17.2.7"
+    "version": "17.2.8"
   },
   "affected": {
     "defaultBase": "main"

@@ -1,12 +1,15 @@
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
@@ -16,6 +19,8 @@ import {
   CheckboxShape,
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{
@@ -63,6 +68,31 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
   );
 
   const { upsertActivity } = useUpsertActivity();
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      handleBlur();
+    },
+    ActivityEditorHotkeyScope.ActivityTitle,
+  );
+
+  const handleBlur = () => {
+    goBackToPreviousHotkeyScope();
+    titleInputRef.current?.blur();
+  };
+
+  const handleFocus = () => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ActivityEditorHotkeyScope.ActivityTitle,
+    );
+  };
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
@@ -138,10 +168,13 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
       <StyledEditableTitleInput
         autoComplete="off"
         autoFocus
+        ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
         value={activityInStore?.title ?? ''}
         completed={completed}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
       />
     </StyledContainer>
   );

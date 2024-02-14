@@ -36,6 +36,7 @@ const StyledContainer = styled.div`
   height: 100%;
   justify-content: space-between;
   overflow-y: auto;
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledUpperPartContainer = styled.div`
@@ -44,7 +45,6 @@ const StyledUpperPartContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-start;
 `;
 
@@ -84,10 +84,6 @@ export const ActivityEditor = ({
     const upsertActivityMutation = async ({
       variables,
     }: RecordUpdateHookParams) => {
-      console.log({
-        activity,
-        variables,
-      });
       await upsertActivity({ activity, input: variables.updateOneRecordInput });
     };
 
@@ -126,6 +122,14 @@ export const ActivityEditor = ({
   const [activityFromStore] = useRecoilState(
     recordStoreFamilyState(activity.id),
   );
+
+  const { FieldContextProvider: ActivityTargetsContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activity?.id ?? '',
+      fieldMetadataName: 'activityTargets',
+      fieldPosition: 2,
+    });
 
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
@@ -188,14 +192,18 @@ export const ActivityEditor = ({
                   </AssigneeFieldContextProvider>
                 </>
               )}
-            <ActivityTargetsInlineCell activity={activity} />
+            {ActivityTargetsContextProvider && (
+              <ActivityTargetsContextProvider>
+                <ActivityTargetsInlineCell activity={activity} />
+              </ActivityTargetsContextProvider>
+            )}
           </PropertyBox>
         </StyledTopContainer>
-        <ActivityBodyEditor
-          activity={activity}
-          fillTitleFromBody={fillTitleFromBody}
-        />
       </StyledUpperPartContainer>
+      <ActivityBodyEditor
+        activity={activity}
+        fillTitleFromBody={fillTitleFromBody}
+      />
       {showComment && (
         <ActivityComments
           activity={activity}

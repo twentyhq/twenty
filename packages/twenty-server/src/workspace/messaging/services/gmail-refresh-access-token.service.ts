@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 
 @Injectable()
 export class GmailRefreshAccessTokenService {

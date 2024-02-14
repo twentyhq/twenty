@@ -24,6 +24,10 @@ This documentation includes [different ways](/start/local-setup/yarn-setup#step-
 If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
 If you don't, make sure you don't have more than one postgres instance running on your computer.
 
+## Cannot find module 'twenty-emails' or its corresponding type declarations.
+
+You have to build the package `twenty-emails` before running the initialization of the database with `yarn nx run twenty-emails:build`
+
 ## Missing twenty-x package
 
 Make sure to run yarn in the root directory and then run `yarn nx server:dev twenty-server`. If this still doesn't work try building the missing package manually.

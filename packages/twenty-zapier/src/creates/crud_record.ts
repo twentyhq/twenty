@@ -3,11 +3,23 @@ import { Bundle, ZObject } from 'zapier-platform-core';
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import { listRecordIdsKey } from '../triggers/list_record_ids';
 import { capitalize } from '../utils/capitalize';
-import { recordInputFields } from '../utils/creates/creates.utils';
+import { computeInputFields } from '../utils/computeInputFields';
 import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
-import requestDb from '../utils/requestDb';
+import requestDb, { requestSchema } from '../utils/requestDb';
 import { Operation } from '../utils/triggers/triggers.utils';
+
+export const recordInputFields = async (
+  z: ZObject,
+  bundle: Bundle,
+  idRequired = false,
+) => {
+  const schema = await requestSchema(z, bundle);
+  const node = schema.data.objects.edges.filter(
+    (edge) => edge.node.nameSingular === bundle.inputData.nameSingular,
+  )[0].node;
+  return computeInputFields(node, idRequired);
+};
 
 const computeFields = async (z: ZObject, bundle: Bundle) => {
   const operation = bundle.inputData.crudZapierOperation;
@@ -84,7 +96,7 @@ export default {
         key: 'nameSingular',
         required: true,
         label: 'Record Name',
-        dynamic: `${findObjectNamesSingularKey}.nameSingular`,
+        dynamic: `${findObjectNamesSingularKey}.nameSingular.labelSingular`,
         altersDynamicFields: true,
       },
       {

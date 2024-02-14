@@ -14,7 +14,7 @@ import {
   GmailPartialSyncJob,
   GmailPartialSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 
 interface GmailPartialSyncOptions {
   workspaceId: string;
@@ -75,7 +75,6 @@ export class GmailPartialSyncCommand extends CommandRunner {
           connectedAccountId: connectedAccount.id,
         },
         {
-          id: `${workspaceId}-${connectedAccount.id}`,
           retryLimit: 2,
         },
       );

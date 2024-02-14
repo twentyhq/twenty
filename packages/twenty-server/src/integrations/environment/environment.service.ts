@@ -236,6 +236,10 @@ export class EnvironmentService {
     );
   }
 
+  getLoggerIsBufferEnabled(): boolean | undefined {
+    return this.configService.get<boolean>('LOGGER_IS_BUFFER_ENABLED') ?? true;
+  }
+
   getExceptionHandlerDriverType(): ExceptionHandlerDriver {
     return (
       this.configService.get<ExceptionHandlerDriver>(
