@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { CompanyService } from 'src/workspace/messaging/repositories/companies/company.service';
+import { CompanyService } from 'src/workspace/messaging/repositories/company/company.service';
 @Injectable()
 export class CreateCompanyService {
   constructor(private readonly companyService: CompanyService) {}

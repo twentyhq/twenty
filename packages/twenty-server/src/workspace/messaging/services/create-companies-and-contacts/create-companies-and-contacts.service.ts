@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
-import { getDomainNameFromHandle } from 'src/workspace/messaging/services/utils/get-domain-name-from-handle';
+import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
 

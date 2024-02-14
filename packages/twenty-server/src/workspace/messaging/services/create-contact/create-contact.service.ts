@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { capitalize } from 'src/utils/capitalize';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
+import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/workspace/messaging/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 
 type ContactToCreate = {
   handle: string;
@@ -22,35 +22,24 @@ type FormattedContactToCreate = {
 
 @Injectable()
 export class CreateContactService {
-  constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-  ) {}
+  constructor(private readonly personService: PersonService) {}
 
   formatContacts(
     contactsToCreate: ContactToCreate[],
   ): FormattedContactToCreate[] {
     return contactsToCreate.map((contact) => {
+      const id = v4();
+
       const { handle, displayName, companyId } = contact;
 
-      const contactFirstName = displayName.split(' ')[0];
-      const contactLastName = displayName.split(' ')[1];
-
-      const contactFullNameFromHandle = handle.split('@')[0];
-      const contactFirstNameFromHandle =
-        contactFullNameFromHandle.split('.')[0];
-      const contactLastNameFromHandle = contactFullNameFromHandle.split('.')[1];
-
-      const id = v4();
+      const { firstName, lastName } =
+        getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
 
       return {
         id,
         handle,
-        firstName: capitalize(
-          contactFirstName || contactFirstNameFromHandle || '',
-        ),
-        lastName: capitalize(
-          contactLastName || contactLastNameFromHandle || '',
-        ),
+        firstName,
+        lastName,
         companyId,
       };
     });
@@ -63,31 +52,10 @@ export class CreateContactService {
   ): Promise<void> {
     if (contactsToCreate.length === 0) return;
 
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    const valuesString = formattedContacts
-      .map(
-        (_, index) =>
-          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
-            index * 5 + 4
-          }, $${index * 5 + 5})`,
-      )
-      .join(', ');
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${valuesString}`,
-      formattedContacts
-        .map((contact) => [
-          contact.id,
-          contact.handle,
-          contact.firstName,
-          contact.lastName,
-          contact.companyId,
-        ])
-        .flat(),
+    await this.personService.createPeople(
+      formattedContacts,
       workspaceId,
       transactionManager,
     );
