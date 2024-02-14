@@ -11,7 +11,6 @@ import { CommandLogger } from 'src/commands/command-logger';
 
 interface WorkspaceHealthCommandOptions {
   workspaceId: string;
-  verbose?: boolean;
   mode?: WorkspaceHealthMode;
   fix?: WorkspaceHealthFixKind;
   dryRun?: boolean;
@@ -49,7 +48,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
         chalk.red(`Workspace is not healthy, found ${issues.length} issues`),
       );
 
-      if (options.verbose) {
+      if (options.dryRun) {
         await this.commandLogger.writeLog(
           `workspace-health-issues-${options.workspaceId}`,
           issues,
@@ -110,15 +109,6 @@ export class WorkspaceHealthCommand extends CommandRunner {
     }
 
     return value as WorkspaceHealthFixKind;
-  }
-
-  @Option({
-    flags: '-v, --verbose',
-    description: 'Detailed output',
-    required: false,
-  })
-  parseVerbose(): boolean {
-    return true;
   }
 
   @Option({
