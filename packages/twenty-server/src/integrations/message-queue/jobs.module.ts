@@ -17,13 +17,13 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/crons/fetch-all-workspaces-messages.job';
-import { ConnectedAccountModule } from 'src/workspace/messaging/connected-account/connected-account.module';
+import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
+import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
-import { MessageParticipantModule } from 'src/workspace/messaging/message-participant/message-participant.module';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/create-companies-and-contacts/create-companies-and-contacts.module';
-import { MessageChannelModule } from 'src/workspace/messaging/message-channel/message-channel.module';
+import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
+import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 
 @Module({
   imports: [

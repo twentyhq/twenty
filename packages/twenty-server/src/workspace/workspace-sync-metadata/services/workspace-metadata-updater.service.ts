@@ -108,7 +108,10 @@ export class WorkspaceMetadataUpdaterService {
     storage: WorkspaceSyncStorage,
   ): Promise<{
     createdFieldMetadataCollection: FieldMetadataEntity[];
-    updatedFieldMetadataCollection: FieldMetadataEntity[];
+    updatedFieldMetadataCollection: {
+      current: FieldMetadataEntity;
+      altered: FieldMetadataEntity;
+    }[];
   }> {
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
 
@@ -124,6 +127,11 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update field metadata
      */
+    const oldFieldMetadataCollection = await fieldMetadataRepository.find({
+      where: {
+        id: In(storage.fieldMetadataUpdateCollection.map((field) => field.id)),
+      },
+    });
     const updatedFieldMetadataCollection = await fieldMetadataRepository.save(
       storage.fieldMetadataUpdateCollection as DeepPartial<FieldMetadataEntity>[],
     );
@@ -148,8 +156,29 @@ export class WorkspaceMetadataUpdaterService {
     return {
       createdFieldMetadataCollection:
         createdFieldMetadataCollection as FieldMetadataEntity[],
-      updatedFieldMetadataCollection:
-        updatedFieldMetadataCollection as FieldMetadataEntity[],
+      updatedFieldMetadataCollection: oldFieldMetadataCollection.map(
+        (oldFieldMetadata) => {
+          const alteredFieldMetadata = updatedFieldMetadataCollection.find(
+            (field) => field.id === oldFieldMetadata.id,
+          );
+
+          if (!alteredFieldMetadata) {
+            throw new Error(
+              `Field ${oldFieldMetadata.id} not found in updatedFieldMetadataCollection`,
+            );
+          }
+
+          return {
+            current: oldFieldMetadata as FieldMetadataEntity,
+            // TypeORM save method doesn't return the whole entity...
+            // https://github.com/typeorm/typeorm/issues/3490
+            altered: {
+              ...oldFieldMetadata,
+              ...alteredFieldMetadata,
+            } as FieldMetadataEntity,
+          };
+        },
+      ),
     };
   }
 

@@ -55,7 +55,7 @@ export class WorkspaceFieldComparator {
     const standardFieldMetadataMap = transformMetadataForComparison(
       standardObjectMetadata.fields,
       {
-        propertiesToIgnore: fieldPropertiesToStringify,
+        propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
           return datum.name;
         },
