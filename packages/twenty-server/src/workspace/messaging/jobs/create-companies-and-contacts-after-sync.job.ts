@@ -56,8 +56,6 @@ export class CreateCompaniesAndContactsAfterSyncJob
     );
 
     await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      //eslint-disable-next-line
-      //@ts-ignore
       messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
     );

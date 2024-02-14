@@ -5,7 +5,10 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
-import { Participant } from 'src/workspace/messaging/types/gmail-message';
+import {
+  Participant,
+  ParticipantWithId,
+} from 'src/workspace/messaging/types/gmail-message';
 
 @Injectable()
 export class MessageParticipantService {
@@ -67,7 +70,7 @@ export class MessageParticipantService {
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<Participant[]> {
+  ): Promise<ParticipantWithId[]> {
     if (!messageChannelId || !workspaceId) {
       return [];
     }
@@ -75,7 +78,7 @@ export class MessageParticipantService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const messageParticipants: Participant[] =
+    const messageParticipants: ParticipantWithId[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT "messageParticipant".id,
         "messageParticipant"."role",
@@ -159,10 +162,7 @@ export class MessageParticipantService {
   }
 
   public async updateMessageParticipantsAfterPeopleCreation(
-    participants: {
-      id: string;
-      handle: string;
-    }[],
+    participants: ParticipantWithId[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -183,7 +183,9 @@ export class MessageParticipantService {
 
     const messageParticipantsToUpdate = participants.map((participant) => [
       participant.id,
-      participantPersonIds.find((e) => e.email === participant.handle)?.id,
+      participantPersonIds.find(
+        (e: { id: string; email: string }) => e.email === participant.handle,
+      )?.id,
     ]);
 
     if (messageParticipantsToUpdate.length === 0) return;
