@@ -92,90 +92,58 @@ export const ActivityTargetInlineCellEditMode = ({
         ),
     );
 
-    if (isActivityInCreateMode) {
-      let existingActivityTargets = activity.activityTargets;
+    const existingActivityTargets = activityTargetWithTargetRecords.map(
+      (activityTargetObjectRecord) => activityTargetObjectRecord.activityTarget,
+    );
 
-      if (isNonEmptyArray(existingActivityTargets)) {
-        const generatedActivityTargets = selectedTargetObjectsToCreate.map(
-          (selectedRecord) => {
-            const emptyActivityTarget =
-              generateObjectRecordOptimisticResponse<ActivityTarget>({
-                id: v4(),
-                activityId: activity.id,
-                activity,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                [getActivityTargetObjectFieldIdName({
-                  nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-                })]: selectedRecord.recordIdentifier.id,
-              });
+    let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
-            return emptyActivityTarget;
-          },
-        );
-
-        existingActivityTargets.push(...generatedActivityTargets);
-      }
-
-      if (isNonEmptyArray(activityTargetsToDelete)) {
-        existingActivityTargets = existingActivityTargets.filter(
-          (activityTarget) =>
-            !activityTargetsToDelete.some(
-              (activityTargetObjectRecord) =>
-                activityTargetObjectRecord.targetObject.id ===
-                activityTarget.id,
-            ),
-        );
-      }
-
-      injectIntoActivityTargetInlineCellCache({
-        activityId: activity.id,
-        activityTargetsToInject: existingActivityTargets,
-      });
-
-      upsertActivity({
-        activity,
-        input: {
-          activityTargets: existingActivityTargets,
-        },
-      });
-    } else {
-      const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
-        (selectedRecord) =>
-          ({
+    const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
+      (selectedRecord) => {
+        const emptyActivityTarget =
+          generateObjectRecordOptimisticResponse<ActivityTarget>({
             id: v4(),
             activityId: activity.id,
+            activity,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             [getActivityTargetObjectFieldIdName({
               nameSingular: selectedRecord.objectMetadataItem.nameSingular,
             })]: selectedRecord.recordIdentifier.id,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            activity,
-          }) as ActivityTarget,
+          });
+
+        return emptyActivityTarget;
+      },
+    );
+
+    activityTargetsAfterUpdate.push(...activityTargetsToCreate);
+
+    if (isNonEmptyArray(activityTargetsToDelete)) {
+      activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
+        (activityTarget) =>
+          !activityTargetsToDelete.some(
+            (activityTargetToDelete) =>
+              activityTargetToDelete.activityTarget.id === activityTarget.id,
+          ),
       );
+    }
 
-      if (selectedTargetObjectsToCreate.length > 0) {
-        const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
-          (selectedRecord) =>
-            ({
-              id: v4(),
-              activityId: activity.id,
-              [getActivityTargetObjectFieldIdName({
-                nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-              })]: selectedRecord.recordIdentifier.id,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              activity,
-            }) as ActivityTarget,
-        );
+    injectIntoActivityTargetInlineCellCache({
+      activityId: activity.id,
+      activityTargetsToInject: activityTargetsAfterUpdate,
+    });
 
+    if (isActivityInCreateMode) {
+      upsertActivity({
+        activity,
+        input: {
+          activityTargets: activityTargetsAfterUpdate,
+        },
+      });
+    } else {
+      if (activityTargetsToCreate.length > 0) {
         await createManyActivityTargets(activityTargetsToCreate, {
           skipOptimisticEffect: true,
-        });
-
-        injectIntoActivityTargetInlineCellCache({
-          activityId: activity.id,
-          activityTargetsToInject: activityTargetsToCreate,
         });
       }
 
@@ -185,13 +153,11 @@ export const ActivityTargetInlineCellEditMode = ({
             (activityTargetObjectRecord) =>
               activityTargetObjectRecord.activityTarget.id,
           ),
+          {
+            skipOptimisticEffect: true,
+          },
         );
       }
-
-      injectIntoActivityTargetInlineCellCache({
-        activityId: activity.id,
-        activityTargetsToInject: activityTargetsToCreate,
-      });
     }
   };
 
