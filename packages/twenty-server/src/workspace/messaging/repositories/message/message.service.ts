@@ -215,6 +215,7 @@ export class MessageService {
       message.participants,
       newMessageId,
       workspaceId,
+      manager,
     );
 
     return Promise.resolve(newMessageId);
