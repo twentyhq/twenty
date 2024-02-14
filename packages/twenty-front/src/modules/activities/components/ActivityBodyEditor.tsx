@@ -156,6 +156,12 @@ export const ActivityBodyEditor = ({
             };
           });
 
+          modifyActivityFromCache(activity.id, {
+            body: () => {
+              return newStringifiedBody;
+            },
+          });
+
           const activityTitleHasBeenSet = snapshot
             .getLoadable(
               activityTitleHasBeenSetFamilyState({
@@ -166,12 +172,6 @@ export const ActivityBodyEditor = ({
 
           const blockBody = JSON.parse(newStringifiedBody);
           const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
-
-          modifyActivityFromCache(activity.id, {
-            body: () => {
-              return newStringifiedBody;
-            },
-          });
 
           if (!activityTitleHasBeenSet && fillTitleFromBody) {
             set(recordStoreFamilyState(activity.id), (oldActivity) => {
