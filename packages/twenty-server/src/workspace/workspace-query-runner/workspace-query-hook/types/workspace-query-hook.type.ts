@@ -46,14 +46,3 @@ export type WorkspaceQueryHookPayload<T> = T extends 'createMany'
               : T extends 'updateOne'
                 ? UpdateOneResolverArgs
                 : never;
-
-export const EMPTY_PAGE = {
-  pageInfo: {
-    hasNextPage: false,
-    hasPreviousPage: false,
-    startCursor: '',
-    endCursor: '',
-  },
-  edges: [],
-  totalCount: 0,
-};
