@@ -1,7 +1,11 @@
+import { global } from '@apollo/client/utilities/globals';
 import { createClient } from '@libsql/client';
-import { drizzle as sqliteDrizzle } from 'drizzle-orm/libsql';
+import { drizzle as sqliteDrizzle, LibSQLDatabase } from 'drizzle-orm/libsql';
 import { migrate as sqliteMigrate } from 'drizzle-orm/libsql/migrator';
-import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js';
+import {
+  drizzle as pgDrizzle,
+  PostgresJsDatabase,
+} from 'drizzle-orm/postgres-js';
 import { migrate as postgresMigrate } from 'drizzle-orm/postgres-js/migrator';
 import { SQLiteTableWithColumns } from 'drizzle-orm/sqlite-core';
 import postgres from 'postgres';
@@ -9,36 +13,54 @@ import postgres from 'postgres';
 import 'dotenv/config';
 
 // Todo: Deprecate SQLite once prototyping is complete, this is making things impossible to type properly
-const databaseDriver = process.env.DATABASE_DRIVER;
-
-const sqliteClient = createClient({
-  url: 'file:twenty-website.sqlite',
-});
-const pgClient = postgres(`${process.env.DATABASE_PG_URL}`);
-const sqliteDb = sqliteDrizzle(sqliteClient, { logger: true });
-const pgDb = pgDrizzle(pgClient, { logger: true });
-
+const databaseDriver = global.process.env.DATABASE_DRIVER || 'sqlite';
 const isSqliteDriver = databaseDriver === 'sqlite';
+const isPgDriver = databaseDriver === 'pg';
+
+let sqliteDb: LibSQLDatabase;
+let pgDb: PostgresJsDatabase;
+
+if (isSqliteDriver) {
+  const sqliteClient = createClient({
+    url: 'file:twenty-website.sqlite',
+  });
+  sqliteDb = sqliteDrizzle(sqliteClient, { logger: false });
+}
+
+if (isPgDriver) {
+  const pgClient = postgres(`${global.process.env.DATABASE_PG_URL}`);
+  pgDb = pgDrizzle(pgClient, { logger: false });
+}
 
 const migrate = async () => {
   if (isSqliteDriver) {
     await sqliteMigrate(sqliteDb, {
       migrationsFolder: './src/database/sqlite/migrations',
     });
-  } else {
+    return;
+  }
+  if (isPgDriver) {
     await postgresMigrate(pgDb, {
       migrationsFolder: './src/database/postgres/migrations',
     });
+    return;
   }
+
+  throw new Error('Unsupported database driver');
 };
 
 const findAll = (model: SQLiteTableWithColumns<any>) => {
-  return isSqliteDriver
-    ? sqliteDb.select().from(model).all()
-    : pgDb.select().from(model).execute();
+  if (isSqliteDriver) {
+    return sqliteDb.select().from(model).all();
+  }
+
+  if (isPgDriver) {
+    return pgDb.select().from(model).execute();
+  }
+
+  throw new Error('Unsupported database driver');
 };
 
-// Todo: rework typing
 const insertMany = async (
   model: SQLiteTableWithColumns<any>,
   data: any,
@@ -55,16 +77,19 @@ const insertMany = async (
     }
     return query.execute();
   }
-  const query = pgDb.insert(model).values(data);
-  if (options?.onConflictKey) {
-    return query
-      .onConflictDoNothing({
-        target: [model[options.onConflictKey]],
-      })
-      .execute();
+  if (isPgDriver) {
+    const query = pgDb.insert(model).values(data);
+    if (options?.onConflictKey) {
+      return query
+        .onConflictDoNothing({
+          target: [model[options.onConflictKey]],
+        })
+        .execute();
+    }
+    return query.execute();
   }
 
-  return query.execute();
+  throw new Error('Unsupported database driver');
 };
 
 export { findAll, insertMany, migrate };

@@ -15,7 +15,7 @@ import {
   sqlLiteUsers,
 } from '@/database/sqlite/schema-sqlite';
 
-const databaseDriver = process.env.DATABASE_DRIVER;
+const databaseDriver = global.process.env.DATABASE_DRIVER;
 const isSqliteDriver = databaseDriver === 'sqlite';
 
 export const userModel = isSqliteDriver ? sqlLiteUsers : pgUsers;

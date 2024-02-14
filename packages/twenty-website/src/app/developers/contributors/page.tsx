@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import AvatarGrid from '@/app/components/AvatarGrid';
 import { Header } from '@/app/components/developers/contributors/Header';
 import { Background } from '@/app/components/oss-friends/Background';
