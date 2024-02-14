@@ -41,19 +41,25 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     objectMetadataItem?.fields ?? [],
   );
 
-  const { records, loading, fetchMoreRecords, queryStateIdentifier } =
-    useFindManyRecords({
-      objectNameSingular,
-      filter: requestFilters,
-      orderBy,
-      onCompleted: () => {
-        setLastRowVisible(false);
-        setIsRecordTableInitialLoading(false);
-      },
-    });
+  const {
+    records,
+    loading,
+    totalCount,
+    fetchMoreRecords,
+    queryStateIdentifier,
+  } = useFindManyRecords({
+    objectNameSingular,
+    filter: requestFilters,
+    orderBy,
+    onCompleted: () => {
+      setLastRowVisible(false);
+      setIsRecordTableInitialLoading(false);
+    },
+  });
 
   return {
     records: isCurrentWorkspaceActive ? records : signInBackgroundMockCompanies,
+    totalCount: totalCount || 0,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

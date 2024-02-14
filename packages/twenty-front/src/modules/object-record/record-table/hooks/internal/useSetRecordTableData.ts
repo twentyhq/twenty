@@ -19,7 +19,7 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { id: string }>(newEntityArray: T[]) => {
+      <T extends { id: string }>(newEntityArray: T[], totalCount: number) => {
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
@@ -37,9 +37,10 @@ export const useSetRecordTableData = ({
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(getTableRowIdsState(), entityIds);
         }
+        console.log(newEntityArray.length);
 
-        set(getNumberOfTableRowsState(), entityIds.length);
-        onEntityCountChange(entityIds.length);
+        set(getNumberOfTableRowsState(), totalCount);
+        onEntityCountChange(totalCount);
       },
     [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
   );
