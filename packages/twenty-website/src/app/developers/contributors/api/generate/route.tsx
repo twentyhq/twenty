@@ -1,7 +1,14 @@
 import { graphql } from '@octokit/graphql';
-import Database from 'better-sqlite3';
 
-const db = new Database('db.sqlite', { verbose: console.log });
+import { insertMany, migrate } from '@/database/database';
+import {
+  issueLabelModel,
+  issueModel,
+  labelModel,
+  pullRequestLabelModel,
+  pullRequestModel,
+  userModel,
+} from '@/database/model';
 
 interface LabelNode {
   id: string;
@@ -188,176 +195,132 @@ async function fetchAssignableUsers(): Promise<Set<string>> {
   return new Set(repository.assignableUsers.nodes.map((user) => user.login));
 }
 
-const initDb = () => {
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS pullRequests (
-      id TEXT PRIMARY KEY,
-      title TEXT,
-      body TEXT,
-	  url TEXT,
-      createdAt TEXT,
-      updatedAt TEXT,
-      closedAt TEXT,
-      mergedAt TEXT,
-      authorId TEXT,
-      FOREIGN KEY (authorId) REFERENCES users(id)
-    );
-  `,
-  ).run();
-
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS issues (
-      id TEXT PRIMARY KEY,
-      title TEXT,
-      body TEXT,
-      url TEXT,
-	  createdAt TEXT,
-      updatedAt TEXT,
-      closedAt TEXT,
-      authorId TEXT,
-      FOREIGN KEY (authorId) REFERENCES users(id)
-    );
-  `,
-  ).run();
-
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      login TEXT,
-      avatarUrl TEXT,
-      url TEXT,
-      isEmployee BOOLEAN
-    );
-  `,
-  ).run();
-
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS labels (
-      id TEXT PRIMARY KEY,
-      name TEXT,
-      color TEXT,
-      description TEXT
-    );
-  `,
-  ).run();
-
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS pullRequestLabels (
-      pullRequestId TEXT,
-      labelId TEXT,
-      FOREIGN KEY (pullRequestId) REFERENCES pullRequests(id),
-      FOREIGN KEY (labelId) REFERENCES labels(id)
-    );
-  `,
-  ).run();
-
-  db.prepare(
-    `
-    CREATE TABLE IF NOT EXISTS issueLabels (
-      issueId TEXT,
-      labelId TEXT,
-      FOREIGN KEY (issueId) REFERENCES issues(id),
-      FOREIGN KEY (labelId) REFERENCES labels(id)
-    );
-  `,
-  ).run();
-};
-
 export async function GET() {
-  initDb();
+  await migrate();
 
   // TODO if we ever hit API Rate Limiting
   const lastPRCursor = null;
   const lastIssueCursor = null;
 
   const assignableUsers = await fetchAssignableUsers();
-  const prs = (await fetchData(lastPRCursor)) as Array<PullRequestNode>;
-  const issues = (await fetchData(lastIssueCursor, true)) as Array<IssueNode>;
+  const fetchedPRs = (await fetchData(lastPRCursor)) as Array<PullRequestNode>;
+  const fetchedIssues = (await fetchData(
+    lastIssueCursor,
+    true,
+  )) as Array<IssueNode>;
 
-  const insertPR = db.prepare(
-    'INSERT INTO pullRequests (id, title, body, url, createdAt, updatedAt, closedAt, mergedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING',
-  );
-  const insertIssue = db.prepare(
-    'INSERT INTO issues (id, title, body, url, createdAt, updatedAt, closedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING',
-  );
-  const insertUser = db.prepare(
-    'INSERT INTO users (id, login, avatarUrl, url, isEmployee) VALUES (?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING',
-  );
-  const insertLabel = db.prepare(
-    'INSERT INTO labels (id, name, color, description) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO NOTHING',
-  );
-  const insertPullRequestLabel = db.prepare(
-    'INSERT INTO pullRequestLabels (pullRequestId, labelId) VALUES (?, ?)',
-  );
-  const insertIssueLabel = db.prepare(
-    'INSERT INTO issueLabels (issueId, labelId) VALUES (?, ?)',
-  );
-
-  for (const pr of prs) {
-    console.log(pr);
+  for (const pr of fetchedPRs) {
     if (pr.author == null) {
       continue;
     }
-    insertUser.run(
-      pr.author.resourcePath,
-      pr.author.login,
-      pr.author.avatarUrl,
-      pr.author.url,
-      assignableUsers.has(pr.author.login) ? 1 : 0,
+    await insertMany(
+      userModel,
+      [
+        {
+          id: pr.author.login,
+          avatarUrl: pr.author.avatarUrl,
+          url: pr.author.url,
+          isEmployee: assignableUsers.has(pr.author.login) ? '1' : '0',
+        },
+      ],
+      { onConflictKey: 'id' },
     );
-    insertPR.run(
-      pr.id,
-      pr.title,
-      pr.body,
-      pr.url,
-      pr.createdAt,
-      pr.updatedAt,
-      pr.closedAt,
-      pr.mergedAt,
-      pr.author.resourcePath,
+
+    await insertMany(
+      pullRequestModel,
+      [
+        {
+          id: pr.id,
+          title: pr.title,
+          body: pr.body,
+          url: pr.url,
+          createdAt: pr.createdAt,
+          updatedAt: pr.updatedAt,
+          closedAt: pr.closedAt,
+          mergedAt: pr.mergedAt,
+          authorId: pr.author.login,
+        },
+      ],
+      { onConflictKey: 'id' },
     );
 
     for (const label of pr.labels.nodes) {
-      insertLabel.run(label.id, label.name, label.color, label.description);
-      insertPullRequestLabel.run(pr.id, label.id);
+      await insertMany(
+        labelModel,
+        [
+          {
+            id: label.id,
+            name: label.name,
+            color: label.color,
+            description: label.description,
+          },
+        ],
+        { onConflictKey: 'id' },
+      );
+      await insertMany(pullRequestLabelModel, [
+        {
+          pullRequestId: pr.id,
+          labelId: label.id,
+        },
+      ]);
     }
   }
 
-  for (const issue of issues) {
+  for (const issue of fetchedIssues) {
     if (issue.author == null) {
       continue;
     }
-    insertUser.run(
-      issue.author.resourcePath,
-      issue.author.login,
-      issue.author.avatarUrl,
-      issue.author.url,
-      assignableUsers.has(issue.author.login) ? 1 : 0,
+    await insertMany(
+      userModel,
+      [
+        {
+          id: issue.author.login,
+          avatarUrl: issue.author.avatarUrl,
+          url: issue.author.url,
+          isEmployee: assignableUsers.has(issue.author.login) ? '1' : '0',
+        },
+      ],
+      { onConflictKey: 'id' },
     );
 
-    insertIssue.run(
-      issue.id,
-      issue.title,
-      issue.body,
-      issue.url,
-      issue.createdAt,
-      issue.updatedAt,
-      issue.closedAt,
-      issue.author.resourcePath,
+    await insertMany(
+      issueModel,
+      [
+        {
+          id: issue.id,
+          title: issue.title,
+          body: issue.body,
+          url: issue.url,
+          createdAt: issue.createdAt,
+          updatedAt: issue.updatedAt,
+          closedAt: issue.closedAt,
+          authorId: issue.author.login,
+        },
+      ],
+      { onConflictKey: 'id' },
     );
 
     for (const label of issue.labels.nodes) {
-      insertLabel.run(label.id, label.name, label.color, label.description);
-      insertIssueLabel.run(issue.id, label.id);
+      await insertMany(
+        labelModel,
+        [
+          {
+            id: label.id,
+            name: label.name,
+            color: label.color,
+            description: label.description,
+          },
+        ],
+        { onConflictKey: 'id' },
+      );
+      await insertMany(issueLabelModel, [
+        {
+          pullRequestId: issue.id,
+          labelId: label.id,
+        },
+      ]);
     }
   }
-
-  db.close();
 
   return new Response('Data synced', { status: 200 });
 }

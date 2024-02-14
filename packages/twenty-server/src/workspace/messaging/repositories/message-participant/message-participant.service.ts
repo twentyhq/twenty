@@ -5,17 +5,15 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { Participant } from 'src/workspace/messaging/types/gmail-message';
-import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
-import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
+import {
+  ParticipantWithId,
+  Participant,
+} from 'src/workspace/messaging/types/gmail-message';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly createContactService: CreateContactService,
-    private readonly createCompaniesService: CreateCompanyService,
   ) {}
 
   public async getByHandles(
@@ -68,79 +66,71 @@ export class MessageParticipantService {
     );
   }
 
+  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    messageChannelId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!messageChannelId || !workspaceId) {
+      return [];
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageParticipants: ParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageParticipant".id,
+        "messageParticipant"."role",
+        "messageParticipant"."handle",
+        "messageParticipant"."displayName",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
+        "messageParticipant"."messageId"
+        FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
+        LEFT JOIN ${dataSourceSchema}."message" ON "messageParticipant"."messageId" = ${dataSourceSchema}."message"."id"
+        LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" ON ${dataSourceSchema}."messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
+        WHERE ${dataSourceSchema}."messageChannelMessageAssociation"."messageChannelId" = $1
+        AND "messageParticipant"."personId" IS NULL
+        AND "messageParticipant"."workspaceMemberId" IS NULL`,
+        [messageChannelId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageParticipants;
+  }
+
   public async saveMessageParticipants(
     participants: Participant[],
     messageId: string,
-    dataSourceMetadata: DataSourceEntity,
-    manager: EntityManager,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
     if (!participants) return;
 
-    const alreadyCreatedContacts = await manager.query(
-      `SELECT email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
-      [participants.map((participant) => participant.handle)],
-    );
-
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ email }) => email,
-    );
-
-    const filteredParticipants = participants.filter(
-      (participant) =>
-        !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
-    );
-
-    const filteredParticipantsWihCompanyDomainNames = filteredParticipants?.map(
-      (participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyDomainName: participant.handle
-          .split('@')?.[1]
-          .split('.')
-          .slice(-2)
-          .join('.')
-          .toLowerCase(),
-      }),
-    );
-
-    const domainNamesToCreate = filteredParticipantsWihCompanyDomainNames.map(
-      (participant) => participant.companyDomainName,
-    );
-
-    const companiesObject = await this.createCompaniesService.createCompanies(
-      domainNamesToCreate,
-      dataSourceMetadata,
-      manager,
-    );
-
-    const contactsToCreate = filteredParticipantsWihCompanyDomainNames.map(
-      (participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
-        companyId: companiesObject[participant.companyDomainName],
-      }),
-    );
-
-    await this.createContactService.createContacts(
-      contactsToCreate,
-      dataSourceMetadata,
-      manager,
-    );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds = await manager.query(
-      `SELECT id, email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
-      [handles],
-    );
+    const participantPersonIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
 
-    const participantWorkspaceMemberIds = await manager.query(
-      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceMetadata.schema}."workspaceMember"
-          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = ANY($1)`,
-      [handles],
-    );
+    const participantWorkspaceMemberIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
 
     const messageParticipantsToSave = participants.map((participant) => [
       messageId,
@@ -163,9 +153,54 @@ export class MessageParticipantService {
 
     if (messageParticipantsToSave.length === 0) return;
 
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
       messageParticipantsToSave.flat(),
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateMessageParticipantsAfterPeopleCreation(
+    participants: ParticipantWithId[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    if (!participants) return;
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const handles = participants.map((participant) => participant.handle);
+
+    const participantPersonIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    const messageParticipantsToUpdate = participants.map((participant) => [
+      participant.id,
+      participantPersonIds.find(
+        (e: { id: string; email: string }) => e.email === participant.handle,
+      )?.id,
+    ]);
+
+    if (messageParticipantsToUpdate.length === 0) return;
+
+    const valuesString = messageParticipantsToUpdate
+      .map((_, index) => `($${index * 2 + 1}::uuid, $${index * 2 + 2}::uuid)`)
+      .join(', ');
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
+      FROM (VALUES ${valuesString}) AS "data"("id", "personId")
+      WHERE "messageParticipant"."id" = "data"."id"`,
+      messageParticipantsToUpdate.flat(),
+      workspaceId,
+      transactionManager,
     );
   }
 }

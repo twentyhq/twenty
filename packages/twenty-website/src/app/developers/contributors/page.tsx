@@ -1,41 +1,44 @@
-import Database from 'better-sqlite3';
-
 import AvatarGrid from '@/app/components/AvatarGrid';
 import { Header } from '@/app/components/developers/contributors/Header';
 import { Background } from '@/app/components/oss-friends/Background';
 import { ContentContainer } from '@/app/components/oss-friends/ContentContainer';
+import { findAll } from '@/database/database';
+import { pullRequestModel, userModel } from '@/database/model';
 
 interface Contributor {
-  login: string;
+  id: string;
   avatarUrl: string;
-  pullRequestCount: number;
 }
 
 const Contributors = async () => {
-  const db = new Database('db.sqlite', { readonly: true });
+  const contributors = await findAll(userModel);
+  const pullRequests = await findAll(pullRequestModel);
 
-  const contributors = db
-    .prepare(
-      `SELECT 
-        u.login,
-        u.avatarUrl, 
-        COUNT(pr.id) AS pullRequestCount
-      FROM 
-          users u
-      JOIN 
-          pullRequests pr ON u.id = pr.authorId
-      WHERE 
-          u.isEmployee = FALSE
-      AND u.login NOT IN ('dependabot', 'cyborch', 'emilienchvt', 'Samox')
-      GROUP BY 
-          u.id
-      ORDER BY 
-          pullRequestCount DESC;
-        `,
+  const pullRequestByAuthor = pullRequests.reduce((acc, pr) => {
+    acc[pr.authorId] = acc[pr.authorId] ? acc[pr.authorId] + 1 : 1;
+    return acc;
+  }, {});
+
+  const fitlerContributors = contributors
+    .filter((contributor) => contributor.isEmployee === '0')
+    .filter(
+      (contributor) =>
+        ![
+          'dependabot',
+          'cyborch',
+          'emilienchvt',
+          'Samox',
+          'nimraahmed',
+          'gitstart-app',
+        ].includes(contributor.id),
     )
-    .all() as Contributor[];
+    .map((contributor) => {
+      contributor.pullRequestCount = pullRequestByAuthor[contributor.id] || 0;
 
-  db.close();
+      return contributor;
+    })
+    .sort((a, b) => b.pullRequestCount - a.pullRequestCount)
+    .filter((contributor) => contributor.pullRequestCount > 0);
 
   return (
     <>
@@ -43,7 +46,7 @@ const Contributors = async () => {
       <ContentContainer>
         <Header />
         <div>
-          <AvatarGrid users={contributors} />
+          <AvatarGrid users={fitlerContributors as Contributor[]} />
         </div>
       </ContentContainer>
     </>
