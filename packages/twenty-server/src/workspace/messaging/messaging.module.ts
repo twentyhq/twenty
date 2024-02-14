@@ -25,6 +25,7 @@ import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/work
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
+import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
 @Module({
   imports: [
     EnvironmentModule,
@@ -39,6 +40,7 @@ import { CompanyModule } from 'src/workspace/messaging/repositories/company/comp
     WorkspaceMemberModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     CompanyModule,
+    PersonModule,
   ],
   providers: [
     GmailFullSyncService,

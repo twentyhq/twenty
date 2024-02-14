@@ -24,7 +24,7 @@ type FormattedContactToCreate = {
 export class CreateContactService {
   constructor(private readonly personService: PersonService) {}
 
-  formatContacts(
+  public formatContacts(
     contactsToCreate: ContactToCreate[],
   ): FormattedContactToCreate[] {
     return contactsToCreate.map((contact) => {
@@ -45,7 +45,7 @@ export class CreateContactService {
     });
   }
 
-  async createContacts(
+  public async createContacts(
     contactsToCreate: ContactToCreate[],
     workspaceId: string,
     transactionManager?: EntityManager,

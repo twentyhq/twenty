@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { v4 } from 'uuid';
+import axios, { AxiosInstance } from 'axios';
 
 import { CompanyService } from 'src/workspace/messaging/repositories/company/company.service';
+import { capitalize } from 'src/utils/capitalize';
 @Injectable()
 export class CreateCompanyService {
-  constructor(private readonly companyService: CompanyService) {}
+  private readonly httpService: AxiosInstance;
+
+  constructor(private readonly companyService: CompanyService) {
+    this.httpService = axios.create({
+      baseURL: 'https://companies.twenty.com',
+    });
+  }
 
   async createCompanies(
     domainNames: string[],
@@ -48,7 +57,7 @@ export class CreateCompanyService {
     );
 
     for (const domainName of filteredDomainNames) {
-      companiesObject[domainName] = await this.companyService.createCompany(
+      companiesObject[domainName] = await this.createCompany(
         domainName,
         workspaceId,
         transactionManager,
@@ -56,5 +65,47 @@ export class CreateCompanyService {
     }
 
     return companiesObject;
+  }
+
+  async createCompany(
+    domainName: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<string> {
+    const companyId = v4();
+
+    const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
+
+    this.companyService.createCompany(
+      companyId,
+      name,
+      domainName,
+      city,
+      workspaceId,
+      transactionManager,
+    );
+
+    return companyId;
+  }
+
+  async getCompanyInfoFromDomainName(domainName: string): Promise<{
+    name: string;
+    city: string;
+  }> {
+    try {
+      const response = await this.httpService.get(`/${domainName}`);
+
+      const data = response.data;
+
+      return {
+        name: data.name,
+        city: data.city,
+      };
+    } catch (e) {
+      return {
+        name: capitalize(domainName.split('.')[0]),
+        city: '',
+      };
+    }
   }
 }
