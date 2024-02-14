@@ -5,7 +5,6 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 
 @Injectable()
@@ -102,24 +101,33 @@ export class MessageParticipantService {
   public async saveMessageParticipants(
     participants: Participant[],
     messageId: string,
-    dataSourceMetadata: DataSourceEntity,
-    manager: EntityManager,
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
     if (!participants) return;
 
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds = await manager.query(
-      `SELECT id, email FROM ${dataSourceMetadata.schema}."person" WHERE "email" = ANY($1)`,
-      [handles],
-    );
+    const participantPersonIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
 
-    const participantWorkspaceMemberIds = await manager.query(
-      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceMetadata.schema}."workspaceMember"
-          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = ANY($1)`,
-      [handles],
-    );
+    const participantWorkspaceMemberIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
 
     const messageParticipantsToSave = participants.map((participant) => [
       messageId,
@@ -142,9 +150,11 @@ export class MessageParticipantService {
 
     if (messageParticipantsToSave.length === 0) return;
 
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
       messageParticipantsToSave.flat(),
+      workspaceId,
+      transactionManager,
     );
   }
 
