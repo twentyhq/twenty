@@ -27,13 +27,19 @@ export enum SignInUpStep {
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const navigate = useNavigate();
+
   const { enqueueSnackBar } = useSnackBar();
+
   const isMatchingLocation = useIsMatchingLocation();
+
   const billing = useRecoilValue(billingState);
+
   const workspaceInviteHash = useParams().workspaceInviteHash;
+
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
+
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
     if (isMatchingLocation(AppPath.Invite)) {
       return SignInUpMode.Invite;
@@ -43,6 +49,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
+
   const {
     signInWithCredentials,
     signUpWithCredentials,
@@ -103,7 +110,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           navigate(AppPath.PlanRequired);
           return;
         }
-        if (currentWorkspace.displayName) {
+
+        if (currentWorkspace.activationStatus === 'active') {
           navigate(AppPath.Index);
           return;
         }

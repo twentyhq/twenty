@@ -163,7 +163,7 @@ export const PasswordReset = () => {
         return;
       }
 
-      if (currentWorkspace.displayName) {
+      if (currentWorkspace.activationStatus === 'active') {
         navigate(AppPath.Index);
         return;
       }
