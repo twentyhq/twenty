@@ -29,7 +29,7 @@ export type WorkspaceQueryHook = {
   };
 };
 
-export type WorkspaceQueryHookPayload<T> = T extends 'createMany'
+export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
   ? CreateManyResolverArgs
   : T extends 'createOne'
     ? CreateOneResolverArgs

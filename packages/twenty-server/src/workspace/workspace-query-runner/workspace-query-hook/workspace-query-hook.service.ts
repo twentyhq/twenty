@@ -7,7 +7,7 @@ import { PGGraphQLMutation } from 'src/workspace/workspace-query-runner/interfac
 
 import {
   ExecuteHookMethod,
-  WorkspaceQueryHookPayload,
+  WorkspacePreQueryHookPayload,
 } from 'src/workspace/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import {
   workspacePostQueryHooks,
@@ -23,7 +23,7 @@ export class WorkspaceQueryHookService {
     workspaceId: string,
     objectName: string,
     method: T,
-    payload: WorkspaceQueryHookPayload<T>,
+    payload: WorkspacePreQueryHookPayload<T>,
   ): Promise<void> {
     const hooks = workspacePreQueryHooks[objectName] || [];
 
