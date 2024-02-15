@@ -203,7 +203,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MAXIMUM_RECORD_AFFECTED: number;
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {
