@@ -1,4 +1,3 @@
-import { MessageFindManyPostQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-many.post-query.hook';
 import { MessageFindManyPreQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-many.pre-query.hook';
 import { MessageFindOnePreQueryHook } from 'src/workspace/messaging/query-hooks/message/message-find-one.pre-query-hook';
 import { WorkspaceQueryHook } from 'src/workspace/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -11,8 +10,4 @@ export const workspacePreQueryHooks: WorkspaceQueryHook = {
   },
 };
 
-export const workspacePostQueryHooks: WorkspaceQueryHook = {
-  message: {
-    findMany: [MessageFindManyPostQueryHook.name],
-  },
-};
+export const workspacePostQueryHooks: WorkspaceQueryHook = {};
