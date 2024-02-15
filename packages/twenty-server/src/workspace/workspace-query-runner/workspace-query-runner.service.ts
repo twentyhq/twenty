@@ -364,6 +364,10 @@ export class WorkspaceQueryRunnerService {
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
+    if (['update', 'deleteFrom'].includes(command) && !result.affectedCount) {
+      throw new BadRequestException('No rows were affected.');
+    }
+
     if (errors && errors.length > 0) {
       const error = computePgGraphQLError(
         command,
