@@ -14,7 +14,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
   icon: 'IconForbid2',
 })
 @Gate({
-  featureFlag: 'IS_MESSAGING_ENABLED',
+  featureFlag: 'IS_BLOCKLIST_ENABLED',
 })
 @IsSystem()
 export class BlocklistObjectMetadata extends BaseObjectMetadata {
