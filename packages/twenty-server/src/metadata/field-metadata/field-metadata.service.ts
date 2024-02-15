@@ -33,6 +33,7 @@ import {
 
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
+import { generateDefaultValue } from './utils/generate-default-value';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -101,6 +102,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         true,
         fieldMetadataInput.name,
       ),
+      defaultValue:
+        fieldMetadataInput.defaultValue ??
+        generateDefaultValue(fieldMetadataInput.type),
       options: fieldMetadataInput.options
         ? fieldMetadataInput.options.map((option) => ({
             ...option,
