@@ -10,6 +10,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsAccountLoader } from '~/pages/settings/accounts/SettingsAccountLoader';
 
 export const SettingsAccounts = () => {
@@ -23,6 +24,8 @@ export const SettingsAccounts = () => {
       },
     },
   });
+
+  const isBlocklistEnabled = useIsFeatureEnabled('IS_BLOCKLIST_ENABLED');
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -40,7 +43,7 @@ export const SettingsAccounts = () => {
         ) : (
           <>
             <SettingsAccountsConnectedAccountsSection accounts={accounts} />
-            <SettingsAccountsEmailsBlocklistSection />
+            {isBlocklistEnabled && <SettingsAccountsEmailsBlocklistSection />}
             <SettingsAccountsSettingsSection />
           </>
         )}
