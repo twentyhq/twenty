@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -25,7 +24,7 @@ export const VerifyEffect = () => {
       } else {
         await verify(loginToken);
 
-        if (isNonEmptyString(currentWorkspace?.displayName)) {
+        if (currentWorkspace?.activationStatus === 'active') {
           navigate(AppPath.Index);
         } else {
           navigate(AppPath.CreateWorkspace);
