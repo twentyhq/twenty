@@ -27,6 +27,7 @@ import { validateOptionsForType } from 'src/metadata/field-metadata/utils/valida
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 import { computeCompositeFieldMetadata } from 'src/workspace/workspace-health/utils/compute-composite-field-metadata.util';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
+import { customNamePrefix } from 'src/workspace/utils/compute-custom-name.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -217,7 +218,15 @@ export class FieldMetadataHealthService {
       issues.push(targetColumnMapIssue);
     }
 
-    if (fieldMetadata.isCustom && !columnName?.startsWith('_')) {
+    if (fieldMetadata.name.startsWith(customNamePrefix)) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_NOT_BE_PREFIXED,
+        fieldMetadata,
+        message: `Column ${columnName} should not be prefixed with "${customNamePrefix}"`,
+      });
+    }
+
+    if (fieldMetadata.isCustom && !columnName?.startsWith(customNamePrefix)) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM,
         fieldMetadata,

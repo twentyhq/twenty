@@ -29,10 +29,8 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import {
-  computeCustomName,
-  computeObjectTargetTable,
-} from 'src/workspace/utils/compute-object-target-table.util';
+import { computeCustomName } from 'src/workspace/utils/compute-custom-name.util';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/metadata/relation-metadata/types/relation-to-delete';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
