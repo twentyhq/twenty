@@ -8,52 +8,56 @@ import {
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
+import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 
-type WorkspaceHealthNullableIssue =
-  WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>;
+import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
 
 @Injectable()
-export class WorkspaceFixNullableService {
+export class WorkspaceTypeFixer extends AbstractWorkspaceFixer<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT> {
   constructor(
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
-  ) {}
-
-  async fix(
-    manager: EntityManager,
-    objectMetadataCollection: ObjectMetadataEntity[],
-    issues: WorkspaceHealthNullableIssue[],
-  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-    const nullabilityIssues = issues.filter(
-      (issue) =>
-        issue.type === WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
-    ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[];
-
-    if (nullabilityIssues.length > 0) {
-      const columnNullabilityWorkspaceMigrations =
-        await this.fixColumnNullabilityIssues(
-          objectMetadataCollection,
-          nullabilityIssues,
-        );
-
-      workspaceMigrations.push(...columnNullabilityWorkspaceMigrations);
-    }
-
-    return workspaceMigrations;
+    private readonly databaseStructureService: DatabaseStructureService,
+  ) {
+    super(WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT);
   }
 
-  private async fixColumnNullabilityIssues(
+  async createWorkspaceMigrations(
+    manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
-    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT>[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[],
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    if (issues.length <= 0) {
+      return [];
+    }
+
+    return this.fixColumnTypeIssues(objectMetadataCollection, issues);
+  }
+
+  private async fixColumnTypeIssues(
+    objectMetadataCollection: ObjectMetadataEntity[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const fieldMetadataUpdateCollection = issues.map((issue) => {
+      if (!issue.columnStructure?.dataType) {
+        throw new Error('Column structure data type is missing');
+      }
+
+      const type =
+        this.databaseStructureService.getFieldMetadataTypeFromPostgresDataType(
+          issue.columnStructure?.dataType,
+        );
+
+      if (!type) {
+        throw new Error("Can't find field metadata type from column structure");
+      }
+
       return {
         current: {
           ...issue.fieldMetadata,
-          isNullable: issue.columnStructure?.isNullable ?? false,
+          type,
         },
         altered: issue.fieldMetadata,
       };
