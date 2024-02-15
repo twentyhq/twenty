@@ -76,6 +76,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
     icon: 'IconUserCircle',
+    defaultValue: { value: true },
   })
   isContactAutoCreationEnabled: boolean;
 
