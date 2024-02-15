@@ -73,7 +73,7 @@ export const TaskGroups = ({
           onClick={() =>
             openCreateActivity({
               type: 'Task',
-              targetableObjects,
+              targetableObjects: targetableObjects ?? [],
             })
           }
         />

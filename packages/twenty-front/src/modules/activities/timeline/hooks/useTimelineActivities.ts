@@ -42,10 +42,6 @@ export const useTimelineActivities = ({
 
   const [initialized, setInitialized] = useState(false);
 
-  console.log({
-    activityTargets,
-  });
-
   const activityIds = Array.from(
     new Set(
       activityTargets

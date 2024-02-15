@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { useAttachRelationInBothDirections } from '@/activities/hooks/useAttachRelationInBothDirections';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { useInjectIntoTimelineActivitiesQueries } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueries';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -34,9 +33,6 @@ export const useCreateActivityInCache = () => {
     depth: 3,
   });
 
-  const { injectIntoTimelineActivitiesQueries } =
-    useInjectIntoTimelineActivitiesQueries();
-
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
@@ -46,12 +42,10 @@ export const useCreateActivityInCache = () => {
   const createActivityInCache = ({
     type,
     targetableObjects,
-    timelineTargetableObject,
     assigneeId,
   }: {
     type: ActivityType;
     targetableObjects: ActivityTargetableObject[];
-    timelineTargetableObject: ActivityTargetableObject;
     assigneeId?: string;
   }) => {
     const activityId = v4();
@@ -77,12 +71,6 @@ export const useCreateActivityInCache = () => {
     const createdActivityTargetsInCache = createManyActivityTargetsInCache(
       activityTargetsToCreate,
     );
-
-    injectIntoTimelineActivitiesQueries({
-      activityToInject: createdActivityInCache,
-      activityTargetsToInject: createdActivityTargetsInCache,
-      timelineTargetableObject,
-    });
 
     injectIntoActivityTargetInlineCellCache({
       activityId,

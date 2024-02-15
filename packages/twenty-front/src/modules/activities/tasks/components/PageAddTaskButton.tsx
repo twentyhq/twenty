@@ -23,6 +23,7 @@ export const PageAddTaskButton = ({
       assigneeId: isNonEmptyString(selectedFilter?.value)
         ? selectedFilter?.value
         : undefined,
+      targetableObjects: [],
     });
   };
 

@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
@@ -59,7 +59,7 @@ export const ActivityActionBar = () => {
   const timelineTargetableObject = useRecoilValue(
     timelineTargetableObjectState,
   );
-  const openCreateActivity = useOpenCreateActivityDrawerV2();
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const { removeFromTimelineActivitiesQueries } =
     useRemoveFromTimelineActivitiesQueries();
