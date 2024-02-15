@@ -88,7 +88,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        const { workspace: currentWorkspace } =
+        const {
+          workspace: currentWorkspace,
+          workspaceMember: currentWorkspaceMember,
+        } =
           signInUpMode === SignInUpMode.SignIn
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
@@ -100,7 +103,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
                 workspaceInviteHash,
               );
 
-        navigateAfterSignInUp(currentWorkspace);
+        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',

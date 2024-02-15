@@ -149,12 +149,12 @@ export const PasswordReset = () => {
         return;
       }
 
-      const { workspace: currentWorkspace } = await signInWithCredentials(
-        email || '',
-        formData.newPassword,
-      );
+      const {
+        workspace: currentWorkspace,
+        workspaceMember: currentWorkspaceMember,
+      } = await signInWithCredentials(email || '', formData.newPassword);
 
-      navigateAfterSignInUp(currentWorkspace);
+      navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
     } catch (err) {
       logError(err);
       enqueueSnackBar(
