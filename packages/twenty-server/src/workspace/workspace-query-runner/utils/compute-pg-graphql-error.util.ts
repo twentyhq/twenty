@@ -11,7 +11,7 @@ interface PgGraphQLErrorMapping {
 const pgGraphQLErrorMapping: PgGraphQLErrorMapping = {
   'delete impacts too many records': (command, objectName) =>
     new BadRequestException(
-      `Cannot ${command} ${objectName} because it impacts too many records (check MAXIMUM_RECORD_AFFECTED environment variable)`,
+      `Cannot ${command} ${objectName} because it impacts too many records.`,
     ),
 };
 
