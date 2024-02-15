@@ -43,7 +43,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
     }
 
     const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
         messageChannelId,
         workspaceId,
       );
@@ -53,14 +53,8 @@ export class CreateCompaniesAndContactsAfterSyncJob
       workspaceId,
     );
 
-    const messageParticipantsToUpdate =
-      await this.messageParticipantService.getMessageParticipantsToUpdateAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-        workspaceId,
-      );
-
     await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      messageParticipantsToUpdate.map(({ id }) => id),
+      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
     );
 

@@ -223,9 +223,7 @@ export class MessageService {
         );
 
       await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId.map(
-          ({ id }) => id,
-        ),
+        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
         manager,
       );
