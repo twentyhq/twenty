@@ -101,6 +101,39 @@ export class MessageParticipantService {
     return messageParticipants;
   }
 
+  public async getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+    handles: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!workspaceId) {
+      throw new Error('WorkspaceId is required');
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageParticipants: ParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageParticipant".id,
+        "messageParticipant"."role",
+        "messageParticipant"."handle",
+        "messageParticipant"."displayName",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
+        "messageParticipant"."messageId"
+        FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
+        WHERE "messageParticipant"."personId" IS NULL
+        AND "messageParticipant"."workspaceMemberId" IS NULL
+        AND "messageParticipant"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageParticipants;
+  }
+
   public async saveMessageParticipants(
     participants: Participant[],
     messageId: string,

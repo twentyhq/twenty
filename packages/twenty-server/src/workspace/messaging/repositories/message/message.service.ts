@@ -211,6 +211,22 @@ export class MessageService {
         workspaceId,
         manager,
       );
+
+      const handles = message.participants.map(
+        (participant) => participant.handle,
+      );
+
+      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+          handles,
+          workspaceId,
+        );
+
+      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+        workspaceId,
+        manager,
+      );
     }
 
     await this.messageParticipantService.saveMessageParticipants(
