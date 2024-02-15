@@ -1,9 +1,11 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
@@ -22,9 +24,13 @@ export const RecordTableCellSoftFocusMode = ({
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState);
+
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  }, []);
+    if (!isSoftFocusUsingMouse) {
+      scrollRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [isSoftFocusUsingMouse]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],

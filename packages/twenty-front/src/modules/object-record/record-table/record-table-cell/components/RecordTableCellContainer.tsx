@@ -1,6 +1,6 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -8,6 +8,7 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -62,6 +63,10 @@ export const RecordTableCellContainer = ({
   const isSomeCellInEditModeState = useGetIsSomeCellInEditModeState();
   const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
 
+  const setIsSoftFocusUsingMouseState = useSetRecoilState(
+    isSoftFocusUsingMouseState,
+  );
+
   const moveSoftFocusToCurrentCellOnHover =
     useMoveSoftFocusToCurrentCellOnHover();
 
@@ -79,6 +84,7 @@ export const RecordTableCellContainer = ({
     if (!isHovered && !isSomeCellInEditMode) {
       setIsHovered(true);
       moveSoftFocusToCurrentCellOnHover();
+      setIsSoftFocusUsingMouseState(true);
     }
   };
 
