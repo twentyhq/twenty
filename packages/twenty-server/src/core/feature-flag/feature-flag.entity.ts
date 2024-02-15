@@ -16,6 +16,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 export enum FeatureFlagKeys {
   IsIntegrationsEnabled = 'IS_INTEGRATIONS_ENABLED',
   IsMessagingEnabled = 'IS_MESSAGING_ENABLED',
+  IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
   IsWorkspaceCleanable = 'IS_WORKSPACE_CLEANABLE',
   IsNewRecordBoardEnabled = 'IS_NEW_RECORD_BOARD_ENABLED',
 }
