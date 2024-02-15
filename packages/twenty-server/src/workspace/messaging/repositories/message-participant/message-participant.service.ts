@@ -9,11 +9,13 @@ import {
   ParticipantWithId,
   Participant,
 } from 'src/workspace/messaging/types/gmail-message';
+import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly personService: PersonService,
   ) {}
 
   public async getByHandles(
@@ -194,36 +196,42 @@ export class MessageParticipantService {
     );
   }
 
-  public async updateMessageParticipantsAfterPeopleCreation(
+  public async getMessageParticipantsToUpdateAfterPeopleCreation(
     participants: ParticipantWithId[],
     workspaceId: string,
     transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!participants) return [];
+
+    const handles = participants.map((participant) => participant.handle);
+
+    const participantPersonIds = await this.personService.getByEmails(
+      handles,
+      workspaceId,
+      transactionManager,
+    );
+
+    const messageParticipantsToUpdate = participants.map((participant) => ({
+      ...participant,
+      personId: participantPersonIds.find(
+        (e: { id: string; email: string }) => e.email === participant.handle,
+      )?.id,
+    }));
+
+    return messageParticipantsToUpdate;
+  }
+
+  public async updateMessageParticipantsAfterPeopleCreation(
+    participantIdsToUpdate: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<void> {
-    if (!participants) return;
+    if (!participantIdsToUpdate) return;
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const handles = participants.map((participant) => participant.handle);
-
-    const participantPersonIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
-      );
-
-    const messageParticipantsToUpdate = participants.map((participant) => [
-      participant.id,
-      participantPersonIds.find(
-        (e: { id: string; email: string }) => e.email === participant.handle,
-      )?.id,
-    ]);
-
-    if (messageParticipantsToUpdate.length === 0) return;
-
-    const valuesString = messageParticipantsToUpdate
+    const valuesString = participantIdsToUpdate
       .map((_, index) => `($${index * 2 + 1}::uuid, $${index * 2 + 2}::uuid)`)
       .join(', ');
 
@@ -231,7 +239,7 @@ export class MessageParticipantService {
       `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
       WHERE "messageParticipant"."id" = "data"."id"`,
-      messageParticipantsToUpdate.flat(),
+      participantIdsToUpdate.flat(),
       workspaceId,
       transactionManager,
     );
