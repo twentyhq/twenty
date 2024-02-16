@@ -143,14 +143,12 @@ export const SettingsNavigationDrawerItems = () => {
             })
           }
         />
-        (
         <NavigationDrawerItem
           label="Integrations"
           to="/settings/integrations"
           Icon={IconApps}
           active={isIntegrationsItemActive}
         />
-        )
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
