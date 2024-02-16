@@ -40,13 +40,6 @@ export const useTimelineActivities = ({
     targetableObject,
   });
 
-  console.log({
-    targetableObject,
-    activityTargets,
-    loadingActivityTargets,
-    initializedActivityTargets,
-  });
-
   const [initialized, setInitialized] = useState(false);
 
   const activityIds = Array.from(
