@@ -1,5 +1,7 @@
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
+import { computeCustomName } from './compute-custom-name.util';
+
 export const computeObjectTargetTable = (
   objectMetadata: ObjectMetadataInterface,
 ) => {
@@ -7,8 +9,4 @@ export const computeObjectTargetTable = (
     objectMetadata.nameSingular,
     objectMetadata.isCustom,
   );
-};
-
-export const computeCustomName = (name: string, isCustom: boolean) => {
-  return isCustom ? `_${name}` : name;
 };

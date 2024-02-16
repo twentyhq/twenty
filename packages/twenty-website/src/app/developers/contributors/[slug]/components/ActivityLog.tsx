@@ -10,6 +10,9 @@ export const ActivityLog = ({
 }: {
   data: { value: number; day: string }[];
 }) => {
+  if (!data.length) {
+    return null;
+  }
   return (
     <CardContainer>
       <Title>Activity</Title>

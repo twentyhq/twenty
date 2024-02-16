@@ -125,8 +125,12 @@ export class WorkspaceHealthService {
       type: WorkspaceHealthFixKind;
       applyChanges?: boolean;
     },
-  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+  ): Promise<{
+    workspaceMigrations: Partial<WorkspaceMigrationEntity>[];
+    metadataEntities: unknown[];
+  }> {
     let workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+    let metadataEntities: unknown[] = [];
 
     // Set default options
     options.applyChanges ??= true;
@@ -145,7 +149,15 @@ export class WorkspaceHealthService {
       const objectMetadataCollection =
         await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-      workspaceMigrations = await this.workspaceFixService.fix(
+      workspaceMigrations =
+        await this.workspaceFixService.createWorkspaceMigrations(
+          manager,
+          objectMetadataCollection,
+          options.type,
+          issues,
+        );
+
+      metadataEntities = await this.workspaceFixService.createMetadataUpdates(
         manager,
         objectMetadataCollection,
         options.type,
@@ -161,7 +173,10 @@ export class WorkspaceHealthService {
 
         await queryRunner.release();
 
-        return workspaceMigrations;
+        return {
+          workspaceMigrations,
+          metadataEntities,
+        };
       }
 
       // Commit the transaction
@@ -178,6 +193,9 @@ export class WorkspaceHealthService {
       await queryRunner.release();
     }
 
-    return workspaceMigrations;
+    return {
+      workspaceMigrations,
+      metadataEntities,
+    };
   }
 }
