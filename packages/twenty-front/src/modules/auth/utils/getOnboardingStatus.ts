@@ -28,6 +28,8 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingUserCreation;
   }
 
+  // After SignInUp, the user should have a current workspace assigned.
+  // If not, it indicates that the data is still being requested.
   if (!currentWorkspace) {
     return undefined;
   }
