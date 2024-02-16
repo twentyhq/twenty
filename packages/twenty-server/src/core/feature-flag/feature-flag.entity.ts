@@ -14,7 +14,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 
 export enum FeatureFlagKeys {
-  IsIntegrationsEnabled = 'IS_INTEGRATIONS_ENABLED',
   IsMessagingEnabled = 'IS_MESSAGING_ENABLED',
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
   IsWorkspaceCleanable = 'IS_WORKSPACE_CLEANABLE',
