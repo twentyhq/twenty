@@ -28,18 +28,22 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingUserCreation;
   }
 
+  if (!currentWorkspace) {
+    return undefined;
+  }
+
   if (
     isBillingEnabled &&
-    currentWorkspace?.subscriptionStatus === 'incomplete'
+    currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
   }
 
-  if (isBillingEnabled && currentWorkspace?.subscriptionStatus === 'canceled') {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
     return OnboardingStatus.Canceled;
   }
 
-  if (currentWorkspace?.activationStatus !== 'active') {
+  if (currentWorkspace.activationStatus !== 'active') {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
 
