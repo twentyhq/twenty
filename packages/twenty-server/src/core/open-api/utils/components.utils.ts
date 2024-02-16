@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -12,7 +12,7 @@ import {
   computeOrderByParameters,
 } from 'src/core/open-api/utils/parameters.utils';
 
-type Property = OpenAPIV3.SchemaObject;
+type Property = OpenAPIV3_1.SchemaObject;
 
 type Properties = {
   [name: string]: Property;
@@ -99,13 +99,13 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
 const computeSchemaComponent = (
   item: ObjectMetadataEntity,
-): OpenAPIV3.SchemaObject => {
+): OpenAPIV3_1.SchemaObject => {
   const result = {
     type: 'object',
     description: item.description,
     properties: getSchemaComponentsProperties(item),
     example: {},
-  } as OpenAPIV3.SchemaObject;
+  } as OpenAPIV3_1.SchemaObject;
 
   const requiredFields = getRequiredFields(item);
 
@@ -126,20 +126,20 @@ const computeSchemaComponent = (
 
 export const computeSchemaComponents = (
   objectMetadataItems: ObjectMetadataEntity[],
-): Record<string, OpenAPIV3.SchemaObject> => {
+): Record<string, OpenAPIV3_1.SchemaObject> => {
   return objectMetadataItems.reduce(
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
 
       return schemas;
     },
-    {} as Record<string, OpenAPIV3.SchemaObject>,
+    {} as Record<string, OpenAPIV3_1.SchemaObject>,
   );
 };
 
 export const computeParameterComponents = (): Record<
   string,
-  OpenAPIV3.ParameterObject
+  OpenAPIV3_1.ParameterObject
 > => {
   return {
     idPath: computeIdPathParameter(),

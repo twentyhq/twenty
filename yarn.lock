@@ -12336,29 +12336,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/elements-core@npm:~7.16.3":
-  version: 7.16.3
-  resolution: "@stoplight/elements-core@npm:7.16.3"
+"@stoplight/elements-core@npm:~8.0.5":
+  version: 8.0.5
+  resolution: "@stoplight/elements-core@npm:8.0.5"
   dependencies:
-    "@stoplight/http-spec": "npm:^6.0.0"
+    "@stoplight/http-spec": "npm:^7.0.2"
     "@stoplight/json": "npm:^3.18.1"
     "@stoplight/json-schema-ref-parser": "npm:^9.0.5"
     "@stoplight/json-schema-sampler": "npm:0.2.3"
-    "@stoplight/json-schema-tree": "npm:^3.0.0"
-    "@stoplight/json-schema-viewer": "npm:^4.14.1"
+    "@stoplight/json-schema-tree": "npm:^4.0.0"
+    "@stoplight/json-schema-viewer": "npm:^4.14.2"
     "@stoplight/markdown-viewer": "npm:^5.6.0"
-    "@stoplight/mosaic": "npm:^1.46.1"
-    "@stoplight/mosaic-code-editor": "npm:^1.46.1"
-    "@stoplight/mosaic-code-viewer": "npm:^1.46.1"
+    "@stoplight/mosaic": "npm:^1.51.3"
+    "@stoplight/mosaic-code-editor": "npm:^1.51.3"
+    "@stoplight/mosaic-code-viewer": "npm:^1.51.3"
     "@stoplight/path": "npm:^1.3.2"
     "@stoplight/react-error-boundary": "npm:^3.0.0"
-    "@stoplight/types": "npm:^14.0.0"
+    "@stoplight/types": "npm:^14.1.1"
     "@stoplight/yaml": "npm:^4.2.3"
     classnames: "npm:^2.2.6"
     httpsnippet-lite: "npm:^3.0.5"
     jotai: "npm:1.3.9"
     json-schema: "npm:^0.4.0"
-    lodash: "npm:^4.17.19"
+    lodash: "npm:^4.17.21"
     nanoid: "npm:^3.1.32"
     prop-types: "npm:^15.7.2"
     react-query: "npm:^3.34.19"
@@ -12371,51 +12371,49 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 7dac752aa91c9efe2338df26f3a62b3498707756798054d1289472df7837a7428076c3d95e4942f5f2d65d8a8fab3067486c97fb6764b8bf3d03a9ac0bfba4a9
+  checksum: 0dd56fd70b95c497ef17e51f57cb31d632dbeee88241e9884fcb50badabc2bba257058b69ebef5b4b4ca099441b36d565d4bd4f36bc313c24fc250cd45278cb5
   languageName: node
   linkType: hard
 
-"@stoplight/elements@npm:^7.16.2":
-  version: 7.16.3
-  resolution: "@stoplight/elements@npm:7.16.3"
+"@stoplight/elements@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "@stoplight/elements@npm:8.0.5"
   dependencies:
-    "@stoplight/elements-core": "npm:~7.16.3"
-    "@stoplight/http-spec": "npm:^6.0.0"
+    "@stoplight/elements-core": "npm:~8.0.5"
+    "@stoplight/http-spec": "npm:^7.0.2"
     "@stoplight/json": "npm:^3.18.1"
-    "@stoplight/mosaic": "npm:^1.46.1"
-    "@stoplight/types": "npm:^14.0.0"
+    "@stoplight/mosaic": "npm:^1.51.3"
+    "@stoplight/types": "npm:^14.1.1"
     "@stoplight/yaml": "npm:^4.2.3"
     classnames: "npm:^2.2.6"
     file-saver: "npm:^2.0.5"
-    lodash: "npm:^4.17.19"
+    lodash: "npm:^4.17.21"
     react-query: "npm:^3.34.19"
     react-router-dom: "npm:^5.2.0"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: bbc90b219a9b36509ead591d65f5fda842ce1de0217a7ef5f3b0cda22e3e8e28b5f7de80b5d6c9681bec3a17dc7d973e8415093625c6769a06d52774a706ae14
+  checksum: 4e3466ffcce215f33df15dbc33be681f69f18f460171395f7444cf1975c1cf6c9cd9878ff53571677ab48b59ac671c41ca0d073239bb84268bf2877ab4dfa79f
   languageName: node
   linkType: hard
 
-"@stoplight/http-spec@npm:^6.0.0":
-  version: 6.0.3
-  resolution: "@stoplight/http-spec@npm:6.0.3"
+"@stoplight/http-spec@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "@stoplight/http-spec@npm:7.0.2"
   dependencies:
     "@stoplight/json": "npm:^3.18.1"
     "@stoplight/json-schema-generator": "npm:1.0.2"
-    "@stoplight/types": "npm:14.0.0"
+    "@stoplight/types": "npm:14.1.0"
     "@types/json-schema": "npm:7.0.11"
     "@types/swagger-schema-official": "npm:~2.0.22"
     "@types/type-is": "npm:^1.6.3"
     fnv-plus: "npm:^1.3.1"
-    lodash.isequalwith: "npm:^4.4.0"
-    lodash.pick: "npm:^4.4.0"
-    lodash.pickby: "npm:^4.6.0"
+    lodash: "npm:^4.17.21"
     openapi3-ts: "npm:^2.0.2"
     postman-collection: "npm:^4.1.2"
     tslib: "npm:^2.6.2"
     type-is: "npm:^1.6.18"
-  checksum: c00121bd0c3322d78bb9c5aee2259ce05c4e2a7bd32fb5e09c14a173ac0d0c05d7bb62a23a81998dd645d8383a120e906efa8822bc5f78a110ac5ba02123c827
+  checksum: 79a9d810a03ee5da02a3c05f12fdc551af8c1c29d453fa0be92070c8fa4c156fd430aeb28ddfea01f03e9397fb901e6e27b8c70f95572ddae0e0b7a11b2cd407
   languageName: node
   linkType: hard
 
@@ -12470,25 +12468,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/json-schema-tree@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@stoplight/json-schema-tree@npm:3.0.0"
+"@stoplight/json-schema-tree@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@stoplight/json-schema-tree@npm:4.0.0"
   dependencies:
     "@stoplight/json": "npm:^3.12.0"
     "@stoplight/json-schema-merge-allof": "npm:^0.8.0"
     "@stoplight/lifecycle": "npm:^2.3.2"
     "@types/json-schema": "npm:^7.0.7"
     magic-error: "npm:0.0.1"
-  checksum: fa07eefe61bbcabe12f29324dfa59def4b9565b40fb786953091c9c6dce584bf510c935d38560b926d30a8f5b3e1467329be9d0a224971dfd997e55f1c5e1f0a
+  checksum: 4e75ccadb60b097965cec0152c680f59aad3bf3a95e51480e5dc70c5cb10ed6ee07f81798ece5dd0fde9e4d616e501f8a6d546d8de5f2774f700dc704de991d0
   languageName: node
   linkType: hard
 
-"@stoplight/json-schema-viewer@npm:^4.14.1":
-  version: 4.14.1
-  resolution: "@stoplight/json-schema-viewer@npm:4.14.1"
+"@stoplight/json-schema-viewer@npm:^4.14.2":
+  version: 4.15.1
+  resolution: "@stoplight/json-schema-viewer@npm:4.15.1"
   dependencies:
     "@stoplight/json": "npm:^3.20.1"
-    "@stoplight/json-schema-tree": "npm:^3.0.0"
+    "@stoplight/json-schema-tree": "npm:^4.0.0"
     "@stoplight/react-error-boundary": "npm:^2.0.0"
     "@types/json-schema": "npm:^7.0.7"
     classnames: "npm:^2.2.6"
@@ -12501,7 +12499,7 @@ __metadata:
     "@stoplight/mosaic-code-viewer": ^1.32
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 2a9ff42861420467324bcd6176905da8cfca1fd5be22aa3a6c152b0c1d7ae2cbacebf462c65e288d482f97f189bf5ef8ae842aa42df422d5ae133e48c6cb9875
+  checksum: bc76248d3df3d7acf3b1040c25d0a9dfecdd8f030252d950465679528e23e328d7f0658fb2c8348d61c52665642bccb57854c2c4a10ab5a40d0f475d6ef8afee
   languageName: node
   linkType: hard
 
@@ -12578,9 +12576,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/mosaic-code-editor@npm:^1.46.1":
-  version: 1.48.4
-  resolution: "@stoplight/mosaic-code-editor@npm:1.48.4"
+"@stoplight/mosaic-code-editor@npm:^1.51.3":
+  version: 1.51.3
+  resolution: "@stoplight/mosaic-code-editor@npm:1.51.3"
   dependencies:
     "@fortawesome/fontawesome-svg-core": "npm:^6.1.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
@@ -12589,8 +12587,8 @@ __metadata:
     "@react-types/radio": "npm:3.1.2"
     "@react-types/shared": "npm:3.9.0"
     "@react-types/switch": "npm:3.1.2"
-    "@stoplight/mosaic": "npm:1.48.4"
-    "@stoplight/mosaic-code-viewer": "npm:1.48.4"
+    "@stoplight/mosaic": "npm:1.51.3"
+    "@stoplight/mosaic-code-viewer": "npm:1.51.3"
     "@stoplight/types": "npm:^13.7.0"
     clsx: "npm:^1.1.1"
     copy-to-clipboard: "npm:^3.3.1"
@@ -12609,13 +12607,13 @@ __metadata:
     zustand: "npm:^3.5.2"
   peerDependencies:
     react: ">= 16.14"
-  checksum: 0f37cec67de896932b096d3608e419943c4177e28607e8fa845c695847525990029fb0f2b1ad6abb066c9983787d81f7d3e8cade1d0f6eff373078201e12e7e4
+  checksum: 0d1cd4a048bcb4d6332523704bc0b1ba46b98dc8e444e76233a2c3c63c1047aa2e64b12a5d89367996db67d53796b317af0948e825765ed2a6cfc5c1e62602a0
   languageName: node
   linkType: hard
 
-"@stoplight/mosaic-code-viewer@npm:1.48.4, @stoplight/mosaic-code-viewer@npm:^1.46.1":
-  version: 1.48.4
-  resolution: "@stoplight/mosaic-code-viewer@npm:1.48.4"
+"@stoplight/mosaic-code-viewer@npm:1.51.3, @stoplight/mosaic-code-viewer@npm:^1.51.3":
+  version: 1.51.3
+  resolution: "@stoplight/mosaic-code-viewer@npm:1.51.3"
   dependencies:
     "@fortawesome/fontawesome-svg-core": "npm:^6.1.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
@@ -12624,7 +12622,7 @@ __metadata:
     "@react-types/radio": "npm:3.1.2"
     "@react-types/shared": "npm:3.9.0"
     "@react-types/switch": "npm:3.1.2"
-    "@stoplight/mosaic": "npm:1.48.4"
+    "@stoplight/mosaic": "npm:1.51.3"
     "@stoplight/types": "npm:^13.7.0"
     clsx: "npm:^1.1.1"
     copy-to-clipboard: "npm:^3.3.1"
@@ -12643,13 +12641,13 @@ __metadata:
     zustand: "npm:^3.5.2"
   peerDependencies:
     react: ">= 16.14"
-  checksum: 2247ec4e08e19edc86931c41071ba840c5df3f289acd4c45854d3666ff4d1ce06836b8506e64f2022fe237b3bf1d73bb9536860d299e83d930426c65faae0e82
+  checksum: a65594884cd50f748436fddf71fb2faa5323156f2f68fd824961db7210fea6a9e3d15d527773babce3b350c1f17321d173d91ec8be0306ef7a0849738022a07f
   languageName: node
   linkType: hard
 
-"@stoplight/mosaic@npm:1.48.4, @stoplight/mosaic@npm:^1.46.1":
-  version: 1.48.4
-  resolution: "@stoplight/mosaic@npm:1.48.4"
+"@stoplight/mosaic@npm:1.51.3, @stoplight/mosaic@npm:^1.51.3":
+  version: 1.51.3
+  resolution: "@stoplight/mosaic@npm:1.51.3"
   dependencies:
     "@fortawesome/fontawesome-svg-core": "npm:^6.1.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
@@ -12678,7 +12676,7 @@ __metadata:
     zustand: "npm:^3.5.2"
   peerDependencies:
     react: ">= 16.14"
-  checksum: 031a02edd6f16d0e05792d29fbef08a86574b93e753d4c02d8c4787f40ee31082599164c33c6d7f456f322a9e1c38c87bd854150977c01a17dc45a86416707c5
+  checksum: b6549ba18187aed374ff0ee3acbd5defa8b22fc04595a472b047026662ae5da899ec9c2b3d67190565a1c039bcddb63dfbb27335fb340355e56ce744fa3098b2
   languageName: node
   linkType: hard
 
@@ -12717,13 +12715,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/types@npm:14.0.0":
-  version: 14.0.0
-  resolution: "@stoplight/types@npm:14.0.0"
+"@stoplight/types@npm:14.1.0":
+  version: 14.1.0
+  resolution: "@stoplight/types@npm:14.1.0"
   dependencies:
     "@types/json-schema": "npm:^7.0.4"
     utility-types: "npm:^3.10.0"
-  checksum: 81a57ec9362258642f659a6a3818958e83db671d687aeba89fb9ba401b5e6d7f04a1d988c5b47a3b055cf2d5f1474ad04719086528a1f71e7ed8d8c394f64a72
+  checksum: 6b822270d7d59e5d73eb8edf185dd69ffeb681ac4a8af5b15c646b70a440df6c52c9af051fcf8244468d219928f0c62c5dbb77f4ce05ed5b22c99495b7275715
   languageName: node
   linkType: hard
 
@@ -12747,13 +12745,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/types@npm:^14.0.0":
-  version: 14.1.0
-  resolution: "@stoplight/types@npm:14.1.0"
+"@stoplight/types@npm:^14.1.1":
+  version: 14.1.1
+  resolution: "@stoplight/types@npm:14.1.1"
   dependencies:
     "@types/json-schema": "npm:^7.0.4"
     utility-types: "npm:^3.10.0"
-  checksum: 6b822270d7d59e5d73eb8edf185dd69ffeb681ac4a8af5b15c646b70a440df6c52c9af051fcf8244468d219928f0c62c5dbb77f4ce05ed5b22c99495b7275715
+  checksum: 1573d842fee99a7f1eea1f2b17c28dcbfb1be51b72f2ef794e07d265b2fb8900654b5848f608952cd1e3dedf6c7ec157c82c65d4d95728d6309f4b1722a11450
   languageName: node
   linkType: hard
 
@@ -31986,13 +31984,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isequalwith@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "lodash.isequalwith@npm:4.4.0"
-  checksum: edb7f01c6d949fad36c756e7b1af6ee1df8b9663cee62880186a3b241e133a981bc7eed42cf14715a58f939d6d779185c3ead0c3f0d617d1ad59f50b423eb5d5
-  languageName: node
-  linkType: hard
-
 "lodash.isinteger@npm:^4.0.4":
   version: 4.0.4
   resolution: "lodash.isinteger@npm:4.0.4"
@@ -32102,13 +32093,6 @@ __metadata:
   version: 4.4.0
   resolution: "lodash.pick@npm:4.4.0"
   checksum: a04c460b95d1aaa44e9513d1dacf72ea74d838da843e45831de9de64c303f13cdde1859702a6f4dcef417816898ffd47c6ae0614c957ac70245bed2809b8d2e2
-  languageName: node
-  linkType: hard
-
-"lodash.pickby@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "lodash.pickby@npm:4.6.0"
-  checksum: 46befadb64ab0f61159977174b291f87b005cec1c7bd73d1b6949ec4cdff483c1be0e34398df8955b76ce06a3e93a4a5c5a552a4299520390d6993c5420c7ab9
   languageName: node
   linkType: hard
 
@@ -44225,7 +44209,7 @@ __metadata:
     "@sentry/react": "npm:^7.88.0"
     "@sentry/tracing": "npm:^7.99.0"
     "@sniptt/guards": "npm:^0.2.0"
-    "@stoplight/elements": "npm:^7.16.2"
+    "@stoplight/elements": "npm:^8.0.5"
     "@storybook/addon-actions": "npm:^7.6.3"
     "@storybook/addon-coverage": "npm:^1.0.0"
     "@storybook/addon-essentials": "npm:^7.6.7"

@@ -50,7 +50,7 @@
     "@sentry/react": "^7.88.0",
     "@sentry/tracing": "^7.99.0",
     "@sniptt/guards": "^0.2.0",
-    "@stoplight/elements": "^7.16.2",
+    "@stoplight/elements": "^8.0.5",
     "@swc/jest": "^0.2.29",
     "@tabler/icons-react": "^2.44.0",
     "@types/lodash.camelcase": "^4.3.7",
