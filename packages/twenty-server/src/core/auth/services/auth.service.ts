@@ -186,11 +186,11 @@ export class AuthService {
 
     assert(user, "This user doesn't exist", NotFoundException);
 
-    assert(
+    /*    assert(
       user.defaultWorkspace,
       'User has no default workspace',
       NotFoundException,
-    );
+    );*/
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
@@ -239,6 +239,7 @@ export class AuthService {
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
+    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
 
     if (!user.defaultWorkspace.allowImpersonation) {
       throw new ForbiddenException('Impersonation not allowed');

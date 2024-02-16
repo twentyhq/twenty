@@ -21,6 +21,7 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
+    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     const dataSourcesMetadata =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         user.defaultWorkspace.id,
@@ -37,6 +38,10 @@ export class UserService extends TypeOrmQueryService<User> {
     }
 
     const dataSourceMetadata = dataSourcesMetadata[0];
+
+    if (!dataSourceMetadata) {
+      return;
+    }
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
@@ -80,6 +85,7 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async createWorkspaceMember(user: User) {
+    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         user.defaultWorkspace.id,
@@ -95,6 +101,34 @@ export class UserService extends TypeOrmQueryService<User> {
         user.id
       }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
+  }
+
+  async resetDefaultWorkspace(
+    userRequestingWorkspaceReset: User,
+    userId: string,
+  ): Promise<User> {
+    const userToReset = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['defaultWorkspace'],
+    });
+
+    assert(userToReset, 'User not found');
+
+    assert(
+      userToReset.defaultWorkspace?.id ===
+        userRequestingWorkspaceReset.defaultWorkspace?.id,
+      'Cannot delete a workspace member that does not belong to your workspace',
+    );
+
+    await this.userRepository.update(userId, {
+      defaultWorkspace: null,
+    });
+
+    const userUpdated = await this.userRepository.findOneBy({ id: userId });
+
+    assert(userUpdated, 'User not found');
+
+    return userUpdated;
   }
 
   async deleteUser(userId: string): Promise<User> {

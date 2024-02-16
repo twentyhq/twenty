@@ -18,6 +18,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useResetUserDefaultWorkspaceMutation } from '~/generated/graphql.tsx';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -33,7 +34,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsWorkspaceMembers = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
-    string | undefined
+    WorkspaceMember | undefined
   >();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
@@ -42,11 +43,17 @@ export const SettingsWorkspaceMembers = () => {
   const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+  const [resetUserDefaultWorkspace] = useResetUserDefaultWorkspaceMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
-    await deleteOneWorkspaceMember?.(workspaceMemberId);
+  const handleRemoveWorkspaceMember = async (
+    workspaceMember: WorkspaceMember,
+  ) => {
+    await resetUserDefaultWorkspace?.({
+      variables: { userId: workspaceMember.userId },
+    });
+    await deleteOneWorkspaceMember?.(workspaceMember.id);
     setIsConfirmationModalOpen(false);
   };
 
@@ -80,7 +87,7 @@ export const SettingsWorkspaceMembers = () => {
                     <IconButton
                       onClick={() => {
                         setIsConfirmationModalOpen(true);
-                        setWorkspaceMemberToDelete(member.id);
+                        setWorkspaceMemberToDelete(member);
                       }}
                       variant="tertiary"
                       size="medium"

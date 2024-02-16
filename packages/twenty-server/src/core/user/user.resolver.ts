@@ -23,6 +23,8 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { ResetUserDefaultWorkspaceInput } from 'src/core/user/dtos/reset-user-default-workspace.input';
 
 import { UserService } from './services/user.service';
 
@@ -39,6 +41,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
+    private readonly typeORMService: TypeORMService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
   ) {}
@@ -100,10 +103,22 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  async resetUserDefaultWorkspace(
+    @AuthUser() user: User,
+    @Args() resetUserDefaultWorkspaceInput: ResetUserDefaultWorkspaceInput,
+  ): Promise<User> {
+    return await this.userService.resetDefaultWorkspace(
+      user,
+      resetUserDefaultWorkspaceInput.userId,
+    );
+  }
+
+  @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId, defaultWorkspace }: User) {
     // Get the list of demo workspace IDs
     const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
 
+    assert(defaultWorkspace?.id, 'User has no defaultWorkspace');
     const currentUserWorkspaceId = defaultWorkspace.id;
 
     // Check if the user's default workspace ID is in the list of demo workspace IDs

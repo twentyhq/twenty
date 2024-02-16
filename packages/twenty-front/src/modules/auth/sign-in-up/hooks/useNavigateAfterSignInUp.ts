@@ -12,18 +12,18 @@ export const useNavigateAfterSignInUp = () => {
   const billing = useRecoilValue(billingState);
   const navigateAfterSignInUp = useCallback(
     (
-      currentWorkspace: CurrentWorkspace,
+      currentWorkspace: CurrentWorkspace | null,
       currentWorkspaceMember: WorkspaceMember | null,
     ) => {
       if (
         billing?.isBillingEnabled &&
-        currentWorkspace.subscriptionStatus !== 'active'
+        currentWorkspace?.subscriptionStatus !== 'active'
       ) {
         navigate(AppPath.PlanRequired);
         return;
       }
 
-      if (currentWorkspace.activationStatus !== 'active') {
+      if (currentWorkspace?.activationStatus !== 'active') {
         navigate(AppPath.CreateWorkspace);
         return;
       }

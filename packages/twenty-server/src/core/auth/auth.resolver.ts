@@ -106,6 +106,7 @@ export class AuthResolver {
     if (!workspaceMember) {
       return;
     }
+    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
       user.defaultWorkspace.id,
