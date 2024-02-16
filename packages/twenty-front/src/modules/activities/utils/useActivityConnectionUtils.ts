@@ -77,11 +77,13 @@ export const useActivityConnectionUtils = () => {
       : [];
 
     const activityTargets = {
+      __typename: 'ActivityTargetConnection',
       edges: activityTargetEdges,
       pageInfo: getEmptyPageInfo(),
     } as ObjectRecordConnection<ActivityTarget>;
 
     const comments = {
+      __typename: 'CommentConnection',
       edges: commentEdges,
       pageInfo: getEmptyPageInfo(),
     } as ObjectRecordConnection<Comment>;
@@ -90,6 +92,9 @@ export const useActivityConnectionUtils = () => {
       ...activity,
       activityTargets,
       comments,
+    } as Activity & {
+      activityTargets: ObjectRecordConnection<ActivityTarget>;
+      comments: ObjectRecordConnection<Comment>;
     };
 
     return { activityWithConnection };

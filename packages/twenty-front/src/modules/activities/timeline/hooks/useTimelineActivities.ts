@@ -40,6 +40,13 @@ export const useTimelineActivities = ({
     targetableObject,
   });
 
+  console.log({
+    targetableObject,
+    activityTargets,
+    loadingActivityTargets,
+    initializedActivityTargets,
+  });
+
   const [initialized, setInitialized] = useState(false);
 
   const activityIds = Array.from(
@@ -56,6 +63,11 @@ export const useTimelineActivities = ({
       activityIds,
     },
   );
+
+  console.log({
+    activityIds,
+    timelineActivitiesQueryVariables,
+  });
 
   const { records: activitiesWithConnection, loading: loadingActivities } =
     useFindManyRecords<Activity>({
@@ -81,6 +93,11 @@ export const useTimelineActivities = ({
         [initialized],
       ),
     });
+
+  console.log({
+    activitiesWithConnection,
+    loadingActivities,
+  });
 
   const noActivityTargets =
     initializedActivityTargets && !isNonEmptyArray(activityTargets);

@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
@@ -9,6 +9,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
+import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
 
 export const useRemoveFromTimelineActivitiesQueries = () => {
   const timelineTargetableObject = useRecoilValue(
@@ -78,14 +79,22 @@ export const useRemoveFromTimelineActivitiesQueries = () => {
         queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
       });
 
-    const newActivityTargetsForTargetableObject =
-      existingActivityTargetsForTargetableObject.filter(
-        (existingActivityTarget) =>
-          activityTargetsToRemove.some(
-            (activityTargetToRemove) =>
-              activityTargetToRemove.id !== existingActivityTarget.id,
-          ),
-      );
+    const newActivityTargetsForTargetableObject = isNonEmptyArray(
+      activityTargetsToRemove,
+    )
+      ? existingActivityTargetsForTargetableObject.filter(
+          (existingActivityTarget) =>
+            activityTargetsToRemove.some(
+              (activityTargetToRemove) =>
+                activityTargetToRemove.id !== existingActivityTarget.id,
+            ),
+        )
+      : existingActivityTargetsForTargetableObject;
+
+    overwriteFindManyActivityTargetsQueryInCache({
+      objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
+      queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+    });
 
     const existingActivityIds = existingActivityTargetsForTargetableObject
       ?.map((activityTarget) => activityTarget.activityId)
@@ -109,14 +118,9 @@ export const useRemoveFromTimelineActivitiesQueries = () => {
         activityIds: activityIdsAfterRemoval,
       });
 
-    overwriteFindManyActivityTargetsQueryInCache({
-      objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
-      queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
-    });
-
-    const newActivities = existingActivities.filter(
-      (existingActivity) => existingActivity.id !== activityIdToRemove,
-    );
+    const newActivities = existingActivities
+      .filter((existingActivity) => existingActivity.id !== activityIdToRemove)
+      .toSorted(sortObjectRecordByDateField('createdAt', 'DescNullsFirst'));
 
     overwriteFindManyActivitiesInCache({
       objectRecordsToOverwrite: newActivities,

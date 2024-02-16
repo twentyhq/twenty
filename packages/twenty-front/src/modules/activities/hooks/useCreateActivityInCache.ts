@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -13,6 +12,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export const useCreateActivityInCache = () => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
@@ -27,7 +27,7 @@ export const useCreateActivityInCache = () => {
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { record: workspaceMemberRecord } = useFindOneRecord({
+  const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
     depth: 3,
@@ -42,24 +42,21 @@ export const useCreateActivityInCache = () => {
   const createActivityInCache = ({
     type,
     targetableObjects,
-    assigneeId,
+    customAssignee,
   }: {
     type: ActivityType;
     targetableObjects: ActivityTargetableObject[];
-    assigneeId?: string;
+    customAssignee?: WorkspaceMember;
   }) => {
     const activityId = v4();
 
     const createdActivityInCache = createOneActivityInCache({
       id: activityId,
-      author: workspaceMemberRecord,
-      authorId: workspaceMemberRecord?.id,
-      assignee: !assigneeId ? workspaceMemberRecord : undefined,
-      assigneeId:
-        assigneeId ?? isNonEmptyString(workspaceMemberRecord?.id)
-          ? workspaceMemberRecord?.id
-          : undefined,
-      type: type,
+      author: currentWorkspaceMemberRecord,
+      authorId: currentWorkspaceMemberRecord?.id,
+      assignee: customAssignee ?? currentWorkspaceMemberRecord,
+      assigneeId: customAssignee?.id ?? currentWorkspaceMemberRecord?.id,
+      type,
     });
 
     const activityTargetsToCreate =

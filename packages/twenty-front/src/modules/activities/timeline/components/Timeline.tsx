@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
+import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -34,6 +37,14 @@ export const Timeline = ({
   const { activities, initialized } = useTimelineActivities({
     targetableObject,
   });
+
+  const setTimelineTargetableObject = useSetRecoilState(
+    timelineTargetableObjectState,
+  );
+
+  useEffect(() => {
+    setTimelineTargetableObject(targetableObject);
+  }, [targetableObject, setTimelineTargetableObject]);
 
   const showEmptyState = initialized && activities.length === 0;
 

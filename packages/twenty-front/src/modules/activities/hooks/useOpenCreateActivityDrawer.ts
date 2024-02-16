@@ -12,6 +12,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -42,16 +43,16 @@ export const useOpenCreateActivityDrawer = () => {
   const openCreateActivityDrawer = async ({
     type,
     targetableObjects,
-    assigneeId,
+    customAssignee,
   }: {
     type: ActivityType;
     targetableObjects: ActivityTargetableObject[];
-    assigneeId?: string;
+    customAssignee?: WorkspaceMember;
   }) => {
     const { createdActivityInCache } = createActivityInCache({
       type,
       targetableObjects,
-      assigneeId,
+      customAssignee,
     });
 
     setActivityInDrawer(createdActivityInCache);

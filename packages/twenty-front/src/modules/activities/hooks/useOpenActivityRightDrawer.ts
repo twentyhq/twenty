@@ -2,6 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
 import { Activity } from '@/activities/types/Activity';
+import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -18,6 +19,8 @@ export const useOpenActivityRightDrawer = () => {
   const [, setActivityInDrawer] = useRecoilState(activityInDrawerState);
   const setHotkeyScope = useSetHotkeyScope();
 
+  const { makeActivityWithoutConnection } = useActivityConnectionUtils();
+
   return (activity: Activity) => {
     if (
       isRightDrawerOpen &&
@@ -27,9 +30,12 @@ export const useOpenActivityRightDrawer = () => {
       return;
     }
 
+    const { activity: activityWithoutConnection } =
+      makeActivityWithoutConnection(activity);
+
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableActivityId(activity.id);
-    setActivityInDrawer(activity);
+    setActivityInDrawer(activityWithoutConnection);
     openRightDrawer(RightDrawerPages.EditActivity);
   };
 };

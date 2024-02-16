@@ -9,6 +9,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
+import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
 
 export const useInjectIntoTimelineActivitiesQueries = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
@@ -91,6 +92,10 @@ export const useInjectIntoTimelineActivitiesQueries = () => {
         activityIds: existingActivityIds,
       });
 
+    console.log({
+      timelineActivitiesQueryVariablesBeforeDrawerMount,
+    });
+
     const existingActivities = readFindManyActivitiesQueryInCache({
       queryVariables: timelineActivitiesQueryVariablesBeforeDrawerMount,
     });
@@ -110,7 +115,14 @@ export const useInjectIntoTimelineActivitiesQueries = () => {
       queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
     });
 
-    const newActivities = [newActivity, ...existingActivities];
+    const newActivities = [newActivity, ...existingActivities].toSorted(
+      sortObjectRecordByDateField('createdAt', 'DescNullsFirst'),
+    );
+
+    console.log({
+      existingActivities,
+      newActivities,
+    });
 
     overwriteFindManyActivitiesInCache({
       objectRecordsToOverwrite: newActivities,

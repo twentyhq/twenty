@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -74,10 +73,12 @@ export const ActivityActionBar = () => {
           const activityTargetIdsToDelete =
             activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
 
-          removeFromTimelineActivitiesQueries({
-            activityTargetsToRemove: activityInDrawer?.activityTargets ?? [],
-            activityIdToRemove: viewableActivityId,
-          });
+          if (isDefined(timelineTargetableObject)) {
+            removeFromTimelineActivitiesQueries({
+              activityTargetsToRemove: activityInDrawer?.activityTargets ?? [],
+              activityIdToRemove: viewableActivityId,
+            });
+          }
 
           deleteManyActivityTargets(activityTargetIdsToDelete);
           deleteOneActivity?.(viewableActivityId);
@@ -96,11 +97,8 @@ export const ActivityActionBar = () => {
     setIsRightDrawerOpen(false);
     if (record && timelineTargetableObject) {
       openCreateActivity({
-        timelineTargetableObject,
         type: record.type,
-        assigneeId: isNonEmptyString(record.assigneeId)
-          ? record.assigneeId
-          : undefined,
+        customAssignee: record.assignee,
         targetableObjects: activityTargetableEntityArray,
       });
     }

@@ -24,7 +24,8 @@ export const useTasks = ({
   });
 
   const isTargettingObjectRecords = isNonEmptyArray(targetableObjects);
-  const targetableObjectsFilter =
+
+  const activityTargetsFilter =
     targetableObjects.reduce<LeafObjectRecordFilter>(
       (aggregateFilter, targetableObject) => {
         const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
@@ -44,7 +45,7 @@ export const useTasks = ({
 
   const { records: activityTargets } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: targetableObjectsFilter,
+    filter: activityTargetsFilter,
     skip: !isTargettingObjectRecords,
   });
 
@@ -58,7 +59,7 @@ export const useTasks = ({
           ),
         },
       }
-    : { id: {} };
+    : undefined;
 
   const assigneeIdFilter = selectedFilter
     ? {

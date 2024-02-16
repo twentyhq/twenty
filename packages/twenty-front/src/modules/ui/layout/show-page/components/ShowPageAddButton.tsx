@@ -30,8 +30,8 @@ export const ShowPageAddButton = ({
     openCreateActivity({
       type,
       targetableObjects: [activityTargetObject],
-      timelineTargetableObject: activityTargetObject,
     });
+
     closeDropdown();
   };
 

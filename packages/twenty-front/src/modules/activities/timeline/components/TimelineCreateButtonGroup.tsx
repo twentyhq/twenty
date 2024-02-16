@@ -30,7 +30,6 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Note',
             targetableObjects: [targetableObject],
-            timelineTargetableObject: targetableObject,
           })
         }
       />
@@ -41,7 +40,6 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Task',
             targetableObjects: [targetableObject],
-            timelineTargetableObject: targetableObject,
           })
         }
       />
