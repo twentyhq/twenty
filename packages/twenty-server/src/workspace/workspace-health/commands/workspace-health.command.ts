@@ -11,7 +11,6 @@ import { CommandLogger } from 'src/commands/command-logger';
 
 interface WorkspaceHealthCommandOptions {
   workspaceId: string;
-  verbose?: boolean;
   mode?: WorkspaceHealthMode;
   fix?: WorkspaceHealthFixKind;
   dryRun?: boolean;
@@ -49,7 +48,7 @@ export class WorkspaceHealthCommand extends CommandRunner {
         chalk.red(`Workspace is not healthy, found ${issues.length} issues`),
       );
 
-      if (options.verbose) {
+      if (options.dryRun) {
         await this.commandLogger.writeLog(
           `workspace-health-issues-${options.workspaceId}`,
           issues,
@@ -61,25 +60,30 @@ export class WorkspaceHealthCommand extends CommandRunner {
     if (options.fix) {
       this.logger.log(chalk.yellow('Fixing issues'));
 
-      const workspaceMigrations = await this.workspaceHealthService.fixIssues(
-        options.workspaceId,
-        issues,
-        {
-          type: options.fix,
-          applyChanges: !options.dryRun,
-        },
-      );
+      const { workspaceMigrations, metadataEntities } =
+        await this.workspaceHealthService.fixIssues(
+          options.workspaceId,
+          issues,
+          {
+            type: options.fix,
+            applyChanges: !options.dryRun,
+          },
+        );
+      const totalCount = workspaceMigrations.length + metadataEntities.length;
 
       if (options.dryRun) {
         await this.commandLogger.writeLog(
           `workspace-health-${options.fix}-migrations`,
           workspaceMigrations,
         );
+
+        await this.commandLogger.writeLog(
+          `workspace-health-${options.fix}-metadata-entities`,
+          metadataEntities,
+        );
       } else {
         this.logger.log(
-          chalk.green(
-            `Fixed ${workspaceMigrations.length}/${issues.length} issues`,
-          ),
+          chalk.green(`Fixed ${totalCount}/${issues.length} issues`),
         );
       }
     }
@@ -105,15 +109,6 @@ export class WorkspaceHealthCommand extends CommandRunner {
     }
 
     return value as WorkspaceHealthFixKind;
-  }
-
-  @Option({
-    flags: '-v, --verbose',
-    description: 'Detailed output',
-    required: false,
-  })
-  parseVerbose(): boolean {
-    return true;
   }
 
   @Option({

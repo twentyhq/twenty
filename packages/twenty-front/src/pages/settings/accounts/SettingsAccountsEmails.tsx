@@ -1,4 +1,3 @@
-import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistSection';
 import { SettingsAccountsEmailsSyncSection } from '@/settings/accounts/components/SettingsAccountsEmailsSyncSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
@@ -15,7 +14,6 @@ export const SettingsAccountsEmails = () => (
         ]}
       />
       <SettingsAccountsEmailsSyncSection />
-      <SettingsAccountsEmailsBlocklistSection />
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
 );

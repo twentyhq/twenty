@@ -15577,7 +15577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.isequal@npm:^4.5.7":
+"@types/lodash.isequal@npm:^4.5.7, @types/lodash.isequal@npm:^4.5.8":
   version: 4.5.8
   resolution: "@types/lodash.isequal@npm:4.5.8"
   dependencies:
@@ -44115,6 +44115,7 @@ __metadata:
     "@nx/js": "npm:17.2.8"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@types/lodash.isempty": "npm:^4.4.7"
+    "@types/lodash.isequal": "npm:^4.5.8"
     "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.omit": "npm:^4.5.9"
     "@types/lodash.snakecase": "npm:^4.1.7"
@@ -44122,6 +44123,7 @@ __metadata:
     "@types/react": "npm:^18.2.39"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
+    lodash.isequal: "npm:^4.5.0"
     passport: "npm:^0.7.0"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.3.3"

@@ -1,5 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
+import isEqual from 'lodash.isequal';
+
 import {
   WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
@@ -23,6 +25,9 @@ import {
 } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
+import { computeCompositeFieldMetadata } from 'src/workspace/workspace-health/utils/compute-composite-field-metadata.util';
+import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
+import { customNamePrefix } from 'src/workspace/utils/compute-custom-name.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -52,10 +57,11 @@ export class FieldMetadataHealthService {
           compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
 
         if (options.mode === 'metadata' || options.mode === 'all') {
-          const targetColumnMapIssues =
-            this.targetColumnMapCheck(fieldMetadata);
+          const targetColumnMapIssue = this.targetColumnMapCheck(fieldMetadata);
 
-          issues.push(...targetColumnMapIssues);
+          if (targetColumnMapIssue) {
+            issues.push(targetColumnMapIssue);
+          }
 
           const defaultValueIssues =
             this.defaultValueHealthCheck(fieldMetadata);
@@ -67,7 +73,10 @@ export class FieldMetadataHealthService {
           const compositeFieldIssues = await this.healthCheckField(
             tableName,
             workspaceTableColumns,
-            compositeFieldMetadata as FieldMetadataEntity,
+            computeCompositeFieldMetadata(
+              compositeFieldMetadata,
+              fieldMetadata,
+            ),
             options,
           );
 
@@ -169,11 +178,7 @@ export class FieldMetadataHealthService {
       });
     }
 
-    if (
-      defaultValue &&
-      columnDefaultValue &&
-      isEnumFieldMetadataType(fieldMetadata.type)
-    ) {
+    if (columnDefaultValue && isEnumFieldMetadataType(fieldMetadata.type)) {
       const enumValues = fieldMetadata.options?.map((option) =>
         serializeDefaultValue(option.value),
       );
@@ -188,11 +193,7 @@ export class FieldMetadataHealthService {
       }
     }
 
-    if (
-      defaultValue &&
-      columnDefaultValue &&
-      columnDefaultValue !== defaultValue
-    ) {
+    if (columnDefaultValue !== defaultValue) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
         fieldMetadata,
@@ -210,20 +211,22 @@ export class FieldMetadataHealthService {
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
-    const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
+    const targetColumnMapIssue = this.targetColumnMapCheck(fieldMetadata);
     const defaultValueIssues = this.defaultValueHealthCheck(fieldMetadata);
 
-    if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
+    if (targetColumnMapIssue) {
+      issues.push(targetColumnMapIssue);
+    }
+
+    if (fieldMetadata.name.startsWith(customNamePrefix)) {
       issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+        type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_NOT_BE_PREFIXED,
         fieldMetadata,
-        message: `Column ${columnName} has more than one target column map, it should only contains "value"`,
+        message: `Column ${columnName} should not be prefixed with "${customNamePrefix}"`,
       });
     }
 
-    issues.push(...targetColumnMapIssues);
-
-    if (fieldMetadata.isCustom && !columnName?.startsWith('_')) {
+    if (fieldMetadata.isCustom && !columnName?.startsWith(customNamePrefix)) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM,
         fieldMetadata,
@@ -277,46 +280,29 @@ export class FieldMetadataHealthService {
 
   private targetColumnMapCheck(
     fieldMetadata: FieldMetadataEntity,
-  ): WorkspaceHealthIssue[] {
-    const issues: WorkspaceHealthIssue[] = [];
-
-    if (!fieldMetadata.targetColumnMap) {
-      issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
-        fieldMetadata,
-        message: `Column targetColumnMap of ${fieldMetadata.name} is empty`,
-      });
-    }
-
-    if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
-      if (
-        Object.keys(fieldMetadata.targetColumnMap).length !== 1 &&
-        !('value' in fieldMetadata.targetColumnMap)
-      ) {
-        issues.push({
-          type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
-          fieldMetadata,
-          message: `Column targetColumnMap "${fieldMetadata.targetColumnMap}" is not valid or well structured`,
-        });
-      }
-
-      return issues;
-    }
+  ): WorkspaceHealthIssue | null {
+    const targetColumnMap = generateTargetColumnMap(
+      fieldMetadata.type,
+      fieldMetadata.isCustom,
+      fieldMetadata.name,
+    );
 
     if (
-      !this.isCompositeObjectWellStructured(
-        fieldMetadata.type,
-        fieldMetadata.targetColumnMap,
-      )
+      !fieldMetadata.targetColumnMap ||
+      !isEqual(targetColumnMap, fieldMetadata.targetColumnMap)
     ) {
-      issues.push({
+      return {
         type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
         fieldMetadata,
-        message: `Column targetColumnMap for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.targetColumnMap}"`,
-      });
+        message: `Column targetColumnMap "${JSON.stringify(
+          fieldMetadata.targetColumnMap,
+        )}" is not the same as the generated one "${JSON.stringify(
+          targetColumnMap,
+        )}"`,
+      };
     }
 
-    return issues;
+    return null;
   }
 
   private defaultValueHealthCheck(
