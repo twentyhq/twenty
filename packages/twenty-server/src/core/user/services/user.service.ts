@@ -105,6 +105,24 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
+  async resetDefaultWorkspaceWithoutCheck(userId: string): Promise<User> {
+    const newWorkspaceToCreate = this.workspaceRepository.create({
+      displayName: '',
+      domainName: '',
+      inviteHash: v4(),
+      subscriptionStatus: 'incomplete',
+    });
+
+    const newWorkspace =
+      await this.workspaceRepository.save(newWorkspaceToCreate);
+
+    await this.userRepository.update(userId, {
+      defaultWorkspace: newWorkspace,
+    });
+
+    return await this.userRepository.findOneByOrFail({ id: userId });
+  }
+
   async resetDefaultWorkspace(
     userRequestingWorkspaceReset: User,
     userId: string,
@@ -122,21 +140,7 @@ export class UserService extends TypeOrmQueryService<User> {
       'Cannot delete a workspace member that does not belong to your workspace',
     );
 
-    const newWorkspaceToCreate = this.workspaceRepository.create({
-      displayName: '',
-      domainName: '',
-      inviteHash: v4(),
-      subscriptionStatus: 'incomplete',
-    });
-
-    const newWorkspace =
-      await this.workspaceRepository.save(newWorkspaceToCreate);
-
-    await this.userRepository.update(userId, {
-      defaultWorkspace: newWorkspace,
-    });
-
-    return await this.userRepository.findOneByOrFail({ id: userId });
+    return await this.resetDefaultWorkspaceWithoutCheck(userId);
   }
 
   async deleteUser(userId: string): Promise<User> {
