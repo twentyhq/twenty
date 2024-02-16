@@ -8,13 +8,18 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 
 import { FieldsStringFactory } from './fields-string.factory';
 
+export interface DeleteManyQueryFactoryOptions
+  extends WorkspaceQueryBuilderOptions {
+  atMost?: number;
+}
+
 @Injectable()
 export class DeleteManyQueryFactory {
   constructor(private readonly fieldsStringFactory: FieldsStringFactory) {}
 
   async create(
     args: DeleteManyResolverArgs,
-    options: WorkspaceQueryBuilderOptions,
+    options: DeleteManyQueryFactoryOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
@@ -28,7 +33,7 @@ export class DeleteManyQueryFactory {
           options.objectMetadataItem,
         )}Collection(filter: ${stringifyWithoutKeyQuote(
           args.filter,
-        )}, atMost: 30) {
+        )}, atMost: ${options.atMost ?? 1}) {
           affectedCount
           records {
             ${fieldsString}
