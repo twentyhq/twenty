@@ -118,7 +118,6 @@ export class UserResolver {
     // Get the list of demo workspace IDs
     const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
 
-    assert(defaultWorkspace?.id, 'User has no defaultWorkspace');
     const currentUserWorkspaceId = defaultWorkspace.id;
 
     // Check if the user's default workspace ID is in the list of demo workspace IDs

@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { assert } from 'src/utils/assert';
 import { User } from 'src/core/user/user.entity';
@@ -9,11 +10,14 @@ import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
   ) {
@@ -21,7 +25,6 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
-    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     const dataSourcesMetadata =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         user.defaultWorkspace.id,
@@ -85,7 +88,6 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async createWorkspaceMember(user: User) {
-    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         user.defaultWorkspace.id,
@@ -115,20 +117,26 @@ export class UserService extends TypeOrmQueryService<User> {
     assert(userToReset, 'User not found');
 
     assert(
-      userToReset.defaultWorkspace?.id ===
-        userRequestingWorkspaceReset.defaultWorkspace?.id,
+      userToReset.defaultWorkspace.id ===
+        userRequestingWorkspaceReset.defaultWorkspace.id,
       'Cannot delete a workspace member that does not belong to your workspace',
     );
 
-    await this.userRepository.update(userId, {
-      defaultWorkspace: null,
+    const newWorkspaceToCreate = this.workspaceRepository.create({
+      displayName: '',
+      domainName: '',
+      inviteHash: v4(),
+      subscriptionStatus: 'incomplete',
     });
 
-    const userUpdated = await this.userRepository.findOneBy({ id: userId });
+    const newWorkspace =
+      await this.workspaceRepository.save(newWorkspaceToCreate);
 
-    assert(userUpdated, 'User not found');
+    await this.userRepository.update(userId, {
+      defaultWorkspace: newWorkspace,
+    });
 
-    return userUpdated;
+    return await this.userRepository.findOneByOrFail({ id: userId });
   }
 
   async deleteUser(userId: string): Promise<User> {

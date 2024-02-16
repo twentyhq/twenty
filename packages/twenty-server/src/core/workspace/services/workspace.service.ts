@@ -26,7 +26,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (!data.displayName || !data.displayName.length) {
       throw new BadRequestException("'displayName' not provided");
     }
-    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
     await this.workspaceRepository.update(user.defaultWorkspace.id, {
       displayName: data.displayName,
     });

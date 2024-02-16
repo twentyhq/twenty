@@ -239,7 +239,6 @@ export class AuthService {
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
-    assert(user.defaultWorkspace?.id, 'User has no defaultWorkspace');
 
     if (!user.defaultWorkspace.allowImpersonation) {
       throw new ForbiddenException('Impersonation not allowed');

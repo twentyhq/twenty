@@ -10,6 +10,7 @@ import { UserResolver } from 'src/core/user/user.resolver';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -20,6 +21,7 @@ import { UserService } from './services/user.service';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([User], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([Workspace], 'core'),
         TypeORMModule,
       ],
       resolvers: userAutoResolverOpts,
