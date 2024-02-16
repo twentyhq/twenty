@@ -37,7 +37,6 @@ export const useSetRecordTableData = ({
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(getTableRowIdsState(), entityIds);
         }
-        console.log(newEntityArray.length);
 
         set(getNumberOfTableRowsState(), totalCount);
         onEntityCountChange(totalCount);
