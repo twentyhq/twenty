@@ -3,6 +3,7 @@ export enum CoreObjectNameSingular {
   ActivityTarget = 'activityTarget',
   ApiKey = 'apiKey',
   Attachment = 'attachment',
+  Blocklist = 'blocklist',
   Comment = 'comment',
   Company = 'company',
   ConenctedAccount = 'conenctedAccount',

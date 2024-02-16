@@ -12,27 +12,27 @@ export class WorkspaceCacheVersionService {
     private readonly workspaceCacheVersionRepository: Repository<WorkspaceCacheVersionEntity>,
   ) {}
 
-  async incrementVersion(workspaceId: string): Promise<void> {
-    const workspaceCacheVersion =
-      (await this.workspaceCacheVersionRepository.findOne({
-        where: { workspaceId },
-      })) ?? { version: '0' };
+  async incrementVersion(workspaceId: string): Promise<string> {
+    const workspaceCacheVersion = (await this.getVersion(workspaceId)) ?? '0';
+    const newVersion = `${+workspaceCacheVersion + 1}`;
 
     await this.workspaceCacheVersionRepository.upsert(
       {
         workspaceId,
-        version: `${+workspaceCacheVersion.version + 1}`,
+        version: `${+workspaceCacheVersion + 1}`,
       },
       ['workspaceId'],
     );
+
+    return newVersion;
   }
 
-  async getVersion(workspaceId: string): Promise<string> {
+  async getVersion(workspaceId: string): Promise<string | null> {
     const workspaceCacheVersion =
       await this.workspaceCacheVersionRepository.findOne({
         where: { workspaceId },
       });
 
-    return workspaceCacheVersion?.version ?? '0';
+    return workspaceCacheVersion?.version ?? null;
   }
 }

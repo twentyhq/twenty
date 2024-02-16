@@ -107,11 +107,11 @@ describe('useCommandMenu', () => {
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should setToIntitialCommandMenu command menu', () => {
+  it('should setToInitialCommandMenu command menu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.setToIntitialCommandMenu();
+      result.current.commandMenu.setToInitialCommandMenu();
     });
 
     expect(result.current.commandMenuCommands.length).toBe(5);

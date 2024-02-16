@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { SoonPill } from 'tsup.ui.index';
 
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -23,7 +22,11 @@ const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
-  opacity: 0.56;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+  }
 `;
 
 const StyledCardMedia = styled(SettingsAccountsInboxSettingsCardMedia)`
@@ -59,16 +62,6 @@ const StyledDescription = styled.div`
 
 const StyledRadio = styled(Radio)`
   margin-left: auto;
-`;
-
-const StyledSoonPill = styled(SoonPill)`
-  position: absolute;
-  right: 0;
-  top: 0;
-`;
-
-const StyledSection = styled(Section)`
-  position: relative;
 `;
 
 const inboxSettingsVisibilityOptions = [
@@ -108,12 +101,11 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
   onChange,
   value = InboxSettingsVisibilityValue.Everything,
 }: SettingsAccountsInboxSettingsVisibilitySectionProps) => (
-  <StyledSection>
+  <Section>
     <H2Title
       title="Email visibility"
       description="Define what will be visible to other users in your workspace"
     />
-    <StyledSoonPill />
     <Card>
       {inboxSettingsVisibilityOptions.map(
         (
@@ -123,6 +115,7 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
           <StyledCardContent
             key={optionValue}
             divider={index < inboxSettingsVisibilityOptions.length - 1}
+            onClick={() => onChange(optionValue)}
           >
             <StyledCardMedia>
               <StyledMetadataSkeleton isActive={visibleElements.metadata} />
@@ -137,11 +130,10 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
               value={optionValue}
               onCheckedChange={() => onChange(optionValue)}
               checked={value === optionValue}
-              disabled={true}
             />
           </StyledCardContent>
         ),
       )}
     </Card>
-  </StyledSection>
+  </Section>
 );

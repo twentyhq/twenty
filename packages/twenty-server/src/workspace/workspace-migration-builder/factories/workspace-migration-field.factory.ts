@@ -85,6 +85,10 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadata of fieldMetadataCollection) {
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(
@@ -116,6 +120,11 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
+      // Skip relations, because they're just representation and not real columns
+      if (fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(

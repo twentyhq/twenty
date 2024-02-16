@@ -43,6 +43,7 @@ export const useGenerateFindManyRecordsQuery = () => {
           startCursor
           endCursor
         }
+        totalCount
       }
     }
   `;

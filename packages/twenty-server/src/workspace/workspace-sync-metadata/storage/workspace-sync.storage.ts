@@ -15,8 +15,9 @@ export class WorkspaceSyncStorage {
 
   // Field metadata
   private readonly _fieldMetadataCreateCollection: PartialFieldMetadata[] = [];
-  private readonly _fieldMetadataUpdateCollection: Partial<PartialFieldMetadata>[] =
-    [];
+  private readonly _fieldMetadataUpdateCollection: Partial<
+    PartialFieldMetadata & { id: string }
+  >[] = [];
   private readonly _fieldMetadataDeleteCollection: FieldMetadataEntity[] = [];
 
   // Relation metadata

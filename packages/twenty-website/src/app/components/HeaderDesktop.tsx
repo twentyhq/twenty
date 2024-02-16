@@ -1,18 +1,12 @@
 'use client';
 
+import React from 'react';
 import styled from '@emotion/styled';
-import { IBM_Plex_Mono } from 'next/font/google';
 
 import { ExternalArrow } from '@/app/components/ExternalArrow';
 
 import { GithubIcon } from './Icons';
 import { Logo } from './Logo';
-
-const IBMPlexMono = IBM_Plex_Mono({
-  weight: '500',
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 const Nav = styled.nav`
   display: flex;
@@ -57,13 +51,6 @@ const LogoContainer = styled.div`
   align-items: center;
   gap: 8px;
   width: 202px;
-`;
-
-const LogoAddon = styled.div`
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%;
 `;
 
 const StyledButton = styled.div`

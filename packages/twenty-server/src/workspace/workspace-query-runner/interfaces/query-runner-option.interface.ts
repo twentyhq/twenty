@@ -5,6 +5,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 export interface WorkspaceQueryRunnerOptions {
   workspaceId: string;
+  userId: string | undefined;
   info: GraphQLResolveInfo;
   objectMetadataItem: ObjectMetadataInterface;
   fieldMetadataCollection: FieldMetadataInterface[];

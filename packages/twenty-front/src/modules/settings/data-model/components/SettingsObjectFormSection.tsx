@@ -45,7 +45,7 @@ const StyledInputContainer = styled.div`
 
 export const SettingsObjectFormSection = ({
   disabled,
-  icon = 'IconPigMoney',
+  icon = 'IconListNumbers',
   singularName = '',
   pluralName = '',
   description = '',
@@ -69,7 +69,7 @@ export const SettingsObjectFormSection = ({
       </StyledInputContainer>
       <TextInput
         label="Singular"
-        placeholder="Investor"
+        placeholder="Listing"
         value={singularName}
         onChange={(value) => {
           if (!value || validateMetadataLabel(value)) {
@@ -81,7 +81,7 @@ export const SettingsObjectFormSection = ({
       />
       <TextInput
         label="Plural"
-        placeholder="Investors"
+        placeholder="Listings"
         value={pluralName}
         onChange={(value) => {
           if (!value || validateMetadataLabel(value)) {

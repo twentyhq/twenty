@@ -62,4 +62,7 @@ export class Workspace {
   @Field()
   @Column({ default: 'incomplete' })
   subscriptionStatus: 'incomplete' | 'active' | 'canceled';
+
+  @Field()
+  activationStatus: 'active' | 'inactive';
 }

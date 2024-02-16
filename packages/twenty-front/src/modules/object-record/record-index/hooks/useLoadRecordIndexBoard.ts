@@ -56,12 +56,17 @@ export const useLoadRecordIndexBoard = ({
     recordIndexIsCompactModeActiveState,
   );
 
-  const { records, loading, fetchMoreRecords, queryStateIdentifier } =
-    useFindManyRecords({
-      objectNameSingular,
-      filter: requestFilters,
-      orderBy,
-    });
+  const {
+    records,
+    totalCount,
+    loading,
+    fetchMoreRecords,
+    queryStateIdentifier,
+  } = useFindManyRecords({
+    objectNameSingular,
+    filter: requestFilters,
+    orderBy,
+  });
 
   const { setEntityCountInCurrentView } = useViewBar({
     viewBarId,
@@ -80,8 +85,8 @@ export const useLoadRecordIndexBoard = ({
   }, [records, setRecordsInStore]);
 
   useEffect(() => {
-    setEntityCountInCurrentView(records.length);
-  }, [records.length, setEntityCountInCurrentView]);
+    setEntityCountInCurrentView(totalCount);
+  }, [totalCount, setEntityCountInCurrentView]);
 
   useEffect(() => {
     setIsCompactModeActive(recordIndexIsCompactModeActive);

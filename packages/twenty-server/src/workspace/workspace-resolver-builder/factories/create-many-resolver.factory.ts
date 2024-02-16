@@ -28,6 +28,7 @@ export class CreateManyResolverFactory
       return this.workspaceQueryRunnerService.createMany(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,

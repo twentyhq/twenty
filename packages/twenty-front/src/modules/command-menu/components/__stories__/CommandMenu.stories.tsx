@@ -31,14 +31,14 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
-      const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
+      const { addToCommandMenu, setToInitialCommandMenu, openCommandMenu } =
         useCommandMenu();
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
 
       useEffect(() => {
-        setToIntitialCommandMenu();
+        setToInitialCommandMenu();
         addToCommandMenu([
           {
             id: 'create-task',
@@ -58,7 +58,7 @@ const meta: Meta<typeof CommandMenu> = {
           },
         ]);
         openCommandMenu();
-      }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
+      }, [addToCommandMenu, setToInitialCommandMenu, openCommandMenu]);
 
       return <Story />;
     },

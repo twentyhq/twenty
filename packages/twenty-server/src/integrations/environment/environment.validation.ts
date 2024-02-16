@@ -212,6 +212,11 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   CAPTCHA_SECRET_KEY?: string;
+
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {

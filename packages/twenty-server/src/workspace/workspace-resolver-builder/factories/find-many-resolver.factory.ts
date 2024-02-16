@@ -28,6 +28,7 @@ export class FindManyResolverFactory
       return this.workspaceQueryRunnerService.findMany(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,
