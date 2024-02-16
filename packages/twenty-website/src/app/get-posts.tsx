@@ -12,6 +12,7 @@ interface ItemInfo {
   path: string;
   type: 'file' | 'directory';
   icon?: string;
+  info?: string;
 }
 
 export interface FileContent {
@@ -121,21 +122,20 @@ export async function getPosts(basePath: string): Promise<Directory> {
 }
 
 export async function getPost(
-  slug: string[],
+  slug: string,
   basePath: string,
 ): Promise<FileContent | null> {
   const postsDirectory = path.join(process.cwd(), basePath);
-  const modifiedSlug = slug.join('/');
-  const filePath = path.join(postsDirectory, `${modifiedSlug}.mdx`);
+  const filePath = path.join(postsDirectory, `${slug}.mdx`);
 
   if (!fs.existsSync(filePath)) {
     return null;
   }
 
-  const { content, frontmatter } = await compileMDXFile(filePath);
+  const { content, frontmatter } = await compileMDXFile(filePath, false);
 
   return {
     content,
-    itemInfo: { ...frontmatter, type: 'file', path: modifiedSlug },
+    itemInfo: { ...frontmatter, type: 'file', path: slug },
   };
 }
