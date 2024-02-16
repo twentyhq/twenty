@@ -73,6 +73,10 @@ const getSchemaComponentsProperties = (
         break;
     }
 
+    if (field.description) {
+      itemProperty.description = field.description;
+    }
+
     if (Object.keys(itemProperty).length) {
       node[field.name] = itemProperty;
     }
@@ -98,6 +102,7 @@ const computeSchemaComponent = (
 ): OpenAPIV3.SchemaObject => {
   const result = {
     type: 'object',
+    description: item.description,
     properties: getSchemaComponentsProperties(item),
     example: {},
   } as OpenAPIV3.SchemaObject;
