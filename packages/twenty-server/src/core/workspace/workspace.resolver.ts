@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -89,5 +96,16 @@ export class WorkspaceResolver {
     }
 
     return this.workspaceService.deleteWorkspace(id);
+  }
+
+  @ResolveField(() => String)
+  async activationStatus(
+    @Parent() workspace: Workspace,
+  ): Promise<'active' | 'inactive'> {
+    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
+      return 'active';
+    }
+
+    return 'inactive';
   }
 }

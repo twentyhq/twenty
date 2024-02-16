@@ -39,13 +39,13 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Canceled;
   }
 
-  if (!currentWorkspaceMember) {
+  if (currentWorkspace?.activationStatus !== 'active') {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
 
   if (
-    !currentWorkspaceMember.name.firstName ||
-    !currentWorkspaceMember.name.lastName
+    !currentWorkspaceMember?.name.firstName ||
+    !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
   }

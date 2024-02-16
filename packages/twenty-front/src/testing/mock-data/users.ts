@@ -29,6 +29,7 @@ export const mockDefaultWorkspace: Workspace = {
   logo: workspaceLogoUrl,
   allowImpersonation: true,
   subscriptionStatus: 'active',
+  activationStatus: 'active',
   featureFlags: [],
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',

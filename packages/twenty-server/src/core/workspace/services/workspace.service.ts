@@ -35,6 +35,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return user.defaultWorkspace;
   }
 
+  async isWorkspaceActivated(id: string): Promise<boolean> {
+    return await this.workspaceManagerService.doesDataSourceExist(id);
+  }
+
   async deleteWorkspace(id: string, shouldDeleteCoreWorkspace = true) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
