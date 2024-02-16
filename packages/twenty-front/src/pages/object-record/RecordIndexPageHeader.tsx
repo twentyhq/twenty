@@ -8,6 +8,7 @@ import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
+import { capitalize } from '~/utils/string/capitalize';
 
 type RecordIndexPageHeaderProps = {
   createRecord: () => void;
@@ -29,12 +30,7 @@ export const RecordIndexPageHeader = ({
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
   return (
-    <PageHeader
-      title={
-        objectNamePlural.charAt(0).toUpperCase() + objectNamePlural.slice(1)
-      }
-      Icon={Icon}
-    >
+    <PageHeader title={capitalize(objectNamePlural)} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
       {recordIndexViewType === ViewType.Table && (
         <PageAddButton onClick={createRecord} />
