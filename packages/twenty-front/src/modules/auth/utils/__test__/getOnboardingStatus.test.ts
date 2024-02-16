@@ -16,16 +16,7 @@ describe('getOnboardingStatus', () => {
       currentWorkspaceMember: null,
       currentWorkspace: {
         id: '1',
-        displayName: null,
-      } as CurrentWorkspace,
-    });
-
-    const ongoingWorkspaceActivationPreviouslyActive = getOnboardingStatus({
-      isLoggedIn: true,
-      currentWorkspaceMember: null,
-      currentWorkspace: {
-        id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'inactive',
       } as CurrentWorkspace,
     });
 
@@ -37,7 +28,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
       } as CurrentWorkspace,
     });
 
@@ -52,7 +43,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
       } as CurrentWorkspace,
     });
 
@@ -67,7 +58,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
       isBillingEnabled: true,
@@ -84,7 +75,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
     });
@@ -100,7 +91,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'canceled',
       } as CurrentWorkspace,
       isBillingEnabled: true,
@@ -108,9 +99,6 @@ describe('getOnboardingStatus', () => {
 
     expect(ongoingUserCreation).toBe('ongoing_user_creation');
     expect(ongoingWorkspaceActivation).toBe('ongoing_workspace_activation');
-    expect(ongoingWorkspaceActivationPreviouslyActive).toBe(
-      'ongoing_workspace_activation',
-    );
     expect(ongoingProfileCreation).toBe('ongoing_profile_creation');
     expect(completed).toBe('completed');
     expect(incomplete).toBe('incomplete');
