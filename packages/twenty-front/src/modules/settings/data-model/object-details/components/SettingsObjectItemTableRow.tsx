@@ -38,6 +38,7 @@ export const SettingsObjectItemTableRow = ({
 
   const { totalCount } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
+    depth: 0,
   });
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
