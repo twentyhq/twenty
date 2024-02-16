@@ -13,15 +13,13 @@ export class WorkspaceCacheVersionService {
   ) {}
 
   async incrementVersion(workspaceId: string): Promise<string> {
-    const workspaceCacheVersion = (await this.getVersion(workspaceId)) ?? {
-      version: '0',
-    };
-    const newVersion = `${+workspaceCacheVersion.version + 1}`;
+    const workspaceCacheVersion = (await this.getVersion(workspaceId)) ?? '0';
+    const newVersion = `${+workspaceCacheVersion + 1}`;
 
     await this.workspaceCacheVersionRepository.upsert(
       {
         workspaceId,
-        version: `${+workspaceCacheVersion.version + 1}`,
+        version: `${+workspaceCacheVersion + 1}`,
       },
       ['workspaceId'],
     );
