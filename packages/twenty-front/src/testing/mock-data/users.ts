@@ -120,7 +120,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     workspaceMember: null,
     defaultWorkspace: {
       ...mockDefaultWorkspace,
-      displayName: '',
+      activationStatus: 'inactive',
     },
     locale: 'en',
   },
