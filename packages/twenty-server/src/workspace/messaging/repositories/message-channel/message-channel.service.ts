@@ -44,6 +44,35 @@ export class MessageChannelService {
     return messageChannels[0];
   }
 
+  public async getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+    connectedAccountId: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const messageChannel = await this.getFirstByConnectedAccountIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    return messageChannel.isContactAutoCreationEnabled;
+  }
+
+  public async getIsContactAutoCreationEnabledByMessageChannelId(
+    messageChannelId: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageChannels =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1 LIMIT 1`,
+        [messageChannelId],
+        workspaceId,
+      );
+
+    return messageChannels[0]?.isContactAutoCreationEnabled;
+  }
+
   public async getByIds(
     ids: string[],
     workspaceId: string,

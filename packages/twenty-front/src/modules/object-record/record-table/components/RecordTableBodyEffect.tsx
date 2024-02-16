@@ -15,6 +15,7 @@ export const RecordTableBodyEffect = ({
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
+    totalCount,
     setRecordTableData,
     queryStateIdentifier,
     loading,
@@ -32,9 +33,9 @@ export const RecordTableBodyEffect = ({
 
   useEffect(() => {
     if (!loading) {
-      setRecordTableData(records);
+      setRecordTableData(records, totalCount);
     }
-  }, [records, setRecordTableData, loading]);
+  }, [records, totalCount, setRecordTableData, loading]);
 
   useEffect(() => {
     if (tableLastRowVisible && !isFetchingMoreObjects) {

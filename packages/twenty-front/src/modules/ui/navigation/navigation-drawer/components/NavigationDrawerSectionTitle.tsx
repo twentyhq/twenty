@@ -11,7 +11,6 @@ const StyledTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding: ${({ theme }) => theme.spacing(1)};
   padding-top: 0;
-  text-transform: uppercase;
 `;
 
 export const NavigationDrawerSectionTitle = ({

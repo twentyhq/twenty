@@ -13,37 +13,26 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 
-type WorkspaceHealthDefaultValueIssue =
-  WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>;
+import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
 
 @Injectable()
-export class WorkspaceFixDefaultValueService {
+export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT> {
   constructor(
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
-  ) {}
+  ) {
+    super(WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT);
+  }
 
-  async fix(
+  async createWorkspaceMigrations(
     manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
-    issues: WorkspaceHealthDefaultValueIssue[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-    const defaultValueIssues = issues.filter(
-      (issue) =>
-        issue.type === WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
-    ) as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[];
-
-    if (defaultValueIssues.length > 0) {
-      const columnDefaultValueWorkspaceMigrations =
-        await this.fixColumnDefaultValueIssues(
-          objectMetadataCollection,
-          defaultValueIssues,
-        );
-
-      workspaceMigrations.push(...columnDefaultValueWorkspaceMigrations);
+    if (issues.length <= 0) {
+      return [];
     }
 
-    return workspaceMigrations;
+    return this.fixColumnDefaultValueIssues(objectMetadataCollection, issues);
   }
 
   private async fixColumnDefaultValueIssues(

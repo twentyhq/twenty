@@ -268,7 +268,7 @@ export class WorkspaceMigrationRunnerService {
 
     // TODO: Maybe we can do something better if we can recreate the old `TableColumn` object
     if (enumValues) {
-      // This is returning the old enum values to avoid TypeORM droping the enum type
+      // This is returning the old enum values to avoid TypeORM dropping the enum type
       await this.workspaceMigrationEnumService.alterEnum(
         queryRunner,
         schemaName,

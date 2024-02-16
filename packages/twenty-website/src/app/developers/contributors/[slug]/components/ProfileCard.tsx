@@ -90,10 +90,12 @@ export const ProfileCard = ({
             <StyledGithubIcon size="M" color="rgba(0,0,0,1)" />
           </a>
         </h3>
-        <p className="duration">
-          Contributing since{' '}
-          {format(new Date(firstContributionAt), 'MMMM yyyy')}
-        </p>
+        {firstContributionAt && (
+          <p className="duration">
+            Contributing since{' '}
+            {format(new Date(firstContributionAt), 'MMMM yyyy')}
+          </p>
+        )}
       </Details>
     </ProfileContainer>
   );

@@ -9,7 +9,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
-import { FieldAliasFacotry } from './field-alias.factory';
+import { FieldAliasFactory } from './field-alias.factory';
 import { RelationFieldAliasFactory } from './relation-field-alias.factory';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class FieldsStringFactory {
   private readonly logger = new Logger(FieldsStringFactory.name);
 
   constructor(
-    private readonly fieldAliasFactory: FieldAliasFacotry,
+    private readonly fieldAliasFactory: FieldAliasFactory,
     private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
   ) {}
 
