@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import rehypeToc from '@jsdevtools/rehype-toc';
+import { toc } from '@jsdevtools/rehype-toc';
 import fs from 'fs';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import path from 'path';
@@ -100,14 +100,13 @@ async function parseFrontMatterAndCategory(
 
 export async function compileMDXFile(filePath: string, addToc: boolean = true) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
-
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
         remarkPlugins: [gfm],
-        rehypePlugins: [rehypeSlug, ...(addToc ? [rehypeToc] : [])],
+        rehypePlugins: [rehypeSlug, ...(addToc ? [toc] : [])],
       },
     },
   });
