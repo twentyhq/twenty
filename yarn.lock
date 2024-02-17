@@ -44110,8 +44110,6 @@ __metadata:
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
-  dependencies:
-    json-2-csv: "npm:^5.0.1"
   languageName: unknown
   linkType: soft
 

@@ -34,7 +34,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   depth,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
-    onCompleted?: (data: ObjectRecordConnection<T>) => void;
+    onCompleted?: (
+      data: ObjectRecordConnection<T>,
+      metadata: { hasNextPage: boolean },
+    ) => void;
     skip?: boolean;
     useRecordsWithoutConnection?: boolean;
     depth?: number;
@@ -77,15 +80,16 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       orderBy,
     },
     onCompleted: (data) => {
-      onCompleted?.(data[objectMetadataItem.namePlural]);
+      const hasNextPage =
+        data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false;
+
+      onCompleted?.(data[objectMetadataItem.namePlural], { hasNextPage });
 
       if (data?.[objectMetadataItem.namePlural]) {
         setLastCursor(
           data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '',
         );
-        setHasNextPage(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false,
-        );
+        setHasNextPage(hasNextPage);
       }
     },
     onError: (error) => {
@@ -128,27 +132,30 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               ]);
             }
 
+            const hasNextPage =
+              fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
+                .hasNextPage ?? false;
             if (data?.[objectMetadataItem.namePlural]) {
               setLastCursor(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
                   .endCursor ?? '',
               );
-              setHasNextPage(
-                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .hasNextPage ?? false,
-              );
+              setHasNextPage(hasNextPage);
             }
 
-            onCompleted?.({
-              __typename: `${capitalize(
-                objectMetadataItem.nameSingular,
-              )}Connection`,
-              edges: newEdges,
-              pageInfo:
-                fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
-              totalCount:
-                fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
-            });
+            onCompleted?.(
+              {
+                __typename: `${capitalize(
+                  objectMetadataItem.nameSingular,
+                )}Connection`,
+                edges: newEdges,
+                pageInfo:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                totalCount:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
+              },
+              { hasNextPage },
+            );
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {

@@ -1,13 +1,12 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { json2csv } from 'json-2-csv';
-import pick from 'lodash.pick';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
@@ -26,11 +25,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
+
+import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
 type RecordIndexOptionsMenu = 'fields';
 
@@ -38,6 +38,111 @@ type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
   objectNameSingular: string;
   viewType: ViewType;
+};
+
+type UseExportTableDataOptions = {
+  delayMs: number;
+  filename: string;
+  limit: number;
+  objectNameSingular: string;
+  recordIndexId: string;
+};
+
+const useExportTableData = ({
+  delayMs,
+  filename,
+  limit,
+  objectNameSingular,
+  recordIndexId,
+}: UseExportTableDataOptions) => {
+  const download = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+  };
+
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState<number | undefined>(undefined);
+  const [hasNextPage, setHasNextPage] = useState(true);
+
+  const { getVisibleTableColumnsSelector } =
+    useRecordTableStates(recordIndexId);
+  const params = useFindManyParams(objectNameSingular);
+  const columns = useRecoilValue(getVisibleTableColumnsSelector());
+  const keys = columns.map((col) => ({
+    field: col.metadata.fieldName,
+    title: col.label,
+  }));
+
+  const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
+    ...params,
+    onCompleted: (_data, { hasNextPage }) => {
+      setHasNextPage(hasNextPage);
+    },
+  });
+
+  const [inflight, setInflight] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
+
+  useEffect(() => {
+    if (!isDownloading) {
+      return;
+    }
+
+    if (!hasNextPage || pageCount >= limit) {
+      const csv = json2csv(records, { keys });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      setProgress(100);
+      download(blob, filename);
+      setIsDownloading(false);
+      setProgress(undefined);
+      return;
+    }
+
+    if (inflight) {
+      return;
+    }
+
+    const CONVERSION_PERCENT_CONSTANT = 10;
+    const PAGE_SIZE = 30;
+    const maximumRequests = Math.max(100, totalCount / PAGE_SIZE);
+    const percentOfRequestsCompleted = pageCount / maximumRequests;
+    const progress = Math.round(
+      (100 - CONVERSION_PERCENT_CONSTANT) * percentOfRequestsCompleted,
+    );
+
+    const downloadNextPage = async () => {
+      setInflight(true);
+      await fetchMoreRecords();
+      setPageCount((state) => state + 1);
+      setProgress(progress);
+      await sleep(delayMs);
+      setInflight(false);
+    };
+
+    downloadNextPage();
+  }, [
+    delayMs,
+    fetchMoreRecords,
+    filename,
+    hasNextPage,
+    inflight,
+    isDownloading,
+    keys,
+    limit,
+    pageCount,
+    records,
+    totalCount,
+  ]);
+
+  return { progress, download: () => setIsDownloading(true) };
 };
 
 export const RecordIndexOptionsDropdownContent = ({
@@ -125,62 +230,13 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openRecordSpreadsheetImport } =
     useSpreadsheetRecordImport(objectNameSingular);
 
-  const useExportTableData = (recordIndexId: string, filename: string) => {
-    const download = (blob: Blob, filename: string) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    };
-
-    const [progress, setProgress] = useState<number | undefined>(undefined);
-    const { getTableRowIdsState, getVisibleTableColumnsSelector } =
-      useRecordTableStates(recordIndexId);
-    const downloadCsv = useRecoilCallback(
-      ({ snapshot }) =>
-        () => {
-          setProgress(1);
-
-          const columns = getSnapshotValue(
-            snapshot,
-            getVisibleTableColumnsSelector(),
-          );
-          const keys = columns.map((col) => ({
-            field: col.metadata.fieldName,
-            title: col.label,
-          }));
-          const fields = keys.map((k) => k.field);
-          const tableRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
-          const rows = tableRowIds.map((id: string) =>
-            getSnapshotValue(snapshot, recordStoreFamilyState(id)),
-          );
-          const rowsWithOnlySelectedFields = rows.map((row) =>
-            pick(row, fields),
-          );
-
-          setProgress(90);
-
-          const csv = json2csv(rowsWithOnlySelectedFields, { keys });
-          const blob = new Blob([csv], { type: 'text/csv' });
-
-          setProgress(100);
-
-          download(blob, filename);
-
-          setProgress(undefined);
-        },
-      [filename],
-    );
-    return { progress, download: downloadCsv };
-  };
-
-  const { progress, download } = useExportTableData(
+  const { progress, download } = useExportTableData({
+    delayMs: 100,
+    filename: `${objectNameSingular}.csv`,
+    limit: 100,
+    objectNameSingular,
     recordIndexId,
-    `${objectNameSingular}.csv`,
-  );
+  });
 
   return (
     <>
