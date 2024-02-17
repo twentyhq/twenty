@@ -69,18 +69,14 @@ const useExportTableData = ({
     new Promise((resolve) => setTimeout(resolve, ms));
 
   const [isDownloading, setIsDownloading] = useState(false);
+  const [inflight, setInflight] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
   const [progress, setProgress] = useState<number | undefined>(undefined);
   const [hasNextPage, setHasNextPage] = useState(true);
-
   const { getVisibleTableColumnsSelector } =
     useRecordTableStates(recordIndexId);
-  const params = useFindManyParams(objectNameSingular);
   const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const keys = columns.map((col) => ({
-    field: col.metadata.fieldName,
-    title: col.label,
-  }));
-
+  const params = useFindManyParams(objectNameSingular);
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...params,
     onCompleted: (_data, { hasNextPage }) => {
@@ -88,46 +84,53 @@ const useExportTableData = ({
     },
   });
 
-  const [inflight, setInflight] = useState(false);
-  const [pageCount, setPageCount] = useState(0);
-
   useEffect(() => {
-    if (!isDownloading) {
-      return;
-    }
-
-    if (!hasNextPage || pageCount >= limit) {
-      const csv = json2csv(records, { keys });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      setProgress(100);
-      download(blob, filename);
-      setIsDownloading(false);
-      setProgress(undefined);
-      return;
-    }
-
-    if (inflight) {
+    if (!isDownloading || inflight) {
       return;
     }
 
     const CONVERSION_PERCENT_CONSTANT = 10;
+    const DOWNLOAD_MAX_PERCENT = 100 - CONVERSION_PERCENT_CONSTANT;
     const PAGE_SIZE = 30;
-    const maximumRequests = Math.max(100, totalCount / PAGE_SIZE);
-    const percentOfRequestsCompleted = pageCount / maximumRequests;
-    const progress = Math.round(
-      (100 - CONVERSION_PERCENT_CONSTANT) * percentOfRequestsCompleted,
-    );
+    const MAXIMUM_REQUESTS = Math.max(limit, totalCount / PAGE_SIZE);
 
-    const downloadNextPage = async () => {
+    const completeDownload = () => {
+      setIsDownloading(false);
+      setProgress(undefined);
+    };
+
+    const downloadCsv = () => {
+      setProgress(DOWNLOAD_MAX_PERCENT);
+      const keys = columns.map((col) => ({
+        field: col.metadata.fieldName,
+        title: col.label,
+      }));
+      const csv = json2csv(records, { keys });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      setProgress(100);
+      download(blob, filename);
+      completeDownload();
+    };
+
+    const downloadProgress = () => {
+      const percentOfRequestsCompleted = pageCount / MAXIMUM_REQUESTS;
+      return Math.round(DOWNLOAD_MAX_PERCENT * percentOfRequestsCompleted);
+    };
+
+    const fetchNextPage = async () => {
       setInflight(true);
       await fetchMoreRecords();
       setPageCount((state) => state + 1);
-      setProgress(progress);
+      setProgress(downloadProgress());
       await sleep(delayMs);
       setInflight(false);
     };
 
-    downloadNextPage();
+    if (!hasNextPage || pageCount >= limit) {
+      downloadCsv();
+    } else {
+      fetchNextPage();
+    }
   }, [
     delayMs,
     fetchMoreRecords,
@@ -135,11 +138,11 @@ const useExportTableData = ({
     hasNextPage,
     inflight,
     isDownloading,
-    keys,
     limit,
     pageCount,
     records,
     totalCount,
+    columns,
   ]);
 
   return { progress, download: () => setIsDownloading(true) };
