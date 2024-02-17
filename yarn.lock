@@ -22827,6 +22827,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deeks@npm:3.0.2":
+  version: 3.0.2
+  resolution: "deeks@npm:3.0.2"
+  checksum: 2d90a569f43a01e450e7693951ad4889475b68a3e95c09a8f04b47dd94cb64ba84f7d7e7fd5b3857461b5a38275be037242768e2686afe3e898c3c1ae65cb4de
+  languageName: node
+  linkType: hard
+
 "deep-eql@npm:^4.1.3":
   version: 4.1.3
   resolution: "deep-eql@npm:4.1.3"
@@ -23281,6 +23288,13 @@ __metadata:
   dependencies:
     "@leichtgewicht/ip-codec": "npm:^2.0.1"
   checksum: 8948d3d03063fb68e04a1e386875f8c3bcc398fc375f535f2b438fad8f41bf1afa6f5e70893ba44f4ae884c089247e0a31045722fa6ff0f01d228da103f1811d
+  languageName: node
+  linkType: hard
+
+"doc-path@npm:4.0.2":
+  version: 4.0.2
+  resolution: "doc-path@npm:4.0.2"
+  checksum: 4dde0c449b8bf7e4f1533510bb78a26f75aeec887917056eda19631ccfb966bb110c89d329f23cd19aaa0df97eced0d5cf9ea09178ce4b1bbe7b769a048da9a6
   languageName: node
   linkType: hard
 
@@ -31081,6 +31095,16 @@ __metadata:
   bin:
     jsesc: bin/jsesc
   checksum: f93792440ae1d80f091b65f8ceddf8e55c4bb7f1a09dee5dcbdb0db5612c55c0f6045625aa6b7e8edb2e0a4feabd80ee48616dbe2d37055573a84db3d24f96d9
+  languageName: node
+  linkType: hard
+
+"json-2-csv@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "json-2-csv@npm:5.0.1"
+  dependencies:
+    deeks: "npm:3.0.2"
+    doc-path: "npm:4.0.2"
+  checksum: b1aaf21e4f2c027b113e6832bce78af66b11683c8e88b53450d11e55591b714731f47839c9670a652309873f55e7ac97c45ea1ac649b5d952c4fb3d42dce0bf9
   languageName: node
   linkType: hard
 
@@ -44086,6 +44110,8 @@ __metadata:
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
+  dependencies:
+    json-2-csv: "npm:^5.0.1"
   languageName: unknown
   linkType: soft
 
@@ -44329,6 +44355,7 @@ __metadata:
     js-cookie: "npm:^3.0.5"
     js-levenshtein: "npm:^1.1.6"
     jsdom: "npm:~22.1.0"
+    json-2-csv: "npm:^5.0.1"
     jsonwebtoken: "npm:^9.0.0"
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
