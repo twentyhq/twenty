@@ -17,7 +17,7 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { PropertyBoxContainer } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxContainer';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -54,7 +54,11 @@ const StyledTopContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px 24px 24px 48px;
+  padding: ${({ theme }) => theme.spacing(6)};
+`;
+
+const StyledPropertyBox = styled(PropertyBoxContainer)`
+  padding: 0;
 `;
 
 type ActivityEditorProps = {
@@ -136,7 +140,7 @@ export const ActivityEditor = ({
         <StyledTopContainer>
           <ActivityTypeDropdown activity={activity} />
           <ActivityTitle activity={activity} />
-          <PropertyBox>
+          <StyledPropertyBox>
             {activity.type === 'Task' &&
               DueAtFieldContextProvider &&
               AssigneeFieldContextProvider && (
@@ -154,7 +158,7 @@ export const ActivityEditor = ({
                 <ActivityTargetsInlineCell activity={activity} />
               </ActivityTargetsContextProvider>
             )}
-          </PropertyBox>
+          </StyledPropertyBox>
         </StyledTopContainer>
       </StyledUpperPartContainer>
       <ActivityBodyEditor

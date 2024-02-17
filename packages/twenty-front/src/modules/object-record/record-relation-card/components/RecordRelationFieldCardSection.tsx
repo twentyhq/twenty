@@ -21,12 +21,10 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconForbid, IconPencil, IconPlus } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Card } from '@/ui/layout/card/components/Card';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -38,7 +36,6 @@ const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
   align-items: center;
   display: flex;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: ${() => (useIsMobile() ? '0 12px' : 'unset')};
 
   ${({ isDropdownOpen, theme }) =>
     isDropdownOpen
@@ -80,16 +77,24 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledCardNoContent = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
-
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(2)};
   display: flex;
   height: ${({ theme }) => theme.spacing(10)};
-  padding: ${({ theme }) => theme.spacing(0, 2)};
+  text-transform: capitalize;
+`;
+
+const StyledCard = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  overflow: hidden;
+`;
+
+const StyledSection = styled(Section)`
+  padding: ${({ theme }) => theme.spacing(3)};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  width: unset;
 `;
 
 export const RecordRelationFieldCardSection = () => {
@@ -180,11 +185,11 @@ export const RecordRelationFieldCardSection = () => {
   const Icon = getIcon(relationObjectMetadataItem.icon);
 
   return (
-    <Section>
+    <StyledSection>
       <StyledHeader isDropdownOpen={isDropdownOpen}>
         <StyledTitle>
           <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
-          {isFromManyObjects && (
+          {isFromManyObjects && relationRecords.length > 0 && (
             <StyledLink to={filterLinkHref}>
               All ({relationRecords.length})
             </StyledLink>
@@ -228,7 +233,7 @@ export const RecordRelationFieldCardSection = () => {
         </StyledCardNoContent>
       )}
       {!!relationRecords.length && (
-        <Card>
+        <StyledCard>
           {relationRecords.slice(0, 5).map((relationRecord, index) => (
             <RecordRelationFieldCardContent
               key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
@@ -236,8 +241,8 @@ export const RecordRelationFieldCardSection = () => {
               relationRecord={relationRecord}
             />
           ))}
-        </Card>
+        </StyledCard>
       )}
-    </Section>
+    </StyledSection>
   );
 };
