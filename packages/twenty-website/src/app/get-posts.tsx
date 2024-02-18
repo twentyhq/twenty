@@ -132,7 +132,7 @@ export async function getPost(
     return null;
   }
 
-  const { content, frontmatter } = await compileMDXFile(filePath, false);
+  const { content, frontmatter } = await compileMDXFile(filePath, true);
 
   return {
     content,
