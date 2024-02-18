@@ -6,8 +6,8 @@ import { Theme } from '@/app/ui/theme/theme';
 import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 import { UserGuideHomeCards } from '@/app/user-guide/constants/UserGuideHomeCards';
 
-const StyledContainer = styled.div`
-  width: 60%;
+const StyledContainer = styled.div<{ isMobile: boolean }>`
+  width: ${({ isMobile }) => (isMobile ? '100%' : '60%')};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -63,7 +63,7 @@ const StyledContentFlex = styled.div`
 export default function UserGuideMain() {
   const deviceType = useDeviceType();
   return (
-    <StyledContainer>
+    <StyledContainer isMobile={deviceType === DeviceType.MOBILE}>
       <StyledWrapper>
         <StyledHeader>
           <StyledHeading>User Guide</StyledHeading>
