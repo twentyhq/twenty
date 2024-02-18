@@ -34,6 +34,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
 import { getImageBufferFromUrl } from 'src/utils/image';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { TokenService } from './token.service';
 
@@ -54,6 +55,7 @@ export class AuthService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
@@ -99,7 +101,9 @@ export class AuthService {
       email: email,
     });
 
-    assert(!existingUser, 'This user already exists', ForbiddenException);
+    if (existingUser && !workspaceInviteHash) {
+      assert(!existingUser, 'This user already exists', ForbiddenException);
+    }
 
     if (password) {
       const isPasswordValid = PASSWORD_REGEX.test(password);
@@ -157,23 +161,57 @@ export class AuthService {
       imagePath = paths[0];
     }
 
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      defaultAvatarUrl: imagePath,
-      canImpersonate: false,
-      passwordHash,
-      defaultWorkspace: workspace,
-    });
+    if (existingUser && workspaceInviteHash) {
+      const userWorkspaceExisits =
+        await this.userWorkspaceService.checkUserWorkspaceExists(
+          existingUser.id,
+          workspace.id,
+        );
 
-    const user = await this.userRepository.save(userToCreate);
+      if (userWorkspaceExisits) return existingUser;
 
-    if (workspaceInviteHash) {
-      await this.userService.createWorkspaceMember(user);
+      const userWorkspace = await this.userWorkspaceService.create(
+        existingUser.id,
+        workspace.id,
+      );
+
+      await this.userWorkspaceService.createWorkspaceMember(
+        workspace.id,
+        existingUser,
+      );
+
+      // const updatedUser = await this.userRepository.save({
+      //   id: existingUser.id,
+      //   defaultWorkspace: userWorkspace,
+      //   updatedAt: new Date().toISOString()
+      // });
+
+      // return updatedUser;
+      return existingUser;
+    } else {
+      const userToCreate = this.userRepository.create({
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        defaultAvatarUrl: imagePath,
+        canImpersonate: false,
+        passwordHash,
+        defaultWorkspace: workspace,
+      });
+
+      const user = await this.userRepository.save(userToCreate);
+
+      // const userWorkspace = await this.userWorkspaceService.create(user.id, workspace.id);
+
+      // // const updatedUser = await this.userRepository.save({
+      // //   id: existingUser.id,
+      // //   defaultWorkspace: userWorkspace,
+      // //   updatedAt: new Date().toISOString()
+      // // });
+
+      // // return updatedUser;
+      return user;
     }
-
-    return user;
   }
 
   async verify(email: string): Promise<Verify> {

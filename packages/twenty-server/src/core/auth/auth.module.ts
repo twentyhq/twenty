@@ -18,6 +18,7 @@ import { GoogleGmailAuthController } from 'src/core/auth/controllers/google-gmai
 import { VerifyAuthController } from 'src/core/auth/controllers/verify-auth.controller';
 import { TokenService } from 'src/core/auth/services/token.service';
 import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -45,6 +46,7 @@ const jwtModule = JwtModule.registerAsync({
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, User, RefreshToken], 'core'),
     HttpModule,
+    UserWorkspaceModule,
   ],
   controllers: [
     GoogleAuthController,
