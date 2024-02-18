@@ -14,7 +14,9 @@ import {
   DeleteOneResolverArgs,
   UpdateManyResolverArgs,
   DeleteManyResolverArgs,
+  FindDuplicatesResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { PGGraphQLResult } from 'src/workspace/workspace-query-runner/interfaces/pg-graphql.interface';
 
 import { FindManyQueryFactory } from './factories/find-many-query.factory';
 import { FindOneQueryFactory } from './factories/find-one-query.factory';
@@ -29,6 +31,7 @@ import {
   DeleteManyQueryFactory,
   DeleteManyQueryFactoryOptions,
 } from './factories/delete-many-query.factory';
+import { FindDuplicatesQueryFactory } from './factories/find-duplicates-query.factory';
 
 @Injectable()
 export class WorkspaceQueryBuilderFactory {
@@ -37,6 +40,7 @@ export class WorkspaceQueryBuilderFactory {
   constructor(
     private readonly findManyQueryFactory: FindManyQueryFactory,
     private readonly findOneQueryFactory: FindOneQueryFactory,
+    private readonly findDuplicatesQueryFactory: FindDuplicatesQueryFactory,
     private readonly createManyQueryFactory: CreateManyQueryFactory,
     private readonly updateOneQueryFactory: UpdateOneQueryFactory,
     private readonly deleteOneQueryFactory: DeleteOneQueryFactory,
@@ -59,6 +63,28 @@ export class WorkspaceQueryBuilderFactory {
     options: WorkspaceQueryBuilderOptions,
   ): Promise<string> {
     return this.findOneQueryFactory.create<Filter>(args, options);
+  }
+
+  findDuplicates<Filter extends RecordFilter = RecordFilter>(
+    args: FindDuplicatesResolverArgs<Filter>,
+    options: WorkspaceQueryBuilderOptions,
+    existingRecord?: PGGraphQLResult,
+  ): Promise<string> {
+    return this.findDuplicatesQueryFactory.create<Filter>(
+      args,
+      options,
+      existingRecord,
+    );
+  }
+
+  findDuplicatesExistingRecord(
+    id: string,
+    options: WorkspaceQueryBuilderOptions,
+  ): string {
+    return this.findDuplicatesQueryFactory.buildQueryForExistingRecord(
+      id,
+      options,
+    );
   }
 
   createMany<Record extends IRecord = IRecord>(

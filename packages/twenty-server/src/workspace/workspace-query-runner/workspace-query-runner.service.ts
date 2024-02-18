@@ -12,6 +12,7 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   UpdateManyResolverArgs,
@@ -127,6 +128,58 @@ export class WorkspaceQueryRunnerService {
     );
 
     return parsedResult?.edges?.[0]?.node;
+  }
+
+  async findDuplicates<Record extends IRecord = IRecord>(
+    args: FindDuplicatesResolverArgs<Record>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<Record> | undefined> {
+    if (!args.data && !args.id) {
+      throw new BadRequestException(
+        'You have to provide either "data" or "id" argument',
+      );
+    }
+
+    const { workspaceId, userId, objectMetadataItem } = options;
+
+    let existingRecord: PGGraphQLResult | undefined;
+
+    if (args.id) {
+      const existingRecordQuery =
+        this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
+          args.id,
+          options,
+        );
+
+      const existingRecordResult = await this.execute(
+        existingRecordQuery,
+        workspaceId,
+      );
+
+      existingRecord = existingRecordResult;
+    }
+
+    const query = await this.workspaceQueryBuilderFactory.findDuplicates(
+      args,
+      options,
+      existingRecord,
+    );
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'findDuplicates',
+      args,
+    );
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<IConnection<Record>>(
+      result,
+      objectMetadataItem,
+      '',
+    );
   }
 
   async createMany<Record extends IRecord = IRecord>(
