@@ -15,10 +15,6 @@
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
-      "env": {
-        "TS_NODE_IGNORE": "false",
-        "TS_NODE_PROJECT": "${workspaceFolder}/packages/twenty-server/tsconfig.json"
-      },
       "cwd": "${workspaceFolder}/packages/twenty-server/"
     }
   ]
