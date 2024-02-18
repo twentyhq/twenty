@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import UserGuideSidebar from '@/app/components/user-guide/UserGuideSidebar';
 import UserGuideTableContents from '@/app/components/user-guide/UserGuideTableContents';
 import { Theme } from '@/app/ui/theme/theme';
+import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -22,11 +23,14 @@ const StyledEmptySideBar = styled.div`
 
 export default function UserGuideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const deviceType = useDeviceType();
   return (
     <StyledContainer>
-      <UserGuideSidebar />
+      {deviceType !== DeviceType.MOBILE && <UserGuideSidebar />}
       {children}
-      {pathname === '/user-guide' ? (
+      {deviceType !== DeviceType.DESKTOP ? (
+        <></>
+      ) : pathname === '/user-guide' ? (
         <StyledEmptySideBar />
       ) : (
         <UserGuideTableContents />

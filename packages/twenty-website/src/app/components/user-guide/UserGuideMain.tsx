@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import UserGuideCard from '@/app/components/user-guide/UserGuideCard';
 import { Theme } from '@/app/ui/theme/theme';
+import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 import { UserGuideHomeCards } from '@/app/user-guide/constants/UserGuideHomeCards';
 
 const StyledContainer = styled.div`
@@ -42,7 +43,7 @@ const StyledSubHeading = styled.h1`
   color: ${Theme.text.color.tertiary};
 `;
 
-const StyledContent = styled.div`
+const StyledContentGrid = styled.div`
   width: 100%;
   padding-top: ${Theme.spacing(6)};
   display: grid;
@@ -51,7 +52,16 @@ const StyledContent = styled.div`
   gap: ${Theme.spacing(6)};
 `;
 
+const StyledContentFlex = styled.div`
+  width: 100%;
+  padding-top: ${Theme.spacing(6)};
+  display: flex;
+  flex-direction: column;
+  gap: ${Theme.spacing(6)};
+`;
+
 export default function UserGuideMain() {
+  const deviceType = useDeviceType();
   return (
     <StyledContainer>
       <StyledWrapper>
@@ -61,11 +71,19 @@ export default function UserGuideMain() {
             A brief guide to grasp the basics of Twenty
           </StyledSubHeading>
         </StyledHeader>
-        <StyledContent>
-          {UserGuideHomeCards.map((card) => {
-            return <UserGuideCard key={card.title} card={card} />;
-          })}
-        </StyledContent>
+        {deviceType === DeviceType.DESKTOP ? (
+          <StyledContentGrid>
+            {UserGuideHomeCards.map((card) => {
+              return <UserGuideCard key={card.title} card={card} />;
+            })}
+          </StyledContentGrid>
+        ) : (
+          <StyledContentFlex>
+            {UserGuideHomeCards.map((card) => {
+              return <UserGuideCard key={card.title} card={card} />;
+            })}
+          </StyledContentFlex>
+        )}
       </StyledWrapper>
     </StyledContainer>
   );

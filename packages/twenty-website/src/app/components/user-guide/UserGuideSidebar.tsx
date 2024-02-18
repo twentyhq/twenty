@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation';
 import UserGuideSidebarSection from '@/app/components/user-guide/UserGuideSidebarSection';
 import { IconBook } from '@/app/ui/icons';
 import { Theme } from '@/app/ui/theme/theme';
+import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 import { UserGuideIndex } from '@/app/user-guide/constants/UserGuideIndex';
 
-const StyledContainer = styled.div`
-  width: 20%;
+const StyledContainer = styled.div<{ isTablet: boolean }>`
+  width: ${({ isTablet }) => (isTablet ? '30%' : '20%')};
   background: ${Theme.background.secondary};
   display: flex;
   flex-direction: column;
@@ -50,8 +51,9 @@ const StyledHeadingText = styled.div`
 
 const UserGuideSidebar = () => {
   const router = useRouter();
+  const isTablet = useDeviceType() === DeviceType.TABLET;
   return (
-    <StyledContainer>
+    <StyledContainer isTablet={isTablet}>
       <StyledHeading>
         <StyledIconContainer>
           <IconBook size={Theme.icon.size.md} />

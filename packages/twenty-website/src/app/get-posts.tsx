@@ -13,6 +13,7 @@ interface ItemInfo {
   type: 'file' | 'directory';
   icon?: string;
   info?: string;
+  image?: string;
 }
 
 export interface FileContent {
