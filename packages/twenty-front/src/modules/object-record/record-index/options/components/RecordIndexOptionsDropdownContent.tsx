@@ -1,13 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { json2csv } from 'json-2-csv';
+import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
 import {
@@ -30,7 +27,7 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
-import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
+import { useExportTableData } from '../hooks/useExportTableData';
 
 type RecordIndexOptionsMenu = 'fields';
 
@@ -38,114 +35,6 @@ type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
   objectNameSingular: string;
   viewType: ViewType;
-};
-
-type UseExportTableDataOptions = {
-  delayMs: number;
-  filename: string;
-  limit: number;
-  objectNameSingular: string;
-  recordIndexId: string;
-};
-
-const useExportTableData = ({
-  delayMs,
-  filename,
-  limit,
-  objectNameSingular,
-  recordIndexId,
-}: UseExportTableDataOptions) => {
-  const download = (blob: Blob, filename: string) => {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    link.parentNode?.removeChild(link);
-  };
-
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [inflight, setInflight] = useState(false);
-  const [pageCount, setPageCount] = useState(0);
-  const [progress, setProgress] = useState<number | undefined>(undefined);
-  const [hasNextPage, setHasNextPage] = useState(true);
-  const { getVisibleTableColumnsSelector } =
-    useRecordTableStates(recordIndexId);
-  const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const params = useFindManyParams(objectNameSingular);
-  const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
-    ...params,
-    onCompleted: (_data, { hasNextPage }) => {
-      setHasNextPage(hasNextPage);
-    },
-  });
-
-  useEffect(() => {
-    if (!isDownloading || inflight) {
-      return;
-    }
-
-    const CONVERSION_PERCENT_CONSTANT = 10;
-    const DOWNLOAD_MAX_PERCENT = 100 - CONVERSION_PERCENT_CONSTANT;
-    const PAGE_SIZE = 30;
-    const MAXIMUM_REQUESTS = Math.max(limit, totalCount / PAGE_SIZE);
-
-    const completeDownload = () => {
-      setIsDownloading(false);
-      setProgress(undefined);
-    };
-
-    const downloadCsv = () => {
-      setProgress(DOWNLOAD_MAX_PERCENT);
-      const keys = columns.map((col) => ({
-        field: col.metadata.fieldName,
-        title: col.label,
-      }));
-      const csv = json2csv(records, { keys });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      setProgress(100);
-      download(blob, filename);
-      completeDownload();
-    };
-
-    const downloadProgress = () => {
-      const percentOfRequestsCompleted = pageCount / MAXIMUM_REQUESTS;
-      return Math.round(DOWNLOAD_MAX_PERCENT * percentOfRequestsCompleted);
-    };
-
-    const fetchNextPage = async () => {
-      setInflight(true);
-      await fetchMoreRecords();
-      setPageCount((state) => state + 1);
-      setProgress(downloadProgress());
-      await sleep(delayMs);
-      setInflight(false);
-    };
-
-    if (!hasNextPage || pageCount >= limit) {
-      downloadCsv();
-    } else {
-      fetchNextPage();
-    }
-  }, [
-    delayMs,
-    fetchMoreRecords,
-    filename,
-    hasNextPage,
-    inflight,
-    isDownloading,
-    limit,
-    pageCount,
-    records,
-    totalCount,
-    columns,
-  ]);
-
-  return { progress, download: () => setIsDownloading(true) };
 };
 
 export const RecordIndexOptionsDropdownContent = ({
