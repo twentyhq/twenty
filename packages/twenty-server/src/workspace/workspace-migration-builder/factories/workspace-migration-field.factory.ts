@@ -16,7 +16,7 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
-interface FieldMetadataUpdate {
+export interface FieldMetadataUpdate {
   current: FieldMetadataEntity;
   altered: FieldMetadataEntity;
 }
