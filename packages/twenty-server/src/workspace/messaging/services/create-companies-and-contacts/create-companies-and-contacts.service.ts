@@ -24,10 +24,22 @@ export class CreateCompaniesAndContactsService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const uniqueHandles = Array.from(
+      new Set(participants.map((participant) => participant.handle)),
+    );
+
+    const uniqueParticipants = uniqueHandles.map((handle) => {
+      const participant = participants.find(
+        (participant) => participant.handle === handle,
+      );
+
+      return participant;
+    }) as Participant[];
+
     const alreadyCreatedContacts =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [participants.map((participant) => participant.handle)],
+        [uniqueParticipants.map((participant) => participant.handle)],
         workspaceId,
         transactionManager,
       );
@@ -36,7 +48,7 @@ export class CreateCompaniesAndContactsService {
       ({ email }) => email,
     );
 
-    const filteredParticipants = participants.filter(
+    const filteredParticipants = uniqueParticipants.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
         participant.handle.includes('@'),
