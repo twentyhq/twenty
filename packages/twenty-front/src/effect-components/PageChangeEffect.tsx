@@ -39,7 +39,7 @@ export const PageChangeEffect = () => {
 
   const [workspaceFromInviteHashQuery] =
     useGetWorkspaceFromInviteHashLazyQuery();
-  const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -209,7 +209,7 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    setToIntitialCommandMenu();
+    setToInitialCommandMenu();
 
     addToCommandMenu([
       {
@@ -222,7 +222,7 @@ export const PageChangeEffect = () => {
           openCreateActivity({ type: 'Task', targetableObjects: [] }),
       },
     ]);
-  }, [addToCommandMenu, setToIntitialCommandMenu, openCreateActivity]);
+  }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
 
   useEffect(() => {
     setTimeout(() => {

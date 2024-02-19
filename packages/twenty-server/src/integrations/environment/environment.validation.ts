@@ -199,6 +199,11 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_SIGN_UP_DISABLED?: boolean;
+
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {

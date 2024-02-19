@@ -63,6 +63,13 @@ export const triggerCreateRecordsOptimisticEffect = ({
           'edges',
           rootQueryCachedObjectRecordConnection,
         );
+
+        const rootQueryCachedRecordTotalCount =
+          readField<number>(
+            'totalCount',
+            rootQueryCachedObjectRecordConnection,
+          ) || 0;
+
         const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
           ? [...rootQueryCachedRecordEdges]
           : [];
@@ -109,6 +116,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextRootQueryCachedRecordEdges,
+          totalCount: rootQueryCachedRecordTotalCount + 1,
         };
       },
     },

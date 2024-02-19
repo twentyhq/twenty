@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import Link from 'next/link';
 
 export interface User {
-  login: string;
+  id: string;
   avatarUrl: string;
 }
 
@@ -66,13 +66,10 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
   return (
     <AvatarGridContainer>
       {users.map((user) => (
-        <Link
-          href={`/developers/contributors/${user.login}`}
-          key={`l_${user.login}`}
-        >
-          <AvatarItem key={user.login}>
-            <img src={user.avatarUrl} alt={user.login} />
-            <span className="username">{user.login}</span>
+        <Link href={`/developers/contributors/${user.id}`} key={`l_${user.id}`}>
+          <AvatarItem key={user.id}>
+            <img src={user.avatarUrl} alt={user.id} />
+            <span className="username">{user.id}</span>
           </AvatarItem>
         </Link>
       ))}

@@ -20,6 +20,9 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
+import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
+import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 
 @Module({
@@ -36,6 +39,8 @@ import { MessageParticipantModule } from 'src/workspace/messaging/repositories/m
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     ConnectedAccountModule,
     MessageParticipantModule,
+    CreateCompaniesAndContactsModule,
+    MessageChannelModule,
   ],
   providers: [
     {
@@ -66,6 +71,10 @@ import { MessageParticipantModule } from 'src/workspace/messaging/repositories/m
     {
       provide: MatchMessageParticipantJob.name,
       useClass: MatchMessageParticipantJob,
+    },
+    {
+      provide: CreateCompaniesAndContactsAfterSyncJob.name,
+      useClass: CreateCompaniesAndContactsAfterSyncJob,
     },
   ],
 })

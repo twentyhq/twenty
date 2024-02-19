@@ -28,24 +28,30 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingUserCreation;
   }
 
+  // After SignInUp, the user should have a current workspace assigned.
+  // If not, it indicates that the data is still being requested.
+  if (!currentWorkspace) {
+    return undefined;
+  }
+
   if (
     isBillingEnabled &&
-    currentWorkspace?.subscriptionStatus === 'incomplete'
+    currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
   }
 
-  if (isBillingEnabled && currentWorkspace?.subscriptionStatus === 'canceled') {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
     return OnboardingStatus.Canceled;
   }
 
-  if (!currentWorkspaceMember) {
+  if (currentWorkspace.activationStatus !== 'active') {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
 
   if (
-    !currentWorkspaceMember.name.firstName ||
-    !currentWorkspaceMember.name.lastName
+    !currentWorkspaceMember?.name.firstName ||
+    !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
   }

@@ -1,11 +1,11 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
 export const computeSchemaTags = (
   items: ObjectMetadataEntity[],
-): OpenAPIV3.TagObject[] => {
+): OpenAPIV3_1.TagObject[] => {
   const results = [{ name: 'General', description: 'General requests' }];
 
   items.forEach((item) => {

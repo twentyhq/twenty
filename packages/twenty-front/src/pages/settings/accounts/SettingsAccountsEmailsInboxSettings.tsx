@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
 import {
   InboxSettingsVisibilityValue,
   SettingsAccountsInboxSettingsVisibilitySection,
@@ -36,6 +37,15 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     });
   };
 
+  const handleContactAutoCreationToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: messageChannelId,
+      updateOneRecordInput: {
+        isContactAutoCreationEnabled: value,
+      },
+    });
+  };
+
   useEffect(() => {
     if (!loading && !messageChannel) navigate(AppPath.NotFound);
   }, [loading, messageChannel, navigate]);
@@ -61,11 +71,10 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           value={messageChannel?.visibility}
           onChange={handleVisibilityChange}
         />
-        {/* TODO : Add this section when the backend will be ready to auto create contacts */}
-        {/* <SettingsAccountsInboxSettingsContactAutoCreateSection
+        <SettingsAccountsInboxSettingsContactAutoCreateSection
           messageChannel={messageChannel}
           onToggle={handleContactAutoCreationToggle}
-        /> */}
+        />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -36,10 +36,10 @@ export const SettingsObjectItemTableRow = ({
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { records } = useFindManyRecords({
+  const { totalCount } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
+    depth: 0,
   });
-
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
 
@@ -61,7 +61,7 @@ export const SettingsObjectItemTableRow = ({
       <TableCell align="right">
         {objectItem.fields.filter((field) => !field.isSystem).length}
       </TableCell>
-      <TableCell align="right">{records.length}</TableCell>
+      <TableCell align="right">{totalCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>
   );

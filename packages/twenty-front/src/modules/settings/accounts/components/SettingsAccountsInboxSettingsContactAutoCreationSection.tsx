@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
-import { IconSend } from '@/ui/display/icon';
+import { IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Card } from '@/ui/layout/card/components/Card';
@@ -43,7 +43,7 @@ export const SettingsAccountsInboxSettingsContactAutoCreateSection = ({
       <Card>
         <StyledCardContent>
           <SettingsAccountsInboxSettingsCardMedia>
-            <IconSend size={theme.icon.size.sm} stroke={theme.icon.stroke.lg} />
+            <IconUser size={theme.icon.size.sm} stroke={theme.icon.stroke.lg} />
           </SettingsAccountsInboxSettingsCardMedia>
           <StyledTitle>Auto-creation</StyledTitle>
           <Toggle
