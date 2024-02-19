@@ -1,15 +1,11 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
-import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
+import { useInjectIntoActivitiesQuery } from '@/activities/hooks/useInjectIntoActivitiesQuery';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
 
 export const useInjectIntoTimelineActivitiesQueries = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
@@ -47,6 +43,8 @@ export const useInjectIntoTimelineActivitiesQueries = () => {
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 
+  const { injectActivitiesQueries } = useInjectIntoActivitiesQuery();
+
   const injectIntoTimelineActivitiesQueries = ({
     activityToInject,
     activityTargetsToInject,
@@ -56,78 +54,88 @@ export const useInjectIntoTimelineActivitiesQueries = () => {
     activityTargetsToInject: ActivityTarget[];
     timelineTargetableObject: ActivityTargetableObject;
   }) => {
-    const newActivity = {
-      ...activityToInject,
-      __typename: 'Activity',
-    };
-
-    const targetObjectFieldName = getActivityTargetObjectFieldIdName({
-      nameSingular: timelineTargetableObject.targetObjectNameSingular,
-    });
-
-    const activitiyTargetsForTargetableObjectQueryVariables = {
-      filter: {
-        [targetObjectFieldName]: {
-          eq: timelineTargetableObject.id,
-        },
+    injectActivitiesQueries({
+      activitiesFilters: {},
+      activitiesOrderByVariables: {
+        createdAt: 'DescNullsFirst',
       },
-    };
-
-    const existingActivityTargetsForTargetableObject =
-      readFindManyActivityTargetsQueryInCache({
-        queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
-      });
-
-    const newActivityTargetsForTargetableObject = [
-      ...existingActivityTargetsForTargetableObject,
-      ...activityTargetsToInject,
-    ];
-
-    const existingActivityIds = existingActivityTargetsForTargetableObject
-      ?.map((activityTarget) => activityTarget.activityId)
-      .filter(isNonEmptyString);
-
-    const timelineActivitiesQueryVariablesBeforeDrawerMount =
-      makeTimelineActivitiesQueryVariables({
-        activityIds: existingActivityIds,
-      });
-
-    console.log({
-      timelineActivitiesQueryVariablesBeforeDrawerMount,
+      activityTargetsToInject,
+      activityToInject,
+      targetableObjects: [timelineTargetableObject],
     });
 
-    const existingActivities = readFindManyActivitiesQueryInCache({
-      queryVariables: timelineActivitiesQueryVariablesBeforeDrawerMount,
-    });
+    // const newActivity = {
+    //   ...activityToInject,
+    //   __typename: 'Activity',
+    // };
 
-    const activityIdsAfterDrawerMount = [
-      ...existingActivityIds,
-      newActivity.id,
-    ];
+    // const targetObjectFieldName = getActivityTargetObjectFieldIdName({
+    //   nameSingular: timelineTargetableObject.targetObjectNameSingular,
+    // });
 
-    const timelineActivitiesQueryVariablesAfterDrawerMount =
-      makeTimelineActivitiesQueryVariables({
-        activityIds: activityIdsAfterDrawerMount,
-      });
+    // const activitiyTargetsForTargetableObjectQueryVariables = {
+    //   filter: {
+    //     [targetObjectFieldName]: {
+    //       eq: timelineTargetableObject.id,
+    //     },
+    //   },
+    // };
 
-    overwriteFindManyActivityTargetsQueryInCache({
-      objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
-      queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
-    });
+    // const existingActivityTargetsForTargetableObject =
+    //   readFindManyActivityTargetsQueryInCache({
+    //     queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+    //   });
 
-    const newActivities = [newActivity, ...existingActivities].toSorted(
-      sortObjectRecordByDateField('createdAt', 'DescNullsFirst'),
-    );
+    // const newActivityTargetsForTargetableObject = [
+    //   ...existingActivityTargetsForTargetableObject,
+    //   ...activityTargetsToInject,
+    // ];
 
-    console.log({
-      existingActivities,
-      newActivities,
-    });
+    // const existingActivityIds = existingActivityTargetsForTargetableObject
+    //   ?.map((activityTarget) => activityTarget.activityId)
+    //   .filter(isNonEmptyString);
 
-    overwriteFindManyActivitiesInCache({
-      objectRecordsToOverwrite: newActivities,
-      queryVariables: timelineActivitiesQueryVariablesAfterDrawerMount,
-    });
+    // const timelineActivitiesQueryVariablesBeforeDrawerMount =
+    //   makeTimelineActivitiesQueryVariables({
+    //     activityIds: existingActivityIds,
+    //   });
+
+    // console.log({
+    //   timelineActivitiesQueryVariablesBeforeDrawerMount,
+    // });
+
+    // const existingActivities = readFindManyActivitiesQueryInCache({
+    //   queryVariables: timelineActivitiesQueryVariablesBeforeDrawerMount,
+    // });
+
+    // const activityIdsAfterDrawerMount = [
+    //   ...existingActivityIds,
+    //   newActivity.id,
+    // ];
+
+    // const timelineActivitiesQueryVariablesAfterDrawerMount =
+    //   makeTimelineActivitiesQueryVariables({
+    //     activityIds: activityIdsAfterDrawerMount,
+    //   });
+
+    // overwriteFindManyActivityTargetsQueryInCache({
+    //   objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
+    //   queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+    // });
+
+    // const newActivities = [newActivity, ...existingActivities].toSorted(
+    //   sortObjectRecordByDateField('createdAt', 'DescNullsFirst'),
+    // );
+
+    // console.log({
+    //   existingActivities,
+    //   newActivities,
+    // });
+
+    // overwriteFindManyActivitiesInCache({
+    //   objectRecordsToOverwrite: newActivities,
+    //   queryVariables: timelineActivitiesQueryVariablesAfterDrawerMount,
+    // });
   };
 
   return {

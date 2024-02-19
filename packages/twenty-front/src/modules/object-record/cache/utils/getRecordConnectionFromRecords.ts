@@ -20,5 +20,6 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
       });
     }),
     pageInfo: getEmptyPageInfo(),
+    totalCount: records.length,
   } as ObjectRecordConnection<T>;
 };

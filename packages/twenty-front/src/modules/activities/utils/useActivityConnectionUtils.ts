@@ -15,7 +15,7 @@ export const useActivityConnectionUtils = () => {
 
   const makeActivityWithoutConnection = (activityWithConnections: any) => {
     if (!isDefined(activityWithConnections)) {
-      return { activity: null };
+      throw new Error('Activity with connections is not defined');
     }
 
     const hasActivityTargetsConnection = isObjectRecordConnection(

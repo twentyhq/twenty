@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -72,6 +73,16 @@ export const ActivityActionBar = () => {
         if (activityInDrawer) {
           const activityTargetIdsToDelete =
             activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
+
+          console.log({
+            temporaryActivityForEditor,
+          });
+
+          if (!isNonEmptyArray(activityTargetIdsToDelete)) {
+            throw new Error('Activity target ids are empty');
+          }
+
+          console.log({ activityTargetIdsToDelete });
 
           if (isDefined(timelineTargetableObject)) {
             removeFromTimelineActivitiesQueries({

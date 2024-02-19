@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
+import { useActivities } from '@/activities/hooks/useActivities';
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -34,8 +35,10 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, initialized } = useTimelineActivities({
-    targetableObject,
+  const { activities, initialized } = useActivities({
+    targetableObjects: [targetableObject],
+    activitiesFilters: {},
+    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
   });
 
   const setTimelineTargetableObject = useSetRecoilState(

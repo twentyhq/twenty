@@ -1,15 +1,13 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
+import { useRemoveFromActivitiesQueries } from '@/activities/hooks/useRemoveFromActivitiesQueries';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
-import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
 
 export const useRemoveFromTimelineActivitiesQueries = () => {
   const timelineTargetableObject = useRecoilValue(
@@ -51,6 +49,8 @@ export const useRemoveFromTimelineActivitiesQueries = () => {
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 
+  const { removeFromActivitiesQueries } = useRemoveFromActivitiesQueries();
+
   const removeFromTimelineActivitiesQueries = ({
     activityIdToRemove,
     activityTargetsToRemove,
@@ -62,70 +62,78 @@ export const useRemoveFromTimelineActivitiesQueries = () => {
       throw new Error('Timeline targetable object is not defined');
     }
 
-    const targetObjectFieldName = getActivityTargetObjectFieldIdName({
-      nameSingular: timelineTargetableObject.targetObjectNameSingular,
-    });
-
-    const activitiyTargetsForTargetableObjectQueryVariables = {
-      filter: {
-        [targetObjectFieldName]: {
-          eq: timelineTargetableObject.id,
-        },
-      },
-    };
-
-    const existingActivityTargetsForTargetableObject =
-      readFindManyActivityTargetsQueryInCache({
-        queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
-      });
-
-    const newActivityTargetsForTargetableObject = isNonEmptyArray(
+    removeFromActivitiesQueries({
+      activityIdToRemove,
       activityTargetsToRemove,
-    )
-      ? existingActivityTargetsForTargetableObject.filter(
-          (existingActivityTarget) =>
-            activityTargetsToRemove.some(
-              (activityTargetToRemove) =>
-                activityTargetToRemove.id !== existingActivityTarget.id,
-            ),
-        )
-      : existingActivityTargetsForTargetableObject;
-
-    overwriteFindManyActivityTargetsQueryInCache({
-      objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
-      queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+      targetableObjects: [timelineTargetableObject],
+      activitiesFilters: {},
+      activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
     });
 
-    const existingActivityIds = existingActivityTargetsForTargetableObject
-      ?.map((activityTarget) => activityTarget.activityId)
-      .filter(isNonEmptyString);
+    // const targetObjectFieldName = getActivityTargetObjectFieldIdName({
+    //   nameSingular: timelineTargetableObject.targetObjectNameSingular,
+    // });
 
-    const timelineActivitiesQueryVariablesBeforeDrawerMount =
-      makeTimelineActivitiesQueryVariables({
-        activityIds: existingActivityIds,
-      });
+    // const activitiyTargetsForTargetableObjectQueryVariables = {
+    //   filter: {
+    //     [targetObjectFieldName]: {
+    //       eq: timelineTargetableObject.id,
+    //     },
+    //   },
+    // };
 
-    const existingActivities = readFindManyActivitiesQueryInCache({
-      queryVariables: timelineActivitiesQueryVariablesBeforeDrawerMount,
-    });
+    // const existingActivityTargetsForTargetableObject =
+    //   readFindManyActivityTargetsQueryInCache({
+    //     queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+    //   });
 
-    const activityIdsAfterRemoval = existingActivityIds.filter(
-      (existingActivityId) => existingActivityId !== activityIdToRemove,
-    );
+    // const newActivityTargetsForTargetableObject = isNonEmptyArray(
+    //   activityTargetsToRemove,
+    // )
+    //   ? existingActivityTargetsForTargetableObject.filter(
+    //       (existingActivityTarget) =>
+    //         activityTargetsToRemove.some(
+    //           (activityTargetToRemove) =>
+    //             activityTargetToRemove.id !== existingActivityTarget.id,
+    //         ),
+    //     )
+    //   : existingActivityTargetsForTargetableObject;
 
-    const timelineActivitiesQueryVariablesAfterRemoval =
-      makeTimelineActivitiesQueryVariables({
-        activityIds: activityIdsAfterRemoval,
-      });
+    // overwriteFindManyActivityTargetsQueryInCache({
+    //   objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
+    //   queryVariables: activitiyTargetsForTargetableObjectQueryVariables,
+    // });
 
-    const newActivities = existingActivities
-      .filter((existingActivity) => existingActivity.id !== activityIdToRemove)
-      .toSorted(sortObjectRecordByDateField('createdAt', 'DescNullsFirst'));
+    // const existingActivityIds = existingActivityTargetsForTargetableObject
+    //   ?.map((activityTarget) => activityTarget.activityId)
+    //   .filter(isNonEmptyString);
 
-    overwriteFindManyActivitiesInCache({
-      objectRecordsToOverwrite: newActivities,
-      queryVariables: timelineActivitiesQueryVariablesAfterRemoval,
-    });
+    // const timelineActivitiesQueryVariablesBeforeDrawerMount =
+    //   makeTimelineActivitiesQueryVariables({
+    //     activityIds: existingActivityIds,
+    //   });
+
+    // const existingActivities = readFindManyActivitiesQueryInCache({
+    //   queryVariables: timelineActivitiesQueryVariablesBeforeDrawerMount,
+    // });
+
+    // const activityIdsAfterRemoval = existingActivityIds.filter(
+    //   (existingActivityId) => existingActivityId !== activityIdToRemove,
+    // );
+
+    // const timelineActivitiesQueryVariablesAfterRemoval =
+    //   makeTimelineActivitiesQueryVariables({
+    //     activityIds: activityIdsAfterRemoval,
+    //   });
+
+    // const newActivities = existingActivities
+    //   .filter((existingActivity) => existingActivity.id !== activityIdToRemove)
+    //   .toSorted(sortObjectRecordByDateField('createdAt', 'DescNullsFirst'));
+
+    // overwriteFindManyActivitiesInCache({
+    //   objectRecordsToOverwrite: newActivities,
+    //   queryVariables: timelineActivitiesQueryVariablesAfterRemoval,
+    // });
   };
 
   return {

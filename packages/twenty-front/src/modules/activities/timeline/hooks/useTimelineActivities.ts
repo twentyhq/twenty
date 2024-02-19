@@ -85,6 +85,7 @@ export const useTimelineActivities = ({
           },
         [initialized],
       ),
+      depth: 3,
     });
 
   console.log({
