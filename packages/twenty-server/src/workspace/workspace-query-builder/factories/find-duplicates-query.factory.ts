@@ -44,6 +44,7 @@ export class FindDuplicatesQueryFactory {
     const duplicateCondition = this.buildDuplicateCondition(
       options.objectMetadataItem,
       argsData,
+      args.id,
     );
 
     const filters = stringifyWithoutKeyQuote(duplicateCondition);
@@ -72,7 +73,7 @@ export class FindDuplicatesQueryFactory {
       currentRecord?.[0]?.resolve?.data?.[entityKey].edges?.[0]?.node;
 
     if (currentRecordResult) {
-      return currentRecordResult;
+      return currentRecordResult as Record<string, unknown>;
     }
 
     return this.argsAliasFactory.create(
@@ -104,25 +105,31 @@ export class FindDuplicatesQueryFactory {
 
   private buildDuplicateCondition(
     objectMetadataItem: ObjectMetadataInterface,
-    currentRecord?: PGGraphQLResult,
+    argsData?: Record<string, unknown>,
+    filteringByExistingRecordId?: string,
   ) {
-    if (!currentRecord) {
+    if (!argsData) {
       return;
     }
 
     const criterias = this.getApplicableDuplicateCriterias(objectMetadataItem);
 
     return {
+      // when filtering by an existing record, we need to filter that explicit record out
+      ...(filteringByExistingRecordId && {
+        id: { neq: filteringByExistingRecordId },
+      }),
+      // keep condition as "or" to get results by more duplicate criterias
       or: criterias
         .map((dc) =>
           dc.fieldNames.reduce((acc, curr) => {
-            if (!currentRecord[curr]) {
+            if (!argsData[curr]) {
               return acc;
             }
 
             return {
               ...acc,
-              [curr]: { ilike: `%${currentRecord[curr]}%` },
+              [curr]: { ilike: `%${argsData[curr]}%` },
             };
           }, {}),
         )
