@@ -17,6 +17,11 @@ export function generateDefaultValue(
         firstName: '',
         lastName: '',
       };
+    case FieldMetadataType.LINK:
+      return {
+        url: '',
+        label: '',
+      };
     default:
       return null;
   }

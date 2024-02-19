@@ -16,6 +16,8 @@ import {
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { serializeTypeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-type-default-value.util';
+import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -165,8 +167,20 @@ export class DatabaseStructureService {
     postgresDataType: string,
   ): FieldMetadataType | null {
     const mainDataSource = this.typeORMService.getMainDataSource();
+    const types = Object.values(FieldMetadataType).filter((type) => {
+      // We're skipping composite and relation types, as they're not directly mapped to a column type
+      if (isCompositeFieldMetadataType(type)) {
+        return false;
+      }
 
-    for (const type in FieldMetadataType) {
+      if (isRelationFieldMetadataType(type)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    for (const type of types) {
       const typeORMType = fieldMetadataTypeToColumnType(
         FieldMetadataType[type],
       ) as ColumnType;
