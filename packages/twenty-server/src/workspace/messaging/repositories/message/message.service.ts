@@ -203,9 +203,7 @@ export class MessageService {
         workspaceId,
       );
 
-    const isOutgoing = connectedAccount.handle === message.fromHandle;
-
-    if (isContactAutoCreationEnabled && isOutgoing) {
+    if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
         message.participants,
         workspaceId,
