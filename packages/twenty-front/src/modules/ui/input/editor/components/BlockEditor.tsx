@@ -5,10 +5,11 @@ import styled from '@emotion/styled';
 
 interface BlockEditorProps {
   editor: BlockNoteEditor;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const StyledEditor = styled.div`
-  min-height: 200px;
   width: 100%;
   & .editor {
     background: ${({ theme }) => theme.background.primary};
@@ -21,12 +22,26 @@ const StyledEditor = styled.div`
   }
 `;
 
-export const BlockEditor = ({ editor }: BlockEditorProps) => {
+export const BlockEditor = ({ editor, onFocus, onBlur }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+
+  const handleFocus = () => {
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    onBlur?.();
+  };
+
   return (
     <StyledEditor>
-      <BlockNoteView editor={editor} theme={blockNoteTheme} />
+      <BlockNoteView
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        editor={editor}
+        theme={blockNoteTheme}
+      />
     </StyledEditor>
   );
 };

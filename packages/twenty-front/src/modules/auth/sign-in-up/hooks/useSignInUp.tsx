@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useParams } from 'react-router-dom';
 
+import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
-import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -26,14 +25,18 @@ export enum SignInUpStep {
 }
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
-  const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+
   const isMatchingLocation = useIsMatchingLocation();
-  const billing = useRecoilValue(billingState);
+
   const workspaceInviteHash = useParams().workspaceInviteHash;
+
+  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
+
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
+
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
     if (isMatchingLocation(AppPath.Invite)) {
       return SignInUpMode.Invite;
@@ -43,6 +46,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
+
   const {
     signInWithCredentials,
     signUpWithCredentials,
@@ -84,7 +88,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        const { workspace: currentWorkspace } =
+        const {
+          workspace: currentWorkspace,
+          workspaceMember: currentWorkspaceMember,
+        } =
           signInUpMode === SignInUpMode.SignIn
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
@@ -96,19 +103,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
                 workspaceInviteHash,
               );
 
-        if (
-          billing?.isBillingEnabled &&
-          currentWorkspace.subscriptionStatus !== 'active'
-        ) {
-          navigate(AppPath.PlanRequired);
-          return;
-        }
-        if (currentWorkspace.displayName) {
-          navigate(AppPath.Index);
-          return;
-        }
-
-        navigate(AppPath.CreateWorkspace);
+        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',
@@ -120,8 +115,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      billing?.isBillingEnabled,
-      navigate,
+      navigateAfterSignInUp,
       enqueueSnackBar,
     ],
   );

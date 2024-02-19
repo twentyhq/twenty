@@ -167,7 +167,13 @@ export class AuthService {
       defaultWorkspace: workspace,
     });
 
-    return await this.userRepository.save(userToCreate);
+    const user = await this.userRepository.save(userToCreate);
+
+    if (workspaceInviteHash) {
+      await this.userService.createWorkspaceMember(user);
+    }
+
+    return user;
   }
 
   async verify(email: string): Promise<Verify> {

@@ -21,8 +21,14 @@ import { FindOneQueryFactory } from './factories/find-one-query.factory';
 import { CreateManyQueryFactory } from './factories/create-many-query.factory';
 import { UpdateOneQueryFactory } from './factories/update-one-query.factory';
 import { DeleteOneQueryFactory } from './factories/delete-one-query.factory';
-import { UpdateManyQueryFactory } from './factories/update-many-query.factory';
-import { DeleteManyQueryFactory } from './factories/delete-many-query.factory';
+import {
+  UpdateManyQueryFactory,
+  UpdateManyQueryFactoryOptions,
+} from './factories/update-many-query.factory';
+import {
+  DeleteManyQueryFactory,
+  DeleteManyQueryFactoryOptions,
+} from './factories/delete-many-query.factory';
 
 @Injectable()
 export class WorkspaceQueryBuilderFactory {
@@ -81,14 +87,14 @@ export class WorkspaceQueryBuilderFactory {
     Filter extends RecordFilter = RecordFilter,
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: UpdateManyQueryFactoryOptions,
   ): Promise<string> {
     return this.updateManyQueryFactory.create(args, options);
   }
 
   deleteMany<Filter extends RecordFilter = RecordFilter>(
     args: DeleteManyResolverArgs<Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: DeleteManyQueryFactoryOptions,
   ): Promise<string> {
     return this.deleteManyQueryFactory.create(args, options);
   }

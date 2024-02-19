@@ -62,6 +62,7 @@ describe('useFindManyRecords', () => {
         setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
           name: { firstName: 'John', lastName: 'Connor' },
+          locale: 'en',
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();

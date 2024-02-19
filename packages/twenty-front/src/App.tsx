@@ -35,6 +35,7 @@ import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-ke
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
+import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -61,7 +62,7 @@ export const App = () => {
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
-          <Route path="/" element={<DefaultHomePage />} />
+          <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
@@ -152,6 +153,10 @@ export const App = () => {
                       />
                     </Routes>
                   }
+                />
+                <Route
+                  path={SettingsPath.Integrations}
+                  element={<SettingsIntegrations />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}

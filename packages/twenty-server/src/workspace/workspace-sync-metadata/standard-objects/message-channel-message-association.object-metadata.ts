@@ -1,6 +1,5 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -15,9 +14,6 @@ import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
   labelPlural: 'Message Channel Message Associations',
   description: 'Message Synced with a Message Channel',
   icon: 'IconMessage',
-})
-@Gate({
-  featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
 export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMetadata {

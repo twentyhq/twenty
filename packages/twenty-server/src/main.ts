@@ -16,7 +16,7 @@ import { EnvironmentService } from './integrations/environment/environment.servi
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
-    bufferLogs: true,
+    bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
   });
   const logger = app.get(LoggerService);
 

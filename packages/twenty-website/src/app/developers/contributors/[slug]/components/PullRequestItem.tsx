@@ -24,6 +24,16 @@ const StyledTitle = styled.a`
   }
 `;
 
+const StyledPrLink = styled.a`
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    color: #474747;
+  }
+`;
+
 const StyledDescription = styled.div`
   font-size: 20px;
   line-height: 28px;
@@ -73,8 +83,13 @@ export const PullRequestItem = ({
           {title}
         </StyledTitle>
         <StyledDescription>
-          #{prNumber} by {authorId.slice(1)} was{' '}
-          {mergedAt ? `merged` : `opened`}{' '}
+          <StyledPrLink
+            href={'https://github.com/twentyhq/twenty/pull/' + prNumber}
+            target="__blank"
+          >
+            #{prNumber}
+          </StyledPrLink>{' '}
+          by {authorId} was {mergedAt ? `merged` : `opened`}{' '}
           <span id={`date-${prNumber}`}>
             {formatIntoRelativeDate(mergedAt ? mergedAt : createdAt)}
           </span>

@@ -22,7 +22,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      setCurrentWorkspace(null);
+      setCurrentWorkspace(mockedOnboardingUsersData[1].defaultWorkspace);
       return <Story />;
     },
     PageDecorator,
