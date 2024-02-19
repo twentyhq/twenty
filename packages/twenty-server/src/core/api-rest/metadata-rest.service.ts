@@ -39,7 +39,7 @@ export class ApiRestMetadataService {
     }
   }
 
-  async fetchMetadataFields(request, fieldName: string) {
+  async fetchMetadataInputFields(request, fieldName: string) {
     const query = `
             query { 
                 __type(name: "${fieldName}") { 
@@ -58,15 +58,157 @@ export class ApiRestMetadataService {
     return fields;
   }
 
+  fetchMetadataFields(objectNamePlural: string) {
+    switch (objectNamePlural) {
+      case 'objects':
+        return `
+          dataSourceId
+          nameSingular
+          namePlural
+          labelSingular
+          labelPlural
+          description
+          icon
+          isCustom
+          isActive
+          isSystem
+          createdAt
+          updatedAt
+          labelIdentifierFieldMetadataId
+          imageIdentifierFieldMetadataId
+        `;
+      case 'fields':
+        return `
+          type
+          name
+          label
+          description
+          icon
+          isCustom
+          isActive
+          isSystem
+          isNullable
+          createdAt
+          updatedAt
+          fromRelationMetadata {
+            id
+            relationType
+            toObjectMetadata {
+              id
+              dataSourceId
+              nameSingular
+              namePlural
+              isSystem
+            }
+            toFieldMetadataId
+          }
+          toRelationMetadata {
+            id
+            relationType
+            fromObjectMetadata {
+              id
+              dataSourceId
+              nameSingular
+              namePlural
+              isSystem
+            }
+            fromFieldMetadataId
+          }
+          defaultValue
+          options
+        `;
+      case 'relations':
+        return `
+          relationType
+          fromObjectMetadata {
+            id
+            dataSourceId
+            nameSingular
+            namePlural
+            isSystem
+          }
+          fromObjectMetadataId
+          toObjectMetadata {
+            id
+            dataSourceId
+            nameSingular
+            namePlural
+            isSystem
+          }
+          toObjectMetadataId
+          fromFieldMetadataId
+          toFieldMetadataId
+        `;
+    }
+  }
+
+  generateFindManyQuery(objectNameSingular: string, objectNamePlural: string) {
+    const fields = this.fetchMetadataFields(objectNamePlural);
+
+    return `
+      query FindMany${capitalize(objectNamePlural)}(
+        $filter: ${objectNameSingular}Filter,
+        ) {
+        ${objectNamePlural}(
+        filter: $filter
+        ) {
+          edges {
+            node {
+              id
+              ${fields}
+              }
+          }
+        }
+      }
+    `;
+  }
+
+  generateFindOneQuery(objectNameSingular: string, objectNamePlural: string) {
+    const fields = this.fetchMetadataFields(objectNamePlural);
+
+    return `
+      query FindOne${capitalize(objectNameSingular)}(
+        $id: ID!,
+        ) {
+        ${objectNameSingular}(id: $id) {
+          id
+          ${fields}
+        }
+      }
+    `;
+  }
+
+  async get(request) {
+    try {
+      await this.tokenService.validateToken(request);
+
+      const { objectNameSingular, objectNamePlural, id } =
+        parseMetadataPath(request);
+
+      const query = id
+        ? this.generateFindOneQuery(objectNameSingular, objectNamePlural)
+        : this.generateFindManyQuery(objectNameSingular, objectNamePlural);
+
+      const data: ApiRestQuery = {
+        query,
+        variables: id ? { id } : request.body,
+      };
+
+      return await this.callMetadata(request, data);
+    } catch (err) {
+      return { data: { error: err, status: err.status } };
+    }
+  }
+
   async create(request) {
     try {
       await this.tokenService.validateToken(request);
 
-      const { object: objectName } = parseMetadataPath(request);
+      const { objectNameSingular: objectName } = parseMetadataPath(request);
       const objectNameCapitalized = capitalize(objectName);
 
       const fieldName = `Create${objectNameCapitalized}Input`;
-      const fields = await this.fetchMetadataFields(request, fieldName);
+      const fields = await this.fetchMetadataInputFields(request, fieldName);
 
       const query = `
             mutation Create${objectNameCapitalized}($input: CreateOne${objectNameCapitalized}Input!) {
@@ -96,7 +238,7 @@ export class ApiRestMetadataService {
     try {
       await this.tokenService.validateToken(request);
 
-      const { object: objectName, id } = parseMetadataPath(request);
+      const { objectNameSingular: objectName, id } = parseMetadataPath(request);
       const objectNameCapitalized = capitalize(objectName);
 
       if (!id) {
@@ -105,7 +247,7 @@ export class ApiRestMetadataService {
         );
       }
       const fieldName = `Update${objectNameCapitalized}Input`;
-      const fields = await this.fetchMetadataFields(request, fieldName);
+      const fields = await this.fetchMetadataInputFields(request, fieldName);
 
       const query = `
             mutation Update${objectNameCapitalized}($input: UpdateOne${objectNameCapitalized}Input!) {
@@ -136,7 +278,7 @@ export class ApiRestMetadataService {
     try {
       await this.tokenService.validateToken(request);
 
-      const { object: objectName, id } = parseMetadataPath(request);
+      const { objectNameSingular: objectName, id } = parseMetadataPath(request);
       const objectNameCapitalized = capitalize(objectName);
 
       if (!id) {
