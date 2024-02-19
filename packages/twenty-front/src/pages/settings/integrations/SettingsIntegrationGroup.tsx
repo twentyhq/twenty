@@ -3,11 +3,10 @@ import styled from '@emotion/styled';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 import { SettingsIntegrationComponent } from '~/pages/settings/integrations/SettingsIntegrationComponent';
-
-import { IntegrationCategory } from './constants/IntegrationTypes';
+import { SettingsIntegrationCategory } from '~/pages/settings/integrations/types/SettingsIntegrationCategory';
 
 interface SettingsIntegrationGroupProps {
-  integrationGroup: IntegrationCategory;
+  integrationGroup: SettingsIntegrationCategory;
 }
 
 const StyledIntegrationGroupHeader = styled.div`

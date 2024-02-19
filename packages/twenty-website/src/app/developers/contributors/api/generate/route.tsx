@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+import { global } from '@apollo/client/utilities/globals';
 import { graphql } from '@octokit/graphql';
 
 import { insertMany, migrate } from '@/database/database';
@@ -86,7 +89,7 @@ interface RepoData {
 
 const query = graphql.defaults({
   headers: {
-    Authorization: 'bearer ' + process.env.GITHUB_TOKEN,
+    Authorization: 'bearer ' + global.process.env.GITHUB_TOKEN,
   },
 });
 
@@ -196,6 +199,10 @@ async function fetchAssignableUsers(): Promise<Set<string>> {
 }
 
 export async function GET() {
+  if (!global.process.env.GITHUB_TOKEN) {
+    return new Response('No GitHub token provided', { status: 500 });
+  }
+
   await migrate();
 
   // TODO if we ever hit API Rate Limiting
@@ -322,5 +329,7 @@ export async function GET() {
     }
   }
 
-  return new Response('Data synced', { status: 200 });
+  return new Response('Data synced', {
+    status: 200,
+  });
 }

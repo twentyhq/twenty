@@ -299,4 +299,10 @@ export class EnvironmentService {
   getApiRateLimitingLimit(): number {
     return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 500;
   }
+
+  getMutationMaximumRecordAffected(): number {
+    return (
+      this.configService.get<number>('MUTATION_MAXIMUM_RECORD_AFFECTED') ?? 100
+    );
+  }
 }

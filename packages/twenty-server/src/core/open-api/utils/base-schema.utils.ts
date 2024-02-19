@@ -1,8 +1,8 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { computeOpenApiPath } from 'src/core/open-api/utils/path.utils';
 
-export const baseSchema = (): OpenAPIV3.Document => {
+export const baseSchema = (): OpenAPIV3_1.Document => {
   return {
     openapi: '3.0.3',
     info: {

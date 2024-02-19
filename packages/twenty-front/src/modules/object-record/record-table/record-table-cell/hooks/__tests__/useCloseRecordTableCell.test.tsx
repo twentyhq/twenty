@@ -3,7 +3,6 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -23,7 +22,6 @@ jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
 }));
 
 const onColumnsChange = jest.fn();
-const deleteEntity = jest.fn();
 const scopeId = 'scopeId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -44,9 +42,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
           <RecordTableCellContext.Provider
             value={{ ...recordTableCell, columnIndex: 0 }}
           >
-            <EntityDeleteContext.Provider value={deleteEntity}>
-              {children}
-            </EntityDeleteContext.Provider>
+            {children}
           </RecordTableCellContext.Provider>
         </RecordTableRowContext.Provider>
       </FieldContext.Provider>
@@ -86,6 +82,5 @@ describe('useCloseRecordTableCell', () => {
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
     expect(result.current.isTableCellInEditMode).toBe(false);
     expect(setHotkeyScope).toHaveBeenCalledWith('table-soft-focus');
-    expect(deleteEntity).toHaveBeenCalled();
   });
 });

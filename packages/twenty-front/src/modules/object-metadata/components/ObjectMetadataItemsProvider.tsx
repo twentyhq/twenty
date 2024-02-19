@@ -1,6 +1,7 @@
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState.ts';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
@@ -9,14 +10,17 @@ export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const isCurrentWorkspaceActive = useRecoilValue(
-    isCurrentWorkspaceActiveSelector,
-  );
-
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const shouldDisplayChildren = () => {
+    if (objectMetadataItems.length) {
+      return true;
+    }
+    return !currentWorkspaceMember;
+  };
   return (
     <>
       <ObjectMetadataItemsLoadEffect />
-      {(!isCurrentWorkspaceActive || !!objectMetadataItems.length) && (
+      {shouldDisplayChildren() && (
         <RelationPickerScope relationPickerScopeId="relation-picker">
           {children}
         </RelationPickerScope>
