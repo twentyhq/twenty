@@ -13,7 +13,12 @@ import { isDefined } from '~/utils/isDefined';
 export const useActivityConnectionUtils = () => {
   const mapConnectionToRecords = useMapConnectionToRecords();
 
-  const makeActivityWithoutConnection = (activityWithConnections: any) => {
+  const makeActivityWithoutConnection = (
+    activityWithConnections: Activity & {
+      activityTargets: ObjectRecordConnection<ActivityTarget>;
+      comments: ObjectRecordConnection<Comment>;
+    },
+  ) => {
     if (!isDefined(activityWithConnections)) {
       throw new Error('Activity with connections is not defined');
     }

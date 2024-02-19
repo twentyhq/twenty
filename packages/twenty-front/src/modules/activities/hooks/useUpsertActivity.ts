@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
@@ -38,6 +39,8 @@ export const useUpsertActivity = () => {
 
   const { makeActivityWithConnection } = useActivityConnectionUtils();
 
+  const apolloClient = useApolloClient();
+
   const upsertActivity = async ({
     activity,
     input,
@@ -66,6 +69,10 @@ export const useUpsertActivity = () => {
       }
 
       await createActivityInDB(activityToCreate);
+
+      await apolloClient.refetchQueries({
+        include: ['FindManyActivities', 'FindManyActivityTargets'],
+      });
 
       setActivityInDrawer(activityToCreate);
 

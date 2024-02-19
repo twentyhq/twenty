@@ -18,10 +18,14 @@ export const useActivities = ({
   targetableObjects,
   activitiesFilters,
   activitiesOrderByVariables,
+  skip,
+  skipActivityTargets,
 }: {
   targetableObjects: ActivityTargetableObject[];
   activitiesFilters: ObjectRecordQueryFilter;
   activitiesOrderByVariables: OrderByField;
+  skip?: boolean;
+  skipActivityTargets?: boolean;
 }) => {
   const [initialized, setInitialized] = useState(false);
 
@@ -33,6 +37,7 @@ export const useActivities = ({
     initialized: initializedActivityTargets,
   } = useActivityTargetsForTargetableObjects({
     targetableObjects,
+    skip: skipActivityTargets || skip,
   });
 
   const activityIds = activityTargets
@@ -52,9 +57,14 @@ export const useActivities = ({
     ...activitiesFilters,
   };
 
+  const skipActivities =
+    skip ||
+    (!skipActivityTargets &&
+      (!initializedActivityTargets || !activityTargetsFound));
+
   const { records: activitiesWithConnection, loading: loadingActivities } =
     useFindManyRecords<Activity>({
-      // skip: !loadingActivityTargets,
+      skip: skipActivities,
       objectNameSingular: CoreObjectNameSingular.Activity,
       filter,
       orderBy: activitiesOrderByVariables,
@@ -77,21 +87,45 @@ export const useActivities = ({
       ),
     });
 
-  useEffect(() => {
-    if (activityTargetsFound) {
-      setInitialized(true);
-    }
-  }, [activityTargetsFound]);
-
   const loading = loadingActivities || loadingActivityTargets;
 
+  // TODO: fix connection in relation => automatically change to an array
   const activities = activitiesWithConnection
-    ?.map(makeActivityWithoutConnection)
-    .map(({ activity }) => activity);
+    ?.map(makeActivityWithoutConnection as any)
+    .map(({ activity }: any) => activity);
+
+  const noActivities =
+    (!activityTargetsFound && !skipActivityTargets && initialized) ||
+    (initialized && !loading && !isNonEmptyArray(activities));
+
+  useEffect(() => {
+    if (skipActivities || noActivities) {
+      console.log('activities', activities);
+      setInitialized(true);
+    }
+  }, [
+    activities,
+    initialized,
+    loading,
+    noActivities,
+    skipActivities,
+    skipActivityTargets,
+  ]);
+
+  console.log({
+    skipActivities,
+    activities,
+    skipActivityTargets,
+    activityTargetsFound,
+    loading,
+    initialized,
+    noActivities,
+  });
 
   return {
     activities,
     loading,
     initialized,
+    noActivities,
   };
 };

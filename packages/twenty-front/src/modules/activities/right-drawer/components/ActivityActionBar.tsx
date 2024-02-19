@@ -37,13 +37,13 @@ export const ActivityActionBar = () => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
-    // refetchFindManyQuery: true,
+    refetchFindManyQuery: true,
   });
 
   const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
     {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      // refetchFindManyQuery: true,
+      refetchFindManyQuery: true,
     },
   );
 
@@ -78,10 +78,6 @@ export const ActivityActionBar = () => {
             temporaryActivityForEditor,
           });
 
-          if (!isNonEmptyArray(activityTargetIdsToDelete)) {
-            throw new Error('Activity target ids are empty');
-          }
-
           console.log({ activityTargetIdsToDelete });
 
           if (isDefined(timelineTargetableObject)) {
@@ -91,7 +87,9 @@ export const ActivityActionBar = () => {
             });
           }
 
-          deleteManyActivityTargets(activityTargetIdsToDelete);
+          if (isNonEmptyArray(activityTargetIdsToDelete)) {
+            deleteManyActivityTargets(activityTargetIdsToDelete);
+          }
           deleteOneActivity?.(viewableActivityId);
         }
       }

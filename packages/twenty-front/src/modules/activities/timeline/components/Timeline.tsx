@@ -15,6 +15,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { isDefined } from '~/utils/isDefined';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 
@@ -35,10 +36,11 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, initialized } = useActivities({
+  const { activities, initialized, noActivities } = useActivities({
     targetableObjects: [targetableObject],
     activitiesFilters: {},
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    skip: !isDefined(targetableObject),
   });
 
   const setTimelineTargetableObject = useSetRecoilState(
@@ -49,7 +51,7 @@ export const Timeline = ({
     setTimelineTargetableObject(targetableObject);
   }, [targetableObject, setTimelineTargetableObject]);
 
-  const showEmptyState = initialized && activities.length === 0;
+  const showEmptyState = noActivities;
 
   const showLoadingState = !initialized;
 

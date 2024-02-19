@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -28,6 +29,8 @@ export const useTasks = ({
       }
     : undefined;
 
+  const skipActivityTargets = !isNonEmptyArray(targetableObjects);
+
   const {
     activities: completeTasksData,
     initialized: initializedCompleteTasks,
@@ -39,6 +42,11 @@ export const useTasks = ({
       ...assigneeIdFilter,
     },
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    skipActivityTargets,
+  });
+
+  console.log({
+    targetableObjects,
   });
 
   const {
@@ -52,6 +60,7 @@ export const useTasks = ({
       ...assigneeIdFilter,
     },
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    skipActivityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
