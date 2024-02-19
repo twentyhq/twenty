@@ -205,6 +205,7 @@ export class MessageService {
 
     if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+        connectedAccount.handle,
         message.participants,
         workspaceId,
         manager,

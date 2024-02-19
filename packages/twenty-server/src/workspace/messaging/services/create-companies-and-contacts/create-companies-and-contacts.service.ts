@@ -2,47 +2,56 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
+import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly personService: PersonService,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
   ) {}
 
   async createCompaniesAndContacts(
+    selfHandle: string,
     participants: Participant[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const selfDomainName = getDomainNameFromHandle(selfHandle);
+
+    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
+    const participantsFromOtherCompanies = participants.filter(
+      (participant) =>
+        getDomainNameFromHandle(participant.handle) !== selfDomainName,
+    );
+
+    if (!participantsFromOtherCompanies.length) {
+      return;
+    }
 
     const uniqueHandles = Array.from(
-      new Set(participants.map((participant) => participant.handle)),
+      new Set(
+        participantsFromOtherCompanies.map((participant) => participant.handle),
+      ),
     );
 
     const uniqueParticipants = uniqueHandles.map((handle) => {
-      const participant = participants.find(
+      const participant = participantsFromOtherCompanies.find(
         (participant) => participant.handle === handle,
       );
 
       return participant;
     }) as Participant[];
 
-    const alreadyCreatedContacts =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [uniqueParticipants.map((participant) => participant.handle)],
-        workspaceId,
-        transactionManager,
-      );
+    const alreadyCreatedContacts = await this.personService.getByEmails(
+      uniqueHandles,
+      workspaceId,
+    );
 
     const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
       ({ email }) => email,
