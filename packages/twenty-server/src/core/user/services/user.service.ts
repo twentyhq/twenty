@@ -137,7 +137,7 @@ export class UserService extends TypeOrmQueryService<User> {
     assert(
       userToReset.defaultWorkspace.id ===
         userRequestingWorkspaceReset.defaultWorkspace.id,
-      'Cannot delete a workspace member that does not belong to your workspace',
+      'Cannot reset the default workspace of a user that does not belong to your workspace',
     );
 
     return await this.resetDefaultWorkspaceWithoutCheck(userId);
