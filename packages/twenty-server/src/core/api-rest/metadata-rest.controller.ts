@@ -1,4 +1,4 @@
-import { Controller, Delete, Post, Put, Req, Res } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Put, Req, Res } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
@@ -9,10 +9,10 @@ import { ApiRestMetadataService } from 'src/core/api-rest/metadata-rest.service'
 export class ApiRestMetadataController {
   constructor(private readonly apiRestService: ApiRestMetadataService) {}
 
-  // @Get()
-  // async handleApiGet(@Req() request: Request, @Res() res: Response) {
-  //   handleResult(res, await this.apiRestService.get(request));
-  // }
+  @Get()
+  async handleApiGet(@Req() request: Request, @Res() res: Response) {
+    handleResult(res, await this.apiRestService.get(request));
+  }
 
   @Delete()
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
