@@ -203,9 +203,25 @@ export class MessageService {
         workspaceId,
       );
 
-    if (isContactAutoCreationEnabled) {
+    if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
         message.participants,
+        workspaceId,
+        manager,
+      );
+
+      const handles = message.participants.map(
+        (participant) => participant.handle,
+      );
+
+      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+          handles,
+          workspaceId,
+        );
+
+      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
         manager,
       );

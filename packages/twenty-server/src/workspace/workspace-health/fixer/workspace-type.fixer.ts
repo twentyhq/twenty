@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
@@ -10,13 +10,20 @@ import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migrati
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
-import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
+import {
+  FieldMetadataUpdate,
+  WorkspaceMigrationFieldFactory,
+} from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 
 import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
 
+const oldDataTypes = ['integer'];
+
 @Injectable()
 export class WorkspaceTypeFixer extends AbstractWorkspaceFixer<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT> {
+  private readonly logger = new Logger(WorkspaceTypeFixer.name);
+
   constructor(
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
     private readonly databaseStructureService: DatabaseStructureService,
@@ -40,28 +47,39 @@ export class WorkspaceTypeFixer extends AbstractWorkspaceFixer<WorkspaceHealthIs
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const fieldMetadataUpdateCollection = issues.map((issue) => {
-      if (!issue.columnStructure?.dataType) {
+    const fieldMetadataUpdateCollection: FieldMetadataUpdate[] = [];
+
+    for (const issue of issues) {
+      const dataType = issue.columnStructure?.dataType;
+
+      if (!dataType) {
         throw new Error('Column structure data type is missing');
       }
 
       const type =
         this.databaseStructureService.getFieldMetadataTypeFromPostgresDataType(
-          issue.columnStructure?.dataType,
+          dataType,
         );
+
+      if (oldDataTypes.includes(dataType)) {
+        this.logger.warn(
+          `Old data type detected for column ${issue.columnStructure?.columnName} with data type ${dataType}. Please update the column data type manually.`,
+        );
+        continue;
+      }
 
       if (!type) {
         throw new Error("Can't find field metadata type from column structure");
       }
 
-      return {
+      fieldMetadataUpdateCollection.push({
         current: {
           ...issue.fieldMetadata,
           type,
         },
         altered: issue.fieldMetadata,
-      };
-    });
+      });
+    }
 
     return this.workspaceMigrationFieldFactory.create(
       objectMetadataCollection,
