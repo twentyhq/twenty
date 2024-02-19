@@ -11,6 +11,7 @@ import { PGGraphQLResult } from 'src/workspace/workspace-query-runner/interfaces
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
+import { duplicateCriteriaCollection } from 'src/workspace/workspace-resolver-builder/constants/duplicate-criteria.constants';
 
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -92,7 +93,7 @@ export class FindDuplicatesQueryFactory {
           edges {
             node {
               ${this.getApplicableDuplicateCriterias(options.objectMetadataItem)
-                .flatMap((dc) => dc.fields)
+                .flatMap((dc) => dc.fieldNames)
                 .join('\n')}
             }
           }
@@ -114,7 +115,7 @@ export class FindDuplicatesQueryFactory {
     return {
       or: criterias
         .map((dc) =>
-          dc.fields.reduce((acc, curr) => {
+          dc.fieldNames.reduce((acc, curr) => {
             if (!currentRecord[curr]) {
               return acc;
             }
@@ -132,8 +133,8 @@ export class FindDuplicatesQueryFactory {
   private getApplicableDuplicateCriterias(
     objectMetadataItem: ObjectMetadataInterface,
   ) {
-    return this.duplicateCriterias.filter(
-      (dc) => dc.object === objectMetadataItem.nameSingular,
+    return duplicateCriteriaCollection.filter(
+      (dc) => dc.objectName === objectMetadataItem.nameSingular,
     );
   }
 }
