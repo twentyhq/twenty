@@ -32,10 +32,8 @@ export default function RootLayout({
       <body>
         <EmotionRootStyleRegistry>
           <HeaderDesktop />
-          <div className="container">
-            <HeaderMobile />
-            {children}
-          </div>
+          <HeaderMobile />
+          <div className="container">{children}</div>
           <FooterDesktop />
         </EmotionRootStyleRegistry>
       </body>
