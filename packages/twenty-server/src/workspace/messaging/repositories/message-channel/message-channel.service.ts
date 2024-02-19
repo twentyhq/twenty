@@ -56,26 +56,6 @@ export class MessageChannelService {
     return messageChannel.isContactAutoCreationEnabled;
   }
 
-  public async getByMessageChannelId(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<{
-    handle: string;
-    isContactAutoCreationEnabled: boolean;
-  }> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const messageChannels =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1 LIMIT 1`,
-        [messageChannelId],
-        workspaceId,
-      );
-
-    return messageChannels[0];
-  }
-
   public async getByIds(
     ids: string[],
     workspaceId: string,
