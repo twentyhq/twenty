@@ -56,21 +56,24 @@ export class MessageChannelService {
     return messageChannel.isContactAutoCreationEnabled;
   }
 
-  public async getIsContactAutoCreationEnabledByMessageChannelId(
+  public async getHandleAndIsContactAutoCreationEnabledByMessageChannelId(
     messageChannelId: string,
     workspaceId: string,
-  ): Promise<boolean> {
+  ): Promise<{
+    handle: string;
+    isContactAutoCreationEnabled: boolean;
+  }> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const messageChannels =
       await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1 LIMIT 1`,
+        `SELECT "handle", "isContactAutoCreationEnabled" FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1 LIMIT 1`,
         [messageChannelId],
         workspaceId,
       );
 
-    return messageChannels[0]?.isContactAutoCreationEnabled;
+    return messageChannels[0];
   }
 
   public async getByIds(

@@ -15,7 +15,6 @@ import { MessageParticipantService } from 'src/workspace/messaging/repositories/
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
-import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
 @Injectable()
 export class MessageService {
   constructor(
@@ -204,17 +203,10 @@ export class MessageService {
         workspaceId,
       );
 
-    const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
-
-    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
-    const participantsFromOtherCompanies = message.participants.filter(
-      (participant) =>
-        getDomainNameFromHandle(participant.handle) !== selfDomainName,
-    );
-
     if (isContactAutoCreationEnabled) {
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-        participantsFromOtherCompanies,
+        connectedAccount.handle,
+        message.participants,
         workspaceId,
         manager,
       );

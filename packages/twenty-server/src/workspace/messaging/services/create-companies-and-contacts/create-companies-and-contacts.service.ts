@@ -17,11 +17,20 @@ export class CreateCompaniesAndContactsService {
   ) {}
 
   async createCompaniesAndContacts(
+    selfHandle: string,
     participants: Participant[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    if (!participants.length) {
+    const selfDomainName = getDomainNameFromHandle(selfHandle);
+
+    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
+    const participantsFromOtherCompanies = participants.filter(
+      (participant) =>
+        getDomainNameFromHandle(participant.handle) !== selfDomainName,
+    );
+
+    if (!participantsFromOtherCompanies.length) {
       return;
     }
 
@@ -31,7 +40,11 @@ export class CreateCompaniesAndContactsService {
     const alreadyCreatedContacts =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [participants.map((participant) => participant.handle)],
+        [
+          participantsFromOtherCompanies.map(
+            (participant) => participant.handle,
+          ),
+        ],
         workspaceId,
         transactionManager,
       );
@@ -40,7 +53,7 @@ export class CreateCompaniesAndContactsService {
       ({ email }) => email,
     );
 
-    const filteredParticipants = participants.filter(
+    const filteredParticipants = participantsFromOtherCompanies.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
         participant.handle.includes('@'),

@@ -32,8 +32,8 @@ export class CreateCompaniesAndContactsAfterSyncJob
     );
     const { workspaceId, messageChannelId } = data;
 
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByMessageChannelId(
+    const { handle, isContactAutoCreationEnabled } =
+      await this.messageChannelService.getHandleAndIsContactAutoCreationEnabledByMessageChannelId(
         messageChannelId,
         workspaceId,
       );
@@ -49,6 +49,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
       );
 
     await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+      handle,
       messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
     );
