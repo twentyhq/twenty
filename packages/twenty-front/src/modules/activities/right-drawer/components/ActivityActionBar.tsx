@@ -74,12 +74,6 @@ export const ActivityActionBar = () => {
           const activityTargetIdsToDelete =
             activityInDrawer?.activityTargets.map(mapToRecordId) ?? [];
 
-          console.log({
-            temporaryActivityForEditor,
-          });
-
-          console.log({ activityTargetIdsToDelete });
-
           if (isDefined(timelineTargetableObject)) {
             removeFromTimelineActivitiesQueries({
               activityTargetsToRemove: activityInDrawer?.activityTargets ?? [],

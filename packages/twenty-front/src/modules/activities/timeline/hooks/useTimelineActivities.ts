@@ -57,11 +57,6 @@ export const useTimelineActivities = ({
     },
   );
 
-  console.log({
-    activityIds,
-    timelineActivitiesQueryVariables,
-  });
-
   const { records: activitiesWithConnection, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: loadingActivityTargets || !isNonEmptyArray(activityTargets),
@@ -88,11 +83,6 @@ export const useTimelineActivities = ({
       depth: 3,
     });
 
-  console.log({
-    activitiesWithConnection,
-    loadingActivities,
-  });
-
   const noActivityTargets =
     initializedActivityTargets && !isNonEmptyArray(activityTargets);
 
@@ -105,8 +95,8 @@ export const useTimelineActivities = ({
   const loading = loadingActivities || loadingActivityTargets;
 
   const activities = activitiesWithConnection
-    ?.map(makeActivityWithoutConnection)
-    .map(({ activity }) => activity)
+    ?.map(makeActivityWithoutConnection as any)
+    .map(({ activity }: any) => activity as any)
     .filter(isDefined);
 
   return {

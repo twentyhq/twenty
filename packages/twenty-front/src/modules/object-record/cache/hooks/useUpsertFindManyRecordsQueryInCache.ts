@@ -35,12 +35,6 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       records: objectRecordsToOverwrite,
     });
 
-    console.log({
-      newObjectRecordConnection,
-      findManyRecordsQueryForCacheOverwrite,
-      queryVariables,
-    });
-
     apolloClient.writeQuery({
       query: findManyRecordsQueryForCacheOverwrite,
       variables: queryVariables,

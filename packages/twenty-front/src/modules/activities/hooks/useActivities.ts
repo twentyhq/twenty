@@ -100,7 +100,6 @@ export const useActivities = ({
 
   useEffect(() => {
     if (skipActivities || noActivities) {
-      console.log('activities', activities);
       setInitialized(true);
     }
   }, [
@@ -111,16 +110,6 @@ export const useActivities = ({
     skipActivities,
     skipActivityTargets,
   ]);
-
-  console.log({
-    skipActivities,
-    activities,
-    skipActivityTargets,
-    activityTargetsFound,
-    loading,
-    initialized,
-    noActivities,
-  });
 
   return {
     activities,

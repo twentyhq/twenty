@@ -45,10 +45,6 @@ export const useTasks = ({
     skipActivityTargets,
   });
 
-  console.log({
-    targetableObjects,
-  });
-
   const {
     activities: incompleteTaskData,
     initialized: initializedIncompleteTasks,
