@@ -7,6 +7,7 @@ import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/is
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordDuplicatesFieldCardSection } from '@/object-record/record-duplicates-card/components/RecordDuplicatesFieldCardSection';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -201,6 +202,10 @@ export const RecordShowContainer = ({
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>
+              <RecordDuplicatesFieldCardSection
+                objectRecordId={objectRecordId}
+                objectNameSingular={objectNameSingular}
+              />
               {relationFieldMetadataItems
                 .filter((item) => {
                   const relationObjectMetadataItem = item.toRelationMetadata
