@@ -6,12 +6,13 @@ import { LightIconButton, MenuItem } from 'tsup.ui.index';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord.ts';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
+import { IconDotsVertical, IconTrash, IconUnlink } from '@/ui/display/icon';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -75,6 +76,10 @@ export const RecordRelationFieldCardContent = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
+  const { deleteOneRecord: deleteOneRelationRecord } = useDeleteOneRecord({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
+
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
@@ -101,12 +106,21 @@ export const RecordRelationFieldCardContent = ({
     });
   };
 
+  const handleDelete = async () => {
+    closeDropdown();
+    await deleteOneRelationRecord(relationRecord.id);
+  };
+
   const isOpportunityCompanyRelation =
     (objectMetadataNameSingular === CoreObjectNameSingular.Opportunity &&
       relationObjectMetadataNameSingular === CoreObjectNameSingular.Company) ||
     (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
       relationObjectMetadataNameSingular ===
         CoreObjectNameSingular.Opportunity);
+
+  const isAccountOwnerRelation =
+    relationObjectMetadataNameSingular ===
+    CoreObjectNameSingular.WorkspaceMember;
 
   return (
     <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
@@ -134,6 +148,14 @@ export const RecordRelationFieldCardContent = ({
                   text="Detach"
                   onClick={handleDetach}
                 />
+                {!isAccountOwnerRelation && (
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Delete"
+                    accent="danger"
+                    onClick={handleDelete}
+                  />
+                )}
               </DropdownMenuItemsContainer>
             }
             dropdownHotkeyScope={{

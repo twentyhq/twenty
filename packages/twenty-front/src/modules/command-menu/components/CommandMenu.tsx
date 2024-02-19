@@ -139,7 +139,9 @@ export const CommandMenu = () => {
     filter: search
       ? makeOrFilterVariables([
           { name: { firstName: { ilike: `%${search}%` } } },
-          { name: { firstName: { ilike: `%${search}%` } } },
+          { name: { lastName: { ilike: `%${search}%` } } },
+          { email: { ilike: `%${search}%` } },
+          { phone: { ilike: `%${search}%` } },
         ])
       : undefined,
     limit: 3,

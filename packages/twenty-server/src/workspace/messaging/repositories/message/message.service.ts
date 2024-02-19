@@ -9,10 +9,12 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
+import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
 @Injectable()
 export class MessageService {
   constructor(
@@ -20,6 +22,8 @@ export class MessageService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageThreadService: MessageThreadService,
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageChannelService: MessageChannelService,
+    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
   public async getFirstByHeaderMessageId(
@@ -193,10 +197,41 @@ export class MessageService {
       ],
     );
 
+    const isContactAutoCreationEnabled =
+      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+        connectedAccount.id,
+        workspaceId,
+      );
+
+    if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
+      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+        connectedAccount.handle,
+        message.participants,
+        workspaceId,
+        manager,
+      );
+
+      const handles = message.participants.map(
+        (participant) => participant.handle,
+      );
+
+      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+          handles,
+          workspaceId,
+        );
+
+      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+        workspaceId,
+        manager,
+      );
+    }
+
     await this.messageParticipantService.saveMessageParticipants(
       message.participants,
       newMessageId,
-      dataSourceMetadata,
+      workspaceId,
       manager,
     );
 

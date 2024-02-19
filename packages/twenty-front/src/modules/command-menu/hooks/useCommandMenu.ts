@@ -61,7 +61,7 @@ export const useCommandMenu = () => {
     [setCommands],
   );
 
-  const setToIntitialCommandMenu = () => {
+  const setToInitialCommandMenu = () => {
     setCommands(commandMenuCommands);
   };
 
@@ -87,6 +87,6 @@ export const useCommandMenu = () => {
     toggleCommandMenu,
     addToCommandMenu,
     onItemClick,
-    setToIntitialCommandMenu,
+    setToInitialCommandMenu,
   };
 };

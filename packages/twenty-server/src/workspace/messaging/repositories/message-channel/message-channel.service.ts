@@ -44,6 +44,18 @@ export class MessageChannelService {
     return messageChannels[0];
   }
 
+  public async getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+    connectedAccountId: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const messageChannel = await this.getFirstByConnectedAccountIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    return messageChannel.isContactAutoCreationEnabled;
+  }
+
   public async getByIds(
     ids: string[],
     workspaceId: string,
