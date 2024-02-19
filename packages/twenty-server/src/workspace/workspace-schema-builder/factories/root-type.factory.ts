@@ -10,6 +10,7 @@ import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/s
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
 import { TypeMapperService } from 'src/workspace/workspace-schema-builder/services/type-mapper.service';
+import { shouldSkipQuery } from 'src/workspace/workspace-schema-builder/utils/should-skip-query.util';
 
 import { ArgsFactory } from './args.factory';
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
@@ -70,6 +71,10 @@ export class RootTypeFactory {
 
     for (const objectMetadata of objectMetadataCollection) {
       for (const methodName of workspaceResolverMethodNames) {
+        if (shouldSkipQuery(methodName, objectMetadata)) {
+          continue;
+        }
+
         const name = getResolverName(objectMetadata, methodName);
         const args = getResolverArgs(methodName);
         const objectType = this.typeDefinitionsStorage.getObjectTypeByKey(

@@ -8,6 +8,7 @@ import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { DeleteManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { ExecuteQuickActionOnOneResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/execute-quick-action-on-one-resolver.factory';
+import { shouldSkipQuery } from 'src/workspace/workspace-schema-builder/utils/should-skip-query.util';
 
 import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
@@ -71,6 +72,10 @@ export class WorkspaceResolverFactory {
         const resolverName = getResolverName(objectMetadata, methodName);
         const resolverFactory = factories.get(methodName);
 
+        if (shouldSkipQuery(methodName, objectMetadata)) {
+          continue;
+        }
+
         if (!resolverFactory) {
           this.logger.error(`Unknown query resolver type: ${methodName}`, {
             objectMetadata,
@@ -94,6 +99,10 @@ export class WorkspaceResolverFactory {
       for (const methodName of workspaceResolverBuilderMethods.mutations) {
         const resolverName = getResolverName(objectMetadata, methodName);
         const resolverFactory = factories.get(methodName);
+
+        if (shouldSkipQuery(methodName, objectMetadata)) {
+          continue;
+        }
 
         if (!resolverFactory) {
           this.logger.error(`Unknown mutation resolver type: ${methodName}`, {
