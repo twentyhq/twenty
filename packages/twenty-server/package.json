@@ -8,7 +8,7 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "prebuild": "rimraf dist",
-    "build": "yarn prebuild && nest build --path ./tsconfig.build.json",
+    "build": "npx nx prebuild && nest build --path ./tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_ENV=development && nest start",
     "start:dev": "npx nx start --watch",
@@ -20,17 +20,14 @@
     "test:cov": "npx nx test --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "./scripts/run-integration.sh",
-    "typeorm": "npx ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
-    "typeorm:migrate": "yarn typeorm migration:run -d ./src/database/typeorm/metadata/metadata.datasource.ts && yarn typeorm migration:run -d ./src/database/typeorm/core/core.datasource.ts",
-    "database:init": "yarn database:setup && yarn database:seed:dev",
-    "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
-    "database:setup:prod": "npx ts-node ./scripts/setup-db.ts && yarn typeorm:migrate",
+    "typeorm": "npx ts-node ../../node_modules/typeorm/cli.js",
+    "database:init": "npx nx database:setup && npx nx database:seed:dev",
+    "database:setup": "npx ts-node ./scripts/setup-db.ts && npx nx database:migrate",
     "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
-    "database:migrate": "yarn build && yarn typeorm:migrate",
-    "database:seed:dev": "yarn build && yarn command workspace:seed:dev",
-    "database:seed:demo": "yarn build && yarn command workspace:seed:demo",
-    "database:reset": "yarn database:truncate && yarn database:init",
-    "command": "node dist/src/command",
+    "database:migrate": "npx nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource && npx nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource",
+    "database:seed:dev": "npx nx command -- workspace:seed:dev",
+    "database:seed:demo": "npx nx command -- workspace:seed:demo",
+    "database:reset": "npx nx database:truncate && npx nx database:init",
     "queue:work": "node dist/src/queue-worker"
   },
   "dependencies": {
@@ -39,7 +36,6 @@
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
-    "lodash.isequal": "^4.5.0",
     "passport": "^0.7.0"
   },
   "devDependencies": {
