@@ -206,6 +206,7 @@ export class MessageService {
 
     const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
 
+    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
     const participantsFromOtherCompanies = message.participants.filter(
       (participant) =>
         getDomainNameFromHandle(participant.handle) !== selfDomainName,
