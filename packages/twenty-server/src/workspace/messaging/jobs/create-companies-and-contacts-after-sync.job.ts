@@ -43,7 +43,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
     }
 
     const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
         messageChannelId,
         workspaceId,
       );
