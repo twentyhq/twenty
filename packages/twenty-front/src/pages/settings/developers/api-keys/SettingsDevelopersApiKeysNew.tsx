@@ -84,7 +84,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             placeholder="E.g. backoffice integration"
             value={formValues.name}
             onKeyDown={(e) => {
-              if (e.key === 'Enter'){
+              if (e.key === 'Enter') {
                 handleSave();
               }
             }}
