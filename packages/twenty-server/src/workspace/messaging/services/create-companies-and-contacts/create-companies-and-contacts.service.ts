@@ -21,6 +21,10 @@ export class CreateCompaniesAndContactsService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
+    if (!participants.length) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
