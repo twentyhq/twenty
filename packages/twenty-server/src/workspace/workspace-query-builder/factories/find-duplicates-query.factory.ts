@@ -14,32 +14,8 @@ import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factorie
 
 import { FieldsStringFactory } from './fields-string.factory';
 
-type DuplicateCriteria = {
-  object: string; // singular name of an object
-  fields: string[];
-};
-
 @Injectable()
 export class FindDuplicatesQueryFactory {
-  private duplicateCriterias: DuplicateCriteria[] = [
-    {
-      object: 'company',
-      fields: ['domain'],
-    },
-    {
-      object: 'company',
-      fields: ['name'],
-    },
-    {
-      object: 'person',
-      fields: ['nameFirstName', 'nameLastName'],
-    },
-    {
-      object: 'person',
-      fields: ['email'],
-    },
-  ];
-
   private readonly logger = new Logger(FindDuplicatesQueryFactory.name);
 
   constructor(
