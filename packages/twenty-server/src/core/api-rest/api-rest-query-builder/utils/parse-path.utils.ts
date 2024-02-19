@@ -22,10 +22,10 @@ export const parsePath = (
 
 export const parseMetadataPath = (
   request: Request,
-): { object: string; id?: string } => {
+): { objectNameSingular: string; objectNamePlural: string; id?: string } => {
   const queryAction = request.path.replace('/rest/metadata/', '').split('/');
 
-  if (queryAction.length > 3) {
+  if (queryAction.length > 3 || queryAction.length === 0) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /rest/metadata/fields or /rest/metadata/objects/id`,
     );
@@ -33,7 +33,7 @@ export const parseMetadataPath = (
 
   if (!['fields', 'objects', 'relations'].includes(queryAction[0])) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Metadata path "${queryAction[0]}" does not exist. Valid examples: /rest/fields or /rest/objects or /rest/relations`,
+      `Query path '${request.path}' invalid. Metadata path "${queryAction[0]}" does not exist. Valid examples: /rest/metadata/fields or /rest/metadata/objects or /rest/metadata/relations`,
     );
   }
 
@@ -42,24 +42,36 @@ export const parseMetadataPath = (
   if (queryAction.length === 2) {
     switch (objectName) {
       case 'fields':
-        return { object: 'field', id: queryAction[1] };
+        return {
+          objectNameSingular: 'field',
+          objectNamePlural: objectName,
+          id: queryAction[1],
+        };
       case 'objects':
-        return { object: 'object', id: queryAction[1] };
+        return {
+          objectNameSingular: 'object',
+          objectNamePlural: objectName,
+          id: queryAction[1],
+        };
       case 'relations':
-        return { object: 'relation', id: queryAction[1] };
+        return {
+          objectNameSingular: 'relation',
+          objectNamePlural: objectName,
+          id: queryAction[1],
+        };
       default:
-        return { object: '', id: '' };
+        return { objectNameSingular: '', objectNamePlural: '', id: '' };
     }
   } else {
     switch (objectName) {
       case 'fields':
-        return { object: 'field' };
+        return { objectNameSingular: 'field', objectNamePlural: objectName };
       case 'objects':
-        return { object: 'object' };
+        return { objectNameSingular: 'object', objectNamePlural: objectName };
       case 'relations':
-        return { object: 'relation' };
+        return { objectNameSingular: 'relation', objectNamePlural: objectName };
       default:
-        return { object: '' };
+        return { objectNameSingular: '', objectNamePlural: '' };
     }
   }
 };
