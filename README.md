@@ -107,7 +107,7 @@ Below are some features we have implemented to date:
     </picture>
 </p>
 
-## See rich notes tasks displayed in a timeline:
+## See rich notes displayed in a timeline:
 
 <p align="center">
     <picture>
