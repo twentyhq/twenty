@@ -33,7 +33,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
     const { workspaceId, messageChannelId } = data;
 
     const { handle, isContactAutoCreationEnabled } =
-      await this.messageChannelService.getHandleAndIsContactAutoCreationEnabledByMessageChannelId(
+      await this.messageChannelService.getByMessageChannelId(
         messageChannelId,
         workspaceId,
       );
