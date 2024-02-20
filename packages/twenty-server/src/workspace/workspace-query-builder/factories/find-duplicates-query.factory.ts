@@ -6,7 +6,6 @@ import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-buil
 import { RecordFilter } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { FindDuplicatesResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
-import { PGGraphQLResult } from 'src/workspace/workspace-query-runner/interfaces/pg-graphql.interface';
 
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
@@ -27,7 +26,7 @@ export class FindDuplicatesQueryFactory {
   async create<Filter extends RecordFilter = RecordFilter>(
     args: FindDuplicatesResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
-    currentRecord?: PGGraphQLResult,
+    currentRecord?: Record<string, unknown>,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
@@ -63,17 +62,10 @@ export class FindDuplicatesQueryFactory {
   getFindDuplicateBy<Filter extends RecordFilter = RecordFilter>(
     args: FindDuplicatesResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
-    currentRecord?: PGGraphQLResult,
+    currentRecord?: Record<string, unknown>,
   ) {
-    const entityKey = `${computeObjectTargetTable(
-      options.objectMetadataItem,
-    )}Collection`;
-
-    const currentRecordResult =
-      currentRecord?.[0]?.resolve?.data?.[entityKey].edges?.[0]?.node;
-
-    if (currentRecordResult) {
-      return currentRecordResult as Record<string, unknown>;
+    if (currentRecord) {
+      return currentRecord;
     }
 
     return this.argsAliasFactory.create(

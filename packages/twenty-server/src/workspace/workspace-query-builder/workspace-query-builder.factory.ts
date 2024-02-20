@@ -16,7 +16,6 @@ import {
   DeleteManyResolverArgs,
   FindDuplicatesResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { PGGraphQLResult } from 'src/workspace/workspace-query-runner/interfaces/pg-graphql.interface';
 
 import { FindManyQueryFactory } from './factories/find-many-query.factory';
 import { FindOneQueryFactory } from './factories/find-one-query.factory';
@@ -68,7 +67,7 @@ export class WorkspaceQueryBuilderFactory {
   findDuplicates<Filter extends RecordFilter = RecordFilter>(
     args: FindDuplicatesResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
-    existingRecord?: PGGraphQLResult,
+    existingRecord?: Record<string, unknown>,
   ): Promise<string> {
     return this.findDuplicatesQueryFactory.create<Filter>(
       args,
