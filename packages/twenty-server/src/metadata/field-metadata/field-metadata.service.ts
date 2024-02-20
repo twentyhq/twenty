@@ -228,9 +228,23 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           )
         : fieldMetadataInput;
 
-    const updatedFieldMetadata = await super.updateOne(id, updatableFieldInput);
+    const updatedFieldMetadata = await super.updateOne(id, {
+      ...updatableFieldInput,
+      // If the name is updated, the targetColumnMap should be updated as well
+      targetColumnMap: fieldMetadataInput.name
+        ? generateTargetColumnMap(
+            existingFieldMetadata.type,
+            existingFieldMetadata.isCustom,
+            fieldMetadataInput.name,
+          )
+        : existingFieldMetadata.targetColumnMap,
+    });
 
-    if (updatableFieldInput.options || updatableFieldInput.defaultValue) {
+    if (
+      fieldMetadataInput.name ||
+      updatableFieldInput.options ||
+      updatableFieldInput.defaultValue
+    ) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`update-${updatedFieldMetadata.name}`),
         existingFieldMetadata.workspaceId,
