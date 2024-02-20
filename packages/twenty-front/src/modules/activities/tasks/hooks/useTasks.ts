@@ -1,13 +1,11 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
+import { useActivities } from '@/activities/hooks/useActivities';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { LeafObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { parseDate } from '~/utils/date-utils';
 
 type UseTasksProps = {
@@ -23,43 +21,6 @@ export const useTasks = ({
     filterDropdownId,
   });
 
-  const isTargettingObjectRecords = isNonEmptyArray(targetableObjects);
-  const targetableObjectsFilter =
-    targetableObjects.reduce<LeafObjectRecordFilter>(
-      (aggregateFilter, targetableObject) => {
-        const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
-          nameSingular: targetableObject.targetObjectNameSingular,
-        });
-
-        if (isNonEmptyString(targetableObject.id)) {
-          aggregateFilter[targetableObjectFieldName] = {
-            eq: targetableObject.id,
-          };
-        }
-
-        return aggregateFilter;
-      },
-      {},
-    );
-
-  const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: targetableObjectsFilter,
-    skip: !isTargettingObjectRecords,
-  });
-
-  const skipRequest = !isNonEmptyArray(activityTargets) && !selectedFilter;
-
-  const idFilter = isTargettingObjectRecords
-    ? {
-        id: {
-          in: activityTargets.map(
-            (activityTarget) => activityTarget.activityId,
-          ),
-        },
-      }
-    : { id: {} };
-
   const assigneeIdFilter = selectedFilter
     ? {
         assigneeId: {
@@ -68,32 +29,34 @@ export const useTasks = ({
       }
     : undefined;
 
-  const { records: completeTasksData } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    skip: skipRequest,
-    filter: {
+  const skipActivityTargets = !isNonEmptyArray(targetableObjects);
+
+  const {
+    activities: completeTasksData,
+    initialized: initializedCompleteTasks,
+  } = useActivities({
+    targetableObjects,
+    activitiesFilters: {
       completedAt: { is: 'NOT_NULL' },
-      ...idFilter,
       type: { eq: 'Task' },
       ...assigneeIdFilter,
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    skipActivityTargets,
   });
 
-  const { records: incompleteTaskData } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    skip: skipRequest,
-    filter: {
+  const {
+    activities: incompleteTaskData,
+    initialized: initializedIncompleteTasks,
+  } = useActivities({
+    targetableObjects,
+    activitiesFilters: {
       completedAt: { is: 'NULL' },
-      ...idFilter,
       type: { eq: 'Task' },
       ...assigneeIdFilter,
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    skipActivityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
@@ -125,5 +88,6 @@ export const useTasks = ({
     upcomingTasks: (upcomingTasks ?? []) as Activity[],
     unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
     completedTasks: (completedTasks ?? []) as Activity[],
+    initialized: initializedCompleteTasks && initializedIncompleteTasks,
   };
 };

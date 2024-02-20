@@ -42,7 +42,7 @@ export const ActivityTargetsInlineCell = ({
         editModeContent={
           <ActivityTargetInlineCellEditMode
             activity={activity}
-            activityTargetObjectRecords={activityTargetObjectRecords}
+            activityTargetWithTargetRecords={activityTargetObjectRecords}
           />
         }
         label="Relations"

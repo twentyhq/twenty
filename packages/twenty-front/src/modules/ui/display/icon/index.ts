@@ -48,6 +48,7 @@ export {
   IconCurrencyYuan,
   IconDatabase,
   IconDeviceFloppy,
+  IconDoorEnter,
   IconDotsVertical,
   IconDownload,
   IconEye,

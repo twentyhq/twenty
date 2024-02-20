@@ -6,7 +6,7 @@ import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH as CORE_OBJECT_NAMES_TO_DELETE_ON_OPTIMISTIC_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
+import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
@@ -74,6 +74,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       return;
     }
 
+    // TODO: replace this by a relation type check, if it's one to many,
+    //   it's an object record connection (we can still check it though as a safeguard)
     const currentFieldValueOnSourceRecordIsARecordConnection =
       isObjectRecordConnection(
         targetObjectMetadataItem.nameSingular,
@@ -104,12 +106,14 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
 
     if (shouldDetachSourceFromAllTargets) {
-      const shouldStartByDeletingRelationTargetRecordsFromCache =
-        CORE_OBJECT_NAMES_TO_DELETE_ON_OPTIMISTIC_RELATION_DETACH.includes(
+      // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
+      //   Instead of hardcoding it here
+      const shouldCascadeDeleteTargetRecords =
+        CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
           targetObjectMetadataItem.nameSingular as CoreObjectNameSingular,
         );
 
-      if (shouldStartByDeletingRelationTargetRecordsFromCache) {
+      if (shouldCascadeDeleteTargetRecords) {
         triggerDeleteRecordsOptimisticEffect({
           cache,
           objectMetadataItem: targetObjectMetadataItem,

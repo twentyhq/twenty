@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 
 // TODO: Move outside of the messaging module
 @Injectable()
@@ -10,6 +12,22 @@ export class PersonService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
+
+  async getByEmails(
+    emails: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<PersonObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}.person WHERE email = ANY($1)`,
+      [emails],
+      workspaceId,
+      transactionManager,
+    );
+  }
 
   async createPeople(
     peopleToCreate: {

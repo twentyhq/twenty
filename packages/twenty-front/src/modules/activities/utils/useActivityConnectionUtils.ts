@@ -13,9 +13,14 @@ import { isDefined } from '~/utils/isDefined';
 export const useActivityConnectionUtils = () => {
   const mapConnectionToRecords = useMapConnectionToRecords();
 
-  const makeActivityWithoutConnection = (activityWithConnections: any) => {
+  const makeActivityWithoutConnection = (
+    activityWithConnections: Activity & {
+      activityTargets: ObjectRecordConnection<ActivityTarget>;
+      comments: ObjectRecordConnection<Comment>;
+    },
+  ) => {
     if (!isDefined(activityWithConnections)) {
-      return { activity: null };
+      throw new Error('Activity with connections is not defined');
     }
 
     const hasActivityTargetsConnection = isObjectRecordConnection(
@@ -77,11 +82,13 @@ export const useActivityConnectionUtils = () => {
       : [];
 
     const activityTargets = {
+      __typename: 'ActivityTargetConnection',
       edges: activityTargetEdges,
       pageInfo: getEmptyPageInfo(),
     } as ObjectRecordConnection<ActivityTarget>;
 
     const comments = {
+      __typename: 'CommentConnection',
       edges: commentEdges,
       pageInfo: getEmptyPageInfo(),
     } as ObjectRecordConnection<Comment>;
@@ -90,6 +97,9 @@ export const useActivityConnectionUtils = () => {
       ...activity,
       activityTargets,
       comments,
+    } as Activity & {
+      activityTargets: ObjectRecordConnection<ActivityTarget>;
+      comments: ObjectRecordConnection<Comment>;
     };
 
     return { activityWithConnection };

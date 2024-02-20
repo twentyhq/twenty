@@ -83,6 +83,11 @@ export const SettingsDevelopersApiKeysNew = () => {
           <TextInput
             placeholder="E.g. backoffice integration"
             value={formValues.name}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSave();
+              }
+            }}
             onChange={(value) => {
               setFormValues((prevState) => ({
                 ...prevState,
