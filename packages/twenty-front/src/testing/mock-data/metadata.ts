@@ -5500,7 +5500,7 @@ export const mockedMessageChannels = {
   },
 };
 
-export const mockedConnectedAccounts = {
+export const mockedConnectedAccountsMetadata = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',

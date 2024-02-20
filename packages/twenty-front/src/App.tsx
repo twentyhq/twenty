@@ -21,6 +21,7 @@ import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
+import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
@@ -99,6 +100,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.AccountsCalendars}
                   element={<SettingsAccountsCalendars />}
+                />
+                <Route
+                  path={SettingsPath.AccountsCalendarsSettings}
+                  element={<SettingsAccountsCalendarsSettings />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
