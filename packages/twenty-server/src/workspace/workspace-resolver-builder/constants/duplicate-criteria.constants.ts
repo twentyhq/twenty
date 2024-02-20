@@ -21,6 +21,10 @@ export const duplicateCriteriaCollection: RecordDuplicateCriteria[] = [
   },
   {
     objectName: 'person',
+    columnNames: ['linkedinLinkUrl'],
+  },
+  {
+    objectName: 'person',
     columnNames: ['email'],
   },
 ];
