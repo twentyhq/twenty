@@ -8,9 +8,9 @@ import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-acco
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+  GmailFullSyncMainJob,
+  GmailFullSyncMainJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-main.job';
 
 @Injectable()
 export class GoogleGmailService {
@@ -72,8 +72,8 @@ export class GoogleGmailService {
       );
     });
 
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullSyncMainJobData>(
+      GmailFullSyncMainJob.name,
       {
         workspaceId,
         connectedAccountId,

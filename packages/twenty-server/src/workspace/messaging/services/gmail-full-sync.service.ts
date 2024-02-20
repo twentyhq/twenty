@@ -6,16 +6,18 @@ import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import {
+  GmailFullSyncSubJob,
+  GmailFullSyncSubJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-sub.job';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -73,47 +75,30 @@ export class GmailFullSyncService {
   public async fetchConnectedAccountThreads(
     workspaceId: string,
     connectedAccountId: string,
-    nextPageToken?: string,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
       workspaceId,
     );
 
-    const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
     }
 
-    const gmailMessageChannel =
+    const messageChannel =
       await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
         connectedAccountId,
         workspaceId,
       );
 
-    const gmailMessageChannelId = gmailMessageChannel.id;
+    const messageChannelId = messageChannel.id;
 
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
-    const messages = await gmailClient.users.messages.list({
-      userId: 'me',
-      maxResults: 500,
-      pageToken: nextPageToken,
-    });
-
-    const messagesData = messages.data.messages;
-
-    const messageExternalIds = messagesData
-      ? messagesData.map((message) => message.id || '')
-      : [];
+    const messageExternalIds = await this.getAllMessagesToFetch(gmailClient);
 
     if (!messageExternalIds || messageExternalIds?.length === 0) {
       return;
@@ -122,7 +107,7 @@ export class GmailFullSyncService {
     const existingMessageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
-        gmailMessageChannelId,
+        messageChannelId,
         workspaceId,
       );
 
@@ -139,6 +124,50 @@ export class GmailFullSyncService {
         ),
     );
 
+    if (messagesToFetch.length === 0) {
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+      );
+
+      return;
+    }
+
+    const numberOfPages = Math.ceil(messagesToFetch.length / 500);
+
+    for (let i = 0; i < numberOfPages; i++) {
+      const messages = messagesToFetch.slice(i * 500, (i + 1) * 500);
+
+      await this.messageQueueService.add<GmailFullSyncSubJobData>(
+        GmailFullSyncSubJob.name,
+        {
+          pageNumber: i + 1,
+          lastPageNumber: numberOfPages,
+          messagesToFetch: messages,
+          accessToken: connectedAccount.accessToken,
+          workspaceId,
+          connectedAccount,
+          messageChannelId,
+        },
+
+        {
+          retryLimit: 2,
+        },
+      );
+    }
+  }
+
+  public async fetchMessages(
+    messagesToFetch: string[],
+    accessToken: string,
+    workspaceId: string,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    messageChannelId: string,
+  ) {
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
+
     const messageQueries = createQueriesFromMessageIds(messagesToFetch);
 
     const { messages: messagesToSave, errors } =
@@ -147,20 +176,12 @@ export class GmailFullSyncService {
         accessToken,
       );
 
-    if (messagesToSave.length === 0) {
-      this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
-      );
-
-      return;
-    }
-
     await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccount,
-      gmailMessageChannelId,
+      messageChannelId,
       workspaceId,
     );
 
@@ -179,25 +200,5 @@ export class GmailFullSyncService {
       connectedAccount.id,
       workspaceId,
     );
-
-    this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
-        nextPageToken ? `and ${nextPageToken} pageToken` : ''
-      }done.`,
-    );
-
-    if (messages.data.nextPageToken) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
-        {
-          workspaceId,
-          connectedAccountId,
-          nextPageToken: messages.data.nextPageToken,
-        },
-        {
-          retryLimit: 2,
-        },
-      );
-    }
   }
 }

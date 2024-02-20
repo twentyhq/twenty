@@ -3,7 +3,7 @@ import { ModuleRef } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { GmailFullSyncJob } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { GmailFullSyncMainJob } from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-main.job';
 import { CallWebhookJobsJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
@@ -44,8 +44,8 @@ import { MessageParticipantModule } from 'src/workspace/messaging/repositories/m
   ],
   providers: [
     {
-      provide: GmailFullSyncJob.name,
-      useClass: GmailFullSyncJob,
+      provide: GmailFullSyncMainJob.name,
+      useClass: GmailFullSyncMainJob,
     },
     {
       provide: GmailPartialSyncJob.name,

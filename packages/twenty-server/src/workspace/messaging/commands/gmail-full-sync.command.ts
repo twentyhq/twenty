@@ -11,9 +11,9 @@ import {
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+  GmailFullSyncMainJobData,
+  GmailFullSyncMainJob,
+} from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-main.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 
 interface GmailFullSyncOptions {
@@ -68,8 +68,8 @@ export class GmailFullSyncCommand extends CommandRunner {
       await this.connectedAccountService.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
+      await this.messageQueueService.add<GmailFullSyncMainJobData>(
+        GmailFullSyncMainJob.name,
         {
           workspaceId,
           connectedAccountId: connectedAccount.id,

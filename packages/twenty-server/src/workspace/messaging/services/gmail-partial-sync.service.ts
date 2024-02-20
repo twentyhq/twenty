@@ -7,9 +7,9 @@ import { GmailClientProvider } from 'src/workspace/messaging/services/providers/
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+  GmailFullSyncMainJob,
+  GmailFullSyncMainJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-main.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
@@ -220,8 +220,8 @@ export class GmailPartialSyncService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullSyncMainJobData>(
+      GmailFullSyncMainJob.name,
       { workspaceId, connectedAccountId },
       {
         retryLimit: 2,

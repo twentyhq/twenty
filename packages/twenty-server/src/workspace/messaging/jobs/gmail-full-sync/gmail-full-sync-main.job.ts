@@ -5,27 +5,27 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 
-export type GmailFullSyncJobData = {
+export type GmailFullSyncMainJobData = {
   workspaceId: string;
   connectedAccountId: string;
-  nextPageToken?: string;
 };
 
 @Injectable()
-export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
-  private readonly logger = new Logger(GmailFullSyncJob.name);
+export class GmailFullSyncMainJob
+  implements MessageQueueJob<GmailFullSyncMainJobData>
+{
+  private readonly logger = new Logger(GmailFullSyncMainJob.name);
 
   constructor(
     private readonly gmailRefreshAccessTokenService: GmailRefreshAccessTokenService,
     private readonly gmailFullSyncService: GmailFullSyncService,
   ) {}
 
-  async handle(data: GmailFullSyncJobData): Promise<void> {
+  async handle(data: GmailFullSyncMainJobData): Promise<void> {
     this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${
-        data.connectedAccountId
-      } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
+      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
+
     await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
       data.workspaceId,
       data.connectedAccountId,
@@ -34,7 +34,6 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
     await this.gmailFullSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
-      data.nextPageToken,
     );
   }
 }
