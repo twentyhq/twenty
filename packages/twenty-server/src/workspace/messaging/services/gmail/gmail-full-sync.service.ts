@@ -2,18 +2,12 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
-import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
-import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
-import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
-import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import {
   GmailFullSyncSubJob,
   GmailFullSyncSubJobData,
@@ -25,14 +19,11 @@ export class GmailFullSyncService {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageService: MessageService,
   ) {}
 
   public async getAllMessagesToFetch(
@@ -158,51 +149,5 @@ export class GmailFullSyncService {
         },
       );
     }
-  }
-
-  public async fetchMessages(
-    messagesToFetch: string[],
-    accessToken: string,
-    workspaceId: string,
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    messageChannelId: string,
-  ) {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
-    const messageQueries = createQueriesFromMessageIds(messagesToFetch);
-
-    const { messages: messagesToSave, errors } =
-      await this.fetchMessagesByBatchesService.fetchAllMessages(
-        messageQueries,
-        accessToken,
-      );
-
-    await this.messageService.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      messageChannelId,
-      workspaceId,
-    );
-
-    if (errors.length) throw new Error('Error fetching messages');
-
-    const lastModifiedMessageId = messagesToFetch[0];
-
-    const historyId = messagesToSave.find(
-      (message) => message.externalId === lastModifiedMessageId,
-    )?.historyId;
-
-    if (!historyId) throw new Error('No history id found');
-
-    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
-      historyId,
-      connectedAccount.id,
-      workspaceId,
-    );
   }
 }

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
-import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
+import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail/gmail-full-sync.service';
+import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail/gmail-refresh-access-token.service';
 
 export type GmailFullSyncMainJobData = {
   workspaceId: string;

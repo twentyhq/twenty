@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
-import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/gmail/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
@@ -37,7 +37,7 @@ export class GmailPartialSyncService {
     maxResults = 500,
   ): Promise<void> {
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+      await this.workspaceDataSourceService.connectToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
       );
 

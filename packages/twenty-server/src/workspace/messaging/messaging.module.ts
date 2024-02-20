@@ -11,10 +11,6 @@ import { MessageModule } from 'src/workspace/messaging/repositories/message/mess
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
 import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
-import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
-import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
-import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
-import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
@@ -26,6 +22,11 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
 import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/gmail/fetch-messages-by-batches.service';
+import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail/gmail-full-sync.service';
+import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail/gmail-partial-sync.service';
+import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail/gmail-refresh-access-token.service';
+import { GmailFetchMessagesService } from 'src/workspace/messaging/services/gmail/gmail-fetch-messages.service';
 @Module({
   imports: [
     EnvironmentModule,
@@ -55,11 +56,13 @@ import { PersonModule } from 'src/workspace/messaging/repositories/person/person
     IsContactAutoCreationEnabledListener,
     MessagingMessageChannelListener,
     MessageService,
+    GmailFetchMessagesService,
   ],
   exports: [
     GmailPartialSyncService,
     GmailFullSyncService,
     GmailRefreshAccessTokenService,
+    GmailFetchMessagesService,
   ],
 })
 export class MessagingModule {}

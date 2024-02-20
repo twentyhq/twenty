@@ -23,12 +23,12 @@ export class WorkspaceDataSourceService {
     workspaceId: string,
   ): Promise<DataSource> {
     const { dataSource } =
-      await this.connectedToWorkspaceDataSourceAndReturnMetadata(workspaceId);
+      await this.connectToWorkspaceDataSourceAndReturnMetadata(workspaceId);
 
     return dataSource;
   }
 
-  public async connectedToWorkspaceDataSourceAndReturnMetadata(
+  public async connectToWorkspaceDataSourceAndReturnMetadata(
     workspaceId: string,
   ) {
     const dataSourceMetadata =
