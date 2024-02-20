@@ -92,7 +92,7 @@ export const ApiKeyForm = () => {
   return (
     <StyledContainer isToggleOn={showSection}>
       <StyledHeader>
-        <StyledImg src="/logo/32-32.png" alt="Twenty Logo" />
+        <StyledImg src="/logo/32-32.svg" alt="Twenty Logo" />
       </StyledHeader>
 
       <StyledMain>
