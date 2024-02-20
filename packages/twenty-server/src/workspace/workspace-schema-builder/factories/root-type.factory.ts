@@ -10,7 +10,7 @@ import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/s
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
 import { TypeMapperService } from 'src/workspace/workspace-schema-builder/services/type-mapper.service';
-import { shouldSkipQuery } from 'src/workspace/workspace-schema-builder/utils/should-skip-query.util';
+import { shouldSkipQuery } from 'src/workspace/utils/should-skip-query.util';
 
 import { ArgsFactory } from './args.factory';
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
