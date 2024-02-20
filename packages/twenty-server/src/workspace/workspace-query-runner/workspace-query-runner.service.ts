@@ -1,6 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import isEmpty from 'lodash.isempty';
+
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
   Record as IRecord,
@@ -138,6 +140,12 @@ export class WorkspaceQueryRunnerService {
     if (!args.data && !args.id) {
       throw new BadRequestException(
         'You have to provide either "data" or "id" argument',
+      );
+    }
+
+    if (!args.id && isEmpty(args.data)) {
+      throw new BadRequestException(
+        'The "data" condition can not be empty when ID input not provided',
       );
     }
 
