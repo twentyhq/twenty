@@ -8,7 +8,9 @@ import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdo
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
+import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
+import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
@@ -18,6 +20,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -78,8 +81,10 @@ export const ActivityEditor = ({
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
   const useUpsertOneActivityMutation: RecordUpdateHook = () => {
-    const upsertActivityMutation = ({ variables }: RecordUpdateHookParams) => {
-      upsertActivity({ activity, input: variables.updateOneRecordInput });
+    const upsertActivityMutation = async ({
+      variables,
+    }: RecordUpdateHookParams) => {
+      await upsertActivity({ activity, input: variables.updateOneRecordInput });
     };
 
     return [upsertActivityMutation, { loading: false }];
@@ -104,6 +109,20 @@ export const ActivityEditor = ({
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
 
+  const [isActivityInCreateMode, setIsActivityInCreateMode] = useRecoilState(
+    isActivityInCreateModeState,
+  );
+
+  const [isUpsertingActivityInDB] = useRecoilState(
+    isUpsertingActivityInDBState,
+  );
+
+  const [canCreateActivity] = useRecoilState(canCreateActivityState);
+
+  const [activityFromStore] = useRecoilState(
+    recordStoreFamilyState(activity.id),
+  );
+
   const { FieldContextProvider: ActivityTargetsContextProvider } =
     useFieldContext({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -112,16 +131,40 @@ export const ActivityEditor = ({
       fieldPosition: 2,
     });
 
-  const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
-    isCreatingActivityState,
-  );
-
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
     callbackFunction: () => {
-      if (isCreatingActivity) {
-        setIsCreatingActivity(false);
-        deleteActivityFromCache(activity);
+      if (isUpsertingActivityInDB || !activityFromStore) {
+        return;
+      }
+
+      if (isActivityInCreateMode) {
+        if (canCreateActivity) {
+          upsertActivity({
+            activity,
+            input: {
+              title: activityFromStore.title,
+              body: activityFromStore.body,
+            },
+          });
+        } else {
+          deleteActivityFromCache(activity);
+        }
+
+        setIsActivityInCreateMode(false);
+      } else {
+        if (
+          activityFromStore.title !== activity.title ||
+          activityFromStore.body !== activity.body
+        ) {
+          upsertActivity({
+            activity,
+            input: {
+              title: activityFromStore.title,
+              body: activityFromStore.body,
+            },
+          });
+        }
       }
     },
   });

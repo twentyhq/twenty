@@ -4,6 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
+// TODO: fix connection in relation => automatically change to an array
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   objectRecordId = '',

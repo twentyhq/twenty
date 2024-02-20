@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/client';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
@@ -28,11 +27,11 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
-      depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
+      depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION, // TODO: fix this
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      objectNameSingular: objectMetadataItem.nameSingular,
       records: objectRecordsToOverwrite,
     });
 

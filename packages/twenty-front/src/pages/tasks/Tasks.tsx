@@ -52,7 +52,7 @@ export const Tasks = () => {
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
         <TasksEffect filterDropdownId={filterDropdownId} />
         <PageHeader title="Tasks" Icon={IconCheckbox}>
-          <PageAddTaskButton filterDropdownId={filterDropdownId} />
+          <PageAddTaskButton />
         </PageHeader>
         <PageBody>
           <StyledTasksContainer>
