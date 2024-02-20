@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useSettingsNavItem } from '@/settings/hooks/useSettingsNavItem';
+import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -36,71 +36,41 @@ export const SettingsNavigationDrawerItems = () => {
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
-  const profileNavItem = useSettingsNavItem({ path: SettingsPath.ProfilePage });
-  const appearanceNavItem = useSettingsNavItem({
-    path: SettingsPath.Appearance,
-  });
-  const accountsNavItem = useSettingsNavItem({ path: SettingsPath.Accounts });
-  const accountsEmailsNavItem = useSettingsNavItem({
-    path: SettingsPath.AccountsEmails,
-    matchSubPages: true,
-  });
-  const accountsCalendarsNavItem = useSettingsNavItem({
-    path: SettingsPath.AccountsCalendars,
-    matchSubPages: true,
-  });
-  const workspaceNavItem = useSettingsNavItem({ path: SettingsPath.Workspace });
-  const workspaceMembersNavItem = useSettingsNavItem({
-    path: SettingsPath.WorkspaceMembersPage,
-  });
-  const dataModelNavItem = useSettingsNavItem({
-    path: SettingsPath.Objects,
-    matchSubPages: true,
-  });
-  const developersNavItem = useSettingsNavItem({
-    path: SettingsPath.Developers,
-  });
-  const integrationsNavItem = useSettingsNavItem({
-    path: SettingsPath.Integrations,
-  });
-
   return (
     <>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Profile"
-          to={profileNavItem.to}
+          path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
-          active={profileNavItem.isActive}
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Appearance"
-          to={appearanceNavItem.to}
+          path={SettingsPath.Appearance}
           Icon={IconColorSwatch}
-          active={appearanceNavItem.isActive}
         />
+
         {isMessagingEnabled && (
           <NavigationDrawerItemGroup>
-            <NavigationDrawerItem
+            <SettingsNavigationDrawerItem
               label="Accounts"
-              to={accountsNavItem.to}
+              path={SettingsPath.Accounts}
               Icon={IconAt}
-              active={accountsNavItem.isActive}
             />
-            <NavigationDrawerItem
+            <SettingsNavigationDrawerItem
               level={2}
               label="Emails"
-              to={accountsEmailsNavItem.to}
+              path={SettingsPath.AccountsEmails}
               Icon={IconMail}
-              active={accountsEmailsNavItem.isActive}
+              matchSubPages
             />
-            <NavigationDrawerItem
+            <SettingsNavigationDrawerItem
               level={2}
               label="Calendars"
-              to={accountsCalendarsNavItem.to}
+              path={SettingsPath.AccountsCalendars}
               Icon={IconCalendarEvent}
-              active={accountsCalendarsNavItem.isActive}
+              matchSubPages
               soon={!isCalendarEnabled}
             />
           </NavigationDrawerItemGroup>
@@ -109,35 +79,31 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="General"
-          to={workspaceNavItem.to}
+          path={SettingsPath.Workspace}
           Icon={IconSettings}
-          active={workspaceNavItem.isActive}
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Members"
-          to={workspaceMembersNavItem.to}
+          path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
-          active={workspaceMembersNavItem.isActive}
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Data model"
-          to={dataModelNavItem.to}
+          path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          active={dataModelNavItem.isActive}
+          matchSubPages
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Developers"
-          to={developersNavItem.to}
+          path={SettingsPath.Developers}
           Icon={IconRobot}
-          active={developersNavItem.isActive}
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Integrations"
-          to={integrationsNavItem.to}
+          path={SettingsPath.Integrations}
           Icon={IconApps}
-          active={integrationsNavItem.isActive}
         />
       </NavigationDrawerSection>
 
