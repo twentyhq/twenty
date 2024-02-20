@@ -153,7 +153,6 @@ export class GmailFullSyncService {
           connectedAccount,
           messageChannelId,
         },
-
         {
           retryLimit: 2,
         },

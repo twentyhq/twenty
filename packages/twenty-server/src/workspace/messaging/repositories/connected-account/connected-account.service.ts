@@ -95,7 +95,7 @@ export class ConnectedAccountService {
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1
       WHERE "id" = $2
-      AND ("lastSyncHistoryId" < $1 OR "lastSyncHistoryId" IS NULL)`,
+      AND ("lastSyncHistoryId" < $1 OR "lastSyncHistoryId" = '')`,
       [historyId, connectedAccountId],
       workspaceId,
       transactionManager,
@@ -111,7 +111,7 @@ export class ConnectedAccountService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = NULL WHERE "id" = $1`,
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = '' WHERE "id" = $1`,
       [connectedAccountId],
       workspaceId,
       transactionManager,
