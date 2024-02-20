@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import {
@@ -6,7 +7,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/testing/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Developers/ApiKeys/SettingsDevelopersApiKeyDetail',
@@ -24,7 +24,8 @@ export default meta;
 export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 
 export const Default: Story = {
-  play: async () => {
-    await sleep(100);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Settings');
   },
 };

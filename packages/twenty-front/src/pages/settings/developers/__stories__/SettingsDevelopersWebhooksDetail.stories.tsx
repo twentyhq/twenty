@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
-import { SettingsDevelopersWebhooks } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooks';
+import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -9,8 +9,8 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Developers/SettingsDevelopersWebhooks',
-  component: SettingsDevelopersWebhooks,
+  title: 'Pages/Settings/Developers/SettingsDevelopersWebhooksDetail',
+  component: SettingsDevelopersWebhooksDetail,
   decorators: [PageDecorator],
   args: { routePath: '/settings/developers' },
   parameters: {
@@ -20,7 +20,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersWebhooks>;
+export type Story = StoryObj<typeof SettingsDevelopersWebhooksDetail>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
