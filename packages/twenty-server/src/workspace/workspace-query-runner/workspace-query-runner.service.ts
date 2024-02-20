@@ -36,6 +36,7 @@ import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/ob
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { NotFoundError } from 'src/filters/utils/graphql-errors.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -163,6 +164,10 @@ export class WorkspaceQueryRunnerService {
       );
 
       existingRecord = parsedResult?.edges?.[0]?.node;
+
+      if (!existingRecord) {
+        throw new NotFoundError(`Object with id ${args.id} not found`);
+      }
     }
 
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
