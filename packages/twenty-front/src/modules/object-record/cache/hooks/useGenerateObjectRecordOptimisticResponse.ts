@@ -43,12 +43,19 @@ export const useGenerateObjectRecordOptimisticResponse = ({
         );
         const relationRecordId = result[relationIdFieldName] as string | null;
 
+        const relationRecord = input[fieldMetadataItem.name] as
+          | ObjectRecord
+          | undefined;
+
         return {
           ...result,
           [fieldMetadataItem.name]: relationRecordId
             ? {
                 __typename: relationRecordTypeName,
                 id: relationRecordId,
+                // TODO: there are too many bugs if we don't include the entire relation record
+                //   See if we can find a way to work only with the id and typename
+                ...relationRecord,
               }
             : null,
         };

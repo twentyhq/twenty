@@ -29,7 +29,7 @@ const StyledTitleBar = styled.h3`
   width: 100%;
 `;
 
-const StyledTitle = styled.h3`
+const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;

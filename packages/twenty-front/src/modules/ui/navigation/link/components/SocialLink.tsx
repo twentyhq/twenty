@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
+
 import { RoundedLink } from './RoundedLink';
 
 export enum LinkType {
@@ -12,7 +14,7 @@ export enum LinkType {
 type SocialLinkProps = {
   href: string;
   children?: React.ReactNode;
-  type?: LinkType;
+  type: LinkType;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
@@ -32,29 +34,8 @@ export const SocialLink = ({
   onClick,
   type,
 }: SocialLinkProps) => {
-  let displayValue = children;
-
-  if (type === 'linkedin') {
-    const matches = href.match(
-      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company)\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
-    );
-    if (matches && matches[1]) {
-      displayValue = matches[1];
-    } else {
-      displayValue = 'LinkedIn';
-    }
-  }
-
-  if (type === 'twitter') {
-    const matches = href.match(
-      /(?:https?:\/\/)?(?:www.)?twitter.com\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
-    );
-    if (matches && matches[1]) {
-      displayValue = `@${matches[1]}`;
-    } else {
-      displayValue = '@twitter';
-    }
-  }
+  const displayValue =
+    getDisplayValueByUrlType({ type: type, href: href }) ?? children;
 
   return (
     <StyledRawLink href={href} onClick={onClick}>
