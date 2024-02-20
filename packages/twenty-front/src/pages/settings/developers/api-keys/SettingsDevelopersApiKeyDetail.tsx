@@ -205,8 +205,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
         title="Delete Api key"
         subtitle={
           <>
-            Please type "yes" to confirm you want to delete this API Key. <br />
-            Be aware that any script using this key will stop working.
+            Please type "yes" to confirm you want to delete this API Key. Be
+            aware that any script using this key will stop working.
           </>
         }
         onConfirmClick={deleteIntegration}
@@ -221,8 +221,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
         subtitle={
           <>
             If you’ve lost this key, you can regenerate it, but be aware that
-            any script using this key will need to be updated. <br /> Please
-            type "yes" to confirm.
+            any script using this key will need to be updated. Please type "yes"
+            to confirm.
           </>
         }
         onConfirmClick={regenerateApiKey}
