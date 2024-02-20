@@ -59,26 +59,7 @@ export class ApiRestMetadataService {
   }
 
   fetchMetadataFields(objectNamePlural: string) {
-    switch (objectNamePlural) {
-      case 'objects':
-        return `
-          dataSourceId
-          nameSingular
-          namePlural
-          labelSingular
-          labelPlural
-          description
-          icon
-          isCustom
-          isActive
-          isSystem
-          createdAt
-          updatedAt
-          labelIdentifierFieldMetadataId
-          imageIdentifierFieldMetadataId
-        `;
-      case 'fields':
-        return `
+    const fields = `
           type
           name
           label
@@ -117,6 +98,35 @@ export class ApiRestMetadataService {
           defaultValue
           options
         `;
+
+    switch (objectNamePlural) {
+      case 'objects':
+        return `
+          dataSourceId
+          nameSingular
+          namePlural
+          labelSingular
+          labelPlural
+          description
+          icon
+          isCustom
+          isActive
+          isSystem
+          createdAt
+          updatedAt
+          labelIdentifierFieldMetadataId
+          imageIdentifierFieldMetadataId
+          fields(paging: { first: 1000 }) {
+            edges {
+              node {
+                id
+                ${fields}
+              }
+            }
+          }
+        `;
+      case 'fields':
+        return fields;
       case 'relations':
         return `
           relationType
@@ -150,7 +160,8 @@ export class ApiRestMetadataService {
         $filter: ${objectNameSingular}Filter,
         ) {
         ${objectNamePlural}(
-        filter: $filter
+        filter: $filter,
+        paging: { first: 1000 }
         ) {
           edges {
             node {
