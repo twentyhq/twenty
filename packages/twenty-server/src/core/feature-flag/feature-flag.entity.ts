@@ -18,6 +18,7 @@ export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
   IsWorkspaceCleanable = 'IS_WORKSPACE_CLEANABLE',
   IsNewRecordBoardEnabled = 'IS_NEW_RECORD_BOARD_ENABLED',
+  IsSelfBillingEnabled = 'IS_SELF_BILLING_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
