@@ -1,13 +1,14 @@
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -135,19 +136,7 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 `;
 
 type TimelineActivityProps = {
-  activity: Pick<
-    Activity,
-    | 'id'
-    | 'title'
-    | 'body'
-    | 'createdAt'
-    | 'completedAt'
-    | 'type'
-    | 'comments'
-    | 'dueAt'
-  > & { author?: Pick<WorkspaceMember, 'name' | 'avatarUrl'> } & {
-    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
-  };
+  activity: Activity;
   isLastActivity?: boolean;
 };
 
@@ -159,6 +148,8 @@ export const TimelineActivity = ({
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const theme = useTheme();
+
+  const activityFromStore = useRecoilValue(recordStoreFamilyState(activity.id));
 
   return (
     <>
@@ -191,11 +182,13 @@ export const TimelineActivity = ({
               </StyledIconContainer>
               {(activity.type === 'Note' || activity.type === 'Task') && (
                 <StyledActivityTitle
-                  onClick={() => openActivityRightDrawer(activity.id)}
+                  onClick={() => openActivityRightDrawer(activity)}
                 >
                   “
-                  <StyledActivityLink title={activity.title ?? '(No Title)'}>
-                    {activity.title ?? '(No Title)'}
+                  <StyledActivityLink
+                    title={activityFromStore?.title ?? '(No Title)'}
+                  >
+                    {activityFromStore?.title ?? '(No Title)'}
                   </StyledActivityLink>
                   “
                 </StyledActivityTitle>
