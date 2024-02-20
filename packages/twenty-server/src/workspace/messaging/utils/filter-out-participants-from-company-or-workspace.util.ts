@@ -13,7 +13,7 @@ export function filterOutParticipantsFromCompanyOrWorkspace(
   return participants.filter(
     (participant) =>
       getDomainNameFromHandle(participant.handle) !== selfDomainName &&
-      !workspaceMembers?.some(
+      !workspaceMembers.some(
         (workspaceMember) => workspaceMember.userEmail === participant.handle,
       ),
   );

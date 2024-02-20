@@ -26,7 +26,7 @@ export class WorkspaceMemberService {
       workspaceId,
     );
 
-    return result.rows;
+    return result;
   }
 
   public async getByIdOrFail(
@@ -64,6 +64,6 @@ export class WorkspaceMemberService {
       transactionManager,
     );
 
-    return result.rows;
+    return result;
   }
 }
