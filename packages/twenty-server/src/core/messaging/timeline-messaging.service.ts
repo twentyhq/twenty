@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/workspace/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/core/messaging/dtos/timeline-threads-with-total.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';

@@ -15,7 +15,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
-import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
+import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/workspace/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/core/messaging/dtos/timeline-threads-with-total.dto';
 
 @ArgsType()

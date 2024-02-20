@@ -12,6 +12,10 @@ import {
   GmailFullSyncSubJob,
   GmailFullSyncSubJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync/gmail-full-sync-sub.job';
+import {
+  GMAIL_FULL_SYNC_DEFAULT_PAGE_SIZE,
+  GMAIL_FULL_SYNC_GMAIL_API_DEFAULT_PAGE_SIZE,
+} from 'src/workspace/messaging/constants/messaging.constants';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -31,7 +35,7 @@ export class GmailFullSyncService {
   ): Promise<string[]> {
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
-      maxResults: 500,
+      maxResults: Math.max(GMAIL_FULL_SYNC_GMAIL_API_DEFAULT_PAGE_SIZE, 500),
     });
 
     const messagesData = messages.data.messages;
@@ -45,7 +49,7 @@ export class GmailFullSyncService {
     while (nextPageToken) {
       const nextPageMessages = await gmailClient.users.messages.list({
         userId: 'me',
-        maxResults: 500,
+        maxResults: Math.max(GMAIL_FULL_SYNC_GMAIL_API_DEFAULT_PAGE_SIZE, 500),
         pageToken: nextPageToken,
       });
 
@@ -128,10 +132,15 @@ export class GmailFullSyncService {
       return;
     }
 
-    const numberOfPages = Math.ceil(messagesToFetch.length / 500);
+    const numberOfPages = Math.ceil(
+      messagesToFetch.length / GMAIL_FULL_SYNC_DEFAULT_PAGE_SIZE,
+    );
 
     for (let i = 0; i < numberOfPages; i++) {
-      const messages = messagesToFetch.slice(i * 500, (i + 1) * 500);
+      const messages = messagesToFetch.slice(
+        i * GMAIL_FULL_SYNC_DEFAULT_PAGE_SIZE,
+        (i + 1) * GMAIL_FULL_SYNC_DEFAULT_PAGE_SIZE,
+      );
 
       await this.messageQueueService.add<GmailFullSyncSubJobData>(
         GmailFullSyncSubJob.name,
