@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { SoonPill } from '@/ui/display/pill/components/SoonPill';
+import { Pill } from '@/ui/display/pill/components/Pill';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
@@ -75,7 +75,7 @@ export const SettingsNavigationCard = ({
           <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
           <StyledTitle className={className}>
             {title}
-            {hasSoonPill && <SoonPill />}
+            {hasSoonPill && <Pill label="Soon" />}
           </StyledTitle>
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>

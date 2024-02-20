@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 
-type SoonPillProps = {
+type PillProps = {
   className?: string;
+  label?: string;
 };
 
-const StyledSoonPill = styled.span`
+const StyledPill = styled.span`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
   border-radius: ${({ theme }) => theme.border.radius.pill};
@@ -20,6 +21,6 @@ const StyledSoonPill = styled.span`
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
-export const SoonPill = ({ className }: SoonPillProps) => (
-  <StyledSoonPill className={className}>Soon</StyledSoonPill>
+export const Pill = ({ className, label }: PillProps) => (
+  <StyledPill className={className}>{label}</StyledPill>
 );
