@@ -4,50 +4,46 @@ import { useRemoveFromActivitiesQueries } from '@/activities/hooks/useRemoveFrom
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 
 export const useRemoveFromTimelineActivitiesQueries = () => {
   const timelineTargetableObject = useRecoilValue(
     timelineTargetableObjectState,
   );
 
-  const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItemOnly({
-      objectNameSingular: CoreObjectNameSingular.Activity,
-    });
+  // const { objectMetadataItem: objectMetadataItemActivity } =
+  //   useObjectMetadataItemOnly({
+  //     objectNameSingular: CoreObjectNameSingular.Activity,
+  //   });
 
-  const {
-    upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
+  // const {
+  //   upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
+  // } = useUpsertFindManyRecordsQueryInCache({
+  //   objectMetadataItem: objectMetadataItemActivity,
+  // });
 
-  const { objectMetadataItem: objectMetadataItemActivityTarget } =
-    useObjectMetadataItemOnly({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    });
+  // const { objectMetadataItem: objectMetadataItemActivityTarget } =
+  //   useObjectMetadataItemOnly({
+  //     objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+  //   });
 
-  const {
-    readFindManyRecordsQueryInCache: readFindManyActivityTargetsQueryInCache,
-  } = useReadFindManyRecordsQueryInCache({
-    objectMetadataItem: objectMetadataItemActivityTarget,
-  });
+  // const {
+  //   readFindManyRecordsQueryInCache: readFindManyActivityTargetsQueryInCache,
+  // } = useReadFindManyRecordsQueryInCache({
+  //   objectMetadataItem: objectMetadataItemActivityTarget,
+  // });
 
-  const {
-    readFindManyRecordsQueryInCache: readFindManyActivitiesQueryInCache,
-  } = useReadFindManyRecordsQueryInCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
+  // const {
+  //   readFindManyRecordsQueryInCache: readFindManyActivitiesQueryInCache,
+  // } = useReadFindManyRecordsQueryInCache({
+  //   objectMetadataItem: objectMetadataItemActivity,
+  // });
 
-  const {
-    upsertFindManyRecordsQueryInCache:
-      overwriteFindManyActivityTargetsQueryInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
-    objectMetadataItem: objectMetadataItemActivityTarget,
-  });
+  // const {
+  //   upsertFindManyRecordsQueryInCache:
+  //     overwriteFindManyActivityTargetsQueryInCache,
+  // } = useUpsertFindManyRecordsQueryInCache({
+  //   objectMetadataItem: objectMetadataItemActivityTarget,
+  // });
 
   const { removeFromActivitiesQueries } = useRemoveFromActivitiesQueries();
 
