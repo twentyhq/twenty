@@ -87,6 +87,11 @@ export class GmailFullSyncService {
       throw new Error('No refresh token found');
     }
 
+    await this.connectedAccountService.deleteHistoryId(
+      connectedAccountId,
+      workspaceId,
+    );
+
     const messageChannel =
       await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
         connectedAccountId,
@@ -195,7 +200,7 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
-    await this.connectedAccountService.updateLastSyncHistoryId(
+    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
       historyId,
       connectedAccount.id,
       workspaceId,
