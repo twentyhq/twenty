@@ -4,6 +4,7 @@ import { RelationMetadataDecoratorParams } from 'src/workspace/workspace-sync-me
 
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { convertClassNameToObjectMetadataName } from 'src/workspace/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { RelationDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export function RelationMetadata(
   params: RelationMetadataDecoratorParams,
@@ -29,6 +30,7 @@ export function RelationMetadata(
           toObjectNameSingular: params.objectName,
           fromFieldMetadataName: fieldKey,
           toFieldMetadataName: params.inverseSideFieldName ?? objectName,
+          onDelete: params.onDelete ?? RelationDeleteAction.SET_NULL,
           gate,
         },
       ],

@@ -5,6 +5,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { RelationDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
+
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
   ALTER = 'ALTER',
@@ -40,6 +42,7 @@ export type WorkspaceMigrationColumnRelation = {
   referencedTableName: string;
   referencedTableColumnName: string;
   isUnique?: boolean;
+  onDelete?: RelationDeleteAction;
 };
 
 export type WorkspaceMigrationColumnDrop = {

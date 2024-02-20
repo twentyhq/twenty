@@ -334,7 +334,7 @@ export class WorkspaceMigrationRunnerService {
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
         referencedSchema: schemaName,
-        onDelete: 'CASCADE',
+        onDelete: migrationColumn.onDelete,
       }),
     );
 

@@ -10,6 +10,7 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import {
+  RelationDeleteAction,
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -95,6 +96,9 @@ export class WorkspaceMigrationRelationFactory {
               isUnique:
                 relationMetadata.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
+              onDelete:
+                relationMetadata.onDeleteAction ||
+                RelationDeleteAction.SET_NULL,
             },
           ],
         },

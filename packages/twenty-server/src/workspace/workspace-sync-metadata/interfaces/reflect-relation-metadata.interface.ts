@@ -1,11 +1,15 @@
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import {
+  RelationDeleteAction,
+  RelationMetadataType,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export interface RelationMetadataDecoratorParams {
   type: RelationMetadataType;
   objectName: string;
   inverseSideFieldName?: string;
+  onDelete?: RelationDeleteAction;
 }
 
 export interface ReflectRelationMetadata {
