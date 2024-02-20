@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import isEmpty from 'lodash.isempty';
-
 import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { FindDuplicatesResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -109,26 +107,26 @@ export class FindDuplicatesQueryFactory {
     const criteriaCollection =
       this.getApplicableDuplicateCriteriaCollection(objectMetadataItem);
 
+    const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
+      criteria.columnNames.every((columnName) => !!argsData[columnName]),
+    );
+
+    const filterCriteria = criteriaWithMatchingArgs.map((criteria) =>
+      Object.fromEntries(
+        criteria.columnNames.map((col) => [
+          col,
+          { ilike: `%${argsData[col]}%` },
+        ]),
+      ),
+    );
+
     return {
       // when filtering by an existing record, we need to filter that explicit record out
       ...(filteringByExistingRecordId && {
         id: { neq: filteringByExistingRecordId },
       }),
       // keep condition as "or" to get results by more duplicate criteria
-      or: criteriaCollection
-        .map((dc) =>
-          dc.columnNames.reduce((acc, curr) => {
-            if (!argsData[curr]) {
-              return acc;
-            }
-
-            return {
-              ...acc,
-              [curr]: { ilike: `%${argsData[curr]}%` },
-            };
-          }, {}),
-        )
-        .filter((dc) => !isEmpty(dc)),
+      or: filterCriteria,
     };
   }
 
