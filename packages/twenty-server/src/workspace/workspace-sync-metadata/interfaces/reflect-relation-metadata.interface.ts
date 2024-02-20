@@ -19,4 +19,5 @@ export interface ReflectRelationMetadata {
   fromFieldMetadataName: string;
   toFieldMetadataName: string;
   gate?: GateDecoratorParams;
+  onDelete: RelationDeleteAction;
 }

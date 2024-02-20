@@ -23,7 +23,7 @@ export enum RelationMetadataType {
 export enum RelationDeleteAction {
   CASCADE = 'CASCADE',
   RESTRICT = 'RESTRICT',
-  SET_NULL = 'SET_NULL',
+  SET_NULL = 'SET NULL',
 }
 
 @Entity('relationMetadata')

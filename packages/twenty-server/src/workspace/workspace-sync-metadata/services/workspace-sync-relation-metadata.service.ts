@@ -79,10 +79,7 @@ export class WorkspaceSyncRelationMetadataService {
       standardRelationMetadataCollection,
     );
 
-    console.log(
-      originalRelationMetadataCollection,
-      standardRelationMetadataCollection,
-    );
+    console.log(relationComparatorResults);
 
     throw new Error('Not implemented');
 
