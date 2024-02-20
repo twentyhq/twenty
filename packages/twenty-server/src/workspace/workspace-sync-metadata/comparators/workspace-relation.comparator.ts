@@ -11,6 +11,7 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const relationPropertiesToIgnore = ['createdAt', 'updatedAt'] as const;
+const relationPropertiesToUpdate = ['onDeleteAction'];
 
 @Injectable()
 export class WorkspaceRelationComparator {
@@ -51,6 +52,9 @@ export class WorkspaceRelationComparator {
     );
 
     for (const difference of relationMetadataDifference) {
+      const fieldName = difference.path[0];
+      const property = difference.path[difference.path.length - 1];
+
       if (difference.type === 'CREATE') {
         results.push({
           action: ComparatorAction.CREATE,
@@ -63,6 +67,32 @@ export class WorkspaceRelationComparator {
         results.push({
           action: ComparatorAction.DELETE,
           object: difference.oldValue,
+        });
+      } else if (
+        difference.type === 'CHANGE' &&
+        relationPropertiesToUpdate.includes(property as string)
+      ) {
+        const originalRelationMetadata = originalRelationMetadataMap[fieldName];
+
+        if (!originalRelationMetadata) {
+          throw new Error(
+            `Relation ${fieldName} not found in originalRelationMetadataMap`,
+          );
+        }
+
+        results.push({
+          action: ComparatorAction.UPDATE,
+          object: {
+            id: originalRelationMetadata.id,
+            fromObjectMetadataId: originalRelationMetadata.fromObjectMetadataId,
+            fromFieldMetadataId: originalRelationMetadata.fromFieldMetadataId,
+            toObjectMetadataId: originalRelationMetadata.toObjectMetadataId,
+            toFieldMetadataId: originalRelationMetadata.toFieldMetadataId,
+            workspaceId: originalRelationMetadata.workspaceId,
+            ...{
+              [property]: difference.value,
+            },
+          },
         });
       }
     }

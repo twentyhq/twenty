@@ -10,7 +10,8 @@ import { RelationDeleteAction } from 'src/metadata/relation-metadata/relation-me
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
   ALTER = 'ALTER',
-  RELATION = 'RELATION',
+  CREATE_RELATION = 'CREATE_RELATION',
+  DROP_RELATION = 'DROP_RELATION',
   DROP = 'DROP',
 }
 
@@ -36,13 +37,18 @@ export type WorkspaceMigrationColumnAlter = {
   alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
-export type WorkspaceMigrationColumnRelation = {
-  action: WorkspaceMigrationColumnActionType.RELATION;
+export type WorkspaceMigrationColumnCreateRelation = {
+  action: WorkspaceMigrationColumnActionType.CREATE_RELATION;
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
   isUnique?: boolean;
   onDelete?: RelationDeleteAction;
+};
+
+export type WorkspaceMigrationColumnDropRelation = {
+  action: WorkspaceMigrationColumnActionType.DROP_RELATION;
+  columnName: string;
 };
 
 export type WorkspaceMigrationColumnDrop = {
@@ -55,7 +61,8 @@ export type WorkspaceMigrationColumnAction = {
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
-  | WorkspaceMigrationColumnRelation
+  | WorkspaceMigrationColumnCreateRelation
+  | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
 );
 

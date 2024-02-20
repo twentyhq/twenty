@@ -4,6 +4,8 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
+import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
+import { WorkspaceMigrationBuilderAction } from 'src/workspace/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -79,32 +81,40 @@ export class WorkspaceSyncRelationMetadataService {
       standardRelationMetadataCollection,
     );
 
-    console.log(relationComparatorResults);
+    for (const relationComparatorResult of relationComparatorResults) {
+      if (relationComparatorResult.action === ComparatorAction.CREATE) {
+        storage.addCreateRelationMetadata(relationComparatorResult.object);
+      } else if (relationComparatorResult.action === ComparatorAction.UPDATE) {
+        storage.addUpdateRelationMetadata(relationComparatorResult.object);
+      } else if (relationComparatorResult.action === ComparatorAction.DELETE) {
+        storage.addDeleteRelationMetadata(relationComparatorResult.object);
+      }
+    }
 
-    throw new Error('Not implemented');
+    const metadataRelationUpdaterResult =
+      await this.workspaceMetadataUpdaterService.updateRelationMetadata(
+        manager,
+        storage,
+      );
 
-    // for (const relationComparatorResult of relationComparatorResults) {
-    //   if (relationComparatorResult.action === ComparatorAction.CREATE) {
-    //     storage.addCreateRelationMetadata(relationComparatorResult.object);
-    //   } else if (relationComparatorResult.action === ComparatorAction.DELETE) {
-    //     storage.addDeleteRelationMetadata(relationComparatorResult.object);
-    //   }
-    // }
+    // Create migrations
+    const createRelationWorkspaceMigrations =
+      await this.workspaceMigrationRelationFactory.create(
+        originalObjectMetadataCollection,
+        metadataRelationUpdaterResult.createdRelationMetadataCollection,
+        WorkspaceMigrationBuilderAction.CREATE,
+      );
 
-    // const metadataRelationUpdaterResult =
-    //   await this.workspaceMetadataUpdaterService.updateRelationMetadata(
-    //     manager,
-    //     storage,
-    //   );
+    const updateRelationWorkspaceMigrations =
+      await this.workspaceMigrationRelationFactory.create(
+        originalObjectMetadataCollection,
+        metadataRelationUpdaterResult.updatedRelationMetadataCollection,
+        WorkspaceMigrationBuilderAction.UPDATE,
+      );
 
-    // // Create migrations
-    // const createRelationWorkspaceMigrations =
-    //   await this.workspaceMigrationRelationFactory.create(
-    //     originalObjectMetadataCollection,
-    //     metadataRelationUpdaterResult.createdRelationMetadataCollection,
-    //     WorkspaceMigrationBuilderAction.CREATE,
-    //   );
-
-    // return createRelationWorkspaceMigrations;
+    return [
+      ...createRelationWorkspaceMigrations,
+      ...updateRelationWorkspaceMigrations,
+    ];
   }
 }
