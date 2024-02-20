@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
-import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useSettingsNavItem } from '@/settings/hooks/useSettingsNavItem';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import {
   IconApps,
   IconAt,
@@ -31,19 +33,35 @@ export const SettingsNavigationDrawerItems = () => {
     navigate(AppPath.SignIn);
   }, [signOut, navigate]);
 
+  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
-  const isIntegrationsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/integrations').pathname,
-    end: true,
-  });
 
-  const isAccountsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/accounts').pathname,
-    end: true,
+  const profileNavItem = useSettingsNavItem({ path: SettingsPath.ProfilePage });
+  const appearanceNavItem = useSettingsNavItem({
+    path: SettingsPath.Appearance,
   });
-  const isAccountsEmailsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/accounts/emails').pathname,
-    end: true,
+  const accountsNavItem = useSettingsNavItem({ path: SettingsPath.Accounts });
+  const accountsEmailsNavItem = useSettingsNavItem({
+    path: SettingsPath.AccountsEmails,
+    matchSubPages: true,
+  });
+  const accountsCalendarsNavItem = useSettingsNavItem({
+    path: SettingsPath.AccountsCalendars,
+    matchSubPages: true,
+  });
+  const workspaceNavItem = useSettingsNavItem({ path: SettingsPath.Workspace });
+  const workspaceMembersNavItem = useSettingsNavItem({
+    path: SettingsPath.WorkspaceMembersPage,
+  });
+  const dataModelNavItem = useSettingsNavItem({
+    path: SettingsPath.Objects,
+    matchSubPages: true,
+  });
+  const developersNavItem = useSettingsNavItem({
+    path: SettingsPath.Developers,
+  });
+  const integrationsNavItem = useSettingsNavItem({
+    path: SettingsPath.Integrations,
   });
 
   return (
@@ -52,46 +70,38 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label="User" />
         <NavigationDrawerItem
           label="Profile"
-          to="/settings/profile"
+          to={profileNavItem.to}
           Icon={IconUserCircle}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/profile').pathname,
-              end: true,
-            })
-          }
+          active={profileNavItem.isActive}
         />
         <NavigationDrawerItem
           label="Appearance"
-          to="/settings/profile/appearance"
+          to={appearanceNavItem.to}
           Icon={IconColorSwatch}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/profile/appearance').pathname,
-              end: true,
-            })
-          }
+          active={appearanceNavItem.isActive}
         />
         {isMessagingEnabled && (
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to="/settings/accounts"
+              to={accountsNavItem.to}
               Icon={IconAt}
-              active={isAccountsItemActive}
+              active={accountsNavItem.isActive}
             />
             <NavigationDrawerItem
               level={2}
               label="Emails"
-              to="/settings/accounts/emails"
+              to={accountsEmailsNavItem.to}
               Icon={IconMail}
-              active={isAccountsEmailsItemActive}
+              active={accountsEmailsNavItem.isActive}
             />
             <NavigationDrawerItem
               level={2}
               label="Calendars"
+              to={accountsCalendarsNavItem.to}
               Icon={IconCalendarEvent}
-              soon
+              active={accountsCalendarsNavItem.isActive}
+              soon={!isCalendarEnabled}
             />
           </NavigationDrawerItemGroup>
         )}
@@ -101,53 +111,33 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label="Workspace" />
         <NavigationDrawerItem
           label="General"
-          to="/settings/workspace"
+          to={workspaceNavItem.to}
           Icon={IconSettings}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/workspace').pathname,
-              end: true,
-            })
-          }
+          active={workspaceNavItem.isActive}
         />
         <NavigationDrawerItem
           label="Members"
-          to="/settings/workspace-members"
+          to={workspaceMembersNavItem.to}
           Icon={IconUsers}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/workspace-members').pathname,
-              end: true,
-            })
-          }
+          active={workspaceMembersNavItem.isActive}
         />
         <NavigationDrawerItem
           label="Data model"
-          to="/settings/objects"
+          to={dataModelNavItem.to}
           Icon={IconHierarchy2}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/objects').pathname,
-              end: false,
-            })
-          }
+          active={dataModelNavItem.isActive}
         />
         <NavigationDrawerItem
           label="Developers"
-          to="/settings/developers"
+          to={developersNavItem.to}
           Icon={IconRobot}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/developers').pathname,
-              end: true,
-            })
-          }
+          active={developersNavItem.isActive}
         />
         <NavigationDrawerItem
           label="Integrations"
-          to="/settings/integrations"
+          to={integrationsNavItem.to}
           Icon={IconApps}
-          active={isIntegrationsItemActive}
+          active={integrationsNavItem.isActive}
         />
       </NavigationDrawerSection>
 
