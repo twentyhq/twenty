@@ -26,8 +26,12 @@ export class CreateCompaniesAndContactsService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
+    if (participants.length === 0) {
+      return;
+    }
+
     const workspaceMembers =
-      await this.workspaceMemberService.getAllByWorkspaceId(
+      await this.workspaceMemberService.getAllByWorkspaceIdOrFail(
         workspaceId,
         transactionManager,
       );

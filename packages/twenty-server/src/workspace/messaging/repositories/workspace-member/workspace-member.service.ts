@@ -50,20 +50,25 @@ export class WorkspaceMemberService {
     return workspaceMembers[0];
   }
 
-  public async getAllByWorkspaceId(
+  public async getAllByWorkspaceIdOrFail(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const result = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
-      [],
-      workspaceId,
-      transactionManager,
-    );
+    const workspaceMembers =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
+        [],
+        workspaceId,
+        transactionManager,
+      );
 
-    return result;
+    if (!workspaceMembers || workspaceMembers.length === 0) {
+      throw new NotFoundException('No workspace member found');
+    }
+
+    return workspaceMembers;
   }
 }
