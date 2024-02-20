@@ -11,17 +11,19 @@ export const isObjectRecordConnection = (
     objectNameSingular,
   )}Connection`;
   const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
+
   const objectConnectionSchema = z.object({
-    __typename: z.literal(objectConnectionTypeName),
+    __typename: z.literal(objectConnectionTypeName).optional(),
     edges: z.array(
       z.object({
-        __typename: z.literal(objectEdgeTypeName),
+        __typename: z.literal(objectEdgeTypeName).optional(),
         node: z.object({
           id: z.string().uuid(),
         }),
       }),
     ),
   });
+
   const connectionValidation = objectConnectionSchema.safeParse(value);
 
   return connectionValidation.success;

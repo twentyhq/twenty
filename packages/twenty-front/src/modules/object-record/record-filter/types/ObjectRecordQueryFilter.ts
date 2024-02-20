@@ -79,7 +79,8 @@ export type LeafFilter =
   | CurrencyFilter
   | URLFilter
   | FullNameFilter
-  | BooleanFilter;
+  | BooleanFilter
+  | undefined;
 
 export type AndObjectRecordFilter = {
   and?: ObjectRecordQueryFilter[];

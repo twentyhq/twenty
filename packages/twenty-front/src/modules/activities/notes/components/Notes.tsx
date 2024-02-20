@@ -27,9 +27,13 @@ export const Notes = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { notes } = useNotes(targetableObject);
+  const { notes, initialized } = useNotes(targetableObject);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
+
+  if (!initialized) {
+    return <></>;
+  }
 
   if (notes?.length === 0) {
     return (
