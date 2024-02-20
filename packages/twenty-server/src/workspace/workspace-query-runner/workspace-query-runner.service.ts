@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
@@ -45,6 +50,8 @@ import { computePgGraphQLError } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
+  private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
+
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -82,7 +89,7 @@ export class WorkspaceQueryRunnerService {
     const result = await this.execute(query, workspaceId);
     const end = performance.now();
 
-    console.log(
+    this.logger.log(
       `query time: ${end - start} ms on query ${
         options.objectMetadataItem.nameSingular
       }`,
@@ -363,6 +370,13 @@ export class WorkspaceQueryRunnerService {
     )}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
+
+    if (!result) {
+      this.logger.log(
+        `No result found for ${entityKey}, graphqlResult: ` +
+          JSON.stringify(graphqlResult, null, 3),
+      );
+    }
 
     if (
       result &&
