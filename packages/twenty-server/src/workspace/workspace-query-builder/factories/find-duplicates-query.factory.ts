@@ -93,7 +93,9 @@ export class FindDuplicatesQueryFactory {
         )}Collection(filter: { id: { eq: "${id}" }}){
           edges {
             node {
-              ${this.getApplicableDuplicateCriterias(options.objectMetadataItem)
+              ${this.getApplicableDuplicateCriteriaCollection(
+                options.objectMetadataItem,
+              )
                 .flatMap((dc) => dc.fieldNames)
                 .join('\n')}
             }
@@ -112,15 +114,16 @@ export class FindDuplicatesQueryFactory {
       return;
     }
 
-    const criterias = this.getApplicableDuplicateCriterias(objectMetadataItem);
+    const criteriaCollection =
+      this.getApplicableDuplicateCriteriaCollection(objectMetadataItem);
 
     return {
       // when filtering by an existing record, we need to filter that explicit record out
       ...(filteringByExistingRecordId && {
         id: { neq: filteringByExistingRecordId },
       }),
-      // keep condition as "or" to get results by more duplicate criterias
-      or: criterias
+      // keep condition as "or" to get results by more duplicate criteria
+      or: criteriaCollection
         .map((dc) =>
           dc.fieldNames.reduce((acc, curr) => {
             if (!argsData[curr]) {
@@ -137,7 +140,7 @@ export class FindDuplicatesQueryFactory {
     };
   }
 
-  private getApplicableDuplicateCriterias(
+  private getApplicableDuplicateCriteriaCollection(
     objectMetadataItem: ObjectMetadataInterface,
   ) {
     return duplicateCriteriaCollection.filter(
