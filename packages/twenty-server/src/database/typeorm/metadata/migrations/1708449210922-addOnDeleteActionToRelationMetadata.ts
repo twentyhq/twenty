@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddOnDeleteActionToRelationMetadata1708442904165
+export class AddOnDeleteActionToRelationMetadata1708449210922
   implements MigrationInterface
 {
-  name = 'AddOnDeleteActionToRelationMetadata1708442904165';
+  name = 'AddOnDeleteActionToRelationMetadata1708449210922';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
