@@ -1,5 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
+import { gmail_v1 } from 'googleapis';
+
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
@@ -30,6 +32,43 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
   ) {}
+
+  public async getAllMessagesToFetch(
+    gmailClient: gmail_v1.Gmail,
+  ): Promise<string[]> {
+    const messages = await gmailClient.users.messages.list({
+      userId: 'me',
+      maxResults: 500,
+    });
+
+    const messagesData = messages.data.messages;
+
+    if (!messagesData) {
+      throw new Error('Error fetching first page');
+    }
+
+    let nextPageToken = messages.data.nextPageToken;
+
+    while (nextPageToken) {
+      const nextPageMessages = await gmailClient.users.messages.list({
+        userId: 'me',
+        maxResults: 500,
+        pageToken: nextPageToken,
+      });
+
+      const nextPageMessagesData = nextPageMessages.data.messages;
+
+      if (!nextPageMessagesData) {
+        throw new Error('Error fetching page ${nextPageToken}');
+      }
+
+      messagesData.push(...nextPageMessagesData);
+
+      nextPageToken = nextPageMessages.data.nextPageToken;
+    }
+
+    return messagesData ? messagesData.map((message) => message.id || '') : [];
+  }
 
   public async fetchConnectedAccountThreads(
     workspaceId: string,
