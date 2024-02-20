@@ -22,5 +22,5 @@ export type RecordOrderBy = {
 
 export interface RecordDuplicateCriteria {
   objectName: string;
-  fieldNames: string[];
+  columnNames: string[];
 }

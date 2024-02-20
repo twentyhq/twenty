@@ -3,18 +3,18 @@ import { RecordDuplicateCriteria } from 'src/workspace/workspace-query-builder/i
 export const duplicateCriteriaCollection: RecordDuplicateCriteria[] = [
   {
     objectName: 'company',
-    fieldNames: ['domainName'],
+    columnNames: ['domainName'],
   },
   {
     objectName: 'company',
-    fieldNames: ['name'],
+    columnNames: ['name'],
   },
   {
     objectName: 'person',
-    fieldNames: ['nameFirstName', 'nameLastName'],
+    columnNames: ['nameFirstName', 'nameLastName'],
   },
   {
     objectName: 'person',
-    fieldNames: ['email'],
+    columnNames: ['email'],
   },
 ];

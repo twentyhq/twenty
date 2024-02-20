@@ -88,7 +88,7 @@ export class FindDuplicatesQueryFactory {
               ${this.getApplicableDuplicateCriteriaCollection(
                 options.objectMetadataItem,
               )
-                .flatMap((dc) => dc.fieldNames)
+                .flatMap((dc) => dc.columnNames)
                 .join('\n')}
             }
           }
@@ -117,7 +117,7 @@ export class FindDuplicatesQueryFactory {
       // keep condition as "or" to get results by more duplicate criteria
       or: criteriaCollection
         .map((dc) =>
-          dc.fieldNames.reduce((acc, curr) => {
+          dc.columnNames.reduce((acc, curr) => {
             if (!argsData[curr]) {
               return acc;
             }
