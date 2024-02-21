@@ -70,7 +70,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               />
               <ConfirmationModal
                 confirmationPlaceholder="Yes"
-                confirmationValue="Yes"
+                confirmationValue="yes"
                 isOpen={isDeleteWebhookModalOpen}
                 setIsOpen={setIsDeleteWebhookModalOpen}
                 title="Delete webhook"
