@@ -27,6 +27,10 @@ const StyledSubHeading = styled.div`
   font-family: ${Theme.font.family};
 `;
 
+const StyledImage = styled.img`
+  width: 300px;
+`;
+
 export default function UserGuideCard({
   card,
 }: {
@@ -35,7 +39,7 @@ export default function UserGuideCard({
   const router = useRouter();
   return (
     <StyledContainer onClick={() => router.push(`/user-guide/${card.url}`)}>
-      <img src={card.image} alt={card.title} />
+      <StyledImage src={card.image} alt={card.title} />
       <StyledHeading>{card.title}</StyledHeading>
       <StyledSubHeading>{card.subtitle}</StyledSubHeading>
     </StyledContainer>

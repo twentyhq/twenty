@@ -10,7 +10,7 @@ import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 
 const Container = styled.div`
   display: flex;
-  gap: 8px;
+  gap: ${Theme.spacing(2)};
   color: #b3b3b3;
 `;
 
@@ -32,10 +32,13 @@ const ActivePage = styled.span`
   font-weight: ${Theme.font.weight.medium};
 `;
 
-const StyledSection = styled(React.Fragment)`
+const StyledSection = styled.div`
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
   color: ${Theme.text.color.quarternary};
+  display: flex;
+  flex-direction: row;
+  gap: ${Theme.spacing(2)};
 `;
 
 const StyledMobileContainer = styled.div`
@@ -83,7 +86,7 @@ export const Breadcrumbs = ({
           ) : (
             <InternalLinkItem href={item.uri}>{item.label}</InternalLinkItem>
           )}
-          <span>{separator}</span>
+          <div>{separator}</div>
         </StyledSection>
       ))}
       <ActivePage>{activePage}</ActivePage>

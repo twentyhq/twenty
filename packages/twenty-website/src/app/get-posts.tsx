@@ -124,6 +124,7 @@ export async function getPosts(basePath: string): Promise<Directory> {
 export async function getPost(
   slug: string,
   basePath: string,
+  getTOC: boolean = true,
 ): Promise<FileContent | null> {
   const postsDirectory = path.join(process.cwd(), basePath);
   const filePath = path.join(postsDirectory, `${slug}.mdx`);
@@ -131,8 +132,7 @@ export async function getPost(
   if (!fs.existsSync(filePath)) {
     return null;
   }
-
-  const { content, frontmatter } = await compileMDXFile(filePath, true);
+  const { content, frontmatter } = await compileMDXFile(filePath, getTOC);
 
   return {
     content,
