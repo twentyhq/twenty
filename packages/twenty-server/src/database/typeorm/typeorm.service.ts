@@ -9,7 +9,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
-import { BillingProduct } from 'src/core/billing/entities/billing-product.entity';
+import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -29,7 +29,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         RefreshToken,
         FeatureFlagEntity,
         BillingSubscription,
-        BillingProduct,
+        BillingSubscriptionItem,
       ],
     });
   }

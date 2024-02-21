@@ -1,18 +1,34 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 
-@Entity({ name: 'billingProduct', schema: 'core' })
-export class BillingProduct {
+@Entity({ name: 'billingSubscriptionItem', schema: 'core' })
+export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true })
+  deletedAt?: Date;
+
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  updatedAt: Date;
 
   @Column({ nullable: false })
   billingSubscriptionId: string;
 
   @ManyToOne(
     () => BillingSubscription,
-    (billingSubscription) => billingSubscription.billingProducts,
+    (billingSubscription) => billingSubscription.billingSubscriptionItems,
     {
       onDelete: 'CASCADE',
     },
