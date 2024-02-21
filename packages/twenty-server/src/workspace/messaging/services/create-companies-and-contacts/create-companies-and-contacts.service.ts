@@ -7,6 +7,9 @@ import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domai
 import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
 import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
+import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
+import { getUniqueParticipantsAndHandles } from 'src/workspace/messaging/utils/get-unique-participants-and-handles.util';
+import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/workspace/messaging/utils/filter-out-participants-from-company-or-workspace.util';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
@@ -14,6 +17,7 @@ export class CreateCompaniesAndContactsService {
     private readonly personService: PersonService,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
+    private readonly workspaceMemberService: WorkspaceMemberService,
   ) {}
 
   async createCompaniesAndContacts(
@@ -22,31 +26,26 @@ export class CreateCompaniesAndContactsService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    const selfDomainName = getDomainNameFromHandle(selfHandle);
-
-    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
-    const participantsFromOtherCompanies = participants.filter(
-      (participant) =>
-        getDomainNameFromHandle(participant.handle) !== selfDomainName,
-    );
-
-    if (!participantsFromOtherCompanies.length) {
+    if (participants.length === 0) {
       return;
     }
 
-    const uniqueHandles = Array.from(
-      new Set(
-        participantsFromOtherCompanies.map((participant) => participant.handle),
-      ),
-    );
-
-    const uniqueParticipants = uniqueHandles.map((handle) => {
-      const participant = participantsFromOtherCompanies.find(
-        (participant) => participant.handle === handle,
+    const workspaceMembers =
+      await this.workspaceMemberService.getAllByWorkspaceId(
+        workspaceId,
+        transactionManager,
       );
 
-      return participant;
-    }) as Participant[];
+    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email ex: @gmail.com
+    const participantsFromOtherCompanies =
+      filterOutParticipantsFromCompanyOrWorkspace(
+        participants,
+        selfHandle,
+        workspaceMembers,
+      );
+
+    const { uniqueParticipants, uniqueHandles } =
+      getUniqueParticipantsAndHandles(participantsFromOtherCompanies);
 
     const alreadyCreatedContacts = await this.personService.getByEmails(
       uniqueHandles,

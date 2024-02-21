@@ -127,13 +127,40 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update field metadata
      */
-    const oldFieldMetadataCollection = await fieldMetadataRepository.find({
-      where: {
-        id: In(storage.fieldMetadataUpdateCollection.map((field) => field.id)),
-      },
+    const oldFieldMetadataCollection = await fieldMetadataRepository.findBy({
+      id: In(storage.fieldMetadataUpdateCollection.map((field) => field.id)),
     });
+    // Pre-process old collection into a mapping for quick access
+    const oldFieldMetadataMap = new Map(
+      oldFieldMetadataCollection.map((field) => [field.id, field]),
+    );
+    // Combine old and new field metadata to get whole updated entities
+    const fieldMetadataUpdateCollection =
+      storage.fieldMetadataUpdateCollection.map((updateFieldMetadata) => {
+        const oldFieldMetadata = oldFieldMetadataMap.get(
+          updateFieldMetadata.id,
+        );
+
+        if (!oldFieldMetadata) {
+          throw new Error(`
+            Field ${updateFieldMetadata.id} not found in oldFieldMetadataCollection`);
+        }
+
+        // TypeORM 😢
+        // If we didn't provide the old value, it will be set to null fields that are not in the updateFieldMetadata
+        // and override the old value with null in the DB.
+        // Also save method doesn't return the whole entity if you give a partial one.
+        // https://github.com/typeorm/typeorm/issues/3490
+        // To avoid calling update in a for loop, we did this hack.
+        return {
+          ...oldFieldMetadata,
+          ...updateFieldMetadata,
+          options: updateFieldMetadata.options ?? oldFieldMetadata.options,
+        };
+      });
+
     const updatedFieldMetadataCollection = await fieldMetadataRepository.save(
-      storage.fieldMetadataUpdateCollection as DeepPartial<FieldMetadataEntity>[],
+      fieldMetadataUpdateCollection,
     );
 
     /**
@@ -156,26 +183,21 @@ export class WorkspaceMetadataUpdaterService {
     return {
       createdFieldMetadataCollection:
         createdFieldMetadataCollection as FieldMetadataEntity[],
-      updatedFieldMetadataCollection: oldFieldMetadataCollection.map(
-        (oldFieldMetadata) => {
-          const alteredFieldMetadata = updatedFieldMetadataCollection.find(
-            (field) => field.id === oldFieldMetadata.id,
+      updatedFieldMetadataCollection: updatedFieldMetadataCollection.map(
+        (alteredFieldMetadata) => {
+          const oldFieldMetadata = oldFieldMetadataMap.get(
+            alteredFieldMetadata.id,
           );
 
-          if (!alteredFieldMetadata) {
-            throw new Error(
-              `Field ${oldFieldMetadata.id} not found in updatedFieldMetadataCollection`,
-            );
+          if (!oldFieldMetadata) {
+            throw new Error(`
+              Field ${alteredFieldMetadata.id} not found in oldFieldMetadataCollection
+            `);
           }
 
           return {
             current: oldFieldMetadata as FieldMetadataEntity,
-            // TypeORM save method doesn't return the whole entity...
-            // https://github.com/typeorm/typeorm/issues/3490
-            altered: {
-              ...oldFieldMetadata,
-              ...alteredFieldMetadata,
-            } as FieldMetadataEntity,
+            altered: alteredFieldMetadata as FieldMetadataEntity,
           };
         },
       ),

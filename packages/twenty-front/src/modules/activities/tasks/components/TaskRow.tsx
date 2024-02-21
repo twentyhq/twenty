@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Activity } from '@/activities/types/Activity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
@@ -71,11 +71,7 @@ const StyledPlaceholder = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const TaskRow = ({
-  task,
-}: {
-  task: Omit<GraphQLActivity, 'assigneeId'>;
-}) => {
+export const TaskRow = ({ task }: { task: Activity }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
@@ -89,7 +85,7 @@ export const TaskRow = ({
   return (
     <StyledContainer
       onClick={() => {
-        openActivityRightDrawer(task.id);
+        openActivityRightDrawer(task);
       }}
     >
       <div

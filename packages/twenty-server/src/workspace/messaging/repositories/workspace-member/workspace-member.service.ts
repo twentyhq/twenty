@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
@@ -24,7 +26,7 @@ export class WorkspaceMemberService {
       workspaceId,
     );
 
-    return result.rows;
+    return result;
   }
 
   public async getByIdOrFail(
@@ -46,5 +48,23 @@ export class WorkspaceMemberService {
     }
 
     return workspaceMembers[0];
+  }
+
+  public async getAllByWorkspaceId(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const workspaceMembers =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
+        [],
+        workspaceId,
+        transactionManager,
+      );
+
+    return workspaceMembers;
   }
 }

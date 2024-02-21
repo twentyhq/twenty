@@ -5229,7 +5229,7 @@ export const mockedMessageThreads = {
   },
 };
 
-export const mockedMessageChannels = {
+export const mockedMessageChannelsMetadata = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -5500,7 +5500,7 @@ export const mockedMessageChannels = {
   },
 };
 
-export const mockedConnectedAccounts = {
+export const mockedConnectedAccountsMetadata = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -6811,6 +6811,8 @@ export const mockedObjectMetadataItems = {
     mockedWorkspaceMembersMetadata,
     mockedOpportunitiesMetadata,
     mockedAPIKeysMetadata,
+    mockedConnectedAccountsMetadata,
+    mockedMessageChannelsMetadata,
   ],
   pageInfo: {
     __typename: 'PageInfo',
@@ -6819,5 +6821,5 @@ export const mockedObjectMetadataItems = {
     startCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
     endCursor: 'YXJyYXljb25uZWN0aW9uOjk=',
   },
-  totalCount: 13,
+  totalCount: 15,
 };

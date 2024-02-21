@@ -10,10 +10,7 @@ import {
   WorkspaceHealthOptions,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
 
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -25,6 +22,7 @@ import {
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { createRelationForeignKeyFieldMetadataName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class RelationMetadataHealthService {
@@ -40,12 +38,22 @@ export class RelationMetadataHealthService {
 
     for (const fieldMetadata of objectMetadata.fields) {
       // We're only interested in relation fields
-      if (fieldMetadata.type !== FieldMetadataType.RELATION) {
+      if (!isRelationFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 
       const relationMetadata =
         fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+
+      if (!relationMetadata) {
+        issues.push({
+          type: WorkspaceHealthIssueType.RELATION_METADATA_NOT_VALID,
+          message: `Field ${fieldMetadata.id} has invalid relation metadata`,
+        });
+
+        continue;
+      }
+
       const relationDirection = deduceRelationDirection(
         objectMetadata.id,
         relationMetadata,
