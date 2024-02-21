@@ -214,7 +214,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       />
       <ConfirmationModal
         confirmationPlaceholder="Yes"
-        confirmationValue="Yes"
+        confirmationValue="yes"
         isOpen={isRegenerateKeyModalOpen}
         setIsOpen={setIsRegenerateKeyModalOpen}
         title="Regenerate an Api key"
