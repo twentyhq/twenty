@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
+import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Radio } from '@/ui/input/components/Radio';
 import { Card } from '@/ui/layout/card/components/Card';
@@ -29,7 +29,7 @@ const StyledCardContent = styled(CardContent)`
   }
 `;
 
-const StyledCardMedia = styled(SettingsAccountsInboxSettingsCardMedia)`
+const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   align-items: stretch;
 `;
 

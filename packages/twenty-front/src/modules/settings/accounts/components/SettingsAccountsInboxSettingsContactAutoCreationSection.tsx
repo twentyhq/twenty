@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
-import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
+import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Toggle } from '@/ui/input/components/Toggle';
@@ -42,9 +42,9 @@ export const SettingsAccountsInboxSettingsContactAutoCreateSection = ({
       />
       <Card>
         <StyledCardContent>
-          <SettingsAccountsInboxSettingsCardMedia>
+          <SettingsAccountsCardMedia>
             <IconUser size={theme.icon.size.sm} stroke={theme.icon.stroke.lg} />
-          </SettingsAccountsInboxSettingsCardMedia>
+          </SettingsAccountsCardMedia>
           <StyledTitle>Auto-creation</StyledTitle>
           <Toggle
             value={messageChannel.isContactAutoCreationEnabled}
