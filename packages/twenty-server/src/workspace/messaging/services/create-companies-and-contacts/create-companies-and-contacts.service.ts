@@ -10,6 +10,7 @@ import { PersonService } from 'src/workspace/messaging/repositories/person/perso
 import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
 import { getUniqueParticipantsAndHandles } from 'src/workspace/messaging/utils/get-unique-participants-and-handles.util';
 import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/workspace/messaging/utils/filter-out-participants-from-company-or-workspace.util';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
@@ -36,7 +37,6 @@ export class CreateCompaniesAndContactsService {
         transactionManager,
       );
 
-    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email ex: @gmail.com
     const participantsFromOtherCompanies =
       filterOutParticipantsFromCompanyOrWorkspace(
         participants,
@@ -59,7 +59,8 @@ export class CreateCompaniesAndContactsService {
     const filteredParticipants = uniqueParticipants.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        participant.handle.includes('@') &&
+        isWorkEmail(participant.handle),
     );
 
     const filteredParticipantsWithCompanyDomainNames =
