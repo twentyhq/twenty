@@ -3,7 +3,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
-import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -22,15 +22,15 @@ export const useTimelineActivities = ({
 }) => {
   const { makeActivityWithoutConnection } = useActivityConnectionUtils();
 
-  const [, setTimelineTargetableObject] = useRecoilState(
-    timelineTargetableObjectState,
+  const [, setObjectShowPageTargetableObject] = useRecoilState(
+    objectShowPageTargetableObjectState,
   );
 
   useEffect(() => {
     if (isDefined(targetableObject)) {
-      setTimelineTargetableObject(targetableObject);
+      setObjectShowPageTargetableObject(targetableObject);
     }
-  }, [targetableObject, setTimelineTargetableObject]);
+  }, [targetableObject, setObjectShowPageTargetableObject]);
 
   const {
     activityTargets,

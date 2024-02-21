@@ -2,8 +2,8 @@ import { atom } from 'recoil';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
-export const timelineTargetableObjectState =
+export const objectShowPageTargetableObjectState =
   atom<ActivityTargetableObject | null>({
-    key: 'timelineTargetableObjectState',
+    key: 'objectShowPageTargetableObjectState',
     default: null,
   });
