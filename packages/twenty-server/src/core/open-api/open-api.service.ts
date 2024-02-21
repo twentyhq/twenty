@@ -5,7 +5,7 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
+import { coreSchema, metadataSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
   computeManyResultPath,
   computeSingleResultPath,
@@ -26,7 +26,7 @@ export class OpenApiService {
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const schema = baseSchema();
+    const schema = coreSchema();
 
     let objectMetadataItems;
 
@@ -80,9 +80,31 @@ export class OpenApiService {
 
   async generateMetaDataSchema(): Promise<OpenAPIV3_1.Document> {
     //TODO Add once Rest MetaData api is ready
-    const schema = baseSchema();
+    const schema = metadataSchema();
 
     schema.tags = [{ name: 'placeholder' }];
+
+    schema.paths = ["objects", "fields", "relations"].reduce((path, item) => {
+      path[`/${item}`] = {
+        "get": { 
+          tags: [item],
+          responses: {
+            '400': { $ref: '#/components/responses/400' },
+            '401': { $ref: '#/components/responses/401' },
+          } 
+        }
+      }
+      path[`/${item}/{id}`] = {
+        "get": {
+          tags: [item], 
+          responses: {
+            '400': { $ref: '#/components/responses/400' },
+            '401': { $ref: '#/components/responses/401' },
+          } 
+        }
+      }
+      return path
+    }, schema.paths as OpenAPIV3_1.PathsObject)
 
     return schema;
   }
