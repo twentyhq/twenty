@@ -1,17 +1,19 @@
 import { useRef } from 'react';
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
+import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   Checkbox,
   CheckboxShape,
@@ -57,7 +59,13 @@ type ActivityTitleProps = {
 };
 
 export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
-  const [internalTitle, setInternalTitle] = useState(activity.title);
+  const [activityInStore, setActivityInStore] = useRecoilState(
+    recordStoreFamilyState(activity.id),
+  );
+
+  const [canCreateActivity, setCanCreateActivity] = useRecoilState(
+    canCreateActivityState,
+  );
 
   const { upsertActivity } = useUpsertActivity();
 
@@ -115,7 +123,17 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
   }, 500);
 
   const handleTitleChange = (newTitle: string) => {
-    setInternalTitle(newTitle);
+    setActivityInStore((currentActivity) => {
+      return {
+        ...currentActivity,
+        id: activity.id,
+        title: newTitle,
+      };
+    });
+
+    if (isNonEmptyString(newTitle) && !canCreateActivity) {
+      setCanCreateActivity(true);
+    }
 
     modifyActivityFromCache(activity.id, {
       title: () => {
@@ -153,7 +171,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={internalTitle}
+        value={activityInStore?.title ?? ''}
         completed={completed}
         onBlur={handleBlur}
         onFocus={handleFocus}

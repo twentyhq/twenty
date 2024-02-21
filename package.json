@@ -274,6 +274,7 @@
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.2.3",
     "ts-node": "10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
     "vite-plugin-checker": "^0.6.2",

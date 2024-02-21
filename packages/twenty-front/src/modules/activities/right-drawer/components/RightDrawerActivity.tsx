@@ -24,11 +24,11 @@ export const RightDrawerActivity = ({
   showComment = true,
   fillTitleFromBody = false,
 }: RightDrawerActivityProps) => {
-  const { activity } = useActivityById({
+  const { activity, loading } = useActivityById({
     activityId,
   });
 
-  if (!activity) {
+  if (!activity || loading) {
     return <></>;
   }
 

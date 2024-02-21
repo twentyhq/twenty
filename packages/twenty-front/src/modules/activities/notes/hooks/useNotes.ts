@@ -1,35 +1,21 @@
-import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
+import { useActivities } from '@/activities/hooks/useActivities';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { Note } from '@/activities/types/Note';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableObject } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
-  const { activityTargets } = useActivityTargetsForTargetableObject({
-    targetableObject,
-  });
-
-  const filter = {
-    id: {
-      in: activityTargets?.map((activityTarget) => activityTarget.activityId),
+  const { activities, initialized, loading } = useActivities({
+    activitiesFilters: {
+      type: { eq: 'Note' },
     },
-    type: { eq: 'Note' },
-  };
-
-  const orderBy = {
-    createdAt: 'AscNullsFirst',
-  } as OrderByField;
-
-  const { records: notes } = useFindManyRecords({
-    skip: !activityTargets?.length,
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    filter,
-    orderBy,
+    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+    targetableObjects: [targetableObject],
   });
 
   return {
-    notes: notes as Note[],
+    notes: activities as Note[],
+    initialized,
+    loading,
   };
 };
