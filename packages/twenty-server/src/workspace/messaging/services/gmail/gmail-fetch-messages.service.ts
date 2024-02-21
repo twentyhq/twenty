@@ -35,6 +35,18 @@ export class GmailFetchMessagesService {
 
     const messageQueries = createQueriesFromMessageIds(messagesToFetch);
 
+    const page =
+      pageNumber &&
+      `page ${pageNumber}${lastPageNumber ? ` of ${lastPageNumber}` : ''}`;
+
+    const pageNumberOrNumberOfMessages = page
+      ? `${page} (${messageQueries.length} messages)`
+      : `${messageQueries.length} messages`;
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: fetching ${pageNumberOrNumberOfMessages}`,
+    );
+
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
@@ -43,16 +55,8 @@ export class GmailFetchMessagesService {
 
     if (errors.length) throw new Error('Error fetching messages');
 
-    const page =
-      pageNumber &&
-      `page ${pageNumber}${lastPageNumber ? ` of ${lastPageNumber}` : ''}`;
-
-    const pageNumberOrNumberOfMessages = page
-      ? `${page} (${messagesToSave.length} messages)`
-      : `${messagesToSave.length} messages`;
-
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: fetched ${pageNumberOrNumberOfMessages}`,
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: saving ${pageNumberOrNumberOfMessages}`,
     );
 
     await this.messageService.saveMessages(
@@ -64,10 +68,6 @@ export class GmailFetchMessagesService {
       workspaceId,
     );
 
-    this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: saved ${pageNumberOrNumberOfMessages}`,
-    );
-
     const lastModifiedMessageId = messagesToFetch[0];
 
     const historyId = messagesToSave.find(
@@ -75,6 +75,12 @@ export class GmailFetchMessagesService {
     )?.historyId;
 
     if (!historyId) throw new Error('No history id found');
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      }: updating lastSyncHistoryId if higher${page ? ` for ${page}` : ''}`,
+    );
 
     await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
       historyId,
@@ -85,7 +91,7 @@ export class GmailFetchMessagesService {
     this.logger.log(
       `gmail full-sync for workspace ${workspaceId} and account ${
         connectedAccount.id
-      }: updated lastSyncHistoryId if higher${page ? ` for ${page}` : ''}`,
+      }: done${page ? ` for ${page}` : ''}`,
     );
   }
 }
