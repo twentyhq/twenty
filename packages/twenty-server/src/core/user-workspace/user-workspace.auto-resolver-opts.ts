@@ -19,18 +19,5 @@ export const userWorkspaceAutoResolverOpts: AutoResolverOpts<
     DTOClass: UserWorkspace,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
-    read: {
-      many: { disabled: true },
-      one: { disabled: true },
-    },
-    create: {
-      many: { disabled: true },
-      one: { disabled: true },
-    },
-    update: {
-      many: { disabled: true },
-      one: { disabled: true },
-    },
-    delete: { many: { disabled: true }, one: { disabled: true } },
   },
 ];
