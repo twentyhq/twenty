@@ -97,8 +97,11 @@ export class AuthService {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
 
-    const existingUser = await this.userRepository.findOneBy({
-      email: email,
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+      relations: ['defaultWorkspace'],
     });
 
     if (existingUser && !workspaceInviteHash) {
@@ -162,32 +165,37 @@ export class AuthService {
     }
 
     if (existingUser && workspaceInviteHash) {
-      const userWorkspaceExisits =
+      const userWorkspaceExists =
         await this.userWorkspaceService.checkUserWorkspaceExists(
           existingUser.id,
           workspace.id,
         );
 
-      if (userWorkspaceExisits) return existingUser;
+      if (
+        userWorkspaceExists &&
+        existingUser.defaultWorkspace.id != workspace.id
+      ) {
+        return await this.userRepository.save({
+          id: existingUser.id,
+          defaultWorkspace: workspace,
+          updatedAt: new Date().toISOString(),
+        });
+      }
 
-      const userWorkspace = await this.userWorkspaceService.create(
-        existingUser.id,
-        workspace.id,
-      );
+      await this.userWorkspaceService.create(existingUser.id, workspace.id);
 
       await this.userWorkspaceService.createWorkspaceMember(
         workspace.id,
         existingUser,
       );
 
-      // const updatedUser = await this.userRepository.save({
-      //   id: existingUser.id,
-      //   defaultWorkspace: userWorkspace,
-      //   updatedAt: new Date().toISOString()
-      // });
+      const updatedUser = await this.userRepository.save({
+        id: existingUser.id,
+        defaultWorkspace: workspace,
+        updatedAt: new Date().toISOString(),
+      });
 
-      // return updatedUser;
-      return existingUser;
+      return updatedUser;
     } else {
       const userToCreate = this.userRepository.create({
         email: email,
@@ -201,15 +209,8 @@ export class AuthService {
 
       const user = await this.userRepository.save(userToCreate);
 
-      // const userWorkspace = await this.userWorkspaceService.create(user.id, workspace.id);
+      await this.userWorkspaceService.create(user.id, workspace.id);
 
-      // // const updatedUser = await this.userRepository.save({
-      // //   id: existingUser.id,
-      // //   defaultWorkspace: userWorkspace,
-      // //   updatedAt: new Date().toISOString()
-      // // });
-
-      // // return updatedUser;
       return user;
     }
   }
