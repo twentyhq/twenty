@@ -8,7 +8,7 @@ import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigation
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-type NavigationDrawerItemProps = {
+export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
   level?: 1 | 2;
