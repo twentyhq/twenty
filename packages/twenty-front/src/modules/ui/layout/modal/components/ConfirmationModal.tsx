@@ -42,6 +42,10 @@ const StyledCenteredTitle = styled.div`
   text-align: center;
 `;
 
+const StyledSection = styled(Section)`
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
+`;
+
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
   border-color: ${({ theme }) => theme.border.color.danger};
   box-shadow: none;
@@ -94,12 +98,12 @@ export const ConfirmationModal = ({
           <StyledCenteredTitle>
             <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           </StyledCenteredTitle>
-          <Section
+          <StyledSection
             alignment={SectionAlignment.Center}
             fontColor={SectionFontColor.Primary}
           >
             {subtitle}
-          </Section>
+          </StyledSection>
           {confirmationValue && (
             <Section>
               <TextInput
@@ -112,17 +116,17 @@ export const ConfirmationModal = ({
             </Section>
           )}
           <StyledCenteredButton
+            onClick={() => setIsOpen(false)}
+            variant="secondary"
+            title="Cancel"
+            fullWidth
+          />
+          <StyledCenteredButton
             onClick={onConfirmClick}
             variant="secondary"
             accent="danger"
             title={deleteButtonText}
             disabled={!isValidValue}
-            fullWidth
-          />
-          <StyledCenteredButton
-            onClick={() => setIsOpen(false)}
-            variant="secondary"
-            title="Cancel"
             fullWidth
           />
         </StyledConfirmationModal>
