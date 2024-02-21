@@ -57,6 +57,8 @@ export const useActivityConnectionUtils = () => {
       comments.push(...newComments);
     }
 
+    console.log({ hasActivityTargetsConnection, hasCommentsConnection });
+
     const activity: Activity = {
       ...activityWithConnections,
       activityTargets,
@@ -92,6 +94,11 @@ export const useActivityConnectionUtils = () => {
       edges: commentEdges,
       pageInfo: getEmptyPageInfo(),
     } as ObjectRecordConnection<Comment>;
+
+    console.log({
+      activityTargets,
+      comments,
+    });
 
     const activityWithConnection = {
       ...activity,

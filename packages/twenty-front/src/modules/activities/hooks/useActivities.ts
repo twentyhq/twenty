@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';

@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { useInjectIntoActivityTargetsQueries } from '@/activities/hooks/useInjectIntoActivityTargetsQueries';
@@ -13,7 +14,6 @@ import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/sta
 import { useInjectIntoTimelineActivitiesQueries } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueries';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
 import { Activity } from '@/activities/types/Activity';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from '~/utils/isDefined';

@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

@@ -1,8 +1,8 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
