@@ -69,7 +69,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 onClick={() => setIsDeleteWebhookModalOpen(true)}
               />
               <ConfirmationModal
-                confirmationPlaceholder="Yes"
+                confirmationPlaceholder="yes"
                 confirmationValue="yes"
                 isOpen={isDeleteWebhookModalOpen}
                 setIsOpen={setIsDeleteWebhookModalOpen}
