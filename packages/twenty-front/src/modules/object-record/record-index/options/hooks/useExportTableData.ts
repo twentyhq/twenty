@@ -80,16 +80,18 @@ export const csvDownloader = downloader('text/csv', generateCsv);
 type UseExportTableDataOptions = {
   delayMs: number;
   filename: string;
-  limit: number;
+  maximumRequests?: number;
   objectNameSingular: string;
+  pageSize?: number;
   recordIndexId: string;
 };
 
 export const useExportTableData = ({
   delayMs,
   filename,
-  limit,
+  maximumRequests = 100,
   objectNameSingular,
+  pageSize = 30,
   recordIndexId,
 }: UseExportTableDataOptions) => {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -103,14 +105,14 @@ export const useExportTableData = ({
   const params = useFindManyParams(objectNameSingular);
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...params,
+    limit: pageSize,
     onCompleted: (_data, { hasNextPage }) => {
       setHasNextPage(hasNextPage);
     },
   });
 
   useEffect(() => {
-    const PAGE_SIZE = 30;
-    const MAXIMUM_REQUESTS = Math.min(limit, totalCount / PAGE_SIZE);
+    const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
 
     if (!isDownloading || inflight) {
       return;
@@ -130,7 +132,7 @@ export const useExportTableData = ({
       setInflight(false);
     };
 
-    if (!hasNextPage || pageCount >= limit) {
+    if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
       csvDownloader(filename, { rows: records, columns });
       completeDownload();
     } else {
@@ -143,11 +145,12 @@ export const useExportTableData = ({
     hasNextPage,
     inflight,
     isDownloading,
-    limit,
     pageCount,
     records,
     totalCount,
     columns,
+    maximumRequests,
+    pageSize,
   ]);
 
   return { progress, download: () => setIsDownloading(true) };

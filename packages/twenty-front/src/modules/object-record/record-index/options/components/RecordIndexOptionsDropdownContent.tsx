@@ -125,7 +125,6 @@ export const RecordIndexOptionsDropdownContent = ({
   const { progress, download } = useExportTableData({
     delayMs: 100,
     filename: `${objectNameSingular}.csv`,
-    limit: 100,
     objectNameSingular,
     recordIndexId,
   });
