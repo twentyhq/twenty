@@ -20,6 +20,7 @@ import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
@@ -94,6 +95,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.NewAccount}
                   element={<SettingsNewAccount />}
+                />
+                <Route
+                  path={SettingsPath.AccountsCalendars}
+                  element={<SettingsAccountsCalendars />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}

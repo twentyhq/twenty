@@ -32,6 +32,7 @@ import { getFileType } from '../files/utils/getFileType';
 import '@blocknote/react/style.css';
 
 const StyledBlockNoteStyledContainer = styled.div`
+  height: 100%;
   width: 100%;
 `;
 
