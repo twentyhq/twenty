@@ -66,9 +66,11 @@ export const TaskGroups = ({
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>No Task</AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptyTitle>
+            Mission accomplished!
+          </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no tasks for this user filter
+            All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
