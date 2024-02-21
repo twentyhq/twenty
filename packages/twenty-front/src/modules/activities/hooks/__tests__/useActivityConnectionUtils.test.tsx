@@ -2,38 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
-import { Activity } from '@/activities/types/Activity';
 import { Comment } from '@/activities/types/Comment';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-
-const mockActivity1: Activity = {
-  __typename: 'Activity',
-  id: '1',
-  createdAt: '2021-08-10T14:00:00Z',
-  updatedAt: '2021-08-10T14:00:00Z',
-
-  body: 'Test',
-  completedAt: null,
-  type: 'Task',
-  reminderAt: null,
-  title: 'Test',
-  dueAt: null,
-  author: {
-    id: '1',
-    name: {
-      firstName: 'Test',
-      lastName: 'Test',
-    },
-    avatarUrl: 'Test',
-  },
-  comments: [],
-  activityTargets: [],
-  authorId: '1',
-  assignee: null,
-  assigneeId: null,
-};
 
 const mockActivityWithConnectionRelation = {
   activityTargets: {
