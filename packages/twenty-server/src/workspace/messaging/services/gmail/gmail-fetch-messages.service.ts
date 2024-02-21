@@ -28,6 +28,8 @@ export class GmailFetchMessagesService {
     pageNumber?: number,
     lastPageNumber?: number,
   ) {
+    const t_0 = Date.now();
+
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
       await this.workspaceDataSourceService.connectToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
@@ -47,17 +49,29 @@ export class GmailFetchMessagesService {
       `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: fetching ${pageNumberOrNumberOfMessages}`,
     );
 
+    let t_1 = Date.now();
+
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
 
+    let t_2 = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      }: fetched ${pageNumberOrNumberOfMessages} in ${t_2 - t_1}ms`,
+    );
+
     if (errors.length) throw new Error('Error fetching messages');
 
     this.logger.log(
       `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: saving ${pageNumberOrNumberOfMessages}`,
     );
+
+    t_1 = Date.now();
 
     await this.messageService.saveMessages(
       messagesToSave,
@@ -66,6 +80,14 @@ export class GmailFetchMessagesService {
       connectedAccount,
       messageChannelId,
       workspaceId,
+    );
+
+    t_2 = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      }: saved ${pageNumberOrNumberOfMessages} in ${t_2 - t_1}ms`,
     );
 
     const lastModifiedMessageId = messagesToFetch[0];
@@ -91,7 +113,7 @@ export class GmailFetchMessagesService {
     this.logger.log(
       `gmail full-sync for workspace ${workspaceId} and account ${
         connectedAccount.id
-      }: done${page ? ` for ${page}` : ''}`,
+      }: done${page ? ` for ${page}` : ''} in ${Date.now() - t_0}ms`,
     );
   }
 }
