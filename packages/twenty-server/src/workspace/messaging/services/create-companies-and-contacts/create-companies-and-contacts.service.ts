@@ -31,7 +31,7 @@ export class CreateCompaniesAndContactsService {
     }
 
     const workspaceMembers =
-      await this.workspaceMemberService.getAllByWorkspaceIdOrFail(
+      await this.workspaceMemberService.getAllByWorkspaceId(
         workspaceId,
         transactionManager,
       );

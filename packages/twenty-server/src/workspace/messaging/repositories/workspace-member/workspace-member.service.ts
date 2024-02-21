@@ -50,7 +50,7 @@ export class WorkspaceMemberService {
     return workspaceMembers[0];
   }
 
-  public async getAllByWorkspaceIdOrFail(
+  public async getAllByWorkspaceId(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
@@ -64,10 +64,6 @@ export class WorkspaceMemberService {
         workspaceId,
         transactionManager,
       );
-
-    if (!workspaceMembers || workspaceMembers.length === 0) {
-      throw new NotFoundException('No workspace member found');
-    }
 
     return workspaceMembers;
   }
