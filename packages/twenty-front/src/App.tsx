@@ -138,13 +138,13 @@ export const App = () => {
                   element={<SettingsNewObject />}
                 />
                 <Route
+                  path={SettingsPath.Developers}
+                  element={<SettingsDevelopers />}
+                />
+                <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
                     <Routes>
-                      <Route
-                        path={SettingsPath.Developers}
-                        element={<SettingsDevelopers />}
-                      />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}
                         element={<SettingsDevelopersApiKeysNew />}
