@@ -7,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -15,6 +16,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType('UserWorkspace')
+@Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
 export class UserWorkspace {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
