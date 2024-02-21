@@ -7,4 +7,4 @@ const StyledCard = styled(Card)`
   height: 40px;
 `;
 
-export { StyledCard as SettingsAccountsSkeletonCard };
+export { StyledCard as SettingsAccountsListSkeletonCard };

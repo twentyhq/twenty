@@ -4,7 +4,7 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import { SettingsAccountsCard } from './SettingsAccountsCard';
-import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard';
+import { SettingsAccountsListEmptyStateCard } from './SettingsAccountsListEmptyStateCard';
 
 export const SettingsAccountsConnectedAccountsSection = ({
   accounts,
@@ -30,7 +30,7 @@ export const SettingsAccountsConnectedAccountsSection = ({
           onAccountRemove={handleAccountRemove}
         />
       ) : (
-        <SettingsAccountsEmptyStateCard />
+        <SettingsAccountsListEmptyStateCard />
       )}
     </Section>
   );

@@ -20,13 +20,13 @@ const StyledBody = styled(CardContent)`
   justify-content: center;
 `;
 
-type SettingsAccountsEmptyStateCardProps = {
+type SettingsAccountsListEmptyStateCardProps = {
   label?: string;
 };
 
-export const SettingsAccountsEmptyStateCard = ({
+export const SettingsAccountsListEmptyStateCard = ({
   label,
-}: SettingsAccountsEmptyStateCardProps) => {
+}: SettingsAccountsListEmptyStateCardProps) => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
 
   const handleGmailLogin = useCallback(async () => {

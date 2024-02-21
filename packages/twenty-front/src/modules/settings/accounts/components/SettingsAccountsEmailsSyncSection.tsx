@@ -5,12 +5,11 @@ import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsSkeletonCard } from '@/settings/accounts/components/SettingsAccountsSkeletonCard';
+import { SettingsAccountsEmailsCard } from '@/settings/accounts/components/SettingsAccountsEmailsCard';
+import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
+import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
-
-import { SettingsAccountsEmailsCard } from './SettingsAccountsEmailsCard';
-import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard';
 
 export const SettingsAccountsEmailsSyncSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -52,13 +51,13 @@ export const SettingsAccountsEmailsSyncSection = () => {
       />
 
       {loading ? (
-        <SettingsAccountsSkeletonCard />
+        <SettingsAccountsListSkeletonCard />
       ) : accounts.length ? (
         <SettingsAccountsEmailsCard
           messageChannels={messageChannelsWithSyncedEmails}
         />
       ) : (
-        <SettingsAccountsEmptyStateCard />
+        <SettingsAccountsListEmptyStateCard />
       )}
     </Section>
   );
