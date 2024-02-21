@@ -19,7 +19,7 @@ export class GmailFetchMessagesService {
     private readonly messageService: MessageService,
   ) {}
 
-  public async fetchMessages(
+  public async fetchAndSaveMessages(
     messagesToFetch: string[],
     accessToken: string,
     workspaceId: string,

@@ -31,7 +31,7 @@ export class GmailFullSyncSubJob
       `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccount.id} and page ${data.pageNumber} of ${data.lastPageNumber}`,
     );
 
-    await this.gmailFetchMessagesService.fetchMessages(
+    await this.gmailFetchMessagesService.fetchAndSaveMessages(
       data.messagesToFetch,
       data.accessToken,
       data.workspaceId,
