@@ -1,77 +1,55 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
-import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
+import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
+import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 
 @Injectable()
 export class GmailPartialSyncService {
+  private readonly logger = new Logger(GmailPartialSyncService.name);
+
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly messageChannelService: MessageChannelService,
+    private readonly messageService: MessageService,
   ) {}
-
-  private async getHistory(
-    workspaceId: string,
-    connectedAccountId: string,
-    lastSyncHistoryId: string,
-    maxResults: number,
-  ) {
-    const { connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
-
-    const gmailClient = await this.gmailClientProvider.getGmailClient(
-      connectedAccount.refreshToken,
-    );
-
-    const history = await gmailClient.users.history.list({
-      userId: 'me',
-      startHistoryId: lastSyncHistoryId,
-      historyTypes: ['messageAdded', 'messageDeleted'],
-      maxResults,
-    });
-
-    return history.data;
-  }
 
   public async fetchConnectedAccountThreads(
     workspaceId: string,
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
-        connectedAccountId,
       );
+
+    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+      connectedAccountId,
+      workspaceId,
+    );
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
     if (!lastSyncHistoryId) {
-      // Fall back to full sync
-
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
-        { workspaceId, connectedAccountId },
-        {
-          id: `${workspaceId}-${connectedAccount.id}`,
-          retryLimit: 2,
-        },
-      );
+      await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
       return;
     }
@@ -83,52 +61,44 @@ export class GmailPartialSyncService {
       throw new Error('No refresh token found');
     }
 
-    const history = await this.getHistory(
-      workspaceId,
-      connectedAccountId,
+    const { history, error } = await this.getHistoryFromGmail(
+      refreshToken,
       lastSyncHistoryId,
       maxResults,
     );
 
-    const historyId = history.historyId;
+    if (error && error.code === 404) {
+      await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
-    if (!historyId) {
+      return;
+    }
+
+    const newHistoryId = history?.historyId;
+
+    if (!newHistoryId) {
       throw new Error('No history id found');
     }
 
-    if (historyId === lastSyncHistoryId) {
+    if (newHistoryId === lastSyncHistoryId) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
+      );
+
       return;
     }
 
-    if (!history.history) {
-      await this.utils.saveLastSyncHistoryId(
-        historyId,
+    const gmailMessageChannel =
+      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
         connectedAccountId,
-        dataSourceMetadata,
-        workspaceDataSource,
+        workspaceId,
       );
 
-      return;
-    }
-
-    const gmailMessageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
-      [connectedAccountId],
-    );
-
-    if (!gmailMessageChannel.length) {
-      throw new Error(
-        `No gmail message channel found for connected account ${connectedAccountId}`,
-      );
-    }
-
-    const gmailMessageChannelId = gmailMessageChannel[0].id;
+    const gmailMessageChannelId = gmailMessageChannel.id;
 
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsFromHistory(history);
 
-    const messageQueries =
-      this.utils.createQueriesFromMessageIds(messagesAdded);
+    const messageQueries = createQueriesFromMessageIds(messagesAdded);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -136,28 +106,36 @@ export class GmailPartialSyncService {
         accessToken,
       );
 
-    await this.utils.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      gmailMessageChannelId,
-    );
+    if (messagesToSave.length !== 0) {
+      await this.messageService.saveMessages(
+        messagesToSave,
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
-    await this.utils.deleteMessageChannelMessageAssociations(
-      messagesDeleted,
-      gmailMessageChannelId,
-      dataSourceMetadata,
-      workspaceDataSource,
-    );
+    if (messagesDeleted.length !== 0) {
+      await this.messageService.deleteMessages(
+        workspaceDataSource,
+        messagesDeleted,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
 
     if (errors.length) throw new Error('Error fetching messages');
 
-    await this.utils.saveLastSyncHistoryId(
-      historyId,
+    await this.connectedAccountService.updateLastSyncHistoryId(
+      newHistoryId,
       connectedAccount.id,
-      dataSourceMetadata,
-      workspaceDataSource,
+      workspaceId,
+    );
+
+    this.logger.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done.`,
     );
   }
 
@@ -205,5 +183,49 @@ export class GmailPartialSyncService {
       messagesAdded: uniqueMessagesAdded,
       messagesDeleted: uniqueMessagesDeleted,
     };
+  }
+
+  private async getHistoryFromGmail(
+    refreshToken: string,
+    lastSyncHistoryId: string,
+    maxResults: number,
+  ): Promise<{
+    history?: gmail_v1.Schema$ListHistoryResponse;
+    error?: any;
+  }> {
+    const gmailClient =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
+
+    try {
+      const history = await gmailClient.users.history.list({
+        userId: 'me',
+        startHistoryId: lastSyncHistoryId,
+        historyTypes: ['messageAdded', 'messageDeleted'],
+        maxResults,
+      });
+
+      return { history: history.data };
+    } catch (error) {
+      const errorData = error?.response?.data?.error;
+
+      if (errorData) {
+        return { error: errorData };
+      }
+
+      throw error;
+    }
+  }
+
+  private async fallbackToFullSync(
+    workspaceId: string,
+    connectedAccountId: string,
+  ) {
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
+      { workspaceId, connectedAccountId },
+      {
+        retryLimit: 2,
+      },
+    );
   }
 }

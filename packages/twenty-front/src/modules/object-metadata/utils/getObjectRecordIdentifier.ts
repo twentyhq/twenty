@@ -16,22 +16,20 @@ export const getObjectRecordIdentifier = ({
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity: {
-      return {
-        id: record.id,
-        name: record?.company?.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-        linkToShowPage: `/opportunities/${record.id}`,
-      };
-    }
     case CoreObjectNameSingular.WorkspaceMember: {
-      const workspaceMember = record as WorkspaceMember;
+      const workspaceMember = record as Partial<WorkspaceMember> & {
+        id: string;
+      };
+
+      const name = workspaceMember.name
+        ? `${workspaceMember.name?.firstName ?? ''} ${
+            workspaceMember.name?.lastName ?? ''
+          }`
+        : '';
 
       return {
         id: workspaceMember.id,
-        name:
-          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
+        name,
         avatarUrl: workspaceMember.avatarUrl ?? undefined,
         avatarType: 'rounded',
       };
@@ -61,10 +59,13 @@ export const getObjectRecordIdentifier = ({
       ? 'squared'
       : 'rounded';
 
+  // TODO: This is a temporary solution before we seed imageIdentifierFieldMetadataId in the database
   const avatarUrl =
     (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
       ? getLogoUrlFromDomainName(record['domainName'] ?? '')
-      : imageIdentifierFieldValue) ?? '';
+      : objectMetadataItem.nameSingular === CoreObjectNameSingular.Person
+        ? record['avatarUrl'] ?? ''
+        : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,

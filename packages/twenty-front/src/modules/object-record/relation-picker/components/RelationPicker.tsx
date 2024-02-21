@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 
-import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
 
@@ -28,33 +27,15 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
+  const relationPickerScopeId = 'relation-picker';
+  const { setRelationPickerSearchFilter } = useRelationPicker({
+    relationPickerScopeId,
+  });
   const { translate } = useI18n('translations');
-  const {
-    relationPickerSearchFilter,
-    setRelationPickerSearchFilter,
-    searchQuery,
-  } = useRelationPicker({ relationPickerScopeId: 'relation-picker' });
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
-
-  const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(
-            fieldDefinition.metadata.relationObjectMetadataNameSingular,
-          ) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: recordId ? [recordId] : [],
-    excludeEntityIds: excludeRecordIds,
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
 
   const handleEntitySelected = (
     selectedEntity: EntityForSelect | null | undefined,
@@ -64,12 +45,15 @@ export const RelationPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconForbid}
       emptyLabel={`${translate('no')} ${fieldDefinition.label}`}
-      entitiesToSelect={entities.entitiesToSelect}
-      loading={entities.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={entities.selectedEntities[0]}
       width={width}
+      relationObjectNameSingular={
+        fieldDefinition.metadata.relationObjectMetadataNameSingular
+      }
+      relationPickerScopeId={relationPickerScopeId}
+      selectedRelationRecordIds={recordId ? [recordId] : []}
+      excludedRelationRecordIds={excludeRecordIds}
     />
   );
 };

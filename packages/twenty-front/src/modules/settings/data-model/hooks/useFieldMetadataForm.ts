@@ -3,7 +3,7 @@ import { DeepPartial } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
-import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,

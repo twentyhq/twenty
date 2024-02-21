@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { HighlightedText } from 'src/components/HighlightedText';

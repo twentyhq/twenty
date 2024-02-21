@@ -11,17 +11,19 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 type SettingsNavigationCardProps = {
   children: ReactNode;
   disabled?: boolean;
-  hasSoonPill?: boolean;
+  soon?: boolean;
   Icon: IconComponent;
   onClick?: () => void;
   title: string;
+  className?: string;
 };
 
 const StyledCard = styled(Card)<{
   disabled?: boolean;
   onClick?: () => void;
 }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
 `;
@@ -39,8 +41,9 @@ const StyledHeader = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
+const StyledTitle = styled.div<{ disabled?: boolean }>`
+  color: ${({ disabled, theme }) =>
+    disabled ? 'inherit' : theme.font.color.secondary};
   display: flex;
   flex: 1 0 auto;
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -58,22 +61,27 @@ const StyledDescription = styled.div`
 
 export const SettingsNavigationCard = ({
   children,
-  disabled,
-  hasSoonPill,
+  soon,
+  disabled = soon,
   Icon,
   onClick,
   title,
+  className,
 }: SettingsNavigationCardProps) => {
   const theme = useTheme();
 
   return (
-    <StyledCard disabled={disabled} onClick={onClick}>
+    <StyledCard
+      disabled={disabled}
+      onClick={disabled ? undefined : onClick}
+      className={className}
+    >
       <StyledCardContent>
         <StyledHeader>
           <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
-          <StyledTitle>
+          <StyledTitle disabled={disabled}>
             {title}
-            {hasSoonPill && <SoonPill />}
+            {soon && <SoonPill />}
           </StyledTitle>
           <StyledIconChevronRight size={theme.icon.size.sm} />
         </StyledHeader>

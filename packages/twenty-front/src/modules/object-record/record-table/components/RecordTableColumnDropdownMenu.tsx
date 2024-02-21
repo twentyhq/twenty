@@ -1,4 +1,7 @@
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { useRecoilValue } from 'recoil';
+
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,18 +13,24 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export type RecordTableColumnDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
-  primaryColumnKey: string;
 };
 
 export const RecordTableColumnDropdownMenu = ({
   column,
-  isFirstColumn,
-  isLastColumn,
-  primaryColumnKey,
 }: RecordTableColumnDropdownMenuProps) => {
   const { translate } = useI18n('translations');
+  const { getVisibleTableColumnsSelector } = useRecordTableStates();
+
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+
+  const secondVisibleColumn = visibleTableColumns[1];
+  const canMoveLeft =
+    column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId;
+
+  const lastVisibleColumn = visibleTableColumns[visibleTableColumns.length - 1];
+  const canMoveRight =
+    column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId;
+
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
@@ -29,17 +38,17 @@ export const RecordTableColumnDropdownMenu = ({
 
   const handleColumnMoveLeft = () => {
     closeDropdown();
-    if (isFirstColumn) {
-      return;
-    }
+
+    if (!canMoveLeft) return;
+
     handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
     closeDropdown();
-    if (isLastColumn) {
-      return;
-    }
+
+    if (!canMoveRight) return;
+
     handleMoveTableColumn('right', column);
   };
 
@@ -48,18 +57,16 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  return column.fieldMetadataId === primaryColumnKey ? (
-    <></>
-  ) : (
+  return (
     <DropdownMenuItemsContainer>
-      {!isFirstColumn && (
+      {canMoveLeft && (
         <MenuItem
           LeftIcon={IconArrowLeft}
           onClick={handleColumnMoveLeft}
           text={translate('moveLeft')}
         />
       )}
-      {!isLastColumn && (
+      {canMoveRight && (
         <MenuItem
           LeftIcon={IconArrowRight}
           onClick={handleColumnMoveRight}

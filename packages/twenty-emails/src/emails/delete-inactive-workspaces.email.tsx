@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Column, Row, Section } from '@react-email/components';
 import { BaseEmail } from 'src/components/BaseEmail';
 import { MainText } from 'src/components/MainText';

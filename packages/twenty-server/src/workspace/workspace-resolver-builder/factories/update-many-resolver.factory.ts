@@ -28,6 +28,7 @@ export class UpdateManyResolverFactory
       return this.workspaceQueryRunnerService.updateMany(args, {
         objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,

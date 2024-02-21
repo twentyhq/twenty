@@ -6,6 +6,7 @@ import {
   LinkType,
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
+import { checkUrlType } from '~/utils/checkUrlType';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -21,21 +22,6 @@ const StyledRawLink = styled(RoundedLink)`
 
 type URLDisplayProps = {
   value: string | null;
-};
-
-const checkUrlType = (url: string) => {
-  if (
-    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
-      url,
-    )
-  ) {
-    return LinkType.LinkedIn;
-  }
-  if (url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i)) {
-    return LinkType.Twitter;
-  }
-
-  return LinkType.Url;
 };
 
 export const URLDisplay = ({ value }: URLDisplayProps) => {

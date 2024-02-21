@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -19,15 +19,15 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { id: string }>(newEntityArray: T[]) => {
+      <T extends { id: string }>(newEntityArray: T[], totalCount: number) => {
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
-            .getLoadable(entityFieldsFamilyState(entity.id))
+            .getLoadable(recordStoreFamilyState(entity.id))
             .valueOrThrow();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-            set(entityFieldsFamilyState(entity.id), entity);
+            set(recordStoreFamilyState(entity.id), entity);
           }
         }
         const currentRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
@@ -38,8 +38,8 @@ export const useSetRecordTableData = ({
           set(getTableRowIdsState(), entityIds);
         }
 
-        set(getNumberOfTableRowsState(), entityIds.length);
-        onEntityCountChange(entityIds.length);
+        set(getNumberOfTableRowsState(), totalCount);
+        onEntityCountChange(totalCount);
       },
     [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
   );

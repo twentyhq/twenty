@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -16,6 +16,7 @@ import {
   computeSchemaComponents,
 } from 'src/core/open-api/utils/components.utils';
 import { computeSchemaTags } from 'src/core/open-api/utils/compute-schema-tags.utils';
+import { computeWebhooks } from 'src/core/open-api/utils/computeWebhooks.utils';
 
 @Injectable()
 export class OpenApiService {
@@ -24,13 +25,13 @@ export class OpenApiService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
-  async generateSchema(request: Request): Promise<OpenAPIV3.Document> {
+  async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
     const schema = baseSchema();
 
     let objectMetadataItems;
 
     try {
-      const workspace = await this.tokenService.validateToken(request);
+      const { workspace } = await this.tokenService.validateToken(request);
 
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
@@ -42,11 +43,25 @@ export class OpenApiService {
       return schema;
     }
     schema.paths = objectMetadataItems.reduce((paths, item) => {
-      paths[`/rest/${item.namePlural}`] = computeManyResultPath(item);
-      paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
+      paths[`/${item.namePlural}`] = computeManyResultPath(item);
+      paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
-    }, schema.paths as OpenAPIV3.PathsObject);
+    }, schema.paths as OpenAPIV3_1.PathsObject);
+
+    schema.webhooks = objectMetadataItems.reduce(
+      (paths, item) => {
+        paths[`Create ${item.nameSingular}`] = computeWebhooks('create', item);
+        paths[`Update ${item.nameSingular}`] = computeWebhooks('update', item);
+        paths[`Delete ${item.nameSingular}`] = computeWebhooks('delete', item);
+
+        return paths;
+      },
+      {} as Record<
+        string,
+        OpenAPIV3_1.PathItemObject | OpenAPIV3_1.ReferenceObject
+      >,
+    );
 
     schema.tags = computeSchemaTags(objectMetadataItems);
 
@@ -59,6 +74,15 @@ export class OpenApiService {
         '401': getErrorResponses('Unauthorized'),
       },
     };
+
+    return schema;
+  }
+
+  async generateMetaDataSchema(): Promise<OpenAPIV3_1.Document> {
+    //TODO Add once Rest MetaData api is ready
+    const schema = baseSchema();
+
+    schema.tags = [{ name: 'placeholder' }];
 
     return schema;
   }

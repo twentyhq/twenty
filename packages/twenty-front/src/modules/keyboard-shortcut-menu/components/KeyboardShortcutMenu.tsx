@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import useI18n from '@/ui/i18n/useI18n';
@@ -24,6 +25,7 @@ export const KeyboardShortcutMenu = () => {
     isKeyboardShortcutMenuOpenedState,
   );
   const { closeCommandMenu } = useCommandMenu();
+
   useScopedHotkeys(
     'shift+?,meta+?',
     () => {
@@ -35,12 +37,12 @@ export const KeyboardShortcutMenu = () => {
   );
 
   useScopedHotkeys(
-    'esc',
+    [Key.Escape],
     () => {
       closeKeyboardShortcutMenu();
     },
-    AppHotkeyScope.KeyboardShortcutMenu,
-    [toggleKeyboardShortcutMenu],
+    AppHotkeyScope.KeyboardShortcutMenuOpen,
+    [closeKeyboardShortcutMenu],
   );
 
   return (
@@ -48,8 +50,8 @@ export const KeyboardShortcutMenu = () => {
       {isKeyboardShortcutMenuOpened && (
         <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
           <KeyboardMenuGroup heading={translate('table')}>
-            {keyboardShortcutsTable.map((TableShortcut) => (
-              <KeyboardMenuItem shortcut={TableShortcut} />
+            {keyboardShortcutsTable.map((TableShortcut, index) => (
+              <KeyboardMenuItem shortcut={TableShortcut} key={index} />
             ))}
           </KeyboardMenuGroup>
           <KeyboardMenuGroup heading={translate('general')}>

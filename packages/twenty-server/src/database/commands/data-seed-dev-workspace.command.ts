@@ -11,7 +11,7 @@ import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/worksp
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
@@ -62,8 +62,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         );
 
       await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        dataSourceMetadata.id,
-        this.workspaceId,
+        {
+          workspaceId: this.workspaceId,
+          dataSourceId: dataSourceMetadata.id,
+        },
       );
     } catch (error) {
       console.error(error);

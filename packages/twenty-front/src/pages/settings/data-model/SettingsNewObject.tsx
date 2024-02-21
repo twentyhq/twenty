@@ -29,7 +29,7 @@ export const SettingsNewObject = () => {
     namePlural: string;
     nameSingular: string;
   }>({
-    icon: 'IconPigMoney',
+    icon: 'IconListNumbers',
     labelPlural: '',
     labelSingular: '',
     namePlural: '',

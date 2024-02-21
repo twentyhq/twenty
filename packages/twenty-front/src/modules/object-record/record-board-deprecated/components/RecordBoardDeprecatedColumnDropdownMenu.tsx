@@ -71,7 +71,9 @@ export const RecordBoardDeprecatedColumnDropdownMenu = ({
 
   useScopedHotkeys(
     [Key.Escape, Key.Enter],
-    closeMenu,
+    () => {
+      closeMenu();
+    },
     BoardColumnHotkeyScope.BoardColumn,
     [],
   );

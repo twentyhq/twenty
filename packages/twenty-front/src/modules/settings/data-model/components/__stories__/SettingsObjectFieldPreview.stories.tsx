@@ -1,13 +1,11 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -20,22 +18,10 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldPreview',
   component: SettingsObjectFieldPreview,
   decorators: [
-    (Story) => {
-      // wait for metadata
-      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-      return objectMetadataItems.length ? <Story /> : <></>;
-    },
+    RecordStoreDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    (Story) => (
-      <RecoilRoot>
-        <RelationPickerScope relationPickerScopeId="relation-picker">
-          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <Story />
-          </SnackBarProviderScope>
-        </RelationPickerScope>
-      </RecoilRoot>
-    ),
+    SnackBarDecorator,
   ],
   args: {
     fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(
@@ -44,6 +30,23 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
     objectMetadataId: mockedCompaniesMetadata.node.id,
   },
   parameters: {
+    records: [
+      {
+        id: `${mockedCompaniesMetadata.node.id}-field-form`,
+        domainName: 'Test',
+        idealCustomerProfile: true,
+        annualRecurringRevenue: {
+          amountMicros: 1000000,
+          currency: 'USD',
+        },
+        updatedAt: '2021-08-05T14:00:00.000Z',
+        linkedinLink: {
+          label: 'LinkedIn',
+          url: 'https://linkedin.com',
+        },
+        employees: 100,
+      },
+    ],
     msw: graphqlMocks,
   },
 };

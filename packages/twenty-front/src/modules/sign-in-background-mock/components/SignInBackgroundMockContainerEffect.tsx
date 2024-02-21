@@ -2,9 +2,8 @@ import { useEffect } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
+import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import {
   signInBackgroundMockColumnDefinitions,
   signInBackgroundMockFilterDefinitions,
@@ -28,9 +27,8 @@ export const SignInBackgroundMockContainerEffect = ({
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    setRecordTableData,
     setTableColumns,
-    setObjectMetadataConfig,
+    resetTableRowSelection,
   } = useRecordTable({
     recordTableId,
   });
@@ -58,17 +56,13 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFilterDefinitions?.(signInBackgroundMockFilterDefinitions);
     setAvailableFieldDefinitions?.(signInBackgroundMockColumnDefinitions);
 
-    const availableTableColumns = signInBackgroundMockColumnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableTableColumns(availableTableColumns);
+    setAvailableTableColumns(signInBackgroundMockColumnDefinitions);
 
     setTableColumns(
-      mapViewFieldsToColumnDefinitions(
-        signInBackgroundMockViewFields,
-        signInBackgroundMockColumnDefinitions,
-      ),
+      mapViewFieldsToColumnDefinitions({
+        viewFields: signInBackgroundMockViewFields,
+        columnDefinitions: signInBackgroundMockColumnDefinitions,
+      }),
     );
   }, [
     setViewObjectMetadataId,
@@ -77,19 +71,14 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFieldDefinitions,
     objectMetadataItem,
     setAvailableTableColumns,
-    setRecordTableData,
     setTableColumns,
   ]);
 
-  useEffect(() => {
-    setObjectMetadataConfig?.(mockIdentifier);
-  }, [setObjectMetadataConfig]);
-
-  const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries({
-      objectNamePlural,
-      recordTableId,
-    });
+  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+    objectMetadataItem,
+    selectedRecordIds: [],
+    callback: resetTableRowSelection,
+  });
 
   useEffect(() => {
     setActionBarEntries?.();
@@ -103,9 +92,4 @@ export const SignInBackgroundMockContainerEffect = ({
   }, [setEntityCountInCurrentView, setOnEntityCountChange]);
 
   return <></>;
-};
-
-const mockIdentifier = {
-  basePathToShowPage: '/object/company/',
-  labelIdentifierFieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
 };

@@ -34,11 +34,11 @@ import {
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
-import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/integrations/email/email.service';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
+import { JwtData } from 'src/core/auth/types/jwt-data.type';
 
 @Injectable()
 export class TokenService {
@@ -192,7 +192,7 @@ export class TokenService {
     return !!token;
   }
 
-  async validateToken(request: Request): Promise<Workspace> {
+  async validateToken(request: Request): Promise<JwtData> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
@@ -203,11 +203,11 @@ export class TokenService {
       this.environmentService.getAccessTokenSecret(),
     );
 
-    const { workspace } = await this.jwtStrategy.validate(
+    const { user, workspace } = await this.jwtStrategy.validate(
       decoded as JwtPayload,
     );
 
-    return workspace;
+    return { user, workspace };
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {

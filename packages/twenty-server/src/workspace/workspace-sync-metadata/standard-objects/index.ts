@@ -2,6 +2,7 @@ import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metad
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { ApiKeyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/api-key.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
+import { BlocklistObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/blocklist.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
@@ -21,11 +22,12 @@ import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
-export const standardObjectMetadata = [
+export const standardObjectMetadataCollection = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,
   AttachmentObjectMetadata,
+  BlocklistObjectMetadata,
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,

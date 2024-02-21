@@ -1,14 +1,14 @@
 import { getActivitySummary } from '../getActivitySummary';
 
 describe('getActivitySummary', () => {
-  it('should work for empty body', () => {
+  it('should work for empty body ""', () => {
     const activityBody = {};
 
     const res = getActivitySummary(JSON.stringify(activityBody));
 
     expect(res).toEqual('');
   });
-  it('should work for empty body', () => {
+  it('should work for empty body {}', () => {
     const activityBody = '';
 
     const res = getActivitySummary(JSON.stringify(activityBody));
@@ -94,6 +94,36 @@ describe('getActivitySummary', () => {
       },
       {
         id: 'd4720499-2a45-4f3b-96cf-a8415c295678',
+        type: 'paragraph',
+        props: {
+          textColor: 'default',
+          backgroundColor: 'default',
+          textAlignment: 'left',
+        },
+        content: [],
+        children: [],
+      },
+    ];
+
+    const res = getActivitySummary(JSON.stringify(activityBody));
+
+    expect(res).toEqual('');
+  });
+
+  it('should work for table as first block', () => {
+    const activityBody = [
+      {
+        id: '591c3aa1-9e51-465d-bb59-611ef60344fb',
+        type: 'table',
+        props: { textColor: 'default', backgroundColor: 'default' },
+        content: {
+          type: 'tableContent',
+          rows: [{ cells: [[], [], []] }, { cells: [[], [], []] }],
+        },
+        children: [],
+      },
+      {
+        id: '1899ab29-0122-4890-bb50-4d7cf2802f98',
         type: 'paragraph',
         props: {
           textColor: 'default',

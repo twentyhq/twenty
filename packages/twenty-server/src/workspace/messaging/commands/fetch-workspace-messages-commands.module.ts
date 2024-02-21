@@ -6,20 +6,22 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { GmailFullSyncCommand } from 'src/workspace/messaging/commands/gmail-full-sync.command';
 import { GmailPartialSyncCommand } from 'src/workspace/messaging/commands/gmail-partial-sync.command';
-import { MessagingModule } from 'src/workspace/messaging/messaging.module';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
+import { StartFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/messaging/commands/start-fetch-all-workspaces-messages.cron.command';
+import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/workspace/messaging/commands/stop-fetch-all-workspaces-messages.cron.command';
 
 @Module({
   imports: [
-    MessagingModule,
     DataSourceModule,
     TypeORMModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    ConnectedAccountModule,
   ],
   providers: [
     GmailFullSyncCommand,
     GmailPartialSyncCommand,
-    MessagingUtilsService,
+    StartFetchAllWorkspacesMessagesCronCommand,
+    StopFetchAllWorkspacesMessagesCronCommand,
   ],
 })
 export class FetchWorkspaceMessagesCommandsModule {}

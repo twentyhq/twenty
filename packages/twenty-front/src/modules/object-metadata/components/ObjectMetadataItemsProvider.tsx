@@ -1,32 +1,29 @@
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState.ts';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
-import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 
 export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  useFindManyObjectMetadataItems();
-
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const shouldDisplayChildren = () => {
+    if (objectMetadataItems.length) {
+      return true;
+    }
+    return !currentWorkspaceMember;
+  };
   return (
     <>
       <ObjectMetadataItemsLoadEffect />
-      {objectMetadataItems.length < 1 && currentWorkspace ? (
-        <></>
-      ) : (
-        <>
-          <ObjectMetadataItemsRelationPickerEffect />
-          <RelationPickerScope relationPickerScopeId="relation-picker">
-            {children}
-          </RelationPickerScope>
-        </>
+      {shouldDisplayChildren() && (
+        <RelationPickerScope relationPickerScopeId="relation-picker">
+          {children}
+        </RelationPickerScope>
       )}
     </>
   );

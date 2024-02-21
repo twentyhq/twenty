@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
 import { BoardFieldDefinition } from '../../types/BoardFieldDefinition';
 import { recordBoardCardFieldsScopedState } from '../recordBoardDeprecatedCardFieldsScopedState';

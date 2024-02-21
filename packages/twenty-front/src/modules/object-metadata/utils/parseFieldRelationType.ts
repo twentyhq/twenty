@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldDefinitionRelationType } from '@/object-record/field/types/FieldDefinition';
+import { FieldDefinitionRelationType } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldMetadataType,
   RelationMetadataType,

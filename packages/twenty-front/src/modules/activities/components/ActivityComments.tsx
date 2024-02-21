@@ -29,7 +29,6 @@ const StyledThreadItemListContainer = styled.div`
 
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(8)};
-  padding-bottom: ${({ theme }) => theme.spacing(32)};
   padding-left: ${({ theme }) => theme.spacing(12)};
   width: 100%;
 `;
@@ -69,6 +68,7 @@ export const ActivityComments = ({
 
   const { records: comments } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Comment,
+    skip: !isNonEmptyString(activity?.id),
     filter: {
       activityId: {
         eq: activity?.id ?? '',

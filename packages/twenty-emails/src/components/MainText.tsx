@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import { Text } from '@react-email/text';
 import { emailTheme } from 'src/common-style';
 
@@ -8,6 +8,6 @@ const mainTextStyle = {
   color: emailTheme.font.colors.primary,
 };
 
-export const MainText = ({ children }) => {
+export const MainText = ({ children }: PropsWithChildren) => {
   return <Text style={mainTextStyle}>{children}</Text>;
 };

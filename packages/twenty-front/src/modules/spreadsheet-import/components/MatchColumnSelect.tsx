@@ -131,9 +131,8 @@ export const MatchColumnSelect = ({
               <DropdownMenuSeparator />
               <DropdownMenuItemsContainer hasMaxHeight>
                 {options?.map((option) => (
-                  <>
+                  <React.Fragment key={option.label}>
                     <MenuItemSelect
-                      key={option.label}
                       selected={value?.label === option.label}
                       onClick={() => handleChange(option)}
                       disabled={
@@ -154,10 +153,10 @@ export const MatchColumnSelect = ({
                         />,
                         document.body,
                       )}
-                  </>
+                  </React.Fragment>
                 ))}
                 {options?.length === 0 && (
-                  <MenuItem text={translate('noResult')} />
+                  <MenuItem key="No result" text={translate('noResult')} />
                 )}
               </DropdownMenuItemsContainer>
             </DropdownMenu>

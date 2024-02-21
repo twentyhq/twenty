@@ -20,3 +20,4 @@
 coverage
 .vercel
 **/yarn.lock
+**/**/logs/**

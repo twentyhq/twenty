@@ -50,7 +50,7 @@ const StyledInputContainer = styled.div`
 
 export const SettingsObjectFormSection = ({
   disabled,
-  icon = 'IconNewSection',
+  icon = 'IconListNumbers',
   singularName = '',
   pluralName = '',
   singularLabel = '',
@@ -77,7 +77,7 @@ export const SettingsObjectFormSection = ({
       <StyledInputsContainer>
         <TextInput
           label={translate('nameSingularEn')}
-          placeholder={'investor'}
+          placeholder={'Listing'}
           value={singularName}
           onChange={(value) => {
             if (!value || validateMetadataLabel(value)) {

@@ -64,7 +64,11 @@ export class EnvironmentVariables {
   PORT: number;
 
   // Database
-  @IsUrl({ protocols: ['postgres'], require_tld: false, allow_underscores: true })
+  @IsUrl({
+    protocols: ['postgres'],
+    require_tld: false,
+    allow_underscores: true,
+  })
   PG_DATABASE_URL: string;
 
   // Frontend URL
@@ -195,6 +199,11 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_SIGN_UP_DISABLED?: boolean;
+
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {

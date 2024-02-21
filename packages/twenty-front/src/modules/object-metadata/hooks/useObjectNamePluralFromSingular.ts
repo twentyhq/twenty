@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
@@ -20,7 +20,7 @@ export const useObjectNamePluralFromSingular = ({
     }),
   );
 
-  if (!currentWorkspace) {
+  if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>

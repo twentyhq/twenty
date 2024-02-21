@@ -7,5 +7,10 @@ import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 export const RecordBoardDeprecatedActionBar = () => {
   const { selectedCardIdsSelector } = useRecordBoardDeprecatedScopedStates();
   const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
-  return <ActionBar selectedIds={selectedCardIds}></ActionBar>;
+
+  if (!selectedCardIds.length) {
+    return null;
+  }
+
+  return <ActionBar />;
 };

@@ -11,6 +11,7 @@ export type CurrentWorkspace = Pick<
   | 'allowImpersonation'
   | 'featureFlags'
   | 'subscriptionStatus'
+  | 'activationStatus'
 >;
 
 export const currentWorkspaceState = atom<CurrentWorkspace | null>({

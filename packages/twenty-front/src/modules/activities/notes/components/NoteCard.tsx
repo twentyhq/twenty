@@ -4,13 +4,12 @@ import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/object-record/field/contexts/FieldContext';
+} from '@/object-record/record-field/contexts/FieldContext';
 import { IconComment } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
 
@@ -97,7 +96,7 @@ export const NoteCard = ({
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledCard isSingleNote={isSingleNote}>
         <StyledCardDetailsContainer
-          onClick={() => openActivityRightDrawer(note.id)}
+          onClick={() => openActivityRightDrawer(note)}
         >
           <StyledNoteTitle>
             ?{note.title ?? translate('taskTitle')}
@@ -105,9 +104,7 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityTargetsInlineCell
-            activity={note as unknown as GraphQLActivity}
-          />
+          <ActivityTargetsInlineCell activity={note} />
           {note.comments && note.comments.length > 0 && (
             <StyledCommentIcon>
               <IconComment size={theme.icon.size.md} />

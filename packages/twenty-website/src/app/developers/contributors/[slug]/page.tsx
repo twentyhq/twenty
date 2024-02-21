@@ -1,14 +1,17 @@
-import Database from 'better-sqlite3';
+export const dynamic = 'force-dynamic';
+
 import { Metadata } from 'next';
-import Image from 'next/image';
 
-import { ActivityLog } from './components/ActivityLog';
-
-interface Contributor {
-  login: string;
-  avatarUrl: string;
-  pullRequestCount: number;
-}
+import { Background } from '@/app/components/oss-friends/Background';
+import { ActivityLog } from '@/app/developers/contributors/[slug]/components/ActivityLog';
+import { Breadcrumb } from '@/app/developers/contributors/[slug]/components/Breadcrumb';
+import { ContentContainer } from '@/app/developers/contributors/[slug]/components/ContentContainer';
+import { ProfileCard } from '@/app/developers/contributors/[slug]/components/ProfileCard';
+import { ProfileInfo } from '@/app/developers/contributors/[slug]/components/ProfileInfo';
+import { PullRequests } from '@/app/developers/contributors/[slug]/components/PullRequests';
+import { ThankYou } from '@/app/developers/contributors/[slug]/components/ThankYou';
+import { findAll } from '@/database/database';
+import { pullRequestModel, userModel } from '@/database/model';
 
 export function generateMetadata({
   params,
@@ -21,100 +24,111 @@ export function generateMetadata({
 }
 
 export default async function ({ params }: { params: { slug: string } }) {
-  const db = new Database('db.sqlite', { readonly: true });
+  const contributors = await findAll(userModel);
 
-  const contributor = db
-    .prepare(
-      `
-  SELECT 
-    u.login,
-    u.avatarUrl, 
-    (SELECT COUNT(*) FROM pullRequests WHERE authorId = u.id) AS pullRequestCount,
-    (SELECT COUNT(*) FROM issues WHERE authorId = u.id) AS issuesCount
-  FROM 
-    users u
-  WHERE
-    u.login = :user_id
-`,
-    )
-    .get({ user_id: params.slug }) as Contributor;
+  const contributor = contributors.find(
+    (contributor) => contributor.id === params.slug,
+  );
 
-  const pullRequestActivity = db
-    .prepare(
-      `
-  SELECT 
-    COUNT(*) as value,
-    DATE(createdAt) as day
-  FROM 
-    pullRequests
-  WHERE 
-    authorId = (SELECT id FROM users WHERE login = :user_id)
-  GROUP BY 
-    DATE(createdAt)
-  ORDER BY 
-    DATE(createdAt)
-`,
-    )
-    .all({ user_id: params.slug }) as { value: number; day: string }[];
+  if (!contributor) {
+    return;
+  }
 
-  const pullRequestList = db
-    .prepare(
-      `
-  SELECT 
-    id,
-    title,
-    body,
-    url,
-    createdAt,
-    updatedAt,
-    closedAt,
-    mergedAt
-  FROM 
-    pullRequests
-  WHERE 
-    authorId = (SELECT id FROM users WHERE login = :user_id)
-  ORDER BY 
-    DATE(createdAt) DESC
-`,
-    )
-    .all({ user_id: params.slug }) as {
-    title: string;
-    createdAt: string;
-    url: string;
-  }[];
+  const pullRequests = await findAll(pullRequestModel);
+  const mergedPullRequests = pullRequests
+    .filter((pr) => pr.mergedAt !== null)
+    .filter(
+      (pr) =>
+        ![
+          'dependabot',
+          'cyborch',
+          'emilienchvt',
+          'Samox',
+          'charlesBochet',
+          'gitstart-app',
+          'thaisguigon',
+          'lucasbordeau',
+          'magrinj',
+          'Weiko',
+          'gitstart-twenty',
+          'bosiraphael',
+          'martmull',
+          'FelixMalfait',
+          'thomtrp',
+          'Bonapara',
+          'nimraahmed',
+        ].includes(pr.authorId),
+    );
 
-  db.close();
+  const contributorPullRequests = pullRequests.filter(
+    (pr) => pr.authorId === contributor.id,
+  );
+  const mergedContributorPullRequests = contributorPullRequests.filter(
+    (pr) => pr.mergedAt !== null,
+  );
+
+  const mergedContributorPullRequestsByContributor = mergedPullRequests.reduce(
+    (acc, pr) => {
+      acc[pr.authorId] = (acc[pr.authorId] || 0) + 1;
+      return acc;
+    },
+    {},
+  );
+
+  const mergedContributorPullRequestsByContributorArray = Object.entries(
+    mergedContributorPullRequestsByContributor,
+  )
+    .map(([authorId, value]) => ({ authorId, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const contributorRank =
+    ((mergedContributorPullRequestsByContributorArray.findIndex(
+      (contributor) => contributor.authorId === params.slug,
+    ) +
+      1) /
+      contributors.length) *
+    100;
+
+  const pullRequestActivity = contributorPullRequests.reduce((acc, pr) => {
+    const date = new Date(pr.createdAt).toISOString().split('T')[0];
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, []);
+
+  const pullRequestActivityArray = Object.entries(pullRequestActivity)
+    .map(([day, value]) => ({ day, value }))
+    .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime());
 
   return (
-    <div
-      style={{
-        maxWidth: '900px',
-        display: 'flex',
-        padding: '40px',
-        gap: '24px',
-      }}
-    >
-      <div style={{ flexDirection: 'column', width: '240px' }}>
-        <Image
-          src={contributor.avatarUrl}
-          alt={contributor.login}
-          width={240}
-          height={240}
+    <>
+      <Background />
+      <ContentContainer>
+        <Breadcrumb active={contributor.id} />
+        <ProfileCard
+          username={contributor.id}
+          avatarUrl={contributor.avatarUrl}
+          firstContributionAt={pullRequestActivityArray[0]?.day}
         />
-        <h1>{contributor.login}</h1>
-      </div>
-      <div style={{ flexDirection: 'column' }}>
-        <div style={{ width: '450px', height: '200px' }}>
-          <ActivityLog data={pullRequestActivity} />
-        </div>
-        <div style={{ width: '450px' }}>
-          {pullRequestList.map((pr) => (
-            <div>
-              <a href={pr.url}>{pr.title}</a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+        <ProfileInfo
+          mergedPRsCount={mergedContributorPullRequests.length}
+          rank={Math.ceil(Number(contributorRank)).toFixed(0)}
+          activeDays={pullRequestActivityArray.length}
+        />
+        <ActivityLog data={pullRequestActivityArray} />
+        <PullRequests
+          list={
+            contributorPullRequests.slice(0, 9) as {
+              id: string;
+              title: string;
+              url: string;
+              createdAt: string;
+              mergedAt: string | null;
+              authorId: string;
+            }[]
+          }
+        />
+        <ThankYou authorId={contributor.login} />
+      </ContentContainer>
+    </>
   );
 }

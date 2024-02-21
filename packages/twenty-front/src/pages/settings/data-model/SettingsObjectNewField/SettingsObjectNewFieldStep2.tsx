@@ -24,7 +24,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
@@ -42,10 +41,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
-
-  const isRatingFieldTypeEnabled = useIsFeatureEnabled(
-    'IS_RATING_FIELD_TYPE_ENABLED',
-  );
 
   const {
     formValues,
@@ -269,10 +264,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
-
-  if (!isRatingFieldTypeEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.Rating);
-  }
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>

@@ -236,6 +236,10 @@ export class EnvironmentService {
     );
   }
 
+  getLoggerIsBufferEnabled(): boolean | undefined {
+    return this.configService.get<boolean>('LOGGER_IS_BUFFER_ENABLED') ?? true;
+  }
+
   getExceptionHandlerDriverType(): ExceptionHandlerDriver {
     return (
       this.configService.get<ExceptionHandlerDriver>(
@@ -286,5 +290,19 @@ export class EnvironmentService {
 
   isSignUpDisabled(): boolean {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
+  }
+
+  getApiRateLimitingTtl(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_TTL') ?? 100;
+  }
+
+  getApiRateLimitingLimit(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 500;
+  }
+
+  getMutationMaximumRecordAffected(): number {
+    return (
+      this.configService.get<number>('MUTATION_MAXIMUM_RECORD_AFFECTED') ?? 100
+    );
   }
 }

@@ -10,32 +10,13 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { IconPlus } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
-
-const StyledTaskGroupEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-  height: 100%;
-`;
-
-const StyledEmptyTaskGroupTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyTaskGroupSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -87,23 +68,28 @@ export const Attachments = ({
             onUploadFile={onUploadFile}
           />
         ) : (
-          <StyledTaskGroupEmptyContainer>
+          <AnimatedPlaceholderEmptyContainer>
+            <AnimatedPlaceholder type="noFile" />
+            <AnimatedPlaceholderEmptyTextContainer>
+              <AnimatedPlaceholderEmptyTitle>
+                {translate('noFiles')}
+              </AnimatedPlaceholderEmptyTitle>
+              <AnimatedPlaceholderEmptySubTitle>
+                {translate('thereAreNoAssociatedFiles')}
+              </AnimatedPlaceholderEmptySubTitle>
+            </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
               ref={inputFileRef}
               onChange={handleFileChange}
               type="file"
             />
-            <StyledEmptyTaskGroupTitle>{translate('noFilesYet')}</StyledEmptyTaskGroupTitle>
-            <StyledEmptyTaskGroupSubTitle>
-              {`${translate('uploadOne')}:`}
-            </StyledEmptyTaskGroupSubTitle>
             <Button
               Icon={IconPlus}
               title={translate('addFile')}
               variant="secondary"
               onClick={handleUploadFileClick}
             />
-          </StyledTaskGroupEmptyContainer>
+          </AnimatedPlaceholderEmptyContainer>
         )}
       </StyledDropZoneContainer>
     );

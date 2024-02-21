@@ -2,8 +2,8 @@ import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { OptionalJwtAuthGuard } from 'src/guards/optional-jwt.auth.guard';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 

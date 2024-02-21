@@ -22,6 +22,7 @@ import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-versi
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
+import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -30,6 +31,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
+    private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
   ) {}
 
   /**
@@ -63,13 +65,26 @@ export class WorkspaceMigrationRunnerService {
       }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    // Loop over each migration and create or update the table
-    // TODO: Should be done in a transaction
-    for (const migration of flattenedPendingMigrations) {
-      await this.handleTableChanges(queryRunner, schemaName, migration);
+    try {
+      // Loop over each migration and create or update the table
+      for (const migration of flattenedPendingMigrations) {
+        await this.handleTableChanges(queryRunner, schemaName, migration);
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      console.error('Error executing migration', error);
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
 
     // Update appliedAt date for each migration
@@ -80,8 +95,6 @@ export class WorkspaceMigrationRunnerService {
         pendingMigration,
       );
     }
-
-    await queryRunner.release();
 
     // Increment workspace cache version
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
@@ -112,6 +125,9 @@ export class WorkspaceMigrationRunnerService {
           tableMigration.name,
           tableMigration?.columns,
         );
+        break;
+      case 'drop':
+        await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
         break;
       default:
         throw new Error(
@@ -252,13 +268,32 @@ export class WorkspaceMigrationRunnerService {
 
     // TODO: Maybe we can do something better if we can recreate the old `TableColumn` object
     if (enumValues) {
-      // This is returning the old enum values to avoid TypeORM droping the enum type
+      // This is returning the old enum values to avoid TypeORM dropping the enum type
       await this.workspaceMigrationEnumService.alterEnum(
         queryRunner,
         schemaName,
         tableName,
         migrationColumn,
       );
+
+      return;
+    }
+
+    if (
+      migrationColumn.currentColumnDefinition.columnType !==
+      migrationColumn.alteredColumnDefinition.columnType
+    ) {
+      await this.workspaceMigrationTypeService.alterType(
+        queryRunner,
+        schemaName,
+        tableName,
+        migrationColumn,
+      );
+
+      migrationColumn.currentColumnDefinition.columnType =
+        migrationColumn.alteredColumnDefinition.columnType;
+
+      return;
     }
 
     await queryRunner.changeColumn(

@@ -5,18 +5,18 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   RecordUpdateHook,
   RecordUpdateHookParams,
-} from '@/object-record/field/contexts/FieldContext';
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+} from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -48,12 +48,13 @@ export const RecordShowContainer = ({
   });
 
   const setEntityFields = useSetRecoilState(
-    entityFieldsFamilyState(objectRecordId ?? ''),
+    recordStoreFamilyState(objectRecordId),
   );
 
   const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
+    depth: 3,
   });
 
   useEffect(() => {
@@ -237,16 +238,21 @@ export const RecordShowContainer = ({
             </>
           )}
         </ShowPageLeftContainer>
-        <ShowPageRightContainer
-          targetableObject={{
-            id: record?.id ?? '',
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          timeline
-          tasks
-          notes
-          emails
-        />
+        {record ? (
+          <ShowPageRightContainer
+            targetableObject={{
+              id: record.id,
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+              targetObjectRecord: record,
+            }}
+            timeline
+            tasks
+            notes
+            emails
+          />
+        ) : (
+          <></>
+        )}
       </ShowPageContainer>
     </RecoilScope>
   );

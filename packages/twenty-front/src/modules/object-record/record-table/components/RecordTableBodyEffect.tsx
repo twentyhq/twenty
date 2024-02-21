@@ -1,24 +1,25 @@
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
+import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 
 type RecordTableBodyEffectProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
 };
 
 export const RecordTableBodyEffect = ({
-  objectNamePlural,
+  objectNameSingular,
 }: RecordTableBodyEffectProps) => {
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
+    totalCount,
     setRecordTableData,
     queryStateIdentifier,
     loading,
-  } = useObjectRecordTable(objectNamePlural);
+  } = useLoadRecordIndexTable(objectNameSingular);
 
   const { getTableLastRowVisibleState } = useRecordTableStates();
 
@@ -32,9 +33,9 @@ export const RecordTableBodyEffect = ({
 
   useEffect(() => {
     if (!loading) {
-      setRecordTableData(records);
+      setRecordTableData(records, totalCount);
     }
-  }, [records, setRecordTableData, loading]);
+  }, [records, totalCount, setRecordTableData, loading]);
 
   useEffect(() => {
     if (tableLastRowVisible && !isFetchingMoreObjects) {

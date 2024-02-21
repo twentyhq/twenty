@@ -21,6 +21,7 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
+import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
 import {
   RelationMetadataEntity,
@@ -173,6 +174,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     foreignKeyColumnName: string,
   ) {
     await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${relationMetadataInput.fromName}`),
       relationMetadataInput.workspaceId,
       [
         // Create the column

@@ -2,10 +2,11 @@ import { useApolloClient } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
@@ -16,10 +17,17 @@ export const useUpdateOneRecord = <
 >({
   objectNameSingular,
 }: useUpdateOneRecordProps) => {
+  const apolloClient = useApolloClient();
+
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
 
-  const apolloClient = useApolloClient();
+  const { generateObjectRecordOptimisticResponse } =
+    useGenerateObjectRecordOptimisticResponse({
+      objectMetadataItem,
+    });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -30,16 +38,15 @@ export const useUpdateOneRecord = <
   }) => {
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
-    const optimisticallyUpdatedRecord = {
-      ...(cachedRecord ?? {}),
-      ...updateOneRecordInput,
-      __typename: capitalize(objectNameSingular),
-      id: idToUpdate,
-    };
-
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
       recordInput: updateOneRecordInput,
+    });
+
+    const optimisticallyUpdatedRecord = generateObjectRecordOptimisticResponse({
+      ...(cachedRecord ?? {}),
+      ...sanitizedUpdateOneRecordInput,
+      id: idToUpdate,
     });
 
     const mutationResponseField =
@@ -57,12 +64,14 @@ export const useUpdateOneRecord = <
       update: (cache, { data }) => {
         const record = data?.[mutationResponseField];
 
-        if (!record) return;
+        if (!record || !cachedRecord) return;
 
         triggerUpdateRecordOptimisticEffect({
           cache,
           objectMetadataItem,
-          record,
+          currentRecord: cachedRecord,
+          updatedRecord: record,
+          objectMetadataItems,
         });
       },
     });

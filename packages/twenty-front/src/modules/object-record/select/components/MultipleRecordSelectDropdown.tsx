@@ -71,7 +71,7 @@ export const MultipleRecordSelectDropdown = ({
           avatar={
             <Avatar
               avatarUrl={record.avatarUrl}
-              colorId={record.id}
+              entityId={record.id}
               placeholder={record.name}
               size="md"
               type={record.avatarType ?? 'rounded'}

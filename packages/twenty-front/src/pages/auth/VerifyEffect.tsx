@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-
-import { AppPath } from '../../modules/types/AppPath';
+import { AppPath } from '@/types/AppPath';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -26,7 +24,7 @@ export const VerifyEffect = () => {
       } else {
         await verify(loginToken);
 
-        if (isNonEmptyString(currentWorkspace?.displayName)) {
+        if (currentWorkspace?.activationStatus === 'active') {
           navigate(AppPath.Index);
         } else {
           navigate(AppPath.CreateWorkspace);

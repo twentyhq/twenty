@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const StyledThreadMessageBodyPreview = styled.span`
+const StyledThreadMessageBodyPreview = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

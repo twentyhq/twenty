@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const useFindOneRecord = <
-  ObjectType extends { id: string } & Record<string, any>,
->({
+// TODO: fix connection in relation => automatically change to an array
+export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   objectRecordId = '',
   onCompleted,
@@ -13,7 +13,7 @@ export const useFindOneRecord = <
   skip,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
-  onCompleted?: (data: ObjectType) => void;
+  onCompleted?: (data: T) => void;
   skip?: boolean;
   depth?: number;
 }) => {
@@ -23,7 +23,7 @@ export const useFindOneRecord = <
   );
 
   const { data, loading, error } = useQuery<
-    { [nameSingular: string]: ObjectType },
+    { [nameSingular: string]: T },
     { objectRecordId: string }
   >(findOneRecordQuery, {
     skip: !objectMetadataItem || !objectRecordId || skip,

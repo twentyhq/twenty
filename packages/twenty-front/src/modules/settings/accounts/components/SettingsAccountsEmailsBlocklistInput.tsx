@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
@@ -8,7 +9,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 16px;
 `;
 
 const StyledLinkContainer = styled.div`
@@ -29,6 +29,14 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   }>({
     email: '',
   });
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === Key.Enter) {
+      updateBlockedEmailList(formValues.email);
+      setFormValues({ email: '' });
+    }
+  };
+
   return (
     <StyledContainer>
       <StyledLinkContainer>
@@ -42,6 +50,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
             }));
           }}
           fullWidth
+          onKeyDown={handleKeyDown}
         />
       </StyledLinkContainer>
       <Button

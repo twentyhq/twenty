@@ -12,6 +12,12 @@ const getRandomProbability = () => {
 const getRandomPipelineStepId = (pipelineStepIds: { id: string }[]) =>
   pipelineStepIds[Math.floor(Math.random() * pipelineStepIds.length)].id;
 
+const getRandomStage = () => {
+  const stages = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
+
+  return stages[Math.floor(Math.random() * stages.length)];
+};
+
 const generateRandomAmountMicros = () => {
   const firstDigit = Math.floor(Math.random() * 9) + 1;
 
@@ -31,6 +37,7 @@ const generateOpportunities = (
     amountAmountMicros: generateRandomAmountMicros(),
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
+    stage: getRandomStage(),
     probability: getRandomProbability(),
     pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,
@@ -65,12 +72,19 @@ export const seedDemoOpportunity = async (
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
+      'stage',
       'probability',
       'pipelineStepId',
       'pointOfContactId',
       'companyId',
+      'position',
     ])
     .orIgnore()
-    .values(opportunities)
+    .values(
+      opportunities.map((opportunity, index) => ({
+        ...opportunity,
+        position: index,
+      })),
+    )
     .execute();
 };

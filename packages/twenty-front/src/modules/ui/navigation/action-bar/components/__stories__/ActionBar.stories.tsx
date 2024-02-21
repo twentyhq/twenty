@@ -8,10 +8,10 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { actionBarOpenState } from '../../states/actionBarIsOpenState';
 import { ActionBar } from '../ActionBar';
 
-const FilledActionBar = (props: { selectedIds: string[] }) => {
+const FilledActionBar = () => {
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   setActionBarOpenState(true);
-  return <ActionBar selectedIds={props.selectedIds} />;
+  return <ActionBar />;
 };
 
 const meta: Meta<typeof ActionBar> = {

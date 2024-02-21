@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { IconArrowRight } from '@/ui/display/icon/index';
 import { Button } from '@/ui/input/button/components/Button';
 import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
@@ -28,6 +30,7 @@ type AutosizeTextInputProps = {
   buttonTitle?: string;
   value?: string;
   className?: string;
+  onBlur?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -120,6 +123,7 @@ export const AutosizeTextInput = ({
   buttonTitle,
   value = '',
   className,
+  onBlur,
 }: AutosizeTextInputProps) => {
   const { translate } = useI18n('translations');
   const [isFocused, setIsFocused] = useState(false);
@@ -127,7 +131,11 @@ export const AutosizeTextInput = ({
     variant === AutosizeTextInputVariant.Button,
   );
   const [text, setText] = useState(value);
-
+  const textInputRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
   const isSendButtonDisabled = !text;
   const words = text.split(/\s|\n/).filter((word) => word).length;
 
@@ -153,7 +161,7 @@ export const AutosizeTextInput = ({
   );
 
   useScopedHotkeys(
-    'esc',
+    Key.Escape,
     (event: KeyboardEvent) => {
       if (!isFocused) {
         return;
@@ -162,6 +170,8 @@ export const AutosizeTextInput = ({
       event.preventDefault();
 
       setText('');
+      goBackToPreviousHotkeyScope();
+      textInputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,
     [onValidate, setText, isFocused],
@@ -183,6 +193,18 @@ export const AutosizeTextInput = ({
     setText('');
   };
 
+  const handleFocus = () => {
+    onFocus?.();
+    setIsFocused(true);
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+  };
+
+  const handleBlur = () => {
+    onBlur?.();
+    setIsFocused(false);
+    goBackToPreviousHotkeyScope();
+  };
+
   const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
@@ -191,17 +213,15 @@ export const AutosizeTextInput = ({
         <StyledInputContainer>
           {!isHidden && (
             <StyledTextArea
+              ref={textInputRef}
               autoFocus={variant === AutosizeTextInputVariant.Button}
               placeholder={placeholder ?? translate('writeAComment')}
               maxRows={MAX_ROWS}
               minRows={computedMinRows}
               onChange={handleInputChange}
               value={text}
-              onFocus={() => {
-                onFocus?.();
-                setIsFocused(true);
-              }}
-              onBlur={() => setIsFocused(false)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               variant={variant}
             />
           )}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
-import { TimelineThread } from 'src/core/messaging/dtos/timeline-thread.dto';
+import { TimelineThreadsWithTotal } from 'src/core/messaging/dtos/timeline-threads-with-total.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
@@ -27,7 +27,7 @@ export class TimelineMessagingService {
     personIds: string[],
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineThread[]> {
+  ): Promise<TimelineThreadsWithTotal> {
     const offset = (page - 1) * pageSize;
 
     const dataSourceMetadata =
@@ -82,7 +82,10 @@ export class TimelineMessagingService {
     );
 
     if (!messageThreads) {
-      return [];
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
     }
 
     const messageThreadIds = messageThreads.map(
@@ -239,6 +242,23 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
+    const totalNumberOfThreads = await workspaceDataSource?.query(
+      `
+      SELECT COUNT(DISTINCT "messageThread".id)
+      FROM
+          ${dataSourceMetadata.schema}."message" message 
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."person" person ON person.id = "messageParticipant"."personId"
+      WHERE
+          person.id = ANY($1)
+      `,
+      [personIds],
+    );
+
     const threadParticipantsByThreadId: {
       [key: string]: TimelineThreadParticipant[];
     } = messageThreadIds.reduce((messageThreadIdAcc, messageThreadId) => {
@@ -297,6 +317,53 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
+    const threadVisibility:
+      | {
+          id: string;
+          visibility: 'metadata' | 'subject' | 'share_everything';
+        }[]
+      | undefined = await workspaceDataSource?.query(
+      `
+      SELECT
+          "messageThread".id,
+          "messageChannel".visibility
+      FROM
+          ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."message" message ON "message"."messageThreadId" = "messageThread".id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannelMessageAssociation" "messageChannelMessageAssociation" ON "messageChannelMessageAssociation"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageChannel" "messageChannel" ON "messageChannel".id = "messageChannelMessageAssociation"."messageChannelId"
+      WHERE
+          "messageThread".id = ANY($1)
+      `,
+      [messageThreadIds],
+    );
+
+    const visibilityValues = ['metadata', 'subject', 'share_everything'];
+
+    const threadVisibilityByThreadId:
+      | {
+          [key: string]: 'metadata' | 'subject' | 'share_everything';
+        }
+      | undefined = threadVisibility?.reduce(
+      (threadVisibilityAcc, threadVisibility) => {
+        threadVisibilityAcc[threadVisibility.id] =
+          visibilityValues[
+            Math.max(
+              visibilityValues.indexOf(threadVisibility.visibility),
+              visibilityValues.indexOf(
+                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+              ),
+            )
+          ];
+
+        return threadVisibilityAcc;
+      },
+      {},
+    );
+
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadParticipants = threadParticipantsByThreadId[messageThreadId];
 
@@ -344,13 +411,17 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
+        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadParticipants.length,
       };
     });
 
-    return timelineThreads;
+    return {
+      totalNumberOfThreads: totalNumberOfThreads[0]?.count ?? 0,
+      timelineThreads,
+    };
   }
 
   async getMessagesFromCompanyId(
@@ -358,7 +429,7 @@ export class TimelineMessagingService {
     companyId: string,
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ) {
+  ): Promise<TimelineThreadsWithTotal> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -380,7 +451,10 @@ export class TimelineMessagingService {
     );
 
     if (!personIds) {
-      return [];
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
     }
 
     const formattedPersonIds = personIds.map(

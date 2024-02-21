@@ -6,15 +6,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -25,6 +24,7 @@ import {
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+import useI18n from '@/ui/i18n/useI18n';
 
 const validationSchema = z
   .object({
@@ -76,6 +76,7 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
+  const { translate } = useI18n('translations');
   const { enqueueSnackBar } = useSnackBar();
 
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken,
     onError: (error) => {
-      enqueueSnackBar(error?.message ?? 'Token Invalid', {
+      enqueueSnackBar(error?.message ?? translate('tokenInvalid'), {
         variant: 'error',
       });
       if (!isLoggedIn) {
@@ -124,7 +125,7 @@ export const PasswordReset = () => {
 
   const { signInWithCredentials } = useAuth();
 
-  const billing = useRecoilValue(billingState);
+  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
 
   const onSubmit = async (formData: Form) => {
     try {
@@ -136,43 +137,30 @@ export const PasswordReset = () => {
       });
 
       if (!data?.updatePasswordViaResetToken.success) {
-        enqueueSnackBar('There was an error while updating password.', {
+        enqueueSnackBar(translate('thereWasAnErrorWhileUpdatingPassword'), {
           variant: 'error',
         });
         return;
       }
 
       if (isLoggedIn) {
-        enqueueSnackBar('Password has been updated', {
+        enqueueSnackBar(translate('passwordHasBeenUpdated'), {
           variant: 'success',
         });
         navigate(AppPath.Index);
         return;
       }
 
-      const { workspace: currentWorkspace } = await signInWithCredentials(
-        email || '',
-        formData.newPassword,
-      );
+      const {
+        workspace: currentWorkspace,
+        workspaceMember: currentWorkspaceMember,
+      } = await signInWithCredentials(email || '', formData.newPassword);
 
-      if (
-        billing?.isBillingEnabled &&
-        currentWorkspace.subscriptionStatus !== 'active'
-      ) {
-        navigate(AppPath.PlanRequired);
-        return;
-      }
-
-      if (currentWorkspace.displayName) {
-        navigate(AppPath.Index);
-        return;
-      }
-
-      navigate(AppPath.CreateWorkspace);
+      navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
     } catch (err) {
       logError(err);
       enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating password',
+        (err as Error)?.message || translate('anErrorOccurredWhileUpdatingPassword'),
         {
           variant: 'error',
         },
@@ -185,7 +173,7 @@ export const PasswordReset = () => {
       <AnimatedEaseIn>
         <Logo />
       </AnimatedEaseIn>
-      <Title animate>Reset Password</Title>
+      <Title animate>{translate('resetPassword')}</Title>
       <StyledContentContainer>
         {isValidatingToken && (
           <SkeletonTheme
@@ -216,7 +204,7 @@ export const PasswordReset = () => {
                 <TextInput
                   autoFocus
                   value={email}
-                  placeholder="Email"
+                  placeholder={translate('email')}
                   fullWidth
                   disableHotkeys
                   disabled
@@ -244,7 +232,7 @@ export const PasswordReset = () => {
                       autoFocus
                       value={value}
                       type="password"
-                      placeholder="New Password"
+                      placeholder={translate('newPassword')}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={error?.message}
@@ -258,7 +246,7 @@ export const PasswordReset = () => {
 
             <MainButton
               variant="secondary"
-              title="Change Password"
+              title={translate('changePassword')}
               type="submit"
               fullWidth
               disabled={isUpdatingPassword}
@@ -267,8 +255,7 @@ export const PasswordReset = () => {
         )}
       </StyledContentContainer>
       <StyledFooterContainer>
-        By using Twenty, you agree to the Terms of Service and Data Processing
-        Agreement.
+        {translate('agreeTermsOfService')}
       </StyledFooterContainer>
     </StyledMainContainer>
   );

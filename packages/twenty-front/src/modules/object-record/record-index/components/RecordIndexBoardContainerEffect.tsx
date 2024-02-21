@@ -1,9 +1,13 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
+import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
 
 type RecordIndexBoardContainerEffectProps = {
@@ -15,12 +19,37 @@ type RecordIndexBoardContainerEffectProps = {
 export const RecordIndexBoardContainerEffect = ({
   objectNameSingular,
   recordBoardId,
+  viewBarId,
 }: RecordIndexBoardContainerEffectProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
   });
 
-  useLoadRecordIndexBoard(objectNameSingular, recordBoardId);
+  const {
+    setColumns,
+    setObjectSingularName,
+    getSelectedRecordIdsSelector,
+    setFieldDefinitions,
+    getOnFetchMoreVisibilityChangeState,
+  } = useRecordBoard(recordBoardId);
+
+  const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
+    objectNameSingular,
+    recordBoardId,
+    viewBarId,
+  });
+
+  const setOnFetchMoreVisibilityChange = useSetRecoilState(
+    getOnFetchMoreVisibilityChangeState(),
+  );
+
+  useEffect(() => {
+    setOnFetchMoreVisibilityChange(() => () => {
+      if (!loading) {
+        fetchMoreRecords?.();
+      }
+    });
+  }, [fetchMoreRecords, loading, setOnFetchMoreVisibilityChange]);
 
   const navigate = useNavigate();
 
@@ -28,7 +57,11 @@ export const RecordIndexBoardContainerEffect = ({
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
 
-  const { setColumns } = useRecordBoard(recordBoardId);
+  const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
+
+  useEffect(() => {
+    setObjectSingularName(objectNameSingular);
+  }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
     setColumns(
@@ -43,6 +76,27 @@ export const RecordIndexBoardContainerEffect = ({
     objectNameSingular,
     setColumns,
   ]);
+
+  const recordIndexFieldDefinitions = useRecoilValue(
+    recordIndexFieldDefinitionsState,
+  );
+
+  useEffect(() => {
+    setFieldDefinitions(recordIndexFieldDefinitions);
+  }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
+
+  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+
+  const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
+    objectMetadataItem,
+    selectedRecordIds,
+    callback: resetRecordSelection,
+  });
+
+  useEffect(() => {
+    setActionBarEntries?.();
+    setContextMenuEntries?.();
+  }, [setActionBarEntries, setContextMenuEntries]);
 
   return <></>;
 };

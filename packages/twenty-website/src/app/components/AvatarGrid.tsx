@@ -4,19 +4,34 @@ import styled from '@emotion/styled';
 import Link from 'next/link';
 
 export interface User {
-  login: string;
+  id: string;
   avatarUrl: string;
 }
 
 const AvatarGridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  grid-gap: 10px;
+  margin: 0 auto;
+  max-width: 1024px;
+  justify-items: center;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
 `;
 
 const AvatarItem = styled.div`
   position: relative;
-  width: 100%;
+  width: 124px;
+  height: 124px;
+  border: 3px solid #141414;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: 200ms;
+
+  &:hover {
+    -webkit-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
+    -moz-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
+    box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
+  }
 
   img {
     width: 100%;
@@ -51,13 +66,10 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
   return (
     <AvatarGridContainer>
       {users.map((user) => (
-        <Link
-          href={`/developers/contributors/${user.login}`}
-          key={`l_${user.login}`}
-        >
-          <AvatarItem key={user.login}>
-            <img src={user.avatarUrl} alt={user.login} />
-            <span className="username">{user.login}</span>
+        <Link href={`/developers/contributors/${user.id}`} key={`l_${user.id}`}>
+          <AvatarItem key={user.id}>
+            <img src={user.avatarUrl} alt={user.id} />
+            <span className="username">{user.id}</span>
           </AvatarItem>
         </Link>
       ))}

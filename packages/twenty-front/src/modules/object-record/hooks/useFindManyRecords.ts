@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
@@ -13,7 +13,6 @@ import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnec
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
-import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -28,7 +27,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
-  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
+  limit,
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,
@@ -66,12 +65,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   );
 
   const { enqueueSnackBar } = useSnackBar();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { data, loading, error, fetchMore } = useQuery<
     ObjectRecordQueryResult<T>
   >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem || !currentWorkspace,
+    skip: skip || !objectMetadataItem || !currentWorkspaceMember,
     variables: {
       filter,
       limit,
@@ -147,6 +146,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               edges: newEdges,
               pageInfo:
                 fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+              totalCount:
+                fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
             });
 
             return Object.assign({}, prev, {
@@ -157,6 +158,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 edges: newEdges,
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                totalCount:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
             } as ObjectRecordQueryResult<T>);
           },
@@ -225,6 +228,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   return {
     objectMetadataItem,
     records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
+    totalCount: data?.[objectMetadataItem.namePlural].totalCount || 0,
     loading,
     error,
     fetchMoreRecords,

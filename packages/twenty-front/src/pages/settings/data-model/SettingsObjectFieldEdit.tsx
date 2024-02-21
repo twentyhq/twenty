@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -27,6 +28,15 @@ import {
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
+const canPersistFieldMetadataItemUpdate = (
+  fieldMetadataItem: FieldMetadataItem,
+) => {
+  return (
+    fieldMetadataItem.isCustom ||
+    fieldMetadataItem.type === FieldMetadataType.Select
+  );
+};
+
 export const SettingsObjectFieldEdit = () => {
   const { translate } = useI18n('translations');
 
@@ -46,11 +56,21 @@ export const SettingsObjectFieldEdit = () => {
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
+  const getRelationMetadata = useGetRelationMetadata();
   const {
     relationFieldMetadataItem,
     relationObjectMetadataItem,
     relationType,
-  } = useRelationMetadata({ fieldMetadataItem: activeMetadataField });
+  } =
+    useMemo(
+      () =>
+        activeMetadataField
+          ? getRelationMetadata({
+              fieldMetadataItem: activeMetadataField,
+            })
+          : null,
+      [activeMetadataField, getRelationMetadata],
+    ) ?? {};
 
   const {
     formValues,
@@ -170,6 +190,9 @@ export const SettingsObjectFieldEdit = () => {
     navigate(`/settings/objects/${objectSlug}`);
   };
 
+  const shouldDisplaySaveAndCancel =
+    canPersistFieldMetadataItemUpdate(activeMetadataField);
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
@@ -184,7 +207,7 @@ export const SettingsObjectFieldEdit = () => {
               { children: activeMetadataField.label },
             ]}
           />
-          {activeMetadataField.isCustom && (
+          {shouldDisplaySaveAndCancel && (
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(`/settings/objects/${objectSlug}`)}

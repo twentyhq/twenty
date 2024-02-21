@@ -7,7 +7,6 @@ import { isSoftFocusActiveStateScopeMap } from '@/object-record/record-table/sta
 import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/record-table/states/isSoftFocusOnTableCellFamilyStateScopeMap';
 import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
 import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
-import { objectMetadataConfigStateScopeMap } from '@/object-record/record-table/states/objectMetadataConfigStateScopeMap';
 import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
 import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
 import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
@@ -15,7 +14,6 @@ import { allRowsSelectedStatusSelectorScopeMap } from '@/object-record/record-ta
 import { hiddenTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/hiddenTableColumnsSelectorScopeMap';
 import { numberOfTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/numberOfTableColumnsSelectorScopeMap';
 import { selectedRowIdsSelectorScopeMap } from '@/object-record/record-table/states/selectors/selectedRowIdsSelectorScopeMap';
-import { tableColumnsByKeySelectorScopeMap } from '@/object-record/record-table/states/selectors/tableColumnsByKeySelectorScopeMap';
 import { visibleTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/visibleTableColumnsSelectorScopeMap';
 import { softFocusPositionStateScopeMap } from '@/object-record/record-table/states/softFocusPositionStateScopeMap';
 import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
@@ -26,7 +24,7 @@ import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tab
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
@@ -44,10 +42,7 @@ export const useRecordTableStates = (recordTableId?: string) => {
     getTableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
     getTableSortsState: getState(tableSortsStateScopeMap, scopeId),
     getTableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
-    getObjectMetadataConfigState: getState(
-      objectMetadataConfigStateScopeMap,
-      scopeId,
-    ),
+
     getOnColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
     getOnEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,
@@ -94,27 +89,23 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    allRowsSelectedStatusSelector: getSelector(
+    getAllRowsSelectedStatusSelector: getSelectorReadOnly(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,
     ),
-    hiddenTableColumnsSelector: getSelector(
+    getHiddenTableColumnsSelector: getSelectorReadOnly(
       hiddenTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    numberOfTableColumnsSelector: getSelector(
+    getNumberOfTableColumnsSelector: getSelectorReadOnly(
       numberOfTableColumnsSelectorScopeMap,
       scopeId,
     ),
-    selectedRowIdsSelector: getSelector(
+    getSelectedRowIdsSelector: getSelectorReadOnly(
       selectedRowIdsSelectorScopeMap,
       scopeId,
     ),
-    tableColumnsByKeySelector: getSelector(
-      tableColumnsByKeySelectorScopeMap,
-      scopeId,
-    ),
-    visibleTableColumnsSelector: getSelector(
+    getVisibleTableColumnsSelector: getSelectorReadOnly(
       visibleTableColumnsSelectorScopeMap,
       scopeId,
     ),

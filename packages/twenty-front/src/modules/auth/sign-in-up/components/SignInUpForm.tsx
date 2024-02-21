@@ -1,13 +1,21 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
 
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
+import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import useI18n from '@/ui/i18n/useI18n';
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
@@ -43,25 +51,21 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const [authProviders] = useRecoilState(authProvidersState);
+  const [showErrors, setShowErrors] = useState(false);
+  const { handleResetPassword } = useHandleResetPassword();
+  const workspace = useWorkspaceFromInviteHash();
+  const { signInWithGoogle } = useSignInWithGoogle();
+  const { form } = useSignInUpForm();
+
   const { translate } = useI18n('translations');
   const {
-    authProviders,
-    signInWithGoogle,
     signInUpStep,
     signInUpMode,
-    showErrors,
-    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
-    form: {
-      control,
-      watch,
-      handleSubmit,
-      formState: { isSubmitting },
-    },
-    workspace,
-  } = useSignInUp();
+  } = useSignInUp(form);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -73,7 +77,7 @@ export const SignInUpForm = () => {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
-        handleSubmit(submitCredentials)();
+        form.handleSubmit(submitCredentials)();
       }
     }
   };
@@ -89,8 +93,10 @@ export const SignInUpForm = () => {
 
     return signInUpMode === SignInUpMode.SignIn
       ? translate('signIn')
-      : translate('signUp');
-  }, [signInUpMode, signInUpStep, translate]);
+      : form.formState.isSubmitting
+        ? translate('creatingWorkspace')
+        : translate('signUp');
+  }, [signInUpMode, signInUpStep, form.formState.isSubmitting]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
@@ -142,7 +148,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="email"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -181,7 +187,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="password"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -219,20 +225,31 @@ export const SignInUpForm = () => {
                 return;
               }
               setShowErrors(true);
-              handleSubmit(submitCredentials)();
+              form.handleSubmit(submitCredentials)();
             }}
+            Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
               SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
-                  ? !watch('email')
-                  : !watch('email') || !watch('password') || isSubmitting
+                  ? !form.watch('email')
+                  : !form.watch('email') ||
+                    !form.watch('password') ||
+                    form.formState.isSubmitting
             }
             fullWidth
           />
         </StyledForm>
       </StyledContentContainer>
-      <StyledFooterNote>{translate('footerNote')}</StyledFooterNote>
+      {signInUpStep === SignInUpStep.Password ? (
+        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
+          {translate('forgotYourPassword')}
+        </ActionLink>
+      ) : (
+        <StyledFooterNote>
+          {translate('footerNote')}
+        </StyledFooterNote>
+      )}
     </>
   );
 };

@@ -56,7 +56,7 @@ export class InputTypeDefinitionFactory {
     for (const fieldMetadata of objectMetadata.fields) {
       // Relation field types are generated during extension of object type definition
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
-        //continue;
+        continue;
       }
 
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {

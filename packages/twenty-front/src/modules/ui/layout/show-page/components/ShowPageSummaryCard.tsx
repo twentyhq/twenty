@@ -101,7 +101,7 @@ export const ShowPageSummaryCard = ({
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
-          colorId={id}
+          entityId={id}
           placeholder={avatarPlaceholder}
           type={avatarType}
         />

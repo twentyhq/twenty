@@ -2,11 +2,10 @@ import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/contexts/RecordBoardColumnContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
-import { BoardCardIdContext } from '@/object-record/record-board-deprecated/contexts/BoardCardIdContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -33,7 +32,7 @@ export const RecordBoardColumn = ({
     isFirstColumnFamilyState,
     isLastColumnFamilyState,
     columnsFamilySelector,
-    recordBoardRecordIdsByColumnIdFamilyState,
+    recordIdsByColumnIdFamilyState,
   } = useRecordBoardStates();
   const columnDefinition = useRecoilValue(
     columnsFamilySelector(recordBoardColumnId),
@@ -48,10 +47,10 @@ export const RecordBoardColumn = ({
   );
 
   const recordIds = useRecoilValue(
-    recordBoardRecordIdsByColumnIdFamilyState(recordBoardColumnId),
+    recordIdsByColumnIdFamilyState(recordBoardColumnId),
   );
 
-  if (!columnDefinition || !recordIds) {
+  if (!columnDefinition) {
     return null;
   }
 
@@ -61,6 +60,7 @@ export const RecordBoardColumn = ({
         columnDefinition: columnDefinition,
         isFirstColumn: isFirstColumn,
         isLastColumn: isLastColumn,
+        recordCount: recordIds.length,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
@@ -69,13 +69,8 @@ export const RecordBoardColumn = ({
             <RecordBoardColumnHeader />
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-            >
-              {recordIds.map((recordId) => (
-                <BoardCardIdContext.Provider value={recordId} key={recordId}>
-                  <div>Card</div>
-                </BoardCardIdContext.Provider>
-              ))}
-            </RecordBoardColumnCardsContainer>
+              recordIds={recordIds}
+            />
           </StyledColumn>
         )}
       </Droppable>

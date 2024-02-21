@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -8,18 +8,30 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
+import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
-export const useLoadRecordIndexBoard = (
-  objectNameSingular: string,
-  recordBoardId: string,
-) => {
+type UseLoadRecordIndexBoardProps = {
+  objectNameSingular: string;
+  viewBarId: string;
+  recordBoardId: string;
+};
+
+export const useLoadRecordIndexBoard = ({
+  objectNameSingular,
+  viewBarId,
+  recordBoardId,
+}: UseLoadRecordIndexBoardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const { setRecordIds: setRecordIdsInBoard, setFieldDefinitions } =
-    useRecordBoard(recordBoardId);
+  const {
+    setRecordIds: setRecordIdsInBoard,
+    setFieldDefinitions,
+    getIsCompactModeActiveState,
+  } = useRecordBoard(recordBoardId);
   const { setRecords: setRecordsInStore } = useSetRecordInStore();
 
   const recordIndexFieldDefinitions = useRecoilValue(
@@ -40,12 +52,29 @@ export const useLoadRecordIndexBoard = (
     objectMetadataItem?.fields ?? [],
   );
 
-  const { records, loading, fetchMoreRecords, queryStateIdentifier } =
-    useFindManyRecords({
-      objectNameSingular,
-      filter: requestFilters,
-      orderBy,
-    });
+  const recordIndexIsCompactModeActive = useRecoilValue(
+    recordIndexIsCompactModeActiveState,
+  );
+
+  const {
+    records,
+    totalCount,
+    loading,
+    fetchMoreRecords,
+    queryStateIdentifier,
+  } = useFindManyRecords({
+    objectNameSingular,
+    filter: requestFilters,
+    orderBy,
+  });
+
+  const { setEntityCountInCurrentView } = useViewBar({
+    viewBarId,
+  });
+
+  const setIsCompactModeActive = useSetRecoilState(
+    getIsCompactModeActiveState(),
+  );
 
   useEffect(() => {
     setRecordIdsInBoard(records);
@@ -54,6 +83,14 @@ export const useLoadRecordIndexBoard = (
   useEffect(() => {
     setRecordsInStore(records);
   }, [records, setRecordsInStore]);
+
+  useEffect(() => {
+    setEntityCountInCurrentView(totalCount);
+  }, [totalCount, setEntityCountInCurrentView]);
+
+  useEffect(() => {
+    setIsCompactModeActive(recordIndexIsCompactModeActive);
+  }, [recordIndexIsCompactModeActive, setIsCompactModeActive]);
 
   return {
     records,

@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -8,6 +9,7 @@ import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import useI18n from '@/ui/i18n/useI18n';
@@ -127,7 +129,7 @@ export const CommandMenu = () => {
   );
 
   useScopedHotkeys(
-    'esc',
+    [Key.Escape],
     () => {
       closeCommandMenu();
     },
@@ -138,33 +140,37 @@ export const CommandMenu = () => {
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Person,
-    filter: {
-      or: [
-        { name: { firstName: { ilike: `%${search}%` } } },
-        { name: { firstName: { ilike: `%${search}%` } } },
-      ],
-    },
+    filter: search
+      ? makeOrFilterVariables([
+          { name: { firstName: { ilike: `%${search}%` } } },
+          { name: { lastName: { ilike: `%${search}%` } } },
+          { email: { ilike: `%${search}%` } },
+          { phone: { ilike: `%${search}%` } },
+        ])
+      : undefined,
     limit: 3,
   });
 
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Company,
-    filter: {
-      name: { ilike: `%${search}%` },
-    },
+    filter: search
+      ? {
+          name: { ilike: `%${search}%` },
+        }
+      : undefined,
     limit: 3,
   });
 
   const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Activity,
-    filter: {
-      or: [
-        { title: { ilike: `%${search}%` } },
-        { body: { ilike: `%${search}%` } },
-      ],
-    },
+    filter: search
+      ? makeOrFilterVariables([
+          { title: { ilike: `%${search}%` } },
+          { body: { ilike: `%${search}%` } },
+        ])
+      : undefined,
     limit: 3,
   });
 
@@ -190,11 +196,11 @@ export const CommandMenu = () => {
 
   const activityCommands = useMemo(
     () =>
-      activities.map(({ id, title }) => ({
-        id,
-        label: title ?? '',
+      activities.map((activity) => ({
+        id: activity.id,
+        label: activity.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(id),
+        onCommandClick: () => openActivityRightDrawer(activity),
       })),
     [activities, openActivityRightDrawer],
   );
@@ -329,7 +335,7 @@ export const CommandMenu = () => {
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
-                              colorId={person.id}
+                              entityId={person.id}
                               placeholder={
                                 person.name.firstName +
                                 ' ' +
@@ -351,7 +357,7 @@ export const CommandMenu = () => {
                           to={`object/company/${company.id}`}
                           Icon={() => (
                             <Avatar
-                              colorId={company.id}
+                              entityId={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
                                 company.domainName,
@@ -370,7 +376,7 @@ export const CommandMenu = () => {
                           Icon={IconNotes}
                           key={activity.id}
                           label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity.id)}
+                          onClick={() => openActivityRightDrawer(activity)}
                         />
                       </SelectableItem>
                     ))}

@@ -29,7 +29,7 @@ export default {
         key: 'nameSingular',
         required: true,
         label: 'Record Name',
-        dynamic: `${findObjectNamesSingularKey}.nameSingular`,
+        dynamic: `${findObjectNamesSingularKey}.nameSingular.labelSingular`,
         altersDynamicFields: true,
       },
       {
@@ -52,12 +52,10 @@ export default {
     sample: {
       id: 'f75f6b2e-9442-4c72-aa95-47d8e5ec8cb3',
       createdAt: '2023-10-19T07:37:25.306Z',
-      workspaceId: 'c8b070fc-c969-4ca5-837a-e7c3735734d2',
     },
     outputFields: [
       { key: 'id', label: 'ID' },
       { key: 'createdAt', label: 'Created At' },
-      { key: 'workspaceId', label: 'Workspace ID' },
     ],
   },
 };

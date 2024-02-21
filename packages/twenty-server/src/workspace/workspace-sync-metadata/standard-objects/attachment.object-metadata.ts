@@ -6,6 +6,7 @@ import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
@@ -80,4 +81,14 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   company: CompanyObjectMetadata;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Opportunity',
+    description: 'Attachment opportunity',
+    icon: 'IconBuildingSkyscraper',
+    joinColumn: 'opportunityId',
+  })
+  @IsNullable()
+  opportunity: OpportunityObjectMetadata;
 }
