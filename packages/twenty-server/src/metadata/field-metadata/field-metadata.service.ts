@@ -231,11 +231,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const updatedFieldMetadata = await super.updateOne(id, {
       ...updatableFieldInput,
       // If the name is updated, the targetColumnMap should be updated as well
-      targetColumnMap: fieldMetadataInput.name
+      targetColumnMap: updatableFieldInput.name
         ? generateTargetColumnMap(
             existingFieldMetadata.type,
             existingFieldMetadata.isCustom,
-            fieldMetadataInput.name,
+            updatableFieldInput.name,
           )
         : existingFieldMetadata.targetColumnMap,
     });
