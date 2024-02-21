@@ -56,9 +56,7 @@ const sidebars = {
             {
               type: 'link',
               label: 'Metadata API',
-              href: '#',
-              className: 'coming-soon',
-              //href: '/rest-api/metadata',
+              href: '/rest-api/metadata',
             },
           ],
         },
