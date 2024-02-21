@@ -199,7 +199,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       )}
       <ConfirmationModal
         confirmationPlaceholder="Yes"
-        confirmationValue="Yes"
+        confirmationValue="yes"
         isOpen={isDeleteApiKeyModalOpen}
         setIsOpen={setIsDeleteApiKeyModalOpen}
         title="Delete Api key"
