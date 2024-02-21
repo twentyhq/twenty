@@ -10,11 +10,18 @@ export function filterOutParticipantsFromCompanyOrWorkspace(
 ): Participant[] {
   const selfDomainName = getDomainNameFromHandle(selfHandle);
 
+  const workspaceMembersMap = workspaceMembers.reduce(
+    (map, workspaceMember) => {
+      map[workspaceMember.userEmail] = true;
+
+      return map;
+    },
+    new Map<string, boolean>(),
+  );
+
   return participants.filter(
     (participant) =>
       getDomainNameFromHandle(participant.handle) !== selfDomainName &&
-      !workspaceMembers.some(
-        (workspaceMember) => workspaceMember.userEmail === participant.handle,
-      ),
+      !workspaceMembersMap[participant.handle],
   );
 }
