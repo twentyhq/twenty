@@ -213,7 +213,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         deleteButtonText="Delete"
       />
       <ConfirmationModal
-        confirmationPlaceholder="Yes"
+        confirmationPlaceholder="yes"
         confirmationValue="yes"
         isOpen={isRegenerateKeyModalOpen}
         setIsOpen={setIsRegenerateKeyModalOpen}
