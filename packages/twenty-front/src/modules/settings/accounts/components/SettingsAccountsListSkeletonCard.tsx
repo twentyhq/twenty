@@ -7,4 +7,4 @@ const StyledCard = styled(Card)`
   height: 40px;
 `;
 
-export const SettingsAccountEmailsSkeletonCard = () => <StyledCard />;
+export { StyledCard as SettingsAccountsListSkeletonCard };

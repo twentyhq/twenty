@@ -1,3 +1,4 @@
+import { SettingsAccountsCalendarSettingsSection } from '@/settings/accounts/components/SettingsAccountsCalendarSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -17,6 +18,7 @@ export const SettingsAccountsCalendars = () => (
           { children: 'Calendars' },
         ]}
       />
+      <SettingsAccountsCalendarSettingsSection />
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
 );
