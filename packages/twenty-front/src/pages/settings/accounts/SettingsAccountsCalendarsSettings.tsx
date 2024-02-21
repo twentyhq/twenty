@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 
+import { SettingsAccountsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsSynchronizationSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -29,6 +30,12 @@ export const SettingsAccountsCalendarsSettings = () => {
             },
             { children: connectedAccount?.handle || '' },
           ]}
+        />
+        <SettingsAccountsSynchronizationSection
+          description="Past and future calendar events will automatically be synced to this workspace"
+          cardTitle="Sync events"
+          isSynced={false}
+          onToggle={() => {}}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
