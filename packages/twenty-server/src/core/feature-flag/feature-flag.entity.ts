@@ -18,6 +18,7 @@ export enum FeatureFlagKeys {
   IsCalendarEnabled = 'IS_CALENDAR_ENABLED',
   IsMessagingEnabled = 'IS_MESSAGING_ENABLED',
   IsNewRecordBoardEnabled = 'IS_NEW_RECORD_BOARD_ENABLED',
+  IsSelfBillingEnabled = 'IS_SELF_BILLING_ENABLED',
   IsWorkspaceCleanable = 'IS_WORKSPACE_CLEANABLE',
 }
 

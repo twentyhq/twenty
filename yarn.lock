@@ -15797,6 +15797,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:>=8.1.0":
+  version: 20.11.19
+  resolution: "@types/node@npm:20.11.19"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: f451ef0a1d78f29c57bad7b77e49ebec945f2a6d0d7a89851d7e185ee9fe7ad94d651c0dfbcb7858c9fa791310c8b40a881e2260f56bd3c1b7e7ae92723373ae
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^10.1.0":
   version: 10.17.60
   resolution: "@types/node@npm:10.17.60"
@@ -42787,6 +42796,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^14.17.0":
+  version: 14.17.0
+  resolution: "stripe@npm:14.17.0"
+  dependencies:
+    "@types/node": "npm:>=8.1.0"
+    qs: "npm:^6.11.0"
+  checksum: ec783c4b125ad6c2f8181d3aa07b7d6a7126a588310ace8d9189269014ce84ba3e98d43464bc557bfcefcc05d7c5aebc551dd4e19c32316165c76944898a719a
+  languageName: node
+  linkType: hard
+
 "strnum@npm:^1.0.5":
   version: 1.0.5
   resolution: "strnum@npm:1.0.5"
@@ -44394,6 +44413,7 @@ __metadata:
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
+    stripe: "npm:^14.17.0"
     supertest: "npm:^6.1.3"
     ts-jest: "npm:^29.1.1"
     ts-key-enum: "npm:^2.0.12"
