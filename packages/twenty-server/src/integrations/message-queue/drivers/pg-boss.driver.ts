@@ -27,7 +27,11 @@ export class PgBossDriver implements MessageQueueDriver {
     queueName: string,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
   ) {
-    return this.pgBoss.work(`${queueName}.*`, handler);
+    return this.pgBoss.work(
+      `${queueName}.*`,
+      //{ teamSize: 3, teamConcurrency: 3 },
+      handler,
+    );
   }
 
   async addCron<T>(

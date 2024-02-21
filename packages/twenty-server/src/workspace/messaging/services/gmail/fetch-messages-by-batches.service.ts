@@ -39,7 +39,7 @@ export class FetchMessagesByBatchesService {
     accessToken: string,
     boundary: string,
   ): Promise<AxiosResponse<any, any>[]> {
-    const batchLimit = 100;
+    const batchLimit = 50;
 
     let batchOffset = 0;
 
