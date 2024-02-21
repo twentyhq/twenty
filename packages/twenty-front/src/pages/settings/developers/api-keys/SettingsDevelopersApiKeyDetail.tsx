@@ -198,7 +198,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         </SubMenuTopBarContainer>
       )}
       <ConfirmationModal
-        confirmationPlaceholder="Yes"
+        confirmationPlaceholder="yes"
         confirmationValue="yes"
         isOpen={isDeleteApiKeyModalOpen}
         setIsOpen={setIsDeleteApiKeyModalOpen}
