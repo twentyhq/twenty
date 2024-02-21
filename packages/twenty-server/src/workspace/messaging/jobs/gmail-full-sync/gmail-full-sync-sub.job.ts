@@ -37,6 +37,8 @@ export class GmailFullSyncSubJob
       data.workspaceId,
       data.connectedAccount,
       data.messageChannelId,
+      data.pageNumber,
+      data.lastPageNumber,
     );
   }
 }

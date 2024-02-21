@@ -44,11 +44,15 @@ export class GmailFetchMessagesService {
     if (errors.length) throw new Error('Error fetching messages');
 
     const pageNumberOrNumberOfMessages = pageNumber
-      ? `page ${pageNumber}${lastPageNumber ? ` of ${lastPageNumber}` : ''}`
+      ? `page ${pageNumber}${
+          lastPageNumber
+            ? ` of ${lastPageNumber} (${messagesToSave.length} messages)`
+            : ''
+        }`
       : `${messagesToSave.length} messages`;
 
     this.logger.log(
-      `Fetched ${pageNumberOrNumberOfMessages} for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: fetched ${pageNumberOrNumberOfMessages}`,
     );
 
     await this.messageService.saveMessages(
@@ -61,7 +65,7 @@ export class GmailFetchMessagesService {
     );
 
     this.logger.log(
-      `Saved ${pageNumberOrNumberOfMessages} for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: saved ${pageNumberOrNumberOfMessages}`,
     );
 
     const lastModifiedMessageId = messagesToFetch[0];
@@ -79,7 +83,7 @@ export class GmailFetchMessagesService {
     );
 
     this.logger.log(
-      `Updated last sync history id for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccount.id}: updated last sync history id`,
     );
   }
 }
