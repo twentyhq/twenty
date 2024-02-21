@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { Pill } from '@/ui/display/pill/components/Pill';
 
 type TabProps = {
   id: string;
@@ -12,6 +13,7 @@ type TabProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
+  hasBetaPill?: boolean;
 };
 
 const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
@@ -59,6 +61,7 @@ export const Tab = ({
   onClick,
   className,
   disabled,
+  hasBetaPill,
 }: TabProps) => {
   const theme = useTheme();
   return (
@@ -72,6 +75,7 @@ export const Tab = ({
       <StyledHover>
         {Icon && <Icon size={theme.icon.size.md} />}
         {title}
+        {hasBetaPill && <Pill label="Beta" />}
       </StyledHover>
     </StyledTab>
   );

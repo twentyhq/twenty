@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,11 +10,14 @@ import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsDevelopersWebhooksDetail = () => {
+  const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
+    useState(false);
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
   const { record: webhookData } = useFindOneRecord({
@@ -62,7 +66,22 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 variant="secondary"
                 title="Disable"
                 Icon={IconTrash}
-                onClick={() => deleteWebhook()}
+                onClick={() => setIsDeleteWebhookModalOpen(true)}
+              />
+              <ConfirmationModal
+                confirmationPlaceholder="yes"
+                confirmationValue="yes"
+                isOpen={isDeleteWebhookModalOpen}
+                setIsOpen={setIsDeleteWebhookModalOpen}
+                title="Delete webhook"
+                subtitle={
+                  <>
+                    Please type "yes" to confirm you want to delete this
+                    webhook.
+                  </>
+                }
+                onConfirmClick={deleteWebhook}
+                deleteButtonText="Delete webhook"
               />
             </Section>
           </SettingsPageContainer>

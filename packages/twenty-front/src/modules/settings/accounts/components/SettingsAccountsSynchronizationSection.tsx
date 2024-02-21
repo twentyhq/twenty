@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { MessageChannel } from '@/accounts/types/MessageChannel';
-import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
+import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { IconRefresh } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Toggle } from '@/ui/input/components/Toggle';
@@ -23,33 +22,34 @@ const StyledTitle = styled.span`
   margin-right: auto;
 `;
 
-type SettingsAccountsInboxSettingsSynchronizationSectionProps = {
-  messageChannel: MessageChannel;
+type SettingsAccountsSynchronizationSectionProps = {
+  cardTitle: string;
+  description: string;
+  isSynced: boolean;
   onToggle: (value: boolean) => void;
 };
 
-export const SettingsAccountsInboxSettingsSynchronizationSection = ({
-  messageChannel,
+export const SettingsAccountsSynchronizationSection = ({
+  cardTitle,
+  description,
+  isSynced,
   onToggle,
-}: SettingsAccountsInboxSettingsSynchronizationSectionProps) => {
+}: SettingsAccountsSynchronizationSectionProps) => {
   const theme = useTheme();
 
   return (
     <Section>
-      <H2Title
-        title="Synchronization"
-        description="Past and future emails will automatically be synced to this workspace"
-      />
+      <H2Title title="Synchronization" description={description} />
       <Card>
         <StyledCardContent>
-          <SettingsAccountsInboxSettingsCardMedia>
+          <SettingsAccountsCardMedia>
             <IconRefresh
               size={theme.icon.size.sm}
               stroke={theme.icon.stroke.lg}
             />
-          </SettingsAccountsInboxSettingsCardMedia>
-          <StyledTitle>Sync emails</StyledTitle>
-          <Toggle value={messageChannel.isSynced} onChange={onToggle} />
+          </SettingsAccountsCardMedia>
+          <StyledTitle>{cardTitle}</StyledTitle>
+          <Toggle value={isSynced} onChange={onToggle} />
         </StyledCardContent>
       </Card>
     </Section>

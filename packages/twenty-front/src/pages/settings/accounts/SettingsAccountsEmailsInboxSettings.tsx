@@ -63,8 +63,10 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           ]}
         />
         {/* TODO : discuss the desired sync behaviour */}
-        {/* <SettingsAccountsInboxSettingsSynchronizationSection
-          messageChannel={messageChannel}
+        {/* <SettingsAccountsSynchronizationSection
+          description="Past and future emails will automatically be synced to this workspace"
+          cardTitle="Sync emails"
+          isSynced={!!messageChannel?.isSynced}
           onToggle={handleSynchronizationToggle}
         /> */}
         <SettingsAccountsInboxSettingsVisibilitySection

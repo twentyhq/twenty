@@ -14,4 +14,4 @@ const StyledCardMedia = styled.div`
   width: ${({ theme }) => theme.spacing(6)};
 `;
 
-export { StyledCardMedia as SettingsAccountsInboxSettingsCardMedia };
+export { StyledCardMedia as SettingsAccountsCardMedia };
