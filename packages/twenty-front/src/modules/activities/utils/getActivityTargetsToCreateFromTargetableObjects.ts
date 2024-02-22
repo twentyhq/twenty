@@ -4,13 +4,16 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const getActivityTargetsToCreateFromTargetableObjects = ({
+export const makeActivityTargetsToCreateFromTargetableObjects = ({
   targetableObjects,
   activityId,
+  targetObjectRecords,
 }: {
   targetableObjects: ActivityTargetableObject[];
   activityId: string;
+  targetObjectRecords: ObjectRecord[];
 }): Partial<ActivityTarget>[] => {
   const activityTargetableObjects = targetableObjects
     ? flattenTargetableObjectsAndTheirRelatedTargetableObjects(
@@ -24,9 +27,12 @@ export const getActivityTargetsToCreateFromTargetableObjects = ({
         nameSingular: targetableObject.targetObjectNameSingular,
       });
 
+      const relatedObjectRecord = targetObjectRecords.find(
+        (record) => record.id === targetableObject.id,
+      );
+
       const activityTarget = {
-        [targetableObject.targetObjectNameSingular]:
-          targetableObject.targetObjectRecord,
+        [targetableObject.targetObjectNameSingular]: relatedObjectRecord,
         [targetableObjectFieldIdName]: targetableObject.id,
         activityId,
         id: v4(),

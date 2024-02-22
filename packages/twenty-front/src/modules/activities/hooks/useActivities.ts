@@ -21,7 +21,10 @@ export const useActivities = ({
   skip,
   skipActivityTargets,
 }: {
-  targetableObjects: ActivityTargetableObject[];
+  targetableObjects: Pick<
+    ActivityTargetableObject,
+    'id' | 'targetObjectNameSingular'
+  >[];
   activitiesFilters: ObjectRecordQueryFilter;
   activitiesOrderByVariables: OrderByField;
   skip?: boolean;

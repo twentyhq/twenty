@@ -98,7 +98,6 @@ export const RecordShowPage = () => {
               activityTargetObject={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
-                targetObjectRecord: record,
               }}
             />
             <ShowPageMoreButton

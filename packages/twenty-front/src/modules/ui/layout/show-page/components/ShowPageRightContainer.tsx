@@ -42,7 +42,10 @@ const StyledTabListContainer = styled.div`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
-  targetableObject: ActivityTargetableObject;
+  targetableObject: Pick<
+    ActivityTargetableObject,
+    'targetObjectNameSingular' | 'id'
+  >;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
