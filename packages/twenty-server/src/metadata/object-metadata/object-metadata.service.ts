@@ -347,7 +347,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: `${computeObjectTargetTable(
                 createdObjectMetadata,
               )}Id`,
@@ -378,7 +378,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: `${computeObjectTargetTable(
                 createdObjectMetadata,
               )}Id`,

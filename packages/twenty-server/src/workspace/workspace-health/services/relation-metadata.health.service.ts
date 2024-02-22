@@ -209,6 +209,16 @@ export class RelationMetadataHealthService {
       });
     }
 
+    if (relationMetadata.onDeleteAction !== relationColumn.onDeleteAction) {
+      issues.push({
+        type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT,
+        fromFieldMetadata,
+        toFieldMetadata,
+        relationMetadata,
+        message: `Relation ${relationMetadata.id} foreign key onDeleteAction is not properly set`,
+      });
+    }
+
     return issues;
   }
 

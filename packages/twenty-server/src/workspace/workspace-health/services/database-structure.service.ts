@@ -85,7 +85,9 @@ export class DatabaseStructureService {
           CASE
             WHEN uc.column_name IS NOT NULL THEN 'TRUE'
             ELSE 'FALSE'
-          END AS "isUnique"
+          END AS "isUnique",
+          rc.update_rule AS "onUpdateAction",
+          rc.delete_rule AS "onDeleteAction"
         FROM
           information_schema.columns AS c
         LEFT JOIN
@@ -109,6 +111,9 @@ export class DatabaseStructureService {
           ON c.table_schema = uc.schema_name
           AND c.table_name = uc.table_name
           AND c.column_name = uc.column_name
+        LEFT JOIN
+          information_schema.referential_constraints AS rc
+          ON rc.constraint_name = fk.constraint_name
         WHERE
           c.table_schema = '${schemaName}'
           AND c.table_name = '${tableName}';
