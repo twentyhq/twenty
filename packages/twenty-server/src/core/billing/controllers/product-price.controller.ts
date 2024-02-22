@@ -37,10 +37,6 @@ export class ProductPriceController {
       return;
     }
 
-    const productPrices = await this.stripeService.stripe.prices.search({
-      query: `product: '${stripeProductId}'`,
-    });
-
-    res.json(this.billingService.formatProductPrices(productPrices.data));
+    res.json(await this.billingService.getProductPrices(stripeProductId));
   }
 }
