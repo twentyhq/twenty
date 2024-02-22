@@ -1,11 +1,14 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { LightIconButton, LightIconButtonProps } from 'tsup.ui.index';
 
 import {
   ColorSample,
   ColorSampleProps,
 } from '@/ui/display/color/components/ColorSample';
+import {
+  LightIconButton,
+  LightIconButtonProps,
+} from '@/ui/input/button/components/LightIconButton';
 
 type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
   Pick<LightIconButtonProps, 'onClick'> & {
