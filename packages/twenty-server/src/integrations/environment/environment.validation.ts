@@ -52,6 +52,10 @@ export class EnvironmentVariables {
   @IsString()
   STRIPE_SUBSCRIPTION_PRODUCT_ID?: string;
 
+  @IsOptional()
+  @IsString()
+  STRIPE_API_KEY?: string;
+
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()

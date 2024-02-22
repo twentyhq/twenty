@@ -5574,19 +5574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@golevelup/nestjs-common@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@golevelup/nestjs-common@npm:2.0.0"
-  dependencies:
-    lodash: "npm:^4.17.21"
-    nanoid: "npm:^3.3.6"
-  peerDependencies:
-    "@nestjs/common": ^10.x
-  checksum: 46b6d78f54426b7db35532791493e323126324b9bc2b011b9cd1f1da8114a767ce29fe26c5fe05c31904a55be6578c98913f7d8dab31f630e9b63c04b22d6596
-  languageName: node
-  linkType: hard
-
-"@golevelup/nestjs-discovery@npm:4.0.0, @golevelup/nestjs-discovery@npm:^4.0.0":
+"@golevelup/nestjs-discovery@npm:4.0.0":
   version: 4.0.0
   resolution: "@golevelup/nestjs-discovery@npm:4.0.0"
   dependencies:
@@ -5595,31 +5583,6 @@ __metadata:
     "@nestjs/common": ^10.x
     "@nestjs/core": ^10.x
   checksum: 60d85e5cad74e424995dd6c0bfb70f8749f9e1db21ff803b8bcf9d13089df2112ba88b1ed07554b3d386d9b43d3256f4a7da56aca5e039043080b63726066e43
-  languageName: node
-  linkType: hard
-
-"@golevelup/nestjs-modules@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "@golevelup/nestjs-modules@npm:0.7.1"
-  dependencies:
-    lodash: "npm:^4.17.21"
-  peerDependencies:
-    "@nestjs/common": ^10.x
-    rxjs: ^7.x
-  checksum: 68b8d81aca60b92918c50409a1bf4699ca5aac18d8c77364f8acb32e71828ad8ef7f44e4c26c3929ab447e24ace29eb96a1e3c143f3aec0f209ec3d923360502
-  languageName: node
-  linkType: hard
-
-"@golevelup/nestjs-stripe@npm:^0.6.5":
-  version: 0.6.5
-  resolution: "@golevelup/nestjs-stripe@npm:0.6.5"
-  dependencies:
-    "@golevelup/nestjs-common": "npm:^2.0.0"
-    "@golevelup/nestjs-discovery": "npm:^4.0.0"
-    "@golevelup/nestjs-modules": "npm:^0.7.1"
-  peerDependencies:
-    stripe: ^11.12.0
-  checksum: ae555495da4d1f33882298a91aaedf66317404cb2f76f1ca0f6df45f1438d8dbe5f9899a24a4efa889ece9c9591a2d2bac8438bdfe39d70219393dd8fdc43348
   languageName: node
   linkType: hard
 
@@ -44149,7 +44112,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
-    "@golevelup/nestjs-stripe": "npm:^0.6.5"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"

@@ -311,4 +311,8 @@ export class EnvironmentService {
       this.configService.get<string>('STRIPE_SUBSCRIPTION_PRODUCT_ID') ?? ''
     );
   }
+
+  getStripeApiKey(): string {
+    return this.configService.get<string>('STRIPE_API_KEY') ?? '';
+  }
 }
