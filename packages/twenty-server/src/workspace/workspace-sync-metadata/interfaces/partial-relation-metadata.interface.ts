@@ -1,4 +1,4 @@
-import { ReflectRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-Relation-metadata.interface';
+import { ReflectRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
 
 export type PartialRelationMetadata = ReflectRelationMetadata & {
   id: string;
