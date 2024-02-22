@@ -215,6 +215,7 @@ export class RelationMetadataHealthService {
         fromFieldMetadata,
         toFieldMetadata,
         relationMetadata,
+        columnStructure: relationColumn,
         message: `Relation ${relationMetadata.id} foreign key onDeleteAction is not properly set`,
       });
     }
