@@ -48,6 +48,10 @@ export class EnvironmentVariables {
   @IsString()
   BILLING_URL?: string;
 
+  @IsOptional()
+  @IsString()
+  STRIPE_SUBSCRIPTION_PRODUCT_ID?: string;
+
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
@@ -83,21 +87,25 @@ export class EnvironmentVariables {
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN: string;
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN: string;
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;
@@ -205,7 +213,6 @@ export class EnvironmentVariables {
   @IsNumber()
   MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 }
-
 export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 

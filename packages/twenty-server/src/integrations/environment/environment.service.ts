@@ -305,4 +305,10 @@ export class EnvironmentService {
       this.configService.get<number>('MUTATION_MAXIMUM_RECORD_AFFECTED') ?? 100
     );
   }
+
+  getStripeSubscriptionProductId(): string {
+    return (
+      this.configService.get<string>('STRIPE_SUBSCRIPTION_PRODUCT_ID') ?? ''
+    );
+  }
 }
