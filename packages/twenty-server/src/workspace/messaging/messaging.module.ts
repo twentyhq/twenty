@@ -18,7 +18,6 @@ import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
-import { IsContactAutoCreationEnabledListener } from 'src/workspace/messaging/listeners/is-contact-auto-creation-enabled-listener';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
@@ -52,7 +51,6 @@ import { PersonModule } from 'src/workspace/messaging/repositories/person/person
     CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
-    IsContactAutoCreationEnabledListener,
     MessagingMessageChannelListener,
     MessageService,
   ],
