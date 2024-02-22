@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
+
 import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { FindDuplicatesResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -49,7 +51,9 @@ export class FindDuplicatesQueryFactory {
     return `
       query {
         ${computeObjectTargetTable(options.objectMetadataItem)}Collection${
-          filters ? `(filter: ${filters})` : ''
+          isEmpty(duplicateCondition?.or)
+            ? '(first: 0)'
+            : `(filter: ${filters})`
         } {
           ${fieldsString}
         }
@@ -83,6 +87,7 @@ export class FindDuplicatesQueryFactory {
         )}Collection(filter: { id: { eq: "${id}" }}){
           edges {
             node {
+              __typename
               ${this.getApplicableDuplicateCriteriaCollection(
                 options.objectMetadataItem,
               )
