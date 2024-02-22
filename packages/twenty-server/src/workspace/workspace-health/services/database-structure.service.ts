@@ -114,6 +114,7 @@ export class DatabaseStructureService {
         LEFT JOIN
           information_schema.referential_constraints AS rc
           ON rc.constraint_name = fk.constraint_name
+          AND rc.constraint_schema = '${schemaName}'
         WHERE
           c.table_schema = '${schemaName}'
           AND c.table_name = '${tableName}';
