@@ -28,6 +28,10 @@ export class TimelineMessagingService {
     page: number = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotal> {
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds}`,
+    );
+
     const offset = (page - 1) * pageSize;
 
     const dataSourceMetadata =
@@ -37,6 +41,10 @@ export class TimelineMessagingService {
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying messageThreads`,
+    );
 
     const messageThreads:
       | {
@@ -81,6 +89,10 @@ export class TimelineMessagingService {
       [personIds, pageSize, offset],
     );
 
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying messageThreads`,
+    );
+
     if (!messageThreads) {
       return {
         totalNumberOfThreads: 0,
@@ -90,6 +102,10 @@ export class TimelineMessagingService {
 
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
+    );
+
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadSubjects`,
     );
 
     const threadSubjects:
@@ -123,6 +139,14 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadSubjects`,
+    );
+
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying numberOfMessagesInThread`,
+    );
+
     const numberOfMessagesInThread:
       | {
           id: string;
@@ -143,6 +167,10 @@ export class TimelineMessagingService {
           "messageThread".id
       `,
       [messageThreadIds],
+    );
+
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying numberOfMessagesInThread`,
     );
 
     const messageThreadsByMessageThreadId: {
@@ -189,6 +217,9 @@ export class TimelineMessagingService {
       {},
     );
 
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadMessagesFromActiveParticipants`,
+    );
     const threadMessagesFromActiveParticipants:
       | {
           id: string;
@@ -242,6 +273,14 @@ export class TimelineMessagingService {
       [messageThreadIds],
     );
 
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadMessagesFromActiveParticipants`,
+    );
+
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying totalNumberOfThreads`,
+    );
+
     const totalNumberOfThreads = await workspaceDataSource?.query(
       `
       SELECT COUNT(DISTINCT "messageThread".id)
@@ -257,6 +296,10 @@ export class TimelineMessagingService {
           person.id = ANY($1)
       `,
       [personIds],
+    );
+
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying totalNumberOfThreads`,
     );
 
     const threadParticipantsByThreadId: {
@@ -317,6 +360,10 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
+    console.time(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadVisibility`,
+    );
+
     const threadVisibility:
       | {
           id: string;
@@ -339,6 +386,10 @@ export class TimelineMessagingService {
           "messageThread".id = ANY($1)
       `,
       [messageThreadIds],
+    );
+
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadVisibility`,
     );
 
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
