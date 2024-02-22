@@ -55,7 +55,7 @@ export class RelationMetadataHealthService {
       }
 
       const relationDirection = deduceRelationDirection(
-        objectMetadata.id,
+        fieldMetadata,
         relationMetadata,
       );
 
