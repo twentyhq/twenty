@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-import _ from 'lodash';
+import compact from 'lodash/compact';
 
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
@@ -77,7 +77,7 @@ export class CreateCompaniesAndContactsService {
           : undefined,
       }));
 
-    const domainNamesToCreate = _.compact(
+    const domainNamesToCreate = compact(
       filteredParticipantsWithCompanyDomainNames.map(
         (participant) => participant.companyDomainName,
       ),
