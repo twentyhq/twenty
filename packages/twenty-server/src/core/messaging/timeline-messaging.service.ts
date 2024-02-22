@@ -50,7 +50,10 @@ export class TimelineMessagingService {
         }[]
       | undefined = await workspaceDataSource?.query(
       `
-      SELECT *
+      SELECT id,
+      "lastMessageReceivedAt",
+      "lastMessageId",
+      "lastMessageBody"
       FROM
       (SELECT message."messageThreadId" AS id,
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
