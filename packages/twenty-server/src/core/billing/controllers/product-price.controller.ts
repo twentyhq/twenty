@@ -1,7 +1,5 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 
-import { InjectStripeClient } from '@golevelup/nestjs-stripe';
-import Stripe from 'stripe';
 import { Request, Response } from 'express';
 
 import {
@@ -9,12 +7,12 @@ import {
   BillingService,
   PriceData,
 } from 'src/core/billing/billing.service';
+import { StripeService } from 'src/core/billing/stripe/stripe.service';
 
 @Controller('stripe/product-prices/*')
 export class ProductPriceController {
   constructor(
-    @InjectStripeClient()
-    private readonly stripeClient: Stripe,
+    private readonly stripeService: StripeService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -38,9 +36,10 @@ export class ProductPriceController {
       });
     }
 
-    const subscriptionProductPrices = await this.stripeClient.prices.search({
-      query: `product: '${productId}'`,
-    });
+    const subscriptionProductPrices =
+      await this.stripeService.stripe.prices.search({
+        query: `product: '${productId}'`,
+      });
 
     res.send(
       this.billingService.formatProductPrices(subscriptionProductPrices.data),
