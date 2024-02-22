@@ -58,15 +58,13 @@ export class TimelineMessagingService {
       `
       SELECT *
       FROM
-      (SELECT "messageThread".id,
+      (SELECT message."messageThreadId" AS id,
       MAX(message."receivedAt") AS "lastMessageReceivedAt",
       message.id AS "lastMessageId",
       message.text AS "lastMessageBody",
-      ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
+      ROW_NUMBER() OVER (PARTITION BY message."messageThreadId" ORDER BY MAX(message."receivedAt") DESC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message 
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       LEFT JOIN
@@ -76,7 +74,7 @@ export class TimelineMessagingService {
       WHERE
           person.id = ANY($1)
       GROUP BY
-          "messageThread".id,
+          message."messageThreadId",
           message.id
       ORDER BY
           message."receivedAt" DESC
