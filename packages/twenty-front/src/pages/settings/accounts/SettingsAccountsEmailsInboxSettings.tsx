@@ -2,17 +2,20 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
 import {
   InboxSettingsVisibilityValue,
   SettingsAccountsInboxSettingsVisibilitySection,
 } from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
+import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings } from '@/ui/display/icon';
+import { IconSettings, IconUser } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
@@ -20,19 +23,19 @@ export const SettingsAccountsEmailsInboxSettings = () => {
   const { accountUuid: messageChannelId = '' } = useParams();
 
   const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
-    objectNameSingular: 'messageChannel',
+    objectNameSingular: CoreObjectNameSingular.MessageChannel,
     objectRecordId: messageChannelId,
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'messageChannel',
+  const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
+    objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
 
-  const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {
+  const handleVisibilityChange = (value: InboxSettingsVisibilityValue) => {
     updateOneRecord({
       idToUpdate: messageChannelId,
       updateOneRecordInput: {
-        visibility: _value,
+        visibility: value,
       },
     });
   };
@@ -59,24 +62,38 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           links={[
             { children: 'Accounts', href: '/settings/accounts' },
             { children: 'Emails', href: '/settings/accounts/emails' },
-            { children: messageChannel?.handle || '' },
+            { children: messageChannel.handle || '' },
           ]}
         />
         {/* TODO : discuss the desired sync behaviour */}
-        {/* <SettingsAccountsSynchronizationSection
-          description="Past and future emails will automatically be synced to this workspace"
-          cardTitle="Sync emails"
-          isSynced={!!messageChannel?.isSynced}
-          onToggle={handleSynchronizationToggle}
-        /> */}
+        {/* <Section>
+          <H2Title
+            title="Synchronization"
+            description="Past and future emails will automatically be synced to this workspace"
+          />
+          <SettingsAccountsSettingCard
+            Icon={IconRefresh}
+            title="Sync emails"
+            isEnabled={!!messageChannel.isSynced}
+            onToggle={handleSynchronizationToggle}
+          />
+        </Section> */}
         <SettingsAccountsInboxSettingsVisibilitySection
-          value={messageChannel?.visibility}
+          value={messageChannel.visibility}
           onChange={handleVisibilityChange}
         />
-        <SettingsAccountsInboxSettingsContactAutoCreateSection
-          messageChannel={messageChannel}
-          onToggle={handleContactAutoCreationToggle}
-        />
+        <Section>
+          <H2Title
+            title="Contact auto-creation"
+            description="Automatically create contacts for people you’ve sent emails to"
+          />
+          <SettingsAccountsToggleSettingCard
+            Icon={IconUser}
+            title="Auto-creation"
+            isEnabled={!!messageChannel.isContactAutoCreationEnabled}
+            onToggle={handleContactAutoCreationToggle}
+          />
+        </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
