@@ -48,6 +48,7 @@ module.exports = {
     '@nx/workspace-styled-components-prefixed-with-styled': 'error',
     '@nx/workspace-no-state-useref': 'error',
     '@nx/workspace-component-props-naming': 'error',
+    '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
 
     'react/no-unescaped-entities': 'off',
     'react/prop-types': 'off',

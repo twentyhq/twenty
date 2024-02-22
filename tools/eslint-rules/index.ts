@@ -26,6 +26,11 @@ import {
   rule as styledComponentsPrefixedWithStyled,
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
+import {
+  rule as useGetLoadableAndGetValueToGetAtoms,
+  RULE_NAME as useGetLoadableAndGetValueToGetAtomsName,
+} from './rules/use-getLoadable-and-getValue-to-get-atoms';
+
 /**
  * Import your custom workspace rules at the top of this file.
  *
@@ -60,5 +65,7 @@ module.exports = {
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [useGetLoadableAndGetValueToGetAtomsName]:
+      useGetLoadableAndGetValueToGetAtoms,
   },
 };
