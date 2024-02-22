@@ -62,6 +62,10 @@ export const RecordDuplicatesFieldCardSection = ({
     objectNameSingular,
   });
 
+  if (duplicateRecords.length === 0) {
+    return null;
+  }
+
   return (
     <Section>
       <StyledHeader>
@@ -69,19 +73,17 @@ export const RecordDuplicatesFieldCardSection = ({
           <StyledTitleLabel>Duplicates</StyledTitleLabel>
         </StyledTitle>
       </StyledHeader>
-      {!!duplicateRecords.length && (
-        <Card>
-          <StyledCardContent>
-            {duplicateRecords.slice(0, 5).map((duplicateRecord) => (
-              <RecordChip
-                key={`${objectNameSingular}${duplicateRecord.id}`}
-                record={duplicateRecord}
-                objectNameSingular={objectNameSingular}
-              />
-            ))}
-          </StyledCardContent>
-        </Card>
-      )}
+      <Card>
+        <StyledCardContent>
+          {duplicateRecords.slice(0, 5).map((duplicateRecord) => (
+            <RecordChip
+              key={`${objectNameSingular}${duplicateRecord.id}`}
+              record={duplicateRecord}
+              objectNameSingular={objectNameSingular}
+            />
+          ))}
+        </StyledCardContent>
+      </Card>
     </Section>
   );
 };
