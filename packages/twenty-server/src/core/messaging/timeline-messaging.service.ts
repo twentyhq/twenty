@@ -116,17 +116,15 @@ export class TimelineMessagingService {
       SELECT *
       FROM
       (SELECT
-        "messageThread".id,
+        message."messageThreadId" AS id,
         message.subject,
-        ROW_NUMBER() OVER (PARTITION BY "messageThread".id ORDER BY MAX(message."receivedAt") ASC) AS "rowNumber"
+        ROW_NUMBER() OVER (PARTITION BY message."messageThreadId" ORDER BY MAX(message."receivedAt") ASC) AS "rowNumber"
       FROM
           ${dataSourceMetadata.schema}."message" message
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
       WHERE
-          "messageThread".id = ANY($1)
+          message."messageThreadId" = ANY($1)
       GROUP BY
-          "messageThread".id,
+          message."messageThreadId",
           message.id
       ORDER BY
           message."receivedAt" DESC
@@ -153,16 +151,14 @@ export class TimelineMessagingService {
       | undefined = await workspaceDataSource?.query(
       `
       SELECT
-          "messageThread".id,
+          message."messageThreadId" AS id,
           COUNT(message.id) AS "numberOfMessagesInThread"
       FROM
           ${dataSourceMetadata.schema}."message" message
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
       WHERE
-          "messageThread".id = ANY($1)
+          message."messageThreadId" = ANY($1)
       GROUP BY
-          "messageThread".id
+          message."messageThreadId"
       `,
       [messageThreadIds],
     );
@@ -218,6 +214,7 @@ export class TimelineMessagingService {
     console.time(
       `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadMessagesFromActiveParticipants`,
     );
+
     const threadMessagesFromActiveParticipants:
       | {
           id: string;
@@ -238,7 +235,7 @@ export class TimelineMessagingService {
         }[]
       | undefined = await workspaceDataSource?.query(
       `
-      SELECT DISTINCT "messageThread".id,
+      SELECT DISTINCT message."messageThreadId" AS id,
         message.id AS "messageId",
         message."receivedAt",
         message.text,
@@ -254,9 +251,7 @@ export class TimelineMessagingService {
         "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl",
         "messageParticipant"."displayName" as "messageDisplayName"
         FROM
-            ${dataSourceMetadata.schema}."message" message 
-        LEFT JOIN
-            ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+            ${dataSourceMetadata.schema}."message" message
         LEFT JOIN
             (SELECT * FROM ${dataSourceMetadata.schema}."messageParticipant" WHERE "messageParticipant".role = 'from') "messageParticipant" ON "messageParticipant"."messageId" = message.id
         LEFT JOIN
@@ -264,7 +259,7 @@ export class TimelineMessagingService {
         LEFT JOIN
             ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
         WHERE
-            "messageThread".id = ANY($1)
+            message."messageThreadId" = ANY($1)
         ORDER BY
             message."receivedAt" DESC
         `,
@@ -281,11 +276,9 @@ export class TimelineMessagingService {
 
     const totalNumberOfThreads = await workspaceDataSource?.query(
       `
-      SELECT COUNT(DISTINCT "messageThread".id)
+      SELECT COUNT(DISTINCT message."messageThreadId")
       FROM
           ${dataSourceMetadata.schema}."message" message 
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       LEFT JOIN
@@ -370,18 +363,16 @@ export class TimelineMessagingService {
       | undefined = await workspaceDataSource?.query(
       `
       SELECT
-          "messageThread".id,
+          message."messageThreadId" AS id,
           "messageChannel".visibility
       FROM
-          ${dataSourceMetadata.schema}."messageThread" "messageThread"
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."message" message ON "message"."messageThreadId" = "messageThread".id
+          ${dataSourceMetadata.schema}."message" message
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageChannelMessageAssociation" "messageChannelMessageAssociation" ON "messageChannelMessageAssociation"."messageId" = message.id
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageChannel" "messageChannel" ON "messageChannel".id = "messageChannelMessageAssociation"."messageChannelId"
       WHERE
-          "messageThread".id = ANY($1)
+          message."messageThreadId" = ANY($1)
       `,
       [messageThreadIds],
     );
@@ -466,6 +457,10 @@ export class TimelineMessagingService {
         participantCount: threadParticipants.length,
       };
     });
+
+    console.timeEnd(
+      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds}`,
+    );
 
     return {
       totalNumberOfThreads: totalNumberOfThreads[0]?.count ?? 0,
