@@ -39,6 +39,7 @@ export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
 }: RecordShowContainerProps) => {
+  console.log('RecordShowContainer');
   const {
     objectMetadataItem,
     labelIdentifierFieldMetadata,
@@ -55,6 +56,10 @@ export const RecordShowContainer = ({
     objectRecordId,
     objectNameSingular,
     depth: 3,
+  });
+
+  console.log({
+    record,
   });
 
   useEffect(() => {
