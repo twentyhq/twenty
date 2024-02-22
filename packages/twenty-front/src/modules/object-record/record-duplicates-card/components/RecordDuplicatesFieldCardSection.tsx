@@ -74,15 +74,17 @@ export const RecordDuplicatesFieldCardSection = ({
         </StyledTitle>
       </StyledHeader>
       <Card>
-        <StyledCardContent>
-          {duplicateRecords.slice(0, 5).map((duplicateRecord) => (
+        {duplicateRecords.slice(0, 5).map((duplicateRecord, index) => (
+          <StyledCardContent
+            key={`${objectNameSingular}${duplicateRecord.id}`}
+            divider={index < duplicateRecords.length - 1}
+          >
             <RecordChip
-              key={`${objectNameSingular}${duplicateRecord.id}`}
               record={duplicateRecord}
               objectNameSingular={objectNameSingular}
             />
-          ))}
-        </StyledCardContent>
+          </StyledCardContent>
+        ))}
       </Card>
     </Section>
   );
