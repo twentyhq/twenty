@@ -32,6 +32,9 @@ export class CreateCompaniesAndContactsService {
       return;
     }
 
+    // TODO: This is a feature that may be implemented in the future
+    const isContactAutoCreationForNonWorkEmailsEnabled = false;
+
     const workspaceMembers =
       await this.workspaceMemberService.getAllByWorkspaceId(
         workspaceId,
@@ -60,7 +63,9 @@ export class CreateCompaniesAndContactsService {
     const filteredParticipants = uniqueParticipants.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        participant.handle.includes('@') &&
+        (isContactAutoCreationForNonWorkEmailsEnabled ||
+          isWorkEmail(participant.handle)),
     );
 
     const filteredParticipantsWithCompanyDomainNames =
