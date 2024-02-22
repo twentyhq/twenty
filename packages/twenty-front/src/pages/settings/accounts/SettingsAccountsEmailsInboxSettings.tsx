@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import {
   InboxSettingsVisibilityValue,
-  SettingsAccountsInboxSettingsVisibilitySection,
-} from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
+  SettingsAccountsInboxVisibilitySettingsCard,
+} from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
@@ -19,6 +21,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { accountUuid: messageChannelId = '' } = useParams();
 
@@ -65,32 +68,33 @@ export const SettingsAccountsEmailsInboxSettings = () => {
             { children: messageChannel.handle || '' },
           ]}
         />
-        {/* TODO : discuss the desired sync behaviour */}
-        {/* <Section>
+        {/* TODO : discuss the desired sync behaviour and add Synchronization section */}
+        <Section>
           <H2Title
-            title="Synchronization"
-            description="Past and future emails will automatically be synced to this workspace"
+            title="Email visibility"
+            description="Define what will be visible to other users in your workspace"
           />
-          <SettingsAccountsSettingCard
-            Icon={IconRefresh}
-            title="Sync emails"
-            isEnabled={!!messageChannel.isSynced}
-            onToggle={handleSynchronizationToggle}
+          <SettingsAccountsInboxVisibilitySettingsCard
+            value={messageChannel.visibility}
+            onChange={handleVisibilityChange}
           />
-        </Section> */}
-        <SettingsAccountsInboxSettingsVisibilitySection
-          value={messageChannel.visibility}
-          onChange={handleVisibilityChange}
-        />
+        </Section>
         <Section>
           <H2Title
             title="Contact auto-creation"
             description="Automatically create contacts for people you’ve sent emails to"
           />
           <SettingsAccountsToggleSettingCard
-            Icon={IconUser}
+            cardMedia={
+              <SettingsAccountsCardMedia>
+                <IconUser
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.lg}
+                />
+              </SettingsAccountsCardMedia>
+            }
             title="Auto-creation"
-            isEnabled={!!messageChannel.isContactAutoCreationEnabled}
+            value={!!messageChannel.isContactAutoCreationEnabled}
             onToggle={handleContactAutoCreationToggle}
           />
         </Section>
