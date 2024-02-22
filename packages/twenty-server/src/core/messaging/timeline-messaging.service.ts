@@ -67,12 +67,8 @@ export class TimelineMessagingService {
           ${dataSourceMetadata.schema}."message" message 
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."person" person ON person.id = "messageParticipant"."personId"
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
       WHERE
-          person.id = ANY($1)
+          "messageParticipant"."personId" = ANY($1)
       GROUP BY
           message."messageThreadId",
           message.id
@@ -281,10 +277,8 @@ export class TimelineMessagingService {
           ${dataSourceMetadata.schema}."message" message 
       LEFT JOIN
           ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
-      LEFT JOIN
-          ${dataSourceMetadata.schema}."person" person ON person.id = "messageParticipant"."personId"
       WHERE
-          person.id = ANY($1)
+          "messageParticipant"."personId" = ANY($1)
       `,
       [personIds],
     );
