@@ -179,10 +179,6 @@ export class TimelineMessagingService {
       {},
     );
 
-    console.time(
-      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadMessagesFromActiveParticipants`,
-    );
-
     const threadMessagesFromActiveParticipants:
       | {
           id: string;
@@ -245,10 +241,6 @@ export class TimelineMessagingService {
           "messageParticipant"."personId" = ANY($1)
       `,
       [personIds],
-    );
-
-    console.timeEnd(
-      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying totalNumberOfThreads`,
     );
 
     const threadParticipantsByThreadId: {
@@ -329,10 +321,6 @@ export class TimelineMessagingService {
           message."messageThreadId" = ANY($1)
       `,
       [messageThreadIds],
-    );
-
-    console.timeEnd(
-      `getMessagesFromPersonIds for workspaceId: ${workspaceId} and personIds: ${personIds} - Querying threadVisibility`,
     );
 
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
