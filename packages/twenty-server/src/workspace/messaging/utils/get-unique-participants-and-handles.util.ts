@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { uniq, uniqBy } from 'lodash';
 
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 export function getUniqueParticipantsAndHandles(participants: Participant[]): {
@@ -9,11 +9,11 @@ export function getUniqueParticipantsAndHandles(participants: Participant[]): {
     return { uniqueParticipants: [], uniqueHandles: [] };
   }
 
-  const uniqueHandles = _.uniq(
+  const uniqueHandles = uniq(
     participants.map((participant) => participant.handle),
   );
 
-  const uniqueParticipants = _.uniqBy(participants, 'handle');
+  const uniqueParticipants = uniqBy(participants, 'handle');
 
   return { uniqueParticipants, uniqueHandles };
 }
