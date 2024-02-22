@@ -1,6 +1,6 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import {
   AvailableProduct,
@@ -9,27 +9,27 @@ import {
 } from 'src/core/billing/billing.service';
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
 
-@Controller('billing/products/*/prices')
+@Controller('billing/product-prices')
 export class ProductPriceController {
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingService: BillingService,
   ) {}
 
-  @Get()
+  @Get(':product')
   async get(
-    @Req() request: Request,
+    @Param() params: { product: AvailableProduct },
     @Res() res: Response<PriceData | { error: string }>,
   ) {
-    const product = request.path
-      .replace('billing/products/', '')
-      .replace('/prices', '') as AvailableProduct;
-
-    const stripeProductId = this.billingService.getProductStripeId(product);
+    const stripeProductId = this.billingService.getProductStripeId(
+      params.product,
+    );
 
     if (!stripeProductId) {
       res.status(404).send({
-        error: `Product '${product}' not found, available products are ['${Object.values(
+        error: `Product '${
+          params.product
+        }' not found, available products are ['${Object.values(
           AvailableProduct,
         ).join("','")}']`,
       });
