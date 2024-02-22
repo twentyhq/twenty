@@ -20,10 +20,10 @@ export enum RelationMetadataType {
   MANY_TO_MANY = 'MANY_TO_MANY',
 }
 
-export enum RelationDeleteAction {
+export enum RelationOnDeleteAction {
   CASCADE = 'CASCADE',
   RESTRICT = 'RESTRICT',
-  SET_NULL = 'SET NULL',
+  SET_NULL = 'SET_NULL',
 }
 
 @Entity('relationMetadata')
@@ -36,11 +36,11 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
 
   @Column({
     nullable: false,
-    default: RelationDeleteAction.SET_NULL,
+    default: RelationOnDeleteAction.SET_NULL,
     type: 'enum',
-    enum: RelationDeleteAction,
+    enum: RelationOnDeleteAction,
   })
-  onDeleteAction: RelationDeleteAction;
+  onDeleteAction: RelationOnDeleteAction;
 
   @Column({ nullable: false, type: 'uuid' })
   fromObjectMetadataId: string;

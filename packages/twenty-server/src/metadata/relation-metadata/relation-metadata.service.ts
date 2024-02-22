@@ -200,7 +200,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.CREATE_RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: foreignKeyColumnName,
               referencedTableName: computeObjectTargetTable(
                 objectMetadataMap[relationMetadataInput.fromObjectMetadataId],

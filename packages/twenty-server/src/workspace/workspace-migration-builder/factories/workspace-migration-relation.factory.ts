@@ -93,7 +93,7 @@ export class WorkspaceMigrationRelationFactory {
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.DROP_RELATION,
+              action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY,
               columnName: `${camelCase(toFieldMetadata.name)}Id`,
             },
           ],
@@ -103,7 +103,7 @@ export class WorkspaceMigrationRelationFactory {
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.CREATE_RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: `${camelCase(toFieldMetadata.name)}Id`,
               referencedTableName: computeObjectTargetTable(fromObjectMetadata),
               referencedTableColumnName: 'id',
@@ -169,7 +169,7 @@ export class WorkspaceMigrationRelationFactory {
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.CREATE_RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: `${camelCase(toFieldMetadata.name)}Id`,
               referencedTableName: computeObjectTargetTable(fromObjectMetadata),
               referencedTableColumnName: 'id',

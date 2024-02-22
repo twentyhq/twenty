@@ -201,7 +201,7 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
-        case WorkspaceMigrationColumnActionType.CREATE_RELATION:
+        case WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY:
           await this.createRelation(
             queryRunner,
             schemaName,
@@ -209,7 +209,7 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
-        case WorkspaceMigrationColumnActionType.DROP_RELATION:
+        case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
           await this.dropRelation(
             queryRunner,
             schemaName,
@@ -343,7 +343,7 @@ export class WorkspaceMigrationRunnerService {
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
         referencedSchema: schemaName,
-        onDelete: migrationColumn.onDelete,
+        onDelete: migrationColumn.onDelete?.replace(/_/g, ' '),
       }),
     );
 

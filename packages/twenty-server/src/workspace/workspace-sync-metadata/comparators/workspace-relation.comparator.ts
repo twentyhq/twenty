@@ -52,48 +52,54 @@ export class WorkspaceRelationComparator {
     );
 
     for (const difference of relationMetadataDifference) {
-      const fieldName = difference.path[0];
-      const property = difference.path[difference.path.length - 1];
+      switch (difference.type) {
+        case 'CREATE':
+          results.push({
+            action: ComparatorAction.CREATE,
+            object: difference.value,
+          });
+          break;
+        case 'REMOVE':
+          if (difference.path[difference.path.length - 1] !== 'id') {
+            results.push({
+              action: ComparatorAction.DELETE,
+              object: difference.oldValue,
+            });
+          }
+          break;
+        case 'CHANGE':
+          const fieldName = difference.path[0];
+          const property = difference.path[difference.path.length - 1];
 
-      if (difference.type === 'CREATE') {
-        results.push({
-          action: ComparatorAction.CREATE,
-          object: difference.value,
-        });
-      } else if (
-        difference.type === 'REMOVE' &&
-        difference.path[difference.path.length - 1] !== 'id'
-      ) {
-        results.push({
-          action: ComparatorAction.DELETE,
-          object: difference.oldValue,
-        });
-      } else if (
-        difference.type === 'CHANGE' &&
-        relationPropertiesToUpdate.includes(property as string)
-      ) {
-        const originalRelationMetadata = originalRelationMetadataMap[fieldName];
+          if (!relationPropertiesToUpdate.includes(property as string)) {
+            continue;
+          }
 
-        if (!originalRelationMetadata) {
-          throw new Error(
-            `Relation ${fieldName} not found in originalRelationMetadataMap`,
-          );
-        }
+          const originalRelationMetadata =
+            originalRelationMetadataMap[fieldName];
 
-        results.push({
-          action: ComparatorAction.UPDATE,
-          object: {
-            id: originalRelationMetadata.id,
-            fromObjectMetadataId: originalRelationMetadata.fromObjectMetadataId,
-            fromFieldMetadataId: originalRelationMetadata.fromFieldMetadataId,
-            toObjectMetadataId: originalRelationMetadata.toObjectMetadataId,
-            toFieldMetadataId: originalRelationMetadata.toFieldMetadataId,
-            workspaceId: originalRelationMetadata.workspaceId,
-            ...{
-              [property]: difference.value,
+          if (!originalRelationMetadata) {
+            throw new Error(
+              `Relation ${fieldName} not found in originalRelationMetadataMap`,
+            );
+          }
+
+          results.push({
+            action: ComparatorAction.UPDATE,
+            object: {
+              id: originalRelationMetadata.id,
+              fromObjectMetadataId:
+                originalRelationMetadata.fromObjectMetadataId,
+              fromFieldMetadataId: originalRelationMetadata.fromFieldMetadataId,
+              toObjectMetadataId: originalRelationMetadata.toObjectMetadataId,
+              toFieldMetadataId: originalRelationMetadata.toFieldMetadataId,
+              workspaceId: originalRelationMetadata.workspaceId,
+              ...{
+                [property]: difference.value,
+              },
             },
-          },
-        });
+          });
+          break;
       }
     }
 
