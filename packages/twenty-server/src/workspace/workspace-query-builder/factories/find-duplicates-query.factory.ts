@@ -113,9 +113,9 @@ export class FindDuplicatesQueryFactory {
 
     const filterCriteria = criteriaWithMatchingArgs.map((criteria) =>
       Object.fromEntries(
-        criteria.columnNames.map((col) => [
-          col,
-          { ilike: `%${argsData[col]}%` },
+        criteria.columnNames.map((columnName) => [
+          columnName,
+          { ilike: `%${argsData[columnName]}%` },
         ]),
       ),
     );
@@ -134,7 +134,8 @@ export class FindDuplicatesQueryFactory {
     objectMetadataItem: ObjectMetadataInterface,
   ) {
     return duplicateCriteriaCollection.filter(
-      (dc) => dc.objectName === objectMetadataItem.nameSingular,
+      (duplicateCriteria) =>
+        duplicateCriteria.objectName === objectMetadataItem.nameSingular,
     );
   }
 }
