@@ -4,8 +4,10 @@ import Stripe from 'stripe';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-export type PriceData = Record<Stripe.Price.Recurring.Interval, Stripe.Price>;
-export enum AvailableProducts {
+export type PriceData = Partial<
+  Record<Stripe.Price.Recurring.Interval, Stripe.Price>
+>;
+export enum AvailableProduct {
   Subscription = 'subscription',
 }
 
@@ -13,14 +15,14 @@ export enum AvailableProducts {
 export class BillingService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  getProductStripeId(product: AvailableProducts) {
-    if (product === AvailableProducts.Subscription) {
+  getProductStripeId(product: AvailableProduct) {
+    if (product === AvailableProduct.Subscription) {
       return this.environmentService.getStripeSubscriptionProductId();
     }
   }
 
   formatProductPrices(prices: Stripe.Price[]) {
-    const mostRecentPricesPerRecurringInterval = {} as PriceData;
+    const result: PriceData = {};
 
     prices.forEach((item) => {
       const recurringInterval = item.recurring?.interval;
@@ -29,14 +31,13 @@ export class BillingService {
         return;
       }
       if (
-        !mostRecentPricesPerRecurringInterval[recurringInterval] ||
-        item.created >
-          mostRecentPricesPerRecurringInterval[recurringInterval].created
+        !result[recurringInterval] ||
+        item.created > (result[recurringInterval]?.created || 0)
       ) {
-        mostRecentPricesPerRecurringInterval[recurringInterval] = item;
+        result[recurringInterval] = item;
       }
     });
 
-    return mostRecentPricesPerRecurringInterval;
+    return result;
   }
 }
