@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { Section } from '@react-email/components';
 
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -8,6 +7,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { IconRefresh, IconSettings, IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
