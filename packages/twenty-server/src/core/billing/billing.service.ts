@@ -17,7 +17,7 @@ export class BillingService {
 
   getProductStripeId(product: AvailableProduct) {
     if (product === AvailableProduct.BasePlan) {
-      return this.environmentService.getStripeBasePlanProductId();
+      return this.environmentService.getBillingStripeBasePlanProductId();
     }
   }
 
