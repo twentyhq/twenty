@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
+import {
+  EventSettingsVisibilityValue,
+  SettingsAccountsEventVisibilitySettingsCard,
+} from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
+import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -11,7 +18,12 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
+const StyledCardMedia = styled(SettingsAccountsCardMedia)`
+  height: ${({ theme }) => theme.spacing(6)};
+`;
+
 export const SettingsAccountsCalendarsSettings = () => {
+  const theme = useTheme();
   const { accountUuid = '' } = useParams();
   const connectedAccount = mockedConnectedAccounts.find(
     ({ id }) => id === accountUuid,
@@ -35,13 +47,30 @@ export const SettingsAccountsCalendarsSettings = () => {
         />
         <Section>
           <H2Title
+            title="Event visibility"
+            description="Define what will be visible to other users in your workspace"
+          />
+          <SettingsAccountsEventVisibilitySettingsCard
+            value={EventSettingsVisibilityValue.Everything}
+            onChange={() => {}}
+          />
+        </Section>
+        <Section>
+          <H2Title
             title="Contact auto-creation"
             description="Automatically create contacts for people you've participated in an event with."
           />
           <SettingsAccountsToggleSettingCard
-            Icon={IconUser}
+            cardMedia={
+              <StyledCardMedia>
+                <IconUser
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.lg}
+                />
+              </StyledCardMedia>
+            }
             title="Auto-creation"
-            isEnabled={false}
+            value={false}
             onToggle={() => {}}
           />
         </Section>
@@ -51,9 +80,16 @@ export const SettingsAccountsCalendarsSettings = () => {
             description="Past and future calendar events will automatically be synced to this workspace"
           />
           <SettingsAccountsToggleSettingCard
-            Icon={IconRefresh}
+            cardMedia={
+              <StyledCardMedia>
+                <IconRefresh
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.lg}
+                />
+              </StyledCardMedia>
+            }
             title="Sync events"
-            isEnabled={false}
+            value={false}
             onToggle={() => {}}
           />
         </Section>
