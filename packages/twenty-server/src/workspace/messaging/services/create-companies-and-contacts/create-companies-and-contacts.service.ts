@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import _ from 'lodash';
 
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
@@ -59,19 +60,22 @@ export class CreateCompaniesAndContactsService {
     const filteredParticipants = uniqueParticipants.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@') &&
-        isWorkEmail(participant.handle),
+        participant.handle.includes('@'),
     );
 
     const filteredParticipantsWithCompanyDomainNames =
       filteredParticipants?.map((participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
-        companyDomainName: getDomainNameFromHandle(participant.handle),
+        companyDomainName: isWorkEmail(participant.handle)
+          ? getDomainNameFromHandle(participant.handle)
+          : undefined,
       }));
 
-    const domainNamesToCreate = filteredParticipantsWithCompanyDomainNames.map(
-      (participant) => participant.companyDomainName,
+    const domainNamesToCreate = _.compact(
+      filteredParticipantsWithCompanyDomainNames.map(
+        (participant) => participant.companyDomainName,
+      ),
     );
 
     const companiesObject = await this.createCompaniesService.createCompanies(
@@ -84,7 +88,9 @@ export class CreateCompaniesAndContactsService {
       (participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
-        companyId: companiesObject[participant.companyDomainName],
+        companyId:
+          participant.companyDomainName &&
+          companiesObject[participant.companyDomainName],
       }),
     );
 
