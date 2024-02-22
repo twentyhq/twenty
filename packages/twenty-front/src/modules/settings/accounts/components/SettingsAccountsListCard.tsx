@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -39,7 +39,7 @@ type SettingsAccountsListCardProps<
   isLoading?: boolean;
   onRowClick?: (account: Account) => void;
   RowIcon?: IconComponent;
-  RowRightComponent: ({ account }: { account: Account }) => ReactNode;
+  RowRightComponent: ComponentType<{ account: Account }>;
 };
 
 export const SettingsAccountsListCard = <
