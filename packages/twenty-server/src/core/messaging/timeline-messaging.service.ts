@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import groupBy from 'lodash.groupBy';
-
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/core/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/core/messaging/dtos/timeline-threads-with-total.dto';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -98,7 +96,7 @@ export class TimelineMessagingService {
         }[]
       | undefined = await workspaceDataSource?.query(
       `
-      SELECT id, subject
+      SELECT *
       FROM
       (SELECT
         message."messageThreadId" AS id,
@@ -145,22 +143,44 @@ export class TimelineMessagingService {
         id: string;
         lastMessageReceivedAt: Date;
         lastMessageBody: string;
-      }[];
-    } = groupBy(messageThreads, 'id');
+      };
+    } = messageThreads.reduce((messageThreadAcc, messageThread) => {
+      messageThreadAcc[messageThread.id] = messageThread;
 
-    const subjectsByMessageThreadId: {
-      [key: string]: {
-        id: string;
-        subject: string;
-      }[];
-    } = groupBy(threadSubjects, 'id');
+      return messageThreadAcc;
+    }, {});
 
-    const numberOfMessagesByMessageThreadId: {
-      [key: string]: {
-        id: string;
-        numberOfMessagesInThread: number;
-      }[];
-    } = groupBy(numberOfMessagesInThread, 'id');
+    const subjectsByMessageThreadId:
+      | {
+          [key: string]: {
+            id: string;
+            subject: string;
+          };
+        }
+      | undefined = threadSubjects?.reduce(
+      (threadSubjectAcc, threadSubject) => {
+        threadSubjectAcc[threadSubject.id] = threadSubject;
+
+        return threadSubjectAcc;
+      },
+      {},
+    );
+
+    const numberOfMessagesByMessageThreadId:
+      | {
+          [key: string]: {
+            id: string;
+            numberOfMessagesInThread: number;
+          };
+        }
+      | undefined = numberOfMessagesInThread?.reduce(
+      (numberOfMessagesAcc, numberOfMessages) => {
+        numberOfMessagesAcc[numberOfMessages.id] = numberOfMessages;
+
+        return numberOfMessagesAcc;
+      },
+      {},
+    );
 
     const threadMessagesFromActiveParticipants:
       | {
@@ -360,13 +380,13 @@ export class TimelineMessagingService {
           );
       }
 
-      const thread = messageThreadsByMessageThreadId[messageThreadId][0];
+      const thread = messageThreadsByMessageThreadId[messageThreadId];
 
       const threadSubject =
-        subjectsByMessageThreadId?.[messageThreadId][0].subject ?? '';
+        subjectsByMessageThreadId?.[messageThreadId].subject ?? '';
 
       const numberOfMessages =
-        numberOfMessagesByMessageThreadId?.[messageThreadId][0]
+        numberOfMessagesByMessageThreadId?.[messageThreadId]
           .numberOfMessagesInThread ?? 1;
 
       return {
