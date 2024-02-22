@@ -9,11 +9,11 @@ import UserGuideTableContents from '@/app/components/user-guide/UserGuideTableCo
 import { Theme } from '@/app/ui/theme/theme';
 import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ deviceType: DeviceType }>`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-between: 
   border-bottom: 1px solid ${Theme.background.transparent.medium};
 `;
 
@@ -25,7 +25,7 @@ export default function UserGuideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const deviceType = useDeviceType();
   return (
-    <StyledContainer>
+    <StyledContainer deviceType={deviceType}>
       {deviceType !== DeviceType.MOBILE && <UserGuideSidebar />}
       {children}
       {deviceType !== DeviceType.DESKTOP ? (

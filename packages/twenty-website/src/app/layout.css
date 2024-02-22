@@ -46,7 +46,7 @@ nav.toc li{
 
 nav.toc a{
     color: #141414;
-    font-family: 'Inter, sans-serif';
+    font-family: 'Inter, monospace';
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;

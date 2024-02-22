@@ -14,6 +14,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  width: 348px;
 `;
 
 const StyledHeading = styled.div`
