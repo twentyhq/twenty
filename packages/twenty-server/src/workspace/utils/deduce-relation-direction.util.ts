@@ -11,24 +11,16 @@ export const deduceRelationDirection = (
   relationMetadata: RelationMetadataInterface,
 ): RelationDirection => {
   if (
-    relationMetadata.fromObjectMetadataId === fieldMetadata.objectMetadataId
-  ) {
-    if (relationMetadata.fromFieldMetadataId === fieldMetadata.id) {
-      return RelationDirection.FROM;
-    }
-
-    if (relationMetadata.toFieldMetadataId === fieldMetadata.id) {
-      return RelationDirection.TO;
-    }
-  }
-
-  if (
-    relationMetadata.fromObjectMetadataId === fieldMetadata.objectMetadataId
+    relationMetadata.fromObjectMetadataId === fieldMetadata.objectMetadataId &&
+    relationMetadata.fromFieldMetadataId === fieldMetadata.id
   ) {
     return RelationDirection.FROM;
   }
 
-  if (relationMetadata.toObjectMetadataId === fieldMetadata.objectMetadataId) {
+  if (
+    relationMetadata.toObjectMetadataId === fieldMetadata.objectMetadataId &&
+    relationMetadata.toFieldMetadataId === fieldMetadata.id
+  ) {
     return RelationDirection.TO;
   }
 
