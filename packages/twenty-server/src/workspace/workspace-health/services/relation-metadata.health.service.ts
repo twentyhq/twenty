@@ -209,7 +209,10 @@ export class RelationMetadataHealthService {
       });
     }
 
-    if (relationMetadata.onDeleteAction !== relationColumn.onDeleteAction) {
+    if (
+      relationMetadata.onDeleteAction?.replace(/_/g, ' ') !==
+      relationColumn.onDeleteAction
+    ) {
       issues.push({
         type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT,
         fromFieldMetadata,
