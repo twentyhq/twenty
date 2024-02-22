@@ -33,15 +33,14 @@ export class ProductPriceController {
           AvailableProduct,
         ).join("','")}']`,
       });
+
+      return;
     }
 
-    const subscriptionProductPrices =
-      await this.stripeService.stripe.prices.search({
-        query: `product: '${stripeProductId}'`,
-      });
+    const productPrices = await this.stripeService.stripe.prices.search({
+      query: `product: '${stripeProductId}'`,
+    });
 
-    res.send(
-      this.billingService.formatProductPrices(subscriptionProductPrices.data),
-    );
+    res.json(this.billingService.formatProductPrices(productPrices.data));
   }
 }

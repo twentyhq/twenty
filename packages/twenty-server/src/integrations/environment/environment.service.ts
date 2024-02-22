@@ -306,10 +306,8 @@ export class EnvironmentService {
     );
   }
 
-  getStripeSubscriptionProductId(): string {
-    return (
-      this.configService.get<string>('STRIPE_SUBSCRIPTION_PRODUCT_ID') ?? ''
-    );
+  getStripeBasePlanProductId(): string {
+    return this.configService.get<string>('STRIPE_BASE_PLAN_PRODUCT_ID') ?? '';
   }
 
   getStripeApiKey(): string {

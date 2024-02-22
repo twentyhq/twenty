@@ -8,7 +8,7 @@ export type PriceData = Partial<
   Record<Stripe.Price.Recurring.Interval, Stripe.Price>
 >;
 export enum AvailableProduct {
-  Subscription = 'subscription',
+  BasePlan = 'base-plan',
 }
 
 @Injectable()
@@ -16,8 +16,8 @@ export class BillingService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   getProductStripeId(product: AvailableProduct) {
-    if (product === AvailableProduct.Subscription) {
-      return this.environmentService.getStripeSubscriptionProductId();
+    if (product === AvailableProduct.BasePlan) {
+      return this.environmentService.getStripeBasePlanProductId();
     }
   }
 

@@ -50,7 +50,7 @@ export class EnvironmentVariables {
 
   @IsOptional()
   @IsString()
-  STRIPE_SUBSCRIPTION_PRODUCT_ID?: string;
+  STRIPE_BASE_PLAN_PRODUCT_ID?: string;
 
   @IsOptional()
   @IsString()
