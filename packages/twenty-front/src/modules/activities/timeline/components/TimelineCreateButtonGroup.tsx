@@ -1,7 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 import { Button, ButtonGroup } from 'tsup.ui.index';
 
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import {
   IconCheckbox,
@@ -19,7 +19,7 @@ export const TimelineCreateButtonGroup = ({
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const setActiveTabId = useSetRecoilState(getActiveTabIdState());
 
-  const openCreateActivity = useOpenCreateActivityDrawerV2();
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   return (
     <ButtonGroup variant={'secondary'}>
@@ -30,7 +30,6 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Note',
             targetableObjects: [targetableObject],
-            timelineTargetableObject: targetableObject,
           })
         }
       />
@@ -41,7 +40,6 @@ export const TimelineCreateButtonGroup = ({
           openCreateActivity({
             type: 'Task',
             targetableObjects: [targetableObject],
-            timelineTargetableObject: targetableObject,
           })
         }
       />

@@ -1,14 +1,18 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useMemo } from 'react';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
+import { useRecoilState } from 'recoil';
 
+import { useActivities } from '@/activities/hooks/useActivities';
+import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
+import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/states/currentIncompleteTaskQueryVariablesState';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { LeafObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { parseDate } from '~/utils/date-utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type UseTasksProps = {
   filterDropdownId?: string;
@@ -23,77 +27,105 @@ export const useTasks = ({
     filterDropdownId,
   });
 
-  const isTargettingObjectRecords = isNonEmptyArray(targetableObjects);
-  const targetableObjectsFilter =
-    targetableObjects.reduce<LeafObjectRecordFilter>(
-      (aggregateFilter, targetableObject) => {
-        const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
-          nameSingular: targetableObject.targetObjectNameSingular,
-        });
+  const assigneeIdFilter = useMemo(
+    () =>
+      selectedFilter
+        ? {
+            assigneeId: {
+              in: JSON.parse(selectedFilter.value),
+            },
+          }
+        : undefined,
+    [selectedFilter],
+  );
 
-        if (isNonEmptyString(targetableObject.id)) {
-          aggregateFilter[targetableObjectFieldName] = {
-            eq: targetableObject.id,
-          };
-        }
+  const skipActivityTargets = !isNonEmptyArray(targetableObjects);
 
-        return aggregateFilter;
-      },
-      {},
-    );
+  const completedQueryVariables = useMemo(
+    () =>
+      ({
+        filter: {
+          completedAt: { is: 'NOT_NULL' },
+          type: { eq: 'Task' },
+          ...assigneeIdFilter,
+        },
+        orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+      }) as ObjectRecordQueryVariables,
+    [assigneeIdFilter],
+  );
 
-  const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: targetableObjectsFilter,
-    skip: !isTargettingObjectRecords,
+  const incompleteQueryVariables = useMemo(
+    () =>
+      ({
+        filter: {
+          completedAt: { is: 'NULL' },
+          type: { eq: 'Task' },
+          ...assigneeIdFilter,
+        },
+        orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+      }) as ObjectRecordQueryVariables,
+    [assigneeIdFilter],
+  );
+
+  const [
+    currentCompletedTaskQueryVariables,
+    setCurrentCompletedTaskQueryVariables,
+  ] = useRecoilState(currentCompletedTaskQueryVariablesState);
+
+  const [
+    currentIncompleteTaskQueryVariables,
+    setCurrentIncompleteTaskQueryVariables,
+  ] = useRecoilState(currentIncompleteTaskQueryVariablesState);
+
+  // TODO: fix useEffect, remove with better pattern
+  useEffect(() => {
+    if (
+      !isDeeplyEqual(
+        completedQueryVariables,
+        currentCompletedTaskQueryVariables,
+      )
+    ) {
+      setCurrentCompletedTaskQueryVariables(completedQueryVariables);
+    }
+  }, [
+    completedQueryVariables,
+    currentCompletedTaskQueryVariables,
+    setCurrentCompletedTaskQueryVariables,
+  ]);
+
+  useEffect(() => {
+    if (
+      !isDeeplyEqual(
+        incompleteQueryVariables,
+        currentIncompleteTaskQueryVariables,
+      )
+    ) {
+      setCurrentIncompleteTaskQueryVariables(incompleteQueryVariables);
+    }
+  }, [
+    incompleteQueryVariables,
+    currentIncompleteTaskQueryVariables,
+    setCurrentIncompleteTaskQueryVariables,
+  ]);
+
+  const {
+    activities: completeTasksData,
+    initialized: initializedCompleteTasks,
+  } = useActivities({
+    targetableObjects,
+    activitiesFilters: completedQueryVariables.filter ?? {},
+    activitiesOrderByVariables: completedQueryVariables.orderBy ?? {},
+    skipActivityTargets,
   });
 
-  const skipRequest = !isNonEmptyArray(activityTargets) && !selectedFilter;
-
-  const idFilter = isTargettingObjectRecords
-    ? {
-        id: {
-          in: activityTargets.map(
-            (activityTarget) => activityTarget.activityId,
-          ),
-        },
-      }
-    : { id: {} };
-
-  const assigneeIdFilter = selectedFilter
-    ? {
-        assigneeId: {
-          in: JSON.parse(selectedFilter.value),
-        },
-      }
-    : undefined;
-
-  const { records: completeTasksData } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    skip: skipRequest,
-    filter: {
-      completedAt: { is: 'NOT_NULL' },
-      ...idFilter,
-      type: { eq: 'Task' },
-      ...assigneeIdFilter,
-    },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
-  });
-
-  const { records: incompleteTaskData } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    skip: skipRequest,
-    filter: {
-      completedAt: { is: 'NULL' },
-      ...idFilter,
-      type: { eq: 'Task' },
-      ...assigneeIdFilter,
-    },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+  const {
+    activities: incompleteTaskData,
+    initialized: initializedIncompleteTasks,
+  } = useActivities({
+    targetableObjects,
+    activitiesFilters: incompleteQueryVariables.filter ?? {},
+    activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? {},
+    skipActivityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
@@ -125,5 +157,6 @@ export const useTasks = ({
     upcomingTasks: (upcomingTasks ?? []) as Activity[],
     unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
     completedTasks: (completedTasks ?? []) as Activity[],
+    initialized: initializedCompleteTasks && initializedIncompleteTasks,
   };
 };

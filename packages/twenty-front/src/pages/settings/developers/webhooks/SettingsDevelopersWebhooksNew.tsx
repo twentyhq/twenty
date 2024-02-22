@@ -60,6 +60,11 @@ export const SettingsDevelopersWebhooksNew = () => {
           <TextInput
             placeholder="URL"
             value={formValues.targetUrl}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSave();
+              }
+            }}
             onChange={(value) => {
               setFormValues((prevState) => ({
                 ...prevState,
