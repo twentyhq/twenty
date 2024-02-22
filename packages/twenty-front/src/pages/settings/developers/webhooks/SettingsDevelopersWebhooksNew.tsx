@@ -23,11 +23,22 @@ export const SettingsDevelopersWebhooksNew = () => {
     targetUrl: '',
     operation: '*.*',
   });
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
   const handleSave = async () => {
+    setErrorMessage(undefined);
+
+    try {
+      new URL(formValues.targetUrl);
+    } catch (err) {
+      setErrorMessage('Invalid webhook URL');
+      return;
+    }
+
     const newWebhook = await createOneWebhook?.(formValues);
+
     if (!newWebhook) {
       return;
     }
@@ -66,6 +77,7 @@ export const SettingsDevelopersWebhooksNew = () => {
                 targetUrl: value,
               }));
             }}
+            error={errorMessage}
             fullWidth
           />
         </Section>
