@@ -127,7 +127,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
@@ -140,7 +140,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -153,7 +153,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];

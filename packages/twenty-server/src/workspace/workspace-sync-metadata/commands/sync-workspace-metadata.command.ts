@@ -64,21 +64,31 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         options.workspaceId,
       );
 
-    const { storage, workspaceMigrations } =
-      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        {
-          workspaceId: options.workspaceId,
-          dataSourceId: dataSourceMetadata.id,
-        },
-        { applyChanges: !options.dryRun },
-      );
+    await this.workspaceSyncMetadataService.syncCustomFieldsMetadata(
+      {
+        workspaceId: options.workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      },
+      {
+        applyChanges: !options.dryRun,
+      },
+    );
 
-    if (options.dryRun) {
-      await this.syncWorkspaceLoggerService.saveLogs(
-        storage,
-        workspaceMigrations,
-      );
-    }
+    // const { storage, workspaceMigrations } =
+    //   await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+    //     {
+    //       workspaceId: options.workspaceId,
+    //       dataSourceId: dataSourceMetadata.id,
+    //     },
+    //     { applyChanges: !options.dryRun },
+    //   );
+
+    // if (options.dryRun) {
+    //   await this.syncWorkspaceLoggerService.saveLogs(
+    //     storage,
+    //     workspaceMigrations,
+    //   );
+    // }
   }
 
   @Option({

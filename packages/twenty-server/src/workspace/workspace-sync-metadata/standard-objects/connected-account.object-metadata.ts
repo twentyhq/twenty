@@ -75,7 +75,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannel',
+    inverseSideTarget: () => MessageChannelObjectMetadata,
   })
   @IsNullable()
   messageChannels: MessageChannelObjectMetadata[];

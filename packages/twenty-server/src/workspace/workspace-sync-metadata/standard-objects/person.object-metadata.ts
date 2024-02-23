@@ -120,8 +120,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
-    inverseSideFieldName: 'pointOfContact',
+    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideFieldKey: 'pointOfContact',
   })
   @IsNullable()
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
@@ -134,7 +134,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -147,7 +147,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
@@ -160,7 +160,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
@@ -173,8 +173,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageParticipant',
-    inverseSideFieldName: 'person',
+    inverseSideTarget: () => MessageParticipantObjectMetadata,
+    inverseSideFieldKey: 'person',
   })
   @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];

@@ -9,6 +9,7 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factories/feature-flags.factory';
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
+import { WorkspaceSyncFieldMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 
@@ -23,6 +24,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
+    private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
   ) {}
 
   /**
@@ -83,6 +85,81 @@ export class WorkspaceSyncMetadataService {
         ...workspaceObjectMigrations,
         ...workspaceRelationMigrations,
       ]);
+
+      // If we're running a dry run, rollback the transaction and do not execute migrations
+      if (!options.applyChanges) {
+        this.logger.log('Running in dry run mode, rolling back transaction');
+
+        await queryRunner.rollbackTransaction();
+
+        await queryRunner.release();
+
+        return {
+          workspaceMigrations,
+          storage,
+        };
+      }
+
+      await queryRunner.commitTransaction();
+
+      // Execute migrations
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        context.workspaceId,
+      );
+    } catch (error) {
+      console.error('Sync of standard objects failed with:', error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+    return {
+      workspaceMigrations,
+      storage,
+    };
+  }
+
+  public async syncCustomFieldsMetadata(
+    context: WorkspaceSyncContext,
+    options: { applyChanges?: boolean } = { applyChanges: true },
+  ): Promise<{
+    workspaceMigrations: WorkspaceMigrationEntity[];
+    storage: WorkspaceSyncStorage;
+  }> {
+    let workspaceMigrations: WorkspaceMigrationEntity[] = [];
+    const storage = new WorkspaceSyncStorage();
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    this.logger.log('Syncing standard objects and fields metadata');
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
+
+    try {
+      const workspaceMigrationRepository = manager.getRepository(
+        WorkspaceMigrationEntity,
+      );
+
+      // Retrieve feature flags
+      const workspaceFeatureFlagsMap =
+        await this.featureFlagFactory.create(context);
+
+      this.logger.log('Syncing standard objects and fields metadata');
+
+      const workspaceFieldMigrations =
+        await this.workspaceSyncFieldMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
+
+      // Save workspace migrations into the database
+      workspaceMigrations = await workspaceMigrationRepository.save(
+        workspaceFieldMigrations,
+      );
 
       // If we're running a dry run, rollback the transaction and do not execute migrations
       if (!options.applyChanges) {

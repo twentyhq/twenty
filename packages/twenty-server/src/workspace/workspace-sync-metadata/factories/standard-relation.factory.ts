@@ -10,6 +10,7 @@ import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/util
 import { assert } from 'src/utils/assert';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { convertClassNameToObjectMetadataName } from 'src/workspace/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class StandardRelationFactory {
@@ -38,8 +39,8 @@ export class StandardRelationFactory {
       'objectMetadata',
       standardObjectMetadata,
     );
-    const relationMetadataCollection = TypedReflect.getMetadata(
-      'relationMetadataCollection',
+    const reflectRelationMetadataCollection = TypedReflect.getMetadata(
+      'reflectRelationMetadataCollection',
       standardObjectMetadata,
     );
 
@@ -50,67 +51,78 @@ export class StandardRelationFactory {
     }
 
     if (
-      !relationMetadataCollection ||
+      !reflectRelationMetadataCollection ||
       isGatedAndNotEnabled(objectMetadata.gate, workspaceFeatureFlagsMap)
     ) {
       return [];
     }
 
-    return relationMetadataCollection
+    return reflectRelationMetadataCollection
       .filter(
-        (relationMetadata) =>
+        (reflectRelationMetadata) =>
           !isGatedAndNotEnabled(
-            relationMetadata.gate,
+            reflectRelationMetadata.gate,
             workspaceFeatureFlagsMap,
           ),
       )
-      .map((relationMetadata) => {
+      .map((reflectRelationMetadata) => {
+        // Compute reflect relation metadata
+        const fromObjectNameSingular = convertClassNameToObjectMetadataName(
+          reflectRelationMetadata.target.constructor.name,
+        );
+        const toObjectNameSingular = convertClassNameToObjectMetadataName(
+          reflectRelationMetadata.inverseSideTarget().name,
+        );
+        const fromFieldMetadataName = reflectRelationMetadata.fieldKey;
+        const toFieldMetadataName =
+          (reflectRelationMetadata.inverseSideFieldKey as string | undefined) ??
+          fromObjectNameSingular;
         const fromObjectMetadata =
-          originalObjectMetadataMap[relationMetadata.fromObjectNameSingular];
+          originalObjectMetadataMap[fromObjectNameSingular];
 
         assert(
           fromObjectMetadata,
-          `Object ${relationMetadata.fromObjectNameSingular} not found in DB 
+          `Object ${fromObjectNameSingular} not found in DB 
         for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toObjectMetadata =
-          originalObjectMetadataMap[relationMetadata.toObjectNameSingular];
+          originalObjectMetadataMap[toObjectNameSingular];
 
         assert(
           toObjectMetadata,
-          `Object ${relationMetadata.toObjectNameSingular} not found in DB
+          `Object ${toObjectNameSingular} not found in DB
         for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
         const fromFieldMetadata = fromObjectMetadata?.fields.find(
-          (field) => field.name === relationMetadata.fromFieldMetadataName,
+          (field) => field.name === fromFieldMetadataName,
         );
 
         assert(
           fromFieldMetadata,
-          `Field ${relationMetadata.fromFieldMetadataName} not found in object ${relationMetadata.fromObjectNameSingular}
+          `Field ${fromFieldMetadataName} not found in object ${fromObjectNameSingular}
         for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toFieldMetadata = toObjectMetadata?.fields.find(
-          (field) => field.name === relationMetadata.toFieldMetadataName,
+          (field) => field.name === toFieldMetadataName,
         );
 
         assert(
           toFieldMetadata,
-          `Field ${relationMetadata.toFieldMetadataName} not found in object ${relationMetadata.toObjectNameSingular}
+          `Field ${toFieldMetadataName} not found in object ${toObjectNameSingular}
         for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
         return {
-          relationType: relationMetadata.type,
+          relationType: reflectRelationMetadata.type,
           fromObjectMetadataId: fromObjectMetadata?.id,
           toObjectMetadataId: toObjectMetadata?.id,
           fromFieldMetadataId: fromFieldMetadata?.id,
           toFieldMetadataId: toFieldMetadata?.id,
           workspaceId: context.workspaceId,
-          onDeleteAction: relationMetadata.onDelete,
+          onDeleteAction: reflectRelationMetadata.onDelete,
         };
       });
   }

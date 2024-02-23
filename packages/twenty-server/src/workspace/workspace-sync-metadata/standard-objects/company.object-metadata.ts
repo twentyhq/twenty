@@ -114,7 +114,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'person',
+    inverseSideTarget: () => PersonObjectMetadata,
   })
   @IsNullable()
   people: PersonObjectMetadata[];
@@ -138,7 +138,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -151,7 +151,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
+    inverseSideTarget: () => OpportunityObjectMetadata,
   })
   @IsNullable()
   opportunities: OpportunityObjectMetadata[];
@@ -164,7 +164,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
@@ -177,7 +177,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
