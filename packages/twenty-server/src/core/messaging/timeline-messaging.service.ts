@@ -233,28 +233,10 @@ export class TimelineMessagingService {
       workspaceId,
     );
 
-    const threadMessagesFromActiveParticipants:
-      | {
-          id: string;
-          messageId: string;
-          receivedAt: Date;
-          body: string;
-          subject: string;
-          role: string;
-          personId: string;
-          workspaceMemberId: string;
-          handle: string;
-          personFirstName: string;
-          personLastName: string;
-          personAvatarUrl: string;
-          workspaceMemberFirstName: string;
-          workspaceMemberLastName: string;
-          workspaceMemberAvatarUrl: string;
-          messageDisplayName: string;
-        }[]
-      | undefined = threadMessagesParticipants?.filter(
-      (threadMessage) => threadMessage.role === 'from',
-    );
+    const threadMessagesFromActiveParticipants =
+      threadMessagesParticipants?.filter(
+        (threadMessage) => threadMessage.role === 'from',
+      );
 
     const totalNumberOfThreads =
       await this.workspaceDataSourceService.executeRawQuery(
