@@ -40,6 +40,7 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
+    initialized,
   } = useTasks({
     filterDropdownId: filterDropdownId,
     targetableObjects: targetableObjects ?? [],
@@ -49,6 +50,10 @@ export const TaskGroups = ({
 
   const { getActiveTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(getActiveTabIdState());
+
+  if (!initialized) {
+    return <></>;
+  }
 
   if (
     (activeTabId !== 'done' &&
@@ -61,9 +66,11 @@ export const TaskGroups = ({
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>No Task</AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptyTitle>
+            Mission accomplished!
+          </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no tasks for this user filter
+            All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
@@ -73,7 +80,7 @@ export const TaskGroups = ({
           onClick={() =>
             openCreateActivity({
               type: 'Task',
-              targetableObjects,
+              targetableObjects: targetableObjects ?? [],
             })
           }
         />

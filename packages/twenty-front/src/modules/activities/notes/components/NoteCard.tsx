@@ -94,7 +94,7 @@ export const NoteCard = ({
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledCard isSingleNote={isSingleNote}>
         <StyledCardDetailsContainer
-          onClick={() => openActivityRightDrawer(note.id)}
+          onClick={() => openActivityRightDrawer(note)}
         >
           <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
           <StyledCardContent>{body}</StyledCardContent>

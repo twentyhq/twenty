@@ -9,7 +9,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 
 type SettingsObjectFieldFormSectionProps = {
   disabled?: boolean;
-  disableNameEdition?: boolean;
   name?: string;
   description?: string;
   iconKey?: string;
@@ -31,7 +30,6 @@ const StyledInputsContainer = styled.div`
 
 export const SettingsObjectFieldFormSection = ({
   disabled,
-  disableNameEdition,
   name = '',
   description = '',
   iconKey = 'IconUsers',
@@ -57,7 +55,7 @@ export const SettingsObjectFieldFormSection = ({
             onChange?.({ label: value });
           }
         }}
-        disabled={disabled || disableNameEdition}
+        disabled={disabled}
         fullWidth
       />
     </StyledInputsContainer>

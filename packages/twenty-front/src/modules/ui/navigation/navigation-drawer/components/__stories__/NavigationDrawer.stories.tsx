@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Favorites } from '@/favorites/components/Favorites';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import {
   IconAt,
   IconBell,
@@ -91,32 +93,32 @@ export const Submenu: Story = {
           <NavigationDrawerSectionTitle label="User" />
           <NavigationDrawerItem
             label="Profile"
-            to="/settings/profile"
+            to={getSettingsPagePath(SettingsPath.ProfilePage)}
             Icon={IconUserCircle}
             active
           />
           <NavigationDrawerItem
             label="Appearance"
-            to="/settings/profile/appearance"
+            to={getSettingsPagePath(SettingsPath.Appearance)}
             Icon={IconColorSwatch}
           />
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to="/settings/accounts"
+              to={getSettingsPagePath(SettingsPath.Accounts)}
               Icon={IconAt}
             />
             <NavigationDrawerItem
               level={2}
               label="Emails"
-              to="/settings/accounts/emails"
+              to={getSettingsPagePath(SettingsPath.AccountsEmails)}
               Icon={IconMail}
             />
             <NavigationDrawerItem
               level={2}
               label="Calendar"
+              to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
               Icon={IconCalendarEvent}
-              soon
             />
           </NavigationDrawerItemGroup>
         </NavigationDrawerSection>
@@ -125,12 +127,12 @@ export const Submenu: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to="/settings/workspace"
+            to={getSettingsPagePath(SettingsPath.Workspace)}
             Icon={IconSettings}
           />
           <NavigationDrawerItem
             label="Members"
-            to="/settings/workspace-members"
+            to={getSettingsPagePath(SettingsPath.WorkspaceMembersPage)}
             Icon={IconUsers}
           />
         </NavigationDrawerSection>

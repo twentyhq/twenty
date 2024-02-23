@@ -192,11 +192,11 @@ export const CommandMenu = () => {
 
   const activityCommands = useMemo(
     () =>
-      activities.map(({ id, title }) => ({
-        id,
-        label: title ?? '',
+      activities.map((activity) => ({
+        id: activity.id,
+        label: activity.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(id),
+        onCommandClick: () => openActivityRightDrawer(activity),
       })),
     [activities, openActivityRightDrawer],
   );
@@ -372,7 +372,7 @@ export const CommandMenu = () => {
                           Icon={IconNotes}
                           key={activity.id}
                           label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity.id)}
+                          onClick={() => openActivityRightDrawer(activity)}
                         />
                       </SelectableItem>
                     ))}
