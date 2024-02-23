@@ -19,7 +19,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordShowPage = () => {
-  console.log('RecordShowPage');
   const { objectNameSingular, objectRecordId } = useParams<{
     objectNameSingular: string;
     objectRecordId: string;

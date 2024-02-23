@@ -52,7 +52,6 @@ export const ActivityEditor = ({
   showComment = true,
   fillTitleFromBody = false,
 }: ActivityEditorProps) => {
-  console.log('ActivityEditor');
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (

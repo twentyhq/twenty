@@ -57,7 +57,6 @@ export const TimelineActivityGroup = ({
   month,
   year,
 }: TimelineActivityGroupProps) => {
-  console.log('TimelineActivityGroup');
   return (
     <StyledActivityGroup>
       <StyledMonthSeperator>

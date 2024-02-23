@@ -60,7 +60,6 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  console.log('ShowPageRightContainer');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);

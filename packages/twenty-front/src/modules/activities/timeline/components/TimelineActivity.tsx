@@ -144,7 +144,6 @@ export const TimelineActivity = ({
   isLastActivity,
   activityId,
 }: TimelineActivityProps) => {
-  console.log('TimelineActivity');
   const activityForTimeline = useRecoilValue(
     timelineActivityWithoutTargetsFamilyState(activityId),
   );

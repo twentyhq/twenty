@@ -15,7 +15,6 @@ export const ActivityEditorEffect = ({
 }: {
   activityId: string;
 }) => {
-  console.log('ActivityEditorEffect');
   const [activityFromStore] = useRecoilState(
     recordStoreFamilyState(activityId),
   );

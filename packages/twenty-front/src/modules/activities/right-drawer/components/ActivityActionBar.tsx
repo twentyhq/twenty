@@ -188,7 +188,25 @@ export const ActivityActionBar = () => {
           }
         }
       },
-    [],
+    [
+      activityIdInDrawer,
+      currentCompletedTaskQueryVariables,
+      currentIncompleteTaskQueryVariables,
+      currentNotesQueryVariables,
+      deleteActivityFromCache,
+      deleteManyActivityTargets,
+      deleteOneActivity,
+      isActivityInCreateMode,
+      objectShowPageTargetableObject,
+      removeFromActivitiesQueries,
+      removeFromActivityTargetsQueries,
+      setTemporaryActivityForEditor,
+      temporaryActivityForEditor,
+      viewableActivityId,
+      weAreOnObjectShowPage,
+      weAreOnTaskPage,
+      setIsRightDrawerOpen,
+    ],
   );
 
   const record = useRecoilValue(

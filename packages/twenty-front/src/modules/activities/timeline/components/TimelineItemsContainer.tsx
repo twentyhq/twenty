@@ -25,7 +25,6 @@ const StyledTimelineContainer = styled.div`
 const StyledScrollWrapper = styled(ScrollWrapper)``;
 
 export const TimelineItemsContainer = () => {
-  console.log('TimelineItemsContainer');
   const timelineActivitiesForGroup = useRecoilValue(
     timelineActivitiesForGroupState,
   );
