@@ -9,10 +9,11 @@ import gfm from 'remark-gfm';
 
 import { ReleaseNote } from '@/app/get-releases';
 
-const StyledContainer = styled.h1`
+const StyledContainer = styled.div`
   width: 810px;
   margin: 0 auto;
   display: flex;
+  font-weight: 400;
 
   @media (max-width: 810px) {
     width: auto;
@@ -28,6 +29,7 @@ const StyledVersion = styled.div`
   display: flex;
   flex-flow: column;
   align-items: start;
+  font-weight: 500;
 
   @media (max-width: 810px) {
     width: 100%;
