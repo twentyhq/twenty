@@ -1,4 +1,3 @@
-import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
@@ -12,9 +11,6 @@ import { mockedPeopleData } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '../RecordShowPage';
-
-loadDevMessages();
-loadErrorMessages();
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
