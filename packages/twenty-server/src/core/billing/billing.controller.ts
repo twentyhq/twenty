@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   RawBodyRequest,
+  Logger,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -28,6 +29,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 @Controller('billing')
 export class BillingController {
+  protected readonly logger = new Logger(BillingController.name);
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingService: BillingService,
@@ -116,6 +118,7 @@ export class BillingController {
 
       return;
     }
+    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
 
     res.redirect(303, session.url);
   }
