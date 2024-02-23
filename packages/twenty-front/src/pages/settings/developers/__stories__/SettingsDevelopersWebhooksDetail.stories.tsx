@@ -20,7 +20,7 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOnewebhook' ?? '', () => {
+        graphql.query('FindOnewebhook', () => {
           return HttpResponse.json({
             data: {
               webhook: {

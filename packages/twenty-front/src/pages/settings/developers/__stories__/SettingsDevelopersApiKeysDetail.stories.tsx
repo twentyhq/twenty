@@ -22,7 +22,7 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOneapiKey' ?? '', () => {
+        graphql.query('FindOneapiKey', () => {
           return HttpResponse.json({
             data: {
               apiKey: {

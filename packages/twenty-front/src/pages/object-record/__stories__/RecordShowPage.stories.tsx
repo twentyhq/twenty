@@ -30,14 +30,14 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOneperson' ?? '', () => {
+        graphql.query('FindOneperson', () => {
           return HttpResponse.json({
             data: {
               person: mockedPeopleData[0],
             },
           });
         }),
-        graphql.query('FindManyActivityTargets' ?? '', () => {
+        graphql.query('FindManyActivityTargets', () => {
           return HttpResponse.json({
             data: {
               activityTargets: {
@@ -52,14 +52,14 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query('FindOneworkspaceMember' ?? '', () => {
+        graphql.query('FindOneworkspaceMember', () => {
           return HttpResponse.json({
             data: {
               workspaceMember: mockedWorkspaceMemberData,
             },
           });
         }),
-        graphql.query('FindManyViews' ?? '', () => {
+        graphql.query('FindManyViews', () => {
           return HttpResponse.json({
             data: {
               views: {

@@ -21,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
-        graphql.query('FindOnemessageChannel' ?? '', () => {
+        graphql.query('FindOnemessageChannel', () => {
           return HttpResponse.json({
             data: {
               messageChannel: {
