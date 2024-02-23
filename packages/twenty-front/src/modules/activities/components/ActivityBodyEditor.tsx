@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -45,6 +45,8 @@ export const ActivityBodyEditor = ({
   activity,
   fillTitleFromBody,
 }: ActivityBodyEditorProps) => {
+  const [internalBody, setInternalBody] = useState(activity.body ?? '{}');
+
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
       activityId: activity.id,
@@ -104,28 +106,6 @@ export const ActivityBodyEditor = ({
     canCreateActivityState,
   );
 
-  const handleBodyChange = useCallback(
-    (activityBody: string) => {
-      if (!canCreateActivity) {
-        setCanCreateActivity(true);
-      }
-
-      if (!activityTitleHasBeenSet && fillTitleFromBody) {
-        updateTitleAndBody(activityBody);
-      } else {
-        persistBodyDebounced(activityBody);
-      }
-    },
-    [
-      fillTitleFromBody,
-      persistBodyDebounced,
-      activityTitleHasBeenSet,
-      updateTitleAndBody,
-      setCanCreateActivity,
-      canCreateActivity,
-    ],
-  );
-
   const slashMenuItems = getSlashMenu();
 
   const [uploadFile] = useUploadFileMutation();
@@ -148,63 +128,93 @@ export const ActivityBodyEditor = ({
     return imageUrl;
   };
 
+  const handleBodyChange = useCallback(
+    (activityBody: string) => {
+      if (!canCreateActivity) {
+        setCanCreateActivity(true);
+      }
+
+      if (!activityTitleHasBeenSet && fillTitleFromBody) {
+        updateTitleAndBody(activityBody);
+      } else {
+        persistBodyDebounced(activityBody);
+      }
+    },
+    [
+      fillTitleFromBody,
+      persistBodyDebounced,
+      activityTitleHasBeenSet,
+      updateTitleAndBody,
+      setCanCreateActivity,
+      canCreateActivity,
+    ],
+  );
+
+  const setBody = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (editor: BlockNoteEditor) => {
+        const newStringifiedBody = JSON.stringify(editor.topLevelBlocks) ?? '';
+
+        set(recordStoreFamilyState(activity.id), (oldActivity) => {
+          return {
+            ...oldActivity,
+            id: activity.id,
+            body: newStringifiedBody,
+          };
+        });
+
+        modifyActivityFromCache(activity.id, {
+          body: () => {
+            return newStringifiedBody;
+          },
+        });
+
+        const activityTitleHasBeenSet = snapshot
+          .getLoadable(
+            activityTitleHasBeenSetFamilyState({
+              activityId: activity.id,
+            }),
+          )
+          .getValue();
+
+        const blockBody = JSON.parse(newStringifiedBody);
+        const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
+
+        if (!activityTitleHasBeenSet && fillTitleFromBody) {
+          set(recordStoreFamilyState(activity.id), (oldActivity) => {
+            return {
+              ...oldActivity,
+              id: activity.id,
+              title: newTitleFromBody,
+            };
+          });
+
+          modifyActivityFromCache(activity.id, {
+            title: () => {
+              return newTitleFromBody;
+            },
+          });
+        }
+
+        handleBodyChange(newStringifiedBody);
+      },
+    [activity, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
+  );
+
+  const handleEditorChangeDebounced = useDebouncedCallback(
+    (newEditor: BlockNoteEditor) => {
+      setBody(newEditor);
+    },
+    500,
+  );
+
   const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
     initialContent:
       isNonEmptyString(activity.body) && activity.body !== '{}'
         ? JSON.parse(activity.body)
         : undefined,
     domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: useRecoilCallback(
-      ({ snapshot, set }) =>
-        (editor: BlockNoteEditor) => {
-          const newStringifiedBody =
-            JSON.stringify(editor.topLevelBlocks) ?? '';
-
-          set(recordStoreFamilyState(activity.id), (oldActivity) => {
-            return {
-              ...oldActivity,
-              id: activity.id,
-              body: newStringifiedBody,
-            };
-          });
-
-          modifyActivityFromCache(activity.id, {
-            body: () => {
-              return newStringifiedBody;
-            },
-          });
-
-          const activityTitleHasBeenSet = snapshot
-            .getLoadable(
-              activityTitleHasBeenSetFamilyState({
-                activityId: activity.id,
-              }),
-            )
-            .getValue();
-
-          const blockBody = JSON.parse(newStringifiedBody);
-          const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
-
-          if (!activityTitleHasBeenSet && fillTitleFromBody) {
-            set(recordStoreFamilyState(activity.id), (oldActivity) => {
-              return {
-                ...oldActivity,
-                id: activity.id,
-                title: newTitleFromBody,
-              };
-            });
-
-            modifyActivityFromCache(activity.id, {
-              title: () => {
-                return newTitleFromBody;
-              },
-            });
-          }
-
-          handleBodyChange(newStringifiedBody);
-        },
-      [activity, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
-    ),
+    onEditorContentChange: handleEditorChangeDebounced,
     slashMenuItems,
     blockSpecs: blockSpecs,
     uploadFile: handleUploadAttachment,

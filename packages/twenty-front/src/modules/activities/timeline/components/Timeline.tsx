@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { useActivities } from '@/activities/hooks/useActivities';
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
+import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -15,7 +12,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isDefined } from '~/utils/isDefined';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 
@@ -34,25 +30,17 @@ const StyledMainContainer = styled.div`
 export const Timeline = ({
   targetableObject,
 }: {
-  targetableObject: Pick<
-    ActivityTargetableObject,
-    'id' | 'targetObjectNameSingular'
-  >;
+  targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, initialized, noActivities } = useActivities({
-    targetableObjects: [targetableObject],
-    activitiesFilters: {},
-    activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-    skip: !isDefined(targetableObject),
-  });
-
-  const setTimelineTargetableObject = useSetRecoilState(
-    objectShowPageTargetableObjectState,
+  console.log('Timeline');
+  const { initialized, noActivities } = useRecoilValue(
+    timelineActivitiesNetworkingState,
   );
 
-  useEffect(() => {
-    setTimelineTargetableObject(targetableObject);
-  }, [targetableObject, setTimelineTargetableObject]);
+  console.log({
+    initialized,
+    noActivities,
+  });
 
   const showEmptyState = noActivities;
 
@@ -82,7 +70,7 @@ export const Timeline = ({
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities} />
+      <TimelineItemsContainer />
     </StyledMainContainer>
   );
 };

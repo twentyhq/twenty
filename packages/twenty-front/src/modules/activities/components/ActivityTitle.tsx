@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
@@ -55,13 +55,19 @@ const StyledContainer = styled.div`
 `;
 
 type ActivityTitleProps = {
-  activity: Activity;
+  activityId: string;
 };
 
-export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
+export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   const [activityInStore, setActivityInStore] = useRecoilState(
-    recordStoreFamilyState(activity.id),
+    recordStoreFamilyState(activityId),
   );
+
+  const [internalTitle, setInternalTitle] = useState(
+    activityInStore?.title ?? '',
+  );
+
+  const activity = activityInStore as Activity;
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
     canCreateActivityState,
@@ -96,7 +102,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
     }),
   );
 
@@ -120,9 +126,9 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     if (!activityTitleHasBeenSet) {
       setActivityTitleHasBeenSet(true);
     }
-  }, 500);
+  }, 250);
 
-  const handleTitleChange = (newTitle: string) => {
+  const setTitleDebounced = useDebouncedCallback((newTitle: string) => {
     setActivityInStore((currentActivity) => {
       return {
         ...currentActivity,
@@ -140,6 +146,12 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         return newTitle;
       },
     });
+  }, 50);
+
+  const handleTitleChange = (newTitle: string) => {
+    setInternalTitle(newTitle);
+
+    setTitleDebounced(newTitle);
 
     persistTitleDebounced(newTitle);
   };
@@ -171,7 +183,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={activityInStore?.title ?? ''}
+        value={internalTitle}
         completed={completed}
         onBlur={handleBlur}
         onFocus={handleFocus}

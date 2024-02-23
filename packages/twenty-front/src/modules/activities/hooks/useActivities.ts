@@ -21,10 +21,7 @@ export const useActivities = ({
   skip,
   skipActivityTargets,
 }: {
-  targetableObjects: Pick<
-    ActivityTargetableObject,
-    'id' | 'targetObjectNameSingular'
-  >[];
+  targetableObjects: ActivityTargetableObject[];
   activitiesFilters: ObjectRecordQueryFilter;
   activitiesOrderByVariables: OrderByField;
   skip?: boolean;
@@ -93,7 +90,7 @@ export const useActivities = ({
   const loading = loadingActivities || loadingActivityTargets;
 
   // TODO: fix connection in relation => automatically change to an array
-  const activities = activitiesWithConnection
+  const activities: Activity[] = activitiesWithConnection
     ?.map(makeActivityWithoutConnection as any)
     .map(({ activity }: any) => activity);
 

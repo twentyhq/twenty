@@ -60,16 +60,17 @@ const StyledTopContainer = styled.div`
 `;
 
 type ActivityEditorProps = {
-  activity: Activity;
+  activityId: string;
   showComment?: boolean;
   fillTitleFromBody?: boolean;
 };
 
 export const ActivityEditor = ({
-  activity,
+  activityId,
   showComment = true,
   fillTitleFromBody = false,
 }: ActivityEditorProps) => {
+  console.log('ActivityEditor');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
@@ -79,11 +80,22 @@ export const ActivityEditor = ({
   const { upsertActivity } = useUpsertActivity();
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
+  const [activityFromStore] = useRecoilState(
+    recordStoreFamilyState(activityId),
+  );
+
+  const activity = activityFromStore as Activity;
+
   const useUpsertOneActivityMutation: RecordUpdateHook = () => {
     const upsertActivityMutation = async ({
       variables,
     }: RecordUpdateHookParams) => {
-      await upsertActivity({ activity, input: variables.updateOneRecordInput });
+      if (activityFromStore) {
+        await upsertActivity({
+          activity: activityFromStore as Activity,
+          input: variables.updateOneRecordInput,
+        });
+      }
     };
 
     return [upsertActivityMutation, { loading: false }];
@@ -91,7 +103,7 @@ export const ActivityEditor = ({
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
-    objectRecordId: activity.id,
+    objectRecordId: activityId,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
     clearable: true,
@@ -101,7 +113,7 @@ export const ActivityEditor = ({
   const { FieldContextProvider: AssigneeFieldContextProvider } =
     useFieldContext({
       objectNameSingular: CoreObjectNameSingular.Activity,
-      objectRecordId: activity.id,
+      objectRecordId: activityId,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,
       clearable: true,
@@ -118,57 +130,53 @@ export const ActivityEditor = ({
 
   const [canCreateActivity] = useRecoilState(canCreateActivityState);
 
-  const [activityFromStore] = useRecoilState(
-    recordStoreFamilyState(activity.id),
-  );
-
   const { FieldContextProvider: ActivityTargetsContextProvider } =
     useFieldContext({
       objectNameSingular: CoreObjectNameSingular.Activity,
-      objectRecordId: activity?.id ?? '',
+      objectRecordId: activityId,
       fieldMetadataName: 'activityTargets',
       fieldPosition: 2,
     });
 
-  useRegisterClickOutsideListenerCallback({
-    callbackId: 'activity-editor',
-    callbackFunction: () => {
-      if (isUpsertingActivityInDB || !activityFromStore) {
-        return;
-      }
+  // useRegisterClickOutsideListenerCallback({
+  //   callbackId: 'activity-editor',
+  //   callbackFunction: () => {
+  //     if (isUpsertingActivityInDB || !activityFromStore) {
+  //       return;
+  //     }
 
-      if (isActivityInCreateMode) {
-        if (canCreateActivity) {
-          upsertActivity({
-            activity,
-            input: {
-              title: activityFromStore.title,
-              body: activityFromStore.body,
-            },
-          });
-        } else {
-          deleteActivityFromCache(activity);
-        }
+  //     if (isActivityInCreateMode) {
+  //       if (canCreateActivity) {
+  //         upsertActivity({
+  //           activity,
+  //           input: {
+  //             title: activityFromStore.title,
+  //             body: activityFromStore.body,
+  //           },
+  //         });
+  //       } else {
+  //         deleteActivityFromCache(activity);
+  //       }
 
-        setIsActivityInCreateMode(false);
-      } else {
-        if (
-          activityFromStore.title !== activity.title ||
-          activityFromStore.body !== activity.body
-        ) {
-          upsertActivity({
-            activity,
-            input: {
-              title: activityFromStore.title,
-              body: activityFromStore.body,
-            },
-          });
-        }
-      }
-    },
-  });
+  //       setIsActivityInCreateMode(false);
+  //     } else {
+  //       if (
+  //         activityFromStore.title !== activity.title ||
+  //         activityFromStore.body !== activity.body
+  //       ) {
+  //         upsertActivity({
+  //           activity,
+  //           input: {
+  //             title: activityFromStore.title,
+  //             body: activityFromStore.body,
+  //           },
+  //         });
+  //       }
+  //     }
+  //   },
+  // });
 
-  if (!activity) {
+  if (!activityFromStore) {
     return <></>;
   }
 
@@ -177,7 +185,7 @@ export const ActivityEditor = ({
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <ActivityTypeDropdown activity={activity} />
-          <ActivityTitle activity={activity} />
+          <ActivityTitle activityId={activityId} />
           <PropertyBox>
             {activity.type === 'Task' &&
               DueAtFieldContextProvider &&

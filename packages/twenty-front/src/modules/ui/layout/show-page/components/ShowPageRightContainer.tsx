@@ -6,6 +6,7 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -59,6 +60,7 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
+  console.log('ShowPageRightContainer');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
@@ -117,7 +119,10 @@ export const ShowPageRightContainer = ({
         <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
-        <Timeline targetableObject={targetableObject} />
+        <>
+          <TimelineQueryEffect targetableObject={targetableObject} />
+          <Timeline targetableObject={targetableObject} />
+        </>
       )}
       {activeTabId === 'tasks' && (
         <ObjectTasks targetableObject={targetableObject} />

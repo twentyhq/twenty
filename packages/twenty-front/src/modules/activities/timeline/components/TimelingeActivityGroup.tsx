@@ -57,6 +57,7 @@ export const TimelineActivityGroup = ({
   month,
   year,
 }: TimelineActivityGroupProps) => {
+  console.log('TimelineActivityGroup');
   return (
     <StyledActivityGroup>
       <StyledMonthSeperator>
@@ -68,7 +69,7 @@ export const TimelineActivityGroup = ({
         {group.items.map((activity, index) => (
           <TimelineActivity
             key={activity.id}
-            activity={activity}
+            activityId={activity.id}
             isLastActivity={index === group.items.length - 1}
           />
         ))}

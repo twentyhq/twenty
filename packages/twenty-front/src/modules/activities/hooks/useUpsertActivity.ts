@@ -6,7 +6,7 @@ import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB'
 import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { useInjectIntoActivityTargetsQueries } from '@/activities/hooks/useInjectIntoActivityTargetsQueries';
 import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
-import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
+import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
@@ -34,7 +34,7 @@ export const useUpsertActivity = () => {
     isUpsertingActivityInDBState,
   );
 
-  const setActivityInDrawer = useSetRecoilState(activityInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const objectShowPageTargetableObject = useRecoilValue(
     objectShowPageTargetableObjectState,
@@ -169,7 +169,7 @@ export const useUpsertActivity = () => {
 
       await createActivityInDB(activityToCreate);
 
-      setActivityInDrawer(activityToCreate);
+      setActivityIdInDrawer(activityToCreate.id);
 
       setIsActivityInCreateMode(false);
     } else {
