@@ -2,23 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
-
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
 } from 'src/database/typeorm-seeds/core';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
 @Injectable()
-export class DataSeedDemoWorkspaceJob implements MessageQueueJob<undefined> {
+export class DataSeedDemoWorkspaceService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
   ) {}
 
-  async handle(): Promise<void> {
+  async seedDemo(): Promise<void> {
     try {
       const dataSource = new DataSource({
         url: this.environmentService.getPGDatabaseUrl(),

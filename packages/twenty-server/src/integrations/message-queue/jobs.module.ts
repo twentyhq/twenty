@@ -24,8 +24,8 @@ import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
-import { DataSeedDemoWorkspaceJob } from 'src/database/jobs/data-seed-demo-workspace.job';
-import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
+import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
+import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspac
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,
     MessageChannelModule,
-    WorkspaceManagerModule,
+    DataSeedDemoWorkspaceModule,
   ],
   providers: [
     {

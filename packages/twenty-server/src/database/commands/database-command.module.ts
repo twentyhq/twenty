@@ -6,12 +6,13 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
-import { DataSeedDemoWorkspaceCronCommand } from 'src/database/commands/crons/data-seed-demo-workspace.cron.command';
+import { DataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/data-seed-demo-workspace.cron.command';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
-import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace-command';
+import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
+import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-de
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
     ObjectMetadataModule,
+    DataSeedDemoWorkspaceModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
