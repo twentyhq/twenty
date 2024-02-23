@@ -1,5 +1,4 @@
 'use client';
-
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
@@ -9,7 +8,7 @@ import UserGuideTableContents from '@/app/components/user-guide/UserGuideTableCo
 import { Theme } from '@/app/ui/theme/theme';
 import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
 
-const StyledContainer = styled.div<{ deviceType: DeviceType }>`
+const StyledContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -24,8 +23,9 @@ const StyledEmptySideBar = styled.div`
 export default function UserGuideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const deviceType = useDeviceType();
+
   return (
-    <StyledContainer deviceType={deviceType}>
+    <StyledContainer>
       {deviceType !== DeviceType.MOBILE && <UserGuideSidebar />}
       {children}
       {deviceType !== DeviceType.DESKTOP ? (

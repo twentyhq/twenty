@@ -18,6 +18,7 @@ const StyledContainer = styled.div<{ devicetype: string }>`
   flex-direction: row;
   justify-content: center;
   font-family: ${Theme.font.family};
+  border-bottom: 1px solid ${Theme.background.transparent.medium};
 `;
 
 const StyledWrapper = styled.div`

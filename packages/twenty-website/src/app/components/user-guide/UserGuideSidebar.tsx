@@ -15,6 +15,7 @@ const StyledContainer = styled.div<{ isTablet: boolean }>`
   display: flex;
   flex-direction: column;
   border-right: 1px solid ${Theme.background.transparent.medium};
+  border-bottom: 1px solid ${Theme.background.transparent.medium};
   padding: ${Theme.spacing(10)} ${Theme.spacing(3)};
   gap: ${Theme.spacing(6)};
 `;
