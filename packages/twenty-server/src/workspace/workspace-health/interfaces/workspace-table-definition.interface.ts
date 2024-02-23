@@ -8,6 +8,8 @@ export interface WorkspaceTableStructure {
   isPrimaryKey: boolean;
   isForeignKey: boolean;
   isUnique: boolean;
+  onUpdateAction: string;
+  onDeleteAction: string;
 }
 
 export type WorkspaceTableStructureResult = {

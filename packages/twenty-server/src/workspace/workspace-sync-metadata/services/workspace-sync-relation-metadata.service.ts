@@ -84,6 +84,8 @@ export class WorkspaceSyncRelationMetadataService {
     for (const relationComparatorResult of relationComparatorResults) {
       if (relationComparatorResult.action === ComparatorAction.CREATE) {
         storage.addCreateRelationMetadata(relationComparatorResult.object);
+      } else if (relationComparatorResult.action === ComparatorAction.UPDATE) {
+        storage.addUpdateRelationMetadata(relationComparatorResult.object);
       } else if (relationComparatorResult.action === ComparatorAction.DELETE) {
         storage.addDeleteRelationMetadata(relationComparatorResult.object);
       }
@@ -103,6 +105,16 @@ export class WorkspaceSyncRelationMetadataService {
         WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    return createRelationWorkspaceMigrations;
+    const updateRelationWorkspaceMigrations =
+      await this.workspaceMigrationRelationFactory.create(
+        originalObjectMetadataCollection,
+        metadataRelationUpdaterResult.updatedRelationMetadataCollection,
+        WorkspaceMigrationBuilderAction.UPDATE,
+      );
+
+    return [
+      ...createRelationWorkspaceMigrations,
+      ...updateRelationWorkspaceMigrations,
+    ];
   }
 }

@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
-import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -22,15 +22,15 @@ export const useTimelineActivities = ({
 }) => {
   const { makeActivityWithoutConnection } = useActivityConnectionUtils();
 
-  const [, setTimelineTargetableObject] = useRecoilState(
-    timelineTargetableObjectState,
+  const [, setObjectShowPageTargetableObject] = useRecoilState(
+    objectShowPageTargetableObjectState,
   );
 
   useEffect(() => {
     if (isDefined(targetableObject)) {
-      setTimelineTargetableObject(targetableObject);
+      setObjectShowPageTargetableObject(targetableObject);
     }
-  }, [targetableObject, setTimelineTargetableObject]);
+  }, [targetableObject, setObjectShowPageTargetableObject]);
 
   const {
     activityTargets,

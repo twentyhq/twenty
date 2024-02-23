@@ -1,5 +1,6 @@
-import { Participant } from 'src/workspace/messaging/types/gmail-message';
+import { uniq, uniqBy } from 'lodash';
 
+import { Participant } from 'src/workspace/messaging/types/gmail-message';
 export function getUniqueParticipantsAndHandles(participants: Participant[]): {
   uniqueParticipants: Participant[];
   uniqueHandles: string[];
@@ -8,17 +9,11 @@ export function getUniqueParticipantsAndHandles(participants: Participant[]): {
     return { uniqueParticipants: [], uniqueHandles: [] };
   }
 
-  const uniqueHandles = Array.from(
-    new Set(participants.map((participant) => participant.handle)),
+  const uniqueHandles = uniq(
+    participants.map((participant) => participant.handle),
   );
 
-  const uniqueParticipants = uniqueHandles.map((handle) => {
-    const participant = participants.find(
-      (participant) => participant.handle === handle,
-    );
-
-    return participant;
-  }) as Participant[];
+  const uniqueParticipants = uniqBy(participants, 'handle');
 
   return { uniqueParticipants, uniqueHandles };
 }

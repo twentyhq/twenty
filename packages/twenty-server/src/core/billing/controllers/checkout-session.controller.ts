@@ -53,7 +53,7 @@ export class CheckoutSessionController {
     if (!priceId) {
       res.status(404).send(
         `BasePlan priceId not found, please check a price for ${recurringInterval} recurring interval 
-          is set for product ${productId}`,
+          is set for product '${productId}'`,
       );
 
       return;
@@ -63,7 +63,7 @@ export class CheckoutSessionController {
       line_items: [
         {
           price: priceId,
-          quantity: 1, // number of users in current workspace of logged in user
+          quantity: 1,
         },
       ],
       mode: 'subscription',

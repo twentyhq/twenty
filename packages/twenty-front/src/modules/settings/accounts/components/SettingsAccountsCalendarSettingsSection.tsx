@@ -1,18 +1,31 @@
+import { useNavigate } from 'react-router-dom';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
+import { SettingsAccountsListCard } from '@/settings/accounts/components/SettingsAccountsListCard';
+import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
+import { IconChevronRight } from '@/ui/display/icon';
+import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Section } from '@/ui/layout/section/components/Section';
+import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
+
+const StyledRowRightContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
 
 export const SettingsAccountsCalendarSettingsSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const navigate = useNavigate();
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
+  const { records: _accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {
       accountOwnerId: {
@@ -27,12 +40,20 @@ export const SettingsAccountsCalendarSettingsSection = () => {
         title="Calendar settings"
         description="Sync your calendars and set your preferences"
       />
-
-      {loading ? (
-        <SettingsAccountsListSkeletonCard />
-      ) : !accounts.length ? (
-        <SettingsAccountsListEmptyStateCard />
-      ) : null}
+      <SettingsAccountsListCard
+        accounts={mockedConnectedAccounts}
+        isLoading={loading}
+        onRowClick={(account) =>
+          navigate(`/settings/accounts/calendars/${account.id}`)
+        }
+        RowIcon={IconGoogleCalendar}
+        RowRightComponent={({ account: _account }) => (
+          <StyledRowRightContainer>
+            <SettingsAccountsSynchronizationStatus synced />
+            <LightIconButton Icon={IconChevronRight} accent="tertiary" />
+          </StyledRowRightContainer>
+        )}
+      />
     </Section>
   );
 };

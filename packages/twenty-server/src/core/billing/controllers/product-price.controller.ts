@@ -7,14 +7,10 @@ import {
   BillingService,
   PriceData,
 } from 'src/core/billing/billing.service';
-import { StripeService } from 'src/core/billing/stripe/stripe.service';
 
 @Controller('billing/product-prices')
 export class ProductPriceController {
-  constructor(
-    private readonly stripeService: StripeService,
-    private readonly billingService: BillingService,
-  ) {}
+  constructor(private readonly billingService: BillingService) {}
 
   @Get(':product')
   async get(
