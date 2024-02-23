@@ -32,11 +32,11 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
         value={timeFormat}
         options={[
           {
-            label: formatInTimeZone(Date.now(), timeZone, 'HH:mm'),
+            label: `24h (${formatInTimeZone(Date.now(), timeZone, 'HH:mm')})`,
             value: 24,
           },
           {
-            label: formatInTimeZone(Date.now(), timeZone, 'h:mm aa'),
+            label: `12h (${formatInTimeZone(Date.now(), timeZone, 'h:mm aa')})`,
             value: 12,
           },
         ]}
