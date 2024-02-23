@@ -25,6 +25,8 @@ export type Story = StoryObj<typeof SettingsDevelopersWebhooksNew>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Server’s on a coffee break');
+    await canvas.findByText(
+      'We will send POST requests to this endpoint for every new event',
+    );
   },
 };
