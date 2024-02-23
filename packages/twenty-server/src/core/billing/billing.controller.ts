@@ -97,6 +97,9 @@ export class BillingController {
         },
       ],
       mode: 'subscription',
+      metadata: {
+        workspaceId: user.defaultWorkspace.id,
+      },
       customer_email: user.email,
       success_url: frontBaseUrl,
       cancel_url: frontBaseUrl,
