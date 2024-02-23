@@ -103,6 +103,8 @@ export class BillingController {
     });
 
     if (!session.url) {
+      res.status(400).send('Error: missing checkout.session.url');
+
       return;
     }
 
