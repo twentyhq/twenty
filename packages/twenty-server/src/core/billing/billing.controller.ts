@@ -129,7 +129,6 @@ export class BillingController {
 
       return;
     }
-    console.log('tata', req.rawBody);
     if (!req.rawBody) {
       res.status(400).send('Missing raw body');
 
@@ -140,7 +139,6 @@ export class BillingController {
       req.rawBody,
     );
 
-    console.log(event);
     if (event.type === WebhookEvent.CHECKOUT_SESSION_COMPLETED) {
       const data = event.data.object;
 
