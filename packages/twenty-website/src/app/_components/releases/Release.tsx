@@ -1,9 +1,8 @@
 'use client';
 
-import Markdown from 'react-markdown';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
-import rehypeRaw from 'rehype-raw';
+import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkBehead from 'remark-behead';
 import gfm from 'remark-gfm';
 
@@ -77,7 +76,23 @@ const gabarito = Gabarito({
   adjustFontFallback: false,
 });
 
-export const Release = ({ release }: { release: ReleaseNote }) => {
+export const Release = async ({ release }: { release: ReleaseNote }) => {
+  let mdxSource;
+  try {
+    mdxSource = await compileMDX({
+      source: release.content,
+      options: {
+        mdxOptions: {
+          remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
+        },
+      },
+    });
+    mdxSource = mdxSource.content;
+  } catch (error) {
+    console.error('An error occurred during MDX rendering:', error);
+    mdxSource = `<p>Oops! Something went wrong.</p> ${error}`;
+  }
+
   return (
     <StyledContainer className={gabarito.className}>
       <StyledVersion>
@@ -89,15 +104,7 @@ export const Release = ({ release }: { release: ReleaseNote }) => {
         </StyledDate>
       </StyledVersion>
 
-      <StlyedContent>
-        <Markdown
-          key={release.slug}
-          remarkPlugins={[gfm, [remarkBehead, { depth: 2 }]] as any}
-          rehypePlugins={[rehypeRaw]}
-        >
-          {release.content}
-        </Markdown>
-      </StlyedContent>
+      <StlyedContent>{mdxSource}</StlyedContent>
     </StyledContainer>
   );
 };
