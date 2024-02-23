@@ -17,6 +17,7 @@ const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
+    rawBody: true,
   });
   const logger = app.get(LoggerService);
 

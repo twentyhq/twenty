@@ -15,6 +15,11 @@ export enum RecurringInterval {
   MONTH = 'month',
   YEAR = 'year',
 }
+
+export enum WebhookEvent {
+  CHECKOUT_SESSION_COMPLETED = 'checkout.session.completed',
+}
+
 @Injectable()
 export class BillingService {
   constructor(

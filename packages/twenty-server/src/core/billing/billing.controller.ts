@@ -3,9 +3,12 @@ import {
   Controller,
   Get,
   Param,
+  Headers,
   Post,
   Res,
   UseGuards,
+  Req,
+  RawBodyRequest,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -15,6 +18,7 @@ import {
   BillingService,
   PriceData,
   RecurringInterval,
+  WebhookEvent,
 } from 'src/core/billing/billing.service';
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -112,5 +116,47 @@ export class BillingController {
     }
 
     res.redirect(303, session.url);
+  }
+
+  @Post('/webhooks')
+  async handleWebhooks(
+    @Headers('stripe-signature') signature: string,
+    @Req() req: RawBodyRequest<Request>,
+    @Res() res: Response,
+  ) {
+    if (!signature) {
+      res.status(400).send('Missing stripe-signature header');
+
+      return;
+    }
+    console.log('tata', req.rawBody);
+    if (!req.rawBody) {
+      res.status(400).send('Missing raw body');
+
+      return;
+    }
+    const event = this.stripeService.constructEventFromPayload(
+      signature,
+      req.rawBody,
+    );
+
+    console.log(event);
+    if (event.type === WebhookEvent.CHECKOUT_SESSION_COMPLETED) {
+      const data = event.data.object;
+
+      if (data.payment_status !== 'paid') {
+        res.status(402).send('Payment did not succeeded');
+
+        return;
+      }
+
+      const workspaceId = data.metadata?.workspaceId;
+
+      if (!workspaceId) {
+        res.status(404).send('Missing workspaceId in webhook event metadata');
+
+        return;
+      }
+    }
   }
 }

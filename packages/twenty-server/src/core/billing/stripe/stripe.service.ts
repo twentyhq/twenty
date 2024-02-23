@@ -14,4 +14,15 @@ export class StripeService {
       {},
     );
   }
+
+  constructEventFromPayload(signature: string, payload: Buffer) {
+    const webhookSecret =
+      this.environmentService.getBillingStripeWebhookSecret();
+
+    return this.stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      webhookSecret,
+    );
+  }
 }
