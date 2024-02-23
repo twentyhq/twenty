@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
+import { ActivityEditorEffect } from '@/activities/components/ActivityEditorEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -25,6 +26,7 @@ export const RightDrawerActivity = ({
 }: RightDrawerActivityProps) => {
   return (
     <StyledContainer>
+      <ActivityEditorEffect activityId={activityId} />
       <ActivityEditor
         activityId={activityId}
         showComment={showComment}

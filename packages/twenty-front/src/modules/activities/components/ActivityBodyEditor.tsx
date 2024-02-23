@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -37,19 +37,21 @@ const StyledBlockNoteStyledContainer = styled.div`
 `;
 
 type ActivityBodyEditorProps = {
-  activity: Activity;
+  activityId: string;
   fillTitleFromBody: boolean;
 };
 
 export const ActivityBodyEditor = ({
-  activity,
+  activityId,
   fillTitleFromBody,
 }: ActivityBodyEditorProps) => {
-  const [internalBody, setInternalBody] = useState(activity.body ?? '{}');
+  const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+
+  const activity = activityInStore as Activity | null;
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
     }),
   );
 
@@ -69,25 +71,29 @@ export const ActivityBodyEditor = ({
   const { upsertActivity } = useUpsertActivity();
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
-    upsertActivity({
-      activity,
-      input: {
-        body: newBody,
-      },
-    });
+    if (activity) {
+      upsertActivity({
+        activity,
+        input: {
+          body: newBody,
+        },
+      });
+    }
   }, 500);
 
   const persistTitleAndBodyDebounced = useDebouncedCallback(
     (newTitle: string, newBody: string) => {
-      upsertActivity({
-        activity,
-        input: {
-          title: newTitle,
-          body: newBody,
-        },
-      });
+      if (activity) {
+        upsertActivity({
+          activity,
+          input: {
+            title: newTitle,
+            body: newBody,
+          },
+        });
 
-      setActivityTitleHasBeenSet(true);
+        setActivityTitleHasBeenSet(true);
+      }
     },
     500,
   );
@@ -155,15 +161,15 @@ export const ActivityBodyEditor = ({
       (editor: BlockNoteEditor) => {
         const newStringifiedBody = JSON.stringify(editor.topLevelBlocks) ?? '';
 
-        set(recordStoreFamilyState(activity.id), (oldActivity) => {
+        set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
             ...oldActivity,
-            id: activity.id,
+            id: activityId,
             body: newStringifiedBody,
           };
         });
 
-        modifyActivityFromCache(activity.id, {
+        modifyActivityFromCache(activityId, {
           body: () => {
             return newStringifiedBody;
           },
@@ -172,7 +178,7 @@ export const ActivityBodyEditor = ({
         const activityTitleHasBeenSet = snapshot
           .getLoadable(
             activityTitleHasBeenSetFamilyState({
-              activityId: activity.id,
+              activityId: activityId,
             }),
           )
           .getValue();
@@ -181,15 +187,15 @@ export const ActivityBodyEditor = ({
         const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
 
         if (!activityTitleHasBeenSet && fillTitleFromBody) {
-          set(recordStoreFamilyState(activity.id), (oldActivity) => {
+          set(recordStoreFamilyState(activityId), (oldActivity) => {
             return {
               ...oldActivity,
-              id: activity.id,
+              id: activityId,
               title: newTitleFromBody,
             };
           });
 
-          modifyActivityFromCache(activity.id, {
+          modifyActivityFromCache(activityId, {
             title: () => {
               return newTitleFromBody;
             },
@@ -198,7 +204,7 @@ export const ActivityBodyEditor = ({
 
         handleBodyChange(newStringifiedBody);
       },
-    [activity, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
+    [activityId, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
   );
 
   const handleEditorChangeDebounced = useDebouncedCallback(
@@ -210,7 +216,7 @@ export const ActivityBodyEditor = ({
 
   const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
     initialContent:
-      isNonEmptyString(activity.body) && activity.body !== '{}'
+      isNonEmptyString(activity?.body) && activity.body !== '{}'
         ? JSON.parse(activity.body)
         : undefined,
     domAttributes: { editor: { class: 'editor' } },

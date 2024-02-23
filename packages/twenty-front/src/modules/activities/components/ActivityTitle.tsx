@@ -126,7 +126,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     if (!activityTitleHasBeenSet) {
       setActivityTitleHasBeenSet(true);
     }
-  }, 250);
+  }, 500);
 
   const setTitleDebounced = useDebouncedCallback((newTitle: string) => {
     setActivityInStore((currentActivity) => {
@@ -146,7 +146,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         return newTitle;
       },
     });
-  }, 50);
+  }, 300);
 
   const handleTitleChange = (newTitle: string) => {
     setInternalTitle(newTitle);
