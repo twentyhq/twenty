@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityType } from '@/activities/types/Activity';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -7,8 +8,6 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { isDefined } from '~/utils/isDefined';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
-
-import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
 export const useOpenCreateActivityDrawerForSelectedRowIds = (
   recordTableId: string,

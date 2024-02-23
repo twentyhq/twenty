@@ -55,11 +55,22 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
       this.getDefaultValue(alteredFieldMetadata.defaultValue) ??
       options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
+    const currentColumnName = currentFieldMetadata.targetColumnMap.value;
+    const alteredColumnName = alteredFieldMetadata.targetColumnMap.value;
+
+    if (!currentColumnName || !alteredColumnName) {
+      this.logger.error(
+        `Column name not found for current or altered field metadata, can be due to a missing or an invalid target column map. Current column name: ${currentColumnName}, Altered column name: ${alteredColumnName}.`,
+      );
+      throw new Error(
+        `Column name not found for current or altered field metadata`,
+      );
+    }
 
     return {
       action: WorkspaceMigrationColumnActionType.ALTER,
       currentColumnDefinition: {
-        columnName: currentFieldMetadata.targetColumnMap.value,
+        columnName: currentColumnName,
         columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
         isNullable: currentFieldMetadata.isNullable,
         defaultValue: serializeDefaultValue(
@@ -67,7 +78,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         ),
       },
       alteredColumnDefinition: {
-        columnName: alteredFieldMetadata.targetColumnMap.value,
+        columnName: alteredColumnName,
         columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
         isNullable: alteredFieldMetadata.isNullable,
         defaultValue: serializedDefaultValue,

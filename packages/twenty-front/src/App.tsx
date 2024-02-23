@@ -20,6 +20,8 @@ import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
+import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
@@ -96,6 +98,14 @@ export const App = () => {
                   element={<SettingsNewAccount />}
                 />
                 <Route
+                  path={SettingsPath.AccountsCalendars}
+                  element={<SettingsAccountsCalendars />}
+                />
+                <Route
+                  path={SettingsPath.AccountsCalendarsSettings}
+                  element={<SettingsAccountsCalendarsSettings />}
+                />
+                <Route
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
                 />
@@ -128,13 +138,13 @@ export const App = () => {
                   element={<SettingsNewObject />}
                 />
                 <Route
+                  path={SettingsPath.Developers}
+                  element={<SettingsDevelopers />}
+                />
+                <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
                     <Routes>
-                      <Route
-                        path={SettingsPath.Developers}
-                        element={<SettingsDevelopers />}
-                      />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}
                         element={<SettingsDevelopersApiKeysNew />}

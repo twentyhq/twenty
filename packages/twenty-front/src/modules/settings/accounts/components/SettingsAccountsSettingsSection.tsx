@@ -2,9 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SettingsNavigationCard } from '@/settings/components/SettingsNavigationCard';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconCalendarEvent, IconMailCog } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -12,12 +15,9 @@ const StyledCardsContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledSettingsNavigationCard = styled(SettingsNavigationCard)`
-  color: ${({ theme }) => theme.font.color.extraLight};
-`;
-
 export const SettingsAccountsSettingsSection = () => {
   const navigate = useNavigate();
+  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
 
   return (
     <Section>
@@ -29,18 +29,22 @@ export const SettingsAccountsSettingsSection = () => {
         <SettingsNavigationCard
           Icon={IconMailCog}
           title="Emails"
-          onClick={() => navigate('/settings/accounts/emails')}
+          onClick={() =>
+            navigate(getSettingsPagePath(SettingsPath.AccountsEmails))
+          }
         >
           Set email visibility, manage your blocklist and more.
         </SettingsNavigationCard>
-        <StyledSettingsNavigationCard
+        <SettingsNavigationCard
           Icon={IconCalendarEvent}
           title="Calendar"
-          disabled
-          hasSoonPill
+          soon={!isCalendarEnabled}
+          onClick={() =>
+            navigate(getSettingsPagePath(SettingsPath.AccountsCalendars))
+          }
         >
           Configure and customize your calendar preferences.
-        </StyledSettingsNavigationCard>
+        </SettingsNavigationCard>
       </StyledCardsContainer>
     </Section>
   );

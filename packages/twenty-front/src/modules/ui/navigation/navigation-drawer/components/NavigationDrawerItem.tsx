@@ -8,7 +8,7 @@ import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigation
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-type NavigationDrawerItemProps = {
+export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
   level?: 1 | 2;
@@ -77,6 +77,7 @@ const StyledItem = styled.div<StyledItemProps>`
 `;
 
 const StyledItemLabel = styled.div`
+  font-size: ${({ theme }) => theme.font.size.md};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

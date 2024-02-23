@@ -104,6 +104,7 @@ export const ShowPageRightContainer = ({
       Icon: IconMail,
       hide: !shouldDisplayEmailsTab,
       disabled: !isMessagingEnabled,
+      hasBetaPill: true,
     },
   ];
 

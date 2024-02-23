@@ -30,8 +30,24 @@ a {
 }
 
 nav.toc {
-  width: 200px;
+  width: 20%;
   position: fixed;
-  top: 100px;
+  top: 125px;
   right: 0;
+}
+
+nav.toc ol{
+    list-style-type: circle;
+}
+
+nav.toc li{
+    height: 32px;
+}
+
+nav.toc a{
+    color: #141414;
+    font-family: var(--font-inter);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
 }
