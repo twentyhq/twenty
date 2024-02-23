@@ -378,7 +378,7 @@ export class TimelineMessagingService {
 
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
 
-    const threadVisibilityByThreadId:
+    const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants:
       | {
           [key: string]: 'metadata' | 'subject' | 'share_everything';
         }
@@ -398,6 +398,22 @@ export class TimelineMessagingService {
       },
       {},
     );
+
+    const threadVisibilityByThreadId: {
+      [key: string]: 'metadata' | 'subject' | 'share_everything';
+    } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
+      // If the workspace member is not in the participants of the thread, use the visibility value from the query
+      threadVisibilityAcc[messageThreadId] =
+        messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants.includes(
+          messageThreadId,
+        )
+          ? threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
+              messageThreadId
+            ] ?? 'metadata'
+          : 'share_everything';
+
+      return threadVisibilityAcc;
+    }, {});
 
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
       const threadActiveParticipants =
@@ -449,8 +465,7 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility:
-          threadVisibilityByThreadId?.[messageThreadId] ?? 'share_everything',
+        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadActiveParticipants.length,
