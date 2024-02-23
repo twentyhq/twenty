@@ -23,6 +23,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { getChildRelationArray } from '@/object-record/utils/getChildRelationArray';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconPlus, IconTrash } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
@@ -101,6 +102,10 @@ export const ActivityActionBar = () => {
           .getLoadable(recordStoreFamilyState(activityIdInDrawer))
           .getValue() as Activity;
 
+        const activityTargets = getChildRelationArray({
+          childRelation: activity.activityTargets,
+        });
+
         setIsRightDrawerOpen(false);
 
         if (viewableActivityId) {
@@ -109,8 +114,8 @@ export const ActivityActionBar = () => {
             setTemporaryActivityForEditor(null);
           } else {
             if (activityIdInDrawer) {
-              const activityTargetIdsToDelete =
-                activity?.activityTargets.map(mapToRecordId) ?? [];
+              const activityTargetIdsToDelete: string[] =
+                activityTargets.map(mapToRecordId) ?? [];
 
               if (weAreOnTaskPage) {
                 removeFromActivitiesQueries({

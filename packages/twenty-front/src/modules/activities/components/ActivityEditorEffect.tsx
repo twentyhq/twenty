@@ -1,7 +1,9 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
+import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
@@ -15,22 +17,6 @@ export const ActivityEditorEffect = ({
 }: {
   activityId: string;
 }) => {
-  const [activityFromStore] = useRecoilState(
-    recordStoreFamilyState(activityId),
-  );
-
-  const activity = activityFromStore as Activity;
-
-  const [isActivityInCreateMode, setIsActivityInCreateMode] = useRecoilState(
-    isActivityInCreateModeState,
-  );
-
-  const [isUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState,
-  );
-
-  const [canCreateActivity] = useRecoilState(canCreateActivityState);
-
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
@@ -38,42 +24,74 @@ export const ActivityEditorEffect = ({
   const { upsertActivity } = useUpsertActivity();
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
+  const upsertActivityCallback = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const isUpsertingActivityInDB = snapshot
+          .getLoadable(isUpsertingActivityInDBState)
+          .getValue();
+
+        const canCreateActivity = snapshot
+          .getLoadable(canCreateActivityState)
+          .getValue();
+
+        const isActivityInCreateMode = snapshot
+          .getLoadable(isActivityInCreateModeState)
+          .getValue();
+
+        const activityFromStore = snapshot
+          .getLoadable(recordStoreFamilyState(activityId))
+          .getValue();
+
+        const activity = activityFromStore as Activity | null;
+
+        const activityTitle = snapshot
+          .getLoadable(activityTitleFamilyState({ activityId }))
+          .getValue();
+
+        const activityBody = snapshot
+          .getLoadable(activityBodyFamilyState({ activityId }))
+          .getValue();
+
+        if (isUpsertingActivityInDB || !activityFromStore) {
+          return;
+        }
+
+        if (isActivityInCreateMode && activity) {
+          if (canCreateActivity) {
+            upsertActivity({
+              activity,
+              input: {
+                title: activityFromStore.title,
+                body: activityFromStore.body,
+              },
+            });
+          } else {
+            deleteActivityFromCache(activity);
+          }
+
+          set(isActivityInCreateModeState, false);
+        } else if (activity) {
+          if (
+            activity.title !== activityTitle ||
+            activity.body !== activityBody
+          ) {
+            upsertActivity({
+              activity,
+              input: {
+                title: activityTitle,
+                body: activityBody,
+              },
+            });
+          }
+        }
+      },
+    [activityId, deleteActivityFromCache, upsertActivity],
+  );
+
   useRegisterClickOutsideListenerCallback({
     callbackId: 'activity-editor',
-    callbackFunction: () => {
-      if (isUpsertingActivityInDB || !activityFromStore) {
-        return;
-      }
-
-      if (isActivityInCreateMode) {
-        if (canCreateActivity) {
-          upsertActivity({
-            activity,
-            input: {
-              title: activityFromStore.title,
-              body: activityFromStore.body,
-            },
-          });
-        } else {
-          deleteActivityFromCache(activity);
-        }
-
-        setIsActivityInCreateMode(false);
-      } else {
-        if (
-          activityFromStore.title !== activity.title ||
-          activityFromStore.body !== activity.body
-        ) {
-          upsertActivity({
-            activity,
-            input: {
-              title: activityFromStore.title,
-              body: activityFromStore.body,
-            },
-          });
-        }
-      }
-    },
+    callbackFunction: upsertActivityCallback,
   });
 
   return <></>;

@@ -2,8 +2,10 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityEditorFields } from '@/activities/components/ActivityEditorFields';
+import { ActivityTitleEffect } from '@/activities/components/ActivityTitleEffect';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -59,10 +61,12 @@ export const ActivityEditor = ({
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <ActivityTypeDropdown activityId={activityId} />
+          <ActivityTitleEffect activityId={activityId} />
           <ActivityTitle activityId={activityId} />
           <ActivityEditorFields activityId={activityId} />
         </StyledTopContainer>
       </StyledUpperPartContainer>
+      <ActivityBodyEffect activityId={activityId} />
       <ActivityBodyEditor
         activityId={activityId}
         fillTitleFromBody={fillTitleFromBody}

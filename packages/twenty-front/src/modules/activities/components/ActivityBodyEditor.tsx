@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -55,6 +56,12 @@ export const ActivityBodyEditor = ({
     }),
   );
 
+  const [activityBody, setActivityBody] = useRecoilState(
+    activityBodyFamilyState({
+      activityId: activityId,
+    }),
+  );
+
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -79,7 +86,7 @@ export const ActivityBodyEditor = ({
         },
       });
     }
-  }, 500);
+  }, 300);
 
   const persistTitleAndBodyDebounced = useDebouncedCallback(
     (newTitle: string, newBody: string) => {
@@ -95,7 +102,7 @@ export const ActivityBodyEditor = ({
         setActivityTitleHasBeenSet(true);
       }
     },
-    500,
+    200,
   );
 
   const updateTitleAndBody = useCallback(
@@ -134,7 +141,7 @@ export const ActivityBodyEditor = ({
     return imageUrl;
   };
 
-  const handleBodyChange = useCallback(
+  const handlePersistBody = useCallback(
     (activityBody: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
@@ -156,11 +163,9 @@ export const ActivityBodyEditor = ({
     ],
   );
 
-  const setBody = useRecoilCallback(
+  const handleBodyChange = useRecoilCallback(
     ({ snapshot, set }) =>
-      (editor: BlockNoteEditor) => {
-        const newStringifiedBody = JSON.stringify(editor.topLevelBlocks) ?? '';
-
+      (newStringifiedBody: string) => {
         set(recordStoreFamilyState(activityId), (oldActivity) => {
           return {
             ...oldActivity,
@@ -202,25 +207,39 @@ export const ActivityBodyEditor = ({
           });
         }
 
-        handleBodyChange(newStringifiedBody);
+        handlePersistBody(newStringifiedBody);
       },
-    [activityId, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
+    [activityId, fillTitleFromBody, modifyActivityFromCache, handlePersistBody],
   );
 
-  const handleEditorChangeDebounced = useDebouncedCallback(
-    (newEditor: BlockNoteEditor) => {
-      setBody(newEditor);
-    },
-    500,
-  );
+  const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
+
+  const handleEditorChange = (newEditor: BlockNoteEditor) => {
+    const newStringifiedBody = JSON.stringify(newEditor.topLevelBlocks) ?? '';
+
+    setActivityBody(newStringifiedBody);
+
+    handleBodyChangeDebounced(newStringifiedBody);
+  };
+
+  const initialBody = useMemo(() => {
+    if (isNonEmptyString(activityBody) && activityBody !== '{}') {
+      return JSON.parse(activityBody);
+    } else if (
+      activity &&
+      isNonEmptyString(activity.body) &&
+      activity?.body !== '{}'
+    ) {
+      return JSON.parse(activity.body);
+    } else {
+      return undefined;
+    }
+  }, [activity, activityBody]);
 
   const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
-    initialContent:
-      isNonEmptyString(activity?.body) && activity.body !== '{}'
-        ? JSON.parse(activity.body)
-        : undefined,
+    initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: handleEditorChangeDebounced,
+    onEditorContentChange: handleEditorChange,
     slashMenuItems,
     blockSpecs: blockSpecs,
     uploadFile: handleUploadAttachment,

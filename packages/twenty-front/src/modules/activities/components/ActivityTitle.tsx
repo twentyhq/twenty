@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
@@ -6,6 +6,7 @@ import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -63,8 +64,8 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     recordStoreFamilyState(activityId),
   );
 
-  const [internalTitle, setInternalTitle] = useState(
-    activityInStore?.title ?? '',
+  const [activityTitle, setActivityTitle] = useRecoilState(
+    activityTitleFamilyState({ activityId }),
   );
 
   const activity = activityInStore as Activity;
@@ -146,10 +147,10 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         return newTitle;
       },
     });
-  }, 300);
+  }, 500);
 
   const handleTitleChange = (newTitle: string) => {
-    setInternalTitle(newTitle);
+    setActivityTitle(newTitle);
 
     setTitleDebounced(newTitle);
 
@@ -183,7 +184,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={internalTitle}
+        value={activityTitle}
         completed={completed}
         onBlur={handleBlur}
         onFocus={handleFocus}

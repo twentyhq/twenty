@@ -42,7 +42,7 @@ export const useCreateActivityInCache = () => {
     useAttachRelationInBothDirections();
 
   const createActivityInCache = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       ({
         type,
         targetableObjects,
@@ -96,6 +96,13 @@ export const useCreateActivityInCache = () => {
           fieldNameOnTargetRecord: 'activity',
           targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
           targetRecords: createdActivityTargetsInCache,
+        });
+
+        // TODO: should refactor when refactoring make activity connection utils
+        set(recordStoreFamilyState(activityId), {
+          ...createdActivityInCache,
+          activityTargets: createdActivityTargetsInCache,
+          comments: [],
         });
 
         return {
