@@ -356,7 +356,6 @@ export class TimelineMessagingService {
       | {
           id: string;
           visibility: 'metadata' | 'subject' | 'share_everything';
-          messageChannelId: string;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
