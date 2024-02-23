@@ -179,13 +179,14 @@ export class TimelineMessagingService {
       {},
     );
 
-    const threadMessagesFromActiveParticipants:
+    const threadMessagesParticipants:
       | {
           id: string;
           messageId: string;
           receivedAt: Date;
           body: string;
           subject: string;
+          role: string;
           personId: string;
           workspaceMemberId: string;
           handle: string;
@@ -204,6 +205,7 @@ export class TimelineMessagingService {
         message."receivedAt",
         message.text,
         message."subject",
+        "messageParticipant"."role",
         "messageParticipant"."personId",
         "messageParticipant"."workspaceMemberId",
         "messageParticipant".handle,
@@ -217,7 +219,7 @@ export class TimelineMessagingService {
         FROM
             ${dataSourceSchema}."message" message
         LEFT JOIN
-            (SELECT * FROM ${dataSourceSchema}."messageParticipant" WHERE "messageParticipant".role = 'from') "messageParticipant" ON "messageParticipant"."messageId" = message.id
+            ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
         LEFT JOIN
             ${dataSourceSchema}."person" person ON person."id" = "messageParticipant"."personId"
         LEFT JOIN
@@ -229,6 +231,29 @@ export class TimelineMessagingService {
         `,
       [messageThreadIds],
       workspaceId,
+    );
+
+    const threadMessagesFromActiveParticipants:
+      | {
+          id: string;
+          messageId: string;
+          receivedAt: Date;
+          body: string;
+          subject: string;
+          role: string;
+          personId: string;
+          workspaceMemberId: string;
+          handle: string;
+          personFirstName: string;
+          personLastName: string;
+          personAvatarUrl: string;
+          workspaceMemberFirstName: string;
+          workspaceMemberLastName: string;
+          workspaceMemberAvatarUrl: string;
+          messageDisplayName: string;
+        }[]
+      | undefined = threadMessagesParticipants?.filter(
+      (threadMessage) => threadMessage.role === 'from',
     );
 
     const totalNumberOfThreads =
@@ -246,14 +271,14 @@ export class TimelineMessagingService {
         workspaceId,
       );
 
-    const threadParticipantsByThreadId: {
+    const threadActiveParticipantsByThreadId: {
       [key: string]: TimelineThreadParticipant[];
     } = messageThreadIds.reduce((messageThreadIdAcc, messageThreadId) => {
       const threadMessages = threadMessagesFromActiveParticipants?.filter(
         (threadMessage) => threadMessage.id === messageThreadId,
       );
 
-      const threadParticipants = threadMessages?.reduce(
+      const threadActiveParticipants = threadMessages?.reduce(
         (
           threadMessageAcc,
           threadMessage,
@@ -297,30 +322,29 @@ export class TimelineMessagingService {
         {},
       );
 
-      messageThreadIdAcc[messageThreadId] = threadParticipants
-        ? Object.values(threadParticipants)
+      messageThreadIdAcc[messageThreadId] = threadActiveParticipants
+        ? Object.values(threadActiveParticipants)
         : [];
 
       return messageThreadIdAcc;
     }, {});
 
-    const messageChannels =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `
-      SELECT id
-      FROM
-          ${dataSourceSchema}."messageChannel"
-      JOIN
-          ${dataSourceSchema}."connectedAccount" "connectedAccount" ON "connectedAccount"."id" = "messageChannel"."connectedAccountId"
-      WHERE
-          "connectedAccount"."workspaceMemberId" = $1
-      `,
-        [workspaceMemberId],
-        workspaceId,
-      );
+    const isWorkspaceMemberInParticipantsByThreadId = messageThreadIds.reduce(
+      (messageThreadIdAcc, messageThreadId) => {
+        const threadMessages = threadMessagesParticipants?.filter(
+          (threadMessage) => threadMessage.id === messageThreadId,
+        );
 
-    const messageChannelIds = messageChannels.map(
-      (messageChannelId: { id: string }) => messageChannelId.id,
+        const isWorkspaceMemberInParticipants = threadMessages?.some(
+          (threadMessage) =>
+            threadMessage.workspaceMemberId === workspaceMemberId,
+        );
+
+        messageThreadIdAcc[messageThreadId] = isWorkspaceMemberInParticipants;
+
+        return messageThreadIdAcc;
+      },
+      {},
     );
 
     const threadVisibility:
@@ -333,7 +357,6 @@ export class TimelineMessagingService {
       `
       SELECT
           message."messageThreadId" AS id,
-          message."messageChannelId",
           "messageChannel".visibility
       FROM
           ${dataSourceSchema}."message" message
@@ -356,18 +379,15 @@ export class TimelineMessagingService {
         }
       | undefined = threadVisibility?.reduce(
       (threadVisibilityAcc, threadVisibility) => {
-        threadVisibilityAcc[threadVisibility.id] = messageChannelIds.includes(
-          threadVisibility.messageChannelId,
-        )
-          ? 'share_everything'
-          : visibilityValues[
-              Math.max(
-                visibilityValues.indexOf(threadVisibility.visibility),
-                visibilityValues.indexOf(
-                  threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
-                ),
-              )
-            ];
+        threadVisibilityAcc[threadVisibility.id] =
+          visibilityValues[
+            Math.max(
+              visibilityValues.indexOf(threadVisibility.visibility),
+              visibilityValues.indexOf(
+                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+              ),
+            )
+          ];
 
         return threadVisibilityAcc;
       },
@@ -375,12 +395,13 @@ export class TimelineMessagingService {
     );
 
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
-      const threadParticipants = threadParticipantsByThreadId[messageThreadId];
+      const threadActiveParticipants =
+        threadActiveParticipantsByThreadId[messageThreadId];
 
-      const firstParticipant = threadParticipants[0];
+      const firstParticipant = threadActiveParticipants[0];
 
-      const threadParticipantsWithoutFirstParticipant =
-        threadParticipants.filter(
+      const threadActiveParticipantsWithoutFirstParticipant =
+        threadActiveParticipants.filter(
           (threadParticipant) =>
             threadParticipant.handle !== firstParticipant.handle,
         );
@@ -388,20 +409,25 @@ export class TimelineMessagingService {
       const lastTwoParticipants: TimelineThreadParticipant[] = [];
 
       const lastParticipant =
-        threadParticipantsWithoutFirstParticipant.slice(-1)[0];
+        threadActiveParticipantsWithoutFirstParticipant.slice(-1)[0];
+
+      const isWorkspaceMemberInParticipants =
+        isWorkspaceMemberInParticipantsByThreadId?.[messageThreadId];
 
       if (lastParticipant) {
         lastTwoParticipants.push(lastParticipant);
 
-        const threadParticipantsWithoutFirstAndLastParticipants =
-          threadParticipantsWithoutFirstParticipant.filter(
+        const threadActiveParticipantsWithoutFirstAndLastParticipants =
+          threadActiveParticipantsWithoutFirstParticipant.filter(
             (threadParticipant) =>
               threadParticipant.handle !== lastParticipant.handle,
           );
 
-        if (threadParticipantsWithoutFirstAndLastParticipants.length > 0)
+        if (threadActiveParticipantsWithoutFirstAndLastParticipants.length > 0)
           lastTwoParticipants.push(
-            threadParticipantsWithoutFirstAndLastParticipants.slice(-1)[0],
+            threadActiveParticipantsWithoutFirstAndLastParticipants.slice(
+              -1,
+            )[0],
           );
       }
 
@@ -421,10 +447,12 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
+        visibility: isWorkspaceMemberInParticipants
+          ? 'share_everything'
+          : threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
-        participantCount: threadParticipants.length,
+        participantCount: threadActiveParticipants.length,
       };
     });
 
