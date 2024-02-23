@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import rehypeToc from '@jsdevtools/rehype-toc';
+import { toc } from '@jsdevtools/rehype-toc';
 import fs from 'fs';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import path from 'path';
@@ -12,6 +12,8 @@ interface ItemInfo {
   path: string;
   type: 'file' | 'directory';
   icon?: string;
+  info?: string;
+  image?: string;
 }
 
 export interface FileContent {
@@ -99,14 +101,13 @@ async function parseFrontMatterAndCategory(
 
 export async function compileMDXFile(filePath: string, addToc: boolean = true) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
-
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
         remarkPlugins: [gfm],
-        rehypePlugins: [rehypeSlug, ...(addToc ? [rehypeToc] : [])],
+        rehypePlugins: [rehypeSlug, ...(addToc ? [toc] : [])],
       },
     },
   });
@@ -121,21 +122,19 @@ export async function getPosts(basePath: string): Promise<Directory> {
 }
 
 export async function getPost(
-  slug: string[],
+  slug: string,
   basePath: string,
 ): Promise<FileContent | null> {
   const postsDirectory = path.join(process.cwd(), basePath);
-  const modifiedSlug = slug.join('/');
-  const filePath = path.join(postsDirectory, `${modifiedSlug}.mdx`);
+  const filePath = path.join(postsDirectory, `${slug}.mdx`);
 
   if (!fs.existsSync(filePath)) {
     return null;
   }
-
-  const { content, frontmatter } = await compileMDXFile(filePath);
+  const { content, frontmatter } = await compileMDXFile(filePath, true);
 
   return {
     content,
-    itemInfo: { ...frontmatter, type: 'file', path: modifiedSlug },
+    itemInfo: { ...frontmatter, type: 'file', path: slug },
   };
 }
