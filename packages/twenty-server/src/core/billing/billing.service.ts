@@ -11,7 +11,10 @@ export type PriceData = Partial<
 export enum AvailableProduct {
   BasePlan = 'base-plan',
 }
-
+export enum RecurringInterval {
+  MONTH = 'month',
+  YEAR = 'year',
+}
 @Injectable()
 export class BillingService {
   constructor(

@@ -1,32 +1,61 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
-import { StripeService } from 'src/core/billing/stripe/stripe.service';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
-import { User } from 'src/core/user/user.entity';
 import {
   AvailableProduct,
   BillingService,
+  PriceData,
+  RecurringInterval,
 } from 'src/core/billing/billing.service';
+import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
+import { User } from 'src/core/user/user.entity';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
-enum RecurringInterval {
-  MONTH = 'month',
-  YEAR = 'year',
-}
-
-@UseGuards(JwtAuthGuard)
-@Controller('billing/checkout')
-export class CheckoutSessionController {
+@Controller('billing')
+export class BillingController {
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingService: BillingService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @Post()
+  @Get('/product-prices/:product')
+  async get(
+    @Param() params: { product: AvailableProduct },
+    @Res() res: Response<PriceData | { error: string }>,
+  ) {
+    const stripeProductId = this.billingService.getProductStripeId(
+      params.product,
+    );
+
+    if (!stripeProductId) {
+      res.status(404).send({
+        error: `Product '${
+          params.product
+        }' not found, available products are ['${Object.values(
+          AvailableProduct,
+        ).join("','")}']`,
+      });
+
+      return;
+    }
+
+    res.json(await this.billingService.getProductPrices(stripeProductId));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/checkout')
   async post(
     @AuthUser() user: User,
     @Body() body: { recurringInterval: RecurringInterval },
