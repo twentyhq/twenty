@@ -42,7 +42,9 @@ export class WorkspaceSyncFieldMetadataService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
+          // TODO: To compute the joinColumn, we'll need to remove this filter as relation are between custom and standard objects
           isCustom: true,
+          // We're only interested in standard fields
           fields: { isCustom: false },
         },
         relations: ['dataSource', 'fields'],
@@ -57,6 +59,8 @@ export class WorkspaceSyncFieldMetadataService {
 
     // Loop over all standard objects and compare them with the objects in DB
     for (const originalObjectMetadata of originalObjectMetadataCollection) {
+      // TODO: Move everything in this for-loop to a separate file/method so we can call it from object-metadata.service
+      // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
       const standardObjectMetadata = computeStandardObject(
         {
           ...originalObjectMetadata,
@@ -64,6 +68,8 @@ export class WorkspaceSyncFieldMetadataService {
         },
         originalObjectMetadata,
       );
+
+      // TODO: Opposite field directions should be generated too, and joinColumn should be computed based on the opposite object metadata
 
       /**
        * COMPARE FIELD METADATA
