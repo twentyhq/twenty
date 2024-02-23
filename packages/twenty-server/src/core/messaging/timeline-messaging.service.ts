@@ -21,6 +21,7 @@ export class TimelineMessagingService {
   ) {}
 
   async getMessagesFromPersonIds(
+    workspaceMemberId: string,
     workspaceId: string,
     personIds: string[],
     page: number = 1,
@@ -178,13 +179,14 @@ export class TimelineMessagingService {
       {},
     );
 
-    const threadMessagesFromActiveParticipants:
+    const threadMessagesParticipants:
       | {
           id: string;
           messageId: string;
           receivedAt: Date;
           body: string;
           subject: string;
+          role: string;
           personId: string;
           workspaceMemberId: string;
           handle: string;
@@ -203,6 +205,7 @@ export class TimelineMessagingService {
         message."receivedAt",
         message.text,
         message."subject",
+        "messageParticipant"."role",
         "messageParticipant"."personId",
         "messageParticipant"."workspaceMemberId",
         "messageParticipant".handle,
@@ -216,7 +219,7 @@ export class TimelineMessagingService {
         FROM
             ${dataSourceSchema}."message" message
         LEFT JOIN
-            (SELECT * FROM ${dataSourceSchema}."messageParticipant" WHERE "messageParticipant".role = 'from') "messageParticipant" ON "messageParticipant"."messageId" = message.id
+            ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
         LEFT JOIN
             ${dataSourceSchema}."person" person ON person."id" = "messageParticipant"."personId"
         LEFT JOIN
@@ -229,6 +232,11 @@ export class TimelineMessagingService {
       [messageThreadIds],
       workspaceId,
     );
+
+    const threadMessagesFromActiveParticipants =
+      threadMessagesParticipants?.filter(
+        (threadMessage) => threadMessage.role === 'from',
+      );
 
     const totalNumberOfThreads =
       await this.workspaceDataSourceService.executeRawQuery(
@@ -245,14 +253,14 @@ export class TimelineMessagingService {
         workspaceId,
       );
 
-    const threadParticipantsByThreadId: {
+    const threadActiveParticipantsByThreadId: {
       [key: string]: TimelineThreadParticipant[];
     } = messageThreadIds.reduce((messageThreadIdAcc, messageThreadId) => {
       const threadMessages = threadMessagesFromActiveParticipants?.filter(
         (threadMessage) => threadMessage.id === messageThreadId,
       );
 
-      const threadParticipants = threadMessages?.reduce(
+      const threadActiveParticipants = threadMessages?.reduce(
         (
           threadMessageAcc,
           threadMessage,
@@ -296,12 +304,35 @@ export class TimelineMessagingService {
         {},
       );
 
-      messageThreadIdAcc[messageThreadId] = threadParticipants
-        ? Object.values(threadParticipants)
+      messageThreadIdAcc[messageThreadId] = threadActiveParticipants
+        ? Object.values(threadActiveParticipants)
         : [];
 
       return messageThreadIdAcc;
     }, {});
+
+    const messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants =
+      messageThreadIds.reduce(
+        (
+          messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc: string[],
+          messageThreadId,
+        ) => {
+          const threadMessagesWithWorkspaceMemberInParticipants =
+            threadMessagesParticipants?.filter(
+              (threadMessage) =>
+                threadMessage.id === messageThreadId &&
+                threadMessage.workspaceMemberId === workspaceMemberId,
+            ) ?? [];
+
+          if (threadMessagesWithWorkspaceMemberInParticipants.length === 0)
+            messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc.push(
+              messageThreadId,
+            );
+
+          return messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc;
+        },
+        [],
+      );
 
     const threadVisibility:
       | {
@@ -322,13 +353,13 @@ export class TimelineMessagingService {
       WHERE
           message."messageThreadId" = ANY($1)
       `,
-      [messageThreadIds],
+      [messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants],
       workspaceId,
     );
 
     const visibilityValues = ['metadata', 'subject', 'share_everything'];
 
-    const threadVisibilityByThreadId:
+    const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants:
       | {
           [key: string]: 'metadata' | 'subject' | 'share_everything';
         }
@@ -349,13 +380,30 @@ export class TimelineMessagingService {
       {},
     );
 
+    const threadVisibilityByThreadId: {
+      [key: string]: 'metadata' | 'subject' | 'share_everything';
+    } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
+      // If the workspace member is not in the participants of the thread, use the visibility value from the query
+      threadVisibilityAcc[messageThreadId] =
+        messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants.includes(
+          messageThreadId,
+        )
+          ? threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
+              messageThreadId
+            ] ?? 'metadata'
+          : 'share_everything';
+
+      return threadVisibilityAcc;
+    }, {});
+
     const timelineThreads = messageThreadIds.map((messageThreadId) => {
-      const threadParticipants = threadParticipantsByThreadId[messageThreadId];
+      const threadActiveParticipants =
+        threadActiveParticipantsByThreadId[messageThreadId];
 
-      const firstParticipant = threadParticipants[0];
+      const firstParticipant = threadActiveParticipants[0];
 
-      const threadParticipantsWithoutFirstParticipant =
-        threadParticipants.filter(
+      const threadActiveParticipantsWithoutFirstParticipant =
+        threadActiveParticipants.filter(
           (threadParticipant) =>
             threadParticipant.handle !== firstParticipant.handle,
         );
@@ -363,20 +411,22 @@ export class TimelineMessagingService {
       const lastTwoParticipants: TimelineThreadParticipant[] = [];
 
       const lastParticipant =
-        threadParticipantsWithoutFirstParticipant.slice(-1)[0];
+        threadActiveParticipantsWithoutFirstParticipant.slice(-1)[0];
 
       if (lastParticipant) {
         lastTwoParticipants.push(lastParticipant);
 
-        const threadParticipantsWithoutFirstAndLastParticipants =
-          threadParticipantsWithoutFirstParticipant.filter(
+        const threadActiveParticipantsWithoutFirstAndLastParticipants =
+          threadActiveParticipantsWithoutFirstParticipant.filter(
             (threadParticipant) =>
               threadParticipant.handle !== lastParticipant.handle,
           );
 
-        if (threadParticipantsWithoutFirstAndLastParticipants.length > 0)
+        if (threadActiveParticipantsWithoutFirstAndLastParticipants.length > 0)
           lastTwoParticipants.push(
-            threadParticipantsWithoutFirstAndLastParticipants.slice(-1)[0],
+            threadActiveParticipantsWithoutFirstAndLastParticipants.slice(
+              -1,
+            )[0],
           );
       }
 
@@ -399,7 +449,7 @@ export class TimelineMessagingService {
         visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
-        participantCount: threadParticipants.length,
+        participantCount: threadActiveParticipants.length,
       };
     });
 
@@ -410,6 +460,7 @@ export class TimelineMessagingService {
   }
 
   async getMessagesFromCompanyId(
+    workspaceMemberId: string,
     workspaceId: string,
     companyId: string,
     page: number = 1,
@@ -443,6 +494,7 @@ export class TimelineMessagingService {
     );
 
     const messageThreads = await this.getMessagesFromPersonIds(
+      workspaceMemberId,
       workspaceId,
       formattedPersonIds,
       page,
