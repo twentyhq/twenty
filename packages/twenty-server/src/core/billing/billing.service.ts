@@ -8,6 +8,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 export type PriceData = Partial<
   Record<Stripe.Price.Recurring.Interval, Stripe.Price>
@@ -33,6 +34,8 @@ export class BillingService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   getProductStripeId(product: AvailableProduct) {
@@ -95,5 +98,8 @@ export class BillingService {
         billingSubscriptionItem,
       );
     }
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: 'active',
+    });
   }
 }

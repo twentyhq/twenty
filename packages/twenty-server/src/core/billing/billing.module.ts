@@ -7,12 +7,13 @@ import { BillingService } from 'src/core/billing/billing.service';
 import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Module({
   imports: [
     StripeModule,
     TypeOrmModule.forFeature(
-      [BillingSubscription, BillingSubscriptionItem],
+      [BillingSubscription, BillingSubscriptionItem, Workspace],
       'core',
     ),
   ],
