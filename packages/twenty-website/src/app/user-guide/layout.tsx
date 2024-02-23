@@ -3,10 +3,13 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
-import UserGuideSidebar from '@/app/components/user-guide/UserGuideSidebar';
-import UserGuideTableContents from '@/app/components/user-guide/UserGuideTableContents';
-import { Theme } from '@/app/ui/theme/theme';
-import { DeviceType, useDeviceType } from '@/app/ui/utilities/useDeviceType';
+import {
+  DeviceType,
+  useDeviceType,
+} from '@/app/_components/client-utils/useDeviceType';
+import { Theme } from '@/app/_components/ui/theme/theme';
+import UserGuideSidebar from '@/app/_components/user-guide/UserGuideSidebar';
+import UserGuideTableContents from '@/app/_components/user-guide/UserGuideTableContents';
 
 const StyledContainer = styled.div`
   width: 100%;
