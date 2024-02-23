@@ -15,7 +15,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     schema: [],
     messages: {
       invalidWayToGetAtoms:
-        "Expected usage '{{ expectWayToGetAtoms }}' but found '{{ actualWayToGetAtoms }}'",
+        "Expected usage '{{ expectedWayToGetAtoms }}' but found '{{ actualWayToGetAtoms }}'",
     },
   },
   defaultOptions: [],
@@ -31,26 +31,27 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         arg.arguments[0]
       ) {
         let actualWayToGetAtoms: string;
-        let expectWayToGetAtoms: string;
+        let expectedWayToGetAtoms: string;
+
         if (arg.arguments[0].callee) {
-          const paramName = arg.arguments[0].arguments[0].name;
-          const stateName = arg.arguments[0].callee.name;
-          actualWayToGetAtoms = `snapshot.getPromise(${stateName}(${paramName}))`;
-          expectWayToGetAtoms = `snapshot.getLoadable(${stateName}(${paramName})).getValue()`;
+          const familyKey = arg.arguments[0].arguments[0].name;
+          const familyName = arg.arguments[0].callee.name;
+          actualWayToGetAtoms = `snapshot.getPromise(${familyName}(${familyKey}))`;
+          expectedWayToGetAtoms = `snapshot.getLoadable(${familyName}(${familyKey})).getValue()`;
         } else {
           const recoilValue = arg.arguments[0].name;
           actualWayToGetAtoms = `snapshot.getPromise(${recoilValue})`;
-          expectWayToGetAtoms = `snapshot.getLoadable(${recoilValue}).getValue()`;
+          expectedWayToGetAtoms = `snapshot.getLoadable(${recoilValue}).getValue()`;
         }
 
         context.report({
           node,
           messageId: 'invalidWayToGetAtoms',
           data: {
-            expectWayToGetAtoms,
+            expectedWayToGetAtoms,
             actualWayToGetAtoms,
           },
-          fix: (fixer) => fixer.replaceText(node, expectWayToGetAtoms),
+          fix: (fixer) => fixer.replaceText(node, expectedWayToGetAtoms),
         });
       }
     },
