@@ -40,7 +40,6 @@ export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
 }: RecordShowContainerProps) => {
-  console.log('RecordShowContainer');
   const { objectMetadataItem, labelIdentifierFieldMetadata } =
     useObjectMetadataItem({
       objectNameSingular,
