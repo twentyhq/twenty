@@ -23,7 +23,6 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Matches,
   Validate,
 } from 'class-validator';
 
@@ -35,6 +34,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { BeforeDeleteOneField } from 'src/metadata/field-metadata/hooks/before-delete-one-field.hook';
 import { IsFieldMetadataDefaultValue } from 'src/metadata/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/metadata/field-metadata/validators/is-field-metadata-options.validator';
+import { IsValidName } from 'src/metadata/decorators/is-valid-name.decorator';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -75,7 +75,7 @@ export class FieldMetadataDTO<
   @IsString()
   @IsNotEmpty()
   @Field()
-  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
+  @IsValidName()
   name: string;
 
   @IsString()

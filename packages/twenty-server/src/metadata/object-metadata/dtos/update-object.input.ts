@@ -1,14 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
-} from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
+import { IsValidName } from 'src/metadata/decorators/is-valid-name.decorator';
 import { BeforeUpdateOneObject } from 'src/metadata/object-metadata/hooks/before-update-one-object.hook';
 
 @InputType()
@@ -27,13 +22,13 @@ export class UpdateObjectInput {
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
+  @IsValidName()
   nameSingular?: string;
 
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
-  @Matches(/^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/)
+  @IsValidName()
   namePlural?: string;
 
   @IsString()
