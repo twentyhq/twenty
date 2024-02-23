@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import compact from 'lodash/compact';
 
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
 import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
 import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
+import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
+import { getUniqueParticipantsAndHandles } from 'src/workspace/messaging/utils/get-unique-participants-and-handles.util';
+import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/workspace/messaging/utils/filter-out-participants-from-company-or-workspace.util';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompaniesAndContactsService {
@@ -14,6 +19,7 @@ export class CreateCompaniesAndContactsService {
     private readonly personService: PersonService,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
+    private readonly workspaceMemberService: WorkspaceMemberService,
   ) {}
 
   async createCompaniesAndContacts(
@@ -22,31 +28,28 @@ export class CreateCompaniesAndContactsService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    const selfDomainName = getDomainNameFromHandle(selfHandle);
-
-    // TODO: use isWorkEmail so we can create a contact even if the email is a personal email
-    const participantsFromOtherCompanies = participants.filter(
-      (participant) =>
-        getDomainNameFromHandle(participant.handle) !== selfDomainName,
-    );
-
-    if (!participantsFromOtherCompanies.length) {
+    if (participants.length === 0) {
       return;
     }
 
-    const uniqueHandles = Array.from(
-      new Set(
-        participantsFromOtherCompanies.map((participant) => participant.handle),
-      ),
-    );
+    // TODO: This is a feature that may be implemented in the future
+    const isContactAutoCreationForNonWorkEmailsEnabled = false;
 
-    const uniqueParticipants = uniqueHandles.map((handle) => {
-      const participant = participantsFromOtherCompanies.find(
-        (participant) => participant.handle === handle,
+    const workspaceMembers =
+      await this.workspaceMemberService.getAllByWorkspaceId(
+        workspaceId,
+        transactionManager,
       );
 
-      return participant;
-    }) as Participant[];
+    const participantsFromOtherCompanies =
+      filterOutParticipantsFromCompanyOrWorkspace(
+        participants,
+        selfHandle,
+        workspaceMembers,
+      );
+
+    const { uniqueParticipants, uniqueHandles } =
+      getUniqueParticipantsAndHandles(participantsFromOtherCompanies);
 
     const alreadyCreatedContacts = await this.personService.getByEmails(
       uniqueHandles,
@@ -60,18 +63,24 @@ export class CreateCompaniesAndContactsService {
     const filteredParticipants = uniqueParticipants.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        participant.handle.includes('@') &&
+        (isContactAutoCreationForNonWorkEmailsEnabled ||
+          isWorkEmail(participant.handle)),
     );
 
     const filteredParticipantsWithCompanyDomainNames =
       filteredParticipants?.map((participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
-        companyDomainName: getDomainNameFromHandle(participant.handle),
+        companyDomainName: isWorkEmail(participant.handle)
+          ? getDomainNameFromHandle(participant.handle)
+          : undefined,
       }));
 
-    const domainNamesToCreate = filteredParticipantsWithCompanyDomainNames.map(
-      (participant) => participant.companyDomainName,
+    const domainNamesToCreate = compact(
+      filteredParticipantsWithCompanyDomainNames.map(
+        (participant) => participant.companyDomainName,
+      ),
     );
 
     const companiesObject = await this.createCompaniesService.createCompanies(
@@ -84,7 +93,9 @@ export class CreateCompaniesAndContactsService {
       (participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
-        companyId: companiesObject[participant.companyDomainName],
+        companyId:
+          participant.companyDomainName &&
+          companiesObject[participant.companyDomainName],
       }),
     );
 

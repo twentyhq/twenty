@@ -1,12 +1,11 @@
 import React from 'react';
 import { Metadata } from 'next';
 
+import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
 import { getReleases } from '@/app/get-releases';
 import { Line } from '@/app/releases/components/Line';
 import { Release } from '@/app/releases/components/Release';
 import { Title } from '@/app/releases/components/StyledTitle';
-
-import { ContentContainer } from '../components/ContentContainer';
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',

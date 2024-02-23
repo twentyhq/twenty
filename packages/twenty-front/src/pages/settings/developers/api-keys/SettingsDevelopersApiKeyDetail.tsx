@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
@@ -20,6 +20,7 @@ import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -40,6 +41,10 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
+  const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
+    useState(false);
+  const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
 
@@ -154,7 +159,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     <Button
                       title="Regenerate Key"
                       Icon={IconRepeat}
-                      onClick={regenerateApiKey}
+                      onClick={() => setIsRegenerateKeyModalOpen(true)}
                     />
                     <StyledInfo>
                       {formatExpiration(
@@ -186,12 +191,43 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 variant="secondary"
                 title="Disable"
                 Icon={IconTrash}
-                onClick={() => deleteIntegration()}
+                onClick={() => setIsDeleteApiKeyModalOpen(true)}
               />
             </Section>
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       )}
+      <ConfirmationModal
+        confirmationPlaceholder="yes"
+        confirmationValue="yes"
+        isOpen={isDeleteApiKeyModalOpen}
+        setIsOpen={setIsDeleteApiKeyModalOpen}
+        title="Delete Api key"
+        subtitle={
+          <>
+            Please type "yes" to confirm you want to delete this API Key. Be
+            aware that any script using this key will stop working.
+          </>
+        }
+        onConfirmClick={deleteIntegration}
+        deleteButtonText="Delete"
+      />
+      <ConfirmationModal
+        confirmationPlaceholder="yes"
+        confirmationValue="yes"
+        isOpen={isRegenerateKeyModalOpen}
+        setIsOpen={setIsRegenerateKeyModalOpen}
+        title="Regenerate an Api key"
+        subtitle={
+          <>
+            If you’ve lost this key, you can regenerate it, but be aware that
+            any script using this key will need to be updated. Please type "yes"
+            to confirm.
+          </>
+        }
+        onConfirmClick={regenerateApiKey}
+        deleteButtonText="Regenerate key"
+      />
     </>
   );
 };

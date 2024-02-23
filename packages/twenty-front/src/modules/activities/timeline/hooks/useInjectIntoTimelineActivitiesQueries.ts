@@ -1,10 +1,10 @@
-import { useInjectIntoActivitiesQuery } from '@/activities/hooks/useInjectIntoActivitiesQuery';
+import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 export const useInjectIntoTimelineActivitiesQueries = () => {
-  const { injectActivitiesQueries } = useInjectIntoActivitiesQuery();
+  const { injectActivitiesQueries } = useInjectIntoActivitiesQueries();
 
   const injectIntoTimelineActivitiesQueries = ({
     activityToInject,

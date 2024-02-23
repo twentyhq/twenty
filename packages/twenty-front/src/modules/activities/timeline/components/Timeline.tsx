@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { useActivities } from '@/activities/hooks/useActivities';
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
-import { timelineTargetableObjectState } from '@/activities/timeline/states/timelineTargetableObjectState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -44,7 +44,7 @@ export const Timeline = ({
   });
 
   const setTimelineTargetableObject = useSetRecoilState(
-    timelineTargetableObjectState,
+    objectShowPageTargetableObjectState,
   );
 
   useEffect(() => {

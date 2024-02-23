@@ -1,6 +1,5 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
@@ -9,8 +8,10 @@ import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
+// TODO: improve, no bug if query to inject doesn't exist
 export const useRemoveFromActivitiesQueries = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItemOnly({
@@ -40,22 +41,13 @@ export const useRemoveFromActivitiesQueries = () => {
     objectMetadataItem: objectMetadataItemActivity,
   });
 
-  const {
-    upsertFindManyRecordsQueryInCache:
-      overwriteFindManyActivityTargetsQueryInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
-    objectMetadataItem: objectMetadataItemActivityTarget,
-  });
-
   const removeFromActivitiesQueries = ({
     activityIdToRemove,
-    activityTargetsToRemove,
     targetableObjects,
     activitiesFilters,
     activitiesOrderByVariables,
   }: {
     activityIdToRemove: string;
-    activityTargetsToRemove: ActivityTarget[];
     targetableObjects: ActivityTargetableObject[];
     activitiesFilters?: ObjectRecordQueryFilter;
     activitiesOrderByVariables?: OrderByField;
@@ -64,27 +56,14 @@ export const useRemoveFromActivitiesQueries = () => {
       targetableObjects,
     });
 
+    const findManyActivityTargetsQueryVariables = {
+      filter: findManyActivitiyTargetsQueryFilter,
+    } as ObjectRecordQueryVariables;
+
     const existingActivityTargetsForTargetableObject =
       readFindManyActivityTargetsQueryInCache({
-        queryVariables: findManyActivitiyTargetsQueryFilter,
+        queryVariables: findManyActivityTargetsQueryVariables,
       });
-
-    const newActivityTargetsForTargetableObject = isNonEmptyArray(
-      activityTargetsToRemove,
-    )
-      ? existingActivityTargetsForTargetableObject.filter(
-          (existingActivityTarget) =>
-            activityTargetsToRemove.some(
-              (activityTargetToRemove) =>
-                activityTargetToRemove.id !== existingActivityTarget.id,
-            ),
-        )
-      : existingActivityTargetsForTargetableObject;
-
-    overwriteFindManyActivityTargetsQueryInCache({
-      objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
-      queryVariables: findManyActivitiyTargetsQueryFilter,
-    });
 
     const existingActivityIds = existingActivityTargetsForTargetableObject
       ?.map((activityTarget) => activityTarget.activityId)
@@ -103,6 +82,10 @@ export const useRemoveFromActivitiesQueries = () => {
     const existingActivities = readFindManyActivitiesQueryInCache({
       queryVariables: currentFindManyActivitiesQueryVariables,
     });
+
+    if (!isNonEmptyArray(existingActivities)) {
+      return;
+    }
 
     const activityIdsAfterRemoval = existingActivityIds.filter(
       (existingActivityId) => existingActivityId !== activityIdToRemove,
