@@ -329,22 +329,28 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
-    const isWorkspaceMemberInParticipantsByThreadId = messageThreadIds.reduce(
-      (isWorkspaceMemberInParticipantsAcc, messageThreadId) => {
-        const threadMessagesWithWorkspaceMemberInParticipants =
-          threadMessagesParticipants?.filter(
-            (threadMessage) =>
-              threadMessage.id === messageThreadId &&
-              threadMessage.workspaceMemberId === workspaceMemberId,
-          ) ?? [];
+    const messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants =
+      messageThreadIds.reduce(
+        (
+          messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc: string[],
+          messageThreadId,
+        ) => {
+          const threadMessagesWithWorkspaceMemberInParticipants =
+            threadMessagesParticipants?.filter(
+              (threadMessage) =>
+                threadMessage.id === messageThreadId &&
+                threadMessage.workspaceMemberId === workspaceMemberId,
+            ) ?? [];
 
-        isWorkspaceMemberInParticipantsAcc[messageThreadId] =
-          threadMessagesWithWorkspaceMemberInParticipants.length > 0;
+          if (threadMessagesWithWorkspaceMemberInParticipants.length === 0)
+            messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc.push(
+              messageThreadId,
+            );
 
-        return isWorkspaceMemberInParticipantsAcc;
-      },
-      {},
-    );
+          return messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc;
+        },
+        [],
+      );
 
     const threadVisibility:
       | {
@@ -366,7 +372,7 @@ export class TimelineMessagingService {
       WHERE
           message."messageThreadId" = ANY($1)
       `,
-      [messageThreadIds],
+      [messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants],
       workspaceId,
     );
 
@@ -410,9 +416,6 @@ export class TimelineMessagingService {
       const lastParticipant =
         threadActiveParticipantsWithoutFirstParticipant.slice(-1)[0];
 
-      const isWorkspaceMemberInParticipants =
-        isWorkspaceMemberInParticipantsByThreadId?.[messageThreadId];
-
       if (lastParticipant) {
         lastTwoParticipants.push(lastParticipant);
 
@@ -446,9 +449,8 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility: isWorkspaceMemberInParticipants
-          ? 'share_everything'
-          : threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
+        visibility:
+          threadVisibilityByThreadId?.[messageThreadId] ?? 'share_everything',
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadActiveParticipants.length,
