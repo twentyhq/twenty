@@ -10,6 +10,7 @@ body {
     padding: 0;
     margin: 0;
     word-wrap: break-word;
+    font-family: var(--font-gabarito);
 }
 
 .container {
