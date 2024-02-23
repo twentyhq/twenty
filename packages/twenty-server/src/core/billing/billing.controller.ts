@@ -80,10 +80,11 @@ export class BillingController {
     const priceId = productPrices[recurringInterval]?.id;
 
     if (!priceId) {
-      res.status(404).send(
-        `BasePlan priceId not found, please check a price for ${recurringInterval} recurring interval 
-          is set for product '${productId}'`,
-      );
+      res
+        .status(404)
+        .send(
+          `BasePlan priceId not found, please check body.recurringInterval and product '${AvailableProduct.BasePlan}' prices`,
+        );
 
       return;
     }
