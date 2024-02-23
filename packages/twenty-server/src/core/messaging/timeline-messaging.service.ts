@@ -21,6 +21,7 @@ export class TimelineMessagingService {
   ) {}
 
   async getMessagesFromPersonIds(
+    workspaceMemberId: string,
     workspaceId: string,
     personIds: string[],
     page: number = 1,
@@ -303,15 +304,36 @@ export class TimelineMessagingService {
       return messageThreadIdAcc;
     }, {});
 
+    const messageChannels =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `
+      SELECT id
+      FROM
+          ${dataSourceSchema}."messageChannel"
+      JOIN
+          ${dataSourceSchema}."connectedAccount" "connectedAccount" ON "connectedAccount"."id" = "messageChannel"."connectedAccountId"
+      WHERE
+          "connectedAccount"."workspaceMemberId" = $1
+      `,
+        [workspaceMemberId],
+        workspaceId,
+      );
+
+    const messageChannelIds = messageChannels.map(
+      (messageChannelId: { id: string }) => messageChannelId.id,
+    );
+
     const threadVisibility:
       | {
           id: string;
           visibility: 'metadata' | 'subject' | 'share_everything';
+          messageChannelId: string;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
       SELECT
           message."messageThreadId" AS id,
+          message."messageChannelId",
           "messageChannel".visibility
       FROM
           ${dataSourceSchema}."message" message
@@ -334,15 +356,18 @@ export class TimelineMessagingService {
         }
       | undefined = threadVisibility?.reduce(
       (threadVisibilityAcc, threadVisibility) => {
-        threadVisibilityAcc[threadVisibility.id] =
-          visibilityValues[
-            Math.max(
-              visibilityValues.indexOf(threadVisibility.visibility),
-              visibilityValues.indexOf(
-                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
-              ),
-            )
-          ];
+        threadVisibilityAcc[threadVisibility.id] = messageChannelIds.includes(
+          threadVisibility.messageChannelId,
+        )
+          ? 'share_everything'
+          : visibilityValues[
+              Math.max(
+                visibilityValues.indexOf(threadVisibility.visibility),
+                visibilityValues.indexOf(
+                  threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+                ),
+              )
+            ];
 
         return threadVisibilityAcc;
       },
@@ -410,6 +435,7 @@ export class TimelineMessagingService {
   }
 
   async getMessagesFromCompanyId(
+    workspaceMemberId: string,
     workspaceId: string,
     companyId: string,
     page: number = 1,
@@ -443,6 +469,7 @@ export class TimelineMessagingService {
     );
 
     const messageThreads = await this.getMessagesFromPersonIds(
+      workspaceMemberId,
       workspaceId,
       formattedPersonIds,
       page,
