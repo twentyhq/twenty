@@ -330,19 +330,18 @@ export class TimelineMessagingService {
     }, {});
 
     const isWorkspaceMemberInParticipantsByThreadId = messageThreadIds.reduce(
-      (messageThreadIdAcc, messageThreadId) => {
-        const threadMessages = threadMessagesParticipants?.filter(
-          (threadMessage) => threadMessage.id === messageThreadId,
-        );
+      (isWorkspaceMemberInParticipantsAcc, messageThreadId) => {
+        const threadMessagesWithWorkspaceMemberInParticipants =
+          threadMessagesParticipants?.filter(
+            (threadMessage) =>
+              threadMessage.id === messageThreadId &&
+              threadMessage.workspaceMemberId === workspaceMemberId,
+          ) ?? [];
 
-        const isWorkspaceMemberInParticipants = threadMessages?.some(
-          (threadMessage) =>
-            threadMessage.workspaceMemberId === workspaceMemberId,
-        );
+        isWorkspaceMemberInParticipantsAcc[messageThreadId] =
+          threadMessagesWithWorkspaceMemberInParticipants.length > 0;
 
-        messageThreadIdAcc[messageThreadId] = isWorkspaceMemberInParticipants;
-
-        return messageThreadIdAcc;
+        return isWorkspaceMemberInParticipantsAcc;
       },
       {},
     );
