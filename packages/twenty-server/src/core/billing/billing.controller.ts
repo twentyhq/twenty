@@ -101,8 +101,10 @@ export class BillingController {
         },
       ],
       mode: 'subscription',
-      metadata: {
-        workspaceId: user.defaultWorkspace.id,
+      subscription_data: {
+        metadata: {
+          workspaceId: user.defaultWorkspace.id,
+        },
       },
       customer_email: user.email,
       success_url: frontBaseUrl,
@@ -124,11 +126,6 @@ export class BillingController {
     @Req() req: RawBodyRequest<Request>,
     @Res() res: Response,
   ) {
-    if (!signature) {
-      res.status(400).send('Missing stripe-signature header');
-
-      return;
-    }
     if (!req.rawBody) {
       res.status(400).send('Missing raw body');
 
@@ -139,22 +136,27 @@ export class BillingController {
       req.rawBody,
     );
 
-    if (event.type === WebhookEvent.CHECKOUT_SESSION_COMPLETED) {
-      const data = event.data.object;
-
-      if (data.payment_status !== 'paid') {
+    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED) {
+      if (event.data.object.status !== 'active') {
         res.status(402).send('Payment did not succeeded');
 
         return;
       }
 
-      const workspaceId = data.metadata?.workspaceId;
+      const workspaceId = event.data.object.metadata?.workspaceId;
 
       if (!workspaceId) {
         res.status(404).send('Missing workspaceId in webhook event metadata');
 
         return;
       }
+
+      await this.billingService.createBillingSubscription(
+        workspaceId,
+        event.data,
+      );
+
+      res.status(200).send('Subscription successfully updated');
     }
   }
 }
