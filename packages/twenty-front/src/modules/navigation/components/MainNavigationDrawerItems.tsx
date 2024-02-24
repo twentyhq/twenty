@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
+import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
+import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
@@ -23,7 +24,7 @@ export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
-  const { currentUserDueTaskCount } = useCurrentUserTaskCount();
+  const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
   const navigate = useNavigate();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -54,6 +55,7 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
+          <CurrentUserDueTaskCountEffect />
           <NavigationDrawerItem
             label="Tasks"
             to="/tasks"

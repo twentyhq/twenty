@@ -41,9 +41,12 @@ export const useActivities = ({
   });
 
   const activityIds = activityTargets
-    ?.map((activityTarget) => activityTarget.activityId)
-    .filter(isNonEmptyString)
-    .toSorted(sortByAscString);
+    ? [
+        ...activityTargets
+          .map((activityTarget) => activityTarget.activityId)
+          .filter(isNonEmptyString),
+      ].sort(sortByAscString)
+    : [];
 
   const activityTargetsFound =
     initializedActivityTargets && isNonEmptyArray(activityTargets);
@@ -90,7 +93,7 @@ export const useActivities = ({
   const loading = loadingActivities || loadingActivityTargets;
 
   // TODO: fix connection in relation => automatically change to an array
-  const activities = activitiesWithConnection
+  const activities: Activity[] = activitiesWithConnection
     ?.map(makeActivityWithoutConnection as any)
     .map(({ activity }: any) => activity);
 

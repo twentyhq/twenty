@@ -22702,6 +22702,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns-tz@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "date-fns-tz@npm:2.0.0"
+  peerDependencies:
+    date-fns: ">=2.0.0"
+  checksum: 31cacb83c675ef8c2cf31d21c298ab6d74c5e975412dd804664d031ac0f2f03ed5bfb2a950fa15a321bbbcb90b833c300823fbceba0133680065a71894cc1170
+  languageName: node
+  linkType: hard
+
 "date-fns@npm:^2.0.1, date-fns@npm:^2.30.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
@@ -44303,6 +44312,7 @@ __metadata:
     danger-plugin-todos: "npm:^1.3.1"
     dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
+    date-fns-tz: "npm:^2.0.0"
     debounce: "npm:^2.0.0"
     deep-equal: "npm:^2.2.2"
     docusaurus-node-polyfills: "npm:^1.0.0"

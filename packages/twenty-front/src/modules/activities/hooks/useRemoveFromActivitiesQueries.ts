@@ -72,7 +72,7 @@ export const useRemoveFromActivitiesQueries = () => {
     const currentFindManyActivitiesQueryVariables = {
       filter: {
         id: {
-          in: existingActivityIds.toSorted(sortByAscString),
+          in: [...existingActivityIds].sort(sortByAscString),
         },
         ...activitiesFilters,
       },
@@ -94,7 +94,7 @@ export const useRemoveFromActivitiesQueries = () => {
     const nextFindManyActivitiesQueryVariables = {
       filter: {
         id: {
-          in: activityIdsAfterRemoval.toSorted(sortByAscString),
+          in: [...activityIdsAfterRemoval].sort(sortByAscString),
         },
         ...activitiesFilters,
       },

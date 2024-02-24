@@ -1,7 +1,7 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
-import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
+import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
@@ -34,7 +34,7 @@ export const useOpenCreateActivityDrawer = () => {
     temporaryActivityForEditorState,
   );
 
-  const setActivityInDrawer = useSetRecoilState(activityInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
     isUpsertingActivityInDBState,
@@ -55,7 +55,7 @@ export const useOpenCreateActivityDrawer = () => {
       customAssignee,
     });
 
-    setActivityInDrawer(createdActivityInCache);
+    setActivityIdInDrawer(createdActivityInCache.id);
     setTemporaryActivityForEditor(createdActivityInCache);
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });

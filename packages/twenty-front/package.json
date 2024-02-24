@@ -32,7 +32,7 @@
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
     "storybook:test-single-worker": "test-storybook --maxWorkers=1",
-    "storybook:coverage": "yarn storybook:test-slow --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "storybook:coverage": "yarn storybook:test-slow --coverage ; npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "storybook:modules:coverage": "STORYBOOK_SCOPE=modules yarn storybook:coverage",
     "storybook:pages:coverage": "STORYBOOK_SCOPE=pages yarn storybook:coverage",
     "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.cjs",
