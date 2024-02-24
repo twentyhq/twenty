@@ -1,6 +1,5 @@
 import { useCallback, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { css, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
@@ -10,7 +9,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
+import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
+import { RecordRelationFieldCardContent } from '@/object-record/record-show/record-detail-section/components/RecordRelationFieldCardContent';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
@@ -26,57 +26,11 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
-`;
-
-const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
-  align-items: center;
-  display: flex;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: ${() => (useIsMobile() ? '0 12px' : 'unset')};
-
-  ${({ isDropdownOpen, theme }) =>
-    isDropdownOpen
-      ? ''
-      : css`
-          .displayOnHover {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity ${theme.animation.duration.instant}s ease;
-          }
-        `}
-
-  &:hover {
-    .displayOnHover {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-`;
-
-const StyledTitle = styled.div`
-  align-items: flex-end;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledTitleLabel = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledLink = styled(Link)`
-  color: ${({ theme }) => theme.font.color.light};
-  text-decoration: none;
-  font-size: ${({ theme }) => theme.font.size.sm};
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
 `;
 
 const StyledCardNoContent = styled.div`
@@ -181,46 +135,50 @@ export const RecordRelationFieldCardSection = () => {
 
   return (
     <Section>
-      <StyledHeader isDropdownOpen={isDropdownOpen}>
-        <StyledTitle>
-          <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
-          {isFromManyObjects && (
-            <StyledLink to={filterLinkHref}>
-              All ({relationRecords.length})
-            </StyledLink>
-          )}
-        </StyledTitle>
-        <DropdownScope dropdownScopeId={dropdownId}>
-          <StyledAddDropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="right-start"
-            onClose={handleCloseRelationPickerDropdown}
-            clickableComponent={
-              <LightIconButton
-                className="displayOnHover"
-                Icon={isToOneObject ? IconPencil : IconPlus}
-                accent="tertiary"
-              />
-            }
-            dropdownComponents={
-              <RelationPickerScope relationPickerScopeId={dropdownId}>
-                <SingleEntitySelectMenuItemsWithSearch
-                  EmptyIcon={IconForbid}
-                  onEntitySelected={handleRelationPickerEntitySelected}
-                  selectedRelationRecordIds={relationRecordIds}
-                  relationObjectNameSingular={
-                    relationObjectMetadataNameSingular
-                  }
-                  relationPickerScopeId={dropdownId}
+      <RecordDetailSectionHeader
+        title={fieldDefinition.label}
+        link={
+          isFromManyObjects
+            ? {
+                to: filterLinkHref,
+                label: `All (${relationRecords.length})`,
+              }
+            : undefined
+        }
+        hideRightAdornmentOnMouseLeave={!isDropdownOpen}
+        rightAdornment={
+          <DropdownScope dropdownScopeId={dropdownId}>
+            <StyledAddDropdown
+              dropdownId={dropdownId}
+              dropdownPlacement="right-start"
+              onClose={handleCloseRelationPickerDropdown}
+              clickableComponent={
+                <LightIconButton
+                  className="displayOnHover"
+                  Icon={isToOneObject ? IconPencil : IconPlus}
+                  accent="tertiary"
                 />
-              </RelationPickerScope>
-            }
-            dropdownHotkeyScope={{
-              scope: dropdownId,
-            }}
-          />
-        </DropdownScope>
-      </StyledHeader>
+              }
+              dropdownComponents={
+                <RelationPickerScope relationPickerScopeId={dropdownId}>
+                  <SingleEntitySelectMenuItemsWithSearch
+                    EmptyIcon={IconForbid}
+                    onEntitySelected={handleRelationPickerEntitySelected}
+                    selectedRelationRecordIds={relationRecordIds}
+                    relationObjectNameSingular={
+                      relationObjectMetadataNameSingular
+                    }
+                    relationPickerScopeId={dropdownId}
+                  />
+                </RelationPickerScope>
+              }
+              dropdownHotkeyScope={{
+                scope: dropdownId,
+              }}
+            />
+          </DropdownScope>
+        }
+      />
       {relationRecords.length === 0 && (
         <StyledCardNoContent>
           <Icon size={theme.icon.size.sm} />

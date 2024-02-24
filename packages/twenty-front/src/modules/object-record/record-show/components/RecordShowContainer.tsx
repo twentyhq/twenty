@@ -7,7 +7,6 @@ import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/is
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordDuplicatesFieldCardSection } from '@/object-record/record-duplicates-card/components/RecordDuplicatesFieldCardSection';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -16,7 +15,8 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
+import { RecordDuplicatesFieldCardSection } from '@/object-record/record-show/record-detail-section/components/RecordDuplicatesFieldCardSection';
+import { RecordRelationFieldCardSection } from '@/object-record/record-show/record-detail-section/components/RecordRelationFieldCardSection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
