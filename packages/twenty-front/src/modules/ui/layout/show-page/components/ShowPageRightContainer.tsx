@@ -6,6 +6,7 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -42,7 +43,10 @@ const StyledTabListContainer = styled.div`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
-  targetableObject: ActivityTargetableObject;
+  targetableObject: Pick<
+    ActivityTargetableObject,
+    'targetObjectNameSingular' | 'id'
+  >;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -114,7 +118,10 @@ export const ShowPageRightContainer = ({
         <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
-        <Timeline targetableObject={targetableObject} />
+        <>
+          <TimelineQueryEffect targetableObject={targetableObject} />
+          <Timeline targetableObject={targetableObject} />
+        </>
       )}
       {activeTabId === 'tasks' && (
         <ObjectTasks targetableObject={targetableObject} />

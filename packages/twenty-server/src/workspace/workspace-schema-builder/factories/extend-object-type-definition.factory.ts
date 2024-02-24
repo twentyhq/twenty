@@ -128,7 +128,7 @@ export class ExtendObjectTypeDefinitionFactory {
       }
 
       const relationDirection = deduceRelationDirection(
-        fieldMetadata.objectMetadataId,
+        fieldMetadata,
         relationMetadata,
       );
       const relationType = this.relationTypeFactory.create(

@@ -52,8 +52,8 @@ export const graphqlMocks = {
       },
     ),
     graphql.query('FindManyViews', ({ variables }) => {
-      const objectMetadataId = variables.filter.objectMetadataId.eq;
-      const viewType = variables.filter.type.eq;
+      const objectMetadataId = variables.filter?.objectMetadataId?.eq;
+      const viewType = variables.filter?.type?.eq;
 
       return HttpResponse.json({
         data: {
@@ -61,8 +61,8 @@ export const graphqlMocks = {
             edges: mockedViewsData
               .filter(
                 (view) =>
-                  view.objectMetadataId === objectMetadataId &&
-                  view.type === viewType,
+                  view?.objectMetadataId === objectMetadataId &&
+                  view?.type === viewType,
               )
               .map((view) => ({
                 node: view,
