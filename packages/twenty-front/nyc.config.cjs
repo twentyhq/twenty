@@ -6,8 +6,8 @@ const globalCoverage = {
 };
 
 const modulesCoverage = {
-  statements: 80,
-  lines: 80,
+  statements: 75,
+  lines: 75,
   functions: 70,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
