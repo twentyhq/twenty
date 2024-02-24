@@ -3,17 +3,23 @@
 import styled from '@emotion/styled';
 import { useRouter } from 'next/navigation';
 
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
 const StyledContainer = styled.div`
-  width: 20%;
-  background: ${Theme.background.secondary};
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid ${Theme.background.transparent.medium};
-  border-bottom: 1px solid ${Theme.background.transparent.medium};
-  padding: ${Theme.spacing(10)} ${Theme.spacing(6)};
-  gap: ${Theme.spacing(6)};
+  ${mq({
+    width: '20%',
+    display: ['none', 'none', 'flex'],
+    flexDirection: 'column',
+    background: `${Theme.background.secondary}`,
+    borderLeft: `1px solid ${Theme.background.transparent.medium}`,
+    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
+    padding: `${Theme.spacing(10)} ${Theme.spacing(6)}`,
+    gap: `${Theme.spacing(6)}`,
+    'body nav': {
+      display: ['none', 'none', ''],
+    },
+  })};
 `;
 
 const StyledContent = styled.div`

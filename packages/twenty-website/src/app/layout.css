@@ -30,6 +30,12 @@ a {
     }
 }
 
+@media (max-width: 1199px) {
+nav {
+        display: none;
+    }
+}
+
 nav.toc {
   width: 20%;
   position: fixed;
