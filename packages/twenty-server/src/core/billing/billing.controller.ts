@@ -3,6 +3,10 @@ import {
   Controller,
   Get,
   Param,
+  Headers,
+  Req,
+  RawBodyRequest,
+  Logger,
   Post,
   Res,
   UseGuards,
@@ -15,6 +19,7 @@ import {
   BillingService,
   PriceData,
   RecurringInterval,
+  WebhookEvent,
 } from 'src/core/billing/billing.service';
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -24,6 +29,8 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 @Controller('billing')
 export class BillingController {
+  protected readonly logger = new Logger(BillingController.name);
+
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingService: BillingService,
@@ -97,8 +104,10 @@ export class BillingController {
         },
       ],
       mode: 'subscription',
-      metadata: {
-        workspaceId: user.defaultWorkspace.id,
+      subscription_data: {
+        metadata: {
+          workspaceId: user.defaultWorkspace.id,
+        },
       },
       customer_email: user.email,
       success_url: frontBaseUrl,
@@ -110,7 +119,48 @@ export class BillingController {
 
       return;
     }
+    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
 
     res.redirect(303, session.url);
+  }
+
+  @Post('/webhooks')
+  async handleWebhooks(
+    @Headers('stripe-signature') signature: string,
+    @Req() req: RawBodyRequest<Request>,
+    @Res() res: Response,
+  ) {
+    if (!req.rawBody) {
+      res.status(400).send('Missing raw body');
+
+      return;
+    }
+    const event = this.stripeService.constructEventFromPayload(
+      signature,
+      req.rawBody,
+    );
+
+    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED) {
+      if (event.data.object.status !== 'active') {
+        res.status(402).send('Payment did not succeeded');
+
+        return;
+      }
+
+      const workspaceId = event.data.object.metadata?.workspaceId;
+
+      if (!workspaceId) {
+        res.status(404).send('Missing workspaceId in webhook event metadata');
+
+        return;
+      }
+
+      await this.billingService.createBillingSubscription(
+        workspaceId,
+        event.data,
+      );
+
+      res.status(200).send('Subscription successfully updated');
+    }
   }
 }
