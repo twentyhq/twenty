@@ -1,7 +1,6 @@
 import { capitalize } from 'src/utils/capitalize';
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
-export const getRequestBody = (item: ObjectMetadataEntity) => {
+export const getRequestBody = (item) => {
   return {
     description: 'body',
     required: true,

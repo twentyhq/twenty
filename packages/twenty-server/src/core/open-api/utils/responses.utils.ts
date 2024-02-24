@@ -1,7 +1,6 @@
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
-export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
+export const getManyResultResponse200 = (item) => {
   return {
     description: 'Successful operation',
     content: {
@@ -37,7 +36,7 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const getSingleResultSuccessResponse = (item: ObjectMetadataEntity) => {
+export const getSingleResultSuccessResponse = (item) => {
   return {
     description: 'Successful operation',
     content: {
