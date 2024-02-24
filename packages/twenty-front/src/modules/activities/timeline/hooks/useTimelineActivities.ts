@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -45,9 +45,12 @@ export const useTimelineActivities = ({
   const activityIds = Array.from(
     new Set(
       activityTargets
-        ?.map((activityTarget) => activityTarget.activityId)
-        .filter(isNonEmptyString)
-        .toSorted(sortByAscString),
+        ? [
+            ...activityTargets
+              .map((activityTarget) => activityTarget.activityId)
+              .filter(isNonEmptyString),
+          ].sort(sortByAscString)
+        : [],
     ),
   );
 
