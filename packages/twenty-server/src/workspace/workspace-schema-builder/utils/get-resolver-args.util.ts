@@ -76,7 +76,7 @@ export const getResolverArgs = (
           isNullable: true,
         },
         data: {
-          kind: InputTypeDefinitionKind.Update,
+          kind: InputTypeDefinitionKind.Create,
           isNullable: true,
         },
       };
