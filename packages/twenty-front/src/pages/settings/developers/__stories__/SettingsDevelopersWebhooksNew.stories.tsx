@@ -1,35 +1,32 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
+import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsAccounts } from '../SettingsAccounts';
-
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Accounts/SettingsAccounts',
-  component: SettingsAccounts,
+  title: 'Pages/Settings/Developers/SettingsDevelopersWebhooksNew',
+  component: SettingsDevelopersWebhooksNew,
   decorators: [PageDecorator],
-  args: {
-    routePath: '/settings/accounts',
-  },
+  args: { routePath: '/settings/developers' },
   parameters: {
-    layout: 'fullscreen',
     msw: graphqlMocks,
   },
 };
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsAccounts>;
+export type Story = StoryObj<typeof SettingsDevelopersWebhooksNew>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    await canvas.findByText('Connected accounts');
+    await canvas.findByText(
+      'We will send POST requests to this endpoint for every new event',
+    );
   },
 };
