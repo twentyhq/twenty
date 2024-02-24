@@ -12,8 +12,6 @@ import { SettingsAccountsListCard } from '@/settings/accounts/components/Setting
 import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGmail } from '@/ui/display/icon/components/IconGmail';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -21,7 +19,7 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsEmailsSyncSection = () => {
+export const SettingsAccountsEmailsAccountsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
@@ -53,27 +51,21 @@ export const SettingsAccountsEmailsSyncSection = () => {
   );
 
   return (
-    <Section>
-      <H2Title
-        title="Emails sync"
-        description="Sync your inboxes and set your privacy settings"
-      />
-      <SettingsAccountsListCard
-        accounts={messageChannelsWithSyncedEmails}
-        isLoading={accountsLoading || messageChannelsLoading}
-        onRowClick={(messageChannel) =>
-          navigate(`/settings/accounts/emails/${messageChannel.id}`)
-        }
-        RowIcon={IconGmail}
-        RowRightComponent={({ account: messageChannel }) => (
-          <StyledRowRightContainer>
-            <SettingsAccountsSynchronizationStatus
-              synced={messageChannel.isSynced}
-            />
-            <LightIconButton Icon={IconChevronRight} accent="tertiary" />
-          </StyledRowRightContainer>
-        )}
-      />
-    </Section>
+    <SettingsAccountsListCard
+      accounts={messageChannelsWithSyncedEmails}
+      isLoading={accountsLoading || messageChannelsLoading}
+      onRowClick={(messageChannel) =>
+        navigate(`/settings/accounts/emails/${messageChannel.id}`)
+      }
+      RowIcon={IconGmail}
+      RowRightComponent={({ account: messageChannel }) => (
+        <StyledRowRightContainer>
+          <SettingsAccountsSynchronizationStatus
+            synced={messageChannel.isSynced}
+          />
+          <LightIconButton Icon={IconChevronRight} accent="tertiary" />
+        </StyledRowRightContainer>
+      )}
+    />
   );
 };

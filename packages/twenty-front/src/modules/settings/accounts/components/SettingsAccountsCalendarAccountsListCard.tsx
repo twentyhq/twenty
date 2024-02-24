@@ -10,9 +10,7 @@ import { SettingsAccountsListCard } from '@/settings/accounts/components/Setting
 import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Section } from '@/ui/layout/section/components/Section';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 const StyledRowRightContainer = styled.div`
@@ -21,7 +19,7 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsCalendarSettingsSection = () => {
+export const SettingsAccountsCalendarAccountsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
@@ -35,25 +33,19 @@ export const SettingsAccountsCalendarSettingsSection = () => {
   });
 
   return (
-    <Section>
-      <H2Title
-        title="Calendar settings"
-        description="Sync your calendars and set your preferences"
-      />
-      <SettingsAccountsListCard
-        accounts={mockedConnectedAccounts}
-        isLoading={loading}
-        onRowClick={(account) =>
-          navigate(`/settings/accounts/calendars/${account.id}`)
-        }
-        RowIcon={IconGoogleCalendar}
-        RowRightComponent={({ account: _account }) => (
-          <StyledRowRightContainer>
-            <SettingsAccountsSynchronizationStatus synced />
-            <LightIconButton Icon={IconChevronRight} accent="tertiary" />
-          </StyledRowRightContainer>
-        )}
-      />
-    </Section>
+    <SettingsAccountsListCard
+      accounts={mockedConnectedAccounts}
+      isLoading={loading}
+      onRowClick={(account) =>
+        navigate(`/settings/accounts/calendars/${account.id}`)
+      }
+      RowIcon={IconGoogleCalendar}
+      RowRightComponent={({ account: _account }) => (
+        <StyledRowRightContainer>
+          <SettingsAccountsSynchronizationStatus synced />
+          <LightIconButton Icon={IconChevronRight} accent="tertiary" />
+        </StyledRowRightContainer>
+      )}
+    />
   );
 };
