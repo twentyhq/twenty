@@ -1,7 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
-import { Activity } from '@/activities/types/Activity';
+import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -15,21 +14,21 @@ export const useOpenActivityRightDrawer = () => {
   const [viewableActivityId, setViewableActivityId] = useRecoilState(
     viewableActivityIdState,
   );
-  const [, setActivityInDrawer] = useRecoilState(activityInDrawerState);
+  const [, setActivityIdInDrawer] = useRecoilState(activityIdInDrawerState);
   const setHotkeyScope = useSetHotkeyScope();
 
-  return (activity: Activity) => {
+  return (activityId: string) => {
     if (
       isRightDrawerOpen &&
       rightDrawerPage === RightDrawerPages.EditActivity &&
-      viewableActivityId === activity.id
+      viewableActivityId === activityId
     ) {
       return;
     }
 
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setViewableActivityId(activity.id);
-    setActivityInDrawer(activity);
+    setViewableActivityId(activityId);
+    setActivityIdInDrawer(activityId);
     openRightDrawer(RightDrawerPages.EditActivity);
   };
 };
