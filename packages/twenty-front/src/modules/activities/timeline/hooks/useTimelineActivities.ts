@@ -45,9 +45,12 @@ export const useTimelineActivities = ({
   const activityIds = Array.from(
     new Set(
       activityTargets
-        ?.map((activityTarget) => activityTarget.activityId)
-        .filter(isNonEmptyString)
-        .toSorted(sortByAscString),
+        ? [
+            ...activityTargets
+              .map((activityTarget) => activityTarget.activityId)
+              .filter(isNonEmptyString),
+          ].sort(sortByAscString)
+        : [],
     ),
   );
 
