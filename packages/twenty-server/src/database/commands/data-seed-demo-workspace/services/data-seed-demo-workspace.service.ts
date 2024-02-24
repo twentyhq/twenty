@@ -1,27 +1,22 @@
-import { Command, CommandRunner } from 'nest-commander';
+import { Injectable } from '@nestjs/common';
+
 import { DataSource } from 'typeorm';
 
 import {
   deleteCoreSchema,
   seedCoreSchema,
-} from 'src/database/typeorm-seeds/core/demo';
+} from 'src/database/typeorm-seeds/core';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
-@Command({
-  name: 'workspace:seed:demo',
-  description:
-    'Seed workspace with demo data. This command is intended for development only.',
-})
-export class DataSeedDemoWorkspaceCommand extends CommandRunner {
+@Injectable()
+export class DataSeedDemoWorkspaceService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly workspaceManagerService: WorkspaceManagerService,
-  ) {
-    super();
-  }
+  ) {}
 
-  async run(): Promise<void> {
+  async seedDemo(): Promise<void> {
     try {
       const dataSource = new DataSource({
         url: this.environmentService.getPGDatabaseUrl(),

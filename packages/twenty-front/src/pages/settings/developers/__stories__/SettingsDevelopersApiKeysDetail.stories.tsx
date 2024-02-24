@@ -14,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsDevelopersApiKeyDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/apis/:apiKeyId',
+    routePath: '/settings/developers/api-keys/:apiKeyId',
     routeParams: {
       ':apiKeyId': 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
     },
@@ -22,22 +22,22 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
+        ...graphqlMocks.handlers,
         graphql.query('FindOneapiKey', () => {
           return HttpResponse.json({
             data: {
               apiKey: {
+                __typename: 'ApiKey',
                 id: 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
                 revokedAt: null,
-                createdAt: '2021-08-27T12:00:00Z',
-                expiresAt: '2021-08-27T12:00:00Z',
-                name: 'My API Key',
-                updatedAt: '2021-08-27T12:00:00Z',
-                __typename: 'ApiKey',
+                expiresAt: '2024-03-10T09:23:10.511Z',
+                name: 'sfsfdsf',
+                updatedAt: '2024-02-24T10:23:10.673Z',
+                createdAt: '2024-02-24T10:23:10.673Z',
               },
             },
           });
         }),
-        graphqlMocks.handlers,
       ],
     },
   },

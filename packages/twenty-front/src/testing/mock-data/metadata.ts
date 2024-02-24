@@ -6802,6 +6802,7 @@ export const mockedObjectMetadataItems = {
         },
       },
     },
+    mockedWebhooksMetadata,
     mockedPeopleMetadata,
     mockedCompaniesMetadata,
     mockedPipelineStepsMetadata,
