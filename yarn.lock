@@ -15247,6 +15247,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/facepaint@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@types/facepaint@npm:1.2.5"
+  checksum: e759fef0858f2f691625c47d59124e35d745c33d7229b99607158361ac0346f012ffad5c24a7312b49d54c097862ca7fe66a3ca37dbf8074154edb093b9fa0fc
+  languageName: node
+  linkType: hard
+
 "@types/filesystem@npm:*":
   version: 0.0.35
   resolution: "@types/filesystem@npm:0.0.35"
@@ -25333,6 +25340,13 @@ __metadata:
   version: 1.4.1
   resolution: "extsprintf@npm:1.4.1"
   checksum: e10e2769985d0e9b6c7199b053a9957589d02e84de42832c295798cb422a025e6d4a92e0259c1fb4d07090f5bfde6b55fd9f880ac5855bd61d775f8ab75a7ab0
+  languageName: node
+  linkType: hard
+
+"facepaint@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "facepaint@npm:1.2.1"
+  checksum: bc4e974f4db7e860afb86cfeaf25720f4058e100a0cc79d42e69b0518363a538643de18753f6ed0161cc9d7280ff49d9f07351dc1d614b5dc79a28837dd6cd50
   languageName: node
   linkType: hard
 
@@ -44262,6 +44276,7 @@ __metadata:
     "@types/bytes": "npm:^3.1.1"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/express": "npm:^4.17.13"
+    "@types/facepaint": "npm:^1.2.5"
     "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^8.0.12"
     "@types/jest": "npm:^29.5.11"
@@ -44333,6 +44348,7 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    facepaint: "npm:^1.2.1"
     file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
     googleapis: "npm:105"

@@ -1,19 +1,18 @@
 'use client';
 import styled from '@emotion/styled';
 
-import {
-  DeviceType,
-  useDeviceType,
-} from '@/app/_components/client-utils/useDeviceType';
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
 import { UserGuideHomeCards } from '@/content/user-guide/constants/UserGuideHomeCards';
 
-const StyledContainer = styled.div<{ isMobile: boolean }>`
-  width: ${({ isMobile }) => (isMobile ? '100%' : '60%')};
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+const StyledContainer = styled.div`
+  ${mq({
+    width: ['100%', '60%', '60%'],
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  })};
 `;
 
 const StyledWrapper = styled.div`
@@ -46,27 +45,21 @@ const StyledSubHeading = styled.h1`
   color: ${Theme.text.color.tertiary};
 `;
 
-const StyledContentGrid = styled.div`
-  width: 100%;
-  padding-top: ${Theme.spacing(6)};
-  display: grid;
-  grid-template-rows: auto auto;
-  grid-template-columns: auto auto;
-  gap: ${Theme.spacing(6)};
-`;
-
-const StyledContentFlex = styled.div`
-  width: 100%;
-  padding-top: ${Theme.spacing(6)};
-  display: flex;
-  flex-direction: column;
-  gap: ${Theme.spacing(6)};
+const StyledContent = styled.div`
+  ${mq({
+    width: '100%',
+    paddingTop: `${Theme.spacing(6)}`,
+    display: ['flex', 'flex', 'grid'],
+    flexDirection: 'column',
+    gridTemplateRows: 'auto auto',
+    gridTemplateColumns: 'auto auto',
+    gap: `${Theme.spacing(6)}`,
+  })};
 `;
 
 export default function UserGuideMain() {
-  const deviceType = useDeviceType();
   return (
-    <StyledContainer isMobile={deviceType === DeviceType.MOBILE}>
+    <StyledContainer>
       <StyledWrapper>
         <StyledHeader>
           <StyledHeading>User Guide</StyledHeading>
@@ -74,19 +67,11 @@ export default function UserGuideMain() {
             A brief guide to grasp the basics of Twenty
           </StyledSubHeading>
         </StyledHeader>
-        {deviceType === DeviceType.DESKTOP ? (
-          <StyledContentGrid>
-            {UserGuideHomeCards.map((card) => {
-              return <UserGuideCard key={card.title} card={card} />;
-            })}
-          </StyledContentGrid>
-        ) : (
-          <StyledContentFlex>
-            {UserGuideHomeCards.map((card) => {
-              return <UserGuideCard key={card.title} card={card} />;
-            })}
-          </StyledContentFlex>
-        )}
+        <StyledContent>
+          {UserGuideHomeCards.map((card) => {
+            return <UserGuideCard key={card.title} card={card} />;
+          })}
+        </StyledContent>
       </StyledWrapper>
     </StyledContainer>
   );

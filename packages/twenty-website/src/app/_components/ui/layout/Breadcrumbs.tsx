@@ -5,16 +5,15 @@ import styled from '@emotion/styled';
 import { IconChevronLeft } from '@tabler/icons-react';
 import Link from 'next/link';
 
-import {
-  DeviceType,
-  useDeviceType,
-} from '@/app/_components/client-utils/useDeviceType';
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
 const Container = styled.div`
-  display: flex;
-  gap: ${Theme.spacing(2)};
-  color: #b3b3b3;
+  ${mq({
+    display: ['none', 'flex', 'flex'],
+    gap: `${Theme.spacing(2)}`,
+    color: '#b3b3b3',
+  })};
 `;
 
 const InternalLinkItem = styled(Link)`
@@ -45,12 +44,14 @@ const StyledSection = styled.div`
 `;
 
 const StyledMobileContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: ${Theme.spacing(1)};
-  color: ${Theme.text.color.quarternary};
-  font-size: ${Theme.font.size.sm};
+  ${mq({
+    display: ['flex', 'none', 'none'],
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: `${Theme.spacing(1)}`,
+    color: `${Theme.text.color.quarternary}`,
+    fontSize: `${Theme.font.size.sm}`,
+  })};
 `;
 
 interface BreadcrumbsProps {
@@ -68,31 +69,29 @@ export const Breadcrumbs = ({
   activePage,
   separator,
 }: BreadcrumbsProps) => {
-  const isMobile = useDeviceType() === DeviceType.MOBILE;
-  if (isMobile) {
-    const lastItem = items[items.length - 1];
-    return (
+  const lastItem = items[items.length - 1];
+
+  return (
+    <div>
       <StyledMobileContainer>
         <IconChevronLeft size={Theme.icon.size.md} />
         <InternalLinkItem href={lastItem.uri}>
           {lastItem.label}
         </InternalLinkItem>
       </StyledMobileContainer>
-    );
-  }
-  return (
-    <Container>
-      {items.map((item, index) => (
-        <StyledSection key={`${item?.uri ?? 'item'}-${index}`}>
-          {item.isExternal ? (
-            <ExternalLinkItem href={item.uri}>{item.label}</ExternalLinkItem>
-          ) : (
-            <InternalLinkItem href={item.uri}>{item.label}</InternalLinkItem>
-          )}
-          <div>{separator}</div>
-        </StyledSection>
-      ))}
-      <ActivePage>{activePage}</ActivePage>
-    </Container>
+      <Container>
+        {items.map((item, index) => (
+          <StyledSection key={`${item?.uri ?? 'item'}-${index}`}>
+            {item.isExternal ? (
+              <ExternalLinkItem href={item.uri}>{item.label}</ExternalLinkItem>
+            ) : (
+              <InternalLinkItem href={item.uri}>{item.label}</InternalLinkItem>
+            )}
+            <div>{separator}</div>
+          </StyledSection>
+        ))}
+        <ActivePage>{activePage}</ActivePage>
+      </Container>
+    </div>
   );
 };

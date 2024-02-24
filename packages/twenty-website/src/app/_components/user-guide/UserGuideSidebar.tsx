@@ -3,24 +3,23 @@
 import styled from '@emotion/styled';
 import { useRouter } from 'next/navigation';
 
-import {
-  DeviceType,
-  useDeviceType,
-} from '@/app/_components/client-utils/useDeviceType';
 import { IconBook } from '@/app/_components/ui/icons';
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideSidebarSection from '@/app/_components/user-guide/UserGuideSidebarSection';
 import { UserGuideIndex } from '@/content/user-guide/constants/UserGuideIndex';
 
-const StyledContainer = styled.div<{ isTablet: boolean }>`
-  width: ${({ isTablet }) => (isTablet ? '30%' : '20%')};
-  background: ${Theme.background.secondary};
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid ${Theme.background.transparent.medium};
-  border-bottom: 1px solid ${Theme.background.transparent.medium};
-  padding: ${Theme.spacing(10)} ${Theme.spacing(3)};
-  gap: ${Theme.spacing(6)};
+const StyledContainer = styled.div`
+  ${mq({
+    width: ['20%', '30%', '20%'],
+    display: ['none', 'flex', 'flex'],
+    flexDirection: 'column',
+    background: `${Theme.background.secondary}`,
+    borderRight: `1px solid ${Theme.background.transparent.medium}`,
+    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
+    padding: `${Theme.spacing(10)} ${Theme.spacing(3)}`,
+    gap: `${Theme.spacing(6)}`,
+  })};
 `;
 
 const StyledHeading = styled.div`
@@ -55,9 +54,8 @@ const StyledHeadingText = styled.div`
 
 const UserGuideSidebar = () => {
   const router = useRouter();
-  const isTablet = useDeviceType() === DeviceType.TABLET;
   return (
-    <StyledContainer isTablet={isTablet}>
+    <StyledContainer>
       <StyledHeading>
         <StyledIconContainer>
           <IconBook size={Theme.icon.size.md} />
