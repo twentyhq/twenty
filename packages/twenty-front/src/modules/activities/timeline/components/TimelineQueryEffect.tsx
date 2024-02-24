@@ -45,17 +45,16 @@ export const TimelineQueryEffect = ({
       return;
     }
 
-    const activitiesForGroup = activities
-      .map((activity) => ({
+    const activitiesForGroup = [
+      ...activities.map((activity) => ({
         id: activity.id,
         createdAt: activity.createdAt,
-      }))
-      .toSorted(sortObjectRecordByDateField('createdAt', 'DescNullsLast'));
+      })),
+    ].sort(sortObjectRecordByDateField('createdAt', 'DescNullsLast'));
 
-    const timelineActivitiesForGroupSorted =
-      timelineActivitiesForGroup.toSorted(
-        sortObjectRecordByDateField('createdAt', 'DescNullsLast'),
-      );
+    const timelineActivitiesForGroupSorted = [
+      ...timelineActivitiesForGroup,
+    ].sort(sortObjectRecordByDateField('createdAt', 'DescNullsLast'));
 
     if (!isDeeplyEqual(activitiesForGroup, timelineActivitiesForGroupSorted)) {
       setTimelineActivitiesForGroup(activitiesForGroup);

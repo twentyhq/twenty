@@ -41,9 +41,12 @@ export const useActivities = ({
   });
 
   const activityIds = activityTargets
-    ?.map((activityTarget) => activityTarget.activityId)
-    .filter(isNonEmptyString)
-    .toSorted(sortByAscString);
+    ? [
+        ...activityTargets
+          .map((activityTarget) => activityTarget.activityId)
+          .filter(isNonEmptyString),
+      ].sort(sortByAscString)
+    : [];
 
   const activityTargetsFound =
     initializedActivityTargets && isNonEmptyArray(activityTargets);
