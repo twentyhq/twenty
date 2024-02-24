@@ -85,7 +85,7 @@ export const TaskRow = ({ task }: { task: Activity }) => {
   return (
     <StyledContainer
       onClick={() => {
-        openActivityRightDrawer(task);
+        openActivityRightDrawer(task.id);
       }}
     >
       <div

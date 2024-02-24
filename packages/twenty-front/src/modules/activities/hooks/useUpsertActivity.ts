@@ -6,13 +6,13 @@ import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB'
 import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { useInjectIntoActivityTargetsQueries } from '@/activities/hooks/useInjectIntoActivityTargetsQueries';
 import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
-import { activityInDrawerState } from '@/activities/states/activityInDrawerState';
+import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
 import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/states/currentIncompleteTaskQueryVariablesState';
 import { useInjectIntoTimelineActivitiesQueries } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueries';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -34,7 +34,7 @@ export const useUpsertActivity = () => {
     isUpsertingActivityInDBState,
   );
 
-  const setActivityInDrawer = useSetRecoilState(activityInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const objectShowPageTargetableObject = useRecoilValue(
     objectShowPageTargetableObjectState,
@@ -169,7 +169,7 @@ export const useUpsertActivity = () => {
 
       await createActivityInDB(activityToCreate);
 
-      setActivityInDrawer(activityToCreate);
+      setActivityIdInDrawer(activityToCreate.id);
 
       setIsActivityInCreateMode(false);
     } else {

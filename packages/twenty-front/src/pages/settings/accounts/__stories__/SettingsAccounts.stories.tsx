@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -25,4 +26,10 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsAccounts>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Connected accounts');
+  },
+};

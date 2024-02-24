@@ -4,12 +4,12 @@ import {
   Get,
   Param,
   Headers,
-  Post,
-  Res,
-  UseGuards,
   Req,
   RawBodyRequest,
   Logger,
+  Post,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -30,6 +30,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 @Controller('billing')
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
+
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingService: BillingService,

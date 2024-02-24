@@ -16,7 +16,7 @@ const pagesCoverage = {
   statements: 50,
   lines: 50,
   functions: 45,
-  exclude: ['src/generated/**/*', 'src/modules/**/*'],
+  exclude: ['src/generated/**/*', 'src/modules/**/*', '*.ts'],
 };
 
 const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;
