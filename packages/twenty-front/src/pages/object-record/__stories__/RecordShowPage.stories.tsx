@@ -84,7 +84,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Alexandre Prot');
+    await canvas.findAllByText('Alexandre Prot');
     await canvas.findByText('Add your first Activity');
   },
 };
