@@ -13,7 +13,8 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
+import { RecordDuplicatesFieldCardSection } from '@/object-record/record-show/record-detail-section/components/RecordDuplicatesFieldCardSection';
+import { RecordRelationFieldCardSection } from '@/object-record/record-show/record-detail-section/components/RecordRelationFieldCardSection';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
@@ -193,6 +194,10 @@ export const RecordShowContainer = ({
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>
+              <RecordDuplicatesFieldCardSection
+                objectRecordId={objectRecordId}
+                objectNameSingular={objectNameSingular}
+              />
               {relationFieldMetadataItems
                 .filter((item) => {
                   const relationObjectMetadataItem = item.toRelationMetadata

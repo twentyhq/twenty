@@ -6,17 +6,18 @@ const globalCoverage = {
 };
 
 const modulesCoverage = {
-  statements: 50,
-  lines: 50,
-  functions: 45,
+  statements: 75,
+  lines: 75,
+  functions: 70,
   include: ['src/modules/**/*'],
+  exclude: ['src/**/*.ts'],
 };
 
 const pagesCoverage = {
-  statements: 50,
-  lines: 50,
+  statements: 60,
+  lines: 60,
   functions: 45,
-  exclude: ['src/generated/**/*', 'src/modules/**/*', '*.ts'],
+  exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };
 
 const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;

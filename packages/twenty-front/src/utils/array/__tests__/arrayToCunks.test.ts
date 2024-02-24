@@ -1,4 +1,4 @@
-import { arrayToChunks } from '~/utils/array/array-to-chunks';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 describe('arrayToChunks', () => {
   it('should split an array into subarrays of a given size', () => {
