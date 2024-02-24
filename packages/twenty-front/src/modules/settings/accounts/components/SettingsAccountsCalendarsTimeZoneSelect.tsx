@@ -3,15 +3,15 @@ import { detectTimeZone } from '@/settings/accounts/utils/detectTimeZone';
 import { findAvailableTimeZoneOption } from '@/settings/accounts/utils/findAvailableTimeZoneOption';
 import { Select } from '@/ui/input/components/Select';
 
-type SettingsAccountsCalendarTimeZoneSelectProps = {
+type SettingsAccountsCalendarsTimeZoneSelectProps = {
   value?: string;
   onChange: (nextValue: string) => void;
 };
 
-export const SettingsAccountsCalendarTimeZoneSelect = ({
+export const SettingsAccountsCalendarsTimeZoneSelect = ({
   value = detectTimeZone(),
   onChange,
-}: SettingsAccountsCalendarTimeZoneSelectProps) => (
+}: SettingsAccountsCalendarsTimeZoneSelectProps) => (
   <Select
     dropdownId="settings-accounts-calendar-time-zone"
     dropdownWidth={416}

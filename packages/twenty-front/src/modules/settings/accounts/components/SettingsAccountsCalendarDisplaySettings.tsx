@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { SettingsAccountsCalendarTimeZoneSelect } from '@/settings/accounts/components/SettingsAccountsCalendarTimeZoneSelect';
+import { SettingsAccountsCalendarsTimeZoneSelect } from '@/settings/accounts/components/SettingsAccountsCalendarsTimeZoneSelect';
 import { detectTimeZone } from '@/settings/accounts/utils/detectTimeZone';
 import { Select } from '@/ui/input/components/Select';
 
@@ -21,7 +21,7 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
 
   return (
     <StyledContainer>
-      <SettingsAccountsCalendarTimeZoneSelect
+      <SettingsAccountsCalendarsTimeZoneSelect
         value={timeZone}
         onChange={setTimeZone}
       />
