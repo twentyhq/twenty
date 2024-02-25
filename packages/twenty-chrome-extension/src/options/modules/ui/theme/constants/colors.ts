@@ -1,4 +1,3 @@
-/* eslint-disable twenty/no-hardcoded-colors */
 import hexRgb from 'hex-rgb';
 
 export const grayScale = {

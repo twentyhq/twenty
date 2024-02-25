@@ -5,14 +5,14 @@ import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/inter
 import { MessageQueueJobData } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import {
+  MESSAGE_QUEUE_DRIVER,
   MessageQueue,
-  QUEUE_DRIVER,
-} from 'src/integrations/message-queue/message-queue.constants';
+} from 'src/integrations/message-queue/constants/MessageQueueDriver';
 
 @Injectable()
 export class MessageQueueService implements OnModuleDestroy {
   constructor(
-    @Inject(QUEUE_DRIVER) protected driver: MessageQueueDriver,
+    @Inject(MESSAGE_QUEUE_DRIVER) protected driver: MessageQueueDriver,
     protected queueName: MessageQueue,
   ) {
     if (typeof this.driver.register === 'function') {

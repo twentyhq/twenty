@@ -5,12 +5,13 @@ import { ExceptionHandlerConsoleDriver } from 'src/integrations/exception-handle
 
 import { ExceptionHandlerService } from './exception-handler.service';
 import { ExceptionHandlerDriver } from './interfaces';
-import { EXCEPTION_HANDLER_DRIVER } from './exception-handler.constants';
 import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
 } from './exception-handler.module-definition';
+
+import { EXCEPTION_HANDLER_DRIVER } from './constants/ExceptionHandlerDriver';
 
 @Global()
 @Module({

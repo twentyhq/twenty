@@ -5,7 +5,7 @@ import { gmail_v1 } from 'googleapis';
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,

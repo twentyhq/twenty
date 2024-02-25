@@ -9,7 +9,7 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import {

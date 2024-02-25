@@ -3,9 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import {
-  QUEUE_DRIVER,
   MessageQueue,
-} from 'src/integrations/message-queue/message-queue.constants';
+  MESSAGE_QUEUE_DRIVER,
+} from 'src/integrations/message-queue/constants/MessageQueueDriver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 
 describe('MessageQueueTaskAssigned queue', () => {
@@ -22,10 +22,10 @@ describe('MessageQueueTaskAssigned queue', () => {
               MessageQueue.taskAssignedQueue,
             );
           },
-          inject: [QUEUE_DRIVER],
+          inject: [MESSAGE_QUEUE_DRIVER],
         },
         {
-          provide: QUEUE_DRIVER,
+          provide: MESSAGE_QUEUE_DRIVER,
           useValue: {},
         },
       ],

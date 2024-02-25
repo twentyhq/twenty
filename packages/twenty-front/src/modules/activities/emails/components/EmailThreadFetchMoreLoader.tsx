@@ -1,7 +1,7 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 
-import { grayScale } from '@/ui/theme/constants/colors';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 type EmailThreadFetchMoreLoaderProps = {
   loading: boolean;
@@ -11,7 +11,7 @@ type EmailThreadFetchMoreLoaderProps = {
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${grayScale.gray40};
+  color: ${GRAY_SCALE.gray40};
   display: flex;
   height: 32px;
   margin-left: ${({ theme }) => theme.spacing(8)};

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
-import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY';
+import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FindManyTimelineActivitiesOrderBy';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { timelineActivitiesFammilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';

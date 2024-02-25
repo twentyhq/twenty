@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { fetchAllWorkspacesMessagesCronPattern } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.cron.pattern';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';

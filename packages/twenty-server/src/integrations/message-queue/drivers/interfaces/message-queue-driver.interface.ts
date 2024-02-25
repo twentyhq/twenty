@@ -1,7 +1,7 @@
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueJobData } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 
 export interface MessageQueueDriver {
   add<T extends MessageQueueJobData>(

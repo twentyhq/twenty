@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ExceptionHandlerOptions } from 'src/integrations/exception-handler/interfaces/exception-handler-options.interface';
 
 import { ExceptionHandlerDriverInterface } from 'src/integrations/exception-handler/interfaces';
-import { EXCEPTION_HANDLER_DRIVER } from 'src/integrations/exception-handler/exception-handler.constants';
+import { EXCEPTION_HANDLER_DRIVER } from 'src/integrations/exception-handler/constants/ExceptionHandlerDriver';
 
 @Injectable()
 export class ExceptionHandlerService {

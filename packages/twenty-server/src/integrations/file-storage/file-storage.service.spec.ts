@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { FILE_STORAGE_DRIVER } from 'src/integrations/file-storage/constants/FileStorageDriver';
+
 import { FileStorageService } from './file-storage.service';
-import { STORAGE_DRIVER } from './file-storage.constants';
 
 describe('FileStorageService', () => {
   let service: FileStorageService;
@@ -11,7 +12,7 @@ describe('FileStorageService', () => {
       providers: [
         FileStorageService,
         {
-          provide: STORAGE_DRIVER,
+          provide: FILE_STORAGE_DRIVER,
           useValue: {},
         },
       ],

@@ -1,4 +1,3 @@
-/* eslint-disable twenty/no-hardcoded-colors */
 import DarkNoise from '../assets/dark-noise.jpg';
 import LightNoise from '../assets/light-noise.png';
 

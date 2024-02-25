@@ -7,11 +7,11 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 
 export enum CallWebhookJobsJobOperation {
   create = 'create',

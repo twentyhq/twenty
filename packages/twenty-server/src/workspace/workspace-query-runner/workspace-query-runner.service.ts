@@ -30,7 +30,6 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
   CallWebhookJobsJob,
   CallWebhookJobsJobData,
@@ -43,6 +42,7 @@ import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/ob
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 import { NotFoundError } from 'src/filters/utils/graphql-errors.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';

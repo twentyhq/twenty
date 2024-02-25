@@ -1,11 +1,12 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
+import { FILE_STORAGE_DRIVER } from 'src/integrations/file-storage/constants/FileStorageDriver';
+
 import { FileStorageService } from './file-storage.service';
 import {
   FileStorageModuleAsyncOptions,
   FileStorageModuleOptions,
 } from './interfaces';
-import { STORAGE_DRIVER } from './file-storage.constants';
 
 import { LocalDriver } from './drivers/local.driver';
 import { S3Driver } from './drivers/s3.driver';
@@ -14,7 +15,7 @@ import { S3Driver } from './drivers/s3.driver';
 export class FileStorageModule {
   static forRoot(options: FileStorageModuleOptions): DynamicModule {
     const provider = {
-      provide: STORAGE_DRIVER,
+      provide: FILE_STORAGE_DRIVER,
       useValue:
         options.type === 's3'
           ? new S3Driver(options.options)
@@ -30,7 +31,7 @@ export class FileStorageModule {
 
   static forRootAsync(options: FileStorageModuleAsyncOptions): DynamicModule {
     const provider = {
-      provide: STORAGE_DRIVER,
+      provide: FILE_STORAGE_DRIVER,
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 

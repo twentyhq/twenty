@@ -5,12 +5,12 @@ import { v4 } from 'uuid';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-account';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 
 @Injectable()
 export class GoogleGmailService {

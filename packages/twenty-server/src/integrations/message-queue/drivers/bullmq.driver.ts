@@ -2,7 +2,7 @@ import { Queue, QueueOptions, Worker } from 'bullmq';
 
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
 
 import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
 

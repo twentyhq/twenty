@@ -3,12 +3,13 @@ import { DynamicModule, Global, ConsoleLogger, Module } from '@nestjs/common';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 
 import { LoggerService } from './logger.service';
-import { LOGGER_DRIVER } from './logger.constants';
 import {
   ASYNC_OPTIONS_TYPE,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './logger.module-definition';
+
+import { LOGGER_DRIVER } from './constants/LoggerDriver';
 
 @Global()
 @Module({

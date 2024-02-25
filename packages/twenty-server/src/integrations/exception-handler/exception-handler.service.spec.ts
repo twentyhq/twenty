@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
-import { EXCEPTION_HANDLER_DRIVER } from './exception-handler.constants';
+import { EXCEPTION_HANDLER_DRIVER } from './constants/ExceptionHandlerDriver';
 
 describe('ExceptionHandlerService', () => {
   let service: ExceptionHandlerService;
