@@ -33,6 +33,7 @@ export const SettingsDevelopersWebhooksNew = () => {
 
     if (!isURL(formValues.targetUrl)) {
       setErrorMessage('Invalid webhook URL');
+      return;
     }
 
     const newWebhook = await createOneWebhook?.(formValues);
