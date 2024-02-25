@@ -36,7 +36,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   ObjectRecordQueryVariables & {
     onCompleted?: (
       data: ObjectRecordConnection<T>,
-      metadata: { hasNextPage: boolean },
+      pageInfo: ObjectRecordConnection<T>['pageInfo'],
     ) => void;
     skip?: boolean;
     useRecordsWithoutConnection?: boolean;
@@ -80,16 +80,13 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       orderBy,
     },
     onCompleted: (data) => {
-      const hasNextPage =
-        data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false;
+      const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
-      onCompleted?.(data[objectMetadataItem.namePlural], { hasNextPage });
+      onCompleted?.(data[objectMetadataItem.namePlural], pageInfo);
 
       if (data?.[objectMetadataItem.namePlural]) {
-        setLastCursor(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '',
-        );
-        setHasNextPage(hasNextPage);
+        setLastCursor(pageInfo.endCursor ?? '');
+        setHasNextPage(pageInfo.hasNextPage ?? false);
       }
     },
     onError: (error) => {
@@ -132,15 +129,11 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               ]);
             }
 
-            const hasNextPage =
-              fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                .hasNextPage ?? false;
+            const pageInfo =
+              fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
             if (data?.[objectMetadataItem.namePlural]) {
-              setLastCursor(
-                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .endCursor ?? '',
-              );
-              setHasNextPage(hasNextPage);
+              setLastCursor(pageInfo.endCursor ?? '');
+              setHasNextPage(pageInfo.hasNextPage ?? false);
             }
 
             onCompleted?.(
@@ -154,7 +147,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 totalCount:
                   fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
-              { hasNextPage },
+              pageInfo,
             );
 
             return Object.assign({}, prev, {

@@ -107,18 +107,15 @@ export const useExportTableData = ({
     ...params,
     limit: pageSize,
     onCompleted: (_data, { hasNextPage }) => {
-      setHasNextPage(hasNextPage);
+      setHasNextPage(hasNextPage ?? false);
     },
   });
 
   useEffect(() => {
     const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
 
-    if (!isDownloading || inflight) {
-      return;
-    }
-
-    const completeDownload = () => {
+    const downloadCav = (rows: object[]) => {
+      csvDownloader(filename, { rows, columns });
       setIsDownloading(false);
       setProgress(undefined);
     };
@@ -132,9 +129,12 @@ export const useExportTableData = ({
       setInflight(false);
     };
 
+    if (!isDownloading || inflight) {
+      return;
+    }
+
     if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
-      csvDownloader(filename, { rows: records, columns });
-      completeDownload();
+      downloadCav(records);
     } else {
       fetchNextPage();
     }
