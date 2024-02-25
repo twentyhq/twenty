@@ -9,6 +9,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { EmailService } from 'src/integrations/email/email.service';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -26,6 +27,10 @@ describe('AuthService', () => {
         },
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: UserWorkspaceService,
           useValue: {},
         },
         {
