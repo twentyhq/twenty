@@ -1,9 +1,10 @@
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb from '../utils/requestDb';
-import createNewButton from './createButton';
-import extractFirstAndLastName from './utils/extractFirstAndLastName';
 
-function insertButtonForPerson(): void {
+import extractFirstAndLastName from './utils/extractFirstAndLastName';
+import createNewButton from './createButton';
+
+const insertButtonForPerson = (): void => {
   // Select the element in which to create the button.
   const parentDiv: HTMLDivElement | null = document.querySelector(
     '.pv-top-card-v2-ctas',
@@ -114,6 +115,6 @@ function insertButtonForPerson(): void {
 
     Object.assign(newButtonPerson.style, buttonSpecificStyles);
   }
-}
+};
 
 export default insertButtonForPerson;
