@@ -5,15 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpService } from '@nestjs/axios';
 
-import FileType from 'file-type';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 import { render } from '@react-email/components';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
 import { ChallengeInput } from 'src/core/auth/dto/challenge.input';
 import { assert } from 'src/utils/assert';
@@ -28,12 +23,10 @@ import { WorkspaceInviteHashValid } from 'src/core/auth/dto/workspace-invite-has
 import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { UserService } from 'src/core/user/services/user.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
-import { getImageBufferFromUrl } from 'src/utils/image';
-import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
+import { SignUpService } from 'src/core/auth/services/sign-up.service';
 
 import { TokenService } from './token.service';
 
@@ -48,13 +41,11 @@ export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
-    private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly fileUploadService: FileUploadService,
+    private readonly signUpService: SignUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
   ) {}
@@ -92,83 +83,14 @@ export class AuthService {
     workspaceInviteHash?: string | null;
     picture?: string | null;
   }) {
-    if (!firstName) firstName = '';
-    if (!lastName) lastName = '';
-
-    const existingUser = await this.userRepository.findOneBy({
-      email: email,
+    return await this.signUpService.signUp({
+      email,
+      password,
+      firstName,
+      lastName,
+      workspaceInviteHash,
+      picture,
     });
-
-    assert(!existingUser, 'This user already exists', ForbiddenException);
-
-    if (password) {
-      const isPasswordValid = PASSWORD_REGEX.test(password);
-
-      assert(isPasswordValid, 'Password too weak', BadRequestException);
-    }
-
-    const passwordHash = password ? await hashPassword(password) : undefined;
-    let workspace: Workspace | null;
-
-    if (workspaceInviteHash) {
-      workspace = await this.workspaceRepository.findOneBy({
-        inviteHash: workspaceInviteHash,
-      });
-
-      assert(
-        workspace,
-        'This workspace inviteHash is invalid',
-        ForbiddenException,
-      );
-    } else {
-      assert(
-        !this.environmentService.isSignUpDisabled(),
-        'Sign up is disabled',
-        ForbiddenException,
-      );
-
-      const workspaceToCreate = this.workspaceRepository.create({
-        displayName: '',
-        domainName: '',
-        inviteHash: v4(),
-        subscriptionStatus: 'incomplete',
-      });
-
-      workspace = await this.workspaceRepository.save(workspaceToCreate);
-      await this.workspaceManagerService.init(workspace.id);
-    }
-
-    const userToCreate = this.userRepository.create({
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      canImpersonate: false,
-      passwordHash,
-      defaultWorkspace: workspace,
-    });
-    const user = await this.userRepository.save(userToCreate);
-    let imagePath: string | undefined = undefined;
-
-    if (picture) {
-      const buffer = await getImageBufferFromUrl(
-        picture,
-        this.httpService.axiosRef,
-      );
-
-      const type = await FileType.fromBuffer(buffer);
-
-      const { paths } = await this.fileUploadService.uploadImage({
-        file: buffer,
-        filename: `${v4()}.${type?.ext}`,
-        mimeType: type?.mime,
-        fileFolder: FileFolder.ProfilePicture,
-      });
-
-      imagePath = paths[0];
-    }
-    await this.userService.createWorkspaceMember(user, imagePath);
-
-    return user;
   }
 
   async verify(email: string): Promise<Verify> {
@@ -189,7 +111,11 @@ export class AuthService {
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
-    user.workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember) {
+      user.workspaceMember = workspaceMember;
+    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

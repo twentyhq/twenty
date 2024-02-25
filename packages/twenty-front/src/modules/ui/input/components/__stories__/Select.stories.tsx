@@ -53,3 +53,7 @@ export const Open: Story = {
 export const Disabled: Story = {
   args: { disabled: true },
 };
+
+export const WithSearch: Story = {
+  args: { withSearchInput: true },
+};

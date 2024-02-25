@@ -11,24 +11,12 @@ describe('getOnboardingStatus', () => {
       currentWorkspace: null,
     });
 
-    const unknownStatus = getOnboardingStatus({
+    const ongoingWorkspaceActivation = getOnboardingStatus({
       isLoggedIn: true,
       currentWorkspaceMember: null,
-      currentWorkspace: null,
-    });
-
-    const ongoingWorkspaceCreation = getOnboardingStatus({
-      isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: null,
+        activationStatus: 'inactive',
       } as CurrentWorkspace,
     });
 
@@ -40,7 +28,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
       } as CurrentWorkspace,
     });
 
@@ -55,7 +43,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
       } as CurrentWorkspace,
     });
 
@@ -70,7 +58,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
       isBillingEnabled: true,
@@ -87,7 +75,7 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
     });
@@ -103,15 +91,14 @@ describe('getOnboardingStatus', () => {
       } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
-        displayName: 'My Workspace',
+        activationStatus: 'active',
         subscriptionStatus: 'canceled',
       } as CurrentWorkspace,
       isBillingEnabled: true,
     });
 
     expect(ongoingUserCreation).toBe('ongoing_user_creation');
-    expect(unknownStatus).toBe(undefined);
-    expect(ongoingWorkspaceCreation).toBe('ongoing_workspace_creation');
+    expect(ongoingWorkspaceActivation).toBe('ongoing_workspace_activation');
     expect(ongoingProfileCreation).toBe('ongoing_profile_creation');
     expect(completed).toBe('completed');
     expect(incomplete).toBe('incomplete');

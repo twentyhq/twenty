@@ -33,6 +33,7 @@ import {
 
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
+import { generateDefaultValue } from './utils/generate-default-value';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -101,6 +102,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         true,
         fieldMetadataInput.name,
       ),
+      defaultValue:
+        fieldMetadataInput.defaultValue ??
+        generateDefaultValue(fieldMetadataInput.type),
       options: fieldMetadataInput.options
         ? fieldMetadataInput.options.map((option) => ({
             ...option,
@@ -186,15 +190,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new NotFoundException('Field does not exist');
     }
 
-    if (existingFieldMetadata.isCustom === false) {
-      // We can only update the isActive field for standard fields
-      fieldMetadataInput = {
-        id: fieldMetadataInput.id,
-        isActive: fieldMetadataInput.isActive,
-        workspaceId: fieldMetadataInput.workspaceId,
-      };
-    }
-
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
         fieldMetadataInput.workspaceId,
@@ -217,7 +212,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new BadRequestException('Cannot deactivate label identifier field');
     }
 
-    // Check if the id of the options has been provided
     if (fieldMetadataInput.options) {
       for (const option of fieldMetadataInput.options) {
         if (!option.id) {
@@ -226,9 +220,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    const updatedFieldMetadata = await super.updateOne(id, fieldMetadataInput);
+    const updatableFieldInput =
+      existingFieldMetadata.isCustom === false
+        ? this.buildUpdatableStandardFieldInput(
+            fieldMetadataInput,
+            existingFieldMetadata,
+          )
+        : fieldMetadataInput;
 
-    if (fieldMetadataInput.options || fieldMetadataInput.defaultValue) {
+    const updatedFieldMetadata = await super.updateOne(id, {
+      ...updatableFieldInput,
+      // If the name is updated, the targetColumnMap should be updated as well
+      targetColumnMap: updatableFieldInput.name
+        ? generateTargetColumnMap(
+            existingFieldMetadata.type,
+            existingFieldMetadata.isCustom,
+            updatableFieldInput.name,
+          )
+        : existingFieldMetadata.targetColumnMap,
+    });
+
+    if (
+      fieldMetadataInput.name ||
+      updatableFieldInput.options ||
+      updatableFieldInput.defaultValue
+    ) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`update-${updatedFieldMetadata.name}`),
         existingFieldMetadata.workspaceId,
@@ -287,5 +303,28 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   public async deleteFieldsMetadata(workspaceId: string) {
     await this.fieldMetadataRepository.delete({ workspaceId });
+  }
+
+  private buildUpdatableStandardFieldInput(
+    fieldMetadataInput: UpdateFieldInput,
+    existingFieldMetadata: FieldMetadataEntity,
+  ) {
+    let fieldMetadataInputOverrided = {};
+
+    fieldMetadataInputOverrided = {
+      id: fieldMetadataInput.id,
+      isActive: fieldMetadataInput.isActive,
+      workspaceId: fieldMetadataInput.workspaceId,
+      defaultValue: fieldMetadataInput.defaultValue,
+    };
+
+    if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
+      fieldMetadataInputOverrided = {
+        ...fieldMetadataInputOverrided,
+        options: fieldMetadataInput.options,
+      };
+    }
+
+    return fieldMetadataInputOverrided as UpdateFieldInput;
   }
 }

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
-import { BoardOptionsDropdownId } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
+import { BOARD_OPTIONS_DROPDOWN_ID } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
 import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
 import {
   IconBaselineDensitySmall,
@@ -26,6 +26,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 import { useRecordBoardDeprecatedCardFieldsInternal } from '../../hooks/internal/useRecordBoardDeprecatedCardFieldsInternal';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
@@ -105,7 +106,7 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
       recordBoardScopeId: recordBoardId,
     });
 
-  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
+  const { closeDropdown } = useDropdown(BOARD_OPTIONS_DROPDOWN_ID);
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
@@ -113,11 +114,12 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
         return;
       }
 
-      const reorderFields = [...visibleBoardCardFields];
-      const [removed] = reorderFields.splice(result.source.index - 1, 1);
-      reorderFields.splice(result.destination.index - 1, 0, removed);
+      const reorderedFields = moveArrayItem(visibleBoardCardFields, {
+        fromIndex: result.source.index - 1,
+        toIndex: result.destination.index - 1,
+      });
 
-      handleFieldsReorder(reorderFields);
+      handleFieldsReorder(reorderedFields);
     },
     [handleFieldsReorder, visibleBoardCardFields],
   );
@@ -217,10 +219,9 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
               fields={visibleBoardCardFields}
-              isVisible={true}
-              onVisibilityChange={handleFieldVisibilityChange}
-              isDraggable={true}
+              isDraggable
               onDragEnd={handleReorderField}
+              onVisibilityChange={handleFieldVisibilityChange}
             />
           )}
           {hasVisibleFields && hasHiddenFields && <DropdownMenuSeparator />}
@@ -228,9 +229,8 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Hidden"
               fields={hiddenBoardCardFields}
-              isVisible={false}
-              onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
+              onVisibilityChange={handleFieldVisibilityChange}
             />
           )}
         </>

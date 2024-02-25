@@ -39,7 +39,7 @@ export const PageChangeEffect = () => {
 
   const [workspaceFromInviteHashQuery] =
     useGetWorkspaceFromInviteHashLazyQuery();
-  const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -88,7 +88,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace)
     ) {
       navigate(AppPath.CreateWorkspace);
@@ -101,7 +101,7 @@ export const PageChangeEffect = () => {
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute
     ) {
-      navigate('/');
+      navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
       const inviteHash =
         matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)
@@ -209,7 +209,7 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    setToIntitialCommandMenu();
+    setToInitialCommandMenu();
 
     addToCommandMenu([
       {
@@ -218,10 +218,11 @@ export const PageChangeEffect = () => {
         label: 'Create Task',
         type: CommandType.Create,
         Icon: IconCheckbox,
-        onCommandClick: () => openCreateActivity({ type: 'Task' }),
+        onCommandClick: () =>
+          openCreateActivity({ type: 'Task', targetableObjects: [] }),
       },
     ]);
-  }, [addToCommandMenu, setToIntitialCommandMenu, openCreateActivity]);
+  }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
 
   useEffect(() => {
     setTimeout(() => {

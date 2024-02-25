@@ -3,14 +3,14 @@ import DataGrid, { DataGridProps } from 'react-data-grid';
 import styled from '@emotion/styled';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { rgba } from '@/ui/theme/constants/colors';
+import { RGBA } from '@/ui/theme/constants/Rgba';
 
 const StyledDataGrid = styled(DataGrid)`
   --rdg-background-color: ${({ theme }) => theme.background.primary};
   --rdg-border-color: ${({ theme }) => theme.border.color.medium};
   --rdg-color: ${({ theme }) => theme.font.color.primary};
   --rdg-error-cell-background-color: ${({ theme }) =>
-    rgba(theme.color.red, 0.4)};
+    RGBA(theme.color.red, 0.4)};
   --rdg-font-size: ${({ theme }) => theme.font.size.sm};
   --rdg-frozen-cell-box-shadow: none;
   --rdg-header-background-color: ${({ theme }) => theme.background.primary};
@@ -67,15 +67,15 @@ const StyledDataGrid = styled(DataGrid)`
   }
 
   .rdg-cell-error {
-    background-color: ${({ theme }) => rgba(theme.color.red, 0.08)};
+    background-color: ${({ theme }) => RGBA(theme.color.red, 0.08)};
   }
 
   .rdg-cell-warning {
-    background-color: ${({ theme }) => rgba(theme.color.orange, 0.08)};
+    background-color: ${({ theme }) => RGBA(theme.color.orange, 0.08)};
   }
 
   .rdg-cell-info {
-    background-color: ${({ theme }) => rgba(theme.color.blue, 0.08)};
+    background-color: ${({ theme }) => RGBA(theme.color.blue, 0.08)};
   }
 
   .rdg-static {

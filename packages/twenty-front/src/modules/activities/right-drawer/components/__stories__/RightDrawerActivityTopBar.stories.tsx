@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { RightDrawerActivityTopBar } from '../RightDrawerActivityTopBar';
@@ -14,7 +14,7 @@ const meta: Meta<typeof RightDrawerActivityTopBar> = {
         <Story />
       </div>
     ),
-    ComponentDecorator,
+    ComponentWithRouterDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

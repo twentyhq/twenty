@@ -19,17 +19,19 @@ const StyledContainer = styled.div`
 `;
 
 export const ShowPageAddButton = ({
-  entity,
+  activityTargetObject,
 }: {
-  entity: ActivityTargetableObject;
+  activityTargetObject: ActivityTargetableObject;
 }) => {
-  const { closeDropdown, toggleDropdown } = useDropdown(
-    SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID,
-  );
+  const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleSelect = (type: ActivityType) => {
-    openCreateActivity({ type, targetableObjects: [entity] });
+    openCreateActivity({
+      type,
+      targetableObjects: [activityTargetObject],
+    });
+
     closeDropdown();
   };
 

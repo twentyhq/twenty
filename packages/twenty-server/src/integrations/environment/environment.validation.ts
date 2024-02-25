@@ -44,9 +44,21 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_BILLING_ENABLED?: boolean;
 
-  @IsOptional()
   @IsString()
-  BILLING_URL?: string;
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_PLAN_REQUIRED_LINK?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_API_KEY?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_WEBHOOK_SECRET?: string;
 
   @CastToBoolean()
   @IsOptional()
@@ -83,21 +95,25 @@ export class EnvironmentVariables {
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN: string;
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN: string;
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;
@@ -199,8 +215,12 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   IS_SIGN_UP_DISABLED?: boolean;
-}
 
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
+}
 export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 

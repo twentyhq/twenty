@@ -1,0 +1,11 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 13px;
+}

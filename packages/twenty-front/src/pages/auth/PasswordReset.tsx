@@ -6,15 +6,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -124,7 +123,7 @@ export const PasswordReset = () => {
 
   const { signInWithCredentials } = useAuth();
 
-  const billing = useRecoilValue(billingState);
+  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
 
   const onSubmit = async (formData: Form) => {
     try {
@@ -150,25 +149,12 @@ export const PasswordReset = () => {
         return;
       }
 
-      const { workspace: currentWorkspace } = await signInWithCredentials(
-        email || '',
-        formData.newPassword,
-      );
+      const {
+        workspace: currentWorkspace,
+        workspaceMember: currentWorkspaceMember,
+      } = await signInWithCredentials(email || '', formData.newPassword);
 
-      if (
-        billing?.isBillingEnabled &&
-        currentWorkspace.subscriptionStatus !== 'active'
-      ) {
-        navigate(AppPath.PlanRequired);
-        return;
-      }
-
-      if (currentWorkspace.displayName) {
-        navigate(AppPath.Index);
-        return;
-      }
-
-      navigate(AppPath.CreateWorkspace);
+      navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
     } catch (err) {
       logError(err);
       enqueueSnackBar(

@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -16,6 +15,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -46,10 +46,9 @@ export const RecordIndexContainer = ({
   recordIndexId,
   objectNamePlural,
 }: RecordIndexContainerProps) => {
-  const [recordIndexViewType, setRecordIndexViewType] = useState<
-    ViewType | undefined
-  >(undefined);
-
+  const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
+    recordIndexViewTypeState,
+  );
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
@@ -74,25 +73,29 @@ export const RecordIndexContainer = ({
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewFields: ViewField[]) => {
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+        const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
+          viewFields,
+          columnDefinitions,
+        });
+
+        setTableColumns(newFieldDefinitions);
+
+        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
+          (boardField) => !boardField.isLabelIdentifier,
         );
 
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
 
-        const newFieldDefinitions = mapViewFieldsToColumnDefinitions(
-          viewFields,
-          columnDefinitions,
-        );
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newFieldDefinitions,
+            newRecordIndexFieldDefinitions,
           )
-        )
-          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+        ) {
+          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+        }
       },
     [columnDefinitions, setTableColumns],
   );

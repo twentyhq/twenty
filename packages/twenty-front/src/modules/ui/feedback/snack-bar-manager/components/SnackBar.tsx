@@ -7,7 +7,7 @@ import {
   ProgressBar,
   ProgressBarControls,
 } from '@/ui/feedback/progress-bar/components/ProgressBar';
-import { rgba } from '@/ui/theme/constants/colors';
+import { RGBA } from '@/ui/theme/constants/Rgba';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 
@@ -85,7 +85,7 @@ const StyledCloseButton = styled.button<Pick<SnackBarProps, 'variant'>>`
   width: 24px;
 
   &:hover {
-    background-color: ${({ theme }) => rgba(theme.grayScale.gray0, 0.1)};
+    background-color: ${({ theme }) => RGBA(theme.grayScale.gray0, 0.1)};
   }
 `;
 
@@ -167,7 +167,7 @@ export const SnackBar = ({
         <ProgressBar
           ref={progressBarRef}
           barHeight={5}
-          barColor={rgba(theme.grayScale.gray0, 0.3)}
+          barColor={RGBA(theme.grayScale.gray0, 0.3)}
           duration={duration}
         />
       </StyledProgressBarContainer>

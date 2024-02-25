@@ -1,13 +1,18 @@
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
+import { Activity } from '@/activities/types/Activity';
 
-export interface ActivityGroup {
+export type ActivityForActivityGroup = Pick<Activity, 'id' | 'createdAt'>;
+
+export type ActivityGroup = {
   month: number;
   year: number;
-  items: ActivityForDrawer[];
-}
+  items: ActivityForActivityGroup[];
+};
 
-export const groupActivitiesByMonth = (activities: ActivityForDrawer[]) => {
+export const groupActivitiesByMonth = (
+  activities: ActivityForActivityGroup[],
+) => {
   const acitivityGroups: ActivityGroup[] = [];
+
   for (const activity of activities) {
     const d = new Date(activity.createdAt);
     const month = d.getMonth();

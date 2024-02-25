@@ -21,10 +21,22 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const dataSourcesMetadata =
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         user.defaultWorkspace.id,
       );
+
+    if (!dataSourcesMetadata.length) {
+      return;
+    }
+
+    if (dataSourcesMetadata.length > 1) {
+      throw new Error(
+        `user '${user.id}' default workspace '${user.defaultWorkspace.id}' has multiple data source metadata`,
+      );
+    }
+
+    const dataSourceMetadata = dataSourcesMetadata[0];
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
@@ -33,7 +45,14 @@ export class UserService extends TypeOrmQueryService<User> {
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
     );
 
-    assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
+    if (!workspaceMembers.length) {
+      return;
+    }
+
+    assert(
+      workspaceMembers.length === 1,
+      'WorkspaceMember not found or too many found',
+    );
 
     const userWorkspaceMember = new WorkspaceMember();
 
@@ -63,7 +82,7 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async createWorkspaceMember(user: User, avatarUrl?: string) {
+  async createWorkspaceMember(user: User) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         user.defaultWorkspace.id,
@@ -77,7 +96,7 @@ export class UserService extends TypeOrmQueryService<User> {
       ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
       VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
         user.id
-      }', '${user.email}', '${avatarUrl ?? ''}')`,
+      }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
   }
 

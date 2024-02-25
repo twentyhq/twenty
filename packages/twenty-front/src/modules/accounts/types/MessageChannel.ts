@@ -1,4 +1,4 @@
-import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
+import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 
 export type MessageChannel = {
   id: string;

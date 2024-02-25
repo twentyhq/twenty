@@ -12,8 +12,9 @@ import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace
 import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migration-builder/workspace-migration-builder.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 
+import { workspaceFixers } from './fixer';
+
 import { WorkspaceFixService } from './services/workspace-fix.service';
-import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.service';
 
 @Module({
   imports: [
@@ -25,12 +26,12 @@ import { WorkspaceFixNullableService } from './services/workspace-fix-nullable.s
     WorkspaceMigrationBuilderModule,
   ],
   providers: [
+    ...workspaceFixers,
     WorkspaceHealthService,
     DatabaseStructureService,
     ObjectMetadataHealthService,
     FieldMetadataHealthService,
     RelationMetadataHealthService,
-    WorkspaceFixNullableService,
     WorkspaceFixService,
   ],
   exports: [WorkspaceHealthService],

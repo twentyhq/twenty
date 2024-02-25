@@ -36,7 +36,7 @@ export const generateEmptyFieldValue = (
       return null;
     }
     case FieldMetadataType.Uuid: {
-      return '';
+      return null;
     }
     case FieldMetadataType.Boolean: {
       return true;

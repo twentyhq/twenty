@@ -20,3 +20,7 @@ export type Participant = {
   handle: string;
   displayName: string;
 };
+
+export type ParticipantWithId = Participant & {
+  id: string;
+};

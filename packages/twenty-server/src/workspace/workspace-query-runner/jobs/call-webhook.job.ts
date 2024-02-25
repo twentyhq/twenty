@@ -26,7 +26,7 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
         `CallWebhookJob successfully called on targetUrl '${data.targetUrl}'`,
       );
     } catch (err) {
-      throw new Error(
+      this.logger.error(
         `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
       );
     }

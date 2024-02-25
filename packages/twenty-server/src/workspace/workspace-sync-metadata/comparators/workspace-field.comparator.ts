@@ -18,13 +18,10 @@ const fieldPropertiesToIgnore = [
   'updatedAt',
   'objectMetadataId',
   'isActive',
-] as const;
-
-const fieldPropertiesToStringify = [
-  'targetColumnMap',
-  'defaultValue',
   'options',
 ] as const;
+
+const fieldPropertiesToStringify = ['targetColumnMap', 'defaultValue'] as const;
 
 @Injectable()
 export class WorkspaceFieldComparator {
@@ -55,7 +52,8 @@ export class WorkspaceFieldComparator {
     const standardFieldMetadataMap = transformMetadataForComparison(
       standardObjectMetadata.fields,
       {
-        propertiesToIgnore: fieldPropertiesToStringify,
+        propertiesToIgnore: ['options'],
+        propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
           return datum.name;
         },

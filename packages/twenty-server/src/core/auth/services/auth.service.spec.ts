@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { HttpService } from '@nestjs/axios';
 
 import { UserService } from 'src/core/user/services/user.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
-import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { EmailService } from 'src/integrations/email/email.service';
+import { SignUpService } from 'src/core/auth/services/sign-up.service';
 
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -29,15 +28,11 @@ describe('AuthService', () => {
           useValue: {},
         },
         {
+          provide: SignUpService,
+          useValue: {},
+        },
+        {
           provide: WorkspaceManagerService,
-          useValue: {},
-        },
-        {
-          provide: FileUploadService,
-          useValue: {},
-        },
-        {
-          provide: HttpService,
           useValue: {},
         },
         {

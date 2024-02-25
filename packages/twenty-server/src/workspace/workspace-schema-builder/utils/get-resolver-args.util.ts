@@ -69,6 +69,17 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'findDuplicates':
+      return {
+        id: {
+          type: FieldMetadataType.UUID,
+          isNullable: true,
+        },
+        data: {
+          kind: InputTypeDefinitionKind.Create,
+          isNullable: true,
+        },
+      };
     case 'deleteOne':
       return {
         id: {

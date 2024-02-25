@@ -16,7 +16,7 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 
-interface FieldMetadataUpdate {
+export interface FieldMetadataUpdate {
   current: FieldMetadataEntity;
   altered: FieldMetadataEntity;
 }
@@ -85,6 +85,10 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadata of fieldMetadataCollection) {
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(
@@ -116,6 +120,11 @@ export class WorkspaceMigrationFieldFactory {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
+      // Skip relations, because they're just representation and not real columns
+      if (fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION) {
+        continue;
+      }
+
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(

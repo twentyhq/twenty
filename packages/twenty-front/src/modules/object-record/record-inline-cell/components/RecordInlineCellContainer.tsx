@@ -62,7 +62,7 @@ const StyledClickableContainer = styled.div`
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
-
+  width: 100%;
   display: flex;
 
   gap: ${({ theme }) => theme.spacing(1)};
@@ -141,7 +141,7 @@ export const RecordInlineCellContainer = ({
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
-      {(!!IconLabel || !!label) && (
+      {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
@@ -160,7 +160,7 @@ export const RecordInlineCellContainer = ({
               content={label}
               clickable
               noArrow
-              place="left"
+              place="bottom"
               positionStrategy="fixed"
             />
           )}

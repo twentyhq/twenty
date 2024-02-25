@@ -139,7 +139,9 @@ export const CommandMenu = () => {
     filter: search
       ? makeOrFilterVariables([
           { name: { firstName: { ilike: `%${search}%` } } },
-          { name: { firstName: { ilike: `%${search}%` } } },
+          { name: { lastName: { ilike: `%${search}%` } } },
+          { email: { ilike: `%${search}%` } },
+          { phone: { ilike: `%${search}%` } },
         ])
       : undefined,
     limit: 3,
@@ -190,11 +192,11 @@ export const CommandMenu = () => {
 
   const activityCommands = useMemo(
     () =>
-      activities.map(({ id, title }) => ({
-        id,
-        label: title ?? '',
+      activities.map((activity) => ({
+        id: activity.id,
+        label: activity.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(id),
+        onCommandClick: () => openActivityRightDrawer(activity.id),
       })),
     [activities, openActivityRightDrawer],
   );

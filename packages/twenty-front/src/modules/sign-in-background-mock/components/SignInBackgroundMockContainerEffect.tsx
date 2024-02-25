@@ -4,13 +4,10 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import {
-  signInBackgroundMockColumnDefinitions,
-  signInBackgroundMockFilterDefinitions,
-  signInBackgroundMockSortDefinitions,
-} from '@/sign-in-background-mock/constants/signInBackgroundMockDefinitions';
-import { signInBackgroundMockViewFields } from '@/sign-in-background-mock/constants/signInBackgroundMockViewFields';
+import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
+import { SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockFilterDefinitions';
+import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
+import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
@@ -28,7 +25,6 @@ export const SignInBackgroundMockContainerEffect = ({
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    setRecordTableData,
     setTableColumns,
     resetTableRowSelection,
   } = useRecordTable({
@@ -54,21 +50,17 @@ export const SignInBackgroundMockContainerEffect = ({
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
 
-    setAvailableSortDefinitions?.(signInBackgroundMockSortDefinitions);
-    setAvailableFilterDefinitions?.(signInBackgroundMockFilterDefinitions);
-    setAvailableFieldDefinitions?.(signInBackgroundMockColumnDefinitions);
+    setAvailableSortDefinitions?.(SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS);
+    setAvailableFilterDefinitions?.(SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS);
+    setAvailableFieldDefinitions?.(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
-    const availableTableColumns = signInBackgroundMockColumnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableTableColumns(availableTableColumns);
+    setAvailableTableColumns(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
     setTableColumns(
-      mapViewFieldsToColumnDefinitions(
-        signInBackgroundMockViewFields,
-        signInBackgroundMockColumnDefinitions,
-      ),
+      mapViewFieldsToColumnDefinitions({
+        viewFields: SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS,
+        columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
+      }),
     );
   }, [
     setViewObjectMetadataId,
@@ -77,7 +69,6 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFieldDefinitions,
     objectMetadataItem,
     setAvailableTableColumns,
-    setRecordTableData,
     setTableColumns,
   ]);
 

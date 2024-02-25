@@ -4,7 +4,7 @@ import { graphql, HttpResponse } from 'msw';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedActivities } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
@@ -22,22 +22,10 @@ const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
 
 export const graphqlMocks = {
   handlers: [
-    graphql.query(getOperationName(GET_CURRENT_USER_AND_VIEWS) ?? '', () => {
+    graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
           currentUser: mockedUsersData[0],
-          views: {
-            edges: mockedViewsData.map((view) => ({
-              node: view,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
         },
       });
     }),
@@ -64,8 +52,8 @@ export const graphqlMocks = {
       },
     ),
     graphql.query('FindManyViews', ({ variables }) => {
-      const objectMetadataId = variables.filter.objectMetadataId.eq;
-      const viewType = variables.filter.type.eq;
+      const objectMetadataId = variables.filter?.objectMetadataId?.eq;
+      const viewType = variables.filter?.type?.eq;
 
       return HttpResponse.json({
         data: {
@@ -73,8 +61,8 @@ export const graphqlMocks = {
             edges: mockedViewsData
               .filter(
                 (view) =>
-                  view.objectMetadataId === objectMetadataId &&
-                  view.type === viewType,
+                  view?.objectMetadataId === objectMetadataId &&
+                  view?.type === viewType,
               )
               .map((view) => ({
                 node: view,
