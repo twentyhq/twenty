@@ -44,4 +44,8 @@ export class UserWorkspace {
   @Field()
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
+
+  @Field()
+  @Column('timestamp with time zone')
+  deletedAt: Date;
 }

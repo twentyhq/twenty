@@ -19,25 +19,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   async create(userId: string, workspaceId: string): Promise<UserWorkspace> {
-    const userWorkspaces = await this.findUserWorkspaces(userId);
-
-    if (userWorkspaces.length > 0) {
-      const maxExistingPosition = Math.max(
-        ...userWorkspaces.map(({ position }) => position),
-      );
-      const newUserWorkspace = this.userWorkspaceRepository.create({
-        userId,
-        workspaceId,
-        position: maxExistingPosition + 1,
-      });
-
-      return this.userWorkspaceRepository.save(newUserWorkspace);
-    }
-
     const userWorkspace = this.userWorkspaceRepository.create({
       userId,
       workspaceId,
-      position: 0,
     });
 
     return this.userWorkspaceRepository.save(userWorkspace);
