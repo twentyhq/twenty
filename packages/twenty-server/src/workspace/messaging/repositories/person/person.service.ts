@@ -35,7 +35,7 @@ export class PersonService {
       handle: string;
       firstName: string;
       lastName: string;
-      companyId: string;
+      companyId?: string;
     }[],
     workspaceId: string,
     transactionManager?: EntityManager,

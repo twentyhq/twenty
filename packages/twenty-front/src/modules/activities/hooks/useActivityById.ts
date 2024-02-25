@@ -1,4 +1,4 @@
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 

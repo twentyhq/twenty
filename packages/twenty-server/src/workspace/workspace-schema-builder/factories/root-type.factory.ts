@@ -74,7 +74,7 @@ export class RootTypeFactory {
         const args = getResolverArgs(methodName);
         const objectType = this.typeDefinitionsStorage.getObjectTypeByKey(
           objectMetadata.id,
-          methodName === 'findMany'
+          ['findMany', 'findDuplicates'].includes(methodName)
             ? ObjectTypeDefinitionKind.Connection
             : ObjectTypeDefinitionKind.Plain,
         );

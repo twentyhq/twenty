@@ -6,12 +6,14 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from 'src/core/user/user.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -65,4 +67,10 @@ export class Workspace {
 
   @Field()
   activationStatus: 'active' | 'inactive';
+
+  @OneToOne(
+    () => BillingSubscription,
+    (billingSubscription) => billingSubscription.workspace,
+  )
+  billingSubscription: BillingSubscription;
 }
