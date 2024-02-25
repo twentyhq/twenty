@@ -64,6 +64,7 @@ export const ApiKeyForm = () => {
       }
 
       if (localStorage.serverBaseUrl) {
+        setShowSection(true);
         setRoute(localStorage.serverBaseUrl);
       }
     };
@@ -76,7 +77,11 @@ export const ApiKeyForm = () => {
   }, [apiKey]);
 
   useEffect(() => {
-    chrome.storage.local.set({ serverBaseUrl: route });
+    if (import.meta.env.VITE_SERVER_BASE_URL !== route) {
+      chrome.storage.local.set({ serverBaseUrl: route });
+    } else {
+      chrome.storage.local.set({ serverBaseUrl: '' });
+    }
   }, [route]);
 
   const handleGenerateClick = () => {
