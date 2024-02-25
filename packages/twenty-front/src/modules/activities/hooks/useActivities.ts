@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -41,9 +41,12 @@ export const useActivities = ({
   });
 
   const activityIds = activityTargets
-    ?.map((activityTarget) => activityTarget.activityId)
-    .filter(isNonEmptyString)
-    .toSorted(sortByAscString);
+    ? [
+        ...activityTargets
+          .map((activityTarget) => activityTarget.activityId)
+          .filter(isNonEmptyString),
+      ].sort(sortByAscString)
+    : [];
 
   const activityTargetsFound =
     initializedActivityTargets && isNonEmptyArray(activityTargets);
@@ -90,7 +93,7 @@ export const useActivities = ({
   const loading = loadingActivities || loadingActivityTargets;
 
   // TODO: fix connection in relation => automatically change to an array
-  const activities = activitiesWithConnection
+  const activities: Activity[] = activitiesWithConnection
     ?.map(makeActivityWithoutConnection as any)
     .map(({ activity }: any) => activity);
 

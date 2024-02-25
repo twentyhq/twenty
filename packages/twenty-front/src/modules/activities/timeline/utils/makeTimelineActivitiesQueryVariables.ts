@@ -9,7 +9,7 @@ export const makeTimelineActivitiesQueryVariables = ({
   return {
     filter: {
       id: {
-        in: activityIds.toSorted(sortByAscString),
+        in: [...activityIds].sort(sortByAscString),
       },
     },
     orderBy: {

@@ -196,7 +196,7 @@ export const CommandMenu = () => {
         id: activity.id,
         label: activity.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(activity),
+        onCommandClick: () => openActivityRightDrawer(activity.id),
       })),
     [activities, openActivityRightDrawer],
   );
@@ -372,7 +372,7 @@ export const CommandMenu = () => {
                           Icon={IconNotes}
                           key={activity.id}
                           label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity)}
+                          onClick={() => openActivityRightDrawer(activity.id)}
                         />
                       </SelectableItem>
                     ))}

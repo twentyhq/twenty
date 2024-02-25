@@ -1,5 +1,6 @@
 import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';
 
+import { FindDuplicatesResolverFactory } from './find-duplicates-resolver.factory';
 import { FindManyResolverFactory } from './find-many-resolver.factory';
 import { FindOneResolverFactory } from './find-one-resolver.factory';
 import { CreateManyResolverFactory } from './create-many-resolver.factory';
@@ -12,6 +13,7 @@ import { ExecuteQuickActionOnOneResolverFactory } from './execute-quick-action-o
 export const workspaceResolverBuilderFactories = [
   FindManyResolverFactory,
   FindOneResolverFactory,
+  FindDuplicatesResolverFactory,
   CreateManyResolverFactory,
   CreateOneResolverFactory,
   UpdateOneResolverFactory,
@@ -25,6 +27,7 @@ export const workspaceResolverBuilderMethodNames = {
   queries: [
     FindManyResolverFactory.methodName,
     FindOneResolverFactory.methodName,
+    FindDuplicatesResolverFactory.methodName,
   ],
   mutations: [
     CreateManyResolverFactory.methodName,

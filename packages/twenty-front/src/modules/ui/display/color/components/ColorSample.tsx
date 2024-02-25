@@ -5,10 +5,12 @@ import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
 
-const StyledColorSample = styled.div<{
+export type ColorSampleProps = {
   colorName: ThemeColor;
   variant?: ColorSampleVariant;
-}>`
+};
+
+const StyledColorSample = styled.div<ColorSampleProps>`
   background-color: ${({ theme, colorName }) =>
     theme.tag.background[colorName]};
   border: 1px solid ${({ theme, colorName }) => theme.tag.text[colorName]};

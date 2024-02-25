@@ -209,6 +209,7 @@ export class WorkspaceMetadataUpdaterService {
     storage: WorkspaceSyncStorage,
   ): Promise<{
     createdRelationMetadataCollection: RelationMetadataEntity[];
+    updatedRelationMetadataCollection: RelationMetadataEntity[];
   }> {
     const relationMetadataRepository = manager.getRepository(
       RelationMetadataEntity,
@@ -221,6 +222,15 @@ export class WorkspaceMetadataUpdaterService {
     const createdRelationMetadataCollection =
       await relationMetadataRepository.save(
         storage.relationMetadataCreateCollection,
+      );
+
+    /**
+     * Update relation metadata
+     */
+
+    const updatedRelationMetadataCollection =
+      await relationMetadataRepository.save(
+        storage.relationMetadataUpdateCollection,
       );
 
     /**
@@ -250,6 +260,7 @@ export class WorkspaceMetadataUpdaterService {
 
     return {
       createdRelationMetadataCollection,
+      updatedRelationMetadataCollection,
     };
   }
 }

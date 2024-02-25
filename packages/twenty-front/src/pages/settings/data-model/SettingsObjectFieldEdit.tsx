@@ -209,7 +209,6 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           disabled={!activeMetadataField.isCustom}
-          disableNameEdition
           name={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}

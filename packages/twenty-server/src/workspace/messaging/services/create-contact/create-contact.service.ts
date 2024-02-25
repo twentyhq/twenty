@@ -9,7 +9,7 @@ import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/workspace/m
 type ContactToCreate = {
   handle: string;
   displayName: string;
-  companyId: string;
+  companyId?: string;
 };
 
 type FormattedContactToCreate = {
@@ -17,7 +17,7 @@ type FormattedContactToCreate = {
   handle: string;
   firstName: string;
   lastName: string;
-  companyId: string;
+  companyId?: string;
 };
 
 @Injectable()
