@@ -1,9 +1,8 @@
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { IconPlus } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-
-import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
 
 type AddObjectFilterFromDetailsButtonProps = {
   filterDropdownId?: string;
@@ -12,7 +11,7 @@ type AddObjectFilterFromDetailsButtonProps = {
 export const AddObjectFilterFromDetailsButton = ({
   filterDropdownId,
 }: AddObjectFilterFromDetailsButtonProps) => {
-  const { toggleDropdown } = useDropdown(ObjectFilterDropdownId);
+  const { toggleDropdown } = useDropdown(OBJECT_FILTER_DROPDOWN_ID);
 
   const { resetFilter } = useFilterDropdown({
     filterDropdownId: filterDropdownId,

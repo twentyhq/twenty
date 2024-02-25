@@ -6,7 +6,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
-import { commandMenuCommands } from '../constants/commandMenuCommands';
+import { COMMAND_MENU_COMMANDS } from '../constants/CommandMenuCommands';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command } from '../types/Command';
@@ -62,7 +62,7 @@ export const useCommandMenu = () => {
   );
 
   const setToInitialCommandMenu = () => {
-    setCommands(commandMenuCommands);
+    setCommands(COMMAND_MENU_COMMANDS);
   };
 
   const onItemClick = useCallback(

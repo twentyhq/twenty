@@ -8,7 +8,7 @@ import {
   RecordBoardDeprecatedProps,
 } from '@/object-record/record-board-deprecated/components/RecordBoardDeprecated';
 import { RecordBoardDeprecatedEffect } from '@/object-record/record-board-deprecated/components/RecordBoardDeprecatedEffect';
-import { BoardOptionsDropdownId } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
+import { BOARD_OPTIONS_DROPDOWN_ID } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
 import { RecordBoardDeprecatedOptionsDropdown } from '@/object-record/record-board-deprecated/options/components/RecordBoardDeprecatedOptionsDropdown';
 import { BoardColumnDefinition } from '@/object-record/record-board-deprecated/types/BoardColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -66,7 +66,7 @@ export const CompanyBoard = ({
             onStageAdd={onStageAdd}
           />
         }
-        optionsDropdownScopeId={BoardOptionsDropdownId}
+        optionsDropdownScopeId={BOARD_OPTIONS_DROPDOWN_ID}
       />
 
       <HooksCompanyBoardEffect
