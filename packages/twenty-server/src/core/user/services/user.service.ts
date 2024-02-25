@@ -49,7 +49,10 @@ export class UserService extends TypeOrmQueryService<User> {
       return;
     }
 
-    assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
+    assert(
+      workspaceMembers.length === 1,
+      'WorkspaceMember not found or too many found',
+    );
 
     const userWorkspaceMember = new WorkspaceMember();
 
