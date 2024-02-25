@@ -3,7 +3,10 @@ import styled from '@emotion/styled';
 import { ColorPickerButton } from '@/ui/input/button/components/ColorPickerButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
 
 type SettingsAccountsColorSettingCardProps = {
   onChange: (nextValue: ThemeColor) => void;
@@ -22,7 +25,7 @@ export const SettingsAccountsColorSettingCard = ({
 }: SettingsAccountsColorSettingCardProps) => (
   <Card>
     <StyledCardContent>
-      {mainColorNames.map((colorName) => (
+      {MAIN_COLOR_NAMES.map((colorName) => (
         <ColorPickerButton
           colorName={colorName}
           isSelected={value === colorName}

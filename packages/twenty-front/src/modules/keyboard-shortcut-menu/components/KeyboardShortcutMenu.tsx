@@ -2,13 +2,11 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { KEYBOARD_SHORTCUTS_GENERAL } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral';
+import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsTable';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
-import {
-  keyboardShortcutsGeneral,
-  keyboardShortcutsTable,
-} from '../constants/keyboardShortcuts';
 import { useKeyboardShortcutMenu } from '../hooks/useKeyboardShortcutMenu';
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
 
@@ -48,12 +46,12 @@ export const KeyboardShortcutMenu = () => {
       {isKeyboardShortcutMenuOpened && (
         <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
           <KeyboardMenuGroup heading="Table">
-            {keyboardShortcutsTable.map((TableShortcut, index) => (
+            {KEYBOARD_SHORTCUTS_TABLE.map((TableShortcut, index) => (
               <KeyboardMenuItem shortcut={TableShortcut} key={index} />
             ))}
           </KeyboardMenuGroup>
           <KeyboardMenuGroup heading="General">
-            {keyboardShortcutsGeneral.map((GeneralShortcut) => (
+            {KEYBOARD_SHORTCUTS_GENERAL.map((GeneralShortcut) => (
               <KeyboardMenuItem shortcut={GeneralShortcut} />
             ))}
           </KeyboardMenuGroup>

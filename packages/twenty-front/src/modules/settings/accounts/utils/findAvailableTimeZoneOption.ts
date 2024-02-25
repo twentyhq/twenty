@@ -1,4 +1,4 @@
-import { availableTimeZoneOptionsByLabel } from '@/settings/accounts/constants/timeZoneSelectOptions';
+import { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } from '@/settings/accounts/constants/AvailableTimezoneOptionsByLabel';
 import { formatTimeZoneLabel } from '@/settings/accounts/utils/formatTimeZoneLabel';
 
 /**
@@ -7,4 +7,4 @@ import { formatTimeZoneLabel } from '@/settings/accounts/utils/formatTimeZoneLab
  * @returns the matching available IANA time zone select option or undefined
  */
 export const findAvailableTimeZoneOption = (value: string) =>
-  availableTimeZoneOptionsByLabel[formatTimeZoneLabel(value)];
+  AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL[formatTimeZoneLabel(value)];

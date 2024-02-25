@@ -1,10 +1,10 @@
-import handleQueryParams from '../utils/handleQueryParams';
-import requestDb from '../utils/requestDb';
-import createNewButton from './createButton';
-import extractCompanyLinkedinLink from './utils/extractCompanyLinkedinLink';
-import extractDomain from './utils/extractDomain';
+import createNewButton from '~/contentScript/createButton';
+import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
+import extractDomain from '~/contentScript/utils/extractDomain';
+import handleQueryParams from '~/utils/handleQueryParams';
+import requestDb from '~/utils/requestDb';
 
-function insertButtonForCompany(): void {
+const insertButtonForCompany = (): void => {
   // Select the element in which to create the button.
   const parentDiv: HTMLDivElement | null = document.querySelector(
     '.org-top-card-primary-actions__inner',
@@ -101,6 +101,6 @@ function insertButtonForCompany(): void {
 
     Object.assign(newButtonCompany.style, buttonSpecificStyles);
   }
-}
+};
 
 export default insertButtonForCompany;

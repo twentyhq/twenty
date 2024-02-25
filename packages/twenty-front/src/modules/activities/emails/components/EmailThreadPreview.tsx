@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { grayScale } from '@/ui/theme/constants/colors';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
@@ -129,8 +129,8 @@ export const EmailThreadPreview = ({
               avatarUrl={finalAvatarUrl}
               placeholder={finalDisplayedName}
               type="rounded"
-              color={isCountIcon ? grayScale.gray50 : undefined}
-              backgroundColor={isCountIcon ? grayScale.gray10 : undefined}
+              color={isCountIcon ? GRAY_SCALE.gray50 : undefined}
+              backgroundColor={isCountIcon ? GRAY_SCALE.gray10 : undefined}
             />
           )}
         </StyledParticipantsContainer>

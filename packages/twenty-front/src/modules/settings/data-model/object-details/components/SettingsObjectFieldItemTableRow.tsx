@@ -6,14 +6,14 @@ import styled from '@emotion/styled';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Nullable } from '~/types/Nullable';
 
-import { relationTypes } from '../../constants/relationTypes';
-import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
+import { RELATION_TYPES } from '../../constants/RelationTypes';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -51,7 +51,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
   const fieldDataTypeIsSupported =
-    fieldMetadataItem.type in settingsFieldMetadataTypes;
+    fieldMetadataItem.type in SETTINGS_FIELD_METADATA_TYPES;
 
   const getRelationMetadata = useGetRelationMetadata();
 
@@ -64,7 +64,7 @@ export const SettingsObjectFieldItemTableRow = ({
   if (!fieldDataTypeIsSupported) return null;
 
   const RelationIcon = relationType
-    ? relationTypes[relationType].Icon
+    ? RELATION_TYPES[relationType].Icon
     : undefined;
 
   return (

@@ -7,7 +7,7 @@ export type IndexHeading = {
   [heading: string]: IndexSubtopic[];
 };
 
-export const UserGuideIndex = {
+export const USER_GUIDE_INDEX = {
   'Getting Started': [
     { title: 'What is Twenty', url: 'what-is-twenty' },
     { title: 'Create a Workspace', url: 'create-a-workspace' },
