@@ -96,7 +96,7 @@ export const SettingsAboutSection = ({
                     onClick={handleEdit}
                   />
                   <MenuItem
-                    text="Disable"
+                    text="Deactivate"
                     LeftIcon={IconArchive}
                     onClick={handleDisable}
                   />
