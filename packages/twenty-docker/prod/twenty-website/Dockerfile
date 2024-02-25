@@ -4,8 +4,6 @@ FROM node:18.17.1-alpine as twenty-website-build
 WORKDIR /app
 
 COPY ./package.json .
-COPY ./.eslintrc.js .
-COPY ./.prettierrc .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
