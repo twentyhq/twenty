@@ -20,6 +20,8 @@ const requestDb = async (query: string) => {
   );
 
   if (!response.ok) {
+    // TODO: Handle error gracefully and remove the console statement.
+    /* eslint-disable no-console */
     console.error(response);
   }
 

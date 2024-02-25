@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
-import { H2Title } from '../../ui/display/typography/components/H2Title';
 import { useEffect, useState } from 'react';
-import { TextInput } from '../../ui/input/components/TextInput';
-import { Button } from '../../ui/input/button/Button';
-import { Toggle } from '../../ui/input/components/Toggle';
+import styled from '@emotion/styled';
+
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Toggle } from '@/ui/input/components/Toggle';
 
 const StyledContainer = styled.div<{ isToggleOn: boolean }>`
   width: 400px;
@@ -18,8 +19,8 @@ const StyledContainer = styled.div<{ isToggleOn: boolean }>`
 `;
 
 const StyledHeader = styled.header`
-  text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
 `;
 
 const StyledImg = styled.img``;
