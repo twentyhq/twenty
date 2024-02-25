@@ -4,12 +4,10 @@ import styled from '@emotion/styled';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { animate } from 'framer-motion';
 
-import {
-  Background,
-  DarkBackground,
-  DarkMovingImage,
-  MovingImage,
-} from '@/ui/layout/animated-placeholder/constants/AnimatedImages';
+import { BACKGROUND } from '@/ui/layout/animated-placeholder/constants/Background';
+import { DARK_BACKGROUND } from '@/ui/layout/animated-placeholder/constants/DarkBackground';
+import { DARK_MOVING_IMAGE } from '@/ui/layout/animated-placeholder/constants/DarkMovingImage';
+import { MOVING_IMAGE } from '@/ui/layout/animated-placeholder/constants/MovingImage';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -39,7 +37,7 @@ const StyledMovingImage = styled(motion.img)<StyledImageProps>`
 `;
 
 interface AnimatedPlaceholderProps {
-  type: keyof typeof Background | keyof typeof MovingImage;
+  type: keyof typeof BACKGROUND | keyof typeof MOVING_IMAGE;
 }
 
 const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
@@ -89,12 +87,14 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   return (
     <StyledContainer>
       <StyledBackgroundImage
-        src={theme.name === 'dark' ? DarkBackground[type] : Background[type]}
+        src={theme.name === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
         alt="Background"
         type={type}
       />
       <StyledMovingImage
-        src={theme.name === 'dark' ? DarkMovingImage[type] : MovingImage[type]}
+        src={
+          theme.name === 'dark' ? DARK_MOVING_IMAGE[type] : MOVING_IMAGE[type]
+        }
         alt="Moving"
         style={{ translateX, translateY }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}

@@ -13,10 +13,10 @@ import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/Keyboa
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
+import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
-import { desktopNavDrawerWidths } from '@/ui/navigation/navigation-drawer/constants';
+import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -100,7 +100,9 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
             marginLeft:
               isSettingsPage && !isMobile
                 ? (widowsWidth -
-                    (objectSettingsWidth + desktopNavDrawerWidths.menu + 64)) /
+                    (OBJECT_SETTINGS_WIDTH +
+                      DESKTOP_NAV_DRAWER_WIDTHS.menu +
+                      64)) /
                   2
                 : 0,
           }}

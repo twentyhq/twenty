@@ -5,7 +5,7 @@ export type UserGuideHomeCardsType = {
   image: string;
 };
 
-export const UserGuideHomeCards: UserGuideHomeCardsType[] = [
+export const USER_GUIDE_HOME_CARDS: UserGuideHomeCardsType[] = [
   {
     url: 'what-is-twenty',
     title: 'What is Twenty',
