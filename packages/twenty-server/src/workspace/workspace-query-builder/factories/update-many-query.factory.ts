@@ -10,6 +10,12 @@ import { UpdateManyResolverArgs } from 'src/workspace/workspace-resolver-builder
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { FieldsStringFactory } from 'src/workspace/workspace-query-builder/factories/fields-string.factory';
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+
+export interface UpdateManyQueryFactoryOptions
+  extends WorkspaceQueryBuilderOptions {
+  atMost?: number;
+}
 
 @Injectable()
 export class UpdateManyQueryFactory {
@@ -23,11 +29,12 @@ export class UpdateManyQueryFactory {
     Filter extends RecordFilter = RecordFilter,
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: UpdateManyQueryFactoryOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
+      options.objectMetadataCollection,
     );
 
     const computedArgs = this.argsAliasFactory.create(
@@ -42,9 +49,10 @@ export class UpdateManyQueryFactory {
 
     return `
     mutation {
-      update${options.targetTableName}Collection(
+      update${computeObjectTargetTable(options.objectMetadataItem)}Collection(
         set: ${stringifyWithoutKeyQuote(argsData)},
         filter: ${stringifyWithoutKeyQuote(args.filter)},
+        atMost: ${options.atMost ?? 1},
       ) {
         affectedCount
         records {

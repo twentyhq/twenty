@@ -1,13 +1,15 @@
 import { PropsWithChildren, useEffect, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/field/hooks/useToggleEditOnlyInput';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { useTableCell } from '../hooks/useTableCell';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
@@ -16,25 +18,25 @@ type RecordTableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 export const RecordTableCellSoftFocusMode = ({
   children,
 }: RecordTableCellSoftFocusModeProps) => {
-  const { openTableCell } = useTableCell();
+  const { openTableCell } = useOpenRecordTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState);
+
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  }, []);
+    if (!isSoftFocusUsingMouse) {
+      scrollRef.current?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [isSoftFocusUsingMouse]);
 
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
       if (!isFieldInputOnly) {
-        openTableCell({
-          initialValue: {
-            isEmpty: true,
-          },
-        });
+        openTableCell();
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -75,9 +77,7 @@ export const RecordTableCellSoftFocusMode = ({
         keyboardEvent.stopImmediatePropagation();
 
         openTableCell({
-          initialValue: {
-            value: keyboardEvent.key,
-          },
+          initialValue: keyboardEvent.key,
         });
       }
     },

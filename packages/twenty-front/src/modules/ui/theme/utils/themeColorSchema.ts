@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
-import { mainColorNames, ThemeColor } from '../constants/colors';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
 
 export const themeColorSchema = z.enum(
-  mainColorNames as [ThemeColor, ...ThemeColor[]],
+  MAIN_COLOR_NAMES as [ThemeColor, ...ThemeColor[]],
 );

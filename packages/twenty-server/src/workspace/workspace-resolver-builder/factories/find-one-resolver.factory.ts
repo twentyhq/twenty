@@ -26,10 +26,12 @@ export class FindOneResolverFactory
 
     return (_source, args, context, info) => {
       return this.workspaceQueryRunnerService.findOne(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }

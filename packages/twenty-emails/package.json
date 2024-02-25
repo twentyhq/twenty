@@ -1,0 +1,35 @@
+{
+  "name": "twenty-emails",
+  "version": "0.3.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
+    "build": "vite build",
+    "lint": "eslint"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@nx/vite": "17.2.8",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "~2.3.0",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  },
+  "nx": {
+    "projectType": "library"
+  }
+}

@@ -22,7 +22,7 @@ export const Default: Story = {
     accent: ChipAccent.TextPrimary,
     disabled: false,
     clickable: true,
-    maxWidth: '200px',
+    maxWidth: 200,
   },
   decorators: [ComponentDecorator],
 };

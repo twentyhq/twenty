@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+import { Person } from '@/people/types/Person';
+
 export const query = gql`
   mutation CreatePeople($data: [PersonCreateInput!]!) {
     createPeople(data: $data) {
@@ -7,6 +9,7 @@ export const query = gql`
       opportunities {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -19,12 +22,14 @@ export const query = gql`
       pointOfContactForOpportunities {
         edges {
           node {
+            __typename
             id
           }
         }
       }
       createdAt
       company {
+        __typename
         id
       }
       city
@@ -32,6 +37,7 @@ export const query = gql`
       activityTargets {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -40,6 +46,7 @@ export const query = gql`
       favorites {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -47,6 +54,7 @@ export const query = gql`
       attachments {
         edges {
           node {
+            __typename
             id
           }
         }
@@ -67,12 +75,15 @@ export const query = gql`
   }
 `;
 
-export const variables = {
-  data: [
-    { id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9' },
-    { id: '37faabcd-cb39-4a0a-8618-7e3fda9afca0' },
-  ],
-};
+const data = [
+  {
+    id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
+    name: { firstName: 'John', lastName: 'Doe' },
+  },
+  { id: '37faabcd-cb39-4a0a-8618-7e3fda9afca0', jobTitle: 'manager' },
+] satisfies Partial<Person>[];
+
+export const variables = { data };
 
 export const responseData = {
   opportunities: {
@@ -114,3 +125,8 @@ export const responseData = {
   avatarUrl: '',
   companyId: '',
 };
+
+export const response = data.map((personData) => ({
+  ...responseData,
+  ...personData,
+}));

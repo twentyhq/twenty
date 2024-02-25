@@ -5,8 +5,8 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 export const useDisableSoftFocus = (recordTableId?: string) => {
   const {
-    softFocusPositionState,
-    isSoftFocusActiveState,
+    getSoftFocusPositionState,
+    getIsSoftFocusActiveState,
     isSoftFocusOnTableCellFamilyState,
   } = useRecordTableStates(recordTableId);
 
@@ -15,18 +15,18 @@ export const useDisableSoftFocus = (recordTableId?: string) => {
       return () => {
         const currentPosition = getSnapshotValue(
           snapshot,
-          softFocusPositionState(),
+          getSoftFocusPositionState(),
         );
 
-        set(isSoftFocusActiveState(), false);
+        set(getIsSoftFocusActiveState(), false);
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
       };
     },
     [
-      isSoftFocusActiveState,
+      getIsSoftFocusActiveState,
+      getSoftFocusPositionState,
       isSoftFocusOnTableCellFamilyState,
-      softFocusPositionState,
     ],
   );
 };

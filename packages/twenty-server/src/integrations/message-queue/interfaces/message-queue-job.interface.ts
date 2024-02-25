@@ -1,4 +1,4 @@
-export interface MessageQueueJob<T extends MessageQueueJobData> {
+export interface MessageQueueJob<T extends MessageQueueJobData | undefined> {
   handle(data: T): Promise<void> | void;
 }
 

@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -7,11 +14,14 @@ import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { User } from 'src/core/user/user.entity';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
+import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
 
 import { Workspace } from './workspace.entity';
 
@@ -33,6 +43,15 @@ export class WorkspaceResolver {
     assert(workspace, 'User not found');
 
     return workspace;
+  }
+
+  @Mutation(() => Workspace)
+  @UseGuards(JwtAuthGuard)
+  async activateWorkspace(
+    @Args('data') data: ActivateWorkspaceInput,
+    @AuthUser() user: User,
+  ) {
+    return await this.workspaceService.activateWorkspace(user, data);
   }
 
   @Mutation(() => Workspace)
@@ -77,5 +96,16 @@ export class WorkspaceResolver {
     }
 
     return this.workspaceService.deleteWorkspace(id);
+  }
+
+  @ResolveField(() => String)
+  async activationStatus(
+    @Parent() workspace: Workspace,
+  ): Promise<'active' | 'inactive'> {
+    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
+      return 'active';
+    }
+
+    return 'inactive';
   }
 }

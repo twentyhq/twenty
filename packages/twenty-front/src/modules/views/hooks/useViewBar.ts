@@ -43,7 +43,6 @@ export const useViewBar = (props?: UseViewProps) => {
     availableSortDefinitionsState,
     entityCountInCurrentViewState,
     viewObjectMetadataIdState,
-    viewTypeState,
   } = useViewScopedStates({
     viewScopeId: scopeId,
   });
@@ -79,7 +78,6 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
   const setViewObjectMetadataId = useSetRecoilState(viewObjectMetadataIdState);
-  const setViewType = useSetRecoilState(viewTypeState);
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -129,8 +127,9 @@ export const useViewBar = (props?: UseViewProps) => {
         if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
           set(currentViewFieldsState, queriedViewFields);
           set(savedViewFieldsState, queriedViewFields);
-          onViewFieldsChange?.(queriedViewFields);
         }
+
+        onViewFieldsChange?.(queriedViewFields);
       },
     [scopeId],
   );
@@ -237,16 +236,19 @@ export const useViewBar = (props?: UseViewProps) => {
       (viewId: string) => {
         setCurrentViewId?.(viewId);
 
-        const { currentView } = getViewScopedStateValuesFromSnapshot({
-          snapshot,
-          viewScopeId: scopeId,
-          viewId,
-        });
+        const { currentView, onViewTypeChange, onViewCompactModeChange } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+            viewId,
+          });
 
         if (!currentView) {
           return;
         }
 
+        onViewTypeChange?.(currentView.type);
+        onViewCompactModeChange?.(currentView.isCompact);
         loadViewFields(currentView.viewFields, viewId);
         loadViewFilters(currentView.viewFilters, viewId);
         loadViewSorts(currentView.viewSorts, viewId);
@@ -418,7 +420,6 @@ export const useViewBar = (props?: UseViewProps) => {
 
     setViewEditMode,
     setViewObjectMetadataId,
-    setViewType,
     setEntityCountInCurrentView,
     setAvailableFieldDefinitions,
 

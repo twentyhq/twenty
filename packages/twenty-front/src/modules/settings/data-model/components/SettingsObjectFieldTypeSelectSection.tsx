@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
 
+import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
-
-import { relationTypes } from '../constants/relationTypes';
-import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 
 import {
   SettingsObjectFieldCurrencyForm,
@@ -71,7 +70,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   const relationFormConfig = values.relation;
   const selectFormConfig = values.select;
 
-  const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
+  const fieldTypeOptions = Object.entries(SETTINGS_FIELD_METADATA_TYPES)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
     .map(([key, dataTypeConfig]) => ({
       value: key as FieldMetadataType,
@@ -124,11 +123,11 @@ export const SettingsObjectFieldTypeSelectSection = ({
                   !!relationFormConfig.objectMetadataId && (
                     <>
                       <StyledRelationImage
-                        src={relationTypes[relationFormConfig.type].imageSrc}
+                        src={RELATION_TYPES[relationFormConfig.type].imageSrc}
                         flip={
-                          relationTypes[relationFormConfig.type].isImageFlipped
+                          RELATION_TYPES[relationFormConfig.type].isImageFlipped
                         }
-                        alt={relationTypes[relationFormConfig.type].label}
+                        alt={RELATION_TYPES[relationFormConfig.type].label}
                       />
                       <StyledSettingsObjectFieldPreview
                         fieldMetadata={{

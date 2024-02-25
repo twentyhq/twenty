@@ -5,10 +5,11 @@ import graphqlFields from 'graphql-fields';
 import isEmpty from 'lodash.isempty';
 
 import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
-import { FieldAliasFacotry } from './field-alias.factory';
+import { FieldAliasFactory } from './field-alias.factory';
 import { RelationFieldAliasFactory } from './relation-field-alias.factory';
 
 @Injectable()
@@ -16,13 +17,14 @@ export class FieldsStringFactory {
   private readonly logger = new Logger(FieldsStringFactory.name);
 
   constructor(
-    private readonly fieldAliasFactory: FieldAliasFacotry,
+    private readonly fieldAliasFactory: FieldAliasFactory,
     private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
   ) {}
 
   create(
     info: GraphQLResolveInfo,
     fieldMetadataCollection: FieldMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataInterface[],
   ): Promise<string> {
     const selectedFields: Record<string, any> = graphqlFields(info);
 
@@ -30,6 +32,7 @@ export class FieldsStringFactory {
       info,
       selectedFields,
       fieldMetadataCollection,
+      objectMetadataCollection,
     );
   }
 
@@ -37,6 +40,7 @@ export class FieldsStringFactory {
     info: GraphQLResolveInfo,
     selectedFields: Record<string, any>,
     fieldMetadataCollection: FieldMetadataInterface[],
+    objectMetadataCollection: ObjectMetadataInterface[],
     accumulator = '',
   ): Promise<string> {
     const fieldMetadataMap = new Map(
@@ -58,6 +62,7 @@ export class FieldsStringFactory {
             fieldKey,
             fieldValue,
             fieldMetadata,
+            objectMetadataCollection,
             info,
           );
 
@@ -84,6 +89,7 @@ export class FieldsStringFactory {
           info,
           fieldValue,
           fieldMetadataCollection,
+          objectMetadataCollection,
           accumulator,
         );
         accumulator += `}\n`;

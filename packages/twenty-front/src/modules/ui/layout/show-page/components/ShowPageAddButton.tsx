@@ -8,6 +8,7 @@ import { IconCheckbox, IconNotes, IconPlus } from '@/ui/display/icon/index';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constants/ShowPageAddButtonDropdownId';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
@@ -18,22 +19,26 @@ const StyledContainer = styled.div`
 `;
 
 export const ShowPageAddButton = ({
-  entity,
+  activityTargetObject,
 }: {
-  entity: ActivityTargetableObject;
+  activityTargetObject: ActivityTargetableObject;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleSelect = (type: ActivityType) => {
-    openCreateActivity({ type, targetableObjects: [entity] });
+    openCreateActivity({
+      type,
+      targetableObjects: [activityTargetObject],
+    });
+
     closeDropdown();
   };
 
   return (
     <StyledContainer>
       <Dropdown
-        dropdownId="show-page-add-button-dropdown-id"
+        dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
           <IconButton
             Icon={IconPlus}

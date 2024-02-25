@@ -3,7 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { SoonPill } from '@/ui/display/pill/components/SoonPill';
+import { Pill } from '@/ui/display/pill/components/Pill';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -125,7 +125,7 @@ const StyledButton = styled.button<
               border-color: ${variant === 'secondary'
                 ? !disabled && focus
                   ? theme.color.blue
-                  : theme.background.transparent.light
+                  : theme.background.transparent.medium
                 : focus
                   ? theme.color.blue
                   : 'transparent'};
@@ -251,7 +251,7 @@ const StyledButton = styled.button<
   }
 `;
 
-const StyledSoonPill = styled(SoonPill)`
+const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
@@ -285,7 +285,7 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {soon && <StyledSoonPill />}
+      {soon && <StyledSoonPill label="Soon" />}
     </StyledButton>
   );
 };

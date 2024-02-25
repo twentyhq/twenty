@@ -42,12 +42,24 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   } = useFilterDropdownStates(scopeId);
 
   const selectFilter = useCallback(
-    (filter: Filter) => {
+    (filter: Filter | null) => {
       setSelectedFilter(filter);
       onFilterSelect?.(filter);
     },
     [setSelectedFilter, onFilterSelect],
   );
+
+  const emptyFilterButKeepDefinition = useCallback(() => {
+    setObjectFilterDropdownSearchInput('');
+    setObjectFilterDropdownSelectedEntityId(null);
+    setObjectFilterDropdownSelectedRecordIds([]);
+    setSelectedFilter(undefined);
+  }, [
+    setSelectedFilter,
+    setObjectFilterDropdownSelectedRecordIds,
+    setObjectFilterDropdownSelectedEntityId,
+    setObjectFilterDropdownSearchInput,
+  ]);
 
   const resetFilter = useCallback(() => {
     setObjectFilterDropdownSearchInput('');
@@ -91,5 +103,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     resetFilter,
     onFilterSelect,
     setOnFilterSelect,
+    emptyFilterButKeepDefinition,
   };
 };

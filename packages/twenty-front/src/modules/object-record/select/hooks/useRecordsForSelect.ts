@@ -2,12 +2,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
-import { isDefined } from '~/utils/isDefined';
-
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 
 export const useRecordsForSelect = ({
   searchFilterText,
@@ -37,85 +37,62 @@ export const useRecordsForSelect = ({
   ];
 
   const orderByField = getObjectOrderByField(sortOrder);
+  const selectedIdsFilter = { id: { in: selectedIds } };
 
   const { loading: selectedRecordsLoading, records: selectedRecordsData } =
     useFindManyRecords({
-      filter: {
-        id: {
-          in: selectedIds,
-        },
-      },
+      filter: selectedIdsFilter,
       orderBy: orderByField,
       objectNameSingular,
+      skip: !selectedIds.length,
     });
 
-  const searchFilter = filters
-    .map(({ fieldNames, filter }) => {
-      if (!isNonEmptyString(filter)) {
-        return undefined;
-      }
+  const searchFilters = filters.map(({ fieldNames, filter }) => {
+    if (!isNonEmptyString(filter)) {
+      return undefined;
+    }
 
-      return {
-        or: fieldNames.map((fieldName) => {
-          const fieldNameParts = fieldName.split('.');
+    return makeOrFilterVariables(
+      fieldNames.map((fieldName) => {
+        const [parentFieldName, subFieldName] = fieldName.split('.');
 
-          if (fieldNameParts.length > 1) {
-            // Composite field
-
-            return {
-              [fieldNameParts[0]]: {
-                [fieldNameParts[1]]: {
-                  ilike: `%${filter}%`,
-                },
-              },
-            };
-          }
+        if (subFieldName) {
+          // Composite field
           return {
-            [fieldName]: {
-              ilike: `%${filter}%`,
+            [parentFieldName]: {
+              [subFieldName]: {
+                ilike: `%${filter}%`,
+              },
             },
           };
-        }),
-      };
-    })
-    .filter(isDefined);
+        }
+
+        return {
+          [fieldName]: {
+            ilike: `%${filter}%`,
+          },
+        };
+      }),
+    );
+  });
 
   const {
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecordsData,
   } = useFindManyRecords({
-    filter: {
-      and: [
-        {
-          and: searchFilter,
-        },
-        {
-          id: {
-            in: selectedIds,
-          },
-        },
-      ],
-    },
+    filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
     orderBy: orderByField,
     objectNameSingular,
+    skip: !selectedIds.length,
   });
 
+  const notFilterIds = [...selectedIds, ...excludeEntityIds];
+  const notFilter = notFilterIds.length
+    ? { not: { id: { in: notFilterIds } } }
+    : undefined;
   const { loading: recordsToSelectLoading, records: recordsToSelectData } =
     useFindManyRecords({
-      filter: {
-        and: [
-          {
-            and: searchFilter,
-          },
-          {
-            not: {
-              id: {
-                in: [...selectedIds, ...excludeEntityIds],
-              },
-            },
-          },
-        ],
-      },
+      filter: makeAndFilterVariables([...searchFilters, notFilter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: orderByField,
       objectNameSingular,

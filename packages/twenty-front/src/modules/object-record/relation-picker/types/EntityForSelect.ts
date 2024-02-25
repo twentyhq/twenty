@@ -1,9 +1,4 @@
-import { AvatarType } from '@/users/components/Avatar';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
-export type EntityForSelect = {
-  id: string;
-  name: string;
-  avatarUrl?: string;
-  avatarType?: AvatarType;
-  record: any;
-};
+export type EntityForSelect = ObjectRecordIdentifier & { record: ObjectRecord };

@@ -1,10 +1,11 @@
+import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
+
 export const isGatedAndNotEnabled = (
-  metadata,
+  gate: GateDecoratorParams | undefined,
   workspaceFeatureFlagsMap: Record<string, boolean>,
 ): boolean => {
   const featureFlagValue =
-    metadata.gate?.featureFlag &&
-    workspaceFeatureFlagsMap[metadata.gate.featureFlag];
+    gate?.featureFlag && workspaceFeatureFlagsMap[gate.featureFlag];
 
-  return metadata.gate?.featureFlag !== undefined && !featureFlagValue;
+  return gate?.featureFlag !== undefined && !featureFlagValue;
 };

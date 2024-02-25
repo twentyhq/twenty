@@ -3,8 +3,9 @@ import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 
 import { IconCalendarX } from '@/ui/display/icon';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { overlayBackground } from '@/ui/theme/constants/effects';
+import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
+import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
+import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -89,7 +90,7 @@ const StyledContainer = styled.div`
   & .react-datepicker__month-dropdown,
   & .react-datepicker__year-dropdown {
     border: ${({ theme }) => theme.border.color.light};
-    ${overlayBackground}
+    ${OVERLAY_BACKGROUND}
     overflow-y: scroll;
     top: ${({ theme }) => theme.spacing(2)};
   }
@@ -226,20 +227,15 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
+  width: auto;
+  height: ${({ theme }) => theme.spacing(8)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
+  margin: ${({ theme }) => theme.spacing(2)};
+`;
 
-  & .menu-item {
-    height: ${({ theme }) => theme.spacing(8)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
-    margin-top: ${({ theme }) => theme.spacing(1)};
-    padding: 0 ${({ theme }) => theme.spacing(2)};
-    width: fit-content;
-  }
+const StyledButton = styled(MenuItemLeftContent)`
+  justify-content: center;
 `;
 
 export type InternalDatePickerProps = {
@@ -281,13 +277,8 @@ export const InternalDatePicker = ({
         ></ReactDatePicker>
       </div>
       {clearable && (
-        <StyledButtonContainer>
-          <MenuItem
-            text="Clear"
-            LeftIcon={IconCalendarX}
-            onClick={handleClear}
-            className="menu-item"
-          />
+        <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>
+          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
         </StyledButtonContainer>
       )}
     </StyledContainer>

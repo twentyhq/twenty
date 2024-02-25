@@ -2,23 +2,32 @@ import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
-import { StyledRow } from '@/object-record/record-table/components/RecordTableRow';
+import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { grayScale } from '@/ui/theme/constants/colors';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 type RecordTableBodyFetchMoreLoaderProps = {
-  objectNamePlural: string;
+  objectNameSingular: string;
 };
 
+const StyledText = styled.div`
+  align-items: center;
+  box-shadow: none;
+  color: ${GRAY_SCALE.gray40};
+  display: flex;
+  height: 32px;
+  margin-left: ${({ theme }) => theme.spacing(8)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const RecordTableBodyFetchMoreLoader = ({
-  objectNamePlural,
+  objectNameSingular,
 }: RecordTableBodyFetchMoreLoaderProps) => {
-  const { queryStateIdentifier } = useObjectRecordTable(objectNamePlural);
+  const { queryStateIdentifier } = useLoadRecordIndexTable(objectNameSingular);
   const { setRecordTableLastRowVisible } = useRecordTable();
 
-  const isFetchingMoreObjects = useRecoilValue(
+  const isFetchingMoreRecords = useRecoilValue(
     isFetchingMoreRecordsFamilyState(queryStateIdentifier),
   );
 
@@ -33,25 +42,15 @@ export const RecordTableBodyFetchMoreLoader = ({
     onChange: onLastRowVisible,
   });
 
-  const StyledText = styled.div`
-    align-items: center;
-    box-shadow: none;
-    color: ${grayScale.gray40};
-    display: flex;
-    height: 32px;
-    margin-left: ${({ theme }) => theme.spacing(8)};
-    padding-left: ${({ theme }) => theme.spacing(2)};
-  `;
-
   return (
     <tbody ref={tbodyRef}>
-      {isFetchingMoreObjects && (
-        <StyledRow selected={false}>
+      {isFetchingMoreRecords && (
+        <tr>
           <td colSpan={7}>
             <StyledText>Loading more...</StyledText>
           </td>
           <td colSpan={7} />
-        </StyledRow>
+        </tr>
       )}
     </tbody>
   );

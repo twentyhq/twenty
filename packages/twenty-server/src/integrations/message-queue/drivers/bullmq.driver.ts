@@ -93,7 +93,11 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const queueOptions = { jobId: options?.id, priority: options?.priority };
+    const queueOptions = {
+      jobId: options?.id,
+      priority: options?.priority,
+      attempts: 1 + (options?.retryLimit || 0),
+    };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }

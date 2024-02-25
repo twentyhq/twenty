@@ -17,6 +17,7 @@ import { CastToStringArray } from 'src/integrations/environment/decorators/cast-
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
+import { IsStrictlyLowerThan } from 'src/integrations/environment/decorators/is-strictly-lower-than.decorator';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -43,9 +44,21 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_BILLING_ENABLED?: boolean;
 
-  @IsOptional()
   @IsString()
-  BILLING_URL?: string;
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_PLAN_REQUIRED_LINK?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_API_KEY?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_WEBHOOK_SECRET?: string;
 
   @CastToBoolean()
   @IsOptional()
@@ -63,7 +76,11 @@ export class EnvironmentVariables {
   PORT: number;
 
   // Database
-  @IsUrl({ protocols: ['postgres'], require_tld: false })
+  @IsUrl({
+    protocols: ['postgres'],
+    require_tld: false,
+    allow_underscores: true,
+  })
   PG_DATABASE_URL: string;
 
   // Frontend URL
@@ -78,21 +95,25 @@ export class EnvironmentVariables {
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN: string;
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN: string;
+
   @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN: string;
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;
@@ -171,12 +192,35 @@ export class EnvironmentVariables {
   @IsString()
   SENTRY_DSN?: string;
 
+  @IsDuration()
+  @IsOptional()
+  PASSWORD_RESET_TOKEN_EXPIRES_IN?: number;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
+    message:
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
+  })
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number;
+
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
   IS_SIGN_UP_DISABLED?: boolean;
-}
 
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
+}
 export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 

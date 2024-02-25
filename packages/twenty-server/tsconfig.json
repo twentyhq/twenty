@@ -1,5 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -11,8 +13,6 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -23,6 +23,13 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "types": ["jest", "node"],
-    "jsx": "react-jsx"
+    "paths": {
+      "src/*": ["packages/twenty-server/src/*"],
+      "twenty-emails": ["packages/twenty-emails/src/index.ts"]
+    }
+  },
+  "ts-node": {
+    "files": true,
+    "require": ["tsconfig-paths/register"]
   }
 }

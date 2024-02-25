@@ -1,11 +1,20 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { Inject } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
-import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import {
+  GmailPartialSyncJob,
+  GmailPartialSyncJobData,
+} from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
+import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 
 interface GmailPartialSyncOptions {
   workspaceId: string;
@@ -17,11 +26,11 @@ interface GmailPartialSyncOptions {
 })
 export class GmailPartialSyncCommand extends CommandRunner {
   constructor(
-    private readonly messagingProducer: MessagingProducer,
-    private readonly utils: MessagingUtilsService,
-
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @Inject(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly connectedAccountService: ConnectedAccountService,
   ) {
     super();
   }
@@ -32,7 +41,7 @@ export class GmailPartialSyncCommand extends CommandRunner {
   ): Promise<void> {
     const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId: options.workspaceId,
-      key: 'IS_MESSAGING_ENABLED',
+      key: FeatureFlagKeys.IsMessagingEnabled,
       value: true,
     });
 
@@ -56,12 +65,18 @@ export class GmailPartialSyncCommand extends CommandRunner {
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     const connectedAccounts =
-      await this.utils.getConnectedAccountsFromWorkspaceId(workspaceId);
+      await this.connectedAccountService.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
-      await this.messagingProducer.enqueueGmailPartialSync(
-        { workspaceId, connectedAccountId: connectedAccount.id },
-        `${workspaceId}-${connectedAccount.id}`,
+      await this.messageQueueService.add<GmailPartialSyncJobData>(
+        GmailPartialSyncJob.name,
+        {
+          workspaceId,
+          connectedAccountId: connectedAccount.id,
+        },
+        {
+          retryLimit: 2,
+        },
       );
     }
   }

@@ -56,17 +56,16 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
     useRecordTableStates();
-
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 
   const scrollWrapper = useScrollWrapperScopedRef();
   const isTableWiderThanScreen =
     (scrollWrapper.current?.clientWidth ?? 0) <
     (scrollWrapper.current?.scrollWidth ?? 0);
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
 
   const theme = useTheme();
 

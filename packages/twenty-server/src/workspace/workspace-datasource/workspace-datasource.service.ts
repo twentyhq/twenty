@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -22,6 +22,15 @@ export class WorkspaceDataSourceService {
   public async connectToWorkspaceDataSource(
     workspaceId: string,
   ): Promise<DataSource> {
+    const { dataSource } =
+      await this.connectedToWorkspaceDataSourceAndReturnMetadata(workspaceId);
+
+    return dataSource;
+  }
+
+  public async connectedToWorkspaceDataSourceAndReturnMetadata(
+    workspaceId: string,
+  ) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -36,7 +45,7 @@ export class WorkspaceDataSourceService {
       );
     }
 
-    return dataSource;
+    return { dataSource, dataSourceMetadata };
   }
 
   /**
@@ -68,6 +77,7 @@ export class WorkspaceDataSourceService {
   /**
    *
    * Get the schema name for a workspace
+   * Note: This is assuming that the workspace only has one schema but we should prefer querying the metadata table instead.
    *
    * @param workspaceId
    * @returns string
@@ -96,5 +106,24 @@ export class WorkspaceDataSourceService {
     const base36String = base10Number.toString(36);
 
     return `${devId ? 'twenty_' : ''}${base36String}`;
+  }
+
+  public async executeRawQuery(
+    query: string,
+    parameters: any[] = [],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<any> {
+    if (transactionManager) {
+      return await transactionManager.query(query, parameters);
+    }
+    const workspaceDataSource =
+      await this.connectToWorkspaceDataSource(workspaceId);
+
+    if (workspaceDataSource) {
+      return await workspaceDataSource.query(query, parameters);
+    }
+
+    throw new Error('No data source found or transaction manager provided');
   }
 }

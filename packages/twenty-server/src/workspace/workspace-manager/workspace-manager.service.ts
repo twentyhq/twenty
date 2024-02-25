@@ -7,7 +7,7 @@ import { standardObjectsPrefillData } from 'src/workspace/workspace-manager/stan
 import { demoObjectsPrefillData } from 'src/workspace/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -39,8 +39,10 @@ export class WorkspaceManagerService {
     await this.setWorkspaceMaxRow(workspaceId, schemaName);
 
     await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      dataSourceMetadata.id,
-      workspaceId,
+      {
+        workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      },
     );
 
     await this.prefillWorkspaceWithStandardObjects(
@@ -69,11 +71,29 @@ export class WorkspaceManagerService {
     await this.setWorkspaceMaxRow(workspaceId, schemaName);
 
     await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      dataSourceMetadata.id,
-      workspaceId,
+      {
+        workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      },
     );
 
     await this.prefillWorkspaceWithDemoObjects(dataSourceMetadata, workspaceId);
+  }
+
+  /**
+   *
+   * Check if the workspace schema has already been created or not
+   *
+   * @param workspaceId
+   * @Returns Promise<boolean>
+   */
+  public async doesDataSourceExist(workspaceId: string): Promise<boolean> {
+    const dataSource =
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+        workspaceId,
+      );
+
+    return dataSource.length > 0;
   }
 
   /**

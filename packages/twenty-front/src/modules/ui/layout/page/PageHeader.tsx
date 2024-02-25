@@ -1,4 +1,5 @@
 import { ComponentProps, ReactNode } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -10,7 +11,7 @@ import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingText
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
@@ -71,11 +72,25 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.quaternary}
+      highlightColor={theme.background.transparent.light}
+      borderRadius={50}
+    >
+      <Skeleton height={24} width={108} />
+    </SkeletonTheme>
+  );
+};
+
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
   Icon: IconComponent;
   children?: ReactNode;
+  loading?: boolean;
 };
 
 export const PageHeader = ({
@@ -83,6 +98,7 @@ export const PageHeader = ({
   hasBackButton,
   Icon,
   children,
+  loading,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -105,12 +121,16 @@ export const PageHeader = ({
             variant="tertiary"
           />
         )}
-        <StyledTopBarIconStyledTitleContainer>
-          {Icon && <Icon size={theme.icon.size.md} />}
-          <StyledTitleContainer data-testid="top-bar-title">
-            <OverflowingTextWithTooltip text={title} />
-          </StyledTitleContainer>
-        </StyledTopBarIconStyledTitleContainer>
+        {loading ? (
+          <StyledSkeletonLoader />
+        ) : (
+          <StyledTopBarIconStyledTitleContainer>
+            {Icon && <Icon size={theme.icon.size.md} />}
+            <StyledTitleContainer data-testid="top-bar-title">
+              <OverflowingTextWithTooltip text={title} />
+            </StyledTitleContainer>
+          </StyledTopBarIconStyledTitleContainer>
+        )}
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>

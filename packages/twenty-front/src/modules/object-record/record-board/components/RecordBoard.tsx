@@ -1,42 +1,27 @@
-import { useCallback, useRef } from 'react';
+import { useContext, useRef } from 'react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordBoardActionBar } from '@/object-record/record-board/action-bar/components/RecordBoardActionBar';
-import { RecordBoardInternalEffect } from '@/object-record/record-board/components/RecordBoardInternalEffect';
-import { RecordBoardContextMenu } from '@/object-record/record-board/context-menu/components/RecordBoardContextMenu';
-import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useSetRecordBoardCardSelectedInternal } from '@/object-record/record-board/hooks/internal/useSetRecordBoardCardSelectedInternal';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
-import { Opportunity } from '@/pipeline/types/Opportunity';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { logError } from '~/utils/logError';
-
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
-import { BoardOptions } from '../types/BoardOptions';
-
-import { RecordBoardColumn } from './RecordBoardColumn';
 
 export type RecordBoardProps = {
   recordBoardId: string;
-  boardOptions: BoardOptions;
-  onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
-  onColumnDelete?: (boardColumnId: string) => void;
-  onEditColumnTitle: (params: {
-    columnId: string;
-    title: string;
-    color: string;
-  }) => void;
 };
 
-const StyledBoard = styled.div`
+const StyledContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex: 1;
@@ -59,110 +44,121 @@ const StyledBoardHeader = styled.div`
   z-index: 1;
 `;
 
-export const RecordBoard = ({
-  recordBoardId,
-  boardOptions,
-  onColumnDelete,
-  onEditColumnTitle,
-}: RecordBoardProps) => {
-  const recordBoardScopeId = recordBoardId;
-
-  const { boardColumnsState } = useRecordBoardScopedStates({
-    recordBoardScopeId,
-  });
-  const boardColumns = useRecoilValue(boardColumnsState);
-
-  const { updateOneRecord: updateOneOpportunity } =
-    useUpdateOneRecord<Opportunity>({
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
-    });
-
-  const { unselectAllActiveCards, setCardSelected } =
-    useSetRecordBoardCardSelectedInternal({ recordBoardScopeId });
-
-  const updatePipelineProgressStageInDB = useCallback(
-    async (pipelineProgressId: string, pipelineStepId: string) => {
-      await updateOneOpportunity?.({
-        idToUpdate: pipelineProgressId,
-        updateOneRecordInput: {
-          pipelineStepId: pipelineStepId,
-        },
-      });
-    },
-    [updateOneOpportunity],
-  );
-
-  useListenClickOutsideByClassName({
-    classNames: ['entity-board-card'],
-    excludeClassNames: ['action-bar', 'context-menu'],
-    callback: unselectAllActiveCards,
-  });
-
-  const onDragEnd: OnDragEndResponder = useCallback(
-    async (result) => {
-      if (!boardColumns) return;
-
-      try {
-        const draggedEntityId = result.draggableId;
-        const destinationColumnId = result.destination?.droppableId;
-
-        if (
-          draggedEntityId &&
-          destinationColumnId &&
-          updatePipelineProgressStageInDB
-        ) {
-          await updatePipelineProgressStageInDB(
-            draggedEntityId,
-            destinationColumnId,
-          );
-        }
-      } catch (e) {
-        logError(e);
-      }
-    },
-    [boardColumns, updatePipelineProgressStageInDB],
-  );
-
-  const sortedBoardColumns = [...boardColumns].sort((a, b) => {
-    return a.position - b.position;
-  });
-
+export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
+  const { updateOneRecord, selectFieldMetadataItem } =
+    useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  useScopedHotkeys(
-    'escape',
-    unselectAllActiveCards,
-    PageHotkeyScope.OpportunitiesPage,
+  const {
+    getColumnIdsState,
+    columnsFamilySelector,
+    recordIdsByColumnIdFamilyState,
+  } = useRecordBoardStates(recordBoardId);
+
+  const columnIds = useRecoilValue(getColumnIdsState());
+
+  const { resetRecordSelection, setRecordAsSelected } =
+    useRecordBoardSelection(recordBoardId);
+
+  useListenClickOutsideByClassName({
+    classNames: ['record-board-card'],
+    excludeClassNames: ['action-bar', 'context-menu'],
+    callback: resetRecordSelection,
+  });
+
+  useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
+
+  const onDragEnd: OnDragEndResponder = useRecoilCallback(
+    ({ snapshot }) =>
+      (result) => {
+        if (!result.destination) return;
+
+        const draggedRecordId = result.draggableId;
+        const sourceColumnId = result.source.droppableId;
+        const destinationColumnId = result.destination.droppableId;
+        const destinationIndexInColumn = result.destination.index;
+
+        if (!destinationColumnId || !selectFieldMetadataItem) return;
+
+        const column = snapshot
+          .getLoadable(columnsFamilySelector(destinationColumnId))
+          .getValue();
+
+        if (!column) return;
+
+        const destinationColumnRecordIds = snapshot
+          .getLoadable(recordIdsByColumnIdFamilyState(destinationColumnId))
+          .getValue();
+        const otherRecordsInDestinationColumn =
+          sourceColumnId === destinationColumnId
+            ? destinationColumnRecordIds.filter(
+                (recordId) => recordId !== draggedRecordId,
+              )
+            : destinationColumnRecordIds;
+
+        const recordBeforeId =
+          otherRecordsInDestinationColumn[destinationIndexInColumn - 1];
+        const recordBefore = recordBeforeId
+          ? snapshot
+              .getLoadable(recordStoreFamilyState(recordBeforeId))
+              .getValue()
+          : null;
+        const recordBeforePosition: number | undefined = recordBefore?.position;
+
+        const recordAfterId =
+          otherRecordsInDestinationColumn[destinationIndexInColumn];
+        const recordAfter = recordAfterId
+          ? snapshot
+              .getLoadable(recordStoreFamilyState(recordAfterId))
+              .getValue()
+          : null;
+        const recordAfterPosition: number | undefined = recordAfter?.position;
+
+        const beforeBoundary = recordBeforePosition ?? 0;
+        const afterBoundary = recordAfterPosition ?? beforeBoundary + 1;
+
+        const draggedRecordPosition = (beforeBoundary + afterBoundary) / 2;
+
+        updateOneRecord({
+          idToUpdate: draggedRecordId,
+          updateOneRecordInput: {
+            [selectFieldMetadataItem.name]: column.value,
+            position: draggedRecordPosition,
+          },
+        });
+      },
+    [
+      columnsFamilySelector,
+      recordIdsByColumnIdFamilyState,
+      selectFieldMetadataItem,
+      updateOneRecord,
+    ],
   );
 
   return (
-    <RecordBoardScope recordBoardScopeId={recordBoardId}>
-      <RecordBoardContextMenu />
-      <RecordBoardActionBar />
-      <RecordBoardInternalEffect />
-
+    <RecordBoardScope
+      recordBoardScopeId={getScopeIdFromComponentId(recordBoardId)}
+      onColumnsChange={() => {}}
+      onFieldsChange={() => {}}
+    >
       <StyledWrapper>
         <StyledBoardHeader />
         <ScrollWrapper>
-          <StyledBoard ref={boardRef}>
+          <StyledContainer ref={boardRef}>
             <DragDropContext onDragEnd={onDragEnd}>
-              {sortedBoardColumns.map((column) => (
+              {columnIds.map((columnId) => (
                 <RecordBoardColumn
-                  key={column.id}
-                  recordBoardColumnId={column.id}
-                  columnDefinition={column}
-                  recordBoardColumnTotal={sortedBoardColumns.length}
-                  recordBoardOptions={boardOptions}
-                  onDelete={onColumnDelete}
-                  onTitleEdit={onEditColumnTitle}
+                  key={columnId}
+                  recordBoardColumnId={columnId}
                 />
               ))}
             </DragDropContext>
-          </StyledBoard>
+          </StyledContainer>
         </ScrollWrapper>
         <DragSelect
           dragSelectable={boardRef}
-          onDragSelectionChange={setCardSelected}
+          onDragSelectionStart={resetRecordSelection}
+          onDragSelectionChange={setRecordAsSelected}
         />
       </StyledWrapper>
     </RecordBoardScope>

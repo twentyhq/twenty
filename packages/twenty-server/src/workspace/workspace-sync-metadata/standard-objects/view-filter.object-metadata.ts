@@ -34,7 +34,6 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Value',
     description: 'View Filter value',
-    defaultValue: { value: '' },
   })
   value: string;
 
@@ -42,7 +41,6 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Display Value',
     description: 'View Filter Display Value',
-    defaultValue: { value: '' },
   })
   displayValue: string;
 

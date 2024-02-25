@@ -6,14 +6,26 @@
         "^build"
       ]
     },
+    "start": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "lint": {
       "cache": true
     },
     "test": {
-      "cache": true
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ]
     },
-    "e2e": {
-      "cache": true
+    "test:e2e": {
+      "cache": true,
+      "dependsOn": [
+        "^build"
+      ]
     },
     "@nx/jest:jest": {
       "cache": true,
@@ -31,13 +43,29 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default"
+      ]
     }
   },
   "installation": {
-    "version": "17.2.7"
+    "version": "17.2.8"
   },
   "affected": {
     "defaultBase": "main"
+  },
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "babel": true
+      },
+      "library": {
+        "unitTestRunner": "none"
+      }
+    }
   }
 }
-

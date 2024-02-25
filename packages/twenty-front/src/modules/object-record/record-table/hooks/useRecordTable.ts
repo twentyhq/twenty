@@ -1,13 +1,16 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { FieldMetadata } from '../../field/types/FieldMetadata';
 import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
@@ -29,45 +32,51 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const {
     scopeId,
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    objectMetadataConfigState,
-    onEntityCountChangeState,
-    softFocusPositionState,
-    numberOfTableRowsState,
-    onColumnsChangeState,
-    isRecordTableInitialLoadingState,
-    tableLastRowVisibleState,
-    numberOfTableColumnsSelector,
-    selectedRowIdsSelector,
+    getAvailableTableColumnsState,
+    getTableFiltersState,
+    getTableSortsState,
+    getTableColumnsState,
+    getOnEntityCountChangeState,
+    getOnColumnsChangeState,
+    getIsRecordTableInitialLoadingState,
+    getTableLastRowVisibleState,
+    getSelectedRowIdsSelector,
   } = useRecordTableStates(recordTableId);
 
-  const setAvailableTableColumns = useSetRecoilState(
-    availableTableColumnsState(),
+  const setAvailableTableColumns = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (columns: ColumnDefinition<FieldMetadata>[]) => {
+        const availableTableColumnsState = getSnapshotValue(
+          snapshot,
+          getAvailableTableColumnsState(),
+        );
+
+        if (isDeeplyEqual(availableTableColumnsState, columns)) {
+          return;
+        }
+        set(getAvailableTableColumnsState(), columns);
+      },
+    [getAvailableTableColumnsState],
   );
 
-  const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState());
-
-  const setTableFilters = useSetRecoilState(tableFiltersState());
-
-  const setObjectMetadataConfig = useSetRecoilState(
-    objectMetadataConfigState(),
+  const setOnEntityCountChange = useSetRecoilState(
+    getOnEntityCountChangeState(),
   );
 
-  const setTableSorts = useSetRecoilState(tableSortsState());
+  const setTableFilters = useSetRecoilState(getTableFiltersState());
 
-  const setTableColumns = useSetRecoilState(tableColumnsState());
+  const setTableSorts = useSetRecoilState(getTableSortsState());
 
-  const setOnColumnsChange = useSetRecoilState(onColumnsChangeState());
+  const setTableColumns = useSetRecoilState(getTableColumnsState());
+
+  const setOnColumnsChange = useSetRecoilState(getOnColumnsChangeState());
 
   const setIsRecordTableInitialLoading = useSetRecoilState(
-    isRecordTableInitialLoadingState(),
+    getIsRecordTableInitialLoadingState(),
   );
 
   const setRecordTableLastRowVisible = useSetRecoilState(
-    tableLastRowVisibleState(),
+    getTableLastRowVisibleState(),
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -75,12 +84,12 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (columns: ColumnDefinition<FieldMetadata>[]) => {
         const onColumnsChange = getSnapshotValue(
           snapshot,
-          onColumnsChangeState(),
+          getOnColumnsChangeState(),
         );
 
         onColumnsChange?.(columns);
       },
-    [onColumnsChangeState],
+    [getOnColumnsChangeState],
   );
 
   const onEntityCountChange = useRecoilCallback(
@@ -88,12 +97,12 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (count: number) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
-          onEntityCountChangeState(),
+          getOnEntityCountChangeState(),
         );
 
         onEntityCountChange?.(count);
       },
-    [onEntityCountChangeState],
+    [getOnEntityCountChangeState],
   );
 
   const setRecordTableData = useSetRecordTableData({
@@ -111,160 +120,16 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
 
-  const moveUp = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const softFocusPosition = getSnapshotValue(
-          snapshot,
-          softFocusPositionState(),
-        );
-
-        let newRowNumber = softFocusPosition.row - 1;
-
-        if (newRowNumber < 0) {
-          newRowNumber = 0;
-        }
-
-        setSoftFocusPosition({
-          ...softFocusPosition,
-          row: newRowNumber,
-        });
-      },
-    [setSoftFocusPosition, softFocusPositionState],
-  );
-
-  const moveDown = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const softFocusPosition = getSnapshotValue(
-          snapshot,
-          softFocusPositionState(),
-        );
-
-        const numberOfTableRows = getSnapshotValue(
-          snapshot,
-          numberOfTableRowsState(),
-        );
-
-        let newRowNumber = softFocusPosition.row + 1;
-
-        if (newRowNumber >= numberOfTableRows) {
-          newRowNumber = numberOfTableRows - 1;
-        }
-
-        setSoftFocusPosition({
-          ...softFocusPosition,
-          row: newRowNumber,
-        });
-      },
-    [numberOfTableRowsState, setSoftFocusPosition, softFocusPositionState],
-  );
-
-  const moveRight = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const softFocusPosition = getSnapshotValue(
-          snapshot,
-          softFocusPositionState(),
-        );
-
-        const numberOfTableColumns = getSnapshotValue(
-          snapshot,
-          numberOfTableColumnsSelector,
-        );
-
-        const numberOfTableRows = getSnapshotValue(
-          snapshot,
-          numberOfTableRowsState(),
-        );
-        const currentColumnNumber = softFocusPosition.column;
-        const currentRowNumber = softFocusPosition.row;
-
-        const isLastRowAndLastColumn =
-          currentColumnNumber === numberOfTableColumns - 1 &&
-          currentRowNumber === numberOfTableRows - 1;
-
-        const isLastColumnButNotLastRow =
-          currentColumnNumber === numberOfTableColumns - 1 &&
-          currentRowNumber !== numberOfTableRows - 1;
-
-        const isNotLastColumn =
-          currentColumnNumber !== numberOfTableColumns - 1;
-
-        if (isLastRowAndLastColumn) {
-          return;
-        }
-
-        if (isNotLastColumn) {
-          setSoftFocusPosition({
-            row: currentRowNumber,
-            column: currentColumnNumber + 1,
-          });
-        } else if (isLastColumnButNotLastRow) {
-          setSoftFocusPosition({
-            row: currentRowNumber + 1,
-            column: 0,
-          });
-        }
-      },
-    [
-      softFocusPositionState,
-      numberOfTableColumnsSelector,
-      numberOfTableRowsState,
-      setSoftFocusPosition,
-    ],
-  );
-
-  const moveLeft = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const softFocusPosition = getSnapshotValue(
-          snapshot,
-          softFocusPositionState(),
-        );
-
-        const numberOfTableColumns = getSnapshotValue(
-          snapshot,
-          numberOfTableColumnsSelector,
-        );
-
-        const currentColumnNumber = softFocusPosition.column;
-        const currentRowNumber = softFocusPosition.row;
-
-        const isFirstRowAndFirstColumn =
-          currentColumnNumber === 0 && currentRowNumber === 0;
-
-        const isFirstColumnButNotFirstRow =
-          currentColumnNumber === 0 && currentRowNumber > 0;
-
-        const isNotFirstColumn = currentColumnNumber > 0;
-
-        if (isFirstRowAndFirstColumn) {
-          return;
-        }
-
-        if (isNotFirstColumn) {
-          setSoftFocusPosition({
-            row: currentRowNumber,
-            column: currentColumnNumber - 1,
-          });
-        } else if (isFirstColumnButNotFirstRow) {
-          setSoftFocusPosition({
-            row: currentRowNumber - 1,
-            column: numberOfTableColumns - 1,
-          });
-        }
-      },
-    [
-      softFocusPositionState,
-      numberOfTableColumnsSelector,
-      setSoftFocusPosition,
-    ],
-  );
+  const { moveDown, moveLeft, moveRight, moveUp } =
+    useRecordTableMoveFocus(recordTableId);
 
   const useMapKeyboardToSoftFocus = () => {
     const disableSoftFocus = useDisableSoftFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
+
+    const setIsSoftFocusUsingMouseState = useSetRecoilState(
+      isSoftFocusUsingMouseState,
+    );
 
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
@@ -288,6 +153,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
       () => {
         moveLeft();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveLeft],
@@ -297,6 +163,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowRight, Key.Tab],
       () => {
         moveRight();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveRight],
@@ -327,7 +194,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,
-    setObjectMetadataConfig,
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,
@@ -346,6 +212,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableLastRowVisible,
     setSoftFocusPosition,
     isSomeCellInEditModeState,
-    selectedRowIdsSelector,
+    getSelectedRowIdsSelector,
   };
 };

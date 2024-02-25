@@ -1,5 +1,5 @@
 import { OpportunityPicker } from '@/companies/components/OpportunityPicker';
-import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
+import { useCreateOpportunity } from '@/object-record/record-board-deprecated/hooks/internal/useCreateOpportunity';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';

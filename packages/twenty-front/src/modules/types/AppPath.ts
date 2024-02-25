@@ -4,6 +4,7 @@ export enum AppPath {
   SignIn = '/sign-in',
   SignUp = '/sign-up',
   Invite = '/invite/:workspaceInviteHash',
+  ResetPassword = '/reset-password/:passwordResetToken',
 
   // Onboarding
   CreateWorkspace = '/create/workspace',
@@ -14,8 +15,8 @@ export enum AppPath {
   Index = '/',
   TasksPage = '/tasks',
   OpportunitiesPage = '/objects/opportunities',
-  RecordTablePage = '/objects/:objectNamePlural',
 
+  RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
 
   SettingsCatchAll = `/settings/*`,

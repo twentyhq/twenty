@@ -39,7 +39,7 @@ export const PageChangeEffect = () => {
 
   const [workspaceFromInviteHashQuery] =
     useGetWorkspaceFromInviteHashLazyQuery();
-  const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
+  const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -54,14 +54,14 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   useEffect(() => {
-    const isMachinOngoingUserCreationRoute =
+    const isMatchingOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.Verify);
 
     const isMatchingOnboardingRoute =
-      isMachinOngoingUserCreationRoute ||
+      isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
       isMatchingLocation(AppPath.PlanRequired);
@@ -75,7 +75,8 @@ export const PageChangeEffect = () => {
 
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMachinOngoingUserCreationRoute
+      !isMatchingOngoingUserCreationRoute &&
+      !isMatchingLocation(AppPath.ResetPassword)
     ) {
       navigate(AppPath.SignIn);
     } else if (
@@ -87,7 +88,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace)
     ) {
       navigate(AppPath.CreateWorkspace);
@@ -100,7 +101,7 @@ export const PageChangeEffect = () => {
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute
     ) {
-      navigate('/');
+      navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
       const inviteHash =
         matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)
@@ -134,7 +135,7 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     switch (true) {
-      case isMatchingLocation(AppPath.RecordTablePage): {
+      case isMatchingLocation(AppPath.RecordIndexPage): {
         setHotkeyScope(TableHotkeyScope.Table, {
           goto: true,
           keyboardShortcutMenu: true,
@@ -208,7 +209,7 @@ export const PageChangeEffect = () => {
   }, [isMatchingLocation, setHotkeyScope]);
 
   useEffect(() => {
-    setToIntitialCommandMenu();
+    setToInitialCommandMenu();
 
     addToCommandMenu([
       {
@@ -217,10 +218,11 @@ export const PageChangeEffect = () => {
         label: 'Create Task',
         type: CommandType.Create,
         Icon: IconCheckbox,
-        onCommandClick: () => openCreateActivity({ type: 'Task' }),
+        onCommandClick: () =>
+          openCreateActivity({ type: 'Task', targetableObjects: [] }),
       },
     ]);
-  }, [addToCommandMenu, setToIntitialCommandMenu, openCreateActivity]);
+  }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);
 
   useEffect(() => {
     setTimeout(() => {

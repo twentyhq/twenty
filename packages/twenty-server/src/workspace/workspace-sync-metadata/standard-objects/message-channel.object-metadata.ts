@@ -1,14 +1,13 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
-import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'messageChannels',
@@ -17,18 +16,24 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
   description: 'Message Channels',
   icon: 'IconMessage',
 })
-@Gate({
-  featureFlag: 'IS_MESSAGING_ENABLED',
-})
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    // This will be a type select later: metadata, subject, share_everything
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
     icon: 'IconEyeglass',
-    defaultValue: { value: 'metadata' },
+    options: [
+      { value: 'metadata', label: 'Metadata', position: 0, color: 'green' },
+      { value: 'subject', label: 'Subject', position: 1, color: 'blue' },
+      {
+        value: 'share_everything',
+        label: 'Share Everything',
+        position: 2,
+        color: 'orange',
+      },
+    ],
+    defaultValue: { value: 'share_everything' },
   })
   visibility: string;
 
@@ -50,25 +55,37 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   connectedAccount: ConnectedAccountObjectMetadata;
 
   @FieldMetadata({
-    // This will be a type select later : email, sms, chat
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Type',
-    description: 'Type',
+    description: 'Channel Type',
     icon: 'IconMessage',
+    options: [
+      { value: 'email', label: 'Email', position: 0, color: 'green' },
+      { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
+    ],
+    defaultValue: { value: 'email' },
   })
-  @IsNullable()
   type: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is Contact Auto Creation Enabled',
+    description: 'Is Contact Auto Creation Enabled',
+    icon: 'IconUserCircle',
+    defaultValue: { value: true },
+  })
+  isContactAutoCreationEnabled: boolean;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Threads',
-    description: 'Threads from the channel.',
+    label: 'Message Channel Association',
+    description: 'Messages from the channel.',
     icon: 'IconMessage',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageThread',
+    objectName: 'messageChannelMessageAssociation',
   })
   @IsNullable()
-  messageThreads: MessageThreadObjectMetadata[];
+  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
 }

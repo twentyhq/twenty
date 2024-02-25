@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { TimelineMessagingResolver } from 'src/core/messaging/timeline-messaging.resolver';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-
+import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
+import { UserModule } from 'src/core/user/user.module';
 @Module({
-  imports: [DataSourceModule, TypeORMModule],
+  imports: [WorkspaceDataSourceModule, UserModule],
   exports: [],
   providers: [TimelineMessagingResolver, TimelineMessagingService],
 })

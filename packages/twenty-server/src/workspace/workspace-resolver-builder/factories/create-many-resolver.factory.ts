@@ -26,10 +26,12 @@ export class CreateManyResolverFactory
 
     return (_source, args, context, info) => {
       return this.workspaceQueryRunnerService.createMany(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
+        userId: internalContext.userId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }

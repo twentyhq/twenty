@@ -20,7 +20,7 @@ export const useGenerateFindManyRecordsQuery = () => {
       objectMetadataItem.nameSingular,
     )}FilterInput, $orderBy: ${capitalize(
       objectMetadataItem.nameSingular,
-    )}OrderByInput, $lastCursor: String, $limit: Float = 30) {
+    )}OrderByInput, $lastCursor: String, $limit: Float) {
       ${
         objectMetadataItem.namePlural
       }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
@@ -28,7 +28,12 @@ export const useGenerateFindManyRecordsQuery = () => {
           node {
             id
             ${objectMetadataItem.fields
-              .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
+              .map((field) =>
+                mapFieldMetadataToGraphQLQuery({
+                  field,
+                  maxDepthForRelations: depth,
+                }),
+              )
               .join('\n')}
           }
           cursor
@@ -38,6 +43,7 @@ export const useGenerateFindManyRecordsQuery = () => {
           startCursor
           endCursor
         }
+        totalCount
       }
     }
   `;

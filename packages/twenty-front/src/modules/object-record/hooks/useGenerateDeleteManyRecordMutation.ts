@@ -4,6 +4,10 @@ import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
+export const getDeleteManyRecordsMutationResponseField = (
+  objectNamePlural: string,
+) => `delete${capitalize(objectNamePlural)}`;
+
 export const useGenerateDeleteManyRecordMutation = ({
   objectMetadataItem,
 }: {
@@ -15,11 +19,15 @@ export const useGenerateDeleteManyRecordMutation = ({
 
   const capitalizedObjectName = capitalize(objectMetadataItem.namePlural);
 
+  const mutationResponseField = getDeleteManyRecordsMutationResponseField(
+    objectMetadataItem.namePlural,
+  );
+
   return gql`
     mutation DeleteMany${capitalizedObjectName}($filter: ${capitalize(
       objectMetadataItem.nameSingular,
     )}FilterInput!)  {
-      delete${capitalizedObjectName}(filter: $filter) {
+      ${mutationResponseField}(filter: $filter) {
         id
       }
     }

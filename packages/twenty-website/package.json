@@ -7,6 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "database:generate:pg": "drizzle-kit generate:pg --config=src/database/postgres/drizzle-posgres.config.ts",
+    "database:generate:sqlite": "drizzle-kit generate:sqlite --config=src/database/sqlite/drizzle-sqlite.config.ts"
+  },
+  "dependencies": {
+    "postgres": "^3.4.3"
   }
 }

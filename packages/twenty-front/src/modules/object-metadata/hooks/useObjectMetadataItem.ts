@@ -1,23 +1,25 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
+import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
-import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -40,6 +42,7 @@ export const useObjectMetadataItem = (
   depth?: number,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -51,7 +54,7 @@ export const useObjectMetadataItem = (
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!currentWorkspace) {
+  if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
@@ -89,6 +92,13 @@ export const useObjectMetadataItem = (
     depth,
   });
 
+  const generateFindDuplicateRecordsQuery =
+    useGenerateFindDuplicateRecordsQuery();
+  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
+    objectMetadataItem,
+    depth,
+  });
+
   const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
   const findOneRecordQuery = generateFindOneRecordQuery({
     objectMetadataItem,
@@ -120,9 +130,8 @@ export const useObjectMetadataItem = (
       objectMetadataItem,
     });
 
-  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
-    ({ name }) => name === 'name',
-  );
+  const labelIdentifierFieldMetadata =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,
@@ -135,6 +144,7 @@ export const useObjectMetadataItem = (
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,
+    findDuplicateRecordsQuery,
     findOneRecordQuery,
     createOneRecordMutation,
     updateOneRecordMutation,

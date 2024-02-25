@@ -1,31 +1,35 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
 
-  const { data: userData, loading: userLoading } = useGetCurrentUserQuery({});
+  const { loading: queryLoading, data: queryData } = useQuery(GET_CURRENT_USER);
 
   useEffect(() => {
-    if (!userLoading) {
+    if (!queryLoading) {
       setIsLoading(false);
     }
-    if (userData?.currentUser?.workspaceMember) {
-      setCurrentUser(userData.currentUser);
-      setCurrentWorkspace(userData.currentUser.defaultWorkspace);
-      const workspaceMember = userData.currentUser.workspaceMember;
+    if (queryData?.currentUser) {
+      setCurrentUser(queryData.currentUser);
+      setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
+    }
+    if (queryData?.currentUser?.workspaceMember) {
+      const workspaceMember = queryData.currentUser.workspaceMember;
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
@@ -34,10 +38,10 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   }, [
     setCurrentUser,
     isLoading,
-    userLoading,
+    queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
-    userData?.currentUser,
+    queryData?.currentUser,
   ]);
 
   return isLoading ? <></> : <>{children}</>;

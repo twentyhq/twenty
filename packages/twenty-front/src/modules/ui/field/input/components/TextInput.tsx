@@ -1,13 +1,12 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/theme/constants/effects';
-
-import { useRegisterInputEvents } from '../../../../object-record/field/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 export const StyledInput = styled.input`
   margin: 0;
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
   width: 100%;
 `;
 

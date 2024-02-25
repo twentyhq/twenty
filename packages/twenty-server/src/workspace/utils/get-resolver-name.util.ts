@@ -13,6 +13,8 @@ export const getResolverName = (
       return `${camelCase(objectMetadata.namePlural)}`;
     case 'findOne':
       return `${camelCase(objectMetadata.nameSingular)}`;
+    case 'findDuplicates':
+      return `${camelCase(objectMetadata.nameSingular)}Duplicates`;
     case 'createMany':
       return `create${pascalCase(objectMetadata.namePlural)}`;
     case 'createOne':

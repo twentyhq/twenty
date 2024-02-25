@@ -2,6 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
   UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,14 +11,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { assert } from 'src/utils/assert';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
+import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
+import { ValidatePasswordResetTokenInput } from 'src/core/auth/dto/validate-password-reset-token.input';
+import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-password-via-reset-token.input';
+import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
+import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
+import { EmailPasswordResetLinkInput } from 'src/core/auth/dto/email-password-reset-link.input';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -83,6 +91,7 @@ export class AuthResolver {
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
     const user = await this.authService.signUp(signUpInput);
+
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
@@ -94,6 +103,10 @@ export class AuthResolver {
     @AuthUser() user: User,
   ): Promise<TransientToken | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (!workspaceMember) {
+      return;
+    }
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
       user.defaultWorkspace.id,
@@ -107,6 +120,8 @@ export class AuthResolver {
     const email = await this.tokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
+
+    assert(email, 'Invalid token', ForbiddenException);
 
     const result = await this.authService.verify(email);
 
@@ -148,6 +163,49 @@ export class AuthResolver {
       workspaceId,
       args.apiKeyId,
       args.expiresAt,
+    );
+  }
+
+  @Mutation(() => EmailPasswordResetLink)
+  async emailPasswordResetLink(
+    @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
+  ): Promise<EmailPasswordResetLink> {
+    const resetToken = await this.tokenService.generatePasswordResetToken(
+      emailPasswordResetInput.email,
+    );
+
+    return await this.tokenService.sendEmailPasswordResetLink(
+      resetToken,
+      emailPasswordResetInput.email,
+    );
+  }
+
+  @Mutation(() => InvalidatePassword)
+  async updatePasswordViaResetToken(
+    @Args() args: UpdatePasswordViaResetTokenInput,
+  ): Promise<InvalidatePassword> {
+    const { id } = await this.tokenService.validatePasswordResetToken(
+      args.passwordResetToken,
+    );
+
+    assert(id, 'User not found', NotFoundException);
+
+    const { success } = await this.authService.updatePassword(
+      id,
+      args.newPassword,
+    );
+
+    assert(success, 'Password update failed', InternalServerErrorException);
+
+    return await this.tokenService.invalidatePasswordResetToken(id);
+  }
+
+  @Query(() => ValidatePasswordResetToken)
+  async validatePasswordResetToken(
+    @Args() args: ValidatePasswordResetTokenInput,
+  ): Promise<ValidatePasswordResetToken> {
+    return this.tokenService.validatePasswordResetToken(
+      args.passwordResetToken,
     );
   }
 }

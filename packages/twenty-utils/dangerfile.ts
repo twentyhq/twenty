@@ -22,9 +22,7 @@ if (packageChanged && !lockfileChanged) {
 const envChanged =
   danger.git.modified_files.find((x) => x.includes('.env.example')) ||
   danger.git.modified_files.find((x) => x.includes('environment.service.ts'));
-const envDocsChanged = danger.git.modified_files.includes(
-  'environment-variables.mdx',
-);
+const envDocsChanged = danger.git.modified_files.includes('self-hosting.mdx');
 if (envChanged && !envDocsChanged) {
   const message =
     'Changes were made to the environment variables, but not to the documentation';

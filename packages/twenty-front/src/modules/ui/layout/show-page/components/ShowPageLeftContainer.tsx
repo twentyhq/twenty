@@ -19,11 +19,7 @@ const StyledOuterContainer = styled.div`
 const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  width: ${({ theme }) =>
-    useIsMobile() ? `calc(100% - ${theme.spacing(5)})` : '320px'};
+  width: ${() => (useIsMobile() ? `100%` : '348px')};
 `;
 
 const StyledIntermediateContainer = styled.div`

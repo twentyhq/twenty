@@ -1,7 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ColorSampleVariant } from '@/ui/display/color/components/ColorSample';
-import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
 import {
   CatalogDecorator,
   CatalogDimension,
@@ -35,7 +38,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectColor> = {
       dimensions: [
         {
           name: 'color',
-          values: mainColorNames,
+          values: MAIN_COLOR_NAMES,
           props: (color: ThemeColor) => ({ color }),
           labels: (color: ThemeColor) => color,
         },

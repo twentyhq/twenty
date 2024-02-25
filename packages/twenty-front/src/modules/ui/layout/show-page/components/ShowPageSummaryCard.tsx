@@ -25,7 +25,8 @@ const StyledShowPageSummaryCard = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(4)};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledInfoContainer = styled.div`
@@ -47,7 +48,6 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
-  width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -99,7 +99,7 @@ export const ShowPageSummaryCard = ({
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
-          colorId={id}
+          entityId={id}
           placeholder={avatarPlaceholder}
           type={avatarType}
         />

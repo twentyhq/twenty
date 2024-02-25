@@ -14,6 +14,7 @@ type SingleTabProps = {
   id: string;
   hide?: boolean;
   disabled?: boolean;
+  hasBetaPill?: boolean;
 };
 
 type TabListProps = {
@@ -29,14 +30,15 @@ const StyledContainer = styled.div`
   height: 40px;
   padding-left: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+  overflow: auto;
 `;
 
 export const TabList = ({ tabs, tabListId }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
-  const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
+  const { getActiveTabIdState, setActiveTabId } = useTabList(tabListId);
 
-  const activeTabId = useRecoilValue(activeTabIdState());
+  const activeTabId = useRecoilValue(getActiveTabIdState());
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);
@@ -58,6 +60,7 @@ export const TabList = ({ tabs, tabListId }: TabListProps) => {
                 setActiveTabId(tab.id);
               }}
               disabled={tab.disabled}
+              hasBetaPill={tab.hasBetaPill}
             />
           ))}
       </StyledContainer>

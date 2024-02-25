@@ -40,7 +40,7 @@ export const SelectableMenuItemSelect = ({
         avatar={
           <Avatar
             avatarUrl={entity.avatarUrl}
-            colorId={entity.id}
+            entityId={entity.id}
             placeholder={entity.name}
             size="md"
             type={entity.avatarType ?? 'rounded'}

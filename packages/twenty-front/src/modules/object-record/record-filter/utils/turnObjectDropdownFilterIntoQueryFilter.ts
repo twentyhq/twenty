@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   CurrencyFilter,
   DateFilter,
@@ -10,8 +8,10 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
@@ -24,7 +24,7 @@ export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordQueryFilter => {
+): ObjectRecordQueryFilter | undefined => {
   const objectRecordFilters: ObjectRecordQueryFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
@@ -36,6 +36,10 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       throw new Error(
         `Could not find field ${rawUIFilter.fieldMetadataId} in metadata object`,
       );
+    }
+
+    if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
+      return undefined;
     }
 
     switch (rawUIFilter.definition.type) {
@@ -110,10 +114,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'RELATION': {
-        if (!isNonEmptyString(rawUIFilter.value)) {
-          break;
-        }
-
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -134,13 +134,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               });
               break;
             case ViewFilterOperand.IsNot:
-              objectRecordFilters.push({
-                not: {
-                  [correspondingField.name + 'Id']: {
-                    in: parsedRecordIds,
-                  } as UUIDFilter,
-                },
-              });
+              if (parsedRecordIds.length) {
+                objectRecordFilters.push({
+                  not: {
+                    [correspondingField.name + 'Id']: {
+                      in: parsedRecordIds,
+                    } as UUIDFilter,
+                  },
+                });
+              }
               break;
             default:
               throw new Error(
@@ -298,5 +300,5 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return { and: objectRecordFilters };
+  return makeAndFilterVariables(objectRecordFilters);
 };

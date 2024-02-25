@@ -23,7 +23,6 @@ export class PipelineStepObjectMetadata extends BaseObjectMetadata {
     description: 'Pipeline Step name',
     icon: 'IconCurrencyDollar',
   })
-  @IsNullable()
   name: string;
 
   @FieldMetadata({
@@ -32,7 +31,6 @@ export class PipelineStepObjectMetadata extends BaseObjectMetadata {
     description: 'Pipeline Step color',
     icon: 'IconColorSwatch',
   })
-  @IsNullable()
   color: string;
 
   @FieldMetadata({

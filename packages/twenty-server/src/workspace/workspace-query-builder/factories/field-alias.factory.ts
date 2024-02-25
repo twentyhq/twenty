@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
 @Injectable()
-export class FieldAliasFacotry {
-  private readonly logger = new Logger(FieldAliasFacotry.name);
+export class FieldAliasFactory {
+  private readonly logger = new Logger(FieldAliasFactory.name);
 
   create(fieldKey: string, fieldMetadata: FieldMetadataInterface) {
     const entries = Object.entries(fieldMetadata.targetColumnMap);

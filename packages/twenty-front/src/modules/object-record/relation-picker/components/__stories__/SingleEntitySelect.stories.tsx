@@ -1,9 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { IconUserCircle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
@@ -13,13 +18,25 @@ import { SingleEntitySelect } from '../SingleEntitySelect';
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
   name: person.name.firstName + ' ' + person.name.lastName,
+  avatarUrl: person.avatarUrl,
+  avatarType: 'rounded',
   record: person,
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {
   title: 'UI/Input/RelationPicker/SingleEntitySelect',
   component: SingleEntitySelect,
-  decorators: [ComponentDecorator, ComponentWithRecoilScopeDecorator],
+  decorators: [
+    ComponentDecorator,
+    ComponentWithRecoilScopeDecorator,
+    RelationPickerDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+  ],
+  args: {
+    relationObjectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    selectedRelationRecordIds: [],
+  },
   argTypes: {
     selectedEntity: {
       options: entities.map(({ name }) => name),
@@ -29,37 +46,8 @@ const meta: Meta<typeof SingleEntitySelect> = {
       ),
     },
   },
-  render: ({
-    EmptyIcon,
-    disableBackgroundBlur = false,
-    emptyLabel,
-    loading,
-    onCancel,
-    onCreate,
-    onEntitySelected,
-    selectedEntity,
-    width,
-  }) => {
-    const filteredEntities = entities.filter(
-      (entity) => entity.id !== selectedEntity?.id,
-    );
-
-    return (
-      <SingleEntitySelect
-        {...{
-          EmptyIcon,
-          disableBackgroundBlur,
-          emptyLabel,
-          loading,
-          onCancel,
-          onCreate,
-          onEntitySelected,
-          selectedEntity,
-          width,
-        }}
-        entitiesToSelect={filteredEntities}
-      />
-    );
+  parameters: {
+    msw: graphqlMocks,
   },
 };
 
@@ -82,7 +70,7 @@ export const WithEmptyOption: Story = {
 export const WithSearchFilter: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const searchInput = canvas.getByRole('textbox');
+    const searchInput = await canvas.findByRole('textbox');
 
     await step('Enter search text', async () => {
       await sleep(50);

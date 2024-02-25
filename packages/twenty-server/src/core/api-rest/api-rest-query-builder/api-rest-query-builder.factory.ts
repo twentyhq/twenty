@@ -40,14 +40,14 @@ export class ApiRestQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const workspace = await this.tokenService.validateToken(request);
+    const { workspace } = await this.tokenService.validateToken(request);
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
 
     if (!objectMetadataItems.length) {
       throw new BadRequestException(
-        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys`,
+        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.environmentService.getFrontBaseUrl()}/settings/developers`,
       );
     }
 

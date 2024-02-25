@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Record as IRecord } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
@@ -17,7 +18,19 @@ export class QuickActionsService {
     private readonly intelligenceService: IntelligenceService,
   ) {}
 
-  async createCompanyFromPerson(id: string, workspaceId: string) {
+  async createCompanyFromPerson(
+    id: string,
+    workspaceId: string,
+    objectMetadataItemCollection: ObjectMetadataInterface[],
+  ) {
+    const personObjectMetadata = objectMetadataItemCollection.find(
+      (item) => item.nameSingular === 'person',
+    );
+
+    if (!personObjectMetadata) {
+      return;
+    }
+
     const personRequest =
       await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
         `query {
@@ -32,7 +45,7 @@ export class QuickActionsService {
             }
           }
         `,
-        'person',
+        personObjectMetadata,
         '',
         workspaceId,
       );
@@ -47,6 +60,14 @@ export class QuickActionsService {
       const companyName = capitalize(companyDomainName.split('.')[0]);
       let relatedCompanyId = uuidv4();
 
+      const companyObjectMetadata = objectMetadataItemCollection.find(
+        (item) => item.nameSingular === 'company',
+      );
+
+      if (!companyObjectMetadata) {
+        return;
+      }
+
       const existingCompany =
         await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
           `query {companyCollection(filter: {domainName: {eq: "${companyDomainName}"}}) {
@@ -58,7 +79,7 @@ export class QuickActionsService {
               }
             }
           `,
-          'company',
+          companyObjectMetadata,
           '',
           workspaceId,
         );
@@ -105,7 +126,11 @@ export class QuickActionsService {
     }
   }
 
-  async executeQuickActionOnCompany(id: string, workspaceId: string) {
+  async executeQuickActionOnCompany(
+    id: string,
+    workspaceId: string,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
     const companyQuery = `query {
         companyCollection(filter: {id: {eq: "${id}"}}) {
           edges {
@@ -123,7 +148,7 @@ export class QuickActionsService {
     const companyRequest =
       await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
         companyQuery,
-        'company',
+        objectMetadataItem,
         '',
         workspaceId,
       );

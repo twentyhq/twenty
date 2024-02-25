@@ -1,6 +1,8 @@
 import { IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
 
-export class FieldMetadataDefaultOptions {
+import { IsValidGraphQLEnumName } from 'src/metadata/field-metadata/validators/is-valid-graphql-enum-name.validator';
+
+export class FieldMetadataDefaultOption {
   @IsOptional()
   @IsString()
   id?: string;
@@ -13,11 +15,11 @@ export class FieldMetadataDefaultOptions {
   label: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsValidGraphQLEnumName()
   value: string;
 }
 
-export class FieldMetadataComplexOptions extends FieldMetadataDefaultOptions {
+export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {
   @IsNotEmpty()
   @IsString()
   color: string;

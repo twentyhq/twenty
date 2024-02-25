@@ -32,6 +32,23 @@ export class EnvironmentService {
     return this.configService.get<string>('BILLING_PLAN_REQUIRED_LINK') ?? '';
   }
 
+  getBillingStripeBasePlanProductId(): string {
+    return (
+      this.configService.get<string>('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID') ??
+      ''
+    );
+  }
+
+  getBillingStripeApiKey(): string {
+    return this.configService.get<string>('BILLING_STRIPE_API_KEY') ?? '';
+  }
+
+  getBillingStripeWebhookSecret(): string {
+    return (
+      this.configService.get<string>('BILLING_STRIPE_WEBHOOK_SECRET') ?? ''
+    );
+  }
+
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }
@@ -172,6 +189,27 @@ export class EnvironmentService {
     );
   }
 
+  getEmailFromAddress(): string {
+    return (
+      this.configService.get<string>('EMAIL_FROM_ADDRESS') ??
+      'noreply@yourdomain.com'
+    );
+  }
+
+  getEmailSystemAddress(): string {
+    return (
+      this.configService.get<string>('EMAIL_SYSTEM_ADDRESS') ??
+      'system@yourdomain.com'
+    );
+  }
+
+  getEmailFromName(): string {
+    return (
+      this.configService.get<string>('EMAIL_FROM_NAME') ??
+      'John from YourDomain'
+    );
+  }
+
   getEmailDriver(): EmailDriver {
     return (
       this.configService.get<EmailDriver>('EMAIL_DRIVER') ?? EmailDriver.Logger
@@ -215,6 +253,10 @@ export class EnvironmentService {
     );
   }
 
+  getLoggerIsBufferEnabled(): boolean | undefined {
+    return this.configService.get<boolean>('LOGGER_IS_BUFFER_ENABLED') ?? true;
+  }
+
   getExceptionHandlerDriverType(): ExceptionHandlerDriver {
     return (
       this.configService.get<ExceptionHandlerDriver>(
@@ -245,7 +287,39 @@ export class EnvironmentService {
     return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
 
+  getPasswordResetTokenExpiresIn(): string {
+    return (
+      this.configService.get<string>('PASSWORD_RESET_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
+
+  getInactiveDaysBeforeEmail(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
+    );
+  }
+
+  getInactiveDaysBeforeDelete(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
+    );
+  }
+
   isSignUpDisabled(): boolean {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
+  }
+
+  getApiRateLimitingTtl(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_TTL') ?? 100;
+  }
+
+  getApiRateLimitingLimit(): number {
+    return this.configService.get<number>('API_RATE_LIMITING_LIMIT') ?? 500;
+  }
+
+  getMutationMaximumRecordAffected(): number {
+    return (
+      this.configService.get<number>('MUTATION_MAXIMUM_RECORD_AFFECTED') ?? 100
+    );
   }
 }

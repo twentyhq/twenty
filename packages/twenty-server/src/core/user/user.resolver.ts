@@ -15,7 +15,7 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
-import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
@@ -55,9 +55,11 @@ export class UserResolver {
   }
 
   @ResolveField(() => WorkspaceMember, {
-    nullable: false,
+    nullable: true,
   })
-  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember> {
+  async workspaceMember(
+    @Parent() user: User,
+  ): Promise<WorkspaceMember | undefined> {
     return this.userService.loadWorkspaceMember(user);
   }
 

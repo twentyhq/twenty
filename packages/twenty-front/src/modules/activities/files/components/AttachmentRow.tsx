@@ -7,11 +7,11 @@ import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/object-record/field/contexts/FieldContext';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+} from '@/object-record/record-field/contexts/FieldContext';
 import { IconCalendar } from '@/ui/display/icon';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils';
@@ -62,10 +62,9 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
-  const { deleteOneRecord: deleteOneAttachment } =
-    useDeleteOneRecord<Attachment>({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
-    });
+  const { deleteOneRecord: deleteOneAttachment } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
 
   const handleDelete = () => {
     deleteOneAttachment(attachment.id);

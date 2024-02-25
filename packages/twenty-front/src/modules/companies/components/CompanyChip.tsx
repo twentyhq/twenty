@@ -4,22 +4,22 @@ import {
 } from '@/ui/display/chip/components/EntityChip';
 
 type CompanyChipProps = {
-  id: string;
-  name: string;
+  opportunityId: string;
+  companyName: string;
   avatarUrl?: string;
   variant?: EntityChipVariant;
 };
 
 export const CompanyChip = ({
-  id,
-  name,
+  opportunityId,
+  companyName,
   avatarUrl,
   variant = EntityChipVariant.Regular,
 }: CompanyChipProps) => (
   <EntityChip
-    entityId={id}
-    linkToEntity={`/object/company/${id}`}
-    name={name}
+    entityId={opportunityId}
+    linkToEntity={`/object/opportunity/${opportunityId}`}
+    name={companyName}
     avatarType="squared"
     avatarUrl={avatarUrl}
     variant={variant}

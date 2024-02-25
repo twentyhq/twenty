@@ -1,4 +1,3 @@
-import { identifiersMapperScopedState } from '@/object-record/relation-picker/states/identifiersMapperScopedState';
 import { relationPickerPreselectedIdScopedState } from '@/object-record/relation-picker/states/relationPickerPreselectedIdScopedState';
 import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { searchQueryScopedState } from '@/object-record/relation-picker/states/searchQueryScopedState';
@@ -9,11 +8,6 @@ export const getRelationPickerScopedStates = ({
 }: {
   relationPickerScopeId: string;
 }) => {
-  const identifiersMapperState = getScopedStateDeprecated(
-    identifiersMapperScopedState,
-    relationPickerScopeId,
-  );
-
   const searchQueryState = getScopedStateDeprecated(
     searchQueryScopedState,
     relationPickerScopeId,
@@ -30,7 +24,6 @@ export const getRelationPickerScopedStates = ({
   );
 
   return {
-    identifiersMapperState,
     relationPickerSearchFilterState,
     relationPickerPreselectedIdState,
     searchQueryState,

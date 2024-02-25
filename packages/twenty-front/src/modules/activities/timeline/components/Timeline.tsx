@@ -1,14 +1,16 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 
-import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
-import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
+import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -25,81 +27,44 @@ const StyledMainContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledTimelineEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-`;
-
-const StyledEmptyTimelineTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyTimelineSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
 export const Timeline = ({
   targetableObject,
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activityTargets } = useActivityTargets({ targetableObject });
+  const { initialized, noActivities } = useRecoilValue(
+    timelineActivitiesNetworkingState,
+  );
 
-  const { records: activities } = useFindManyRecords({
-    skip: !activityTargets?.length,
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    filter: {
-      id: {
-        in: activityTargets
-          ?.map((activityTarget) => activityTarget.activityId)
-          .filter(isNonEmptyString),
-      },
-    },
-    orderBy: {
-      createdAt: 'AscNullsFirst',
-    },
-  });
+  const showEmptyState = noActivities;
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const showLoadingState = !initialized;
 
-  if (!activities.length) {
+  if (showLoadingState) {
+    // TODO: Display a beautiful loading page
+    return <></>;
+  }
+
+  if (showEmptyState) {
     return (
-      <StyledTimelineEmptyContainer>
-        <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
-        <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <ActivityCreateButton
-          onNoteClick={() =>
-            openCreateActivity({
-              type: 'Note',
-              targetableObjects: [targetableObject],
-            })
-          }
-          onTaskClick={() =>
-            openCreateActivity({
-              type: 'Task',
-              targetableObjects: [targetableObject],
-            })
-          }
-        />
-      </StyledTimelineEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="emptyTimeline" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            Add your first Activity
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            There are no activities associated with this record.{' '}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+        <TimelineCreateButtonGroup targetableObject={targetableObject} />
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities as Activity[]} />
+      <TimelineItemsContainer />
     </StyledMainContainer>
   );
 };

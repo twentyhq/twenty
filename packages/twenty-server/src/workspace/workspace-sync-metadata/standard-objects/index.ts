@@ -2,12 +2,14 @@ import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metad
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { ApiKeyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/api-key.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
+import { BlocklistObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/blocklist.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
-import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
@@ -20,11 +22,12 @@ import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
-export const standardObjectMetadata = [
+export const standardObjectMetadataCollection = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,
   AttachmentObjectMetadata,
+  BlocklistObjectMetadata,
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,
@@ -41,5 +44,6 @@ export const standardObjectMetadata = [
   MessageThreadObjectMetadata,
   MessageObjectMetadata,
   MessageChannelObjectMetadata,
-  MessageRecipientObjectMetadata,
+  MessageParticipantObjectMetadata,
+  MessageChannelMessageAssociationObjectMetadata,
 ];

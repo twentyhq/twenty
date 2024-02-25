@@ -59,7 +59,7 @@ describe('useFilterDropdown', () => {
 
     act(() => {
       result.current.setOnFilterSelect(
-        (_currVal?: Filter) => (_filter: Filter) => {},
+        (_currVal?: Filter | null) => (_filter: Filter | null) => {},
       );
     });
     await waitFor(() => {
@@ -261,7 +261,6 @@ describe('useFilterDropdown', () => {
   });
 
   it('should handle scopeId undefined on initial values', () => {
-    // eslint-disable-next-line no-console
     console.error = jest.fn();
 
     const renderFunction = () => {

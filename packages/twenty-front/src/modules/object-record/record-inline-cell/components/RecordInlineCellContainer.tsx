@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
@@ -38,13 +41,10 @@ const StyledValueContainer = styled.div`
   display: flex;
 `;
 
-const StyledLabel = styled.div<
-  Pick<RecordInlineCellContainerProps, 'labelFixedWidth'>
->`
-  align-items: center;
-
-  width: ${({ labelFixedWidth }) =>
-    labelFixedWidth ? `${labelFixedWidth}px` : 'fit-content'};
+const StyledLabelContainer = styled.div<{ width?: number }>`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  width: ${({ width }) => width}px;
 `;
 
 const StyledEditButtonContainer = styled(motion.div)`
@@ -62,7 +62,7 @@ const StyledClickableContainer = styled.div`
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
   box-sizing: border-box;
-
+  width: 100%;
   display: flex;
 
   gap: ${({ theme }) => theme.spacing(1)};
@@ -71,10 +71,22 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
+const StyledTooltip = styled(Tooltip)`
+  background-color: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+
+  color: ${({ theme }) => theme.font.color.primary};
+
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 type RecordInlineCellContainerProps = {
   IconLabel?: IconComponent;
   label?: string;
-  labelFixedWidth?: number;
+  labelWidth?: number;
+  showLabel?: boolean;
   buttonIcon?: IconComponent;
   editModeContent?: React.ReactNode;
   editModeContentOnly?: boolean;
@@ -88,7 +100,8 @@ type RecordInlineCellContainerProps = {
 export const RecordInlineCellContainer = ({
   IconLabel,
   label,
-  labelFixedWidth,
+  labelWidth,
+  showLabel,
   buttonIcon,
   editModeContent,
   displayModeContent,
@@ -98,6 +111,7 @@ export const RecordInlineCellContainer = ({
   isDisplayModeFixHeight,
   disableHoverEffect,
 }: RecordInlineCellContainerProps) => {
+  const { entityId, fieldDefinition } = useContext(FieldContext);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
@@ -120,21 +134,35 @@ export const RecordInlineCellContainer = ({
     buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
   const theme = useTheme();
+  const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
 
   return (
     <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
-      {(!!IconLabel || !!label) && (
-        <StyledLabelAndIconContainer>
+      {(IconLabel || label) && (
+        <StyledLabelAndIconContainer id={labelId}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
-          {label && (
-            <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
+          {showLabel && label && (
+            <StyledLabelContainer width={labelWidth}>
+              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+            </StyledLabelContainer>
+          )}
+          {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
+          {!showLabel && !fieldDefinition?.disableTooltip && (
+            <StyledTooltip
+              anchorSelect={`#${labelId}`}
+              content={label}
+              clickable
+              noArrow
+              place="bottom"
+              positionStrategy="fixed"
+            />
           )}
         </StyledLabelAndIconContainer>
       )}
@@ -148,6 +176,7 @@ export const RecordInlineCellContainer = ({
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
+              emptyPlaceholder={showLabel ? 'Empty' : label}
             >
               {editModeContent}
             </RecordInlineCellDisplayMode>
@@ -159,6 +188,7 @@ export const RecordInlineCellContainer = ({
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
+              emptyPlaceholder={showLabel ? 'Empty' : label}
             >
               {displayModeContent}
             </RecordInlineCellDisplayMode>

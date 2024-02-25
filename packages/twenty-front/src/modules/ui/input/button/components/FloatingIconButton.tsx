@@ -35,7 +35,9 @@ const StyledButton = styled.button<
   background: ${({ theme, isActive }) =>
     isActive ? theme.background.transparent.medium : theme.background.primary};
   border: ${({ focus, theme }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'transparent'};
+    focus
+      ? `1px solid ${theme.color.blue}`
+      : `1px solid ${theme.border.color.strong}`};
   border-radius: ${({ position, theme }) => {
     switch (position) {
       case 'left':

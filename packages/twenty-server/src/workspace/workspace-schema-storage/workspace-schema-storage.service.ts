@@ -28,12 +28,16 @@ export class WorkspaceSchemaStorageService {
       (await this.cacheVersionMemoryStorageService.read({
         key: workspaceId,
       })) ?? '0';
-    const latestVersion =
+    let latestVersion =
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
-    if (currentVersion !== latestVersion) {
+    if (!latestVersion || currentVersion !== latestVersion) {
       // Invalidate cache if version mismatch is detected
       await this.invalidateCache(workspaceId);
+
+      // If the latest version is not found, increment the version
+      latestVersion ??=
+        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
       // Update the cache version after invalidation
       await this.cacheVersionMemoryStorageService.write({

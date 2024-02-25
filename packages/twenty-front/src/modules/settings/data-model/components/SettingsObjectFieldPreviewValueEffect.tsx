@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 type SettingsObjectFieldPreviewValueEffectProps = {
   entityId: string;
@@ -14,9 +14,9 @@ export const SettingsObjectFieldPreviewValueEffect = ({
   fieldName,
   value,
 }: SettingsObjectFieldPreviewValueEffectProps) => {
-  const [, setFieldValue] = useRecoilState(
-    entityFieldsFamilySelector({
-      entityId,
+  const setFieldValue = useSetRecoilState(
+    recordStoreFamilySelector({
+      recordId: entityId,
       fieldName,
     }),
   );

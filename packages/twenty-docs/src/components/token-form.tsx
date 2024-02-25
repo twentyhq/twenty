@@ -1,68 +1,98 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from '@docusaurus/router';
+import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
+
 import tokenForm from '!css-loader!./token-form.css';
-import { TbLoader2 } from 'react-icons/tb';
 
 export type TokenFormProps = {
-  setOpenApiJson?: (json: object) => void,
-  setToken?: (token: string) => void,
-  isTokenValid: boolean,
-  setIsTokenValid: (boolean) => void,
-}
+  setOpenApiJson?: (json: object) => void;
+  setToken?: (token: string) => void;
+  setBaseUrl?: (baseUrl: string) => void;
+  isTokenValid: boolean;
+  setIsTokenValid: (boolean) => void;
+  setLoadingState: (boolean) => void;
+  subDoc?: string;
+};
 
-const TokenForm = (
-  {
-    setOpenApiJson,
-    setToken,
-    isTokenValid,
-    setIsTokenValid,
-  }: TokenFormProps
-) => {
-  const [isLoading, setIsLoading] = useState(false)
-  const token = parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ?? ''
+const TokenForm = ({
+  setOpenApiJson,
+  setToken,
+  setBaseUrl: submitBaseUrl,
+  isTokenValid,
+  setIsTokenValid,
+  subDoc,
+  setLoadingState,
+}: TokenFormProps) => {
+  const history = useHistory();
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [baseUrl, setBaseUrl] = useState(
+    parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
+      'https://api.twenty.com',
+  );
+  const token =
+    parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ??
+    '';
+
+  const updateLoading = (loading: boolean) => {
+    setIsLoading(loading);
+    setLoadingState(loading);
+  };
 
   const updateToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem(
       'TryIt_securitySchemeValues',
-      JSON.stringify({bearerAuth: event.target.value}),
-    )
-    await submitToken(event.target.value)
-  }
+      JSON.stringify({ bearerAuth: event.target.value }),
+    );
+    await submitToken(event.target.value);
+  };
 
-  const validateToken = (openApiJson) => setIsTokenValid(!!openApiJson.tags)
+  const updateBaseUrl = (baseUrl) => {
+    setBaseUrl(baseUrl);
+    submitBaseUrl?.(baseUrl);
+    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: baseUrl }));
+  };
 
-  const getJson = async (token: string ) => {
-    setIsLoading(true)
+  const validateToken = (openApiJson) => {
+    setIsTokenValid(!!openApiJson.tags);
+  };
 
-    return await fetch(
-      'https://api.twenty.com/open-api',
-      {headers: {Authorization: `Bearer ${token}`}}
-    )
-      .then((res)=> res.json())
-      .then((result)=> {
-        validateToken(result)
-        setIsLoading(false)
+  const getJson = async (token: string) => {
+    updateLoading(true);
 
-        return result
+    return await fetch(baseUrl + '/open-api/' + (subDoc ?? 'core'), {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        validateToken(result);
+        updateLoading(false);
+
+        return result;
       })
-      .catch(() => setIsLoading(false))
-  }
+      .catch(() => {
+        updateLoading(false);
+        setIsTokenValid(false);
+      });
+  };
 
   const submitToken = async (token) => {
-    if (isLoading) return
+    if (isLoading) return;
 
-    const json = await getJson(token)
+    const json = await getJson(token);
 
-    setToken && setToken(token)
+    setToken && setToken(token);
 
-    setOpenApiJson && setOpenApiJson(json)
-  }
+    setOpenApiJson && setOpenApiJson(json);
+  };
 
-  useEffect(()=> {
-    (async ()=> {
-      await submitToken(token)
-    })()
-  },[])
+  useEffect(() => {
+    (async () => {
+      updateBaseUrl(baseUrl);
+      await submitToken(token);
+    })();
+  }, []);
 
   // We load playground style using useEffect as it breaks remaining docs style
   useEffect(() => {
@@ -73,31 +103,63 @@ const TokenForm = (
     return () => styleElement.remove();
   }, []);
 
-  return !isTokenValid && (
-    <div>
-      <div className='container'>
-        <form className="form">
-          <label>
-            To load your playground schema, <a className='link' href='https://app.twenty.com/settings/developers/api-keys'>generate an API key</a> and paste it here:
-          </label>
-          <p>
-            <input
-              className={(token && !isLoading) ? 'input invalid' : 'input'}
-              type='text'
-              readOnly={isLoading}
-              placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'
-              defaultValue={token}
-              onChange={updateToken}
-            />
-            <span className={`token-invalid ${(!token || isLoading )&& 'not-visible'}`}>Token invalid</span>
-            <div className='loader-container'>
-              <TbLoader2 className={`loader ${!isLoading && 'not-visible'}`} />
-            </div>
-          </p>
-        </form>
-      </div>
+  return (
+    <div className="form-container">
+      <form className="form">
+        <div className="backButton" onClick={() => history.goBack()}>
+          <TbChevronLeft size={18} />
+          <span>Back</span>
+        </div>
+
+        <div className="inputWrapper">
+          <div className="inputIcon" title="Api Key">
+            <TbApi size={20} />
+          </div>
+          <input
+            className={!isTokenValid && !isLoading ? 'input invalid' : 'input'}
+            type="text"
+            readOnly={isLoading}
+            placeholder="API Key"
+            defaultValue={token}
+            onChange={updateToken}
+          />
+        </div>
+        <div className="inputWrapper">
+          <div className="inputIcon" title="Base URL">
+            <TbLink size={20} />
+          </div>
+          <input
+            className={'input'}
+            type="text"
+            readOnly={isLoading}
+            placeholder="Base URL"
+            defaultValue={baseUrl}
+            onChange={(event) => updateBaseUrl(event.target.value)}
+            onBlur={() => submitToken(token)}
+          />
+        </div>
+        {!location.pathname.includes('rest-api') && (
+          <div className="inputWrapper" style={{ maxWidth: '100px' }}>
+            <select
+              className="select"
+              onChange={(event) =>
+                history.replace(
+                  '/' +
+                    location.pathname.split('/').at(-2) +
+                    '/' +
+                    event.target.value,
+                )
+              }
+              value={location.pathname.split('/').at(-1)}
+            >
+              <option value="core">Core</option>
+              <option value="metadata">Metadata</option>
+            </select>
+          </div>
+        )}
+      </form>
     </div>
-  )
-}
+  );
+};
 
 export default TokenForm;

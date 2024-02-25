@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
+
 const tableName = 'featureFlag';
 
 export const seedFeatureFlags = async (
@@ -14,32 +16,27 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: 'IS_RELATION_FIELD_TYPE_ENABLED',
+        key: FeatureFlagKeys.IsCalendarEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_MESSAGING_ENABLED',
+        key: FeatureFlagKeys.IsMessagingEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_NOTE_CREATE_IMAGES_ENABLED',
+        key: FeatureFlagKeys.IsBlocklistEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_SELECT_FIELD_TYPE_ENABLED',
+        key: FeatureFlagKeys.IsWorkspaceCleanable,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_RATING_FIELD_TYPE_ENABLED',
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: 'IS_RELATION_FIELD_CARD_ENABLED',
+        key: FeatureFlagKeys.IsNewRecordBoardEnabled,
         workspaceId: workspaceId,
         value: true,
       },

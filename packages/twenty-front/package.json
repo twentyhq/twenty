@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.2.2",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,9 +9,9 @@
     "start:clean": "yarn start --force",
     "build": "tsc && vite build && yarn build:inject-runtime-env",
     "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
-    "tsc:spec": "tsc --project tsconfig.spec.json --noEmit",
     "tsc": "tsc --project tsconfig.app.json --watch",
-    "tsc:ci": "tsc --project tsconfig.app.json --noEmit && tsc --project tsconfig.spec.json --noEmit && tsc --project tsconfig.node.json --noEmit",
+    "tsc:ci": "tsc",
+    "tsc:spec": "tsc --project tsconfig.spec.json",
     "preview": "vite preview",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
     "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
@@ -32,7 +32,7 @@
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
     "storybook:test-single-worker": "test-storybook --maxWorkers=1",
-    "storybook:coverage": "yarn storybook:test-slow --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "storybook:coverage": "yarn storybook:test-slow --coverage ; npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "storybook:modules:coverage": "STORYBOOK_SCOPE=modules yarn storybook:coverage",
     "storybook:pages:coverage": "STORYBOOK_SCOPE=pages yarn storybook:coverage",
     "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.cjs",

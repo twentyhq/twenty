@@ -1,10 +1,10 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
+import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -12,58 +12,62 @@ type useDeleteOneRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-export const useDeleteManyRecords = <T>({
+type DeleteManyRecordsOptions = {
+  skipOptimisticEffect?: boolean;
+};
+
+export const useDeleteManyRecords = ({
   objectNameSingular,
-  refetchFindManyQuery = false,
 }: useDeleteOneRecordProps) => {
-  const { performOptimisticEvict } = useOptimisticEvict();
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular,
-  });
-
-  const {
-    objectMetadataItem,
-    deleteManyRecordsMutation,
-    findManyRecordsQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
   const apolloClient = useApolloClient();
 
-  const deleteManyRecords = async (idsToDelete: string[]) => {
-    triggerOptimisticEffects({
-      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      deletedRecordIds: idsToDelete,
-    });
+  const { objectMetadataItem, deleteManyRecordsMutation, getRecordFromCache } =
+    useObjectMetadataItem({ objectNameSingular });
 
-    idsToDelete.forEach((idToDelete) => {
-      performOptimisticEvict(
-        capitalize(objectMetadataItem.nameSingular),
-        'id',
-        idToDelete,
-      );
-    });
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-    const deleteRecordFilter: ObjectRecordQueryFilter = {
-      id: {
-        in: idsToDelete,
-      },
-    };
+  const mutationResponseField = getDeleteManyRecordsMutationResponseField(
+    objectMetadataItem.namePlural,
+  );
+
+  const deleteManyRecords = async (
+    idsToDelete: string[],
+    options?: DeleteManyRecordsOptions,
+  ) => {
     const deletedRecords = await apolloClient.mutate({
       mutation: deleteManyRecordsMutation,
       variables: {
-        filter: deleteRecordFilter,
-        // atMost: idsToDelete.length,
+        filter: { id: { in: idsToDelete } },
       },
-      refetchQueries: refetchFindManyQuery
-        ? [getOperationName(findManyRecordsQuery) ?? '']
-        : [],
+      optimisticResponse: options?.skipOptimisticEffect
+        ? undefined
+        : {
+            [mutationResponseField]: idsToDelete.map((idToDelete) => ({
+              __typename: capitalize(objectNameSingular),
+              id: idToDelete,
+            })),
+          },
+      update: options?.skipOptimisticEffect
+        ? undefined
+        : (cache, { data }) => {
+            const records = data?.[mutationResponseField];
+
+            if (!records?.length) return;
+
+            const cachedRecords = records
+              .map((record) => getRecordFromCache(record.id, cache))
+              .filter(isDefined);
+
+            triggerDeleteRecordsOptimisticEffect({
+              cache,
+              objectMetadataItem,
+              recordsToDelete: cachedRecords,
+              objectMetadataItems,
+            });
+          },
     });
 
-    return deletedRecords.data[
-      `delete${capitalize(objectMetadataItem.namePlural)}`
-    ] as T;
+    return deletedRecords.data?.[mutationResponseField] ?? null;
   };
 
   return { deleteManyRecords };

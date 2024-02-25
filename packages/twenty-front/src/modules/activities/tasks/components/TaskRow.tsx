@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Activity } from '@/activities/types/Activity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
@@ -22,6 +22,10 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(12)};
   min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
+
+  &:last-child {
+    border-bottom: 0;
+  }
 `;
 
 const StyledTaskBody = styled.div`
@@ -63,11 +67,11 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
-export const TaskRow = ({
-  task,
-}: {
-  task: Omit<GraphQLActivity, 'assigneeId'>;
-}) => {
+const StyledPlaceholder = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
+export const TaskRow = ({ task }: { task: Activity }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
@@ -96,7 +100,7 @@ export const TaskRow = ({
         />
       </div>
       <StyledTaskTitle completed={task.completedAt !== null}>
-        {task.title ?? 'Task Title'}
+        {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
       </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />

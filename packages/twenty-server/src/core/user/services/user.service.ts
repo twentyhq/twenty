@@ -8,6 +8,7 @@ import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -20,10 +21,22 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const dataSourcesMetadata =
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         user.defaultWorkspace.id,
       );
+
+    if (!dataSourcesMetadata.length) {
+      return;
+    }
+
+    if (dataSourcesMetadata.length > 1) {
+      throw new Error(
+        `user '${user.id}' default workspace '${user.defaultWorkspace.id}' has multiple data source metadata`,
+      );
+    }
+
+    const dataSourceMetadata = dataSourcesMetadata[0];
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
@@ -32,7 +45,14 @@ export class UserService extends TypeOrmQueryService<User> {
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
     );
 
-    assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
+    if (!workspaceMembers.length) {
+      return;
+    }
+
+    assert(
+      workspaceMembers.length === 1,
+      'WorkspaceMember not found or too many found',
+    );
 
     const userWorkspaceMember = new WorkspaceMember();
 
@@ -48,7 +68,21 @@ export class UserService extends TypeOrmQueryService<User> {
     return userWorkspaceMember;
   }
 
-  async createWorkspaceMember(user: User, avatarUrl?: string) {
+  async loadWorkspaceMembers(dataSource: DataSourceEntity) {
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSource);
+
+    return await workspaceDataSource?.query(
+      `
+      SELECT * 
+      FROM ${dataSource.schema}."workspaceMember" AS s 
+      INNER JOIN core.user AS u 
+      ON s."userId" = u.id
+    `,
+    );
+  }
+
+  async createWorkspaceMember(user: User) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         user.defaultWorkspace.id,
@@ -59,10 +93,10 @@ export class UserService extends TypeOrmQueryService<User> {
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-      ("nameFirstName", "nameLastName", "colorScheme", "userId", "avatarUrl")
+      ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
       VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
         user.id
-      }', '${avatarUrl ?? ''}')`,
+      }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
   }
 

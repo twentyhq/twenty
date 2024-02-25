@@ -1,16 +1,26 @@
+import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerOptions } from 'src/integrations/exception-handler/interfaces/exception-handler-options.interface';
+
 import { ExceptionHandlerDriverInterface } from 'src/integrations/exception-handler/interfaces';
 
 export class ExceptionHandlerConsoleDriver
   implements ExceptionHandlerDriverInterface
 {
-  captureException(exception: unknown) {
+  captureExceptions(
+    exceptions: ReadonlyArray<any>,
+    options?: ExceptionHandlerOptions,
+  ) {
     console.group('Exception Captured');
-    console.error(exception);
+    console.info(options);
+    console.error(exceptions);
     console.groupEnd();
+
+    return [];
   }
 
-  captureMessage(message: string): void {
+  captureMessage(message: string, user?: ExceptionHandlerUser): void {
     console.group('Message Captured');
+    console.info(user);
     console.info(message);
     console.groupEnd();
   }

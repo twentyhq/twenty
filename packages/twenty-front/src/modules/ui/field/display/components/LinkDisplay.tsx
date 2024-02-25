@@ -1,12 +1,13 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { FieldLinkValue } from '@/object-record/field/types/FieldMetadata';
+import { FieldLinkValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
+import { checkUrlType } from '~/utils/checkUrlType';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -22,21 +23,6 @@ const StyledRawLink = styled(RoundedLink)`
 
 type LinkDisplayProps = {
   value?: FieldLinkValue;
-};
-
-const checkUrlType = (url: string) => {
-  if (
-    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
-      url,
-    )
-  ) {
-    return LinkType.LinkedIn;
-  }
-  if (url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i)) {
-    return LinkType.Twitter;
-  }
-
-  return LinkType.Url;
 };
 
 export const LinkDisplay = ({ value }: LinkDisplayProps) => {
