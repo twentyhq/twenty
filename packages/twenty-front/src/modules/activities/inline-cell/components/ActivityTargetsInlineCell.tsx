@@ -39,6 +39,7 @@ export const ActivityTargetsInlineCell = ({
           scope: ActivityEditorHotkeyScope.ActivityTargets,
         }}
         IconLabel={IconArrowUpRight}
+        showLabel={true}
         editModeContent={
           <ActivityTargetInlineCellEditMode
             activity={activity}
