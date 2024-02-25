@@ -39,19 +39,23 @@ export const generateCsv: GenerateExport = ({
       title: col.label,
     };
 
-    const objectColumnData = rows.find((r) => {
-      const val = (r as any)[column.field];
-      return val && typeof val === 'object' && !Array.isArray(val);
+    const fieldsWithSubFields = rows.find((row) => {
+      const fieldValue = (row as any)[column.field];
+      const hasSubFields =
+        fieldValue &&
+        typeof fieldValue === 'object' &&
+        !Array.isArray(fieldValue);
+      return hasSubFields;
     });
 
-    if (objectColumnData) {
+    if (fieldsWithSubFields) {
       const nestedFieldsWithoutTypename = Object.keys(
-        (objectColumnData as any)[column.field],
+        (fieldsWithSubFields as any)[column.field],
       )
         .filter((key) => key !== '__typename')
-        .map((k) => ({
-          field: `${column.field}.${k}`,
-          title: `${column.title}${k[0].toUpperCase() + k.slice(1)}`,
+        .map((key) => ({
+          field: `${column.field}.${key}`,
+          title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
         }));
       return nestedFieldsWithoutTypename;
     }

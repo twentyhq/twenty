@@ -57,7 +57,7 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Foo,Empty,NestedFoo,NestedNested
+    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested
 some field,,foo,nested`);
   });
 });

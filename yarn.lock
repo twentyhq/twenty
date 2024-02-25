@@ -22827,10 +22827,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deeks@npm:3.0.2":
-  version: 3.0.2
-  resolution: "deeks@npm:3.0.2"
-  checksum: 2d90a569f43a01e450e7693951ad4889475b68a3e95c09a8f04b47dd94cb64ba84f7d7e7fd5b3857461b5a38275be037242768e2686afe3e898c3c1ae65cb4de
+"deeks@npm:3.1.0":
+  version: 3.1.0
+  resolution: "deeks@npm:3.1.0"
+  checksum: 3173ca28466cf31d550248c034c5466d93c5aecb8ee8ca547a2c9f471e62af4ebed7456c3310503be901d982867071b4411030a6b724528739895aee1dc2b482
   languageName: node
   linkType: hard
 
@@ -23291,10 +23291,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"doc-path@npm:4.0.2":
-  version: 4.0.2
-  resolution: "doc-path@npm:4.0.2"
-  checksum: 4dde0c449b8bf7e4f1533510bb78a26f75aeec887917056eda19631ccfb966bb110c89d329f23cd19aaa0df97eced0d5cf9ea09178ce4b1bbe7b769a048da9a6
+"doc-path@npm:4.1.0":
+  version: 4.1.0
+  resolution: "doc-path@npm:4.1.0"
+  checksum: 134a272a0c41c5f03083fbe7d12fba88615734f15d75e5c1e59e6d9d41e6ad2c5d2ec442282a55ceab45695c4b31aaf6194de1db57ea840e10e77a5c8dd65fa4
   languageName: node
   linkType: hard
 
@@ -31098,13 +31098,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-2-csv@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "json-2-csv@npm:5.0.1"
+"json-2-csv@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "json-2-csv@npm:5.4.0"
   dependencies:
-    deeks: "npm:3.0.2"
-    doc-path: "npm:4.0.2"
-  checksum: b1aaf21e4f2c027b113e6832bce78af66b11683c8e88b53450d11e55591b714731f47839c9670a652309873f55e7ac97c45ea1ac649b5d952c4fb3d42dce0bf9
+    deeks: "npm:3.1.0"
+    doc-path: "npm:4.1.0"
+  checksum: e33a646315aca132a535aa77e7aa3702452a7d535fece17f8247dd938ee97b93ff44a621a193efcd2e6b73251026044b6dfddb222086941f030fd7cf309e3aa1
   languageName: node
   linkType: hard
 
@@ -44353,7 +44353,7 @@ __metadata:
     js-cookie: "npm:^3.0.5"
     js-levenshtein: "npm:^1.1.6"
     jsdom: "npm:~22.1.0"
-    json-2-csv: "npm:^5.0.1"
+    json-2-csv: "npm:^5.4.0"
     jsonwebtoken: "npm:^9.0.0"
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
