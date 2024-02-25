@@ -1,4 +1,4 @@
-export const animation = {
+export const ANIMATION = {
   duration: {
     instant: 0.075,
     fast: 0.15,

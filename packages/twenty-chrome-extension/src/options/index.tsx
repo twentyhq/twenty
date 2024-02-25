@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/constants/theme';
+import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import App from '~/options/Options';
 
 import '~/index.css';

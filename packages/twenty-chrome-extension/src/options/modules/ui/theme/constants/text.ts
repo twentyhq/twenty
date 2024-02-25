@@ -1,4 +1,4 @@
-export const text = {
+export const TEXT = {
   lineHeight: {
     lg: 1.5,
     md: 1.2,

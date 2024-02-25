@@ -1,4 +1,4 @@
-export const icon = {
+export const ICON = {
   size: {
     sm: 14,
     md: 16,

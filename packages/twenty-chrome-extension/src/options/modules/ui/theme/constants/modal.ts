@@ -1,4 +1,4 @@
-export const modal = {
+export const MODAL = {
   size: {
     sm: '300px',
     md: '400px',
