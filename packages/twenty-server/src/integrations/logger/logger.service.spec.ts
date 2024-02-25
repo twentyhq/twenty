@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LoggerService } from './logger.service';
-
-import { LOGGER_DRIVER } from './constants/LoggerDriver';
+import { LOGGER_DRIVER } from './logger.constants';
 
 describe('LoggerService', () => {
   let service: LoggerService;

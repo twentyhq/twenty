@@ -8,8 +8,8 @@ import {
 } from 'src/integrations/message-queue/interfaces';
 import {
   MessageQueue,
-  MESSAGE_QUEUE_DRIVER,
-} from 'src/integrations/message-queue/constants/MessageQueueDriver';
+  QUEUE_DRIVER,
+} from 'src/integrations/message-queue/message-queue.constants';
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { BullMQDriver } from 'src/integrations/message-queue/drivers/bullmq.driver';
@@ -25,10 +25,10 @@ export class MessageQueueModule {
         useFactory: (driver: MessageQueueDriver) => {
           return new MessageQueueService(driver, queue);
         },
-        inject: [MESSAGE_QUEUE_DRIVER],
+        inject: [QUEUE_DRIVER],
       })),
       {
-        provide: MESSAGE_QUEUE_DRIVER,
+        provide: QUEUE_DRIVER,
         useFactory: async (...args: any[]) => {
           const config = await options.useFactory(...args);
 

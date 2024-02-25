@@ -10,7 +10,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
-import { DUPLICATE_CRITERIA_COLLECTION } from 'src/workspace/workspace-resolver-builder/constants/DuplicateCriteria';
+import { duplicateCriteriaCollection } from 'src/workspace/workspace-resolver-builder/constants/duplicate-criteria.constants';
 
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -138,7 +138,7 @@ export class FindDuplicatesQueryFactory {
   private getApplicableDuplicateCriteriaCollection(
     objectMetadataItem: ObjectMetadataInterface,
   ) {
-    return DUPLICATE_CRITERIA_COLLECTION.filter(
+    return duplicateCriteriaCollection.filter(
       (duplicateCriteria) =>
         duplicateCriteria.objectName === objectMetadataItem.nameSingular,
     );

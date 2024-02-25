@@ -8,7 +8,7 @@ import {
   MessageQueueJobData,
 } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { getJobClassName } from 'src/integrations/message-queue/utils/get-job-class-name.util';
 
 export class SyncDriver implements MessageQueueDriver {

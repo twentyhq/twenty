@@ -11,7 +11,7 @@ import {
 import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/integrations/event-emitter/utils/object-record-changed-properties.util';
-import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
   MatchMessageParticipantJob,

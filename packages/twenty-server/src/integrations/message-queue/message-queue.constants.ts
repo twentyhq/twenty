@@ -1,4 +1,4 @@
-export const MESSAGE_QUEUE_DRIVER = Symbol('QUEUE_DRIVER');
+export const QUEUE_DRIVER = Symbol('QUEUE_DRIVER');
 
 export enum MessageQueue {
   taskAssignedQueue = 'task-assigned-queue',

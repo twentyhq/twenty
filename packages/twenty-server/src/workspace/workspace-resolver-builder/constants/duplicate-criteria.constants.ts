@@ -6,7 +6,7 @@ import { RecordDuplicateCriteria } from 'src/workspace/workspace-query-builder/i
  * So if we need to reference a custom field, we should directly add the column name like `_customColumn`.
  * If we need to terence a composite field, we should add all children of the composite like `nameFirstName` and `nameLastName`
  */
-export const DUPLICATE_CRITERIA_COLLECTION: RecordDuplicateCriteria[] = [
+export const duplicateCriteriaCollection: RecordDuplicateCriteria[] = [
   {
     objectName: 'company',
     columnNames: ['domainName'],

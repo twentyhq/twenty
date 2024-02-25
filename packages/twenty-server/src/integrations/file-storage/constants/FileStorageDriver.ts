@@ -1,1 +1,0 @@
-export const FILE_STORAGE_DRIVER = Symbol('STORAGE_DRIVER');

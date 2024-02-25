@@ -1,1 +1,0 @@
-export const TIMELINE_THREADS_MAX_PAGE_SIZE = 50;

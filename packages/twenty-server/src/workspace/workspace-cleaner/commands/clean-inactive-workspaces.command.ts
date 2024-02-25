@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { MessageQueue } from 'src/integrations/message-queue/constants/MessageQueueDriver';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { CleanInactiveWorkspaceJob } from 'src/workspace/workspace-cleaner/crons/clean-inactive-workspace.job';
 
