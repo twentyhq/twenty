@@ -7,9 +7,8 @@ import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefin
 import { isObjectFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isObjectFilterDropdownOperandSelectUnfoldedScopedState';
 import { isObjectFilterDropdownUnfoldedScopedState } from '../states/isObjectFilterDropdownUnfoldedScopedState';
 import { objectFilterDropdownSearchInputScopedState } from '../states/objectFilterDropdownSearchInputScopedState';
-import { objectFilterDropdownSelectedOptionValuesScopedState } from '../states/objectFilterDropdownSelectedOptionValuesScopedState';
-
 import { objectFilterDropdownSelectedEntityIdScopedState } from '../states/objectFilterDropdownSelectedEntityIdScopedState';
+import { objectFilterDropdownSelectedOptionValuesScopedState } from '../states/objectFilterDropdownSelectedOptionValuesScopedState';
 import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 

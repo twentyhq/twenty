@@ -1,4 +1,7 @@
-import { ObjectFilterDropdownOptionSearchInput, ObjectFilterDropdownRecordSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
+import {
+  ObjectFilterDropdownOptionSearchInput,
+  ObjectFilterDropdownRecordSearchInput,
+} from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -8,8 +11,8 @@ import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSe
 import { ObjectFilterDropdownNumberSearchInput } from './ObjectFilterDropdownNumberSearchInput';
 import { ObjectFilterDropdownOperandButton } from './ObjectFilterDropdownOperandButton';
 import { ObjectFilterDropdownOperandSelect } from './ObjectFilterDropdownOperandSelect';
-import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownOptionSelect } from './ObjectFilterDropdownOptionSelect';
+import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownTextSearchInput } from './ObjectFilterDropdownTextSearchInput';
 
 type MultipleFiltersDropdownContentProps = {

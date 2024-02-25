@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { MenuItemMultiSelect } from 'tsup.ui.index';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+
 import { SelectableOption } from '../types/SelectableOption';
-import { MenuItemMultiSelect } from 'tsup.ui.index';
 
 export const MultipleOptionSelectDropdown = ({
   optionsToSelect,
@@ -39,15 +40,15 @@ export const MultipleOptionSelectDropdown = ({
 
   useEffect(() => {
     setOptionInDropdown([
-        ...(filteredSelectedOptions ?? []),
-        ...(optionsToSelect ?? []),
+      ...(filteredSelectedOptions ?? []),
+      ...(optionsToSelect ?? []),
     ]);
   }, [optionsToSelect, filteredSelectedOptions]);
 
   const showNoResult =
     optionsToSelect?.length === 0 &&
     searchFilter !== '' &&
-    filteredSelectedOptions?.length === 0 ;
+    filteredSelectedOptions?.length === 0;
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
       {optionsInDropdown?.map((option) => (
@@ -55,10 +56,10 @@ export const MultipleOptionSelectDropdown = ({
           key={option.id}
           selected={option.isSelected}
           onSelectChange={(selected) =>
-            handleRecordSelectChange(option,selected)
+            handleRecordSelectChange(option, selected)
           }
           text={option.label}
-          className=''
+          className=""
         />
       ))}
       {showNoResult && <MenuItem text="No result" />}

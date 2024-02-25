@@ -1,19 +1,12 @@
 import { useTheme } from '@emotion/react';
+import { Tag } from 'tsup.ui.index';
 
-import {
-  ColorSample,
-  ColorSampleVariant,
-} from '@/ui/display/color/components/ColorSample';
 import { IconCheck } from '@/ui/display/icon';
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
-import {
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
-import { Tag } from 'tsup.ui.index';
 
 export const colorLabels: Record<ThemeColor, string> = {
   green: 'Green',
@@ -29,21 +22,19 @@ export const colorLabels: Record<ThemeColor, string> = {
 };
 
 type MenuItemSelectOptionProps = {
-    selected: boolean;
-    className?: string;
-    onClick?: () => void;
-    color: ThemeColor;
-    text: string;
+  selected: boolean;
+  className?: string;
+  onClick?: () => void;
+  color: ThemeColor;
+  text: string;
 };
-  
-
 
 export const MenuItemSelectOption = ({
   color,
   selected,
   className,
   onClick,
-  text
+  text,
 }: MenuItemSelectOptionProps) => {
   const theme = useTheme();
 
@@ -54,7 +45,7 @@ export const MenuItemSelectOption = ({
       selected={selected}
     >
       <StyledMenuItemLeftContent>
-        <Tag color={color} text={text}/>
+        <Tag color={color} text={text} />
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>

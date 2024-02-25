@@ -62,8 +62,7 @@ export const ViewBarFilterEffect = ({
         : [];
 
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
-    }
-    else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
+    } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
       const viewFilterUsedInDropdown = currentViewFilters.find(
         (filter) =>
           filter.fieldMetadataId ===
@@ -76,13 +75,16 @@ export const ViewBarFilterEffect = ({
         ? JSON.parse(viewFilterUsedInDropdown.value)
         : [];
 
-      setObjectFilterDropdownSelectedOptionValues(viewFilterSelectedOptionValues);
+      setObjectFilterDropdownSelectedOptionValues(
+        viewFilterSelectedOptionValues,
+      );
     }
   }, [
     filterDefinitionUsedInDropdown,
     currentViewFilters,
     setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownUnfolded,
+    setObjectFilterDropdownSelectedOptionValues,
   ]);
 
   return <></>;

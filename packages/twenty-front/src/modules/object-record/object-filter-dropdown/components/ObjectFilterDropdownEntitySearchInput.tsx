@@ -27,7 +27,6 @@ export const ObjectFilterDropdownRecordSearchInput = () => {
   );
 };
 
-
 export const ObjectFilterDropdownOptionSearchInput = () => {
   const {
     filterDefinitionUsedInDropdown,
