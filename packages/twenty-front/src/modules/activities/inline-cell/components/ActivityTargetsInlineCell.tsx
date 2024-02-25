@@ -46,7 +46,7 @@ export const ActivityTargetsInlineCell = ({
             activityTargetObjectRecords={activityTargetObjectRecords}
           />
         }
-        label="Relations:"
+        label="Relations"
         displayModeContent={
           <ActivityTargetChips
             activityTargetObjectRecords={activityTargetObjectRecords}
