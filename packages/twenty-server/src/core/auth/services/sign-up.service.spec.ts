@@ -1,38 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { HttpService } from '@nestjs/axios';
 
-import { UserService } from 'src/core/user/services/user.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { EmailService } from 'src/integrations/email/email.service';
 import { SignUpService } from 'src/core/auth/services/sign-up.service';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
-import { AuthService } from './auth.service';
-import { TokenService } from './token.service';
-
-describe('AuthService', () => {
-  let service: AuthService;
+describe('SignUpService', () => {
+  let service: SignUpService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AuthService,
+        SignUpService,
         {
-          provide: TokenService,
+          provide: FileUploadService,
           useValue: {},
         },
         {
-          provide: UserService,
-          useValue: {},
-        },
-        {
-          provide: SignUpService,
-          useValue: {},
-        },
-        {
-          provide: WorkspaceManagerService,
+          provide: UserWorkspaceService,
           useValue: {},
         },
         {
@@ -48,13 +37,13 @@ describe('AuthService', () => {
           useValue: {},
         },
         {
-          provide: EmailService,
+          provide: HttpService,
           useValue: {},
         },
       ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    service = module.get<SignUpService>(SignUpService);
   });
 
   it('should be defined', () => {
