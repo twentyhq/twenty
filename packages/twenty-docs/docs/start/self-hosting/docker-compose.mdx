@@ -29,7 +29,7 @@ services:
       - SIGN_IN_PREFILLED=${SIGN_IN_PREFILLED}
       - REACT_APP_SERVER_BASE_URL=${LOCAL_SERVER_URL}
       - REACT_APP_SERVER_AUTH_URL=${LOCAL_SERVER_URL}/auth
-      - REACT_APP_SERVER_FILES_URL ${LOCAL_SERVER_URL}/files
+      - REACT_APP_SERVER_FILES_URL=${LOCAL_SERVER_URL}/files
     depends_on:
       - backend
 
@@ -56,7 +56,6 @@ services:
       - twenty-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
-  
 volumes:
   twenty-db-data:
 ```
