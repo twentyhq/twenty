@@ -8,7 +8,10 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
@@ -48,11 +51,11 @@ const StyledButton = styled(LightButton)`
 `;
 
 const getNextColor = (currentColor: ThemeColor) => {
-  const currentColorIndex = mainColorNames.findIndex(
+  const currentColorIndex = MAIN_COLOR_NAMES.findIndex(
     (color) => color === currentColor,
   );
-  const nextColorIndex = (currentColorIndex + 1) % mainColorNames.length;
-  return mainColorNames[nextColorIndex];
+  const nextColorIndex = (currentColorIndex + 1) % MAIN_COLOR_NAMES.length;
+  return MAIN_COLOR_NAMES[nextColorIndex];
 };
 
 export const SettingsObjectFieldSelectForm = ({

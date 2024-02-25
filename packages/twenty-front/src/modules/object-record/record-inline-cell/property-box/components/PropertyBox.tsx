@@ -1,10 +1,22 @@
-import { PropertyBoxContainer } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxContainer';
+import styled from '@emotion/styled';
 
 interface PropertyBoxProps {
   children: React.ReactNode;
-  extraPadding?: boolean;
+  className?: string;
 }
 
-export const PropertyBox = ({ children }: PropertyBoxProps) => (
-  <PropertyBoxContainer>{children}</PropertyBoxContainer>
+export const StyledPropertyBoxContainer = styled.div`
+  align-self: stretch;
+  background: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+export const PropertyBox = ({ children, className }: PropertyBoxProps) => (
+  <StyledPropertyBoxContainer className={className}>
+    {children}
+  </StyledPropertyBoxContainer>
 );

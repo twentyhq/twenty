@@ -5,10 +5,10 @@ import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-type NavigationDrawerItemProps = {
+export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
   level?: 1 | 2;

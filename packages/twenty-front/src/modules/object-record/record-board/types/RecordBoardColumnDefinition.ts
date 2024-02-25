@@ -1,5 +1,5 @@
 import { RecordBoardColumnAction } from '@/object-record/record-board/types/RecordBoardColumnAction';
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 export type RecordBoardColumnDefinition = {
   id: string;

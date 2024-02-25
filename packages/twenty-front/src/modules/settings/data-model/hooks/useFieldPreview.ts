@@ -1,8 +1,8 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
 import { useFieldPreviewValue } from './useFieldPreviewValue';
@@ -46,7 +46,7 @@ export const useFieldPreview = ({
     });
 
   const settingsFieldMetadataType =
-    settingsFieldMetadataTypes[fieldMetadata.type];
+    SETTINGS_FIELD_METADATA_TYPES[fieldMetadata.type];
 
   const defaultSelectValue = selectOptions?.[0];
   const selectValue =

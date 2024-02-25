@@ -28,6 +28,7 @@ import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/seriali
 import { computeCompositeFieldMetadata } from 'src/workspace/workspace-health/utils/compute-composite-field-metadata.util';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { customNamePrefix } from 'src/workspace/utils/compute-custom-name.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -45,10 +46,7 @@ export class FieldMetadataHealthService {
 
     for (const fieldMetadata of fieldMetadataCollection) {
       // Relation metadata are checked in another service
-      if (
-        fieldMetadata.fromRelationMetadata ||
-        fieldMetadata.toRelationMetadata
-      ) {
+      if (isRelationFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 

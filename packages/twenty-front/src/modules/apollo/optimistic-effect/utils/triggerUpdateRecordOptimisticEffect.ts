@@ -117,7 +117,10 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
         const rootQueryNextEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
 
-        if (rootQueryNextEdgesShouldBeSorted) {
+        if (
+          rootQueryNextEdgesShouldBeSorted &&
+          Object.getOwnPropertyNames(rootQueryOrderBy).length > 0
+        ) {
           rootQueryNextEdges = sortCachedObjectEdges({
             edges: rootQueryNextEdges,
             orderBy: rootQueryOrderBy,

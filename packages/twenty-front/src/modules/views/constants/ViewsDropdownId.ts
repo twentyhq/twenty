@@ -1,1 +1,1 @@
-export const ViewsDropdownId = 'views';
+export const VIEWS_DROPDOWN_ID = 'views';

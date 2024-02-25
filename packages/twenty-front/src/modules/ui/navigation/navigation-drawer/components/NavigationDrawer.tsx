@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { desktopNavDrawerWidths } from '../constants';
+import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
 
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
@@ -33,7 +33,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
-  min-width: ${desktopNavDrawerWidths.menu}px;
+  min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -80,7 +80,7 @@ export const NavigationDrawer = ({
 
   const desktopWidth = !isNavigationDrawerOpen
     ? 12
-    : desktopNavDrawerWidths.menu;
+    : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
   const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
 

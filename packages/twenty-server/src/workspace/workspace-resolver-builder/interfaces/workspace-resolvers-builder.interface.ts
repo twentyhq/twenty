@@ -26,6 +26,11 @@ export interface FindOneResolverArgs<Filter = any> {
   filter?: Filter;
 }
 
+export interface FindDuplicatesResolverArgs<Data extends Record = Record> {
+  id?: string;
+  data?: Data;
+}
+
 export interface CreateOneResolverArgs<Data extends Record = Record> {
   data: Data;
 }
@@ -81,5 +86,6 @@ export type ResolverArgs =
   | DeleteOneResolverArgs
   | FindManyResolverArgs
   | FindOneResolverArgs
+  | FindDuplicatesResolverArgs
   | UpdateManyResolverArgs
   | UpdateOneResolverArgs;
