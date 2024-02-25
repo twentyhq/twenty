@@ -40,7 +40,7 @@ const StyledTopContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px 24px 24px 48px;
+  padding: ${({ theme }) => theme.spacing(6)};
 `;
 
 type ActivityEditorProps = {

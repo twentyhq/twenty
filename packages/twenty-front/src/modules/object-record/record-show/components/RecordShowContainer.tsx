@@ -169,7 +169,7 @@ export const RecordShowContainer = ({
                   objectNameSingular === 'person' ? onUploadPicture : undefined
                 }
               />
-              <PropertyBox extraPadding={true}>
+              <PropertyBox>
                 {inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}

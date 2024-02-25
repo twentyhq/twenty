@@ -27,7 +27,8 @@ const StyledCardContent = styled(CardContent)<{
   gap: ${({ theme }) => theme.spacing(1)};
   display: flex;
   height: ${({ theme }) => theme.spacing(10)};
-  padding: ${({ theme }) => theme.spacing(0, 2, 0, 3)};
+  padding: 0;
+  border: 0;
 
   ${({ isDropdownOpen, theme }) =>
     isDropdownOpen

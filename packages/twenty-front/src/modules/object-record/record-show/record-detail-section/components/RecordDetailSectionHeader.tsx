@@ -2,14 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
 const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
   align-items: center;
   display: flex;
   height: 24px;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: ${() => (useIsMobile() ? '0 12px' : 'unset')};
 `;
 
 const StyledTitle = styled.div`
