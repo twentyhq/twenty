@@ -34,9 +34,6 @@ export class UserWorkspace {
   @Column()
   workspaceId: string;
 
-  @Column()
-  position: number;
-
   @Field()
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;

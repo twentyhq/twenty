@@ -11,7 +11,7 @@ export class AddUserWorkspaces1707778127558 implements MigrationInterface {
                 "workspaceId" uuid NOT NULL REFERENCES core.workspace(id),
                 "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-                "deletedAt" TIMESTAMP,
+                "deletedAt" TIMESTAMP
             )`,
     );
 

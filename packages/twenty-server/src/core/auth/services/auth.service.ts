@@ -171,25 +171,14 @@ export class AuthService {
           workspace.id,
         );
 
-      // Todo: deprecate this logic once we have the workspace picker.
-      // If userWorkspaceExist, we should just throw an exception saying that the user is already part of the workspace
-      if (
-        userWorkspaceExists &&
-        existingUser.defaultWorkspace.id !== workspace.id
-      ) {
-        return await this.userRepository.save({
-          id: existingUser.id,
-          defaultWorkspace: workspace,
-          updatedAt: new Date().toISOString(),
-        });
+      if (!userWorkspaceExists) {
+        await this.userWorkspaceService.create(existingUser.id, workspace.id);
+
+        await this.userWorkspaceService.createWorkspaceMember(
+          workspace.id,
+          existingUser,
+        );
       }
-
-      await this.userWorkspaceService.create(existingUser.id, workspace.id);
-
-      await this.userWorkspaceService.createWorkspaceMember(
-        workspace.id,
-        existingUser,
-      );
 
       const updatedUser = await this.userRepository.save({
         id: existingUser.id,
@@ -197,7 +186,7 @@ export class AuthService {
         updatedAt: new Date().toISOString(),
       });
 
-      return updatedUser;
+      return Object.assign(existingUser, updatedUser);
     }
 
     const userToCreate = this.userRepository.create({
@@ -213,6 +202,7 @@ export class AuthService {
     const user = await this.userRepository.save(userToCreate);
 
     await this.userWorkspaceService.create(user.id, workspace.id);
+    await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
     return user;
   }
