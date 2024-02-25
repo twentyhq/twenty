@@ -3,6 +3,7 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   UpdateManyResolverArgs,
@@ -16,6 +17,7 @@ export type ExecutePreHookMethod =
   | 'deleteOne'
   | 'findMany'
   | 'findOne'
+  | 'findDuplicates'
   | 'updateMany'
   | 'updateOne';
 
@@ -45,4 +47,6 @@ export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
               ? UpdateManyResolverArgs
               : T extends 'updateOne'
                 ? UpdateOneResolverArgs
-                : never;
+                : T extends 'findDuplicates'
+                  ? FindDuplicatesResolverArgs
+                  : never;

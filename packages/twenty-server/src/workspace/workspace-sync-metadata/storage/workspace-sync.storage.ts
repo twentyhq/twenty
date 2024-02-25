@@ -1,5 +1,6 @@
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { PartialRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-relation-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -24,6 +25,8 @@ export class WorkspaceSyncStorage {
   private readonly _relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
     [];
   private readonly _relationMetadataDeleteCollection: RelationMetadataEntity[] =
+    [];
+  private readonly _relationMetadataUpdateCollection: Partial<PartialRelationMetadata>[] =
     [];
 
   constructor() {}
@@ -54,6 +57,10 @@ export class WorkspaceSyncStorage {
 
   get relationMetadataCreateCollection() {
     return this._relationMetadataCreateCollection;
+  }
+
+  get relationMetadataUpdateCollection() {
+    return this._relationMetadataUpdateCollection;
   }
 
   get relationMetadataDeleteCollection() {
@@ -88,6 +95,10 @@ export class WorkspaceSyncStorage {
 
   addCreateRelationMetadata(relation: Partial<RelationMetadataEntity>) {
     this._relationMetadataCreateCollection.push(relation);
+  }
+
+  addUpdateRelationMetadata(relation: Partial<PartialRelationMetadata>) {
+    this._relationMetadataUpdateCollection.push(relation);
   }
 
   addDeleteRelationMetadata(relation: RelationMetadataEntity) {

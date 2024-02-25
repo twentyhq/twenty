@@ -15247,6 +15247,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/facepaint@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@types/facepaint@npm:1.2.5"
+  checksum: e759fef0858f2f691625c47d59124e35d745c33d7229b99607158361ac0346f012ffad5c24a7312b49d54c097862ca7fe66a3ca37dbf8074154edb093b9fa0fc
+  languageName: node
+  linkType: hard
+
 "@types/filesystem@npm:*":
   version: 0.0.35
   resolution: "@types/filesystem@npm:0.0.35"
@@ -15794,6 +15801,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 2c8b70cba731eb2ae3ae046daa74903bfcbb0e7b9196da767e5895054f6d252296ae7a04fb1dbbcb53bb004c4c658c05eaea2731bc9e2dd9e08f7e88d672f563
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:>=8.1.0":
+  version: 20.11.19
+  resolution: "@types/node@npm:20.11.19"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: f451ef0a1d78f29c57bad7b77e49ebec945f2a6d0d7a89851d7e185ee9fe7ad94d651c0dfbcb7858c9fa791310c8b40a881e2260f56bd3c1b7e7ae92723373ae
   languageName: node
   linkType: hard
 
@@ -22693,6 +22709,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns-tz@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "date-fns-tz@npm:2.0.0"
+  peerDependencies:
+    date-fns: ">=2.0.0"
+  checksum: 31cacb83c675ef8c2cf31d21c298ab6d74c5e975412dd804664d031ac0f2f03ed5bfb2a950fa15a321bbbcb90b833c300823fbceba0133680065a71894cc1170
+  languageName: node
+  linkType: hard
+
 "date-fns@npm:^2.0.1, date-fns@npm:^2.30.0":
   version: 2.30.0
   resolution: "date-fns@npm:2.30.0"
@@ -25315,6 +25340,13 @@ __metadata:
   version: 1.4.1
   resolution: "extsprintf@npm:1.4.1"
   checksum: e10e2769985d0e9b6c7199b053a9957589d02e84de42832c295798cb422a025e6d4a92e0259c1fb4d07090f5bfde6b55fd9f880ac5855bd61d775f8ab75a7ab0
+  languageName: node
+  linkType: hard
+
+"facepaint@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "facepaint@npm:1.2.1"
+  checksum: bc4e974f4db7e860afb86cfeaf25720f4058e100a0cc79d42e69b0518363a538643de18753f6ed0161cc9d7280ff49d9f07351dc1d614b5dc79a28837dd6cd50
   languageName: node
   linkType: hard
 
@@ -42787,6 +42819,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"stripe@npm:^14.17.0":
+  version: 14.17.0
+  resolution: "stripe@npm:14.17.0"
+  dependencies:
+    "@types/node": "npm:>=8.1.0"
+    qs: "npm:^6.11.0"
+  checksum: ec783c4b125ad6c2f8181d3aa07b7d6a7126a588310ace8d9189269014ce84ba3e98d43464bc557bfcefcc05d7c5aebc551dd4e19c32316165c76944898a719a
+  languageName: node
+  linkType: hard
+
 "strnum@npm:^1.0.5":
   version: 1.0.5
   resolution: "strnum@npm:1.0.5"
@@ -44234,6 +44276,7 @@ __metadata:
     "@types/bytes": "npm:^3.1.1"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/express": "npm:^4.17.13"
+    "@types/facepaint": "npm:^1.2.5"
     "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^8.0.12"
     "@types/jest": "npm:^29.5.11"
@@ -44284,6 +44327,7 @@ __metadata:
     danger-plugin-todos: "npm:^1.3.1"
     dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
+    date-fns-tz: "npm:^2.0.0"
     debounce: "npm:^2.0.0"
     deep-equal: "npm:^2.2.2"
     docusaurus-node-polyfills: "npm:^1.0.0"
@@ -44304,6 +44348,7 @@ __metadata:
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    facepaint: "npm:^1.2.1"
     file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
     googleapis: "npm:105"
@@ -44394,6 +44439,7 @@ __metadata:
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
+    stripe: "npm:^14.17.0"
     supertest: "npm:^6.1.3"
     ts-jest: "npm:^29.1.1"
     ts-key-enum: "npm:^2.0.12"

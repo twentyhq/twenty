@@ -11,6 +11,7 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const relationPropertiesToIgnore = ['createdAt', 'updatedAt'] as const;
+const relationPropertiesToUpdate = ['onDeleteAction'];
 
 @Injectable()
 export class WorkspaceRelationComparator {
@@ -51,19 +52,54 @@ export class WorkspaceRelationComparator {
     );
 
     for (const difference of relationMetadataDifference) {
-      if (difference.type === 'CREATE') {
-        results.push({
-          action: ComparatorAction.CREATE,
-          object: difference.value,
-        });
-      } else if (
-        difference.type === 'REMOVE' &&
-        difference.path[difference.path.length - 1] !== 'id'
-      ) {
-        results.push({
-          action: ComparatorAction.DELETE,
-          object: difference.oldValue,
-        });
+      switch (difference.type) {
+        case 'CREATE':
+          results.push({
+            action: ComparatorAction.CREATE,
+            object: difference.value,
+          });
+          break;
+        case 'REMOVE':
+          if (difference.path[difference.path.length - 1] !== 'id') {
+            results.push({
+              action: ComparatorAction.DELETE,
+              object: difference.oldValue,
+            });
+          }
+          break;
+        case 'CHANGE':
+          const fieldName = difference.path[0];
+          const property = difference.path[difference.path.length - 1];
+
+          if (!relationPropertiesToUpdate.includes(property as string)) {
+            continue;
+          }
+
+          const originalRelationMetadata =
+            originalRelationMetadataMap[fieldName];
+
+          if (!originalRelationMetadata) {
+            throw new Error(
+              `Relation ${fieldName} not found in originalRelationMetadataMap`,
+            );
+          }
+
+          results.push({
+            action: ComparatorAction.UPDATE,
+            object: {
+              id: originalRelationMetadata.id,
+              fromObjectMetadataId:
+                originalRelationMetadata.fromObjectMetadataId,
+              fromFieldMetadataId: originalRelationMetadata.fromFieldMetadataId,
+              toObjectMetadataId: originalRelationMetadata.toObjectMetadataId,
+              toFieldMetadataId: originalRelationMetadata.toFieldMetadataId,
+              workspaceId: originalRelationMetadata.workspaceId,
+              ...{
+                [property]: difference.value,
+              },
+            },
+          });
+          break;
       }
     }
 

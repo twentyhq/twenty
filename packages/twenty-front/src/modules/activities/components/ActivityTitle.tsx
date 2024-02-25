@@ -6,6 +6,7 @@ import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -55,13 +56,19 @@ const StyledContainer = styled.div`
 `;
 
 type ActivityTitleProps = {
-  activity: Activity;
+  activityId: string;
 };
 
-export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
+export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   const [activityInStore, setActivityInStore] = useRecoilState(
-    recordStoreFamilyState(activity.id),
+    recordStoreFamilyState(activityId),
   );
+
+  const [activityTitle, setActivityTitle] = useRecoilState(
+    activityTitleFamilyState({ activityId }),
+  );
+
+  const activity = activityInStore as Activity;
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
     canCreateActivityState,
@@ -96,7 +103,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
     }),
   );
 
@@ -122,7 +129,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     }
   }, 500);
 
-  const handleTitleChange = (newTitle: string) => {
+  const setTitleDebounced = useDebouncedCallback((newTitle: string) => {
     setActivityInStore((currentActivity) => {
       return {
         ...currentActivity,
@@ -140,6 +147,12 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         return newTitle;
       },
     });
+  }, 500);
+
+  const handleTitleChange = (newTitle: string) => {
+    setActivityTitle(newTitle);
+
+    setTitleDebounced(newTitle);
 
     persistTitleDebounced(newTitle);
   };
@@ -171,7 +184,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={activityInStore?.title ?? ''}
+        value={activityTitle}
         completed={completed}
         onBlur={handleBlur}
         onFocus={handleFocus}

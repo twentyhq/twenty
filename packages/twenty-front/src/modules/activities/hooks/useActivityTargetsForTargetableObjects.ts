@@ -10,7 +10,10 @@ export const useActivityTargetsForTargetableObjects = ({
   targetableObjects,
   skip,
 }: {
-  targetableObjects: ActivityTargetableObject[];
+  targetableObjects: Pick<
+    ActivityTargetableObject,
+    'id' | 'targetObjectNameSingular'
+  >[];
   skip?: boolean;
 }) => {
   const activityTargetsFilter = getActivityTargetsFilter({

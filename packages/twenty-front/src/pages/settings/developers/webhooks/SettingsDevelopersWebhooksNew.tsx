@@ -13,6 +13,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { isURL } from '~/utils/is-url';
 
 export const SettingsDevelopersWebhooksNew = () => {
   const navigate = useNavigate();
@@ -23,11 +24,20 @@ export const SettingsDevelopersWebhooksNew = () => {
     targetUrl: '',
     operation: '*.*',
   });
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const { createOneRecord: createOneWebhook } = useCreateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
   const handleSave = async () => {
+    setErrorMessage(undefined);
+
+    if (!isURL(formValues.targetUrl)) {
+      setErrorMessage('Invalid webhook URL');
+      return;
+    }
+
     const newWebhook = await createOneWebhook?.(formValues);
+
     if (!newWebhook) {
       return;
     }
@@ -71,6 +81,7 @@ export const SettingsDevelopersWebhooksNew = () => {
                 targetUrl: value,
               }));
             }}
+            error={errorMessage}
             fullWidth
           />
         </Section>

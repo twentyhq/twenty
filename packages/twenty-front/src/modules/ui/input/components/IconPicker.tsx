@@ -14,7 +14,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { arrayToChunks } from '~/utils/array/array-to-chunks';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';

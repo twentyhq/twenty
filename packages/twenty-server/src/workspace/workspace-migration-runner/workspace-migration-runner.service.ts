@@ -15,8 +15,9 @@ import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationColumnRelation,
+  WorkspaceMigrationColumnCreateRelation,
   WorkspaceMigrationColumnAlter,
+  WorkspaceMigrationColumnDropRelation,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -200,8 +201,16 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
-        case WorkspaceMigrationColumnActionType.RELATION:
+        case WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY:
           await this.createRelation(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration,
+          );
+          break;
+        case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
+          await this.dropRelation(
             queryRunner,
             schemaName,
             tableName,
@@ -325,7 +334,7 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnRelation,
+    migrationColumn: WorkspaceMigrationColumnCreateRelation,
   ) {
     await queryRunner.createForeignKey(
       `${schemaName}.${tableName}`,
@@ -334,7 +343,7 @@ export class WorkspaceMigrationRunnerService {
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
         referencedSchema: schemaName,
-        onDelete: 'CASCADE',
+        onDelete: migrationColumn.onDelete?.replace(/_/g, ' '),
       }),
     );
 
@@ -348,5 +357,58 @@ export class WorkspaceMigrationRunnerService {
         }),
       );
     }
+  }
+
+  private async dropRelation(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    migrationColumn: WorkspaceMigrationColumnDropRelation,
+  ) {
+    const foreignKeyName = await this.getForeignKeyName(
+      queryRunner,
+      schemaName,
+      tableName,
+      migrationColumn.columnName,
+    );
+
+    if (!foreignKeyName) {
+      throw new Error(
+        `Foreign key not found for column ${migrationColumn.columnName}`,
+      );
+    }
+
+    await queryRunner.dropForeignKey(
+      `${schemaName}.${tableName}`,
+      foreignKeyName,
+    );
+  }
+
+  private async getForeignKeyName(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    columnName: string,
+  ): Promise<string | undefined> {
+    const foreignKeys = await queryRunner.query(
+      `
+      SELECT
+        tc.constraint_name AS constraint_name
+      FROM
+        information_schema.table_constraints AS tc
+      JOIN
+        information_schema.key_column_usage AS kcu
+        ON tc.constraint_name = kcu.constraint_name
+        AND tc.table_schema = kcu.table_schema
+      WHERE
+        tc.constraint_type = 'FOREIGN KEY'
+        AND tc.table_schema = $1
+        AND tc.table_name = $2
+        AND kcu.column_name = $3
+    `,
+      [schemaName, tableName, columnName],
+    );
+
+    return foreignKeys[0]?.constraint_name;
   }
 }
