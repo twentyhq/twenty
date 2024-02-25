@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
-import { UserGuideHomeCards } from '@/content/user-guide/constants/UserGuideHomeCards';
+import { USER_GUIDE_HOME_CARDS } from '@/content/user-guide/constants/UserGuideHomeCards';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -68,7 +68,7 @@ export default function UserGuideMain() {
           </StyledSubHeading>
         </StyledHeader>
         <StyledContent>
-          {UserGuideHomeCards.map((card) => {
+          {USER_GUIDE_HOME_CARDS.map((card) => {
             return <UserGuideCard key={card.title} card={card} />;
           })}
         </StyledContent>

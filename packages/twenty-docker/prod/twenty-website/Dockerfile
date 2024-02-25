@@ -9,6 +9,7 @@ COPY ./.prettierrc .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
+COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-website/package.json /app/packages/twenty-website/package.json
 
 RUN yarn

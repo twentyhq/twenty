@@ -7,7 +7,7 @@ import { IconBook } from '@/app/_components/ui/icons';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideSidebarSection from '@/app/_components/user-guide/UserGuideSidebarSection';
-import { UserGuideIndex } from '@/content/user-guide/constants/UserGuideIndex';
+import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -42,8 +42,7 @@ const StyledIconContainer = styled.div`
   color: ${Theme.text.color.secondary};
   border: 1px solid ${Theme.text.color.secondary};
   border-radius: ${Theme.border.radius.sm};
-  padding: ${Theme.spacing(1)} ${Theme.spacing(1)} ${Theme.spacing(1)}
-    ${Theme.spacing(1)};
+  padding: ${Theme.spacing(1)};
 `;
 
 const StyledHeadingText = styled.div`
@@ -64,7 +63,7 @@ const UserGuideSidebar = () => {
           User Guide
         </StyledHeadingText>
       </StyledHeading>
-      {Object.entries(UserGuideIndex).map(([heading, subtopics]) => (
+      {Object.entries(USER_GUIDE_INDEX).map(([heading, subtopics]) => (
         <UserGuideSidebarSection
           key={heading}
           title={heading}
