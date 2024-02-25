@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-import { ThemeType } from './theme';
+import { ThemeType } from '@/ui/theme/constants/theme';
 
 export const overlayBackground = (props: { theme: ThemeType }) => css`
   backdrop-filter: blur(8px);

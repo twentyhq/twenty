@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 
-import { lightTheme } from '../constants/theme';
+import { lightTheme } from '@/ui/theme/constants/theme';
 
 type AppThemeProviderProps = {
   children: JSX.Element;

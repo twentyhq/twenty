@@ -1,9 +1,8 @@
-import handleQueryParams from '../utils/handleQueryParams';
-import requestDb from '../utils/requestDb';
-
-import extractCompanyLinkedinLink from './utils/extractCompanyLinkedinLink';
-import extractDomain from './utils/extractDomain';
-import createNewButton from './createButton';
+import createNewButton from '~/contentScript/createButton';
+import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
+import extractDomain from '~/contentScript/utils/extractDomain';
+import handleQueryParams from '~/utils/handleQueryParams';
+import requestDb from '~/utils/requestDb';
 
 const insertButtonForCompany = (): void => {
   // Select the element in which to create the button.

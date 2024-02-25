@@ -1,8 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import DarkNoise from '../assets/dark-noise.jpg';
-import LightNoise from '../assets/light-noise.png';
-
-import { color, grayScale, rgba } from './colors';
+import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
+import LightNoise from '@/ui/theme/assets/light-noise.png';
+import { color, grayScale, rgba } from '@/ui/theme/constants/colors';
 
 export const backgroundLight = {
   noisy: `url(${LightNoise.toString()});`,

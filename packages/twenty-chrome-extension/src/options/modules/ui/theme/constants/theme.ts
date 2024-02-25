@@ -1,16 +1,19 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import { accentDark, accentLight } from './accent';
-import { animation } from './animation';
-import { backgroundDark, backgroundLight } from './background';
-import { blur } from './blur';
-import { borderDark, borderLight } from './border';
-import { boxShadowDark, boxShadowLight } from './boxShadow';
-import { color, grayScale } from './colors';
-import { fontDark, fontLight } from './font';
-import { icon } from './icon';
-import { modal } from './modal';
-import { tagDark, tagLight } from './tag';
-import { text } from './text';
+import { accentDark, accentLight } from '@/ui/theme/constants/accent';
+import { animation } from '@/ui/theme/constants/animation';
+import {
+  backgroundDark,
+  backgroundLight,
+} from '@/ui/theme/constants/background';
+import { blur } from '@/ui/theme/constants/blur';
+import { borderDark, borderLight } from '@/ui/theme/constants/border';
+import { boxShadowDark, boxShadowLight } from '@/ui/theme/constants/boxShadow';
+import { color, grayScale } from '@/ui/theme/constants/colors';
+import { fontDark, fontLight } from '@/ui/theme/constants/font';
+import { icon } from '@/ui/theme/constants/icon';
+import { modal } from '@/ui/theme/constants/modal';
+import { tagDark, tagLight } from '@/ui/theme/constants/tag';
+import { text } from '@/ui/theme/constants/text';
 
 const common = {
   color: color,

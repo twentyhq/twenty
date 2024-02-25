@@ -1,4 +1,4 @@
-import { openOptionsPage } from './utils/openOptionsPage';
+import { openOptionsPage } from '~/background/utils/openOptionsPage';
 
 // Open options page programmatically in a new tab.
 chrome.runtime.onInstalled.addListener((details) => {

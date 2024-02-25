@@ -1,8 +1,7 @@
-import handleQueryParams from '../utils/handleQueryParams';
-import requestDb from '../utils/requestDb';
-
-import extractFirstAndLastName from './utils/extractFirstAndLastName';
-import createNewButton from './createButton';
+import createNewButton from '~/contentScript/createButton';
+import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
+import handleQueryParams from '~/utils/handleQueryParams';
+import requestDb from '~/utils/requestDb';
 
 const insertButtonForPerson = (): void => {
   // Select the element in which to create the button.

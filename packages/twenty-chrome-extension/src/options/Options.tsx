@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ApiKeyForm } from './modules/api-key/components/ApiKeyForm';
+import { ApiKeyForm } from '@/api-key/components/ApiKeyForm';
 
 const StyledContainer = styled.div`
   align-items: center;

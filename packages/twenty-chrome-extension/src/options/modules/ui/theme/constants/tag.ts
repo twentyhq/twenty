@@ -1,4 +1,4 @@
-import { color } from './colors';
+import { color } from '@/ui/theme/constants/colors';
 
 export const tagLight: { [key: string]: { [key: string]: string } } = {
   text: {

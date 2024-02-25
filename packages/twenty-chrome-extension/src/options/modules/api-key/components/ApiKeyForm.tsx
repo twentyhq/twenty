@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { H2Title } from '../../ui/display/typography/components/H2Title';
-import { Button } from '../../ui/input/button/Button';
-import { TextInput } from '../../ui/input/components/TextInput';
-import { Toggle } from '../../ui/input/components/Toggle';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Toggle } from '@/ui/input/components/Toggle';
 
 const StyledContainer = styled.div<{ isToggleOn: boolean }>`
   width: 400px;

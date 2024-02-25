@@ -1,4 +1,4 @@
-import { color, grayScale } from './colors';
+import { color, grayScale } from '@/ui/theme/constants/colors';
 
 const common = {
   radius: {

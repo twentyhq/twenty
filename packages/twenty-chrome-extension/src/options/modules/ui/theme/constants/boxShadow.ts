@@ -1,4 +1,4 @@
-import { grayScale, rgba } from './colors';
+import { grayScale, rgba } from '@/ui/theme/constants/colors';
 
 export const boxShadowLight = {
   extraLight: `0px 1px 0px 0px ${rgba(grayScale.gray100, 0.04)}`,

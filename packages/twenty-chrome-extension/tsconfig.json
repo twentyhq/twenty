@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/modules/*"],
+      "@/*": ["src/options/modules/*"],
       "~/*": ["src/*"]
     },
 
