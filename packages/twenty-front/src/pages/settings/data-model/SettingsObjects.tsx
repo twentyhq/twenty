@@ -11,7 +11,7 @@ import {
   StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
-import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/objects/SettingsObjectDisabledMenuDropDown';
+import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/SettingsObjectInactiveMenuDropDown';
 import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -37,7 +37,7 @@ export const SettingsObjects = () => {
   const {
     activateObjectMetadataItem,
     activeObjectMetadataItems,
-    disabledObjectMetadataItems,
+    inactiveObjectMetadataItems,
     eraseObjectMetadataItem,
   } = useObjectMetadataItemForSettings();
 
@@ -89,25 +89,25 @@ export const SettingsObjects = () => {
                   ))}
                 </TableSection>
               )}
-              {!!disabledObjectMetadataItems.length && (
-                <TableSection title="Disabled">
-                  {disabledObjectMetadataItems.map(
-                    (disabledObjectMetadataItem) => (
+              {!!inactiveObjectMetadataItems.length && (
+                <TableSection title="Inactive">
+                  {inactiveObjectMetadataItems.map(
+                    (inactiveObjectMetadataItem) => (
                       <SettingsObjectItemTableRow
-                        key={disabledObjectMetadataItem.namePlural}
-                        objectItem={disabledObjectMetadataItem}
+                        key={inactiveObjectMetadataItem.namePlural}
+                        objectItem={inactiveObjectMetadataItem}
                         action={
-                          <SettingsObjectDisabledMenuDropDown
-                            isCustomObject={disabledObjectMetadataItem.isCustom}
-                            scopeKey={disabledObjectMetadataItem.namePlural}
+                          <SettingsObjectinactiveMenuDropDown
+                            isCustomObject={inactiveObjectMetadataItem.isCustom}
+                            scopeKey={inactiveObjectMetadataItem.namePlural}
                             onActivate={() =>
                               activateObjectMetadataItem(
-                                disabledObjectMetadataItem,
+                                inactiveObjectMetadataItem,
                               )
                             }
                             onErase={() =>
                               eraseObjectMetadataItem(
-                                disabledObjectMetadataItem,
+                                inactiveObjectMetadataItem,
                               )
                             }
                           />
