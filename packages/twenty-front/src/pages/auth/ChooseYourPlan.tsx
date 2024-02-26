@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import Stripe from 'stripe';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
+import { billingState } from '@/client-config/states/billingState.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import { SubscriptionCard } from '@/ui/input/subscription/components/SubscriptionCard.tsx';
@@ -19,6 +21,7 @@ const StyledChoosePlanContainer = styled.div`
 `;
 
 export const ChooseYourPlan = () => {
+  const billing = useRecoilValue(billingState);
   const [planSelected, setPlanSelected] =
     useState<Stripe.Price.Recurring.Interval>('month');
   const [prices, setPrices] = useState<Stripe.Price[]>();
@@ -65,7 +68,10 @@ export const ChooseYourPlan = () => {
     prices && (
       <>
         <Title>Choose your Plan</Title>
-        <SubTitle>Not satisfied in 14 days? Full refund.</SubTitle>
+        <SubTitle>
+          Not satisfied in ${billing?.billingFreeTrialDurationInDays} days? Full
+          refund.
+        </SubTitle>
         <StyledChoosePlanContainer>
           {prices.map((price, index) => (
             <CardPicker

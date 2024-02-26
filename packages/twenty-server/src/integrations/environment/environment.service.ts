@@ -49,6 +49,13 @@ export class EnvironmentService {
     );
   }
 
+  getBillingFreeTrialDurationInDays(): number {
+    return (
+      this.configService.get<number>('BILLING_FREE_TRIAL_DURATION_IN_DAYS') ??
+      14
+    );
+  }
+
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }

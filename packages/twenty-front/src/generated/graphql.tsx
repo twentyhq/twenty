@@ -60,6 +60,7 @@ export type AuthTokens = {
 
 export type Billing = {
   __typename?: 'Billing';
+  billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
   billingUrl: Scalars['String'];
   isBillingEnabled: Scalars['Boolean'];
 };
@@ -833,7 +834,7 @@ export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePa
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1524,6 +1525,7 @@ export const GetClientConfigDocument = gql`
     billing {
       isBillingEnabled
       billingUrl
+      billingFreeTrialDurationInDays
     }
     signInPrefilled
     signUpDisabled
