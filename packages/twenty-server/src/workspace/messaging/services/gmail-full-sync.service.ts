@@ -11,12 +11,8 @@ import {
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
-import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
-import { ParticipantWithMessageId } from 'src/workspace/messaging/types/gmail-message';
+import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -27,13 +23,10 @@ export class GmailFullSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageService: MessageService,
-    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -41,11 +34,6 @@ export class GmailFullSyncService {
     connectedAccountId: string,
     nextPageToken?: string,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
       workspaceId,
@@ -114,6 +102,8 @@ export class GmailFullSyncService {
       );
 
     if (messagesToSave.length === 0) {
+      if (errors.length) throw new Error('Error fetching messages');
+
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
@@ -121,63 +111,11 @@ export class GmailFullSyncService {
       return;
     }
 
-    const messageExternalIdsandIdsMap = await this.messageService.saveMessages(
+    this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
       messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
       connectedAccount,
+      workspaceId,
       gmailMessageChannelId,
-      workspaceId,
-    );
-
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    const participantsWithMessageId: ParticipantWithMessageId[] =
-      messagesToSave.flatMap((message) => {
-        const messageId = messageExternalIdsandIdsMap.get(message.externalId);
-
-        return messageId
-          ? message.participants.map((participant) => ({
-              ...participant,
-              messageId,
-            }))
-          : [];
-      });
-
-    const contactsToCreate = messagesToSave
-      .filter((message) => connectedAccount.handle === message.fromHandle)
-      .flatMap((message) => message.participants);
-
-    if (isContactAutoCreationEnabled) {
-      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-        connectedAccount.handle,
-        contactsToCreate,
-        workspaceId,
-      );
-
-      const handles = participantsWithMessageId.map(
-        (participant) => participant.handle,
-      );
-
-      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-          handles,
-          workspaceId,
-        );
-
-      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-        workspaceId,
-      );
-    }
-
-    await this.messageParticipantService.saveMessageParticipants(
-      participantsWithMessageId,
-      workspaceId,
     );
 
     if (errors.length) throw new Error('Error fetching messages');
