@@ -10,7 +10,7 @@ import {
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const relationPropertiesToIgnore = ['createdAt', 'updatedAt'] as const;
+const relationPropertiesToIgnore = ['createdAt', 'updatedAt'];
 const relationPropertiesToUpdate = ['onDeleteAction'];
 
 @Injectable()
@@ -38,7 +38,8 @@ export class WorkspaceRelationComparator {
     const originalRelationMetadataMap = transformMetadataForComparison(
       originalRelationMetadataCollection,
       {
-        propertiesToIgnore: relationPropertiesToIgnore,
+        shouldIgnoreProperty: (property) =>
+          relationPropertiesToIgnore.includes(property),
         keyFactory(relationMetadata) {
           return `${relationMetadata.fromObjectMetadataId}->${relationMetadata.fromFieldMetadataId}`;
         },
