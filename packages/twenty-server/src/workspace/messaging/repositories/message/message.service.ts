@@ -103,7 +103,9 @@ export class MessageService {
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     gmailMessageChannelId: string,
     workspaceId: string,
-  ) {
+  ): Promise<Map<string, string>> {
+    const messageExternalIdsandIdsMap = new Map<string, string>();
+
     for (const message of messages) {
       if (this.shouldSkipImport(message)) {
         continue;
@@ -140,6 +142,11 @@ export class MessageService {
             manager,
           );
 
+        messageExternalIdsandIdsMap.set(
+          message.externalId,
+          savedOrExistingMessageId,
+        );
+
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
           [
@@ -152,6 +159,8 @@ export class MessageService {
         );
       });
     }
+
+    return messageExternalIdsandIdsMap;
   }
 
   private shouldSkipImport(message: GmailMessage): boolean {
@@ -195,44 +204,6 @@ export class MessageService {
         message.text,
         message.html,
       ],
-    );
-
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
-      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-        connectedAccount.handle,
-        message.participants,
-        workspaceId,
-        manager,
-      );
-
-      const handles = message.participants.map(
-        (participant) => participant.handle,
-      );
-
-      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-          handles,
-          workspaceId,
-        );
-
-      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-        workspaceId,
-        manager,
-      );
-    }
-
-    await this.messageParticipantService.saveMessageParticipants(
-      message.participants,
-      newMessageId,
-      workspaceId,
-      manager,
     );
 
     return Promise.resolve(newMessageId);

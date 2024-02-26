@@ -14,6 +14,9 @@ import { MessageChannelMessageAssociationService } from 'src/workspace/messaging
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
+import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
+import { ParticipantWithMessageId } from 'src/workspace/messaging/types/gmail-message';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -29,6 +32,8 @@ export class GmailFullSyncService {
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
+    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -116,12 +121,58 @@ export class GmailFullSyncService {
       return;
     }
 
-    await this.messageService.saveMessages(
+    const messageExternalIdsandIdsMap = await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccount,
       gmailMessageChannelId,
+      workspaceId,
+    );
+
+    const isContactAutoCreationEnabled =
+      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+        connectedAccount.id,
+        workspaceId,
+      );
+
+    const participantsWithMessageId: ParticipantWithMessageId[] =
+      messagesToSave.flatMap((message) =>
+        message.participants.map((participant) => ({
+          ...participant,
+          messageId: messageExternalIdsandIdsMap[message.externalId],
+        })),
+      );
+
+    const contactsToCreate = messagesToSave
+      .filter((message) => connectedAccount.handle === message.fromHandle)
+      .flatMap((message) => message.participants);
+
+    if (isContactAutoCreationEnabled) {
+      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+        connectedAccount.handle,
+        contactsToCreate,
+        workspaceId,
+      );
+
+      const handles = participantsWithMessageId.map(
+        (participant) => participant.handle,
+      );
+
+      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+          handles,
+          workspaceId,
+        );
+
+      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+        workspaceId,
+      );
+    }
+
+    await this.messageParticipantService.saveMessageParticipants(
+      participantsWithMessageId,
       workspaceId,
     );
 
