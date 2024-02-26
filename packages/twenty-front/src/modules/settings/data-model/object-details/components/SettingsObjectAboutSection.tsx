@@ -19,7 +19,7 @@ type SettingsAboutSectionProps = {
   iconKey?: string;
   isCustom: boolean;
   name: string;
-  onDisable: () => void;
+  onDeactivate: () => void;
   onEdit: () => void;
 };
 
@@ -49,7 +49,7 @@ export const SettingsAboutSection = ({
   iconKey = '',
   isCustom,
   name,
-  onDisable,
+  onDeactivate,
   onEdit,
 }: SettingsAboutSectionProps) => {
   const theme = useTheme();
@@ -63,8 +63,8 @@ export const SettingsAboutSection = ({
     closeDropdown();
   };
 
-  const handleDisable = () => {
-    onDisable();
+  const handleDeactivate = () => {
+    onDeactivate();
     closeDropdown();
   };
 
@@ -96,9 +96,9 @@ export const SettingsAboutSection = ({
                     onClick={handleEdit}
                   />
                   <MenuItem
-                    text="Disable"
+                    text="Deactivate"
                     LeftIcon={IconArchive}
-                    onClick={handleDisable}
+                    onClick={handleDeactivate}
                   />
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
