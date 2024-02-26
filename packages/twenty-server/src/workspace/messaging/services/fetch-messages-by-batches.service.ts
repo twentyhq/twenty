@@ -25,11 +25,14 @@ export class FetchMessagesByBatchesService {
     queries: MessageQuery[],
     accessToken: string,
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
+    console.time('fetching all messages');
     const batchResponses = await this.fetchAllByBatches(
       queries,
       accessToken,
       'batch_gmail_messages',
     );
+
+    console.timeEnd('fetching all messages');
 
     return this.formatBatchResponsesAsGmailMessages(batchResponses);
   }
@@ -276,6 +279,7 @@ export class FetchMessagesByBatchesService {
   async formatBatchResponsesAsGmailMessages(
     batchResponses: AxiosResponse<any, any>[],
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
+    console.time('formatting batch responses');
     const messagesAndErrors = await Promise.all(
       batchResponses.map(async (response) => {
         return this.formatBatchResponseAsGmailMessage(response);
@@ -285,6 +289,8 @@ export class FetchMessagesByBatchesService {
     const messages = messagesAndErrors.map((item) => item.messages).flat();
 
     const errors = messagesAndErrors.map((item) => item.errors).flat();
+
+    console.timeEnd('formatting batch responses');
 
     return { messages, errors };
   }

@@ -57,11 +57,15 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
+    console.time('gmail full-sync user.messages.list');
+
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults: 500,
       pageToken: nextPageToken,
     });
+
+    console.timeEnd('gmail full-sync user.messages.list');
 
     const messagesData = messages.data.messages;
 
@@ -73,12 +77,20 @@ export class GmailFullSyncService {
       return;
     }
 
+    console.time(
+      'gmail full-sync get existing message channel message associations',
+    );
+
     const existingMessageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
         gmailMessageChannelId,
         workspaceId,
       );
+
+    console.timeEnd(
+      'gmail full-sync get existing message channel message associations',
+    );
 
     const existingMessageChannelMessageAssociationsExternalIds =
       existingMessageChannelMessageAssociations.map(
@@ -95,11 +107,15 @@ export class GmailFullSyncService {
 
     const messageQueries = createQueriesFromMessageIds(messagesToFetch);
 
+    console.time('gmail full-sync fetch all messages');
+
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
+
+    console.timeEnd('gmail full-sync fetch all messages');
 
     if (messagesToSave.length === 0) {
       if (errors.length) throw new Error('Error fetching messages');
@@ -128,11 +144,15 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
+    console.time('gmail full-sync update last sync history id');
+
     await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
       historyId,
       connectedAccount.id,
       workspaceId,
     );
+
+    console.timeEnd('gmail full-sync update last sync history id');
 
     this.logger.log(
       `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${

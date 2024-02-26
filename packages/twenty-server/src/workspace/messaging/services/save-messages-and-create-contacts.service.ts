@@ -33,6 +33,8 @@ export class SaveMessagesAndCreateContactsService {
         workspaceId,
       );
 
+    console.time('saving messages');
+
     const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
@@ -41,6 +43,8 @@ export class SaveMessagesAndCreateContactsService {
       gmailMessageChannelId,
       workspaceId,
     );
+
+    console.timeEnd('saving messages');
 
     const isContactAutoCreationEnabled =
       await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
@@ -65,6 +69,7 @@ export class SaveMessagesAndCreateContactsService {
       .flatMap((message) => message.participants);
 
     if (isContactAutoCreationEnabled) {
+      console.time('creating companies and contacts');
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
         connectedAccount.handle,
         contactsToCreate,
@@ -85,11 +90,16 @@ export class SaveMessagesAndCreateContactsService {
         messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
       );
+      console.timeEnd('creating companies and contacts');
     }
+
+    console.time('saving message participants');
 
     await this.messageParticipantService.saveMessageParticipants(
       participantsWithMessageId,
       workspaceId,
     );
+
+    console.timeEnd('saving message participants');
   }
 }
