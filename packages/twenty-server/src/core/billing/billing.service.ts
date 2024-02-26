@@ -10,15 +10,8 @@ import { BillingSubscription } from 'src/core/billing/entities/billing-subscript
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 
-export type PriceData = Partial<
-  Record<Stripe.Price.Recurring.Interval, Stripe.Price>
->;
 export enum AvailableProduct {
   BasePlan = 'base-plan',
-}
-export enum RecurringInterval {
-  MONTH = 'month',
-  YEAR = 'year',
 }
 
 export enum WebhookEvent {
@@ -53,23 +46,23 @@ export class BillingService {
   }
 
   formatProductPrices(prices: Stripe.Price[]) {
-    const result: PriceData = {};
+    const result: Record<string, Stripe.Price> = {};
 
     prices.forEach((item) => {
-      const recurringInterval = item.recurring?.interval;
+      const interval = item.recurring?.interval;
 
-      if (!recurringInterval) {
+      if (!interval) {
         return;
       }
       if (
-        !result[recurringInterval] ||
-        item.created > (result[recurringInterval]?.created || 0)
+        !result[interval] ||
+        item.created > (result[interval]?.created || 0)
       ) {
-        result[recurringInterval] = item;
+        result[interval] = item;
       }
     });
 
-    return result;
+    return Object.values(result);
   }
 
   async createBillingSubscription(

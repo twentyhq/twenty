@@ -13,12 +13,11 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import Stripe from 'stripe';
 
 import {
   AvailableProduct,
   BillingService,
-  PriceData,
-  RecurringInterval,
   WebhookEvent,
 } from 'src/core/billing/billing.service';
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
@@ -40,7 +39,7 @@ export class BillingController {
   @Get('/product-prices/:product')
   async get(
     @Param() params: { product: AvailableProduct },
-    @Res() res: Response<PriceData | { error: string }>,
+    @Res() res: Response<Stripe.Price[] | { error: string }>,
   ) {
     const stripeProductId = this.billingService.getProductStripeId(
       params.product,
@@ -65,7 +64,7 @@ export class BillingController {
   @Post('/checkout')
   async post(
     @AuthUser() user: User,
-    @Body() body: { recurringInterval: RecurringInterval },
+    @Body() body: { recurringInterval: Stripe.Price.Recurring },
     @Res() res: Response,
   ) {
     const productId = this.billingService.getProductStripeId(
@@ -84,9 +83,11 @@ export class BillingController {
 
     const productPrices = await this.billingService.getProductPrices(productId);
     const recurringInterval = body.recurringInterval;
-    const priceId = productPrices[recurringInterval]?.id;
+    const productPrice = productPrices.filter(
+      (price) => price.recurring === recurringInterval,
+    );
 
-    if (!priceId) {
+    if (productPrice.length !== 1 || productPrices[0]?.id) {
       res
         .status(404)
         .send(
@@ -95,6 +96,7 @@ export class BillingController {
 
       return;
     }
+    const priceId = productPrices[0].id;
     const frontBaseUrl = this.environmentService.getFrontBaseUrl();
     const session = await this.stripeService.stripe.checkout.sessions.create({
       line_items: [

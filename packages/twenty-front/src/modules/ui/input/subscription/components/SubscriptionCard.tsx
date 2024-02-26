@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
+import Stripe from 'stripe';
 
 import { SubscriptionCardPrice } from '@/ui/input/subscription/components/SubscriptionCardPrice.tsx';
-export enum SubscriptionCardType {
-  Yearly = 'Yearly',
-  Monthly = 'Monthly',
-}
+import { capitalize } from '~/utils/string/capitalize.ts';
+
 type SubscriptionCardProps = {
-  type: SubscriptionCardType;
+  type?: Stripe.Price.Recurring.Interval;
   price: number;
   info: string;
 };
@@ -35,7 +34,7 @@ export const SubscriptionCard = ({
 }: SubscriptionCardProps) => {
   return (
     <StyledSubscriptionCardContainer>
-      <StyledTypeContainer>{type}</StyledTypeContainer>
+      <StyledTypeContainer>{capitalize(type || '')}</StyledTypeContainer>
       <SubscriptionCardPrice price={price} />
       <StyledInfoContainer>{info}</StyledInfoContainer>
     </StyledSubscriptionCardContainer>

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import Stripe from 'stripe';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
-import {
-  SubscriptionCard,
-  SubscriptionCardType,
-} from '@/ui/input/subscription/components/SubscriptionCard.tsx';
+import { SubscriptionCard } from '@/ui/input/subscription/components/SubscriptionCard.tsx';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledChoosePlanContainer = styled.div`
   display: flex;
@@ -19,42 +19,69 @@ const StyledChoosePlanContainer = styled.div`
 `;
 
 export const ChooseYourPlan = () => {
-  const [planSelected, setPlanSelected] = useState(
-    SubscriptionCardType.Monthly,
-  );
-  const handlePlanChange = (type: SubscriptionCardType) => {
+  const [planSelected, setPlanSelected] =
+    useState<Stripe.Price.Recurring.Interval>('month');
+  const [prices, setPrices] = useState<Stripe.Price[]>();
+  const { enqueueSnackBar } = useSnackBar();
+  const handlePlanChange = (type?: Stripe.Price.Recurring.Interval) => {
     return () => {
-      if (planSelected !== type) {
+      if (type && planSelected !== type) {
         setPlanSelected(type);
       }
     };
   };
+
+  const sortPrices = (prices: Stripe.Price[]) => {
+    return prices.sort((a: Stripe.Price, b: Stripe.Price) => {
+      return (a.unit_amount || 0) - (b.unit_amount || 0);
+    });
+  };
+
+  const computeInfo = (price: Stripe.Price, prices: Stripe.Price[]): string => {
+    if (price.recurring?.interval !== 'year') {
+      return 'Cancel anytime';
+    }
+    const monthPrice = prices.filter(
+      (price) => price.recurring?.interval === 'month',
+    )?.[0];
+    if (monthPrice && monthPrice.unit_amount && price.unit_amount) {
+      return `Save $${(12 * monthPrice.unit_amount - price.unit_amount) / 100}`;
+    }
+    return 'Cancel anytime';
+  };
+
+  useEffect(() => {
+    fetch(REACT_APP_SERVER_BASE_URL + '/billing/product-prices/base-plan')
+      .then((result) => result.json())
+      .then((data) => setPrices(sortPrices(data)))
+      .catch(() => {
+        enqueueSnackBar('Error while fetching prices. Please retry', {
+          variant: 'error',
+        });
+      });
+  }, [setPrices, enqueueSnackBar]);
+
   return (
-    <>
-      <Title>Choose your Plan</Title>
-      <SubTitle>Not satisfied in 14 days? Full refund.</SubTitle>
-      <StyledChoosePlanContainer>
-        <CardPicker
-          checked={planSelected === SubscriptionCardType.Monthly}
-          handleChange={handlePlanChange(SubscriptionCardType.Monthly)}
-        >
-          <SubscriptionCard
-            type={SubscriptionCardType.Monthly}
-            price={9}
-            info="Cancel anytime"
-          />
-        </CardPicker>
-        <CardPicker
-          checked={planSelected === SubscriptionCardType.Yearly}
-          handleChange={handlePlanChange(SubscriptionCardType.Yearly)}
-        >
-          <SubscriptionCard
-            type={SubscriptionCardType.Yearly}
-            price={90}
-            info="Save $18"
-          />
-        </CardPicker>
-      </StyledChoosePlanContainer>
-    </>
+    prices && (
+      <>
+        <Title>Choose your Plan</Title>
+        <SubTitle>Not satisfied in 14 days? Full refund.</SubTitle>
+        <StyledChoosePlanContainer>
+          {prices.map((price, index) => (
+            <CardPicker
+              checked={price.recurring?.interval === planSelected}
+              handleChange={handlePlanChange(price.recurring?.interval)}
+              key={index}
+            >
+              <SubscriptionCard
+                type={price.recurring?.interval}
+                price={(price.unit_amount || 0) / 100}
+                info={computeInfo(price, prices)}
+              />
+            </CardPicker>
+          ))}
+        </StyledChoosePlanContainer>
+      </>
+    )
   );
 };
