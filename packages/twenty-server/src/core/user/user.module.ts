@@ -14,6 +14,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
 import { UserService } from './services/user.service';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UserService } from './services/user.service';
     }),
     DataSourceModule,
     FileModule,
+    UserWorkspaceModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],
