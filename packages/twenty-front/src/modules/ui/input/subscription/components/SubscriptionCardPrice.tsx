@@ -11,6 +11,7 @@ const StyledSubscriptionCardPriceContainer = styled.div`
     ${({ theme }) => theme.spacing(2)};
 `;
 const StyledPriceSpan = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
