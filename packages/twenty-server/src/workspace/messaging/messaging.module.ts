@@ -25,6 +25,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
 import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
+import { MessagingConnectedAccountListener } from 'src/workspace/messaging/listeners/messaging-connected-account.listener';
 @Module({
   imports: [
     EnvironmentModule,
@@ -53,6 +54,7 @@ import { PersonModule } from 'src/workspace/messaging/repositories/person/person
     MessagingWorkspaceMemberListener,
     MessagingMessageChannelListener,
     MessageService,
+    MessagingConnectedAccountListener,
   ],
   exports: [
     GmailPartialSyncService,
