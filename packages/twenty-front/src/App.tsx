@@ -7,6 +7,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
@@ -48,6 +49,7 @@ export const App = () => {
   const isNewRecordBoardEnabled = useIsFeatureEnabled(
     'IS_NEW_RECORD_BOARD_ENABLED',
   );
+  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
     <>
@@ -63,7 +65,12 @@ export const App = () => {
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
+          <Route
+            path={AppPath.PlanRequired}
+            element={
+              isSelfBillingEnabled ? <ChooseYourPlan /> : <PlanRequired />
+            }
+          />
           <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />

@@ -19,6 +19,7 @@ import { AppPath } from '@/types/AppPath';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled.ts';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`
@@ -74,13 +75,18 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
   const isMatchingLocation = useIsMatchingLocation();
-
+  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
   const showAuthModal = useMemo(() => {
     return (
       (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) ||
       isMatchingLocation(AppPath.ResetPassword)
     );
   }, [isMatchingLocation, onboardingStatus]);
+
+  const modalPadding =
+    isMatchingLocation(AppPath.PlanRequired) && isSelfBillingEnabled
+      ? 'none'
+      : undefined;
 
   return (
     <>
@@ -117,7 +123,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
                 <SignInBackgroundMockPage />
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal>{children}</AuthModal>
+                    <AuthModal padding={modalPadding}>{children}</AuthModal>
                   </LayoutGroup>
                 </AnimatePresence>
               </>
