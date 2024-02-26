@@ -1,3 +1,5 @@
+import { RelationOnDeleteAction } from 'packages/twenty-server/dist/src/metadata/relation-metadata/relation-metadata.entity';
+
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -27,6 +29,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'message',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   messages: MessageObjectMetadata[];
@@ -40,6 +43,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'messageChannelMessageAssociation',
+    onDelete: RelationOnDeleteAction.RESTRICT,
   })
   @IsNullable()
   messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];

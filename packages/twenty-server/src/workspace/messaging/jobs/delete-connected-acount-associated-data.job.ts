@@ -2,10 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
+import { ThreadCleanerService } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.service';
 
 export type DeleteConnectedAccountAssociatedDataJobData = {
   workspaceId: string;
@@ -20,12 +17,7 @@ export class DeleteConnectedAccountAssociatedDataJob
     DeleteConnectedAccountAssociatedDataJob.name,
   );
 
-  constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly messageChannelService: MessageChannelService,
-    private readonly typeORMService: TypeORMService,
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-  ) {}
+  constructor(private readonly threadCleanerService: ThreadCleanerService) {}
 
   async handle(
     data: DeleteConnectedAccountAssociatedDataJobData,
@@ -34,28 +26,7 @@ export class DeleteConnectedAccountAssociatedDataJob
       `Deleting connected account ${data.connectedAccountId} associated data in workspace ${data.workspaceId}`,
     );
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        data.workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    await workspaceDataSource?.transaction(async (transactionManager) => {
-      const messageChannels =
-        await this.messageChannelService.getByConnectedAccountId(
-          data.connectedAccountId,
-          data.workspaceId,
-          transactionManager,
-        );
-
-      await this.messageChannelMessageAssociationService.deleteByMessageChannelIds(
-        messageChannels.map((messageChannel) => messageChannel.id),
-        data.workspaceId,
-        transactionManager,
-      );
-    });
+    await this.threadCleanerService.cleanWorkspaceThreads(data.workspaceId);
 
     this.logger.log(
       `Deleted connected account ${data.connectedAccountId} associated data in workspace ${data.workspaceId}`,

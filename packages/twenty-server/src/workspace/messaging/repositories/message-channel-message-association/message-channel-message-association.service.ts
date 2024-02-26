@@ -67,6 +67,23 @@ export class MessageChannelMessageAssociationService {
     );
   }
 
+  public async getByMessageChannelIds(
+    messageChannelIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannelMessageAssociation"
+    WHERE "messageChannelId" = ANY($1)`,
+      [messageChannelIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async deleteByMessageChannelId(
     messageChannelId: string,
     workspaceId: string,
