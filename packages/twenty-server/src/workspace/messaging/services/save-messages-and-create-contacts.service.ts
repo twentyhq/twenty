@@ -33,7 +33,7 @@ export class SaveMessagesAndCreateContactsService {
         workspaceId,
       );
 
-    const messageExternalIdsandIdsMap = await this.messageService.saveMessages(
+    const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,
@@ -50,7 +50,7 @@ export class SaveMessagesAndCreateContactsService {
 
     const participantsWithMessageId: ParticipantWithMessageId[] =
       messagesToSave.flatMap((message) => {
-        const messageId = messageExternalIdsandIdsMap.get(message.externalId);
+        const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
         return messageId
           ? message.participants.map((participant) => ({

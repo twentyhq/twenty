@@ -104,7 +104,7 @@ export class MessageService {
     gmailMessageChannelId: string,
     workspaceId: string,
   ): Promise<Map<string, string>> {
-    const messageExternalIdsandIdsMap = new Map<string, string>();
+    const messageExternalIdsAndIdsMap = new Map<string, string>();
 
     for (const message of messages) {
       if (this.shouldSkipImport(message)) {
@@ -142,7 +142,7 @@ export class MessageService {
             manager,
           );
 
-        messageExternalIdsandIdsMap.set(
+        messageExternalIdsAndIdsMap.set(
           message.externalId,
           savedOrExistingMessageId,
         );
@@ -160,7 +160,7 @@ export class MessageService {
       });
     }
 
-    return messageExternalIdsandIdsMap;
+    return messageExternalIdsAndIdsMap;
   }
 
   private shouldSkipImport(message: GmailMessage): boolean {
