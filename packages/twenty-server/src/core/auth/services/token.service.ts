@@ -39,6 +39,7 @@ import { EmailService } from 'src/integrations/email/email.service';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/core/auth/types/jwt-data.type';
+import { Verify } from 'src/core/auth/dto/verify.entity';
 
 @Injectable()
 export class TokenService {
@@ -53,7 +54,10 @@ export class TokenService {
     private readonly emailService: EmailService,
   ) {}
 
-  async generateAccessToken(userId: string): Promise<AuthToken> {
+  async generateAccessToken(
+    userId: string,
+    workspaceId: string | null = null,
+  ): Promise<AuthToken> {
     const expiresIn = this.environmentService.getAccessTokenExpiresIn();
 
     assert(expiresIn, '', InternalServerErrorException);
@@ -74,7 +78,7 @@ export class TokenService {
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: user.defaultWorkspace.id,
+      workspaceId: workspaceId ? workspaceId : user.defaultWorkspace.id,
     };
 
     return {
@@ -229,6 +233,31 @@ export class TokenService {
     return {
       workspaceMemberId: payload.sub,
       workspaceId: payload.workspaceId,
+    };
+  }
+
+  async generateSwitchWorkspaceToken(
+    accessToken: string,
+    workspaceId: string,
+  ): Promise<Verify> {
+    const secret = this.environmentService.getRefreshTokenSecret();
+    const jwtPayload = await this.verifyJwt(accessToken, secret);
+
+    const user = await this.userRepository.findOneBy({
+      id: jwtPayload.sub,
+    });
+
+    assert(user, 'User not found', NotFoundException);
+
+    const token = await this.generateAccessToken(user.id, workspaceId);
+    const refreshToken = await this.generateRefreshToken(user.id);
+
+    return {
+      user,
+      tokens: {
+        accessToken: token,
+        refreshToken,
+      },
     };
   }
 
