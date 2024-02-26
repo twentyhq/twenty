@@ -8,6 +8,7 @@ import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetad
 import {
   IconBell,
   IconCheckbox,
+  IconMail,
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
@@ -69,6 +70,21 @@ export const MainNavigationDrawerItems = () => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <ObjectMetadataNavItems />
+        <NavigationDrawerItem
+          label="Message Templates"
+          onClick={() => {
+            navigate('/templatelist');
+          }}
+          Icon={IconMail}
+        />
+
+        <NavigationDrawerItem
+          label="Campaigns"
+          onClick={() => {
+            navigate('/campaigns');
+          }}
+          Icon={IconMail}
+        />
       </NavigationDrawerSection>
     </>
   );
