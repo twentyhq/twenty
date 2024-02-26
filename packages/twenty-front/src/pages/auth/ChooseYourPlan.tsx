@@ -8,6 +8,7 @@ import { Title } from '@/auth/components/Title.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
+import { SubscriptionBenefit } from '@/ui/input/subscription/components/SubscriptionBenefit.tsx';
 import { SubscriptionCard } from '@/ui/input/subscription/components/SubscriptionCard.tsx';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -18,6 +19,18 @@ const StyledChoosePlanContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(8)} 0
     ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledBenefitsContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
 `;
 
 export const ChooseYourPlan = () => {
@@ -69,7 +82,7 @@ export const ChooseYourPlan = () => {
       <>
         <Title>Choose your Plan</Title>
         <SubTitle>
-          Not satisfied in ${billing?.billingFreeTrialDurationInDays} days? Full
+          Not satisfied in {billing?.billingFreeTrialDurationInDays} days? Full
           refund.
         </SubTitle>
         <StyledChoosePlanContainer>
@@ -87,6 +100,16 @@ export const ChooseYourPlan = () => {
             </CardPicker>
           ))}
         </StyledChoosePlanContainer>
+        <StyledBenefitsContainer>
+          <SubscriptionBenefit>Full access</SubscriptionBenefit>
+          <SubscriptionBenefit>White gloves onboarding</SubscriptionBenefit>
+          <SubscriptionBenefit>Unlimited contacts</SubscriptionBenefit>
+          <SubscriptionBenefit>Priority support</SubscriptionBenefit>
+          <SubscriptionBenefit>Frequent updates</SubscriptionBenefit>
+          <SubscriptionBenefit>
+            {billing?.billingFreeTrialDurationInDays}-day refund
+          </SubscriptionBenefit>
+        </StyledBenefitsContainer>
       </>
     )
   );
