@@ -7,6 +7,7 @@ import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
+import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import { SubscriptionBenefit } from '@/ui/input/subscription/components/SubscriptionBenefit.tsx';
 import { SubscriptionCard } from '@/ui/input/subscription/components/SubscriptionCard.tsx';
@@ -35,10 +36,14 @@ const StyledBenefitsContainer = styled.div`
 
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
+
   const [planSelected, setPlanSelected] =
     useState<Stripe.Price.Recurring.Interval>('month');
+
   const [prices, setPrices] = useState<Stripe.Price[]>();
+
   const { enqueueSnackBar } = useSnackBar();
+
   const handlePlanChange = (type?: Stripe.Price.Recurring.Interval) => {
     return () => {
       if (type && planSelected !== type) {
@@ -65,6 +70,8 @@ export const ChooseYourPlan = () => {
     }
     return 'Cancel anytime';
   };
+
+  const handleButtonClick = () => {};
 
   useEffect(() => {
     fetch(REACT_APP_SERVER_BASE_URL + '/billing/product-prices/base-plan')
@@ -110,6 +117,7 @@ export const ChooseYourPlan = () => {
             {billing?.billingFreeTrialDurationInDays}-day refund
           </SubscriptionBenefit>
         </StyledBenefitsContainer>
+        <LargeMainButton title="Continue" onClick={handleButtonClick} />
       </>
     )
   );
