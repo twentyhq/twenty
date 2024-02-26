@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { SettingsAccountsEmailsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTableRow';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { formatToHumanReadableDate } from '~/utils';
 
 const onRemoveJestFn = fn();
 
@@ -35,7 +36,20 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistTableRow> = {
 export default meta;
 type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistTableRow>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(mockedBlocklist[0].handle),
+    ).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        formatToHumanReadableDate(mockedBlocklist[0].createdAt),
+      ),
+    ).toBeInTheDocument();
+  },
+};
 
 export const DeleteFirstElementFromBlocklist: Story = {
   play: async ({ canvasElement }) => {
