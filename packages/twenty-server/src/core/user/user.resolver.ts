@@ -23,6 +23,8 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { CurrentUser } from 'src/core/user/dtos/current-user.dto';
 
 import { UserService } from './services/user.service';
 
@@ -39,19 +41,23 @@ const getHMACKey = (email?: string, key?: string | null) => {
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  @Query(() => User)
-  async currentUser(@AuthUser() { id }: User) {
+  @Query(() => CurrentUser)
+  async currentUser(@AuthUser() { id }: User): Promise<CurrentUser> {
     const user = await this.userService.findById(id, {
       relations: [{ name: 'defaultWorkspace', query: {} }],
     });
 
     assert(user, 'User not found');
 
-    return user;
+    const userWorkspaces =
+      await this.userWorkspaceService.findUserWorkspaces(id);
+
+    return { user, workspaces: userWorkspaces };
   }
 
   @ResolveField(() => WorkspaceMember, {

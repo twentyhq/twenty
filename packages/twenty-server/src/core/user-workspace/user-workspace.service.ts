@@ -50,6 +50,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       where: {
         userId,
       },
+      relations: ['workspace'],
     });
   }
 

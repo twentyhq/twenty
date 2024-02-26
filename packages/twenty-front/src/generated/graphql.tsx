@@ -81,6 +81,12 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CurrentUser = {
+  __typename?: 'CurrentUser';
+  user: User;
+  workspaces: Array<UserWorkspace>;
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -367,7 +373,7 @@ export type Query = {
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
-  currentUser: User;
+  currentUser: CurrentUser;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -561,6 +567,18 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   exists: Scalars['Boolean'];
+};
+
+export type UserWorkspace = {
+  __typename?: 'UserWorkspace';
+  createdAt: Scalars['DateTime'];
+  deletedAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+  workspace: Workspace;
+  workspaceId: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
@@ -868,7 +886,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUser', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, workspaces: Array<{ __typename?: 'UserWorkspace', userId: string, workspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } }> } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1699,36 +1717,47 @@ export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<Upl
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
-    id
-    firstName
-    lastName
-    email
-    canImpersonate
-    supportUserHash
-    workspaceMember {
+    user {
       id
-      name {
-        firstName
-        lastName
-      }
-      colorScheme
-      avatarUrl
-      locale
-    }
-    defaultWorkspace {
-      id
-      displayName
-      logo
-      domainName
-      inviteHash
-      allowImpersonation
-      subscriptionStatus
-      activationStatus
-      featureFlags {
+      firstName
+      lastName
+      email
+      canImpersonate
+      supportUserHash
+      workspaceMember {
         id
-        key
-        value
-        workspaceId
+        name {
+          firstName
+          lastName
+        }
+        colorScheme
+        avatarUrl
+        locale
+      }
+      defaultWorkspace {
+        id
+        displayName
+        logo
+        domainName
+        inviteHash
+        allowImpersonation
+        subscriptionStatus
+        activationStatus
+        featureFlags {
+          id
+          key
+          value
+          workspaceId
+        }
+      }
+    }
+    workspaces {
+      userId
+      workspace {
+        id
+        displayName
+        logo
+        domainName
       }
     }
   }

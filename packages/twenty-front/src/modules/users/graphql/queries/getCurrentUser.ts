@@ -4,36 +4,47 @@ import { gql } from '@apollo/client';
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser {
     currentUser {
-      id
-      firstName
-      lastName
-      email
-      canImpersonate
-      supportUserHash
-      workspaceMember {
+      user {
         id
-        name {
-          firstName
-          lastName
-        }
-        colorScheme
-        avatarUrl
-        locale
-      }
-      defaultWorkspace {
-        id
-        displayName
-        logo
-        domainName
-        inviteHash
-        allowImpersonation
-        subscriptionStatus
-        activationStatus
-        featureFlags {
+        firstName
+        lastName
+        email
+        canImpersonate
+        supportUserHash
+        workspaceMember {
           id
-          key
-          value
-          workspaceId
+          name {
+            firstName
+            lastName
+          }
+          colorScheme
+          avatarUrl
+          locale
+        }
+        defaultWorkspace {
+          id
+          displayName
+          logo
+          domainName
+          inviteHash
+          allowImpersonation
+          subscriptionStatus
+          activationStatus
+          featureFlags {
+            id
+            key
+            value
+            workspaceId
+          }
+        }
+      }
+      workspaces {
+        userId
+        workspace {
+          id
+          displayName
+          logo
+          domainName
         }
       }
     }

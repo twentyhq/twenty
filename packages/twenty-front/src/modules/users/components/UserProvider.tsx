@@ -25,11 +25,11 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
       setIsLoading(false);
     }
     if (queryData?.currentUser) {
-      setCurrentUser(queryData.currentUser);
-      setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
+      setCurrentUser(queryData.currentUser.user);
+      setCurrentWorkspace(queryData.currentUser.user.defaultWorkspace);
     }
-    if (queryData?.currentUser?.workspaceMember) {
-      const workspaceMember = queryData.currentUser.workspaceMember;
+    if (queryData?.currentUser?.user.workspaceMember) {
+      const workspaceMember = queryData.currentUser.user.workspaceMember;
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
