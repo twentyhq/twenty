@@ -1,13 +1,31 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+const updateBlockedEmailListJestFn = fn();
+
+const ClearMocksDecorator: Decorator = (Story, context) => {
+  if (context.parameters.clearMocks) {
+    updateBlockedEmailListJestFn.mockClear();
+  }
+  return <Story />;
+};
+
 const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
   title: 'Modules/Settings/Accounts/SettingsAccountsEmailsBlocklistInput',
   component: SettingsAccountsEmailsBlocklistInput,
-  decorators: [ComponentDecorator],
-  argTypes: {},
+  decorators: [ComponentDecorator, ClearMocksDecorator],
+  args: {
+    updateBlockedEmailList: updateBlockedEmailListJestFn,
+  },
+  argTypes: {
+    updateBlockedEmailList: { control: false },
+  },
+  parameters: {
+    clearMocks: true,
+  },
 };
 
 export default meta;
@@ -17,4 +35,27 @@ export const Default: Story = {
   render: () => (
     <SettingsAccountsEmailsBlocklistInput updateBlockedEmailList={() => {}} />
   ),
+};
+
+export const AddToBlocklist: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(updateBlockedEmailListJestFn).toHaveBeenCalledTimes(0);
+
+    const addToBlocklistInput = await canvas.getByRole('textbox');
+
+    await userEvent.type(addToBlocklistInput, 'test@twenty.com');
+
+    const addToBlocklistButton = await canvas.getByRole('button', {
+      name: /add to blocklist/i,
+    });
+
+    await userEvent.click(addToBlocklistButton);
+
+    expect(updateBlockedEmailListJestFn).toHaveBeenCalledTimes(1);
+    expect(updateBlockedEmailListJestFn).toHaveBeenCalledWith(
+      'test@twenty.com',
+    );
+  },
 };
