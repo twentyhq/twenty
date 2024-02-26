@@ -14,7 +14,8 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
-  title: 'Modules/Settings/Accounts/SettingsAccountsEmailsBlocklistInput',
+  title:
+    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistInput',
   component: SettingsAccountsEmailsBlocklistInput,
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
@@ -31,11 +32,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
 export default meta;
 type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistInput>;
 
-export const Default: Story = {
-  render: () => (
-    <SettingsAccountsEmailsBlocklistInput updateBlockedEmailList={() => {}} />
-  ),
-};
+export const Default: Story = {};
 
 export const AddToBlocklist: Story = {
   play: async ({ canvasElement }) => {

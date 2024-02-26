@@ -5,7 +5,8 @@ import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/comp
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 const meta: Meta<typeof SettingsAccountsEmailsBlocklistSection> = {
-  title: 'Modules/Settings/Accounts/SettingsAccountsEmailsBlocklistSection',
+  title:
+    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistSection',
   component: SettingsAccountsEmailsBlocklistInput,
   decorators: [ComponentDecorator],
   argTypes: {},
