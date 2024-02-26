@@ -137,12 +137,16 @@ export class GmailFullSyncService {
       );
 
     const participantsWithMessageId: ParticipantWithMessageId[] =
-      messagesToSave.flatMap((message) =>
-        message.participants.map((participant) => ({
-          ...participant,
-          messageId: messageExternalIdsandIdsMap[message.externalId],
-        })),
-      );
+      messagesToSave.flatMap((message) => {
+        const messageId = messageExternalIdsandIdsMap.get(message.externalId);
+
+        return messageId
+          ? message.participants.map((participant) => ({
+              ...participant,
+              messageId,
+            }))
+          : [];
+      });
 
     const contactsToCreate = messagesToSave
       .filter((message) => connectedAccount.handle === message.fromHandle)
