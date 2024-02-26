@@ -21,7 +21,6 @@ export class MessagingConnectedAccountListener {
   handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<ConnectedAccountObjectMetadata>,
   ) {
-    console.log('allo');
     this.messageQueueService.add<DeleteConnectedAccountAssociatedDataJobData>(
       DeleteConnectedAccountAssociatedDataJob.name,
       {
