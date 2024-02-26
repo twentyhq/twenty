@@ -9,12 +9,9 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistSection> = {
     'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistSection',
   component: SettingsAccountsEmailsBlocklistInput,
   decorators: [ComponentDecorator],
-  argTypes: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistSection>;
 
-export const Default: Story = {
-  render: () => <SettingsAccountsEmailsBlocklistSection />,
-};
+export const Default: Story = {};
