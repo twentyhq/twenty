@@ -122,7 +122,10 @@ export const ConfirmationModal = ({
             fullWidth
           />
           <StyledCenteredButton
-            onClick={onConfirmClick}
+            onClick={async () => {
+              await onConfirmClick();
+              setIsOpen(false);
+            }}
             variant="secondary"
             accent="danger"
             title={deleteButtonText}
