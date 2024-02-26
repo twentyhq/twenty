@@ -190,7 +190,7 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
-    await this.connectedAccountService.updateLastSyncHistoryId(
+    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
       historyId,
       connectedAccount.id,
       workspaceId,
