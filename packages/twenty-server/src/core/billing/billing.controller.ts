@@ -64,7 +64,7 @@ export class BillingController {
   @Post('/checkout')
   async post(
     @AuthUser() user: User,
-    @Body() body: { recurringInterval: Stripe.Price.Recurring },
+    @Body() body: { recurringInterval: Stripe.Price.Recurring.Interval },
     @Res() res: Response,
   ) {
     const productId = this.billingService.getProductStripeId(
@@ -83,11 +83,12 @@ export class BillingController {
 
     const productPrices = await this.billingService.getProductPrices(productId);
     const recurringInterval = body.recurringInterval;
+
     const productPrice = productPrices.filter(
-      (price) => price.recurring === recurringInterval,
+      (price) => price.recurring?.interval === recurringInterval,
     );
 
-    if (productPrice.length !== 1 || productPrices[0]?.id) {
+    if (productPrice.length !== 1 || !productPrices[0]?.id) {
       res
         .status(404)
         .send(
@@ -96,8 +97,10 @@ export class BillingController {
 
       return;
     }
-    const priceId = productPrices[0].id;
+    const priceId = productPrice[0].id;
+
     const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+
     const session = await this.stripeService.stripe.checkout.sessions.create({
       line_items: [
         {
@@ -123,7 +126,7 @@ export class BillingController {
     }
     this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
 
-    res.redirect(303, session.url);
+    res.status(200).json({ url: session.url });
   }
 
   @Post('/webhooks')

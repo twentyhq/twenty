@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import Stripe from 'stripe';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
+import { tokenPairState } from '@/auth/states/tokenPairState.ts';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
@@ -42,6 +43,8 @@ export const ChooseYourPlan = () => {
 
   const [prices, setPrices] = useState<Stripe.Price[]>();
 
+  const [tokenPair] = useRecoilState(tokenPairState);
+
   const { enqueueSnackBar } = useSnackBar();
 
   const handlePlanChange = (type?: Stripe.Price.Recurring.Interval) => {
@@ -71,11 +74,28 @@ export const ChooseYourPlan = () => {
     return 'Cancel anytime';
   };
 
-  const handleButtonClick = () => {};
+  const handleButtonClick = () => {
+    fetch(REACT_APP_SERVER_BASE_URL + '/billing/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${tokenPair?.accessToken.token}`,
+      },
+      body: JSON.stringify({ recurringInterval: planSelected }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const redirectUrl = data?.url;
+        if (redirectUrl) {
+          window.location.replace(redirectUrl);
+        }
+      });
+  };
 
   useEffect(() => {
     fetch(REACT_APP_SERVER_BASE_URL + '/billing/product-prices/base-plan')
-      .then((result) => result.json())
+      .then((response) => response.json())
       .then((data) => setPrices(sortPrices(data)))
       .catch(() => {
         enqueueSnackBar('Error while fetching prices. Please retry', {
