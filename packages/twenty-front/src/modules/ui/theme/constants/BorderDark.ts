@@ -7,6 +7,7 @@ export const BORDER_DARK = {
     strong: GRAY_SCALE.gray55,
     medium: GRAY_SCALE.gray65,
     light: GRAY_SCALE.gray70,
+    dark: GRAY_SCALE.gray90,
     secondaryInverted: GRAY_SCALE.gray35,
     inverted: GRAY_SCALE.gray20,
     danger: COLOR.red70,
