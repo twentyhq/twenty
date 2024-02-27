@@ -9,8 +9,8 @@ import { RecordTableHeader } from '@/object-record/record-table/components/Recor
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { RGBA } from '@/ui/theme/constants/Rgba';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
