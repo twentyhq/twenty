@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser, AddressObject } from 'mailparser';
@@ -14,6 +14,7 @@ import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-
 @Injectable()
 export class FetchMessagesByBatchesService {
   private readonly httpService: AxiosInstance;
+  private readonly logger = new Logger(FetchMessagesByBatchesService.name);
 
   constructor() {
     this.httpService = axios.create({
@@ -24,17 +25,42 @@ export class FetchMessagesByBatchesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
+    jobName?: string,
+    workspaceId?: string,
+    connectedAccountId?: string,
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
-    console.time('fetching all messages');
+    let startTime = Date.now();
     const batchResponses = await this.fetchAllByBatches(
       queries,
       accessToken,
       'batch_gmail_messages',
     );
+    let endTime = Date.now();
 
-    console.timeEnd('fetching all messages');
+    this.logger.log(
+      `${jobName} fetching ${
+        queries.length
+      } messages for workspace ${workspaceId} and account ${connectedAccountId} in ${
+        endTime - startTime
+      }ms`,
+    );
 
-    return this.formatBatchResponsesAsGmailMessages(batchResponses);
+    startTime = Date.now();
+
+    const formattedResponse =
+      await this.formatBatchResponsesAsGmailMessages(batchResponses);
+
+    endTime = Date.now();
+
+    this.logger.log(
+      `${jobName} formatting ${
+        queries.length
+      } messages for workspace ${workspaceId} and account ${connectedAccountId} in ${
+        endTime - startTime
+      }ms`,
+    );
+
+    return formattedResponse;
   }
 
   async fetchAllByBatches(
@@ -279,7 +305,6 @@ export class FetchMessagesByBatchesService {
   async formatBatchResponsesAsGmailMessages(
     batchResponses: AxiosResponse<any, any>[],
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
-    console.time('formatting batch responses');
     const messagesAndErrors = await Promise.all(
       batchResponses.map(async (response) => {
         return this.formatBatchResponseAsGmailMessage(response);
@@ -289,8 +314,6 @@ export class FetchMessagesByBatchesService {
     const messages = messagesAndErrors.map((item) => item.messages).flat();
 
     const errors = messagesAndErrors.map((item) => item.errors).flat();
-
-    console.timeEnd('formatting batch responses');
 
     return { messages, errors };
   }
