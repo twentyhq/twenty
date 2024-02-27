@@ -100,7 +100,7 @@ export class CreateCompanyService {
       const data = response.data;
 
       return {
-        name: data.name,
+        name: data.name ?? capitalize(domainName.split('.')[0]),
         city: data.city,
       };
     } catch (e) {
