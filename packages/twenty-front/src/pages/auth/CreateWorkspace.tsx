@@ -15,6 +15,7 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -162,6 +163,7 @@ export const CreateWorkspace = () => {
           title="Continue"
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
+          Icon={() => isSubmitting && <Loader />}
           fullWidth
         />
       </StyledButtonContainer>
