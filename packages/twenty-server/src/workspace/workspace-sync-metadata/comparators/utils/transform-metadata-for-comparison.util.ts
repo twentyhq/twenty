@@ -44,6 +44,7 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
       ) {
         continue;
       }
+
       if (
         propertiesToStringify.includes(property) &&
         datum[property] !== null &&
@@ -51,9 +52,12 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
       ) {
         const orderedValue = orderObjectProperties(datum[property] as object);
 
-        transformedField[property as string] = JSON.stringify(
-          orderedValue,
-        ) as T[Keys];
+        const stringifiedValue = JSON.stringify(orderedValue) as T[Keys];
+
+        transformedField[property as string] =
+          stringifiedValue === '{}' || stringifiedValue === '[]'
+            ? null
+            : stringifiedValue;
       } else {
         transformedField[property as string] = datum[property];
       }

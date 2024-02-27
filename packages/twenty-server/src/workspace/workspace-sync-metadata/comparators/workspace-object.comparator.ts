@@ -52,13 +52,20 @@ export class WorkspaceObjectComparator {
       },
     );
 
+    const partialStandardObjectMetadata = transformMetadataForComparison(
+      omit(standardObjectMetadata, 'fields'),
+      {
+        shouldIgnoreProperty: (property) =>
+          objectPropertiesToIgnore.includes(property),
+        propertiesToStringify: objectPropertiesToStringify,
+      },
+    );
+
     // Compare objects
     const objectMetadataDifference = diff(
       partialOriginalObjectMetadata,
-      omit(standardObjectMetadata, 'fields'),
+      partialStandardObjectMetadata,
     );
-
-    console.log('objectMetadataDifference', objectMetadataDifference);
 
     // Loop through the differences and create an object with the properties to update
     for (const difference of objectMetadataDifference) {
@@ -66,7 +73,17 @@ export class WorkspaceObjectComparator {
       if (difference.type === 'CHANGE') {
         const property = difference.path[0];
 
-        objectPropertiesToUpdate[property] = difference.value;
+        if (typeof property !== 'string') {
+          break;
+        }
+
+        if (
+          (objectPropertiesToStringify as readonly string[]).includes(property)
+        ) {
+          objectPropertiesToUpdate[property] = JSON.parse(difference.value);
+        } else {
+          objectPropertiesToUpdate[property] = difference.value;
+        }
       }
     }
 
@@ -83,6 +100,8 @@ export class WorkspaceObjectComparator {
       object: {
         id: originalObjectMetadata.id,
         ...objectPropertiesToUpdate,
+        nameSingular: originalObjectMetadata.nameSingular,
+        workspaceId: originalObjectMetadata.workspaceId,
       },
     };
   }

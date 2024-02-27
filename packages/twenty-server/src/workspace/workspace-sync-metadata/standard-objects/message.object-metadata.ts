@@ -23,7 +23,6 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 })
 @IndexMetadata({
   columns: ['headerMessageId'],
-  name: 'IndexOnHeaderMessageId',
 })
 @IndexMetadata({
   columns: ['messageThreadId'],

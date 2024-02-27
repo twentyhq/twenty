@@ -43,5 +43,5 @@ export type FieldComparatorResult =
 
 export type RelationComparatorResult =
   | ComparatorCreateResult<Partial<RelationMetadataEntity>>
-  | ComparatorDeleteResult<RelationMetadataEntity>
-  | ComparatorUpdateResult<Partial<RelationMetadataEntity>>;
+  | ComparatorUpdateResult<Partial<RelationMetadataEntity>>
+  | ComparatorDeleteResult<RelationMetadataEntity>;

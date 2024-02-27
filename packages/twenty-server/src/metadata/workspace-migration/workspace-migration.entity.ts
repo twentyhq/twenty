@@ -6,6 +6,7 @@ import {
 } from 'typeorm';
 
 import { RelationOnDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
@@ -37,7 +38,7 @@ export type WorkspaceMigrationColumnAlter = {
   alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
-export type WorkspaceMigrationColumnCreateRelation = {
+export type WorkspaceMigrationColumnCreateForeignKey = {
   action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY;
   columnName: string;
   referencedTableName: string;
@@ -46,7 +47,7 @@ export type WorkspaceMigrationColumnCreateRelation = {
   onDelete?: RelationOnDeleteAction;
 };
 
-export type WorkspaceMigrationColumnDropRelation = {
+export type WorkspaceMigrationColumnDropForeignKey = {
   action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY;
   columnName: string;
 };
@@ -61,15 +62,18 @@ export type WorkspaceMigrationColumnAction = {
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
-  | WorkspaceMigrationColumnCreateRelation
-  | WorkspaceMigrationColumnDropRelation
+  | WorkspaceMigrationColumnCreateForeignKey
+  | WorkspaceMigrationColumnDropForeignKey
   | WorkspaceMigrationColumnDrop
 );
+
+export type WorkspaceMigrationIndexAction = IndexMetadata;
 
 export type WorkspaceMigrationTableAction = {
   name: string;
   action: 'create' | 'alter' | 'drop';
   columns?: WorkspaceMigrationColumnAction[];
+  indexes?: WorkspaceMigrationIndexAction[];
 };
 
 @Entity('workspaceMigration')

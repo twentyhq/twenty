@@ -5,6 +5,7 @@ import {
   Table,
   TableColumn,
   TableForeignKey,
+  TableIndex,
   TableUnique,
 } from 'typeorm';
 
@@ -15,13 +16,14 @@ import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationColumnCreateRelation,
+  WorkspaceMigrationColumnCreateForeignKey,
   WorkspaceMigrationColumnAlter,
-  WorkspaceMigrationColumnDropRelation,
+  WorkspaceMigrationColumnDropForeignKey,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/workspace/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -121,12 +123,22 @@ export class WorkspaceMigrationRunnerService {
         await this.createTable(queryRunner, schemaName, tableMigration.name);
         break;
       case 'alter':
-        await this.handleColumnChanges(
-          queryRunner,
-          schemaName,
-          tableMigration.name,
-          tableMigration?.columns,
-        );
+        if (tableMigration.columns) {
+          await this.handleColumnChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.name,
+            tableMigration?.columns,
+          );
+        }
+        if (tableMigration.indexes) {
+          await this.handleIndexesChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.name,
+            tableMigration.indexes,
+          );
+        }
         break;
       case 'drop':
         await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
@@ -227,6 +239,41 @@ export class WorkspaceMigrationRunnerService {
         default:
           throw new Error(`Migration column action not supported`);
       }
+    }
+  }
+
+  private async handleIndexesChanges(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    indexMigrations: IndexMetadata[],
+  ) {
+    if (!indexMigrations || indexMigrations.length === 0) {
+      return;
+    }
+
+    for (const indexMigration of indexMigrations) {
+      if (!indexMigration.columns) {
+        throw new Error(
+          'Index columns not found, other types of indexes are not supported yet',
+        );
+      }
+
+      if (indexMigration.type && indexMigration.type !== 'btree') {
+        throw new Error(
+          `Index type ${indexMigration.type} not supported, other types of indexes are not supported yet`,
+        );
+      }
+
+      await queryRunner.createIndex(
+        `${schemaName}.${tableName}`,
+        new TableIndex({
+          name: indexMigration.name,
+          columnNames: indexMigration.columns,
+          isUnique: indexMigration.unique,
+          where: indexMigration.where,
+        }),
+      );
     }
   }
 
@@ -335,7 +382,7 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnCreateRelation,
+    migrationColumn: WorkspaceMigrationColumnCreateForeignKey,
   ) {
     await queryRunner.createForeignKey(
       `${schemaName}.${tableName}`,
@@ -364,7 +411,7 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnDropRelation,
+    migrationColumn: WorkspaceMigrationColumnDropForeignKey,
   ) {
     const foreignKeyName = await this.getForeignKeyName(
       queryRunner,

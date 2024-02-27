@@ -60,15 +60,6 @@ export class StandardObjectFactory {
       [] as PartialFieldMetadata[],
     );
 
-    const indexMetadataCollection =
-      TypedReflect.getMetadata('indexMetadataCollection', metadata) ?? [];
-
-    console.log(
-      `indexMetadataCollection: ${JSON.stringify(
-        indexMetadataCollection,
-      )} for object ${metadata.name}`,
-    );
-
     return {
       ...objectMetadata,
       workspaceId: context.workspaceId,

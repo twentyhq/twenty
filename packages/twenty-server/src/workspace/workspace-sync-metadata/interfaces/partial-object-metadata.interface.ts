@@ -6,4 +6,5 @@ export type PartialObjectMetadata = ReflectObjectMetadata & {
   workspaceId: string;
   dataSourceId: string;
   fields: PartialFieldMetadata[];
+  // indexMetadata: PartialIndexMetadata[];
 };
