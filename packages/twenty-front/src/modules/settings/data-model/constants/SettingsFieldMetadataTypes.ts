@@ -91,5 +91,9 @@ export const SETTINGS_FIELD_METADATA_TYPES: Partial<
     Icon: IconTwentyStar,
     defaultValue: '3',
   },
-  [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
+  [FieldMetadataType.FullName]: {
+    label: 'Full Name',
+    Icon: IconUser,
+    defaultValue: { firstName: 'John', lastName: 'Doe' },
+  },
 };

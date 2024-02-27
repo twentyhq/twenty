@@ -11,13 +11,14 @@ import {
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { SettingsObjectFieldTypeSelectSectionFormValues } from '../components/SettingsObjectFieldTypeSelectSection';
+import { SettingsDataModelFieldPreviewFormValues } from '../components/SettingsDataModelFieldPreviewFormCard';
 
 type FormValues = {
   description?: string;
   icon: string;
   label: string;
-} & SettingsObjectFieldTypeSelectSectionFormValues;
+  type: FieldMetadataType;
+} & SettingsDataModelFieldPreviewFormValues;
 
 export const fieldMetadataFormDefaultValues: FormValues = {
   icon: 'IconUsers',

@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import styled from '@emotion/styled';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -10,9 +11,10 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsDataModelFieldPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelFieldPreviewFormCard';
+import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/components/SettingsDataModelFieldTypeSelect';
 import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
-import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
 import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
@@ -26,6 +28,12 @@ import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
+
+const StyledSettingsObjectFieldTypeSelect = styled(
+  SettingsDataModelFieldTypeSelect,
+)`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,
@@ -214,23 +222,35 @@ export const SettingsObjectFieldEdit = () => {
           iconKey={formValues.icon}
           onChange={handleFormChange}
         />
-        <SettingsObjectFieldTypeSelectSection
-          disableCurrencyForm
-          fieldMetadata={{
-            icon: formValues.icon,
-            label: formValues.label || 'Employees',
-            id: activeMetadataField.id,
-          }}
-          objectMetadataId={activeObjectMetadataItem.id}
-          onChange={handleFormChange}
-          relationFieldMetadata={relationFieldMetadataItem}
-          values={{
-            type: formValues.type,
-            currency: formValues.currency,
-            relation: formValues.relation,
-            select: formValues.select,
-          }}
-        />
+        <Section>
+          <H2Title
+            title="Type and values"
+            description="The field's type and values."
+          />
+          <StyledSettingsObjectFieldTypeSelect
+            disabled
+            onChange={handleFormChange}
+            value={formValues.type}
+          />
+          <SettingsDataModelFieldPreviewFormCard
+            disableCurrencyForm
+            fieldMetadataItem={{
+              icon: formValues.icon,
+              id: activeMetadataField.id,
+              label: formValues.label,
+              name: activeMetadataField.name,
+              type: formValues.type,
+            }}
+            objectMetadataItem={activeObjectMetadataItem}
+            onChange={handleFormChange}
+            relationFieldMetadataItem={relationFieldMetadataItem}
+            values={{
+              currency: formValues.currency,
+              relation: formValues.relation,
+              select: formValues.select,
+            }}
+          />
+        </Section>
         {!isLabelIdentifier && (
           <Section>
             <H2Title title="Danger zone" description="Disable this field" />

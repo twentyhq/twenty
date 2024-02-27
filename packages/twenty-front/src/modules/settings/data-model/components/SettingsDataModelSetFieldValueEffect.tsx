@@ -3,17 +3,17 @@ import { useSetRecoilState } from 'recoil';
 
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-type SettingsObjectFieldPreviewValueEffectProps = {
+type SettingsDataModelSetFieldValueEffectProps = {
   entityId: string;
   fieldName: string;
   value: unknown;
 };
 
-export const SettingsObjectFieldPreviewValueEffect = ({
+export const SettingsDataModelSetFieldValueEffect = ({
   entityId,
   fieldName,
   value,
-}: SettingsObjectFieldPreviewValueEffectProps) => {
+}: SettingsDataModelSetFieldValueEffectProps) => {
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
       recordId: entityId,

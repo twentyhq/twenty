@@ -1,54 +1,44 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { Tag } from '@/ui/display/tag/components/Tag';
+import { SettingsDataModelObjectSummary } from '@/settings/data-model/components/SettingsDataModelObjectSummary';
+import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/components/SettingsDataModelSetFieldValueEffect';
+import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/components/SettingsDataModelSetRecordEffect';
+import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { useFieldPreview } from '@/settings/data-model/hooks/useFieldPreview';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { useFieldPreview } from '../hooks/useFieldPreview';
-
-import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
-
-export type SettingsObjectFieldPreviewProps = {
+export type SettingsDataModelFieldPreviewCardProps = {
   className?: string;
-  fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
-  objectMetadataId: string;
-  relationObjectMetadataId?: string;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> & {
+    id?: string;
+    name?: string;
+  };
+  objectMetadataItem: ObjectMetadataItem;
+  relationObjectMetadataItem?: ObjectMetadataItem;
   selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
+  withFieldLabel?: boolean;
 };
 
 const StyledCard = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};
   color: ${({ theme }) => theme.font.color.primary};
-  max-width: 480px;
 `;
 
 const StyledCardContent = styled(CardContent)`
   display: grid;
   padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledObjectSummary = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledObjectName = styled.div`
-  align-items: center;
-  display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
@@ -63,6 +53,7 @@ const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   padding: 0
     ${({ shrink, theme }) => (shrink ? theme.spacing(1) : theme.spacing(2))};
   white-space: nowrap;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledFieldLabel = styled.div`
@@ -72,76 +63,65 @@ const StyledFieldLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsObjectFieldPreview = ({
+export const SettingsDataModelFieldPreviewCard = ({
   className,
-  fieldMetadata,
-  objectMetadataId,
-  relationObjectMetadataId,
+  fieldMetadataItem,
+  objectMetadataItem,
+  relationObjectMetadataItem,
   selectOptions,
   shrink,
-}: SettingsObjectFieldPreviewProps) => {
+  withFieldLabel = true,
+}: SettingsDataModelFieldPreviewCardProps) => {
   const theme = useTheme();
 
-  const {
-    entityId,
-    FieldIcon,
-    fieldName,
-    ObjectIcon,
-    objectMetadataItem,
-    relationObjectMetadataItem,
-    value,
-  } = useFieldPreview({
-    fieldMetadata,
-    objectMetadataId,
-    relationObjectMetadataId,
-    selectOptions,
-  });
+  const { getIcon } = useIcons();
+  const FieldIcon = getIcon(fieldMetadataItem.icon);
+
+  const { entityId, fieldName, fieldPreviewValue, isLabelIdentifier, record } =
+    useFieldPreview({
+      fieldMetadataItem,
+      objectMetadataItem,
+      relationObjectMetadataItem,
+      selectOptions,
+    });
 
   return (
-    <StyledCard className={className}>
+    <StyledCard className={className} fullWidth>
       <StyledCardContent>
-        <StyledObjectSummary>
-          <StyledObjectName>
-            {!!ObjectIcon && (
-              <ObjectIcon
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
-            )}
-            {objectMetadataItem?.labelPlural}
-          </StyledObjectName>
-          {objectMetadataItem?.isCustom ? (
-            <Tag color="orange" text="Custom" weight="medium" />
-          ) : (
-            <Tag color="blue" text="Standard" weight="medium" />
-          )}
-        </StyledObjectSummary>
-        <SettingsObjectFieldPreviewValueEffect
-          entityId={entityId}
-          fieldName={fieldName}
-          value={value}
+        <SettingsDataModelObjectSummary
+          objectMetadataItem={objectMetadataItem}
         />
+        {record ? (
+          <SettingsDataModelSetRecordEffect record={record} />
+        ) : (
+          <SettingsDataModelSetFieldValueEffect
+            entityId={entityId}
+            fieldName={fieldName}
+            value={fieldPreviewValue}
+          />
+        )}
         <StyledFieldPreview shrink={shrink}>
-          <StyledFieldLabel>
-            {!!FieldIcon && (
+          {!!withFieldLabel && (
+            <StyledFieldLabel>
               <FieldIcon
                 size={theme.icon.size.md}
                 stroke={theme.icon.stroke.sm}
               />
-            )}
-            {fieldMetadata.label}:
-          </StyledFieldLabel>
+              {fieldMetadataItem.label}:
+            </StyledFieldLabel>
+          )}
           <FieldContext.Provider
             value={{
               entityId,
-              isLabelIdentifier: false,
+              isLabelIdentifier,
               fieldDefinition: {
-                type: parseFieldType(fieldMetadata.type),
+                type: parseFieldType(fieldMetadataItem.type),
                 iconName: 'FieldIcon',
-                fieldMetadataId: fieldMetadata.id || '',
-                label: fieldMetadata.label,
+                fieldMetadataId: fieldMetadataItem.id || '',
+                label: fieldMetadataItem.label,
                 metadata: {
                   fieldName,
+                  objectMetadataNameSingular: objectMetadataItem.nameSingular,
                   relationObjectMetadataNameSingular:
                     relationObjectMetadataItem?.nameSingular,
                   options: selectOptions,
@@ -150,9 +130,9 @@ export const SettingsObjectFieldPreview = ({
               hotkeyScope: 'field-preview',
             }}
           >
-            {fieldMetadata.type === FieldMetadataType.Boolean ? (
+            {fieldMetadataItem.type === FieldMetadataType.Boolean ? (
               <BooleanFieldInput readonly />
-            ) : fieldMetadata.type === FieldMetadataType.Rating ? (
+            ) : fieldMetadataItem.type === FieldMetadataType.Rating ? (
               <RatingFieldInput readonly />
             ) : (
               <FieldDisplay />

@@ -1,74 +1,101 @@
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { getFieldDefaultPreviewValue } from '@/settings/data-model/utils/getFieldDefaultPreviewValue';
+import { getFieldValueFromRecord } from '@/settings/data-model/utils/getFieldValueFromRecord';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
-
-import { useFieldPreviewValue } from './useFieldPreviewValue';
-import { useRelationFieldPreviewValue } from './useRelationFieldPreviewValue';
+type UseFieldPreviewParams = {
+  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'type'> & {
+    id?: string;
+    name?: string;
+  };
+  objectMetadataItem: ObjectMetadataItem;
+  relationObjectMetadataItem?: ObjectMetadataItem;
+  selectOptions?: SettingsObjectFieldSelectFormValues;
+};
 
 export const useFieldPreview = ({
-  fieldMetadata,
-  objectMetadataId,
-  relationObjectMetadataId,
+  fieldMetadataItem,
+  objectMetadataItem,
+  relationObjectMetadataItem,
   selectOptions,
-}: {
-  fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
-  objectMetadataId: string;
-  relationObjectMetadataId?: string;
-  selectOptions?: SettingsObjectFieldSelectFormOption[];
-}) => {
-  const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
-  const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
-
-  const { getIcon } = useIcons();
-  const ObjectIcon = getIcon(objectMetadataItem?.icon);
-  const FieldIcon = getIcon(fieldMetadata.icon);
-
-  const fieldName = fieldMetadata.id
-    ? objectMetadataItem?.fields.find(({ id }) => id === fieldMetadata.id)?.name
-    : undefined;
-
-  const { value: firstRecordFieldValue } = useFieldPreviewValue({
-    fieldName: fieldName || '',
-    objectNamePlural: objectMetadataItem?.namePlural ?? '',
-    skip:
-      !fieldName ||
-      !objectMetadataItem ||
-      fieldMetadata.type === FieldMetadataType.Relation,
-  });
-
-  const { relationObjectMetadataItem, value: relationValue } =
-    useRelationFieldPreviewValue({
-      relationObjectMetadataId,
-      skip: fieldMetadata.type !== FieldMetadataType.Relation,
+}: UseFieldPreviewParams) => {
+  const isLabelIdentifier =
+    !!fieldMetadataItem.id &&
+    !!fieldMetadataItem.name &&
+    isLabelIdentifierField({
+      fieldMetadataItem: {
+        id: fieldMetadataItem.id,
+        name: fieldMetadataItem.name,
+      },
+      objectMetadataItem,
     });
 
-  const settingsFieldMetadataType =
-    SETTINGS_FIELD_METADATA_TYPES[fieldMetadata.type];
+  const { records } = useFindManyRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    limit: 1,
+    skip: !fieldMetadataItem.name,
+  });
+  const [firstRecord] = records;
 
-  const defaultSelectValue = selectOptions?.[0];
-  const selectValue =
-    fieldMetadata.type === FieldMetadataType.Select &&
-    typeof firstRecordFieldValue === 'string'
-      ? selectOptions?.find(
-          (selectOption) => selectOption.value === firstRecordFieldValue,
-        )
-      : undefined;
+  const fieldPreviewValueFromFirstRecord =
+    firstRecord && fieldMetadataItem.name
+      ? getFieldValueFromRecord({
+          record: firstRecord,
+          fieldMetadataItem: {
+            name: fieldMetadataItem.name,
+            type: fieldMetadataItem.type,
+          },
+          selectOptions,
+        })
+      : null;
+
+  const isValueFromFirstRecord =
+    firstRecord &&
+    !isFieldValueEmpty({
+      fieldDefinition: { type: parseFieldType(fieldMetadataItem.type) },
+      fieldValue: fieldPreviewValueFromFirstRecord,
+    });
+
+  const { records: relationRecords } = useFindManyRecords({
+    objectNameSingular:
+      relationObjectMetadataItem?.nameSingular ||
+      CoreObjectNameSingular.Company,
+    limit: 1,
+    skip:
+      !relationObjectMetadataItem ||
+      fieldMetadataItem.type !== FieldMetadataType.Relation ||
+      isValueFromFirstRecord,
+  });
+  const [firstRelationRecord] = relationRecords;
+
+  const fieldPreviewValue = isValueFromFirstRecord
+    ? fieldPreviewValueFromFirstRecord
+    : firstRelationRecord ??
+      getFieldDefaultPreviewValue({
+        fieldMetadataItem,
+        objectMetadataItem,
+        relationObjectMetadataItem,
+        selectOptions,
+      });
+
+  const fieldName =
+    fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
+  const entityId = isValueFromFirstRecord
+    ? firstRecord.id
+    : `${objectMetadataItem.nameSingular}-${fieldMetadataItem.name}-preview-field-form`;
 
   return {
-    entityId: `${objectMetadataId}-field-form`,
-    FieldIcon,
-    fieldName: fieldName || `${fieldMetadata.type}-new-field`,
-    ObjectIcon,
-    objectMetadataItem,
-    relationObjectMetadataItem,
-    value:
-      fieldMetadata.type === FieldMetadataType.Relation
-        ? relationValue
-        : fieldMetadata.type === FieldMetadataType.Select
-          ? selectValue || defaultSelectValue
-          : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
+    entityId,
+    fieldName,
+    fieldPreviewValue,
+    isLabelIdentifier,
+    record: isValueFromFirstRecord ? firstRecord : null,
   };
 };

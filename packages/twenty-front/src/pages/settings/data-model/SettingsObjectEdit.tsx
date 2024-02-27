@@ -6,6 +6,7 @@ import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsDataModelObjectPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelObjectPreviewFormCard';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
@@ -125,6 +126,15 @@ export const SettingsObjectEdit = () => {
             }))
           }
         />
+        <Section>
+          <H2Title
+            title="Settings"
+            description="Choose the fields that will identify your records"
+          />
+          <SettingsDataModelObjectPreviewFormCard
+            objectMetadataItem={activeObjectMetadataItem}
+          />
+        </Section>
         <Section>
           <H2Title title="Danger zone" description="Disable object" />
           <Button
