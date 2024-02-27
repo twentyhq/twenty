@@ -84,13 +84,15 @@ export class GmailFullSyncService {
 
     const messagesData = messages.data.messages;
 
-    console.log('messagesData', messagesData?.length);
-
     const messageExternalIds = messagesData
       ? messagesData.map((message) => message.id || '')
       : [];
 
     if (!messageExternalIds || messageExternalIds?.length === 0) {
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+      );
+
       return;
     }
 
