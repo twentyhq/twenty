@@ -2,11 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheck } from '@tabler/icons-react';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
 import { AppPath } from '@/types/AppPath.ts';
+import { IconCheck } from '@/ui/display/icon';
 import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn.tsx';
 
