@@ -102,6 +102,22 @@ export class ConnectedAccountService {
     );
   }
 
+  public async deleteHistoryId(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = '' WHERE "id" = $1`,
+      [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateAccessToken(
     accessToken: string,
     connectedAccountId: string,

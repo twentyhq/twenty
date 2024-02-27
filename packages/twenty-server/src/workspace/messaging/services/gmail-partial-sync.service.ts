@@ -65,6 +65,11 @@ export class GmailPartialSyncService {
     );
 
     if (error && error.code === 404) {
+      await this.connectedAccountService.deleteHistoryId(
+        connectedAccountId,
+        workspaceId,
+      );
+
       await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
       return;
