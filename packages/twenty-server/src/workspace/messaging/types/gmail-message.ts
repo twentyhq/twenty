@@ -21,6 +21,8 @@ export type Participant = {
   displayName: string;
 };
 
+export type ParticipantWithMessageId = Participant & { messageId: string };
+
 export type ParticipantWithId = Participant & {
   id: string;
 };

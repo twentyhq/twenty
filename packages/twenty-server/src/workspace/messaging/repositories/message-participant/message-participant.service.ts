@@ -7,7 +7,7 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import {
   ParticipantWithId,
-  Participant,
+  ParticipantWithMessageId,
 } from 'src/workspace/messaging/types/gmail-message';
 import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
 
@@ -138,8 +138,7 @@ export class MessageParticipantService {
   }
 
   public async saveMessageParticipants(
-    participants: Participant[],
-    messageId: string,
+    participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -169,7 +168,7 @@ export class MessageParticipantService {
       );
 
     const messageParticipantsToSave = participants.map((participant) => [
-      messageId,
+      participant.messageId,
       participant.role,
       participant.handle,
       participant.displayName,

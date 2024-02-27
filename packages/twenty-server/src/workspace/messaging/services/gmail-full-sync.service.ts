@@ -11,11 +11,10 @@ import {
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -26,12 +25,11 @@ export class GmailFullSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageService: MessageService,
     private readonly blocklistService: BlocklistService,
+    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -39,11 +37,6 @@ export class GmailFullSyncService {
     connectedAccountId: string,
     nextPageToken?: string,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
       workspaceId,
@@ -74,6 +67,7 @@ export class GmailFullSyncService {
     );
 
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+    let startTime = Date.now();
 
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
@@ -81,6 +75,14 @@ export class GmailFullSyncService {
       pageToken: nextPageToken,
       q: gmailSearchFilterExcludeEmails(blocklistedEmails),
     });
+
+    let endTime = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting messages list in ${
+        endTime - startTime
+      }ms.`,
+    );
 
     const messagesData = messages.data.messages;
 
@@ -96,12 +98,22 @@ export class GmailFullSyncService {
       return;
     }
 
+    startTime = Date.now();
+
     const existingMessageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
         gmailMessageChannelId,
         workspaceId,
       );
+
+    endTime = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing message channel message associations in ${
+        endTime - startTime
+      }ms.`,
+    );
 
     const existingMessageChannelMessageAssociationsExternalIds =
       existingMessageChannelMessageAssociations.map(
@@ -118,13 +130,28 @@ export class GmailFullSyncService {
 
     const messageQueries = createQueriesFromMessageIds(messagesToFetch);
 
+    startTime = Date.now();
+
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
+        'gmail full-sync',
+        workspaceId,
+        connectedAccountId,
       );
 
+    endTime = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all messages in ${
+        endTime - startTime
+      }ms.`,
+    );
+
     if (messagesToSave.length === 0) {
+      if (errors.length) throw new Error('Error fetching messages');
+
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
@@ -132,13 +159,12 @@ export class GmailFullSyncService {
       return;
     }
 
-    await this.messageService.saveMessages(
+    this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
       messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
       connectedAccount,
-      gmailMessageChannelId,
       workspaceId,
+      gmailMessageChannelId,
+      'gmail full-sync',
     );
 
     if (errors.length) throw new Error('Error fetching messages');
@@ -151,10 +177,20 @@ export class GmailFullSyncService {
 
     if (!historyId) throw new Error('No history id found');
 
-    await this.connectedAccountService.updateLastSyncHistoryId(
+    startTime = Date.now();
+
+    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
       historyId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    endTime = Date.now();
+
+    this.logger.log(
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
+        endTime - startTime
+      }ms.`,
     );
 
     this.logger.log(
