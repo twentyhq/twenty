@@ -2,7 +2,7 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-import { settingsFieldCurrencyCodes } from '../constants/settingsFieldCurrencyCodes';
+import { SETTINGS_FIELD_CURRENCY_CODES } from '../constants/SettingsFieldCurrencyCodes';
 
 export type SettingsObjectFieldCurrencyFormValues = {
   currencyCode: CurrencyCode;
@@ -26,7 +26,7 @@ export const SettingsObjectFieldCurrencyForm = ({
       label="Unit"
       dropdownId="currency-unit-select"
       value={values.currencyCode}
-      options={Object.entries(settingsFieldCurrencyCodes).map(
+      options={Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
         ([value, { label, Icon }]) => ({
           label,
           value: value as CurrencyCode,

@@ -44,17 +44,21 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_BILLING_ENABLED?: boolean;
 
-  @IsOptional()
   @IsString()
-  BILLING_URL?: string;
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_PLAN_REQUIRED_LINK?: string;
 
-  @IsOptional()
   @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_BASE_PLAN_PRODUCT_ID?: string;
 
-  @IsOptional()
   @IsString()
-  STRIPE_API_KEY?: string;
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_API_KEY?: string;
+
+  @IsString()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_STRIPE_WEBHOOK_SECRET?: string;
 
   @CastToBoolean()
   @IsOptional()

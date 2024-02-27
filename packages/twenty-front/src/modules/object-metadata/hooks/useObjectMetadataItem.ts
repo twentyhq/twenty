@@ -16,6 +16,7 @@ import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGe
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
+import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
@@ -91,6 +92,13 @@ export const useObjectMetadataItem = (
     depth,
   });
 
+  const generateFindDuplicateRecordsQuery =
+    useGenerateFindDuplicateRecordsQuery();
+  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
+    objectMetadataItem,
+    depth,
+  });
+
   const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
   const findOneRecordQuery = generateFindOneRecordQuery({
     objectMetadataItem,
@@ -136,6 +144,7 @@ export const useObjectMetadataItem = (
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,
+    findDuplicateRecordsQuery,
     findOneRecordQuery,
     createOneRecordMutation,
     updateOneRecordMutation,

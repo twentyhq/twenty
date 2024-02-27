@@ -1,4 +1,4 @@
-import { availableTimeZoneOptions } from '@/settings/accounts/constants/timeZoneSelectOptions';
+import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/accounts/constants/AvailableTimezoneOptions';
 import { detectTimeZone } from '@/settings/accounts/utils/detectTimeZone';
 import { findAvailableTimeZoneOption } from '@/settings/accounts/utils/findAvailableTimeZoneOption';
 import { Select } from '@/ui/input/components/Select';
@@ -18,7 +18,7 @@ export const SettingsAccountsCalendarTimeZoneSelect = ({
     label="Time zone"
     fullWidth
     value={findAvailableTimeZoneOption(value)?.value}
-    options={availableTimeZoneOptions}
+    options={AVAILABLE_TIMEZONE_OPTIONS}
     onChange={onChange}
     withSearchInput
   />

@@ -2,26 +2,20 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import {
-  DeviceType,
-  useDeviceType,
-} from '@/app/_components/client-utils/useDeviceType';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { FileContent } from '@/app/_server-utils/get-posts';
 
-const StyledContainer = styled.div<{ devicetype: string }>`
-  width: ${({ devicetype }) =>
-    devicetype === DeviceType.TABLET
-      ? '70%'
-      : devicetype === DeviceType.DESKTOP
-        ? '60%'
-        : '100%'};
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  font-family: ${Theme.font.family};
-  border-bottom: 1px solid ${Theme.background.transparent.medium};
+const StyledContainer = styled('div')`
+  ${mq({
+    width: ['100%', '70%', '60%'],
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
+    fontFamily: `${Theme.font.family}`,
+  })};
 `;
 
 const StyledWrapper = styled.div`
@@ -74,9 +68,8 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
       label: 'User Guide',
     },
   ];
-  const deviceType = useDeviceType();
   return (
-    <StyledContainer devicetype={deviceType}>
+    <StyledContainer>
       <StyledWrapper>
         <StyledHeader>
           <Breadcrumbs

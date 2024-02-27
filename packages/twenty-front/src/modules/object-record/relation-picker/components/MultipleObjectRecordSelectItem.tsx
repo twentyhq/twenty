@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { MultiObjectRecordSelectSelectableListId } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
+import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -24,7 +24,7 @@ export const MultipleObjectRecordSelectItem = ({
   selected: boolean;
 }) => {
   const { isSelectedItemIdSelector } = useSelectableList(
-    MultiObjectRecordSelectSelectableListId,
+    MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
 
   const isSelectedByKeyboard = useRecoilValue(

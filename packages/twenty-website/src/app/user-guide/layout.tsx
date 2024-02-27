@@ -3,14 +3,10 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
-import {
-  DeviceType,
-  useDeviceType,
-} from '@/app/_components/client-utils/useDeviceType';
+import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideSidebar from '@/app/_components/user-guide/UserGuideSidebar';
 import UserGuideTableContents from '@/app/_components/user-guide/UserGuideTableContents';
-
 const StyledContainer = styled.div`
   width: 100%;
   display: flex;
@@ -20,20 +16,19 @@ const StyledContainer = styled.div`
 `;
 
 const StyledEmptySideBar = styled.div`
-  width: 20%;
+  ${mq({
+    width: '20%',
+    display: ['none', 'none', ''],
+  })};
 `;
 
 export default function UserGuideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const deviceType = useDeviceType();
-
   return (
     <StyledContainer>
-      {deviceType !== DeviceType.MOBILE && <UserGuideSidebar />}
+      <UserGuideSidebar />
       {children}
-      {deviceType !== DeviceType.DESKTOP ? (
-        <></>
-      ) : pathname === '/user-guide' ? (
+      {pathname === '/user-guide' ? (
         <StyledEmptySideBar />
       ) : (
         <UserGuideTableContents />

@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { hoverBackground } from '@/ui/theme/constants/effects';
+import { HOVER_BACKGROUND } from '@/ui/theme/constants/HoverBackground';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -36,7 +36,7 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  ${hoverBackground};
+  ${HOVER_BACKGROUND};
 
   ${({ theme, accent }) => {
     switch (accent) {

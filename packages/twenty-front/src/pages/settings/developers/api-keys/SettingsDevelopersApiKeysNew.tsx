@@ -7,7 +7,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
+import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
@@ -27,7 +27,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: string;
     expirationDate: number | null;
   }>({
-    expirationDate: ExpirationDates[0].value,
+    expirationDate: EXPIRATION_DATES[0].value,
     name: '',
   });
 
@@ -104,7 +104,7 @@ export const SettingsDevelopersApiKeysNew = () => {
           />
           <Select
             dropdownId="object-field-type-select"
-            options={ExpirationDates}
+            options={EXPIRATION_DATES}
             value={formValues.expirationDate}
             onChange={(value) => {
               setFormValues((prevState) => ({

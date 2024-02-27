@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { rgba } from '@/ui/theme/constants/colors';
+import { RGBA } from '@/ui/theme/constants/Rgba';
 
 import { RadioGroup } from './RadioGroup';
 
@@ -58,7 +58,7 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
         if (!checked) {
           return theme.background.tertiary;
         }
-        return rgba(theme.color.blue, 0.12);
+        return RGBA(theme.color.blue, 0.12);
       }};
   }
 

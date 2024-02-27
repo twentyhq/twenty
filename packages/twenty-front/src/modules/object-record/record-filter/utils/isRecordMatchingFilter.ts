@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   AndObjectRecordFilter,
   BooleanFilter,
+  CurrencyFilter,
   DateFilter,
   FloatFilter,
   FullNameFilter,
@@ -15,6 +16,7 @@ import {
   UUIDFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
+import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
@@ -200,6 +202,12 @@ export const isRecordMatchingFilter = ({
         return isMatchingBooleanFilter({
           booleanFilter: filterValue as BooleanFilter,
           value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Currency: {
+        return isMatchingCurrencyFilter({
+          currencyFilter: filterValue as CurrencyFilter,
+          value: record[filterKey].amountMicros,
         });
       }
       case FieldMetadataType.Relation: {

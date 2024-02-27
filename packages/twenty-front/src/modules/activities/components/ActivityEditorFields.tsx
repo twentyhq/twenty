@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -12,6 +13,10 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+
+const StyledPropertyBox = styled(PropertyBox)`
+  padding: 0;
+`;
 
 export const ActivityEditorFields = ({
   activityId,
@@ -69,7 +74,7 @@ export const ActivityEditorFields = ({
     });
 
   return (
-    <PropertyBox>
+    <StyledPropertyBox>
       {activity.type === 'Task' &&
         DueAtFieldContextProvider &&
         AssigneeFieldContextProvider && (
@@ -87,6 +92,6 @@ export const ActivityEditorFields = ({
           <ActivityTargetsInlineCell activity={activity} />
         </ActivityTargetsContextProvider>
       )}
-    </PropertyBox>
+    </StyledPropertyBox>
   );
 };

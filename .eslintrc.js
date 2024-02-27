@@ -1,7 +1,13 @@
 module.exports = {
   root: true,
   extends: ['plugin:prettier/recommended'],
-  plugins: ['@nx', 'prefer-arrow', 'simple-import-sort', 'unused-imports'],
+  plugins: [
+    '@nx',
+    'prefer-arrow',
+    'simple-import-sort',
+    'unused-imports',
+    'unicorn',
+  ],
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -94,6 +100,27 @@ module.exports = {
         jest: true,
       },
       rules: {},
+    },
+    {
+      files: ['**/constants/*.ts', '**/*.constants.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'variable',
+            format: ['UPPER_CASE'],
+          },
+        ],
+        'unicorn/filename-case': [
+          'warn',
+          {
+            cases: {
+              pascalCase: true,
+            },
+          },
+        ],
+        '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      },
     },
   ],
 };

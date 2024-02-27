@@ -9,7 +9,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { UpdateViewDropdownId } from '@/views/constants/UpdateViewDropdownId';
+import { UPDATE_VIEW_DROPDOWN_ID } from '@/views/constants/UpdateViewDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
@@ -58,7 +58,7 @@ export const UpdateViewButtonGroup = ({
       <ButtonGroup size="small" accent="blue">
         <Button title="Update view" onClick={handleViewSubmit} />
         <Dropdown
-          dropdownId={UpdateViewDropdownId}
+          dropdownId={UPDATE_VIEW_DROPDOWN_ID}
           dropdownHotkeyScope={hotkeyScope}
           clickableComponent={
             <Button size="small" accent="blue" Icon={IconChevronDown} />

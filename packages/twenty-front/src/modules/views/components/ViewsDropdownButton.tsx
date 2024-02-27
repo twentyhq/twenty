@@ -16,12 +16,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { VIEWS_DROPDOWN_ID } from '@/views/constants/ViewsDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { assertNotNull } from '~/utils/assert';
 
-import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
@@ -83,7 +83,7 @@ export const ViewsDropdownButton = ({
   const {
     isDropdownOpen: isViewsDropdownOpen,
     closeDropdown: closeViewsDropdown,
-  } = useDropdown(ViewsDropdownId);
+  } = useDropdown(VIEWS_DROPDOWN_ID);
 
   const { openDropdown: openOptionsDropdown } = useDropdown(
     optionsDropdownScopeId,
@@ -130,7 +130,7 @@ export const ViewsDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownId={ViewsDropdownId}
+      dropdownId={VIEWS_DROPDOWN_ID}
       dropdownHotkeyScope={hotkeyScope}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>

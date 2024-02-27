@@ -91,6 +91,7 @@ export class AuthResolver {
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
     const user = await this.authService.signUp(signUpInput);
+
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
@@ -119,6 +120,8 @@ export class AuthResolver {
     const email = await this.tokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
+
+    assert(email, 'Invalid token', ForbiddenException);
 
     const result = await this.authService.verify(email);
 

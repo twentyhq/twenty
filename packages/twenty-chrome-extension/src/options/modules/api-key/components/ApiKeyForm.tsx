@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
-import { H2Title } from '../../ui/display/typography/components/H2Title';
 import { useEffect, useState } from 'react';
-import { TextInput } from '../../ui/input/components/TextInput';
-import { Button } from '../../ui/input/button/Button';
-import { Toggle } from '../../ui/input/components/Toggle';
+import styled from '@emotion/styled';
+
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/Button';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Toggle } from '@/ui/input/components/Toggle';
 
 const StyledContainer = styled.div<{ isToggleOn: boolean }>`
   width: 400px;
@@ -18,8 +19,8 @@ const StyledContainer = styled.div<{ isToggleOn: boolean }>`
 `;
 
 const StyledHeader = styled.header`
-  text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
 `;
 
 const StyledImg = styled.img``;
@@ -64,6 +65,7 @@ export const ApiKeyForm = () => {
       }
 
       if (localStorage.serverBaseUrl) {
+        setShowSection(true);
         setRoute(localStorage.serverBaseUrl);
       }
     };
@@ -76,7 +78,11 @@ export const ApiKeyForm = () => {
   }, [apiKey]);
 
   useEffect(() => {
-    chrome.storage.local.set({ serverBaseUrl: route });
+    if (import.meta.env.VITE_SERVER_BASE_URL !== route) {
+      chrome.storage.local.set({ serverBaseUrl: route });
+    } else {
+      chrome.storage.local.set({ serverBaseUrl: '' });
+    }
   }, [route]);
 
   const handleGenerateClick = () => {
@@ -92,7 +98,7 @@ export const ApiKeyForm = () => {
   return (
     <StyledContainer isToggleOn={showSection}>
       <StyledHeader>
-        <StyledImg src="/logo/32-32.png" alt="Twenty Logo" />
+        <StyledImg src="/logo/32-32.svg" alt="Twenty Logo" />
       </StyledHeader>
 
       <StyledMain>

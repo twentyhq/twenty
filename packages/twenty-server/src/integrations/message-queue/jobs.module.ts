@@ -24,8 +24,10 @@ import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
-import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
+import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
+import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
 
 @Module({
   imports: [
@@ -44,6 +46,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     CreateCompaniesAndContactsModule,
     MessageChannelModule,
     DataSeedDemoWorkspaceModule,
+    ThreadCleanerModule,
   ],
   providers: [
     {
@@ -82,6 +85,10 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     {
       provide: DataSeedDemoWorkspaceJob.name,
       useClass: DataSeedDemoWorkspaceJob,
+    },
+    {
+      provide: DeleteConnectedAccountAssociatedDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedDataJob,
     },
   ],
 })
