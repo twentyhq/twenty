@@ -64,7 +64,11 @@ export class BillingController {
   @Post('/checkout')
   async post(
     @AuthUser() user: User,
-    @Body() body: { recurringInterval: Stripe.Price.Recurring.Interval },
+    @Body()
+    body: {
+      recurringInterval: Stripe.Price.Recurring.Interval;
+      successUrlPath?: string;
+    },
     @Res() res: Response,
   ) {
     const productId = this.billingService.getProductStripeId(
@@ -115,7 +119,9 @@ export class BillingController {
         },
       },
       customer_email: user.email,
-      success_url: frontBaseUrl,
+      success_url: body.successUrlPath
+        ? frontBaseUrl + body.successUrlPath
+        : frontBaseUrl,
       cancel_url: frontBaseUrl,
     });
 

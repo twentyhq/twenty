@@ -84,7 +84,9 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   }, [isMatchingLocation, onboardingStatus]);
 
   const modalPadding =
-    isMatchingLocation(AppPath.PlanRequired) && isSelfBillingEnabled
+    (isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess)) &&
+    isSelfBillingEnabled
       ? 'none'
       : undefined;
 

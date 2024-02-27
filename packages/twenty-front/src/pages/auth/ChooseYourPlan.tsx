@@ -7,6 +7,7 @@ import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
 import { tokenPairState } from '@/auth/states/tokenPairState.ts';
 import { billingState } from '@/client-config/states/billingState.ts';
+import { AppPath } from '@/types/AppPath.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
@@ -82,7 +83,10 @@ export const ChooseYourPlan = () => {
         Accept: 'application/json',
         Authorization: `Bearer ${tokenPair?.accessToken.token}`,
       },
-      body: JSON.stringify({ recurringInterval: planSelected }),
+      body: JSON.stringify({
+        recurringInterval: planSelected,
+        successUrlPath: AppPath.PlanRequiredSuccess,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {

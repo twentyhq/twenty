@@ -13,6 +13,7 @@ import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
+import { SuccessPayment } from '~/pages/auth/SuccessPayment.tsx';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
@@ -70,6 +71,10 @@ export const App = () => {
             element={
               isSelfBillingEnabled ? <ChooseYourPlan /> : <PlanRequired />
             }
+          />
+          <Route
+            path={AppPath.PlanRequiredSuccess}
+            element={<SuccessPayment />}
           />
           <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
