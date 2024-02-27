@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type SettingsDataModelSetRecordEffectProps = {
@@ -11,11 +10,11 @@ type SettingsDataModelSetRecordEffectProps = {
 export const SettingsDataModelSetRecordEffect = ({
   record,
 }: SettingsDataModelSetRecordEffectProps) => {
-  const setRecord = useSetRecoilState(recordStoreFamilyState(record.id));
+  const { setRecords: setRecordsInStore } = useSetRecordInStore();
 
   useEffect(() => {
-    setRecord(record);
-  }, [record, setRecord]);
+    setRecordsInStore([record]);
+  }, [record, setRecordsInStore]);
 
   return null;
 };

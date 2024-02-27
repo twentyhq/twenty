@@ -8,7 +8,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -18,7 +17,6 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
   title: 'Modules/Settings/DataModel/SettingsDataModelFieldPreviewCard',
   component: SettingsDataModelFieldPreviewCard,
   decorators: [
-    RecordStoreDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -31,23 +29,6 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
   },
   parameters: {
     container: { width: 480 },
-    records: [
-      {
-        id: `${mockedCompanyObjectMetadataItem.id}-field-form`,
-        domainName: 'Test',
-        idealCustomerProfile: true,
-        annualRecurringRevenue: {
-          amountMicros: 1000000,
-          currency: 'USD',
-        },
-        updatedAt: '2021-08-05T14:00:00.000Z',
-        linkedinLink: {
-          label: 'LinkedIn',
-          url: 'https://linkedin.com',
-        },
-        employees: 100,
-      },
-    ],
     msw: graphqlMocks,
   },
 };
