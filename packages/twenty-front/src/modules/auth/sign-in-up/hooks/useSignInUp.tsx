@@ -146,7 +146,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     PageHotkeyScope.SignInUp,
-    [continueWithEmail],
+    [
+      continueWithEmail,
+      signInUpStep,
+      continueWithCredentials,
+      form,
+      submitCredentials,
+    ],
   );
 
   return {
