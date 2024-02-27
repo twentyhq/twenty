@@ -106,9 +106,9 @@ export class SaveMessagesAndCreateContactsService {
       endTime = Date.now();
 
       this.logger.log(
-        `${jobName} creating companies and contacts for workspace ${workspaceId} and account in ${
+        `${jobName} creating companies and contacts for workspace ${workspaceId} and account ${
           connectedAccount.id
-        } ${endTime - startTime}ms`,
+        } in ${endTime - startTime}ms`,
       );
     }
 

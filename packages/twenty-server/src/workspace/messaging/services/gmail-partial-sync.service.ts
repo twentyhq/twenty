@@ -101,6 +101,9 @@ export class GmailPartialSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
+        'gmail full-sync',
+        workspaceId,
+        connectedAccountId,
       );
 
     if (messagesToSave.length !== 0) {

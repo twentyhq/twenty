@@ -38,11 +38,9 @@ export class FetchMessagesByBatchesService {
     let endTime = Date.now();
 
     this.logger.log(
-      `${jobName} fetching ${
+      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
         queries.length
-      } messages for workspace ${workspaceId} and account ${connectedAccountId} in ${
-        endTime - startTime
-      }ms`,
+      } messages in ${endTime - startTime}ms`,
     );
 
     startTime = Date.now();
@@ -53,11 +51,9 @@ export class FetchMessagesByBatchesService {
     endTime = Date.now();
 
     this.logger.log(
-      `${jobName} formatting ${
+      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
         queries.length
-      } messages for workspace ${workspaceId} and account ${connectedAccountId} in ${
-        endTime - startTime
-      }ms`,
+      } messages in ${endTime - startTime}ms`,
     );
 
     return formattedResponse;
