@@ -30,6 +30,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   async createWorkspaceMember(workspaceId: string, user: User) {
+    await this.billingService.updateBillingSubscriptionQuantity(workspaceId, 1);
+
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -45,8 +47,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
           user.id
         }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
-
-    await this.billingService.updateBillingSubscription(workspaceId);
   }
 
   async findUserWorkspaces(userId: string): Promise<UserWorkspace[]> {

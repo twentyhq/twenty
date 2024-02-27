@@ -97,7 +97,10 @@ export class BillingService {
     });
   }
 
-  async updateBillingSubscription(workspaceId: string) {
+  async updateBillingSubscriptionQuantity(
+    workspaceId: string,
+    increment: 1 | -1,
+  ) {
     const billingSubscription =
       await this.billingSubscriptionRepository.findOneOrFail({
         where: { workspaceId },
@@ -119,9 +122,15 @@ export class BillingService {
       );
     }
 
-    /*await this.stripeService.stripe.subscriptionItems.update(
+    const newQuantity = billingSubscriptionItem.quantity + increment;
+
+    await this.stripeService.stripe.subscriptionItems.update(
       billingSubscriptionItem.stripeSubscriptionItemId,
-      {},
-    );*/
+      { quantity: newQuantity },
+    );
+    await this.billingSubscriptionItemRepository.update(
+      billingSubscriptionItem.id,
+      { quantity: newQuantity },
+    );
   }
 }
