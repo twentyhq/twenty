@@ -4,10 +4,10 @@ import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 export const BORDER_LIGHT = {
   color: {
+    dark: GRAY_SCALE.gray90,
     strong: GRAY_SCALE.gray25,
     medium: GRAY_SCALE.gray20,
     light: GRAY_SCALE.gray15,
-    dark: GRAY_SCALE.gray10,
     secondaryInverted: GRAY_SCALE.gray50,
     inverted: GRAY_SCALE.gray60,
     danger: COLOR.red20,
