@@ -38,11 +38,6 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
       workspaceId,
@@ -120,7 +115,6 @@ export class GmailPartialSyncService {
 
     if (messagesDeleted.length !== 0) {
       await this.messageService.deleteMessages(
-        workspaceDataSource,
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,

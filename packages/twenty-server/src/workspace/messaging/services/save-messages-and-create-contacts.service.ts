@@ -114,9 +114,12 @@ export class SaveMessagesAndCreateContactsService {
 
     startTime = Date.now();
 
-    await this.messageParticipantService.saveMessageParticipants(
+    await this.tryToSaveMessageParticipantsOrDeleteMessagesIfError(
       participantsWithMessageId,
       workspaceId,
+      connectedAccount,
+      gmailMessageChannelId,
+      jobName,
     );
 
     endTime = Date.now();
@@ -126,5 +129,35 @@ export class SaveMessagesAndCreateContactsService {
         connectedAccount.id
       } ${endTime - startTime}ms`,
     );
+  }
+
+  private async tryToSaveMessageParticipantsOrDeleteMessagesIfError(
+    participantsWithMessageId: ParticipantWithMessageId[],
+    workspaceId: string,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    gmailMessageChannelId: string,
+    jobName?: string,
+  ) {
+    try {
+      await this.messageParticipantService.saveMessageParticipants(
+        participantsWithMessageId,
+        workspaceId,
+      );
+    } catch (error) {
+      this.logger.error(
+        `${jobName} error saving message participants for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        error,
+      );
+
+      const messagesToDelete = participantsWithMessageId.map(
+        (participant) => participant.messageId,
+      );
+
+      await this.messageService.deleteMessages(
+        messagesToDelete,
+        gmailMessageChannelId,
+        workspaceId,
+      );
+    }
   }
 }

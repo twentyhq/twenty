@@ -210,11 +210,15 @@ export class MessageService {
   }
 
   public async deleteMessages(
-    workspaceDataSource: DataSource,
     messagesDeletedMessageExternalIds: string[],
     gmailMessageChannelId: string,
     workspaceId: string,
   ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
     await workspaceDataSource?.transaction(async (manager: EntityManager) => {
       const messageChannelMessageAssociationsToDelete =
         await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
