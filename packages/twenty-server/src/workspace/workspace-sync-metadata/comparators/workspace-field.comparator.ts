@@ -11,15 +11,16 @@ import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/int
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-const fieldPropertiesToIgnore = [
+const commonFieldPropertiesToIgnore = [
   'id',
   'createdAt',
   'updatedAt',
   'objectMetadataId',
   'isActive',
   'options',
-] as const;
+];
 
 const fieldPropertiesToStringify = ['targetColumnMap', 'defaultValue'] as const;
 
@@ -36,13 +37,28 @@ export class WorkspaceFieldComparator {
       string,
       Partial<PartialFieldMetadata>
     > = {};
+
     // Double security to only compare non-custom fields
     const filteredOriginalFieldCollection =
       originalObjectMetadata.fields.filter((field) => !field.isCustom);
     const originalFieldMetadataMap = transformMetadataForComparison(
       filteredOriginalFieldCollection,
       {
-        propertiesToIgnore: fieldPropertiesToIgnore,
+        shouldIgnoreProperty: (property, originalMetadata) => {
+          if (commonFieldPropertiesToIgnore.includes(property)) {
+            return true;
+          }
+
+          if (
+            originalMetadata &&
+            property === 'defaultValue' &&
+            originalMetadata.type === FieldMetadataType.SELECT
+          ) {
+            return true;
+          }
+
+          return false;
+        },
         propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
           return datum.name;
@@ -52,7 +68,21 @@ export class WorkspaceFieldComparator {
     const standardFieldMetadataMap = transformMetadataForComparison(
       standardObjectMetadata.fields,
       {
-        propertiesToIgnore: ['options'],
+        shouldIgnoreProperty: (property, originalMetadata) => {
+          if (['options'].includes(property)) {
+            return true;
+          }
+
+          if (
+            originalMetadata &&
+            property === 'defaultValue' &&
+            originalMetadata.type === FieldMetadataType.SELECT
+          ) {
+            return true;
+          }
+
+          return false;
+        },
         propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
           return datum.name;

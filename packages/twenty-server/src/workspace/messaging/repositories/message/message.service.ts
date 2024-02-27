@@ -26,6 +26,25 @@ export class MessageService {
     private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
+  public async getNonAssociatedMessages(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT m.* FROM ${dataSourceSchema}."message" m
+        WHERE NOT EXISTS (
+            SELECT 1 FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+            WHERE mcma."messageId" = m.id
+        )`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getFirstByHeaderMessageId(
     headerMessageId: string,
     workspaceId: string,

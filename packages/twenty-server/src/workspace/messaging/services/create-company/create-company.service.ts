@@ -77,11 +77,13 @@ export class CreateCompanyService {
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
     this.companyService.createCompany(
-      companyId,
-      name,
-      domainName,
-      city,
       workspaceId,
+      {
+        id: companyId,
+        domainName,
+        name,
+        city,
+      },
       transactionManager,
     );
 
