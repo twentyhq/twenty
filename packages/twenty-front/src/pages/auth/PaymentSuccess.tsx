@@ -22,7 +22,7 @@ const StyledCheckContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SuccessPayment = () => {
+export const PaymentSuccess = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const handleButtonClick = () => {
@@ -32,7 +32,7 @@ export const SuccessPayment = () => {
     <>
       <AnimatedEaseIn>
         <StyledCheckContainer>
-          <IconCheck color={theme.grayScale.gray90} size={24} stroke={3} />
+          <IconCheck color={theme.font.color.dark} size={24} stroke={3} />
         </StyledCheckContainer>
       </AnimatedEaseIn>
       <Title>All set!</Title>
