@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
@@ -14,6 +14,10 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 
 @Injectable()
 export class SaveMessagesAndCreateContactsService {
+  private readonly logger = new Logger(
+    SaveMessagesAndCreateContactsService.name,
+  );
+
   constructor(
     private readonly messageService: MessageService,
     private readonly messageChannelService: MessageChannelService,
@@ -27,13 +31,14 @@ export class SaveMessagesAndCreateContactsService {
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     workspaceId: string,
     gmailMessageChannelId: string,
+    jobName?: string,
   ) {
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
       await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
       );
 
-    console.time('saving messages');
+    let startTime = Date.now();
 
     const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
       messagesToSave,
@@ -44,7 +49,13 @@ export class SaveMessagesAndCreateContactsService {
       workspaceId,
     );
 
-    console.timeEnd('saving messages');
+    let endTime = Date.now();
+
+    this.logger.log(
+      `${jobName} saving messages for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      } in ${endTime - startTime}ms`,
+    );
 
     const isContactAutoCreationEnabled =
       await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
@@ -69,7 +80,8 @@ export class SaveMessagesAndCreateContactsService {
       .flatMap((message) => message.participants);
 
     if (isContactAutoCreationEnabled) {
-      console.time('creating companies and contacts');
+      startTime = Date.now();
+
       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
         connectedAccount.handle,
         contactsToCreate,
@@ -90,16 +102,29 @@ export class SaveMessagesAndCreateContactsService {
         messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
       );
-      console.timeEnd('creating companies and contacts');
+
+      endTime = Date.now();
+
+      this.logger.log(
+        `${jobName} creating companies and contacts for workspace ${workspaceId} and account in ${
+          connectedAccount.id
+        } ${endTime - startTime}ms`,
+      );
     }
 
-    console.time('saving message participants');
+    startTime = Date.now();
 
     await this.messageParticipantService.saveMessageParticipants(
       participantsWithMessageId,
       workspaceId,
     );
 
-    console.timeEnd('saving message participants');
+    endTime = Date.now();
+
+    this.logger.log(
+      `${jobName} saving message participants for workspace ${workspaceId} and account in ${
+        connectedAccount.id
+      } ${endTime - startTime}ms`,
+    );
   }
 }

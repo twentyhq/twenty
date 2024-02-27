@@ -68,7 +68,7 @@ export class GmailFullSyncService {
     let endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} get messages list ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting messages list in ${
         endTime - startTime
       }ms.`,
     );
@@ -95,7 +95,7 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: get existing message channel message associations ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing message channel message associations in ${
         endTime - startTime
       }ms.`,
     );
@@ -126,7 +126,7 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetch all messages ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all messages in ${
         endTime - startTime
       }ms.`,
     );
@@ -169,7 +169,7 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: update last sync history id ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
         endTime - startTime
       }ms.`,
     );
