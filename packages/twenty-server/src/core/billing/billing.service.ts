@@ -95,4 +95,32 @@ export class BillingService {
       subscriptionStatus: 'active',
     });
   }
+
+  async updateBillingSubscription(workspaceId: string) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+        relations: ['billingSubscriptionItems'],
+      });
+
+    const basePlanProductIt =
+      this.environmentService.getBillingStripeBasePlanProductId();
+
+    const billingSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.filter(
+        (billingSubscriptionItem) =>
+          billingSubscriptionItem.stripeProductId === basePlanProductIt,
+      )?.[0];
+
+    if (!billingSubscriptionItem) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${basePlanProductIt} for workspace ${workspaceId}`,
+      );
+    }
+
+    /*await this.stripeService.stripe.subscriptionItems.update(
+      billingSubscriptionItem.stripeSubscriptionItemId,
+      {},
+    );*/
+  }
 }

@@ -19,5 +19,6 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
   ],
   controllers: [BillingController],
   providers: [EnvironmentModule, BillingService],
+  exports: [BillingService],
 })
 export class BillingModule {}

@@ -7,6 +7,7 @@ import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { User } from 'src/core/user/user.entity';
+import { BillingService } from 'src/core/billing/billing.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -14,6 +15,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly billingService: BillingService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -43,6 +45,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
           user.id
         }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
+
+    await this.billingService.updateBillingSubscription(workspaceId);
   }
 
   async findUserWorkspaces(userId: string): Promise<UserWorkspace[]> {
