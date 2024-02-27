@@ -166,4 +166,18 @@ export class BillingService {
       );
     }
   }
+
+  async deleteSubscription(workspaceId: string) {
+    const subscriptionToCancel =
+      await this.billingSubscriptionRepository.findOneBy({
+        workspaceId,
+      });
+
+    if (subscriptionToCancel) {
+      await this.stripeService.stripe.subscriptions.cancel(
+        subscriptionToCancel.stripeSubscriptionId,
+      );
+      await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
+    }
+  }
 }
