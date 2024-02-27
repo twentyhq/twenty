@@ -9,6 +9,10 @@ import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -29,6 +33,8 @@ export class BillingService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   getProductStripeId(product: AvailableProduct) {
@@ -135,21 +141,29 @@ export class BillingService {
     workspaceId: string,
     quantity: number,
   ) {
-    const billingSubscriptionItem =
-      await this.getBillingSubscriptionItem(workspaceId);
+    const isSelfBillingEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId: workspaceId,
+      key: FeatureFlagKeys.IsSelfBillingEnabled,
+      value: true,
+    });
 
-    const newSubscriptionItem =
-      await this.stripeService.stripe.subscriptionItems.update(
-        billingSubscriptionItem.stripeSubscriptionItemId,
-        {
-          quantity,
-          metadata: { workspaceId },
-        },
+    if (isSelfBillingEnabled) {
+      const billingSubscriptionItem =
+        await this.getBillingSubscriptionItem(workspaceId);
+
+      const newSubscriptionItem =
+        await this.stripeService.stripe.subscriptionItems.update(
+          billingSubscriptionItem.stripeSubscriptionItemId,
+          {
+            quantity,
+            metadata: { workspaceId },
+          },
+        );
+
+      await this.billingSubscriptionItemRepository.update(
+        billingSubscriptionItem.id,
+        { quantity: newSubscriptionItem.quantity },
       );
-
-    await this.billingSubscriptionItemRepository.update(
-      billingSubscriptionItem.id,
-      { quantity: newSubscriptionItem.quantity },
-    );
+    }
   }
 }

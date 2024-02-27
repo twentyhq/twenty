@@ -8,12 +8,18 @@ import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
     StripeModule,
     TypeOrmModule.forFeature(
-      [BillingSubscription, BillingSubscriptionItem, Workspace],
+      [
+        BillingSubscription,
+        BillingSubscriptionItem,
+        Workspace,
+        FeatureFlagEntity,
+      ],
       'core',
     ),
   ],
