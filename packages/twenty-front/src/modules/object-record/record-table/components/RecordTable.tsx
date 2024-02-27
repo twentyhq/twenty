@@ -10,6 +10,7 @@ import { RecordTableContext } from '@/object-record/record-table/contexts/Record
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { rgba } from '@/ui/theme/constants/colors';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -96,6 +97,16 @@ const StyledTable = styled.table`
   tbody td:nth-of-type(3) {
     border-left: 1px solid ${({ theme }) => theme.border.color.light};
   }
+
+  ${() =>
+    useIsMobile() &&
+    `
+      &.freeze-first-columns-shadow thead th:nth-of-type(2),
+      &.freeze-first-columns-shadow tbody td:nth-of-type(2) {
+        width: 35px;
+        max-width: 35px;
+      }
+  `}
 `;
 
 type RecordTableProps = {

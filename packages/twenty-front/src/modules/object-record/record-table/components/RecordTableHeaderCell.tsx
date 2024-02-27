@@ -11,6 +11,7 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
@@ -73,6 +74,7 @@ const StyledHeaderIcon = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(1.5)};
 `;
 
 export const RecordTableHeaderCell = ({
@@ -174,17 +176,19 @@ export const RecordTableHeaderCell = ({
           24,
         COLUMN_MIN_WIDTH,
       )}
+      onMouseEnter={() => setIconVisibility(true)}
+      onMouseLeave={() => setIconVisibility(false)}
     >
-      <StyledColumnHeadContainer
-        onMouseEnter={() => setIconVisibility(true)}
-        onMouseLeave={() => setIconVisibility(false)}
-      >
+      <StyledColumnHeadContainer>
         {column.isLabelIdentifier ? (
-          <ColumnHead column={column} />
+          <ColumnHead
+            isLabelIdentifier={!!column.isLabelIdentifier}
+            column={column}
+          />
         ) : (
           <ColumnHeadWithDropdown column={column} />
         )}
-        {iconVisibility && !!column.isLabelIdentifier && (
+        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}

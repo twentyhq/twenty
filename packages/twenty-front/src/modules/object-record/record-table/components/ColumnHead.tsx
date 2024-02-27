@@ -1,16 +1,20 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type ColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
+  isLabelIdentifier: boolean;
 };
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -19,6 +23,8 @@ const StyledTitle = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+
+  ${({ hideTitle }) => hideTitle && useIsMobile() && `display: none;`}
 `;
 
 const StyledIcon = styled.div`
@@ -36,14 +42,16 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({ column }: ColumnHeadProps) => {
+export const ColumnHead = ({ isLabelIdentifier, column }: ColumnHeadProps) => {
   const theme = useTheme();
 
   const { getIcon } = useIcons();
   const Icon = getIcon(column.iconName);
 
+  const scrollLeft = useRecoilValue(scrollLeftState);
+
   return (
-    <StyledTitle>
+    <StyledTitle hideTitle={isLabelIdentifier && scrollLeft > 0}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
