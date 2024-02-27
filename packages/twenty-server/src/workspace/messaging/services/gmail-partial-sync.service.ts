@@ -114,6 +114,7 @@ export class GmailPartialSyncService {
         connectedAccount,
         workspaceId,
         gmailMessageChannelId,
+        'gmail partial-sync',
       );
     }
 

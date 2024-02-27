@@ -146,6 +146,7 @@ export class GmailFullSyncService {
       connectedAccount,
       workspaceId,
       gmailMessageChannelId,
+      'gmail full-sync',
     );
 
     if (errors.length) throw new Error('Error fetching messages');
