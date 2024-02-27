@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
+import { objectRecordChangedProperties } from 'src/integrations/event-emitter/utils/object-record-changed-properties.util';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
-  DeleteMessageChannelMessageAssociationJob,
-  DeleteMessageChannelMessageAssociationJobData,
-} from 'src/workspace/messaging/jobs/delete-message-channel-message-association.job';
+  CreateCompaniesAndContactsAfterSyncJobData,
+  CreateCompaniesAndContactsAfterSyncJob,
+} from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 
 @Injectable()
@@ -17,16 +18,24 @@ export class MessagingMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('messageChannel.deleted')
-  handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<MessageChannelObjectMetadata>,
+  @OnEvent('messageChannel.updated')
+  handleUpdatedEvent(
+    payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
   ) {
-    this.messageQueueService.add<DeleteMessageChannelMessageAssociationJobData>(
-      DeleteMessageChannelMessageAssociationJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        messageChannelId: payload.deletedRecord.id,
-      },
-    );
+    if (
+      objectRecordChangedProperties(
+        payload.previousRecord,
+        payload.updatedRecord,
+      ).includes('isContactAutoCreationEnabled') &&
+      payload.updatedRecord.isContactAutoCreationEnabled
+    ) {
+      this.messageQueueService.add<CreateCompaniesAndContactsAfterSyncJobData>(
+        CreateCompaniesAndContactsAfterSyncJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          messageChannelId: payload.updatedRecord.id,
+        },
+      );
+    }
   }
 }

@@ -65,6 +65,7 @@ export const ApiKeyForm = () => {
       }
 
       if (localStorage.serverBaseUrl) {
+        setShowSection(true);
         setRoute(localStorage.serverBaseUrl);
       }
     };
@@ -77,7 +78,11 @@ export const ApiKeyForm = () => {
   }, [apiKey]);
 
   useEffect(() => {
-    chrome.storage.local.set({ serverBaseUrl: route });
+    if (import.meta.env.VITE_SERVER_BASE_URL !== route) {
+      chrome.storage.local.set({ serverBaseUrl: route });
+    } else {
+      chrome.storage.local.set({ serverBaseUrl: '' });
+    }
   }, [route]);
 
   const handleGenerateClick = () => {
@@ -93,7 +98,7 @@ export const ApiKeyForm = () => {
   return (
     <StyledContainer isToggleOn={showSection}>
       <StyledHeader>
-        <StyledImg src="/logo/32-32.png" alt="Twenty Logo" />
+        <StyledImg src="/logo/32-32.svg" alt="Twenty Logo" />
       </StyledHeader>
 
       <StyledMain>

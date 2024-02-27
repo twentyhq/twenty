@@ -20,7 +20,7 @@ const objectPropertiesToIgnore = [
   'imageIdentifierFieldMetadataId',
   'isActive',
   'fields',
-] as const;
+];
 
 @Injectable()
 export class WorkspaceObjectComparator {
@@ -44,7 +44,8 @@ export class WorkspaceObjectComparator {
     const partialOriginalObjectMetadata = transformMetadataForComparison(
       originalObjectMetadata,
       {
-        propertiesToIgnore: objectPropertiesToIgnore,
+        shouldIgnoreProperty: (property) =>
+          objectPropertiesToIgnore.includes(property),
       },
     );
 
