@@ -1,41 +1,20 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { IconSettings, IconUpload, IconPlus, IconFile,IconVideo, IconPhoto} from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TextArea, TextInput } from 'tsup.ui.index';
 import { Button } from '@/ui/input/button/components/Button';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageBody } from '@/ui/layout/page/PageBody';
-
+import { useMutation } from '@apollo/client';
+import { UPLOAD_FILE } from '../../modules/files/graphql/queries/uploadFile.ts'; 
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { IconSettings } from '@/ui/display/icon';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
-`;
-
-const StyledAttachmentsContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-`;
-
-const StyledFileInput = styled.input`
-  display: none;
-`;
-const StyledComboInputContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
-  }
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInputsContainer = styled.div`
@@ -44,104 +23,65 @@ const StyledInputsContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
-const StyledButtonContainer = styled.div`
-  width: auto;
-  align-self: flex-start;
-`;
 
 export const AudioTemplate = ({
   targetableObject,
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const inputFileRef = useRef<HTMLInputElement>(null);
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const file = e.target.files[0];
-      onUploadFile(file);
-    }  };
-
-  const handleUploadFileClick = () => {
-    inputFileRef?.current?.click?.();
-  };
-
   const [bodyDescription, setBodyDescription] = useState('');
   const [footerText, setFooterText] = useState('');
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null); 
+  const [uploadFileMutation] = useMutation(UPLOAD_FILE);
+  const { enqueueSnackBar } = useSnackBar();
 
-  const onUploadFile = async (file: File) => {
-    console.log("Uploading file:", file);
-    const resp = await uploadAttachmentFile(file, targetableObject);
-    console.log("resp", resp)
-    setUploadedFile(file);
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files && event.target.files[0]; 
+    setFile(selectedFile || null); 
   };
 
+  const handleUpload = async () => {
+    try {
+      if (!file) return; 
+      const { data } = await uploadFileMutation({
+        variables: {
+          file,
+          fileFolder: 'Attachment', 
+        },
+      });
+      console.log('File uploaded successfully:', data);
 
-  const attachmentIcon = (fileName:string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    switch (extension){
-      case 'pdf':
-      case 'doc':
-      case 'docx':
-      case 'xls':
-      case 'xlsx':
-        return <IconFile />;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-        return <IconPhoto />
-      case 'mp4':
-      case 'avi':
-      case 'mov':
-        return <IconVideo />
-      case 'mp3':
-      case 'wav':
-      case 'ogg':
-        return < IconPhoto />
-      default:
-        return <IconFile />
-      
+      enqueueSnackBar('Uploaded Sucessfullly!',{
+        variant: 'success',
+      });
+    } catch (errors: any) {
+      console.error('Error uploading file:', errors);
+            enqueueSnackBar(errors.message + ' Error uploading file:',{
+        variant: 'error',
+      });
+
     }
-  }
- 
+  };
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Templates">
       <SettingsPageContainer>
         <StyledH1Title title="Templates" />
-        
         <Section>
           <H2Title title="Header" />
-
-          <StyledComboInputContainer>
-              <StyledAttachmentsContainer>
-                <StyledFileInput
-                  ref={inputFileRef}
-                  onChange={handleFileChange}
-                  type="file"
-                />
-                <StyledButtonContainer>
-                  <Button
-                    Icon={IconPlus}
-                    size="small"
-                    variant="secondary"
-                    title="Upload file"
-                    onClick={handleUploadFileClick}
-                  />
-                </StyledButtonContainer>
-              </StyledAttachmentsContainer>
-             
-            </StyledComboInputContainer>
-            {uploadedFile && (
-              <div style={{ display: 'flex', alignItems: 'center', marginLeft: 0, marginTop:'20px' }}>
-                {attachmentIcon(uploadedFile.name)}
-                <span style={{ marginLeft: '4px' }}>{uploadedFile.name}</span>
-              </div>
-            )}
-
-          </Section>
-        
+            <div>
+              <input type="file" onChange={handleFileChange} accept="audio/*"/>
+            </div>
+        </Section>
+        <Section>
+            <Button
+              title="Upload"
+              variant="primary"
+              accent="blue"
+              size="medium"
+              onClick={handleUpload}
+              />
+        </Section>
         <Section>
           <H2Title title="Body" />
           <TextArea
@@ -151,7 +91,6 @@ export const AudioTemplate = ({
             minRows={4}
           />
         </Section>
-        
         <StyledInputsContainer>
           <Section>
             <H2Title title="Footer" />
