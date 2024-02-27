@@ -8,4 +8,4 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
   providers: [BlocklistService],
   exports: [BlocklistService],
 })
-export class ConnectedAccountModule {}
+export class BlocklistModule {}
