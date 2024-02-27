@@ -21,7 +21,6 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 import { BillingService } from 'src/core/billing/billing.service';
-import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
 
 export type SignUpServiceInput = {
   email: string;
@@ -43,7 +42,6 @@ export class SignUpService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
-    private readonly workspaceMemberService: WorkspaceMemberService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -126,9 +124,8 @@ export class SignUpService {
       ForbiddenException,
     );
 
-    const workspaceMembersCount = (
-      await this.workspaceMemberService.getAllByWorkspaceId(workspace.id)
-    ).length;
+    const workspaceMembersCount =
+      await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
 
     await this.billingService.requestUpdateBillingSubscriptionQuantity(
       workspace.id,
