@@ -4,10 +4,9 @@ import { OpenApiController } from 'src/core/open-api/open-api.controller';
 import { OpenApiService } from 'src/core/open-api/open-api.service';
 import { AuthModule } from 'src/core/auth/auth.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
-import { ApiRestModule } from 'src/core/api-rest/api-rest.module';
 
 @Module({
-  imports: [ApiRestModule, ObjectMetadataModule, AuthModule],
+  imports: [ObjectMetadataModule, AuthModule],
   controllers: [OpenApiController],
   providers: [OpenApiService],
 })

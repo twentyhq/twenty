@@ -5,10 +5,7 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import {
-  coreSchema,
-  metadataSchema,
-} from 'src/core/open-api/utils/base-schema.utils';
+import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
   computeManyResultPath,
   computeSingleResultPath,
@@ -22,7 +19,6 @@ import {
 import { computeSchemaTags } from 'src/core/open-api/utils/compute-schema-tags.utils';
 import { computeWebhooks } from 'src/core/open-api/utils/computeWebhooks.utils';
 import { capitalize } from 'src/utils/capitalize';
-import { ApiRestMetadataService } from 'src/core/api-rest/metadata-rest.service';
 import {
   getDeleteResponse200,
   getManyResultResponse200,
@@ -35,11 +31,10 @@ export class OpenApiService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly metadataRestService: ApiRestMetadataService,
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const schema = coreSchema();
+    const schema = baseSchema('core');
 
     let objectMetadataItems;
 
@@ -92,41 +87,8 @@ export class OpenApiService {
   }
 
   async generateMetaDataSchema(): Promise<OpenAPIV3_1.Document> {
-    // const query = `
-    //   query {
-    //     {
-    //       __schema {
-    //         queryType {
-    //           fields {
-    //             name
-    //             type {
-    //               ofType {
-    //                 fields {
-    //                   name
-    //                   type {
-    //                     ofType {
-    //                       name
-    //                     }
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // `
-
-    // const data: ApiRestQuery = {
-    //   query,
-    //   variables: {}
-    // }
-
-    // const fields = await this.metadataRestService.callMetadata(request, data)
-    // console.log(fields.data);
     //TODO Add once Rest MetaData api is ready
-    const schema = metadataSchema();
+    const schema = baseSchema('metadata');
 
     schema.tags = [{ name: 'placeholder' }];
 
