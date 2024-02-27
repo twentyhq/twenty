@@ -116,9 +116,9 @@ export class SaveMessagesAndCreateContactsService {
 
     await this.tryToSaveMessageParticipantsOrDeleteMessagesIfError(
       participantsWithMessageId,
+      gmailMessageChannelId,
       workspaceId,
       connectedAccount,
-      gmailMessageChannelId,
       jobName,
     );
 
@@ -133,9 +133,9 @@ export class SaveMessagesAndCreateContactsService {
 
   private async tryToSaveMessageParticipantsOrDeleteMessagesIfError(
     participantsWithMessageId: ParticipantWithMessageId[],
+    gmailMessageChannelId: string,
     workspaceId: string,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    gmailMessageChannelId: string,
     jobName?: string,
   ) {
     try {
