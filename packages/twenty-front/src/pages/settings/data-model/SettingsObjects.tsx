@@ -97,7 +97,7 @@ export const SettingsObjects = () => {
                         key={inactiveObjectMetadataItem.namePlural}
                         objectItem={inactiveObjectMetadataItem}
                         action={
-                          <SettingsObjectinactiveMenuDropDown
+                          <SettingsObjectInactiveMenuDropDown
                             isCustomObject={inactiveObjectMetadataItem.isCustom}
                             scopeKey={inactiveObjectMetadataItem.namePlural}
                             onActivate={() =>
