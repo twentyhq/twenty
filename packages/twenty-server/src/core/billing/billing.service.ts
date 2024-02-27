@@ -82,6 +82,7 @@ export class BillingService {
       const billingSubscriptionItem =
         this.billingSubscriptionItemRepository.create({
           billingSubscriptionId: billingSubscription.id,
+          stripeSubscriptionItemId: item.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
           quantity: item.quantity,
