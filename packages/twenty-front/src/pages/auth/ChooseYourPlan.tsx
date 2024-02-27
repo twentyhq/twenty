@@ -39,6 +39,8 @@ const StyledBenefitsContainer = styled.div`
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [planSelected, setPlanSelected] =
     useState<Stripe.Price.Recurring.Interval>('month');
 
@@ -76,6 +78,7 @@ export const ChooseYourPlan = () => {
   };
 
   const handleButtonClick = () => {
+    setIsSubmitting(true);
     fetch(REACT_APP_SERVER_BASE_URL + '/billing/checkout', {
       method: 'POST',
       headers: {
@@ -93,7 +96,12 @@ export const ChooseYourPlan = () => {
         const redirectUrl = data?.url;
         if (redirectUrl) {
           window.location.replace(redirectUrl);
+        } else {
+          setIsSubmitting(false);
         }
+      })
+      .catch(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -141,7 +149,11 @@ export const ChooseYourPlan = () => {
             {billing?.billingFreeTrialDurationInDays}-day refund
           </SubscriptionBenefit>
         </StyledBenefitsContainer>
-        <LargeMainButton title="Continue" onClick={handleButtonClick} />
+        <LargeMainButton
+          title="Continue"
+          onClick={handleButtonClick}
+          disabled={isSubmitting}
+        />
       </>
     )
   );
