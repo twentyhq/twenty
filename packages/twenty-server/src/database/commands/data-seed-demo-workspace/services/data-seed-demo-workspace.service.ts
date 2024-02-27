@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
-} from 'src/database/typeorm-seeds/core';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+} from 'src/database/typeorm-seeds/core/demo';
 
 @Injectable()
 export class DataSeedDemoWorkspaceService {
