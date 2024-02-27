@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class UpdateBillingCoreTables1709039419356
+export class UpdateBillingCoreTables1709044486771
   implements MigrationInterface
 {
-  name = 'UpdateBillingCoreTables1709039419356';
+  name = 'UpdateBillingCoreTables1709044486771';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
