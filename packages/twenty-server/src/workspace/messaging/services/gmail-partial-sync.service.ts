@@ -118,7 +118,12 @@ export class GmailPartialSyncService {
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
 
     const messagesToSave = messages.filter(
-      (message) => !this.shouldSkipImport(message, blocklistedEmails),
+      (message) =>
+        !this.shouldSkipImport(
+          connectedAccount.handle,
+          message,
+          blocklistedEmails,
+        ),
     );
 
     if (messagesToSave.length !== 0) {
@@ -244,13 +249,33 @@ export class GmailPartialSyncService {
     );
   }
 
+  private isMessageBlocked = (
+    selfHandle: string,
+    message: GmailMessage,
+    blocklistedEmails: string[],
+  ): boolean => {
+    // If the message is received, check if the sender is in the blocklist
+    // If the message is sent, check if any of the recipients with role 'to' are in the blocklist
+
+    if (message.fromHandle === selfHandle) {
+      return message.participants.some(
+        (participant) =>
+          participant.role === 'to' &&
+          blocklistedEmails.includes(participant.handle),
+      );
+    }
+
+    return blocklistedEmails.includes(message.fromHandle);
+  };
+
   private shouldSkipImport(
+    selfHandle: string,
     message: GmailMessage,
     blocklistedEmails: string[],
   ): boolean {
     return (
       !isPersonEmail(message.fromHandle) ||
-      blocklistedEmails.includes(message.fromHandle)
+      this.isMessageBlocked(selfHandle, message, blocklistedEmails)
     );
   }
 }
