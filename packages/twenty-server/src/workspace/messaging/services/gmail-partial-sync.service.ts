@@ -15,6 +15,9 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
+import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
+import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -29,6 +32,7 @@ export class GmailPartialSyncService {
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageService: MessageService,
+    private readonly blocklistService: BlocklistService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -100,11 +104,22 @@ export class GmailPartialSyncService {
 
     const messageQueries = createQueriesFromMessageIds(messagesAdded);
 
-    const { messages: messagesToSave, errors } =
+    const { messages, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
+
+    const blocklist = await this.blocklistService.getByWorkspaceMemberId(
+      connectedAccount.accountOwnerId,
+      workspaceId,
+    );
+
+    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+
+    const messagesToSave = messages.filter(
+      (message) => !this.shouldSkipImport(message, blocklistedEmails),
+    );
 
     if (messagesToSave.length !== 0) {
       await this.messageService.saveMessages(
@@ -226,6 +241,16 @@ export class GmailPartialSyncService {
       {
         retryLimit: 2,
       },
+    );
+  }
+
+  private shouldSkipImport(
+    message: GmailMessage,
+    blocklistedEmails: string[],
+  ): boolean {
+    return (
+      !isPersonEmail(message.fromHandle) ||
+      blocklistedEmails.includes(message.fromHandle)
     );
   }
 }

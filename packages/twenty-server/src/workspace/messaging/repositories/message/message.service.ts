@@ -13,7 +13,6 @@ import { MessageChannelService } from 'src/workspace/messaging/repositories/mess
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
-import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
 @Injectable()
 export class MessageService {
@@ -124,10 +123,6 @@ export class MessageService {
     workspaceId: string,
   ) {
     for (const message of messages) {
-      if (this.shouldSkipImport(message)) {
-        continue;
-      }
-
       await workspaceDataSource?.transaction(async (manager: EntityManager) => {
         const existingMessageChannelMessageAssociationsCount =
           await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
@@ -171,10 +166,6 @@ export class MessageService {
         );
       });
     }
-  }
-
-  private shouldSkipImport(message: GmailMessage): boolean {
-    return !isPersonEmail(message.fromHandle);
   }
 
   private async saveMessageOrReturnExistingMessage(
