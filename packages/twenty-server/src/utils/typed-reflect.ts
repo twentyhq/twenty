@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 import { ReflectFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
+import { ReflectIndexMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-index-metadata.interface';
 import { ReflectObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-object-metadata.interface';
 import { ReflectRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
 
@@ -10,6 +11,7 @@ export interface ReflectMetadataTypeMap {
   fieldMetadataMap: ReflectFieldMetadata;
   relationMetadataCollection: ReflectRelationMetadata[];
   gate: GateDecoratorParams;
+  indexMetadataCollection: ReflectIndexMetadata[];
   isNullable: true;
   isSystem: true;
 }

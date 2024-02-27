@@ -57,6 +57,11 @@ export class WorkspaceSyncObjectMetadataService {
       workspaceFeatureFlagsMap,
     );
 
+    // console.log(
+    //   'standardObjectMetadataCollection',
+    //   standardObjectMetadataCollection,
+    // );
+
     // Create map of original and standard object metadata by unique identifier
     const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection,

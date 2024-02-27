@@ -28,6 +28,7 @@
       "twenty-emails": ["packages/twenty-emails/src/index.ts"]
     }
   },
+  "exclude": ["dist"],
   "ts-node": {
     "files": true,
     "require": ["tsconfig-paths/register"]

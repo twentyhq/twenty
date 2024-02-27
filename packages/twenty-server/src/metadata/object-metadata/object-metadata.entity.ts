@@ -11,6 +11,7 @@ import {
 
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
+import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
@@ -94,6 +95,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     onDelete: 'CASCADE',
   })
   dataSource: DataSourceEntity;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  indexMetadata?: DeepPartial<IndexMetadata>;
 
   @CreateDateColumn()
   createdAt: Date;

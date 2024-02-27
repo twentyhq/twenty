@@ -11,6 +11,9 @@ export function ObjectMetadata(
     const gate = TypedReflect.getMetadata('gate', target);
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
+    const indexMetadataCollection =
+      TypedReflect.getMetadata('indexMetadataCollection', target) ?? [];
+
     TypedReflect.defineMetadata(
       'objectMetadata',
       {
@@ -22,6 +25,7 @@ export function ObjectMetadata(
         description: params.description,
         icon: params.icon,
         gate,
+        indexMetadata: indexMetadataCollection,
       },
       target,
     );

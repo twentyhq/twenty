@@ -22,6 +22,8 @@ const objectPropertiesToIgnore = [
   'fields',
 ];
 
+const objectPropertiesToStringify = ['indexMetadata'] as const;
+
 @Injectable()
 export class WorkspaceObjectComparator {
   constructor() {}
@@ -46,6 +48,7 @@ export class WorkspaceObjectComparator {
       {
         shouldIgnoreProperty: (property) =>
           objectPropertiesToIgnore.includes(property),
+        propertiesToStringify: objectPropertiesToStringify,
       },
     );
 
@@ -54,6 +57,8 @@ export class WorkspaceObjectComparator {
       partialOriginalObjectMetadata,
       omit(standardObjectMetadata, 'fields'),
     );
+
+    console.log('objectMetadataDifference', objectMetadataDifference);
 
     // Loop through the differences and create an object with the properties to update
     for (const difference of objectMetadataDifference) {

@@ -53,13 +53,15 @@ export class WorkspaceMetadataUpdaterService {
       },
     );
 
+    console.log(JSON.stringify(storage.objectMetadataUpdateCollection));
+
     /**
      * Update object metadata
      */
     const updatedObjectMetadataCollection = await objectMetadataRepository.save(
       storage.objectMetadataUpdateCollection.map((objectMetadata) =>
         omit(objectMetadata, ['fields']),
-      ),
+      ) as DeepPartial<ObjectMetadataEntity>[],
     );
 
     /**
