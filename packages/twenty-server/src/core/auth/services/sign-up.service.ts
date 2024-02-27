@@ -20,6 +20,8 @@ import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { BillingService } from 'src/core/billing/billing.service';
+import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
 
 export type SignUpServiceInput = {
   email: string;
@@ -41,6 +43,8 @@ export class SignUpService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
+    private readonly workspaceMemberService: WorkspaceMemberService,
+    private readonly billingService: BillingService,
   ) {}
 
   async signUp({
@@ -120,6 +124,15 @@ export class SignUpService {
       workspace,
       'This workspace inviteHash is invalid',
       ForbiddenException,
+    );
+
+    const workspaceMembersCount = (
+      await this.workspaceMemberService.getAllByWorkspaceId(workspace.id)
+    ).length;
+
+    await this.billingService.requestUpdateBillingSubscriptionQuantity(
+      workspace.id,
+      workspaceMembersCount + 1,
     );
 
     if (existingUser) {

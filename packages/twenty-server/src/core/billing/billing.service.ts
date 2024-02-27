@@ -65,6 +65,40 @@ export class BillingService {
     return Object.values(result);
   }
 
+  async checkBillingSubscriptionExists(workspaceId: string) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: { workspaceId },
+      });
+
+    return billingSubscription !== null;
+  }
+
+  async getBillingSubscriptionItem(
+    workspaceId: string,
+    stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+        relations: ['billingSubscriptionItems'],
+      });
+
+    const billingSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.filter(
+        (billingSubscriptionItem) =>
+          billingSubscriptionItem.stripeProductId === stripeProductId,
+      )?.[0];
+
+    if (!billingSubscriptionItem) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+      );
+    }
+
+    return billingSubscriptionItem;
+  }
+
   async createBillingSubscription(
     workspaceId: string,
     data: Stripe.CustomerSubscriptionUpdatedEvent.Data,
@@ -97,40 +131,25 @@ export class BillingService {
     });
   }
 
-  async updateBillingSubscriptionQuantity(
+  async requestUpdateBillingSubscriptionQuantity(
     workspaceId: string,
-    increment: 1 | -1,
+    quantity: number,
   ) {
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { workspaceId },
-        relations: ['billingSubscriptionItems'],
-      });
-
-    const basePlanProductIt =
-      this.environmentService.getBillingStripeBasePlanProductId();
-
     const billingSubscriptionItem =
-      billingSubscription.billingSubscriptionItems.filter(
-        (billingSubscriptionItem) =>
-          billingSubscriptionItem.stripeProductId === basePlanProductIt,
-      )?.[0];
+      await this.getBillingSubscriptionItem(workspaceId);
 
-    if (!billingSubscriptionItem) {
-      throw new Error(
-        `Cannot find billingSubscriptionItem for product ${basePlanProductIt} for workspace ${workspaceId}`,
+    const newSubscriptionItem =
+      await this.stripeService.stripe.subscriptionItems.update(
+        billingSubscriptionItem.stripeSubscriptionItemId,
+        {
+          quantity,
+          metadata: { workspaceId },
+        },
       );
-    }
 
-    const newQuantity = billingSubscriptionItem.quantity + increment;
-
-    await this.stripeService.stripe.subscriptionItems.update(
-      billingSubscriptionItem.stripeSubscriptionItemId,
-      { quantity: newQuantity },
-    );
     await this.billingSubscriptionItemRepository.update(
       billingSubscriptionItem.id,
-      { quantity: newQuantity },
+      { quantity: newSubscriptionItem.quantity },
     );
   }
 }

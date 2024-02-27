@@ -20,6 +20,8 @@ import { TokenService } from 'src/core/auth/services/token.service';
 import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/core/auth/services/sign-up.service';
+import { BillingModule } from 'src/core/billing/billing.module';
+import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -43,6 +45,8 @@ const jwtModule = JwtModule.registerAsync({
     FileModule,
     DataSourceModule,
     UserModule,
+    BillingModule,
+    WorkspaceMemberModule,
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, User, RefreshToken], 'core'),

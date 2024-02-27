@@ -166,12 +166,16 @@ export class BillingController {
         return;
       }
 
-      await this.billingService.createBillingSubscription(
-        workspaceId,
-        event.data,
-      );
-
-      res.status(200).send('Subscription successfully updated');
+      if (
+        !(await this.billingService.checkBillingSubscriptionExists(workspaceId))
+      ) {
+        await this.billingService.createBillingSubscription(
+          workspaceId,
+          event.data,
+        );
+        res.status(200).send('Subscription successfully created');
+      }
     }
+    res.status(200).send('Subscription event successfully handled');
   }
 }
