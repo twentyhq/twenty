@@ -258,7 +258,7 @@ export class GmailPartialSyncService {
     blocklistedEmails: string[],
   ): boolean => {
     // If the message is received, check if the sender is in the blocklist
-    // If the message is sent, check if any of the recipients with role 'to' are in the blocklist
+    // If the message is sent, check if any of the recipients with role 'to' is in the blocklist
 
     if (message.fromHandle === selfHandle) {
       return message.participants.some(
