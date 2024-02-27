@@ -14,6 +14,8 @@ import { MessageChannelMessageAssociationService } from 'src/workspace/messaging
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
+import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -29,6 +31,7 @@ export class GmailFullSyncService {
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageService: MessageService,
+    private readonly blocklistService: BlocklistService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -48,6 +51,7 @@ export class GmailFullSyncService {
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
+    const workspaceMemberId = connectedAccount.accountOwnerId;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
@@ -64,13 +68,23 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
+    const blocklist = await this.blocklistService.getByWorkspaceMemberId(
+      workspaceMemberId,
+      workspaceId,
+    );
+
+    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults: 500,
       pageToken: nextPageToken,
+      q: gmailSearchFilterExcludeEmails(blocklistedEmails),
     });
 
     const messagesData = messages.data.messages;
+
+    console.log('messagesData', messagesData?.length);
 
     const messageExternalIds = messagesData
       ? messagesData.map((message) => message.id || '')
