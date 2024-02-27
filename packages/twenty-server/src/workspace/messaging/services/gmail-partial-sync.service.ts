@@ -81,7 +81,7 @@ export class GmailPartialSyncService {
       throw new Error('No history id found');
     }
 
-    if (newHistoryId === lastSyncHistoryId) {
+    if (newHistoryId === lastSyncHistoryId || !history?.history?.length) {
       this.logger.log(
         `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
       );
