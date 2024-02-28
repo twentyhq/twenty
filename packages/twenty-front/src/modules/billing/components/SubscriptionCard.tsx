@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
-import Stripe from 'stripe';
 
 import { SubscriptionCardPrice } from '@/billing/components/SubscriptionCardPrice.tsx';
 import { capitalize } from '~/utils/string/capitalize.ts';
 
 type SubscriptionCardProps = {
-  type?: Stripe.Price.Recurring.Interval;
+  type?: string;
   price: number;
   info: string;
 };
