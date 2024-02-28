@@ -46,6 +46,10 @@ export class GmailPartialSyncService {
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
     if (!lastSyncHistoryId) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: no lastSyncHistoryId, falling back to full sync.`,
+      );
+
       await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
       return;
@@ -58,13 +62,27 @@ export class GmailPartialSyncService {
       throw new Error('No refresh token found');
     }
 
+    let startTime = Date.now();
+
     const { history, historyId, error } = await this.getHistoryFromGmail(
       refreshToken,
       lastSyncHistoryId,
       maxResults,
     );
 
+    let endTime = Date.now();
+
+    this.logger.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} getting history in ${
+        endTime - startTime
+      }ms.`,
+    );
+
     if (error && error.code === 404) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: invalid lastSyncHistoryId, falling back to full sync.`,
+      );
+
       await this.connectedAccountService.deleteHistoryId(
         connectedAccountId,
         workspaceId,
@@ -104,7 +122,7 @@ export class GmailPartialSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
-        'gmail full-sync',
+        'gmail partial-sync',
         workspaceId,
         connectedAccountId,
       );
@@ -120,19 +138,39 @@ export class GmailPartialSyncService {
     }
 
     if (messagesDeleted.length !== 0) {
+      startTime = Date.now();
+
       await this.messageService.deleteMessages(
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,
       );
+
+      endTime = Date.now();
+
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: deleting messages in ${
+          endTime - startTime
+        }ms.`,
+      );
     }
 
     if (errors.length) throw new Error('Error fetching messages');
+
+    startTime = Date.now();
 
     await this.connectedAccountService.updateLastSyncHistoryId(
       historyId,
       connectedAccount.id,
       workspaceId,
+    );
+
+    endTime = Date.now();
+
+    this.logger.log(
+      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} updating lastSyncHistoryId in ${
+        endTime - startTime
+      }ms.`,
     );
 
     this.logger.log(
