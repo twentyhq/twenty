@@ -67,13 +67,16 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationColumnDrop
 );
 
-export type WorkspaceMigrationIndexAction = IndexMetadata;
+export type WorkspaceMigrationIndexAction = {
+  previousIndexDefinition?: IndexMetadata[];
+  newIndexDefinition: IndexMetadata[];
+};
 
 export type WorkspaceMigrationTableAction = {
   name: string;
   action: 'create' | 'alter' | 'drop';
   columns?: WorkspaceMigrationColumnAction[];
-  indexes?: WorkspaceMigrationIndexAction[];
+  indexes?: WorkspaceMigrationIndexAction;
 };
 
 @Entity('workspaceMigration')

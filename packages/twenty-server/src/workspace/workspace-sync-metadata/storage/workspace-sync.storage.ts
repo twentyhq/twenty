@@ -1,6 +1,7 @@
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-relation-metadata.interface';
+import { PartialIndexMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -13,6 +14,14 @@ export class WorkspaceSyncStorage {
   private readonly _objectMetadataUpdateCollection: Partial<PartialObjectMetadata>[] =
     [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
+
+  // Index metadata
+  private readonly _indexMetadataUpdateCollection: {
+    newIndexMetadata: PartialIndexMetadata[];
+    previousIndexMetadata: PartialIndexMetadata[];
+    workspaceId: string;
+    nameSingular: string;
+  }[] = [];
 
   // Field metadata
   private readonly _fieldMetadataCreateCollection: PartialFieldMetadata[] = [];
@@ -41,6 +50,10 @@ export class WorkspaceSyncStorage {
 
   get objectMetadataDeleteCollection() {
     return this._objectMetadataDeleteCollection;
+  }
+
+  get indexMetadataUpdateCollection() {
+    return this._indexMetadataUpdateCollection;
   }
 
   get fieldMetadataCreateCollection() {
@@ -77,6 +90,20 @@ export class WorkspaceSyncStorage {
 
   addDeleteObjectMetadata(object: ObjectMetadataEntity) {
     this._objectMetadataDeleteCollection.push(object);
+  }
+
+  addUpdateIndexMetadata(
+    workspaceId: string,
+    nameSingular: string,
+    newIndexMetadata: PartialIndexMetadata[],
+    previousIndexMetadata: PartialIndexMetadata[],
+  ) {
+    this._indexMetadataUpdateCollection.push({
+      workspaceId,
+      nameSingular,
+      newIndexMetadata,
+      previousIndexMetadata,
+    });
   }
 
   addCreateFieldMetadata(field: PartialFieldMetadata) {

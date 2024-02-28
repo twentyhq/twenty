@@ -40,7 +40,7 @@ export class WorkspaceMetadataUpdaterService {
           fields: objectMetadata.fields.map((field) =>
             this.prepareFieldMetadataForCreation(field),
           ),
-        })) as DeepPartial<ObjectMetadataEntity>[],
+        })) as any,
       );
     const identifiers = createdPartialObjectMetadataCollection.map(
       (object) => object.id,
@@ -121,7 +121,7 @@ export class WorkspaceMetadataUpdaterService {
     const createdFieldMetadataCollection = await fieldMetadataRepository.save(
       storage.fieldMetadataCreateCollection.map((field) =>
         this.prepareFieldMetadataForCreation(field),
-      ) as DeepPartial<FieldMetadataEntity>[],
+      ) as any,
     );
 
     /**

@@ -60,11 +60,15 @@ export class StandardObjectFactory {
       [] as PartialFieldMetadata[],
     );
 
+    const indexMetadataCollection =
+      TypedReflect.getMetadata('indexMetadataCollection', metadata) ?? [];
+
     return {
       ...objectMetadata,
       workspaceId: context.workspaceId,
       dataSourceId: context.dataSourceId,
       fields,
+      indexMetadata: indexMetadataCollection,
     };
   }
 }

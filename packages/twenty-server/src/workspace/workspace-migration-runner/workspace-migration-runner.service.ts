@@ -19,6 +19,7 @@ import {
   WorkspaceMigrationColumnCreateForeignKey,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropForeignKey,
+  WorkspaceMigrationIndexAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -246,33 +247,143 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    indexMigrations: IndexMetadata[],
+    indexMigrations: WorkspaceMigrationIndexAction,
   ) {
-    if (!indexMigrations || indexMigrations.length === 0) {
-      return;
+    const serializeIndex = (index: IndexMetadata) => {
+      return JSON.stringify({
+        ...index,
+        columns: index.columns ? [...index.columns].sort() : undefined,
+      });
+    };
+
+    const newIndexesSet = new Set(
+      indexMigrations.newIndexDefinition.map(serializeIndex),
+    );
+    const previousIndexesSet = new Set(
+      indexMigrations.previousIndexDefinition
+        ? indexMigrations.previousIndexDefinition.map(serializeIndex)
+        : [],
+    );
+
+    const indexesToCreate: IndexMetadata[] =
+      indexMigrations.newIndexDefinition.filter(
+        (index) => !previousIndexesSet.has(serializeIndex(index)),
+      );
+    const indexesToDrop: IndexMetadata[] | undefined =
+      indexMigrations.previousIndexDefinition?.filter(
+        (index) => !newIndexesSet.has(serializeIndex(index)),
+      );
+
+    if (indexesToDrop && indexesToDrop.length > 0) {
+      await this.dropExistingIndexes(
+        queryRunner,
+        schemaName,
+        tableName,
+        indexesToDrop,
+      );
     }
 
-    for (const indexMigration of indexMigrations) {
-      if (!indexMigration.columns) {
-        throw new Error(
-          'Index columns not found, other types of indexes are not supported yet',
-        );
+    for (const indexToCreate of indexesToCreate) {
+      if (!indexToCreate.columns) {
+        throw new Error('Index columns not found');
       }
 
-      if (indexMigration.type && indexMigration.type !== 'btree') {
-        throw new Error(
-          `Index type ${indexMigration.type} not supported, other types of indexes are not supported yet`,
-        );
+      if (indexToCreate.type && indexToCreate.type !== 'btree') {
+        throw new Error(`Index type ${indexToCreate.type} not supported`);
       }
 
       await queryRunner.createIndex(
         `${schemaName}.${tableName}`,
         new TableIndex({
-          name: indexMigration.name,
-          columnNames: indexMigration.columns,
-          isUnique: indexMigration.unique,
-          where: indexMigration.where,
+          name: indexToCreate.name,
+          columnNames: indexToCreate.columns,
         }),
+      );
+    }
+  }
+
+  private async fetchExistingTableIndexes(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+  ) {
+    const existingIndexes = await queryRunner.query(
+      `
+      SELECT
+      _table.relname as "tableName",
+      _index.relname as "indexName",
+      array_agg(_attribute.attname ORDER BY idx) as "columnNames",
+      _table_index.indisunique as "isUnique",
+      pg_get_indexdef(_table_index.indexrelid) as "indexDefinition"
+    FROM
+      pg_class _table
+    JOIN
+      pg_index _table_index ON _table.oid = _table_index.indrelid
+    JOIN
+      pg_class _index ON _index.oid = _table_index.indexrelid
+    JOIN
+      pg_namespace _namespace ON _table.relnamespace = _namespace.oid
+    JOIN
+      LATERAL unnest(_table_index.indkey) WITH ORDINALITY as col(att, idx) ON true
+    JOIN
+      pg_attribute _attribute ON _attribute.attrelid = _table.oid AND _attribute.attnum = col.att
+    WHERE
+      _table.relkind = 'r'
+      AND _table.relname = $1
+      AND _namespace.nspname = $2
+      AND _table_index.indisprimary = FALSE
+    GROUP BY
+      _table.relname,
+      _index.relname,
+      _table_index.indisunique,
+      _table_index.indexrelid
+    ORDER BY
+      _table.relname,
+      _index.relname;
+    `,
+      [tableName, schemaName],
+    );
+
+    return existingIndexes;
+  }
+
+  private async dropExistingIndexes(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    indexesToDrop: IndexMetadata[],
+  ) {
+    // Since we don't always provide a name when we create an new index, we need to
+    // fetch the existing indexes and filter them based on the columns.
+    const existingTableIndexes = await this.fetchExistingTableIndexes(
+      queryRunner,
+      schemaName,
+      tableName,
+    );
+
+    const existingIndexesToDrop: any[] = [];
+
+    for (const indexToDrop of indexesToDrop) {
+      if (!indexToDrop.columns) {
+        throw new Error(
+          'Index columns not found and are required to drop index',
+        );
+      }
+
+      existingIndexesToDrop.push(
+        existingTableIndexes
+          .filter(
+            (index) =>
+              index.columnNames.replace(/[{}]/g, '') ===
+              indexToDrop.columns?.join(','),
+          )
+          .map((index) => index.indexName),
+      );
+    }
+
+    for (const index of existingIndexesToDrop) {
+      await queryRunner.query(
+        `DROP INDEX IF EXISTS "${schemaName}"."${index}"`,
       );
     }
   }

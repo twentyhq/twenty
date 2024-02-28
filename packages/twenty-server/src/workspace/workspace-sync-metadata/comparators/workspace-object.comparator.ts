@@ -77,10 +77,14 @@ export class WorkspaceObjectComparator {
           break;
         }
 
-        if (
-          (objectPropertiesToStringify as readonly string[]).includes(property)
-        ) {
-          objectPropertiesToUpdate[property] = JSON.parse(difference.value);
+        // Handle indexMetadata
+        if ('indexMetadata' === property) {
+          objectPropertiesToUpdate['indexMetadata'] = JSON.parse(
+            difference.value,
+          );
+          objectPropertiesToUpdate['previousIndexMetadata'] = JSON.parse(
+            difference.oldValue,
+          );
         } else {
           objectPropertiesToUpdate[property] = difference.value;
         }
@@ -100,8 +104,6 @@ export class WorkspaceObjectComparator {
       object: {
         id: originalObjectMetadata.id,
         ...objectPropertiesToUpdate,
-        nameSingular: originalObjectMetadata.nameSingular,
-        workspaceId: originalObjectMetadata.workspaceId,
       },
     };
   }

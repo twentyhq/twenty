@@ -4,7 +4,6 @@ import {
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IndexMetadata } from 'src/workspace/workspace-sync-metadata/decorators/index-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -20,12 +19,6 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
   labelPlural: 'Messages',
   description: 'Message',
   icon: 'IconMessage',
-})
-@IndexMetadata({
-  columns: ['headerMessageId'],
-})
-@IndexMetadata({
-  columns: ['messageThreadId'],
 })
 @IsSystem()
 export class MessageObjectMetadata extends BaseObjectMetadata {

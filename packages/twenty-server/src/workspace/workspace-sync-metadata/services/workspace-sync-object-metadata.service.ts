@@ -17,6 +17,7 @@ import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-me
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationObjectFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
+import { WorkspaceMigrationIndexFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-index.factory';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -29,6 +30,7 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
+    private readonly workspaceMigrationIndexFactory: WorkspaceMigrationIndexFactory,
   ) {}
 
   async synchronize(
@@ -95,7 +97,34 @@ export class WorkspaceSyncObjectMetadataService {
       }
 
       if (objectComparatorResult.action === ComparatorAction.UPDATE) {
-        storage.addUpdateObjectMetadata(objectComparatorResult.object);
+        const {
+          object: {
+            previousIndexMetadata,
+            ...objectWithoutPreviousIndexMetadata
+          },
+        } = objectComparatorResult;
+        const objectComparatorResultWithoutPreviousIndexMetadata = {
+          ...objectComparatorResult,
+          object: objectWithoutPreviousIndexMetadata,
+        };
+
+        storage.addUpdateObjectMetadata(
+          objectComparatorResultWithoutPreviousIndexMetadata.object,
+        );
+
+        if (
+          objectComparatorResultWithoutPreviousIndexMetadata.object
+            .indexMetadata ||
+          previousIndexMetadata
+        ) {
+          storage.addUpdateIndexMetadata(
+            context.workspaceId,
+            standardObjectName,
+            objectComparatorResultWithoutPreviousIndexMetadata.object
+              .indexMetadata ?? [],
+            previousIndexMetadata ?? [],
+          );
+        }
       }
 
       /**
@@ -159,6 +188,12 @@ export class WorkspaceSyncObjectMetadataService {
         WorkspaceMigrationBuilderAction.DELETE,
       );
 
+    const updateIndexWorkspaceMigrations =
+      await this.workspaceMigrationIndexFactory.create(
+        storage.indexMetadataUpdateCollection,
+        WorkspaceMigrationBuilderAction.UPDATE,
+      );
+
     const createFieldWorkspaceMigrations =
       await this.workspaceMigrationFieldFactory.create(
         originalObjectMetadataCollection,
@@ -186,6 +221,7 @@ export class WorkspaceSyncObjectMetadataService {
       ...createObjectWorkspaceMigrations,
       ...updateObjectWorkspaceMigrations,
       ...deleteObjectWorkspaceMigrations,
+      ...updateIndexWorkspaceMigrations,
       ...createFieldWorkspaceMigrations,
       ...updateFieldWorkspaceMigrations,
       ...deleteFieldWorkspaceMigrations,

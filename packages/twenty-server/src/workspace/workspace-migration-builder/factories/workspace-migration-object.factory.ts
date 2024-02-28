@@ -26,8 +26,6 @@ export class WorkspaceMigrationObjectFactory {
     switch (action) {
       case WorkspaceMigrationBuilderAction.CREATE:
         return this.createObjectMigration(objectMetadataCollection);
-      case WorkspaceMigrationBuilderAction.UPDATE:
-        return this.updateObjectMigration(objectMetadataCollection);
       case WorkspaceMigrationBuilderAction.DELETE:
         return this.deleteObjectMigration(objectMetadataCollection);
       default:
@@ -66,41 +64,6 @@ export class WorkspaceMigrationObjectFactory {
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(`create-${objectMetadata.nameSingular}`),
-        isCustom: false,
-        migrations,
-      });
-    }
-
-    return workspaceMigrations;
-  }
-
-  private async updateObjectMigration(
-    objectMetadataCollection: ObjectMetadataEntity[],
-  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-
-    const isUpdatingIndexMetadata = (
-      objectMetadata: ObjectMetadataEntity,
-    ): boolean => objectMetadata?.indexMetadata?.length > 0;
-
-    for (const objectMetadata of objectMetadataCollection) {
-      if (!isUpdatingIndexMetadata(objectMetadata)) {
-        continue;
-      }
-
-      const migrations: WorkspaceMigrationTableAction[] = [
-        {
-          name: computeObjectTargetTable(objectMetadata),
-          action: 'alter',
-          indexes: objectMetadata.indexMetadata,
-        },
-      ];
-
-      workspaceMigrations.push({
-        workspaceId: objectMetadata.workspaceId,
-        name: generateMigrationName(
-          `update-${objectMetadata.nameSingular}-indexes`,
-        ),
         isCustom: false,
         migrations,
       });
