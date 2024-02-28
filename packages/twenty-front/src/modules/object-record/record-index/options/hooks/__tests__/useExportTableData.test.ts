@@ -47,13 +47,18 @@ describe('generateCsv', () => {
       { label: 'Foo', metadata: { fieldName: 'foo' } },
       { label: 'Empty', metadata: { fieldName: 'empty' } },
       { label: 'Nested', metadata: { fieldName: 'nested' } },
+      {
+        label: 'Relation',
+        metadata: { fieldName: 'relation', relationType: 'TO_ONE_OBJECT' },
+      },
     ] as ColumnDefinition<FieldMetadata>[];
     const rows = [
       {
-        foo: 'some field',
         bar: 'another field',
         empty: null,
+        foo: 'some field',
         nested: { __typename: 'type', foo: 'foo', nested: 'nested' },
+        relation: 'a relation',
       },
     ];
     const csv = generateCsv({ columns, rows });

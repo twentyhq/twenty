@@ -33,7 +33,11 @@ export const generateCsv: GenerateExport = ({
   columns,
   rows,
 }: GenerateExportOptions): string => {
-  const keys = columns.flatMap((col) => {
+  const columnsWithoutRelations = columns.filter(
+    (col) => !('relationType' in col.metadata && col.metadata.relationType),
+  );
+
+  const keys = columnsWithoutRelations.flatMap((col) => {
     const column = {
       field: col.metadata.fieldName,
       title: col.label,
@@ -118,7 +122,7 @@ export const useExportTableData = ({
   useEffect(() => {
     const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
 
-    const downloadCav = (rows: object[]) => {
+    const downloadCsv = (rows: object[]) => {
       csvDownloader(filename, { rows, columns });
       setIsDownloading(false);
       setProgress(undefined);
@@ -138,7 +142,7 @@ export const useExportTableData = ({
     }
 
     if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
-      downloadCav(records);
+      downloadCsv(records);
     } else {
       fetchNextPage();
     }
