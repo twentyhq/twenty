@@ -4,7 +4,6 @@ import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 export const BORDER_DARK = {
   color: {
-    dark: GRAY_SCALE.gray15,
     strong: GRAY_SCALE.gray55,
     medium: GRAY_SCALE.gray65,
     light: GRAY_SCALE.gray70,

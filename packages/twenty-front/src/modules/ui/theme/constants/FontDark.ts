@@ -4,7 +4,6 @@ import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 export const FONT_DARK = {
   color: {
-    dark: GRAY_SCALE.gray15,
     primary: GRAY_SCALE.gray20,
     secondary: GRAY_SCALE.gray35,
     tertiary: GRAY_SCALE.gray45,

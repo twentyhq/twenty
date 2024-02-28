@@ -18,5 +18,4 @@ export const BOX_SHADOW_LIGHT = {
     GRAY_SCALE.gray100,
     0.48,
   )}, 0px 24px 56px -16px ${RGBA(GRAY_SCALE.gray100, 0.08)}`,
-  dark: `-4px 4px 0 -2px ${RGBA(GRAY_SCALE.gray90, 1)}`,
 };

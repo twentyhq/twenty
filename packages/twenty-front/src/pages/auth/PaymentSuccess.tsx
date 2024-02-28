@@ -7,19 +7,25 @@ import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
 import { AppPath } from '@/types/AppPath.ts';
 import { IconCheck } from '@/ui/display/icon';
-import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
+import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
+import { RGBA } from '@/ui/theme/constants/Rgba.ts';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn.tsx';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  border: 2px solid ${({ theme }) => theme.border.color.dark};
+  border: 2px solid ${(props) => props.color};
   border-radius: ${({ theme }) => theme.border.radius.rounded};
-  box-shadow: ${({ theme }) => theme.boxShadow.dark};
+  box-shadow: ${(props) =>
+    props.color && `-4px 4px 0 -2px ${RGBA(props.color, 1)}`};
   height: 36px;
   width: 36px;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const PaymentSuccess = () => {
@@ -28,16 +34,20 @@ export const PaymentSuccess = () => {
   const handleButtonClick = () => {
     navigate(AppPath.CreateWorkspace);
   };
+  const color =
+    theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
   return (
     <>
       <AnimatedEaseIn>
-        <StyledCheckContainer>
-          <IconCheck color={theme.font.color.dark} size={24} stroke={3} />
+        <StyledCheckContainer color={color}>
+          <IconCheck color={color} size={24} stroke={3} />
         </StyledCheckContainer>
       </AnimatedEaseIn>
       <Title>All set!</Title>
       <SubTitle>Your account has been activated.</SubTitle>
-      <LargeMainButton title="Start" onClick={handleButtonClick} />
+      <StyledButtonContainer>
+        <MainButton title="Start" onClick={handleButtonClick} width={200} />
+      </StyledButtonContainer>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import Stripe from 'stripe';
@@ -6,13 +6,13 @@ import Stripe from 'stripe';
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
 import { tokenPairState } from '@/auth/states/tokenPairState.ts';
+import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit.tsx';
+import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
-import { LargeMainButton } from '@/ui/input/button/components/LargeMainButton.tsx';
+import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
-import { SubscriptionBenefit } from '@/ui/input/subscription/components/SubscriptionBenefit.tsx';
-import { SubscriptionCard } from '@/ui/input/subscription/components/SubscriptionCard.tsx';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledChoosePlanContainer = styled.div`
@@ -20,7 +20,7 @@ const StyledChoosePlanContainer = styled.div`
   flex-direction: row;
   width: 100%;
   margin: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme }) => theme.spacing(1)};
+    ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -34,6 +34,7 @@ const StyledBenefitsContainer = styled.div`
   width: 100%;
   gap: 16px;
   padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const ChooseYourPlan = () => {
@@ -111,10 +112,9 @@ export const ChooseYourPlan = () => {
   return (
     prices && (
       <>
-        <Title>Choose your Plan</Title>
+        <Title withMarginTop={false}>Choose your Plan</Title>
         <SubTitle>
-          Not satisfied in {billing?.billingFreeTrialDurationInDays} days? Full
-          refund.
+          Enjoy a {billing?.billingFreeTrialDurationInDays}-day free trial
         </SubTitle>
         <StyledChoosePlanContainer>
           {prices.map((price, index) => (
@@ -133,15 +133,14 @@ export const ChooseYourPlan = () => {
         </StyledChoosePlanContainer>
         <StyledBenefitsContainer>
           <SubscriptionBenefit>Full access</SubscriptionBenefit>
-          <SubscriptionBenefit>White gloves onboarding</SubscriptionBenefit>
           <SubscriptionBenefit>Unlimited contacts</SubscriptionBenefit>
-          <SubscriptionBenefit>Priority support</SubscriptionBenefit>
+          <SubscriptionBenefit>Email integration</SubscriptionBenefit>
+          <SubscriptionBenefit>Custom objects</SubscriptionBenefit>
+          <SubscriptionBenefit>API & Webhooks</SubscriptionBenefit>
           <SubscriptionBenefit>Frequent updates</SubscriptionBenefit>
-          <SubscriptionBenefit>
-            {billing?.billingFreeTrialDurationInDays}-day refund
-          </SubscriptionBenefit>
+          <SubscriptionBenefit>And much more</SubscriptionBenefit>
         </StyledBenefitsContainer>
-        <LargeMainButton title="Continue" onClick={handleButtonClick} />
+        <MainButton title="Continue" onClick={handleButtonClick} width={200} />
       </>
     )
   );

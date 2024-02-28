@@ -30,10 +30,6 @@ const StyledContentContainer = styled.div`
   width: 200px;
 `;
 
-const StyledFooterNote = styled(FooterNote)`
-  max-width: 280px;
-`;
-
 const StyledForm = styled.form`
   align-items: center;
   display: flex;
@@ -242,10 +238,10 @@ export const SignInUpForm = () => {
           Forgot your password?
         </ActionLink>
       ) : (
-        <StyledFooterNote>
+        <FooterNote>
           By using Twenty, you agree to the Terms of Service and Data Processing
           Agreement.
-        </StyledFooterNote>
+        </FooterNote>
       )}
     </>
   );

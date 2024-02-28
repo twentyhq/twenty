@@ -121,7 +121,7 @@ export const CreateWorkspace = () => {
 
   return (
     <>
-      <Title>Create your workspace</Title>
+      <Title withMarginTop={false}>Create your workspace</Title>
       <SubTitle>
         A shared environment where you will be able to manage your customer
         relations with your team.
