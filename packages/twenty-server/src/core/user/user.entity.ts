@@ -14,6 +14,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
@@ -87,4 +88,11 @@ export class User {
 
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
+
+  // @Field(() => [Workspace], { nullable: true })
+  // @ManyToMany(() => Workspace, (workspace) => workspace.workspaceUsers)
+  // userWorkspaces: Workspace[];
+
+  @Field(() => [UserWorkspace], { nullable: true })
+  workspaces: UserWorkspace[];
 }

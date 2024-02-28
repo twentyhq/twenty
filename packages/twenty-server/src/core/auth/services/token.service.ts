@@ -56,7 +56,7 @@ export class TokenService {
 
   async generateAccessToken(
     userId: string,
-    workspaceId: string | null = null,
+    workspaceId?: string,
   ): Promise<AuthToken> {
     const expiresIn = this.environmentService.getAccessTokenExpiresIn();
 
@@ -237,18 +237,9 @@ export class TokenService {
   }
 
   async generateSwitchWorkspaceToken(
-    accessToken: string,
+    user: User,
     workspaceId: string,
   ): Promise<Verify> {
-    const secret = this.environmentService.getRefreshTokenSecret();
-    const jwtPayload = await this.verifyJwt(accessToken, secret);
-
-    const user = await this.userRepository.findOneBy({
-      id: jwtPayload.sub,
-    });
-
-    assert(user, 'User not found', NotFoundException);
-
     const token = await this.generateAccessToken(user.id, workspaceId);
     const refreshToken = await this.generateRefreshToken(user.id);
 

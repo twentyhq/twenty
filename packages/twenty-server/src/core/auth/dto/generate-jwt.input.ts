@@ -8,9 +8,4 @@ export class GenerateJwtInput {
   @IsNotEmpty()
   @IsString()
   workspaceId: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  accessToken: string;
 }

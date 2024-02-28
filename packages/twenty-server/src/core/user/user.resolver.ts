@@ -24,7 +24,6 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
-import { CurrentUser } from 'src/core/user/dtos/current-user.dto';
 
 import { UserService } from './services/user.service';
 
@@ -46,18 +45,17 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  @Query(() => CurrentUser)
-  async currentUser(@AuthUser() { id }: User): Promise<CurrentUser> {
+  @Query(() => User)
+  async currentUser(@AuthUser() { id }: User): Promise<User> {
     const user = await this.userService.findById(id, {
       relations: [{ name: 'defaultWorkspace', query: {} }],
     });
 
     assert(user, 'User not found');
 
-    const userWorkspaces =
-      await this.userWorkspaceService.findUserWorkspaces(id);
+    user.workspaces = await this.userWorkspaceService.findUserWorkspaces(id);
 
-    return { user, workspaces: userWorkspaces };
+    return user;
   }
 
   @ResolveField(() => WorkspaceMember, {

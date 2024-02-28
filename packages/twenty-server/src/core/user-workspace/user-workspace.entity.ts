@@ -23,13 +23,21 @@ export class UserWorkspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  // @Field(() => [User])
+  // @ManyToMany(() => User, (user) => user.userWorkspaces)
+  // users: User[];
+
+  @Field(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @Field({ nullable: false })
   @Column()
   userId: string;
+
+  // @Field(() => [Workspace])
+  // @ManyToMany(() => Workspace, (workspace) => workspace.workspaceUsers)
+  // workspaces: Workspace[];
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {

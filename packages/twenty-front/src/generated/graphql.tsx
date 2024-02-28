@@ -81,12 +81,6 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
-export type CurrentUser = {
-  __typename?: 'CurrentUser';
-  user: User;
-  workspaces: Array<UserWorkspace>;
-};
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -234,6 +228,7 @@ export type Mutation = {
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
+  generateJWT: Verify;
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
@@ -279,6 +274,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
+};
+
+
+export type MutationGenerateJwtArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -373,7 +373,7 @@ export type Query = {
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
-  currentUser: CurrentUser;
+  currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -554,6 +554,7 @@ export type User = {
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
+  workspaces?: Maybe<Array<UserWorkspace>>;
 };
 
 export type UserEdge = {
@@ -886,7 +887,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'CurrentUser', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, workspaces: Array<{ __typename?: 'UserWorkspace', userId: string, workspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces?: Array<{ __typename?: 'UserWorkspace', workspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } }> | null } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1717,42 +1718,39 @@ export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<Upl
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
-    user {
+    id
+    firstName
+    lastName
+    email
+    canImpersonate
+    supportUserHash
+    workspaceMember {
       id
-      firstName
-      lastName
-      email
-      canImpersonate
-      supportUserHash
-      workspaceMember {
-        id
-        name {
-          firstName
-          lastName
-        }
-        colorScheme
-        avatarUrl
-        locale
+      name {
+        firstName
+        lastName
       }
-      defaultWorkspace {
+      colorScheme
+      avatarUrl
+      locale
+    }
+    defaultWorkspace {
+      id
+      displayName
+      logo
+      domainName
+      inviteHash
+      allowImpersonation
+      subscriptionStatus
+      activationStatus
+      featureFlags {
         id
-        displayName
-        logo
-        domainName
-        inviteHash
-        allowImpersonation
-        subscriptionStatus
-        activationStatus
-        featureFlags {
-          id
-          key
-          value
-          workspaceId
-        }
+        key
+        value
+        workspaceId
       }
     }
     workspaces {
-      userId
       workspace {
         id
         displayName
