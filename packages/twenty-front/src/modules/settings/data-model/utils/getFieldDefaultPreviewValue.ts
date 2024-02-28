@@ -21,8 +21,8 @@ export const getFieldDefaultPreviewValue = ({
   selectOptions?: SettingsObjectFieldSelectFormValues;
 }) => {
   // Select field
-  if (fieldMetadataItem.type === FieldMetadataType.Select) {
-    return selectOptions?.[0];
+  if (fieldMetadataItem.type === FieldMetadataType.Select && selectOptions) {
+    return selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
   }
 
   // Relation field
