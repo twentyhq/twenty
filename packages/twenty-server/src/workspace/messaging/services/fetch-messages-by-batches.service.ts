@@ -199,7 +199,12 @@ export class FetchMessagesByBatchesService {
         const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
         try {
-          const parsed = await simpleParser(body);
+          const parsed = await simpleParser(body, {
+            skipHtmlToText: true,
+            skipImageLinks: true,
+            skipTextToHtml: true,
+            maxHtmlLengthToParse: 0,
+          });
 
           const { subject, messageId, from, to, cc, bcc, text, attachments } =
             parsed;
@@ -239,7 +244,6 @@ export class FetchMessagesByBatchesService {
             fromDisplayName: from.value[0].name || '',
             participants,
             text: textWithoutReplyQuotations || '',
-            html: '',
             attachments,
           };
 
