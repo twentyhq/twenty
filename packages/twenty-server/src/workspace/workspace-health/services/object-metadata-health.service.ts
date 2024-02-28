@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   WorkspaceHealthIssue,
+  WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceHealthOptions } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
@@ -67,9 +68,55 @@ export class ObjectMetadataHealthService {
           objectMetadata,
         )} not found in schema ${schemaName}`,
       });
-
-      return issues;
     }
+
+    const structureIndexCheck = await this.structureIndexCheck(
+      schemaName,
+      objectMetadata,
+    );
+
+    issues.push(...structureIndexCheck);
+
+    return issues;
+  }
+
+  private async structureIndexCheck(
+    schemaName: string,
+    objectMetadata: ObjectMetadataEntity,
+  ) {
+    const mainDataSource = this.typeORMService.getMainDataSource();
+    const issues: WorkspaceHealthIssue[] = [];
+
+    const queryRunner = mainDataSource.createQueryRunner();
+
+    const existingIndexes = await this.typeORMService.fetchExistingTableIndexes(
+      schemaName,
+      objectMetadata.nameSingular,
+      queryRunner,
+    );
+
+    if (objectMetadata.indexMetadata) {
+      const allObjectIndexMetadataHaveAnExistingIndex =
+        objectMetadata.indexMetadata.every((objectIndexMetadata) =>
+          existingIndexes.some(
+            (existingIndex) =>
+              existingIndex.columnNames.replace(/[{}]/g, '') ===
+              objectIndexMetadata.columns?.join(','),
+          ),
+        );
+
+      if (!allObjectIndexMetadataHaveAnExistingIndex) {
+        issues.push({
+          type: WorkspaceHealthIssueType.ALL_OBJECT_INDEX_DONT_HAVE_AN_EXISTING_INDEX,
+          objectMetadata,
+          message: `Missing indexes for table ${computeObjectTargetTable(
+            objectMetadata,
+          )} in schema ${schemaName}`,
+        });
+      }
+    }
+
+    queryRunner.release();
 
     return issues;
   }

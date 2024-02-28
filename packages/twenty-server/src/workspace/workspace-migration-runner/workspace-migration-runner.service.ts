@@ -9,6 +9,7 @@ import {
   TableUnique,
 } from 'typeorm';
 
+import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import {
@@ -23,8 +24,8 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { convertOnDeleteActionToOnDelete } from 'src/workspace/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
-import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -32,6 +33,7 @@ import { WorkspaceMigrationTypeService } from './services/workspace-migration-ty
 @Injectable()
 export class WorkspaceMigrationRunnerService {
   constructor(
+    private readonly typeORMService: TypeORMService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
@@ -302,51 +304,6 @@ export class WorkspaceMigrationRunnerService {
     }
   }
 
-  private async fetchExistingTableIndexes(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-  ) {
-    const existingIndexes = await queryRunner.query(
-      `
-      SELECT
-      _table.relname as "tableName",
-      _index.relname as "indexName",
-      array_agg(_attribute.attname ORDER BY idx) as "columnNames",
-      _table_index.indisunique as "isUnique",
-      pg_get_indexdef(_table_index.indexrelid) as "indexDefinition"
-    FROM
-      pg_class _table
-    JOIN
-      pg_index _table_index ON _table.oid = _table_index.indrelid
-    JOIN
-      pg_class _index ON _index.oid = _table_index.indexrelid
-    JOIN
-      pg_namespace _namespace ON _table.relnamespace = _namespace.oid
-    JOIN
-      LATERAL unnest(_table_index.indkey) WITH ORDINALITY as col(att, idx) ON true
-    JOIN
-      pg_attribute _attribute ON _attribute.attrelid = _table.oid AND _attribute.attnum = col.att
-    WHERE
-      _table.relkind = 'r'
-      AND _table.relname = $1
-      AND _namespace.nspname = $2
-      AND _table_index.indisprimary = FALSE
-    GROUP BY
-      _table.relname,
-      _index.relname,
-      _table_index.indisunique,
-      _table_index.indexrelid
-    ORDER BY
-      _table.relname,
-      _index.relname;
-    `,
-      [tableName, schemaName],
-    );
-
-    return existingIndexes;
-  }
-
   private async dropExistingIndexes(
     queryRunner: QueryRunner,
     schemaName: string,
@@ -355,11 +312,12 @@ export class WorkspaceMigrationRunnerService {
   ) {
     // Since we don't always provide a name when we create an new index, we need to
     // fetch the existing indexes and filter them based on the columns.
-    const existingTableIndexes = await this.fetchExistingTableIndexes(
-      queryRunner,
-      schemaName,
-      tableName,
-    );
+    const existingTableIndexes =
+      await this.typeORMService.fetchExistingTableIndexes(
+        schemaName,
+        tableName,
+        queryRunner,
+      );
 
     const existingIndexesToDrop: any[] = [];
 

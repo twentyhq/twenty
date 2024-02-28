@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
-import { DataSource } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
@@ -148,5 +148,70 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     for (const [, dataSource] of this.dataSources) {
       await dataSource.destroy();
     }
+  }
+
+  public async fetchExistingTableIndexes(
+    schemaName: string,
+    tableName: string,
+    queryRunner?: QueryRunner,
+  ): Promise<
+    {
+      tableName: string;
+      indexName: string;
+      columnNames: string;
+      isUnique: boolean;
+      indexDefinition: string;
+    }[]
+  > {
+    const query = `
+      SELECT
+      _table.relname as "tableName",
+      _index.relname as "indexName",
+      array_agg(_attribute.attname ORDER BY idx) as "columnNames",
+      _table_index.indisunique as "isUnique",
+      pg_get_indexdef(_table_index.indexrelid) as "indexDefinition"
+    FROM
+      pg_class _table
+    JOIN
+      pg_index _table_index ON _table.oid = _table_index.indrelid
+    JOIN
+      pg_class _index ON _index.oid = _table_index.indexrelid
+    JOIN
+      pg_namespace _namespace ON _table.relnamespace = _namespace.oid
+    JOIN
+      LATERAL unnest(_table_index.indkey) WITH ORDINALITY as col(att, idx) ON true
+    JOIN
+      pg_attribute _attribute ON _attribute.attrelid = _table.oid AND _attribute.attnum = col.att
+    WHERE
+      _table.relkind = 'r'
+      AND _table.relname = $1
+      AND _namespace.nspname = $2
+      AND _table_index.indisprimary = FALSE
+    GROUP BY
+      _table.relname,
+      _index.relname,
+      _table_index.indisunique,
+      _table_index.indexrelid
+    ORDER BY
+      _table.relname,
+      _index.relname;
+    `;
+
+    if (!queryRunner) {
+      const queryRunner = this.mainDataSource.createQueryRunner();
+
+      const existingIndexes = queryRunner.query(query, [tableName, schemaName]);
+
+      await queryRunner.release();
+
+      return existingIndexes;
+    }
+
+    const existingIndexes = await queryRunner.query(query, [
+      tableName,
+      schemaName,
+    ]);
+
+    return existingIndexes;
   }
 }

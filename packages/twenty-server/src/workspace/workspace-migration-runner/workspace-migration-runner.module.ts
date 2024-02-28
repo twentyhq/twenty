@@ -4,6 +4,7 @@ import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/works
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { WorkspaceCacheVersionModule } from 'src/metadata/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 import { WorkspaceMigrationRunnerService } from './workspace-migration-runner.service';
 
@@ -11,6 +12,7 @@ import { WorkspaceMigrationTypeService } from './services/workspace-migration-ty
 
 @Module({
   imports: [
+    TypeORMModule,
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
     WorkspaceCacheVersionModule,

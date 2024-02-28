@@ -31,6 +31,7 @@ export enum WorkspaceHealthIssueType {
   RELATION_FOREIGN_KEY_CONFLICT = 'RELATION_FOREIGN_KEY_CONFLICT',
   RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT = 'RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT',
   RELATION_TYPE_NOT_VALID = 'RELATION_TYPE_NOT_VALID',
+  ALL_OBJECT_INDEX_DONT_HAVE_AN_EXISTING_INDEX = 'ALL_OBJECT_INDEX_DONT_HAVE_AN_EXISTING_INDEX',
 }
 
 /**
@@ -41,7 +42,8 @@ export type WorkspaceTableIssueTypes =
   | WorkspaceHealthIssueType.TABLE_NAME_SHOULD_BE_CUSTOM
   | WorkspaceHealthIssueType.TABLE_TARGET_TABLE_NAME_NOT_VALID
   | WorkspaceHealthIssueType.TABLE_DATA_SOURCE_ID_NOT_VALID
-  | WorkspaceHealthIssueType.TABLE_NAME_NOT_VALID;
+  | WorkspaceHealthIssueType.TABLE_NAME_NOT_VALID
+  | WorkspaceHealthIssueType.ALL_OBJECT_INDEX_DONT_HAVE_AN_EXISTING_INDEX;
 
 export interface WorkspaceHealthTableIssue<T extends WorkspaceTableIssueTypes> {
   type: T;
