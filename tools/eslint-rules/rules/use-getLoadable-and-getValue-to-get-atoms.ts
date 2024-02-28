@@ -15,7 +15,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     schema: [],
     messages: {
       invalidWayToGetAtoms:
-        "Expected usage '{{ expectedWayToGetAtoms }}' but found '{{ actualWayToGetAtoms }}'",
+        "Expected to use method 'getValue()' with 'getLoadable()' but instead found '{{ propertyName}}'",
     },
   },
   defaultOptions: [],
@@ -36,11 +36,11 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         if (arg.arguments[0].callee) {
           const familyKey = arg.arguments[0].arguments[0].name;
           const familyName = arg.arguments[0].callee.name;
-          actualWayToGetAtoms = `snapshot.getPromise(${familyName}(${familyKey}))`;
+          actualWayToGetAtoms = `await snapshot.getPromise(${familyName}(${familyKey}))`;
           expectedWayToGetAtoms = `snapshot.getLoadable(${familyName}(${familyKey})).getValue()`;
         } else {
           const recoilValue = arg.arguments[0].name;
-          actualWayToGetAtoms = `snapshot.getPromise(${recoilValue})`;
+          actualWayToGetAtoms = `await snapshot.getPromise(${recoilValue})`;
           expectedWayToGetAtoms = `snapshot.getLoadable(${recoilValue}).getValue()`;
         }
 
@@ -53,6 +53,28 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           },
           fix: (fixer) => fixer.replaceText(node, expectedWayToGetAtoms),
         });
+      }
+    },
+    MemberExpression: (node) => {
+      const { object, property }: any = node;
+
+      if (
+        object.callee &&
+        object.callee.type === 'MemberExpression' &&
+        object.callee.property.name === 'getLoadable'
+      ) {
+        const propertyName = property.name;
+
+        if (propertyName !== 'getValue') {
+          context.report({
+            node: property,
+            messageId: 'invalidWayToGetAtoms',
+            data: {
+              propertyName,
+            },
+            fix: (fixer) => fixer.replaceText(property, 'getValue'),
+          });
+        }
       }
     },
   }),

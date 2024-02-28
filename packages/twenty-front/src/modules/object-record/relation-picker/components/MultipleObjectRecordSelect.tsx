@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
-import { MultiObjectRecordSelectSelectableListId } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
+import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import {
   ObjectRecordForSelect,
   SelectedObjectRecordId,
@@ -140,7 +140,7 @@ export const MultipleObjectRecordSelect = ({
           ) : (
             <>
               <SelectableList
-                selectableListId={MultiObjectRecordSelectSelectableListId}
+                selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={selectableItemIds}
                 hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 onEnter={(recordId) => {

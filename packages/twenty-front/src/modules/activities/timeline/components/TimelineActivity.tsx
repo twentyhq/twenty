@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityFirstLevelFamilySelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -136,28 +136,42 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 `;
 
 type TimelineActivityProps = {
-  activity: Activity;
   isLastActivity?: boolean;
+  activityId: string;
 };
 
 export const TimelineActivity = ({
-  activity,
   isLastActivity,
+  activityId,
 }: TimelineActivityProps) => {
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
-  const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
+  const activityForTimeline = useRecoilValue(
+    timelineActivityWithoutTargetsFamilyState(activityId),
+  );
+
+  const beautifiedCreatedAt = activityForTimeline
+    ? beautifyPastDateRelativeToNow(activityForTimeline.createdAt)
+    : '';
+  const exactCreatedAt = activityForTimeline
+    ? beautifyExactDateTime(activityForTimeline.createdAt)
+    : '';
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const theme = useTheme();
 
-  const activityFromStore = useRecoilValue(recordStoreFamilyState(activity.id));
+  const activityFromStore = useRecoilValue(
+    recordStoreFamilyState(activityForTimeline?.id ?? ''),
+  );
+
+  if (!activityForTimeline) {
+    return <></>;
+  }
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledAvatarContainer>
           <Avatar
-            avatarUrl={activity.author?.avatarUrl}
-            placeholder={activity.author?.name.firstName ?? ''}
+            avatarUrl={activityForTimeline.author?.avatarUrl}
+            placeholder={activityForTimeline.author?.name.firstName ?? ''}
             size="sm"
             type="rounded"
           />
@@ -166,23 +180,26 @@ export const TimelineActivity = ({
           <StyledItemTitleContainer>
             <StyledItemAuthorText>
               <span>
-                {activity.author?.name.firstName}{' '}
-                {activity.author?.name.lastName}
+                {activityForTimeline.author?.name.firstName}{' '}
+                {activityForTimeline.author?.name.lastName}
               </span>
-              created a {activity.type.toLowerCase()}
+              created a {activityForTimeline.type.toLowerCase()}
             </StyledItemAuthorText>
             <StyledItemTitle>
               <StyledIconContainer>
-                {activity.type === 'Note' && (
+                {activityForTimeline.type === 'Note' && (
                   <IconNotes size={theme.icon.size.sm} />
                 )}
-                {activity.type === 'Task' && (
+                {activityForTimeline.type === 'Task' && (
                   <IconCheckbox size={theme.icon.size.sm} />
                 )}
               </StyledIconContainer>
-              {(activity.type === 'Note' || activity.type === 'Task') && (
+              {(activityForTimeline.type === 'Note' ||
+                activityForTimeline.type === 'Task') && (
                 <StyledActivityTitle
-                  onClick={() => openActivityRightDrawer(activity)}
+                  onClick={() =>
+                    openActivityRightDrawer(activityForTimeline.id)
+                  }
                 >
                   “
                   <StyledActivityLink
@@ -195,11 +212,11 @@ export const TimelineActivity = ({
               )}
             </StyledItemTitle>
           </StyledItemTitleContainer>
-          <StyledItemTitleDate id={`id-${activity.id}`}>
+          <StyledItemTitleDate id={`id-${activityForTimeline.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
           <StyledTooltip
-            anchorSelect={`#id-${activity.id}`}
+            anchorSelect={`#id-${activityForTimeline.id}`}
             content={exactCreatedAt}
             clickable
             noArrow

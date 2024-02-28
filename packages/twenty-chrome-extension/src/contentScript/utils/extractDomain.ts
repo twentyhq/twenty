@@ -1,4 +1,4 @@
-function extractDomain(url: string | null) {
+const extractDomain = (url: string | null) => {
   if (!url) return '';
 
   const hostname = new URL(url).hostname;
@@ -10,6 +10,6 @@ function extractDomain(url: string | null) {
   }
 
   return domain;
-}
+};
 
 export default extractDomain;

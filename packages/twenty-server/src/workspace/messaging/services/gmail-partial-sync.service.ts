@@ -15,6 +15,7 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -29,6 +30,7 @@ export class GmailPartialSyncService {
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageService: MessageService,
+    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -36,11 +38,6 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
       workspaceId,
@@ -68,6 +65,11 @@ export class GmailPartialSyncService {
     );
 
     if (error && error.code === 404) {
+      await this.connectedAccountService.deleteHistoryId(
+        connectedAccountId,
+        workspaceId,
+      );
+
       await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
       return;
@@ -104,22 +106,23 @@ export class GmailPartialSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
+        'gmail full-sync',
+        workspaceId,
+        connectedAccountId,
       );
 
     if (messagesToSave.length !== 0) {
-      await this.messageService.saveMessages(
+      await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
         messagesToSave,
-        dataSourceMetadata,
-        workspaceDataSource,
         connectedAccount,
-        gmailMessageChannelId,
         workspaceId,
+        gmailMessageChannelId,
+        'gmail partial-sync',
       );
     }
 
     if (messagesDeleted.length !== 0) {
       await this.messageService.deleteMessages(
-        workspaceDataSource,
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,

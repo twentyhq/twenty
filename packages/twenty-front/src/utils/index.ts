@@ -20,5 +20,7 @@ export const getLogoUrlFromDomainName = (
   domainName?: string,
 ): string | undefined => {
   const sanitizedDomain = sanitizeURL(domainName);
-  return `https://favicon.twenty.com/${sanitizedDomain}`;
+  return sanitizedDomain
+    ? `https://favicon.twenty.com/${sanitizedDomain}`
+    : undefined;
 };

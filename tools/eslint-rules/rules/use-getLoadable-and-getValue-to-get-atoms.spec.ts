@@ -22,7 +22,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   invalid: [
     {
-      code: 'const atoms = snapshot.getPromise(someState);',
+      code: 'const atoms = await snapshot.getPromise(someState);',
       errors: [
         {
           messageId: 'invalidWayToGetAtoms',
@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
       output: 'const atoms = snapshot.getLoadable(someState).getValue();',
     },
     {
-      code: 'const atoms = snapshot.getPromise(someState(viewId));',
+      code: 'const atoms = await snapshot.getPromise(someState(viewId));',
       errors: [
         {
           messageId: 'invalidWayToGetAtoms',
@@ -39,6 +39,15 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output:
         'const atoms = snapshot.getLoadable(someState(viewId)).getValue();',
+    },
+    {
+      code: 'const atoms = snapshot.getLoadable(someState).anotherMethod();',
+      errors: [
+        {
+          messageId: 'invalidWayToGetAtoms',
+        },
+      ],
+      output: 'const atoms = snapshot.getLoadable(someState).getValue();',
     },
   ],
 });

@@ -91,7 +91,7 @@ export const useInjectIntoActivitiesQueries = () => {
       const currentFindManyActivitiesQueryVariables = {
         filter: {
           id: {
-            in: existingActivityIdsFromTargets.toSorted(sortByAscString),
+            in: [...existingActivityIdsFromTargets].sort(sortByAscString),
           },
           ...activitiesFilters,
         },
@@ -110,7 +110,7 @@ export const useInjectIntoActivitiesQueries = () => {
       const nextFindManyActivitiesQueryVariables = {
         filter: {
           id: {
-            in: nextActivityIds.toSorted(sortByAscString),
+            in: [...nextActivityIds].sort(sortByAscString),
           },
           ...activitiesFilters,
         },

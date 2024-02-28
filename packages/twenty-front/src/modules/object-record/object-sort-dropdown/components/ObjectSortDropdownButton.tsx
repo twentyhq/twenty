@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
@@ -13,7 +14,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
@@ -41,7 +41,7 @@ export const ObjectSortDropdownButton = ({
     sortDropdownId: sortDropdownId,
   });
 
-  const { toggleDropdown } = useDropdown(ObjectSortDropdownId);
+  const { toggleDropdown } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
     toggleDropdown();
@@ -70,7 +70,7 @@ export const ObjectSortDropdownButton = ({
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <Dropdown
-        dropdownId={ObjectSortDropdownId}
+        dropdownId={OBJECT_SORT_DROPDOWN_ID}
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8 }}
         clickableComponent={

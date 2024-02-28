@@ -1,8 +1,7 @@
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-
-import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
 
 import { MultipleFiltersButton } from './MultipleFiltersButton';
 import { MultipleFiltersDropdownContent } from './MultipleFiltersDropdownContent';
@@ -18,7 +17,7 @@ export const MultipleFiltersDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownId={ObjectFilterDropdownId}
+      dropdownId={OBJECT_FILTER_DROPDOWN_ID}
       onClose={resetFilter}
       clickableComponent={<MultipleFiltersButton />}
       dropdownComponents={<MultipleFiltersDropdownContent />}

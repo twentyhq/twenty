@@ -1,11 +1,11 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 
-import { rgba } from '@/ui/theme/constants/colors';
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import { RGBA } from '@/ui/theme/constants/Rgba';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 const StyledInput = styled.input`
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
 
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -17,7 +17,7 @@ const StyledInput = styled.input`
 
   &:focus {
     border-color: ${({ theme }) => theme.color.blue};
-    box-shadow: 0px 0px 0px 3px ${({ theme }) => rgba(theme.color.blue, 0.1)};
+    box-shadow: 0px 0px 0px 3px ${({ theme }) => RGBA(theme.color.blue, 0.1)};
   }
 `;
 

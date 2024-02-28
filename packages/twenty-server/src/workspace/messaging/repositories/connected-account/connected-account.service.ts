@@ -83,6 +83,41 @@ export class ConnectedAccountService {
     );
   }
 
+  public async updateLastSyncHistoryIdIfHigher(
+    historyId: string,
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1
+      WHERE "id" = $2
+      AND ("lastSyncHistoryId" < $1 OR "lastSyncHistoryId" = '')`,
+      [historyId, connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async deleteHistoryId(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = '' WHERE "id" = $1`,
+      [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateAccessToken(
     accessToken: string,
     connectedAccountId: string,

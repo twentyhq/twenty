@@ -68,7 +68,7 @@ export const useUpdateCompanyBoardColumnsInternal = () => {
         for (const [id, companyProgress] of Object.entries(companyBoardIndex)) {
           const currentCompanyProgress = snapshot
             .getLoadable(companyProgressesFamilyState(id))
-            .valueOrThrow();
+            .getValue();
 
           if (!isDeeplyEqual(currentCompanyProgress, companyProgress)) {
             set(companyProgressesFamilyState(id), companyProgress);
@@ -78,11 +78,11 @@ export const useUpdateCompanyBoardColumnsInternal = () => {
 
         const currentPipelineSteps = snapshot
           .getLoadable(currentPipelineStepsState)
-          .valueOrThrow();
+          .getValue();
 
         const currentBoardColumns = snapshot
           .getLoadable(boardColumnsState)
-          .valueOrThrow();
+          .getValue();
 
         if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {
           set(currentPipelineStepsState, pipelineSteps);
@@ -133,7 +133,7 @@ export const useUpdateCompanyBoardColumnsInternal = () => {
             .getLoadable(
               recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
             )
-            .valueOrThrow();
+            .getValue();
 
           if (!isDeeplyEqual(currentBoardCardIds, boardCardIds)) {
             set(

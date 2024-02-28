@@ -19,9 +19,6 @@ const StyledOuterContainer = styled.div`
 const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => (useIsMobile() ? '12px 0' : theme.spacing(3))};
-  padding-right: ${({ theme }) => (useIsMobile() ? 0 : theme.spacing(2))};
   width: ${() => (useIsMobile() ? `100%` : '348px')};
 `;
 

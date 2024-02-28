@@ -1,7 +1,7 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -17,7 +17,7 @@ const StyledDropdownMenuSearchInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input`
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
 
   font-size: ${({ theme }) => theme.font.size.sm};
   width: 100%;

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
@@ -37,17 +38,27 @@ const StyledBlockNoteStyledContainer = styled.div`
 `;
 
 type ActivityBodyEditorProps = {
-  activity: Activity;
+  activityId: string;
   fillTitleFromBody: boolean;
 };
 
 export const ActivityBodyEditor = ({
-  activity,
+  activityId,
   fillTitleFromBody,
 }: ActivityBodyEditorProps) => {
+  const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+
+  const activity = activityInStore as Activity | null;
+
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
+    }),
+  );
+
+  const [activityBody, setActivityBody] = useRecoilState(
+    activityBodyFamilyState({
+      activityId: activityId,
     }),
   );
 
@@ -67,27 +78,31 @@ export const ActivityBodyEditor = ({
   const { upsertActivity } = useUpsertActivity();
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
-    upsertActivity({
-      activity,
-      input: {
-        body: newBody,
-      },
-    });
-  }, 500);
-
-  const persistTitleAndBodyDebounced = useDebouncedCallback(
-    (newTitle: string, newBody: string) => {
+    if (activity) {
       upsertActivity({
         activity,
         input: {
-          title: newTitle,
           body: newBody,
         },
       });
+    }
+  }, 300);
 
-      setActivityTitleHasBeenSet(true);
+  const persistTitleAndBodyDebounced = useDebouncedCallback(
+    (newTitle: string, newBody: string) => {
+      if (activity) {
+        upsertActivity({
+          activity,
+          input: {
+            title: newTitle,
+            body: newBody,
+          },
+        });
+
+        setActivityTitleHasBeenSet(true);
+      }
     },
-    500,
+    200,
   );
 
   const updateTitleAndBody = useCallback(
@@ -102,28 +117,6 @@ export const ActivityBodyEditor = ({
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
     canCreateActivityState,
-  );
-
-  const handleBodyChange = useCallback(
-    (activityBody: string) => {
-      if (!canCreateActivity) {
-        setCanCreateActivity(true);
-      }
-
-      if (!activityTitleHasBeenSet && fillTitleFromBody) {
-        updateTitleAndBody(activityBody);
-      } else {
-        persistBodyDebounced(activityBody);
-      }
-    },
-    [
-      fillTitleFromBody,
-      persistBodyDebounced,
-      activityTitleHasBeenSet,
-      updateTitleAndBody,
-      setCanCreateActivity,
-      canCreateActivity,
-    ],
   );
 
   const slashMenuItems = getSlashMenu();
@@ -148,63 +141,105 @@ export const ActivityBodyEditor = ({
     return imageUrl;
   };
 
-  const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
-    initialContent:
-      isNonEmptyString(activity.body) && activity.body !== '{}'
-        ? JSON.parse(activity.body)
-        : undefined,
-    domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: useRecoilCallback(
-      ({ snapshot, set }) =>
-        (editor: BlockNoteEditor) => {
-          const newStringifiedBody =
-            JSON.stringify(editor.topLevelBlocks) ?? '';
+  const handlePersistBody = useCallback(
+    (activityBody: string) => {
+      if (!canCreateActivity) {
+        setCanCreateActivity(true);
+      }
 
-          set(recordStoreFamilyState(activity.id), (oldActivity) => {
+      if (!activityTitleHasBeenSet && fillTitleFromBody) {
+        updateTitleAndBody(activityBody);
+      } else {
+        persistBodyDebounced(activityBody);
+      }
+    },
+    [
+      fillTitleFromBody,
+      persistBodyDebounced,
+      activityTitleHasBeenSet,
+      updateTitleAndBody,
+      setCanCreateActivity,
+      canCreateActivity,
+    ],
+  );
+
+  const handleBodyChange = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (newStringifiedBody: string) => {
+        set(recordStoreFamilyState(activityId), (oldActivity) => {
+          return {
+            ...oldActivity,
+            id: activityId,
+            body: newStringifiedBody,
+          };
+        });
+
+        modifyActivityFromCache(activityId, {
+          body: () => {
+            return newStringifiedBody;
+          },
+        });
+
+        const activityTitleHasBeenSet = snapshot
+          .getLoadable(
+            activityTitleHasBeenSetFamilyState({
+              activityId: activityId,
+            }),
+          )
+          .getValue();
+
+        const blockBody = JSON.parse(newStringifiedBody);
+        const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
+
+        if (!activityTitleHasBeenSet && fillTitleFromBody) {
+          set(recordStoreFamilyState(activityId), (oldActivity) => {
             return {
               ...oldActivity,
-              id: activity.id,
-              body: newStringifiedBody,
+              id: activityId,
+              title: newTitleFromBody,
             };
           });
 
-          modifyActivityFromCache(activity.id, {
-            body: () => {
-              return newStringifiedBody;
+          modifyActivityFromCache(activityId, {
+            title: () => {
+              return newTitleFromBody;
             },
           });
+        }
 
-          const activityTitleHasBeenSet = snapshot
-            .getLoadable(
-              activityTitleHasBeenSetFamilyState({
-                activityId: activity.id,
-              }),
-            )
-            .getValue();
+        handlePersistBody(newStringifiedBody);
+      },
+    [activityId, fillTitleFromBody, modifyActivityFromCache, handlePersistBody],
+  );
 
-          const blockBody = JSON.parse(newStringifiedBody);
-          const newTitleFromBody = blockBody[0]?.content?.[0]?.text as string;
+  const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
-          if (!activityTitleHasBeenSet && fillTitleFromBody) {
-            set(recordStoreFamilyState(activity.id), (oldActivity) => {
-              return {
-                ...oldActivity,
-                id: activity.id,
-                title: newTitleFromBody,
-              };
-            });
+  const handleEditorChange = (newEditor: BlockNoteEditor) => {
+    const newStringifiedBody = JSON.stringify(newEditor.topLevelBlocks) ?? '';
 
-            modifyActivityFromCache(activity.id, {
-              title: () => {
-                return newTitleFromBody;
-              },
-            });
-          }
+    setActivityBody(newStringifiedBody);
 
-          handleBodyChange(newStringifiedBody);
-        },
-      [activity, fillTitleFromBody, modifyActivityFromCache, handleBodyChange],
-    ),
+    handleBodyChangeDebounced(newStringifiedBody);
+  };
+
+  const initialBody = useMemo(() => {
+    if (isNonEmptyString(activityBody) && activityBody !== '{}') {
+      return JSON.parse(activityBody);
+    } else if (
+      activity &&
+      isNonEmptyString(activity.body) &&
+      activity?.body !== '{}'
+    ) {
+      return JSON.parse(activity.body);
+    } else {
+      return undefined;
+    }
+  }, [activity, activityBody]);
+
+  const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
+    initialContent: initialBody,
+    domAttributes: { editor: { class: 'editor' } },
+    onEditorContentChange: handleEditorChange,
     slashMenuItems,
     blockSpecs: blockSpecs,
     uploadFile: handleUploadAttachment,

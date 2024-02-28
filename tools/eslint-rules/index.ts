@@ -11,6 +11,10 @@ import {
   RULE_NAME as matchingStateVariableName,
 } from './rules/matching-state-variable';
 import {
+  rule as maxConstsPerFile,
+  RULE_NAME as maxConstsPerFileName,
+} from './rules/max-consts-per-file';
+import {
   rule as noHardcodedColors,
   RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
@@ -67,5 +71,6 @@ module.exports = {
       styledComponentsPrefixedWithStyled,
     [useGetLoadableAndGetValueToGetAtomsName]:
       useGetLoadableAndGetValueToGetAtoms,
+    [maxConstsPerFileName]: maxConstsPerFile,
   },
 };

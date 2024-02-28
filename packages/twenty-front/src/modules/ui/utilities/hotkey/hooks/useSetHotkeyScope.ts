@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { isDefined } from '~/utils/isDefined';
 
-import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants';
+import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 import { AppHotkeyScope } from '../types/AppHotkeyScope';
@@ -27,7 +27,7 @@ export const useSetHotkeyScope = () =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isDefined(customScopes)) {
