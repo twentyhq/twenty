@@ -248,7 +248,7 @@ export class GmailPartialSyncService {
 
       const historyId = history?.data?.historyId;
 
-      if (history.data.history) fullHistory.push(...history?.data.history);
+      if (history?.data?.history) fullHistory.push(...history.data.history);
 
       while (nextPageToken) {
         const nextHistory = await gmailClient.users.history.list({
