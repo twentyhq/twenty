@@ -15,5 +15,4 @@ export interface ObjectMetadataInterface {
   isSystem: boolean;
   isCustom: boolean;
   isActive: boolean;
-  // IndexMetadata?: IndexMetadata[];
 }

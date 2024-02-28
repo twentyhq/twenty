@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   WorkspaceHealthIssue,
-  WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceHealthOptions } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
@@ -107,7 +106,7 @@ export class ObjectMetadataHealthService {
 
       if (!allObjectIndexMetadataHaveAnExistingIndex) {
         issues.push({
-          type: WorkspaceHealthIssueType.ALL_OBJECT_INDEX_DONT_HAVE_AN_EXISTING_INDEX,
+          type: WorkspaceHealthIssueType.TABLE_MISSING_INDEX,
           objectMetadata,
           message: `Missing indexes for table ${computeObjectTargetTable(
             objectMetadata,

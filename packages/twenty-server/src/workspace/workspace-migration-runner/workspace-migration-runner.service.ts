@@ -310,8 +310,8 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     indexesToDrop: IndexMetadata[],
   ) {
-    // Since we don't always provide a name when we create an new index, we need to
-    // fetch the existing indexes and filter them based on the columns.
+    // Since we don't always provide a name when we create a new index, we need to
+    // fetch the existing indexes of the table and filter them based on the columns.
     const existingTableIndexes =
       await this.typeORMService.fetchExistingTableIndexes(
         schemaName,
