@@ -97,7 +97,7 @@ export class GmailPartialSyncService {
       throw new Error('No history id found');
     }
 
-    if (historyId === lastSyncHistoryId) {
+    if (historyId === lastSyncHistoryId || !history?.length) {
       this.logger.log(
         `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
       );
@@ -244,11 +244,11 @@ export class GmailPartialSyncService {
         maxResults,
       });
 
-      let nextPageToken = history.data.nextPageToken;
+      let nextPageToken = history?.data?.nextPageToken;
 
-      const historyId = history.data.historyId;
+      const historyId = history?.data?.historyId;
 
-      if (history.data.history) fullHistory.push(...history.data.history);
+      if (history.data.history) fullHistory.push(...history?.data.history);
 
       while (nextPageToken) {
         const nextHistory = await gmailClient.users.history.list({
@@ -259,9 +259,9 @@ export class GmailPartialSyncService {
           pageToken: nextPageToken,
         });
 
-        nextPageToken = nextHistory.data.nextPageToken;
+        nextPageToken = nextHistory?.data?.nextPageToken;
 
-        if (nextHistory.data.history)
+        if (nextHistory?.data?.history)
           fullHistory.push(...nextHistory.data.history);
       }
 
