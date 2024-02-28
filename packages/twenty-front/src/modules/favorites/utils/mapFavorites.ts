@@ -1,5 +1,4 @@
 import { getLogoUrlFromDomainName } from '~/utils';
-import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 
 export const mapFavorites = (favorites: any) => {
@@ -33,6 +32,6 @@ export const mapFavorites = (favorites: any) => {
         position: favorite?.position,
       };
     })
-    .filter(assertNotNull)
+    .filter(isDefined)
     .sort((a: any, b: any) => a.position - b.position);
 };

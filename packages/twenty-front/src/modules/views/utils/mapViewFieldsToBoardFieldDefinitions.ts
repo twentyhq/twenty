@@ -1,6 +1,6 @@
 import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
 import { ViewField } from '../types/ViewField';
 
@@ -28,5 +28,5 @@ export const mapViewFieldsToBoardFieldDefinitions = (
           }
         : null;
     })
-    .filter(assertNotNull);
+    .filter(isDefined);
 };

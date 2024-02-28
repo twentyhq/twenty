@@ -56,7 +56,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
         const rootQueryConnection = rootQueryCachedResponse;
 
-        const { fieldArguments: rootQueryVariables } =
+        const { fieldVariables: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
