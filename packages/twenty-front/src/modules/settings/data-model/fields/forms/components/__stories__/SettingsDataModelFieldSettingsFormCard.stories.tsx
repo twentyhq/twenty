@@ -5,6 +5,7 @@ import {
   mockedCompanyObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { fieldMetadataFormDefaultValues } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -15,8 +16,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { fieldMetadataFormDefaultValues } from '../../hooks/useFieldMetadataForm';
-import { SettingsDataModelFieldPreviewFormCard } from '../SettingsDataModelFieldPreviewFormCard';
+import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
 
 const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
   ({ type }) => type === FieldMetadataType.Text,
@@ -28,9 +28,10 @@ const defaultValues = {
   select: fieldMetadataFormDefaultValues.select,
 };
 
-const meta: Meta<typeof SettingsDataModelFieldPreviewFormCard> = {
-  title: 'Modules/Settings/DataModel/SettingsDataModelFieldPreviewFormCard',
-  component: SettingsDataModelFieldPreviewFormCard,
+const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
+  title:
+    'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldSettingsFormCard',
+  component: SettingsDataModelFieldSettingsFormCard,
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -49,7 +50,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewFormCard> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsDataModelFieldPreviewFormCard>;
+type Story = StoryObj<typeof SettingsDataModelFieldSettingsFormCard>;
 
 export const Default: Story = {};
 

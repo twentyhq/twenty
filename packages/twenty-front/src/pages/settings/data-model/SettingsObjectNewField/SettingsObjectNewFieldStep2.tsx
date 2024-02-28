@@ -14,10 +14,10 @@ import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnec
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsDataModelFieldPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelFieldPreviewFormCard';
-import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/components/SettingsDataModelFieldTypeSelect';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
-import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
+import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
+import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
+import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -306,7 +306,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             onChange={handleFormChange}
             value={formValues.type}
           />
-          <SettingsDataModelFieldPreviewFormCard
+          <SettingsDataModelFieldSettingsFormCard
             fieldMetadataItem={{
               icon: formValues.icon,
               label: formValues.label || 'Employees',

@@ -14,7 +14,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 
 const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
-  title: 'Modules/Settings/DataModel/SettingsDataModelFieldPreviewCard',
+  title:
+    'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewCard',
   component: SettingsDataModelFieldPreviewCard,
   decorators: [
     ComponentDecorator,

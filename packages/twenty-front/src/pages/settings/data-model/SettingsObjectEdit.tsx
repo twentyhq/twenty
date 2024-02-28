@@ -6,8 +6,8 @@ import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsDataModelObjectPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelObjectPreviewFormCard';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -131,7 +131,7 @@ export const SettingsObjectEdit = () => {
             title="Settings"
             description="Choose the fields that will identify your records"
           />
-          <SettingsDataModelObjectPreviewFormCard
+          <SettingsDataModelObjectSettingsFormCard
             objectMetadataItem={activeObjectMetadataItem}
           />
         </Section>

@@ -2,41 +2,40 @@ import styled from '@emotion/styled';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-import {
-  SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
-} from './SettingsDataModelFieldPreviewCard';
-import { SettingsDataModelPreviewFormCard } from './SettingsDataModelPreviewFormCard';
+import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   SettingsObjectFieldCurrencyForm,
   SettingsObjectFieldCurrencyFormValues,
-} from './SettingsObjectFieldCurrencyForm';
+} from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import {
   SettingsObjectFieldRelationForm,
   SettingsObjectFieldRelationFormValues,
-} from './SettingsObjectFieldRelationForm';
+} from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
 import {
   SettingsObjectFieldSelectForm,
   SettingsObjectFieldSelectFormValues,
-} from './SettingsObjectFieldSelectForm';
+} from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import {
+  SettingsDataModelFieldPreviewCard,
+  SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export type SettingsDataModelFieldPreviewFormValues = {
+export type SettingsDataModelFieldSettingsFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
 };
 
-type SettingsDataModelFieldPreviewFormCardProps = {
+type SettingsDataModelFieldSettingsFormCardProps = {
   disableCurrencyForm?: boolean;
-  onChange: (values: Partial<SettingsDataModelFieldPreviewFormValues>) => void;
+  onChange: (values: Partial<SettingsDataModelFieldSettingsFormValues>) => void;
   relationFieldMetadataItem?: Pick<
     FieldMetadataItem,
     'id' | 'isCustom' | 'name'
   >;
-  values: SettingsDataModelFieldPreviewFormValues;
+  values: SettingsDataModelFieldSettingsFormValues;
 } & Pick<
   SettingsDataModelFieldPreviewCardProps,
   'fieldMetadataItem' | 'objectMetadataItem'
@@ -69,14 +68,14 @@ const previewableTypes = [
   FieldMetadataType.Text,
 ];
 
-export const SettingsDataModelFieldPreviewFormCard = ({
+export const SettingsDataModelFieldSettingsFormCard = ({
   disableCurrencyForm,
   fieldMetadataItem,
   objectMetadataItem,
   onChange,
   relationFieldMetadataItem,
   values,
-}: SettingsDataModelFieldPreviewFormCardProps) => {
+}: SettingsDataModelFieldSettingsFormCardProps) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
 
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;

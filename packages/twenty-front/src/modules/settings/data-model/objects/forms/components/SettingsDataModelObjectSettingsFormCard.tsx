@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/components/SettingsDataModelFieldPreviewCard';
-import { SettingsDataModelObjectSummary } from '@/settings/data-model/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/SettingsDataModelObjectSummary';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-type SettingsDataModelObjectPreviewFormCardProps = {
+type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
@@ -26,9 +26,9 @@ const StyledObjectSummaryCardContent = styled(CardContent)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsDataModelObjectPreviewFormCard = ({
+export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
-}: SettingsDataModelObjectPreviewFormCardProps) => {
+}: SettingsDataModelObjectSettingsFormCardProps) => {
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 

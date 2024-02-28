@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { SettingsDataModelIsCustomTag } from '@/settings/data-model/components/SettingsDataModelIsCustomTag';
+import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { H2Title } from '@/ui/display/typography/components/H2Title';

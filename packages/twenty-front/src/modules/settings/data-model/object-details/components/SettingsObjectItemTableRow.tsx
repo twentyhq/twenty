@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsDataModelIsCustomTag } from '@/settings/data-model/components/SettingsDataModelIsCustomTag';
+import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

@@ -8,7 +8,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { SettingsDataModelFieldTypeSelect } from '../SettingsDataModelFieldTypeSelect';
 
 const meta: Meta<typeof SettingsDataModelFieldTypeSelect> = {
-  title: 'Modules/Settings/DataModel/SettingsDataModelFieldTypeSelect',
+  title:
+    'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldTypeSelect',
   component: SettingsDataModelFieldTypeSelect,
   decorators: [ComponentDecorator],
   args: {
