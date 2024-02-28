@@ -201,17 +201,8 @@ export class FetchMessagesByBatchesService {
         try {
           const parsed = await simpleParser(body);
 
-          const {
-            subject,
-            messageId,
-            from,
-            to,
-            cc,
-            bcc,
-            text,
-            html,
-            attachments,
-          } = parsed;
+          const { subject, messageId, from, to, cc, bcc, text, attachments } =
+            parsed;
 
           if (!from) throw new Error('From value is missing');
 
@@ -248,7 +239,7 @@ export class FetchMessagesByBatchesService {
             fromDisplayName: from.value[0].name || '',
             participants,
             text: textWithoutReplyQuotations || '',
-            html: html || '',
+            html: '',
             attachments,
           };
 
