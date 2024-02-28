@@ -38,5 +38,6 @@ export default {
     '__stories__/*',
     'display/icon/index.ts',
   ],
+  reporters: ['<rootDir>/jest-custom-reporter.cjs'],
   // coverageDirectory: '<rootDir>/coverage/',
 };

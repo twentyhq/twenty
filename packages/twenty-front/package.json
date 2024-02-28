@@ -17,7 +17,7 @@
     "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "test": "jest",
+    "test": "jest --coverage=false",
     "test-watch": "jest --coverage=false --watch",
     "tsup": "tsup",
     "coverage": "jest --coverage",
