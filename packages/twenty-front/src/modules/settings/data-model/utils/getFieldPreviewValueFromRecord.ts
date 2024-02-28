@@ -3,7 +3,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const getFieldValueFromRecord = ({
+export const getFieldPreviewValueFromRecord = ({
   record,
   fieldMetadataItem,
   selectOptions,
@@ -26,7 +26,7 @@ export const getFieldValueFromRecord = ({
     fieldMetadataItem.type === FieldMetadataType.Relation &&
     Array.isArray(recordFieldValue?.edges)
   ) {
-    return recordFieldValue.edges[0];
+    return recordFieldValue.edges[0]?.node;
   }
 
   // Other fields

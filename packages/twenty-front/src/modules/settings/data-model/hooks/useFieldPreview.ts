@@ -7,7 +7,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { getFieldDefaultPreviewValue } from '@/settings/data-model/utils/getFieldDefaultPreviewValue';
-import { getFieldValueFromRecord } from '@/settings/data-model/utils/getFieldValueFromRecord';
+import { getFieldPreviewValueFromRecord } from '@/settings/data-model/utils/getFieldPreviewValueFromRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
@@ -46,7 +46,7 @@ export const useFieldPreview = ({
 
   const fieldPreviewValueFromFirstRecord =
     firstRecord && fieldMetadataItem.name
-      ? getFieldValueFromRecord({
+      ? getFieldPreviewValueFromRecord({
           record: firstRecord,
           fieldMetadataItem: {
             name: fieldMetadataItem.name,
