@@ -1,6 +1,6 @@
 import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { RelationMetadataType, RelationOnDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -114,6 +114,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
