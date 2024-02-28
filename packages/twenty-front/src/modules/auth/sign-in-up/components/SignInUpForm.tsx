@@ -85,12 +85,8 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in'
-      : form.formState.isSubmitting
-        ? 'Creating workspace'
-        : 'Sign up';
-  }, [signInUpMode, signInUpStep, form.formState.isSubmitting]);
+    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+  }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
