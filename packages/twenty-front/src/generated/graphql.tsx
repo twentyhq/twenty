@@ -60,6 +60,7 @@ export type AuthTokens = {
 
 export type Billing = {
   __typename?: 'Billing';
+  billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
   billingUrl: Scalars['String'];
   isBillingEnabled: Scalars['Boolean'];
 };
@@ -67,6 +68,11 @@ export type Billing = {
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CheckoutEntity = {
+  __typename?: 'CheckoutEntity';
+  url: Scalars['String'];
 };
 
 export type ClientConfig = {
@@ -220,6 +226,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
   challenge: LoginToken;
+  checkout: CheckoutEntity;
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
@@ -251,6 +258,12 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCheckoutArgs = {
+  recurringInterval: Scalars['String'];
+  successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -362,6 +375,20 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
+export type ProductPriceEntity = {
+  __typename?: 'ProductPriceEntity';
+  created: Scalars['Float'];
+  recurringInterval: Scalars['String'];
+  stripePriceId: Scalars['String'];
+  unitAmount: Scalars['Float'];
+};
+
+export type ProductPricesEntity = {
+  __typename?: 'ProductPricesEntity';
+  productPrices: Array<ProductPriceEntity>;
+  totalNumberOfPrices: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   checkUserExists: UserExists;
@@ -370,6 +397,7 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
+  getProductPrices: ProductPricesEntity;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
@@ -390,6 +418,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryGetProductPricesArgs = {
+  product: Scalars['String'];
 };
 
 
@@ -830,10 +863,25 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
+export type CheckoutMutationVariables = Exact<{
+  recurringInterval: Scalars['String'];
+  successUrlPath?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CheckoutMutation = { __typename?: 'Mutation', checkout: { __typename?: 'CheckoutEntity', url: string } };
+
+export type GetProductPricesQueryVariables = Exact<{
+  product: Scalars['String'];
+}>;
+
+
+export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'ProductPricesEntity', productPrices: Array<{ __typename?: 'ProductPriceEntity', created: number, recurringInterval: string, stripePriceId: string, unitAmount: number }> } };
+
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1514,6 +1562,80 @@ export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.Lazy
 export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
 export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
 export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
+export const CheckoutDocument = gql`
+    mutation Checkout($recurringInterval: String!, $successUrlPath: String) {
+  checkout(recurringInterval: $recurringInterval, successUrlPath: $successUrlPath) {
+    url
+  }
+}
+    `;
+export type CheckoutMutationFn = Apollo.MutationFunction<CheckoutMutation, CheckoutMutationVariables>;
+
+/**
+ * __useCheckoutMutation__
+ *
+ * To run a mutation, you first call `useCheckoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [checkoutMutation, { data, loading, error }] = useCheckoutMutation({
+ *   variables: {
+ *      recurringInterval: // value for 'recurringInterval'
+ *      successUrlPath: // value for 'successUrlPath'
+ *   },
+ * });
+ */
+export function useCheckoutMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutMutation, CheckoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CheckoutMutation, CheckoutMutationVariables>(CheckoutDocument, options);
+      }
+export type CheckoutMutationHookResult = ReturnType<typeof useCheckoutMutation>;
+export type CheckoutMutationResult = Apollo.MutationResult<CheckoutMutation>;
+export type CheckoutMutationOptions = Apollo.BaseMutationOptions<CheckoutMutation, CheckoutMutationVariables>;
+export const GetProductPricesDocument = gql`
+    query GetProductPrices($product: String!) {
+  getProductPrices(product: $product) {
+    productPrices {
+      created
+      recurringInterval
+      stripePriceId
+      unitAmount
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetProductPricesQuery__
+ *
+ * To run a query within a React component, call `useGetProductPricesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProductPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProductPricesQuery({
+ *   variables: {
+ *      product: // value for 'product'
+ *   },
+ * });
+ */
+export function useGetProductPricesQuery(baseOptions: Apollo.QueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
+      }
+export function useGetProductPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProductPricesQuery, GetProductPricesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProductPricesQuery, GetProductPricesQueryVariables>(GetProductPricesDocument, options);
+        }
+export type GetProductPricesQueryHookResult = ReturnType<typeof useGetProductPricesQuery>;
+export type GetProductPricesLazyQueryHookResult = ReturnType<typeof useGetProductPricesLazyQuery>;
+export type GetProductPricesQueryResult = Apollo.QueryResult<GetProductPricesQuery, GetProductPricesQueryVariables>;
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {
@@ -1524,6 +1646,7 @@ export const GetClientConfigDocument = gql`
     billing {
       isBillingEnabled
       billingUrl
+      billingFreeTrialDurationInDays
     }
     signInPrefilled
     signUpDisabled

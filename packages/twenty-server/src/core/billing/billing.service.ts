@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -9,16 +9,12 @@ import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
+import { User } from 'src/core/user/user.entity';
+import { assert } from 'src/utils/assert';
 
-export type PriceData = Partial<
-  Record<Stripe.Price.Recurring.Interval, Stripe.Price>
->;
 export enum AvailableProduct {
   BasePlan = 'base-plan',
-}
-export enum RecurringInterval {
-  MONTH = 'month',
-  YEAR = 'year',
 }
 
 export enum WebhookEvent {
@@ -27,6 +23,7 @@ export enum WebhookEvent {
 
 @Injectable()
 export class BillingService {
+  protected readonly logger = new Logger(BillingService.name);
   constructor(
     private readonly stripeService: StripeService,
     private readonly environmentService: EnvironmentService,
@@ -53,23 +50,57 @@ export class BillingService {
   }
 
   formatProductPrices(prices: Stripe.Price[]) {
-    const result: PriceData = {};
+    const result: Record<string, ProductPriceEntity> = {};
 
     prices.forEach((item) => {
-      const recurringInterval = item.recurring?.interval;
+      const interval = item.recurring?.interval;
 
-      if (!recurringInterval) {
+      if (!interval || !item.unit_amount) {
         return;
       }
       if (
-        !result[recurringInterval] ||
-        item.created > (result[recurringInterval]?.created || 0)
+        !result[interval] ||
+        item.created > (result[interval]?.created || 0)
       ) {
-        result[recurringInterval] = item;
+        result[interval] = {
+          unitAmount: item.unit_amount,
+          recurringInterval: interval,
+          created: item.created,
+          stripePriceId: item.id,
+        };
       }
     });
 
-    return result;
+    return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
+  }
+
+  async checkout(user: User, priceId: string, successUrlPath?: string) {
+    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const session = await this.stripeService.stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      subscription_data: {
+        metadata: {
+          workspaceId: user.defaultWorkspace.id,
+        },
+      },
+      customer_email: user.email,
+      success_url: successUrlPath
+        ? frontBaseUrl + successUrlPath
+        : frontBaseUrl,
+      cancel_url: frontBaseUrl,
+    });
+
+    assert(session.url, 'Error: missing checkout.session.url');
+
+    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
+
+    return session.url;
   }
 
   async createBillingSubscription(

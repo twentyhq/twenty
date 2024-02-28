@@ -74,7 +74,6 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
   const isMatchingLocation = useIsMatchingLocation();
-
   const showAuthModal = useMemo(() => {
     return (
       (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) ||

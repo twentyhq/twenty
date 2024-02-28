@@ -9,11 +9,14 @@ type Variant = 'primary' | 'secondary';
 type Props = {
   title: string;
   fullWidth?: boolean;
+  width?: number;
   variant?: Variant;
   soon?: boolean;
 } & React.ComponentProps<'button'>;
 
-const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
+const StyledButton = styled.button<
+  Pick<Props, 'fullWidth' | 'width' | 'variant'>
+>`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
     if (disabled) {
@@ -75,7 +78,8 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   justify-content: center;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  width: ${({ fullWidth, width }) =>
+    fullWidth ? '100%' : width ? `${width}px` : 'auto'};
   ${({ theme, variant }) => {
     switch (variant) {
       case 'secondary':
@@ -101,6 +105,7 @@ type MainButtonProps = Props & {
 export const MainButton = ({
   Icon,
   title,
+  width,
   fullWidth = false,
   variant = 'primary',
   type,
@@ -112,7 +117,7 @@ export const MainButton = ({
   return (
     <StyledButton
       className={className}
-      {...{ disabled, fullWidth, onClick, type, variant }}
+      {...{ disabled, fullWidth, width, onClick, type, variant }}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
