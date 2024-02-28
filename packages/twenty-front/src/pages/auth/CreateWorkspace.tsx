@@ -3,6 +3,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -13,13 +14,11 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useActivateWorkspaceMutation } from '~/generated/graphql';
 
@@ -58,7 +57,6 @@ export const CreateWorkspace = () => {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-    getValues,
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -100,20 +98,11 @@ export const CreateWorkspace = () => {
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === Key.Enter) {
       event.preventDefault();
       handleSubmit(onSubmit)();
     }
   };
-
-  useScopedHotkeys(
-    'enter',
-    () => {
-      onSubmit(getValues());
-    },
-    PageHotkeyScope.CreateWokspace,
-    [onSubmit],
-  );
 
   if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceActivation) {
     return null;
