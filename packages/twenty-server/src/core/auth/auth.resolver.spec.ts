@@ -9,6 +9,7 @@ import { AuthResolver } from './auth.resolver';
 
 import { TokenService } from './services/token.service';
 import { AuthService } from './services/auth.service';
+import { User } from 'src/core/user/user.entity';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -19,6 +20,10 @@ describe('AuthResolver', () => {
         AuthResolver,
         {
           provide: getRepositoryToken(Workspace, 'core'),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(User, 'core'),
           useValue: {},
         },
         {
