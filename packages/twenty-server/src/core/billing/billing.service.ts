@@ -11,11 +11,6 @@ import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subsc
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
-import { assert } from 'src/utils/assert';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/core/feature-flag/feature-flag.entity';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -38,8 +33,6 @@ export class BillingService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   getProductStripeId(product: AvailableProduct) {
@@ -49,9 +42,8 @@ export class BillingService {
   }
 
   async getProductPrices(stripeProductId: string) {
-    const productPrices = await this.stripeService.stripe.prices.search({
-      query: `product: '${stripeProductId}'`,
-    });
+    const productPrices =
+      await this.stripeService.getProductPrices(stripeProductId);
 
     return this.formatProductPrices(productPrices.data);
   }
@@ -111,31 +103,16 @@ export class BillingService {
 
   async checkout(user: User, priceId: string, successUrlPath?: string) {
     const frontBaseUrl = this.environmentService.getFrontBaseUrl();
-    const session = await this.stripeService.stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      subscription_data: {
-        metadata: {
-          workspaceId: user.defaultWorkspace.id,
-        },
-      },
-      customer_email: user.email,
-      success_url: successUrlPath
-        ? frontBaseUrl + successUrlPath
-        : frontBaseUrl,
-      cancel_url: frontBaseUrl,
-    });
+    const successUrl = successUrlPath
+      ? frontBaseUrl + successUrlPath
+      : frontBaseUrl;
 
-    assert(session.url, 'Error: missing checkout.session.url');
-
-    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
-
-    return session.url;
+    return await this.stripeService.createCheckoutSession(
+      user,
+      priceId,
+      successUrl,
+      frontBaseUrl,
+    );
   }
 
   async upsertBillingSubscription(
@@ -178,26 +155,5 @@ export class BillingService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
-  }
-
-  async updateBillingSubscriptionQuantity(
-    workspaceId: string,
-    quantity: number,
-  ) {
-    const isSelfBillingEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId: workspaceId,
-      key: FeatureFlagKeys.IsSelfBillingEnabled,
-      value: true,
-    });
-
-    if (isSelfBillingEnabled) {
-      const billingSubscriptionItem =
-        await this.getBillingSubscriptionItem(workspaceId);
-
-      await this.stripeService.stripe.subscriptionItems.update(
-        billingSubscriptionItem.stripeSubscriptionItemId,
-        { quantity },
-      );
-    }
   }
 }

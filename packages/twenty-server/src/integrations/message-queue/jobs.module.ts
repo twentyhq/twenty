@@ -31,6 +31,7 @@ import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cle
 import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
 import { BillingModule } from 'src/core/billing/billing.module';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
+import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.modu
     MessageParticipantModule,
     MessageChannelModule,
     ObjectMetadataModule,
+    StripeModule,
     ThreadCleanerModule,
     TypeORMModule,
     TypeORMModule,
