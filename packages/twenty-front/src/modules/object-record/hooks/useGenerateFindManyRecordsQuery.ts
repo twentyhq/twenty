@@ -9,7 +9,7 @@ export const useGenerateFindManyRecordsQuery = () => {
 
   return ({
     objectMetadataItem,
-    depth,
+    depth = 2,
   }: {
     objectMetadataItem: ObjectMetadataItem;
     depth?: number;
