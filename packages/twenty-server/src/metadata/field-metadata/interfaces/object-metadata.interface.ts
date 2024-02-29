@@ -1,3 +1,5 @@
+import { IndexMetadata } from 'src/metadata/object-metadata/types/index-metadata';
+
 import { RelationMetadataInterface } from './relation-metadata.interface';
 import { FieldMetadataInterface } from './field-metadata.interface';
 
@@ -15,4 +17,5 @@ export interface ObjectMetadataInterface {
   isSystem: boolean;
   isCustom: boolean;
   isActive: boolean;
+  indexMetadata?: IndexMetadata[];
 }

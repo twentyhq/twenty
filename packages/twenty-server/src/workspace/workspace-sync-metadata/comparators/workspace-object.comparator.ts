@@ -73,6 +73,13 @@ export class WorkspaceObjectComparator {
       if (difference.type === 'CHANGE') {
         const property = difference.path[0];
 
+        if (
+          difference.oldValue === null &&
+          (difference.value === null || difference.value === undefined)
+        ) {
+          break;
+        }
+
         if (typeof property !== 'string') {
           break;
         }

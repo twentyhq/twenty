@@ -97,7 +97,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   dataSource: DataSourceEntity;
 
   @Column({ nullable: true, type: 'jsonb' })
-  indexMetadata: IndexMetadata[];
+  indexMetadata?: IndexMetadata[];
 
   @CreateDateColumn()
   createdAt: Date;

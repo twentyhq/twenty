@@ -93,6 +93,14 @@ export class WorkspaceSyncObjectMetadataService {
 
       if (objectComparatorResult.action === ComparatorAction.CREATE) {
         storage.addCreateObjectMetadata(standardObjectMetadata);
+        if (standardObjectMetadata.indexMetadata) {
+          storage.addUpdateIndexMetadata(
+            context.workspaceId,
+            standardObjectName,
+            standardObjectMetadata.indexMetadata,
+            [],
+          );
+        }
         continue;
       }
 
