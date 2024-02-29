@@ -82,24 +82,6 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async createWorkspaceMember(user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        user.defaultWorkspace.id,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-      ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-      VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
-        user.id
-      }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
-    );
-  }
-
   async deleteUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOneBy({
       id: userId,

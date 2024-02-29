@@ -12,6 +12,10 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
 import { assert } from 'src/utils/assert';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -33,6 +37,8 @@ export class BillingService {
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   getProductStripeId(product: AvailableProduct) {
@@ -72,6 +78,31 @@ export class BillingService {
     });
 
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
+  }
+
+  async getBillingSubscriptionItem(
+    workspaceId: string,
+    stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+        relations: ['billingSubscriptionItems'],
+      });
+
+    const billingSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.filter(
+        (billingSubscriptionItem) =>
+          billingSubscriptionItem.stripeProductId === stripeProductId,
+      )?.[0];
+
+    if (!billingSubscriptionItem) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+      );
+    }
+
+    return billingSubscriptionItem;
   }
 
   async checkout(user: User, priceId: string, successUrlPath?: string) {
@@ -122,6 +153,7 @@ export class BillingService {
           billingSubscriptionId: billingSubscription.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
+          stripeSubscriptionItemId: item.id,
           quantity: item.quantity,
         });
 
@@ -132,5 +164,35 @@ export class BillingService {
     await this.workspaceRepository.update(workspaceId, {
       subscriptionStatus: 'active',
     });
+  }
+
+  async updateBillingSubscriptionQuantity(
+    workspaceId: string,
+    quantity: number,
+  ) {
+    const isSelfBillingEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId: workspaceId,
+      key: FeatureFlagKeys.IsSelfBillingEnabled,
+      value: true,
+    });
+
+    if (isSelfBillingEnabled) {
+      const billingSubscriptionItem =
+        await this.getBillingSubscriptionItem(workspaceId);
+
+      const newSubscriptionItem =
+        await this.stripeService.stripe.subscriptionItems.update(
+          billingSubscriptionItem.stripeSubscriptionItemId,
+          {
+            quantity,
+            metadata: { workspaceId },
+          },
+        );
+
+      await this.billingSubscriptionItemRepository.update(
+        billingSubscriptionItem.id,
+        { quantity: newSubscriptionItem.quantity },
+      );
+    }
   }
 }

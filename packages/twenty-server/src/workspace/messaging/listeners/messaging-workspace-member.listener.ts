@@ -46,7 +46,7 @@ export class MessagingWorkspaceMemberListener {
       return;
     }
 
-    this.messageQueueService.add<MatchMessageParticipantsJobData>(
+    await this.messageQueueService.add<MatchMessageParticipantsJobData>(
       MatchMessageParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -76,7 +76,7 @@ export class MessagingWorkspaceMemberListener {
       ).includes('userEmail') &&
       isMessagingEnabled
     ) {
-      this.messageQueueService.add<MatchMessageParticipantsJobData>(
+      await this.messageQueueService.add<MatchMessageParticipantsJobData>(
         MatchMessageParticipantJob.name,
         {
           workspaceId: payload.workspaceId,

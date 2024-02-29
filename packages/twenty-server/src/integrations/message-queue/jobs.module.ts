@@ -28,25 +28,30 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
+import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
+import { BillingModule } from 'src/core/billing/billing.module';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
-    ObjectMetadataModule,
+    BillingModule,
     DataSourceModule,
-    HttpModule,
-    TypeORMModule,
-    MessagingModule,
-    UserModule,
+    ConnectedAccountModule,
+    CreateCompaniesAndContactsModule,
+    DataSeedDemoWorkspaceModule,
     EnvironmentModule,
+    HttpModule,
+    MessagingModule,
+    MessageParticipantModule,
+    MessageChannelModule,
+    ObjectMetadataModule,
+    ThreadCleanerModule,
+    TypeORMModule,
     TypeORMModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
-    ConnectedAccountModule,
-    MessageParticipantModule,
-    CreateCompaniesAndContactsModule,
-    MessageChannelModule,
-    DataSeedDemoWorkspaceModule,
-    ThreadCleanerModule,
+    UserModule,
+    UserWorkspaceModule,
+    WorkspaceDataSourceModule,
   ],
   providers: [
     {
@@ -90,6 +95,7 @@ import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cle
       provide: DeleteConnectedAccountAssociatedDataJob.name,
       useClass: DeleteConnectedAccountAssociatedDataJob,
     },
+    { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
   ],
 })
 export class JobsModule {
