@@ -1,4 +1,3 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 import { fn } from '@storybook/test';
@@ -8,6 +7,7 @@ import {
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -78,13 +78,7 @@ const relationFieldMetadata = mockedPeopleMetadata.node.fields.edges.find(
 )!.node;
 
 export const WithRelationForm: Story = {
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
+  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(
       ({ node }) => node.type === FieldMetadataType.Relation,

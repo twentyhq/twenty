@@ -11,35 +11,26 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconTrash, IconUnlink } from '@/ui/display/icon';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
-const StyledCardContent = styled(CardContent)<{
+const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
 }>`
-  align-items: center;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(1)};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding: 0;
-  border: 0;
-
   ${({ isDropdownOpen, theme }) =>
-    isDropdownOpen
-      ? ''
-      : css`
-          .displayOnHover {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity ${theme.animation.duration.instant}s ease;
-          }
-        `}
+    !isDropdownOpen &&
+    css`
+      .displayOnHover {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity ${theme.animation.duration.instant}s ease;
+      }
+    `}
 
   &:hover {
     .displayOnHover {
@@ -49,15 +40,13 @@ const StyledCardContent = styled(CardContent)<{
   }
 `;
 
-type RecordRelationFieldCardContentProps = {
-  divider?: boolean;
+type RecordDetailRelationRecordsListItemProps = {
   relationRecord: ObjectRecord;
 };
 
-export const RecordRelationFieldCardContent = ({
-  divider,
+export const RecordDetailRelationRecordsListItem = ({
   relationRecord,
-}: RecordRelationFieldCardContentProps) => {
+}: RecordDetailRelationRecordsListItemProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
   const {
@@ -124,7 +113,7 @@ export const RecordRelationFieldCardContent = ({
     CoreObjectNameSingular.WorkspaceMember;
 
   return (
-    <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
+    <StyledListItem isDropdownOpen={isDropdownOpen}>
       <RecordChip
         record={relationRecord}
         objectNameSingular={relationObjectMetadataItem.nameSingular}
@@ -165,6 +154,6 @@ export const RecordRelationFieldCardContent = ({
           />
         </DropdownScope>
       )}
-    </StyledCardContent>
+    </StyledListItem>
   );
 };

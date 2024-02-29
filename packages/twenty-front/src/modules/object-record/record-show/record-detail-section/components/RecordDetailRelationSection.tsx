@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
@@ -9,8 +8,10 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
+import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
+import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
-import { RecordRelationFieldCardContent } from '@/object-record/record-show/record-detail-section/components/RecordRelationFieldCardContent';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
@@ -19,12 +20,10 @@ import { RelationPickerScope } from '@/object-record/relation-picker/scopes/Rela
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconForbid, IconPencil, IconPlus } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { Section } from '@/ui/layout/section/components/Section';
 import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -32,30 +31,7 @@ const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
 
-const StyledCardNoContent = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  text-transform: capitalize;
-`;
-
-const StyledCard = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  overflow: hidden;
-`;
-
-const StyledSection = styled(Section)`
-  padding: ${({ theme }) => theme.spacing(3)};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  width: unset;
-`;
-
-export const RecordRelationFieldCardSection = () => {
-  const theme = useTheme();
-
+export const RecordDetailRelationSection = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -65,12 +41,10 @@ export const RecordRelationFieldCardSection = () => {
   } = fieldDefinition.metadata as FieldRelationMetadata;
   const record = useRecoilValue(recordStoreFamilyState(entityId));
 
-  const {
-    labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
-    objectMetadataItem: relationObjectMetadataItem,
-  } = useObjectMetadataItem({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationObjectMetadataNameSingular,
+    });
 
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldMetadataId,
@@ -137,11 +111,8 @@ export const RecordRelationFieldCardSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
-  const { getIcon } = useIcons();
-  const Icon = getIcon(relationObjectMetadataItem.icon);
-
   return (
-    <StyledSection>
+    <RecordDetailSection>
       <RecordDetailSectionHeader
         title={fieldDefinition.label}
         link={
@@ -186,23 +157,13 @@ export const RecordRelationFieldCardSection = () => {
           </DropdownScope>
         }
       />
-      {relationRecords.length === 0 && (
-        <StyledCardNoContent>
-          <Icon size={theme.icon.size.sm} />
-          <div>No {relationObjectMetadataItem.labelSingular}</div>
-        </StyledCardNoContent>
+      {relationRecords.length ? (
+        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+      ) : (
+        <RecordDetailRelationRecordsListEmptyState
+          relationObjectMetadataItem={relationObjectMetadataItem}
+        />
       )}
-      {!!relationRecords.length && (
-        <StyledCard>
-          {relationRecords.slice(0, 5).map((relationRecord, index) => (
-            <RecordRelationFieldCardContent
-              key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
-              divider={index < relationRecords.length - 1}
-              relationRecord={relationRecord}
-            />
-          ))}
-        </StyledCard>
-      )}
-    </StyledSection>
+    </RecordDetailSection>
   );
 };
