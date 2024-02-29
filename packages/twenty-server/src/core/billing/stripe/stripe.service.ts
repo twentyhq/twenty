@@ -39,6 +39,10 @@ export class StripeService {
     await this.stripe.subscriptionItems.update(stripeItemId, { quantity });
   }
 
+  async cancelSubscription(stripeSubscriptionId: string) {
+    await this.stripe.subscriptions.cancel(stripeSubscriptionId);
+  }
+
   async createCheckoutSession(
     user: User,
     priceId: string,

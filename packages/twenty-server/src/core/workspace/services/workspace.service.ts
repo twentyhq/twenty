@@ -11,6 +11,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { BillingService } from 'src/core/billing/billing.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -18,6 +19,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly billingService: BillingService,
   ) {
     super(workspaceRepository);
   }
@@ -46,6 +48,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
+
+    await this.billingService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
     if (shouldDeleteCoreWorkspace) {
