@@ -252,7 +252,7 @@ export class GmailPartialSyncService {
     );
   }
 
-  private isMessageBlocked = (
+  private isHandleBlocked = (
     selfHandle: string,
     message: GmailMessage,
     blocklistedEmails: string[],
@@ -278,7 +278,7 @@ export class GmailPartialSyncService {
   ): boolean {
     return (
       !isPersonEmail(message.fromHandle) ||
-      this.isMessageBlocked(selfHandle, message, blocklistedEmails)
+      this.isHandleBlocked(selfHandle, message, blocklistedEmails)
     );
   }
 }
