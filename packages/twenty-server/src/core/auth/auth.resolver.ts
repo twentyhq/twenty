@@ -48,6 +48,8 @@ export class AuthResolver {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
@@ -128,6 +130,11 @@ export class AuthResolver {
 
     const result = await this.authService.verify(email);
 
+    if (result.user.id) {
+      result.user.workspaces =
+        await this.userWorkspaceService.findUserWorkspaces(result.user.id);
+    }
+
     return result;
   }
 
@@ -154,6 +161,20 @@ export class AuthResolver {
       );
 
     assert(userWorkspace, 'cannot access workspace', ForbiddenException);
+
+    await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember) {
+      user.workspaceMember = workspaceMember;
+    }
+
+    user.defaultWorkspace = workspace;
 
     const token = await this.tokenService.generateSwitchWorkspaceToken(
       user,
