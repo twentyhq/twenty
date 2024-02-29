@@ -52,6 +52,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
     const defaultValue =
       alteredFieldMetadata.defaultValue?.value ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
+
     const enumOptions = alteredFieldMetadata.options
       ? [
           ...alteredFieldMetadata.options.map((option) => {

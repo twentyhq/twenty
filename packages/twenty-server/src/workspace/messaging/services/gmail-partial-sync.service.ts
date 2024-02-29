@@ -1,6 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { gmail_v1 } from 'googleapis';
+import { Repository } from 'typeorm';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
@@ -11,11 +13,17 @@ import {
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
+import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
+import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -26,11 +34,13 @@ export class GmailPartialSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageService: MessageService,
+    private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -59,7 +69,9 @@ export class GmailPartialSyncService {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
-      throw new Error('No refresh token found');
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
     }
 
     let startTime = Date.now();
@@ -93,8 +105,17 @@ export class GmailPartialSyncService {
       return;
     }
 
+    if (error) {
+      throw new Error(
+        `Error getting history for ${connectedAccountId} in workspace ${workspaceId} during partial-sync:
+        ${JSON.stringify(error)}`,
+      );
+    }
+
     if (!historyId) {
-      throw new Error('No history id found');
+      throw new Error(
+        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
     }
 
     if (historyId === lastSyncHistoryId || !history?.length) {
@@ -118,7 +139,7 @@ export class GmailPartialSyncService {
 
     const messageQueries = createQueriesFromMessageIds(messagesAdded);
 
-    const { messages: messagesToSave, errors } =
+    const { messages, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
@@ -126,6 +147,34 @@ export class GmailPartialSyncService {
         workspaceId,
         connectedAccountId,
       );
+
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
+
+    const blocklist = isBlocklistEnabled
+      ? await this.blocklistService.getByWorkspaceMemberId(
+          connectedAccount.accountOwnerId,
+          workspaceId,
+        )
+      : [];
+
+    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+
+    const messagesToSave = messages.filter(
+      (message) =>
+        !this.shouldSkipImport(
+          connectedAccount.handle,
+          message,
+          blocklistedEmails,
+        ),
+    );
 
     if (messagesToSave.length !== 0) {
       await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
@@ -155,8 +204,11 @@ export class GmailPartialSyncService {
       );
     }
 
-    if (errors.length) throw new Error('Error fetching messages');
-
+    if (errors.length) {
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
+    }
     startTime = Date.now();
 
     await this.connectedAccountService.updateLastSyncHistoryId(
@@ -229,7 +281,17 @@ export class GmailPartialSyncService {
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
-    error?: any;
+    error?: {
+      code: number;
+      errors: {
+        domain: string;
+        reason: string;
+        message: string;
+        locationType?: string;
+        location?: string;
+      }[];
+      message: string;
+    };
   }> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
@@ -290,6 +352,36 @@ export class GmailPartialSyncService {
       {
         retryLimit: 2,
       },
+    );
+  }
+
+  private isHandleBlocked = (
+    selfHandle: string,
+    message: GmailMessage,
+    blocklistedEmails: string[],
+  ): boolean => {
+    // If the message is received, check if the sender is in the blocklist
+    // If the message is sent, check if any of the recipients with role 'to' is in the blocklist
+
+    if (message.fromHandle === selfHandle) {
+      return message.participants.some(
+        (participant) =>
+          participant.role === 'to' &&
+          blocklistedEmails.includes(participant.handle),
+      );
+    }
+
+    return blocklistedEmails.includes(message.fromHandle);
+  };
+
+  private shouldSkipImport(
+    selfHandle: string,
+    message: GmailMessage,
+    blocklistedEmails: string[],
+  ): boolean {
+    return (
+      !isPersonEmail(message.fromHandle) ||
+      this.isHandleBlocked(selfHandle, message, blocklistedEmails)
     );
   }
 }

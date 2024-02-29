@@ -6,7 +6,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkBehead from 'remark-behead';
 import gfm from 'remark-gfm';
 
-import { ReleaseNote } from '@/app/get-releases';
+import { ReleaseNote } from '@/app/releases/api/route';
 
 const StyledContainer = styled.div`
   width: 810px;

@@ -20,7 +20,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];
@@ -69,7 +69,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             Icon: field.isVisible ? IconMinus : IconPlus,
             onClick: () => onVisibilityChange(field),
           },
-    ].filter(isDefined);
+    ].filter(isNonNullable);
 
     return iconButtons.length ? iconButtons : undefined;
   };
@@ -134,7 +134,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
           />
         )}
       </DropdownMenuItemsContainer>
-      {isDefined(openToolTipIndex) &&
+      {isNonNullable(openToolTipIndex) &&
         createPortal(
           <AppTooltip
             anchorSelect={`.${title}-${

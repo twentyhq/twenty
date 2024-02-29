@@ -37,7 +37,8 @@ export class ArgsStringFactory {
         computedArgs[key] !== null
       ) {
         // If it's an object (and not null), stringify it
-        argsString += `${key}: ${stringifyWithoutKeyQuote(
+        argsString += `${key}: ${this.buildStringifiedObject(
+          key,
           computedArgs[key],
         )}, `;
       } else {
@@ -52,5 +53,21 @@ export class ArgsStringFactory {
     }
 
     return argsString;
+  }
+
+  private buildStringifiedObject(
+    key: string,
+    obj: Record<string, any>,
+  ): string {
+    // PgGraphql is expecting the orderBy argument to be an array of objects
+    if (key === 'orderBy') {
+      const orderByString = Object.keys(obj)
+        .map((orderByKey) => `{${orderByKey}: ${obj[orderByKey]}}`)
+        .join(', ');
+
+      return `[${orderByString}]`;
+    }
+
+    return stringifyWithoutKeyQuote(obj);
   }
 }

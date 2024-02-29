@@ -16,7 +16,6 @@ import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
@@ -32,6 +31,8 @@ import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription
 import { BillingModule } from 'src/core/billing/billing.module';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 import { StripeModule } from 'src/core/billing/stripe/stripe.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -49,8 +50,7 @@ import { StripeModule } from 'src/core/billing/stripe/stripe.module';
     StripeModule,
     ThreadCleanerModule,
     TypeORMModule,
-    TypeORMModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,

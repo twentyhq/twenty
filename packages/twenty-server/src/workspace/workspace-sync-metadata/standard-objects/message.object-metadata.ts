@@ -70,14 +70,6 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   text: string;
 
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
-    label: 'Html',
-    description: 'Html',
-    icon: 'IconMessage',
-  })
-  html: string;
-
-  @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
     label: 'Received At',
     description: 'The date the message was received',

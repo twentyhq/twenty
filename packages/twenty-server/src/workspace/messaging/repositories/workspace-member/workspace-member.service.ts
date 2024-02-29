@@ -44,7 +44,9 @@ export class WorkspaceMemberService {
       );
 
     if (!workspaceMembers || workspaceMembers.length === 0) {
-      throw new NotFoundException('No workspace member found');
+      throw new NotFoundException(
+        `No workspace member found for user ${userId} in workspace ${workspaceId}`,
+      );
     }
 
     return workspaceMembers[0];

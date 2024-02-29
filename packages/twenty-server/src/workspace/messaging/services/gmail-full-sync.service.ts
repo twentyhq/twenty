@@ -1,4 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
@@ -12,7 +15,13 @@ import { ConnectedAccountService } from 'src/workspace/messaging/repositories/co
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
+import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -26,7 +35,10 @@ export class GmailFullSyncService {
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -41,9 +53,12 @@ export class GmailFullSyncService {
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
+    const workspaceMemberId = connectedAccount.accountOwnerId;
 
     if (!refreshToken) {
-      throw new Error('No refresh token found');
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
     }
 
     const gmailMessageChannel =
@@ -57,12 +72,31 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
+
+    const blocklist = isBlocklistEnabled
+      ? await this.blocklistService.getByWorkspaceMemberId(
+          workspaceMemberId,
+          workspaceId,
+        )
+      : [];
+
+    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
 
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults: 500,
       pageToken: nextPageToken,
+      q: gmailSearchFilterExcludeEmails(blocklistedEmails),
     });
 
     let endTime = Date.now();
@@ -80,6 +114,10 @@ export class GmailFullSyncService {
       : [];
 
     if (!messageExternalIds || messageExternalIds?.length === 0) {
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+      );
+
       return;
     }
 
@@ -134,33 +172,36 @@ export class GmailFullSyncService {
       }ms.`,
     );
 
-    if (messagesToSave.length === 0) {
-      if (errors.length) throw new Error('Error fetching messages');
-
+    if (messagesToSave.length > 0) {
+      this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+        messagesToSave,
+        connectedAccount,
+        workspaceId,
+        gmailMessageChannelId,
+        'gmail full-sync',
+      );
+    } else {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
-
-      return;
     }
 
-    this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
-      messagesToSave,
-      connectedAccount,
-      workspaceId,
-      gmailMessageChannelId,
-      'gmail full-sync',
-    );
-
-    if (errors.length) throw new Error('Error fetching messages');
-
+    if (errors.length) {
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
+    }
     const lastModifiedMessageId = messagesToFetch[0];
 
     const historyId = messagesToSave.find(
       (message) => message.externalId === lastModifiedMessageId,
     )?.historyId;
 
-    if (!historyId) throw new Error('No history id found');
+    if (!historyId) {
+      throw new Error(
+        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
+    }
 
     startTime = Date.now();
 
