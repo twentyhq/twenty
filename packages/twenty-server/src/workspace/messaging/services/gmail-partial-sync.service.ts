@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { gmail_v1 } from 'googleapis';
 import { Repository } from 'typeorm';
@@ -38,6 +39,7 @@ export class GmailPartialSyncService {
     private readonly messageService: MessageService,
     private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
@@ -139,11 +141,15 @@ export class GmailPartialSyncService {
         connectedAccountId,
       );
 
-    const isBlocklistEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsBlocklistEnabled,
-      value: true,
-    });
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
 
     const blocklist = isBlocklistEnabled
       ? await this.blocklistService.getByWorkspaceMemberId(

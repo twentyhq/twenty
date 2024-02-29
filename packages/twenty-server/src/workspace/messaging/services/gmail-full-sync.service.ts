@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
@@ -36,6 +37,7 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
@@ -70,11 +72,15 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
-    const isBlocklistEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsBlocklistEnabled,
-      value: true,
-    });
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
 
     const blocklist = isBlocklistEnabled
       ? await this.blocklistService.getByWorkspaceMemberId(
