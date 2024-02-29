@@ -34,7 +34,6 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
-  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
   return (
     <>
@@ -51,30 +50,28 @@ export const SettingsNavigationDrawerItems = () => {
           Icon={IconColorSwatch}
         />
 
-        {isMessagingEnabled && (
-          <NavigationDrawerItemGroup>
-            <SettingsNavigationDrawerItem
-              label="Accounts"
-              path={SettingsPath.Accounts}
-              Icon={IconAt}
-            />
-            <SettingsNavigationDrawerItem
-              level={2}
-              label="Emails"
-              path={SettingsPath.AccountsEmails}
-              Icon={IconMail}
-              matchSubPages
-            />
-            <SettingsNavigationDrawerItem
-              level={2}
-              label="Calendars"
-              path={SettingsPath.AccountsCalendars}
-              Icon={IconCalendarEvent}
-              matchSubPages
-              soon={!isCalendarEnabled}
-            />
-          </NavigationDrawerItemGroup>
-        )}
+        <NavigationDrawerItemGroup>
+          <SettingsNavigationDrawerItem
+            label="Accounts"
+            path={SettingsPath.Accounts}
+            Icon={IconAt}
+          />
+          <SettingsNavigationDrawerItem
+            level={2}
+            label="Emails"
+            path={SettingsPath.AccountsEmails}
+            Icon={IconMail}
+            matchSubPages
+          />
+          <SettingsNavigationDrawerItem
+            level={2}
+            label="Calendars"
+            path={SettingsPath.AccountsCalendars}
+            Icon={IconCalendarEvent}
+            matchSubPages
+            soon={!isCalendarEnabled}
+          />
+        </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>

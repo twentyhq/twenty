@@ -4,10 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/core/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/integrations/event-emitter/utils/object-record-changed-properties.util';
@@ -36,16 +33,6 @@ export class MessagingWorkspaceMemberListener {
       return;
     }
 
-    const messagingFeatureFlag = await this.featureFlagRepository.findOneBy({
-      key: FeatureFlagKeys.IsMessagingEnabled,
-      value: true,
-      workspaceId: payload.workspaceId,
-    });
-
-    if (!messagingFeatureFlag || !messagingFeatureFlag.value) {
-      return;
-    }
-
     this.messageQueueService.add<MatchMessageParticipantsJobData>(
       MatchMessageParticipantJob.name,
       {
@@ -60,21 +47,11 @@ export class MessagingWorkspaceMemberListener {
   async handleUpdatedEvent(
     payload: ObjectRecordUpdateEvent<WorkspaceMemberObjectMetadata>,
   ) {
-    const messagingFeatureFlag = await this.featureFlagRepository.findOneBy({
-      key: FeatureFlagKeys.IsMessagingEnabled,
-      value: true,
-      workspaceId: payload.workspaceId,
-    });
-
-    const isMessagingEnabled =
-      messagingFeatureFlag && messagingFeatureFlag.value;
-
     if (
       objectRecordUpdateEventChangedProperties(
         payload.previousRecord,
         payload.updatedRecord,
-      ).includes('userEmail') &&
-      isMessagingEnabled
+      ).includes('userEmail')
     ) {
       this.messageQueueService.add<MatchMessageParticipantsJobData>(
         MatchMessageParticipantJob.name,

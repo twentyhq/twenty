@@ -20,7 +20,6 @@ import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
@@ -47,9 +46,6 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
-  const isNewRecordBoardEnabled = useIsFeatureEnabled(
-    'IS_NEW_RECORD_BOARD_ENABLED',
-  );
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
@@ -79,13 +75,6 @@ export const App = () => {
           <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
-
-          {!isNewRecordBoardEnabled && (
-            <Route
-              path={AppPath.OpportunitiesPage}
-              element={<Opportunities />}
-            />
-          )}
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
 
