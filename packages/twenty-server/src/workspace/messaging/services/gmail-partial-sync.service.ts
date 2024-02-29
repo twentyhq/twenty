@@ -261,7 +261,17 @@ export class GmailPartialSyncService {
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
-    error?: { code: number; message: string };
+    error?: {
+      code: number;
+      errors: {
+        domain: string;
+        reason: string;
+        message: string;
+        locationType?: string;
+        location?: string;
+      }[];
+      message: string;
+    };
   }> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
