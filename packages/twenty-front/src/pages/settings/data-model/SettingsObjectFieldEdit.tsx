@@ -105,7 +105,7 @@ export const SettingsObjectFieldEdit = () => {
 
     const selectOptions = activeMetadataField.options?.map((option) => ({
       ...option,
-      isDefault: defaultValue === option.value,
+      isDefault: defaultValue?.value === option.value,
     }));
     selectOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
