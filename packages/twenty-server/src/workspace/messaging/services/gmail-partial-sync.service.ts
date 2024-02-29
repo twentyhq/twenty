@@ -97,6 +97,13 @@ export class GmailPartialSyncService {
       return;
     }
 
+    if (error) {
+      throw new Error(
+        `Error getting history for ${connectedAccountId} in workspace ${workspaceId} during partial-sync:
+        ${JSON.stringify(error)}`,
+      );
+    }
+
     if (!historyId) {
       throw new Error(
         `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
@@ -254,7 +261,17 @@ export class GmailPartialSyncService {
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
-    error?: any;
+    error?: {
+      code: number;
+      errors: {
+        domain: string;
+        reason: string;
+        message: string;
+        locationType?: string;
+        location?: string;
+      }[];
+      message: string;
+    };
   }> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
