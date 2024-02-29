@@ -14,7 +14,7 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const filterQueryParamsSchema = z.object({
   filter: z.record(
@@ -142,7 +142,7 @@ export const useFiltersFromQueryParams = () => {
               },
             ),
           )
-        ).filter(isDefined);
+        ).filter(isNonNullable);
       },
     [
       apolloClient,

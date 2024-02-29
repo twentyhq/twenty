@@ -30,7 +30,7 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -131,7 +131,7 @@ export const RecordShowContainer = ({
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
         <ShowPageLeftContainer>
-          {!recordLoading && isDefined(recordFromStore) && (
+          {!recordLoading && isNonNullable(recordFromStore) && (
             <>
               <ShowPageSummaryCard
                 id={objectRecordId}

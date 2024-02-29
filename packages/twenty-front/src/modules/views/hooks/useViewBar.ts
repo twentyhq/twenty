@@ -8,7 +8,7 @@ import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
@@ -116,7 +116,7 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFields = viewFields.filter(isDefined);
+        const queriedViewFields = viewFields.filter(isNonNullable);
 
         if (isPersistingView) {
           return;
@@ -171,7 +171,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableFilterDefinition,
             };
           })
-          .filter(isDefined);
+          .filter(isNonNullable);
 
         if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
           set(savedViewFiltersState, queriedViewFilters);
@@ -218,7 +218,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableSortDefinition,
             };
           })
-          .filter(isDefined);
+          .filter(isNonNullable);
 
         if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
           set(savedViewSortsState, queriedViewSorts);

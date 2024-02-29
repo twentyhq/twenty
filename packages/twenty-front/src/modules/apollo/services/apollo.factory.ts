@@ -14,7 +14,7 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { logDebug } from '~/utils/logDebug';
 
 import { ApolloManager } from '../types/apolloManager.interface';
@@ -139,7 +139,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           isDebugMode ? logger : null,
           retryLink,
           httpLink,
-        ].filter(isDefined),
+        ].filter(isNonNullable),
       );
     };
 

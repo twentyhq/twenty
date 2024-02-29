@@ -1,10 +1,10 @@
 import { getLogoUrlFromDomainName } from '~/utils';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const mapFavorites = (favorites: any) => {
   return favorites
     .map((favorite: any) => {
-      const recordInformation = isDefined(favorite?.person)
+      const recordInformation = isNonNullable(favorite?.person)
         ? {
             id: favorite.person.id,
             labelIdentifier:
@@ -15,7 +15,7 @@ export const mapFavorites = (favorites: any) => {
             avatarType: 'rounded',
             link: `/object/person/${favorite.person.id}`,
           }
-        : isDefined(favorite?.company)
+        : isNonNullable(favorite?.company)
           ? {
               id: favorite.company.id,
               labelIdentifier: favorite.company.name,
@@ -32,6 +32,6 @@ export const mapFavorites = (favorites: any) => {
         position: favorite?.position,
       };
     })
-    .filter(isDefined)
+    .filter(isNonNullable)
     .sort((a: any, b: any) => a.position - b.position);
 };

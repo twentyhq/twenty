@@ -5,7 +5,7 @@ import { recordBoardColumnsFamilyStateScopeMap } from '@/object-record/record-bo
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { createFamilySelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilySelectorScopeMap';
 import { guardRecoilDefaultValue } from '@/ui/utilities/recoil-scope/utils/guardRecoilDefaultValue';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const recordBoardColumnsFamilySelectorScopeMap =
   createFamilySelectorScopeMap<RecordBoardColumnDefinition | undefined, string>(
@@ -57,7 +57,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
                 }),
               );
             })
-            .filter(isDefined);
+            .filter(isNonNullable);
 
           const lastColumn = [...columns].sort(
             (a, b) => b.position - a.position,

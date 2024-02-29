@@ -12,7 +12,9 @@ export const parseApolloStoreFieldName = <
 
   const fieldName = matches?.[1];
 
-  if (!fieldName) return {};
+  if (!fieldName) {
+    return {};
+  }
 
   const stringifiedVariables = matches[3];
 
