@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { workspacesState } from '@/auth/states/workspaces';
+import { Select } from '@/ui/input/components/Select';
+import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
@@ -22,13 +27,6 @@ const StyledLogo = styled.div<{ logo: string }>`
   width: 16px;
 `;
 
-const StyledName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-family: 'Inter';
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 const StyledNavigationDrawerCollapseButton = styled(
   NavigationDrawerCollapseButton,
 )<{ show?: boolean }>`
@@ -49,11 +47,50 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
+  const workspaces = useRecoilValue(workspacesState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const { swtitchWorkspace } = useWorkspaceSwitching();
+
+  const handleChange = async (workspaceId: string) => {
+    await swtitchWorkspace(workspaceId);
+  };
 
   return (
     <StyledContainer>
-      <StyledLogo logo={logo} />
-      <StyledName>{name}</StyledName>
+      {!workspaces ? (
+        <Select
+          dropdownId="workspace-selector"
+          fullWidth={true}
+          options={[
+            {
+              label: name,
+              value: name,
+              avatarOrIcon: <StyledLogo logo={logo} />,
+            },
+          ]}
+          onChange={handleChange}
+        />
+      ) : (
+        <Select
+          dropdownId="workspace-selector"
+          fullWidth={true}
+          options={workspaces.map((workspace) => {
+            return {
+              label: workspace.displayName!,
+              value: workspace.id,
+              avatarOrIcon: workspace.logo ? (
+                <StyledLogo logo={workspace.logo} />
+              ) : (
+                <StyledLogo logo={logo} />
+              ),
+            };
+          })}
+          onChange={handleChange}
+          value={currentWorkspace?.id}
+        />
+      )}
+
       {!isMobile && (
         <StyledNavigationDrawerCollapseButton
           direction="left"

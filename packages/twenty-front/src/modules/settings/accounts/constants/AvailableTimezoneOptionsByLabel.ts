@@ -5,7 +5,7 @@ import { formatTimeZoneLabel } from '@/settings/accounts/utils/formatTimeZoneLab
 import { SelectOption } from '@/ui/input/components/Select';
 
 export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
-  Record<string, SelectOption<string>>
+  Record<string, SelectOption<string, null>>
 >((result, ianaTimeZone) => {
   const timeZoneLabel = formatTimeZoneLabel(ianaTimeZone);
 

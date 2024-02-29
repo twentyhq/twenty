@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { Select, SelectProps } from '../Select';
 
-type RenderProps = SelectProps<string | number | null>;
+type RenderProps = SelectProps<
+  string | number | null,
+  IconComponent | ReactNode | null
+>;
 
 const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
