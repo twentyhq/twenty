@@ -1,8 +1,8 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -81,13 +81,7 @@ export const Date: Story = {
 };
 
 export const Link: Story = {
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
+  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(
       ({ node }) => node.type === FieldMetadataType.Link,
@@ -114,13 +108,7 @@ export const Rating: Story = {
 };
 
 export const Relation: Story = {
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
+  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadata: mockedPeopleMetadata.node.fields.edges.find(
       ({ node }) => node.type === FieldMetadataType.Relation,
