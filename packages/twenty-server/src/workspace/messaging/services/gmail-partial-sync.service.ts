@@ -61,7 +61,9 @@ export class GmailPartialSyncService {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
-      throw new Error('No refresh token found');
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
     }
 
     let startTime = Date.now();
@@ -96,7 +98,9 @@ export class GmailPartialSyncService {
     }
 
     if (!historyId) {
-      throw new Error('No history id found');
+      throw new Error(
+        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
     }
 
     if (historyId === lastSyncHistoryId || !history?.length) {
@@ -173,8 +177,11 @@ export class GmailPartialSyncService {
       );
     }
 
-    if (errors.length) throw new Error('Error fetching messages');
-
+    if (errors.length) {
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
+    }
     startTime = Date.now();
 
     await this.connectedAccountService.updateLastSyncHistoryId(

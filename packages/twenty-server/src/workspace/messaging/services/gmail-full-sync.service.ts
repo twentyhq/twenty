@@ -47,7 +47,9 @@ export class GmailFullSyncService {
     const workspaceMemberId = connectedAccount.accountOwnerId;
 
     if (!refreshToken) {
-      throw new Error('No refresh token found');
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
     }
 
     const gmailMessageChannel =
@@ -149,33 +151,36 @@ export class GmailFullSyncService {
       }ms.`,
     );
 
-    if (messagesToSave.length === 0) {
-      if (errors.length) throw new Error('Error fetching messages');
-
+    if (messagesToSave.length > 0) {
+      this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+        messagesToSave,
+        connectedAccount,
+        workspaceId,
+        gmailMessageChannelId,
+        'gmail full-sync',
+      );
+    } else {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
-
-      return;
     }
 
-    this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
-      messagesToSave,
-      connectedAccount,
-      workspaceId,
-      gmailMessageChannelId,
-      'gmail full-sync',
-    );
-
-    if (errors.length) throw new Error('Error fetching messages');
-
+    if (errors.length) {
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
+    }
     const lastModifiedMessageId = messagesToFetch[0];
 
     const historyId = messagesToSave.find(
       (message) => message.externalId === lastModifiedMessageId,
     )?.historyId;
 
-    if (!historyId) throw new Error('No history id found');
+    if (!historyId) {
+      throw new Error(
+        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+      );
+    }
 
     startTime = Date.now();
 

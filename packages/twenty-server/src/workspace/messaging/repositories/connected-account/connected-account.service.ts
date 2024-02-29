@@ -60,7 +60,9 @@ export class ConnectedAccountService {
       );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new NotFoundException('No connected account found');
+      throw new NotFoundException(
+        `No connected account found for id ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     return connectedAccounts[0];
