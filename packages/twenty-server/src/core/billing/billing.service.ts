@@ -22,6 +22,7 @@ export enum AvailableProduct {
 }
 
 export enum WebhookEvent {
+  CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
 }
 
@@ -80,15 +81,18 @@ export class BillingService {
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
+  async getBillingSubscription(workspaceId: string) {
+    return await this.billingSubscriptionRepository.findOneOrFail({
+      where: { workspaceId },
+      relations: ['billingSubscriptionItems'],
+    });
+  }
+
   async getBillingSubscriptionItem(
     workspaceId: string,
     stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { workspaceId },
-        relations: ['billingSubscriptionItems'],
-      });
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -134,36 +138,46 @@ export class BillingService {
     return session.url;
   }
 
-  async createBillingSubscription(
+  async upsertBillingSubscription(
     workspaceId: string,
-    data: Stripe.CustomerSubscriptionUpdatedEvent.Data,
+    data:
+      | Stripe.CustomerSubscriptionUpdatedEvent.Data
+      | Stripe.CustomerSubscriptionCreatedEvent.Data,
   ) {
-    const billingSubscription = this.billingSubscriptionRepository.create({
-      workspaceId: workspaceId,
-      stripeCustomerId: data.object.customer as string,
-      stripeSubscriptionId: data.object.id,
-      status: data.object.status,
+    await this.billingSubscriptionRepository.upsert(
+      {
+        workspaceId: workspaceId,
+        stripeCustomerId: data.object.customer as string,
+        stripeSubscriptionId: data.object.id,
+        status: data.object.status,
+      },
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: data.object.status,
     });
 
-    await this.billingSubscriptionRepository.save(billingSubscription);
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
 
-    for (const item of data.object.items.data) {
-      const billingSubscriptionItem =
-        this.billingSubscriptionItemRepository.create({
+    await this.billingSubscriptionItemRepository.upsert(
+      data.object.items.data.map((item) => {
+        return {
           billingSubscriptionId: billingSubscription.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
           stripeSubscriptionItemId: item.id,
           quantity: item.quantity,
-        });
-
-      await this.billingSubscriptionItemRepository.save(
-        billingSubscriptionItem,
-      );
-    }
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: 'active',
-    });
+        };
+      }),
+      {
+        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 
   async updateBillingSubscriptionQuantity(
@@ -180,18 +194,9 @@ export class BillingService {
       const billingSubscriptionItem =
         await this.getBillingSubscriptionItem(workspaceId);
 
-      const newSubscriptionItem =
-        await this.stripeService.stripe.subscriptionItems.update(
-          billingSubscriptionItem.stripeSubscriptionItemId,
-          {
-            quantity,
-            metadata: { workspaceId },
-          },
-        );
-
-      await this.billingSubscriptionItemRepository.update(
-        billingSubscriptionItem.id,
-        { quantity: newSubscriptionItem.quantity },
+      await this.stripeService.stripe.subscriptionItems.update(
+        billingSubscriptionItem.stripeSubscriptionItemId,
+        { quantity },
       );
     }
   }

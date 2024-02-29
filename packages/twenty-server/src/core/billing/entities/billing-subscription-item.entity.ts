@@ -11,9 +11,13 @@ import {
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
-@Unique('IndexOnBillingSubscriptionIdAndProductIdUnique', [
+@Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
   'billingSubscriptionId',
   'stripeProductId',
+])
+@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
+  'billingSubscriptionId',
+  'stripeSubscriptionItemId',
 ])
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')

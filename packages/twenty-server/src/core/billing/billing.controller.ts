@@ -38,13 +38,10 @@ export class BillingController {
       req.rawBody,
     );
 
-    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED) {
-      if (event.data.object.status !== 'active') {
-        res.status(402).send('Payment did not succeeded');
-
-        return;
-      }
-
+    if (
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
+    ) {
       const workspaceId = event.data.object.metadata?.workspaceId;
 
       if (!workspaceId) {
@@ -53,12 +50,12 @@ export class BillingController {
         return;
       }
 
-      await this.billingService.createBillingSubscription(
+      await this.billingService.upsertBillingSubscription(
         workspaceId,
         event.data,
       );
 
-      res.status(200).send('Subscription successfully updated');
+      res.status(200).send('Subscription successfully upserted');
     }
   }
 }
