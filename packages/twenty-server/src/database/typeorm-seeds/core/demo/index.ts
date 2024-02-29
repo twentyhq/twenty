@@ -21,7 +21,7 @@ export const seedCoreSchema = async (
 
   await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
   await seedUsers(workspaceDataSource, schemaName, workspaceId);
-  await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
+  await seedFeatureFlags(workspaceDataSource, schemaName);
 };
 
 export const deleteCoreSchema = async (

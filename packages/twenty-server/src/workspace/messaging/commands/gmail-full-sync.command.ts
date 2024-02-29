@@ -4,10 +4,7 @@ import { Inject } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/core/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
@@ -39,16 +36,6 @@ export class GmailFullSyncCommand extends CommandRunner {
     _passedParam: string[],
     options: GmailFullSyncOptions,
   ): Promise<void> {
-    const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId: options.workspaceId,
-      key: FeatureFlagKeys.IsMessagingEnabled,
-      value: true,
-    });
-
-    if (!isMessagingEnabled) {
-      throw new Error('Messaging is not enabled for this workspace');
-    }
-
     await this.fetchWorkspaceMessages(options.workspaceId);
 
     return;
