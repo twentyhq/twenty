@@ -12,7 +12,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
@@ -36,7 +36,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     }
 
     const fieldDoesNotExist =
-      isDefined(updatedSourceRecord) &&
+      isNonNullable(updatedSourceRecord) &&
       !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
 
     if (fieldDoesNotExist) {
@@ -87,7 +87,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? currentFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [currentFieldValueOnSourceRecord].filter(isDefined);
+        : [currentFieldValueOnSourceRecord].filter(isNonNullable);
 
     const updatedFieldValueOnSourceRecordIsARecordConnection =
       isObjectRecordConnection(
@@ -100,10 +100,11 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? updatedFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [updatedFieldValueOnSourceRecord].filter(isDefined);
+        : [updatedFieldValueOnSourceRecord].filter(isNonNullable);
 
     const shouldDetachSourceFromAllTargets =
-      isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
+      isNonNullable(currentSourceRecord) &&
+      targetRecordsToDetachFrom.length > 0;
 
     if (shouldDetachSourceFromAllTargets) {
       // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item

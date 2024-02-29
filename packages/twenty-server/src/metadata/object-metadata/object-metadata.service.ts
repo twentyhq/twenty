@@ -28,6 +28,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import {
   RelationMetadataEntity,
   RelationMetadataType,
+  RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { computeCustomName } from 'src/workspace/utils/compute-custom-name.util';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
@@ -355,6 +356,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 createdObjectMetadata,
               ),
               referencedTableColumnName: 'id',
+              onDelete: RelationOnDeleteAction.CASCADE,
             },
           ],
         },
@@ -386,6 +388,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 createdObjectMetadata,
               ),
               referencedTableColumnName: 'id',
+              onDelete: RelationOnDeleteAction.CASCADE,
             },
           ],
         },
@@ -611,6 +614,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           activityTargetRelationFieldMetadataMap[
             activityTargetObjectMetadata.id
           ].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
       },
     ]);
 
@@ -699,6 +703,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           favoriteRelationFieldMetadataMap[createdObjectMetadata.id].id,
         toFieldMetadataId:
           favoriteRelationFieldMetadataMap[favoriteObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
       },
     ]);
 

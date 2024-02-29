@@ -5,7 +5,7 @@ import { ActivityType } from '@/activities/types/Activity';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -47,7 +47,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
                 targetObjectRecord,
               };
             })
-            .filter(isDefined);
+            .filter(isNonNullable);
 
         if (relatedEntities) {
           activityTargetableObjectArray =

@@ -1,10 +1,10 @@
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const makeOrFilterVariables = (
   filters: (ObjectRecordQueryFilter | undefined)[],
 ): ObjectRecordQueryFilter | undefined => {
-  const definedFilters = filters.filter(isDefined);
+  const definedFilters = filters.filter(isNonNullable);
 
   if (!definedFilters.length) return undefined;
 

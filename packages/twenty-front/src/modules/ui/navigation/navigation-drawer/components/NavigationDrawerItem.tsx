@@ -77,7 +77,7 @@ const StyledItem = styled.div<StyledItemProps>`
 `;
 
 const StyledItemLabel = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

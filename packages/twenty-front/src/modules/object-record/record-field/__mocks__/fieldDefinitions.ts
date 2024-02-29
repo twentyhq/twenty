@@ -14,11 +14,11 @@ import {
 
 export const fieldMetadataId = 'fieldMetadataId';
 
-const mockedPersonObjectMetadataItem = {
+export const mockedPersonObjectMetadataItem = {
   ...mockedPeopleMetadata.node,
   fields: mockedPeopleMetadata.node.fields.edges.map(({ node }) => node),
 };
-const mockedCompanyObjectMetadataItem = {
+export const mockedCompanyObjectMetadataItem = {
   ...mockedCompaniesMetadata.node,
   fields: mockedCompaniesMetadata.node.fields.edges.map(({ node }) => node),
 };

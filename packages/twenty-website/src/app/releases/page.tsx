@@ -5,7 +5,7 @@ import { Line } from '@/app/_components/releases/Line';
 import { Release } from '@/app/_components/releases/Release';
 import { Title } from '@/app/_components/releases/StyledTitle';
 import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
-import { getReleases } from '@/app/get-releases';
+import { getReleases } from '@/app/releases/api/route';
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',

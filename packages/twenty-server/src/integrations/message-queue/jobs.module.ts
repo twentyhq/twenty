@@ -16,7 +16,6 @@ import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
@@ -24,8 +23,11 @@ import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
-import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
+import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
+import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Module({
   imports: [
@@ -38,12 +40,13 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     UserModule,
     EnvironmentModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     ConnectedAccountModule,
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,
     MessageChannelModule,
     DataSeedDemoWorkspaceModule,
+    ThreadCleanerModule,
   ],
   providers: [
     {
@@ -82,6 +85,10 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     {
       provide: DataSeedDemoWorkspaceJob.name,
       useClass: DataSeedDemoWorkspaceJob,
+    },
+    {
+      provide: DeleteConnectedAccountAssociatedDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedDataJob,
     },
   ],
 })

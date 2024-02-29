@@ -1,7 +1,7 @@
 import { isObject, isString } from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
 
-import { isDefined } from '../../utils/isDefined';
+import { isNonNullable } from '../../utils/isNonNullable';
 
 type StringFilter = {
   equals?: string;
@@ -133,7 +133,7 @@ export const fetchOneFromData = <DataT extends { id: string }>(
   data: Array<DataT>,
   id: string,
 ): DataT | undefined => {
-  if (!isDefined(id)) {
+  if (!isNonNullable(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
     );
@@ -147,7 +147,7 @@ export const updateOneFromData = <DataT extends { id: string }>(
   id: string | undefined,
   payload: GraphQLVariables,
 ): DataT | undefined => {
-  if (!isDefined(id)) {
+  if (!isNonNullable(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
     );

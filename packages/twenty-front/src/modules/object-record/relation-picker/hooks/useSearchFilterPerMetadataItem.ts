@@ -3,7 +3,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useSearchFilterPerMetadataItem = ({
   objectMetadataItems,
@@ -64,7 +64,7 @@ export const useSearchFilterPerMetadataItem = ({
 
           return [objectMetadataItem.nameSingular, searchFilter] as const;
         })
-        .filter(isDefined),
+        .filter(isNonNullable),
     );
 
   return {

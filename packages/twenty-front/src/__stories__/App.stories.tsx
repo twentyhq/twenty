@@ -1,5 +1,4 @@
 import { HelmetProvider } from 'react-helmet-async';
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
@@ -7,6 +6,7 @@ import { ObjectMetadataItemsProvider } from '@/object-metadata/components/Object
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { UserProvider } from '@/users/components/UserProvider';
 import { App } from '~/App';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -14,20 +14,19 @@ const meta: Meta<typeof App> = {
   title: 'App/App',
   component: App,
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <ClientConfigProvider>
         <UserProvider>
-          <MemoryRouter>
-            <FullHeightStorybookLayout>
-              <HelmetProvider>
-                <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                  <ObjectMetadataItemsProvider>
-                    <Story />
-                  </ObjectMetadataItemsProvider>
-                </SnackBarProviderScope>
-              </HelmetProvider>
-            </FullHeightStorybookLayout>
-          </MemoryRouter>
+          <FullHeightStorybookLayout>
+            <HelmetProvider>
+              <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                <ObjectMetadataItemsProvider>
+                  <Story />
+                </ObjectMetadataItemsProvider>
+              </SnackBarProviderScope>
+            </HelmetProvider>
+          </FullHeightStorybookLayout>
         </UserProvider>
       </ClientConfigProvider>
     ),
