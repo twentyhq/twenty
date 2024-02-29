@@ -29,7 +29,7 @@ export class BillingController {
     @Res() res: Response,
   ) {
     if (!req.rawBody) {
-      res.status(400).send('Missing raw body');
+      res.status(400).end();
 
       return;
     }
@@ -45,7 +45,7 @@ export class BillingController {
       const workspaceId = event.data.object.metadata?.workspaceId;
 
       if (!workspaceId) {
-        res.status(404).send('Missing workspaceId in webhook event metadata');
+        res.status(404).end();
 
         return;
       }
@@ -54,8 +54,7 @@ export class BillingController {
         workspaceId,
         event.data,
       );
-
-      res.status(200).send('Subscription successfully upserted');
     }
+    res.status(200).end();
   }
 }
