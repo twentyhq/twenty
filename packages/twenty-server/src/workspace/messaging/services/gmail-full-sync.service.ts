@@ -1,4 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
@@ -15,6 +18,10 @@ import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/creat
 import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -30,6 +37,8 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -63,10 +72,22 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
-    const blocklist = await this.blocklistService.getByWorkspaceMemberId(
-      workspaceMemberId,
-      workspaceId,
-    );
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
+
+    const blocklist = isBlocklistEnabled
+      ? await this.blocklistService.getByWorkspaceMemberId(
+          workspaceMemberId,
+          workspaceId,
+        )
+      : [];
 
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
