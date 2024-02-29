@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { Repository } from 'typeorm';
+
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-assocation.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
@@ -59,6 +61,7 @@ import { BlocklistModule } from 'src/workspace/messaging/repositories/blocklist/
     MessageService,
     SaveMessagesAndCreateContactsService,
     MessagingConnectedAccountListener,
+    Repository,
   ],
   exports: [
     GmailPartialSyncService,
