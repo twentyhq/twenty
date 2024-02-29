@@ -25,6 +25,7 @@ import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
+import { generateNullable } from 'src/metadata/field-metadata/utils/generate-nullable';
 
 import {
   FieldMetadataEntity,
@@ -101,6 +102,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.type,
         true,
         fieldMetadataInput.name,
+      ),
+      isNullable: generateNullable(
+        fieldMetadataInput.type,
+        fieldMetadataInput.isNullable,
       ),
       defaultValue:
         fieldMetadataInput.defaultValue ??
