@@ -9,6 +9,8 @@ import { JwtAuthStrategy } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/integrations/email/email.service';
 
 import { TokenService } from './token.service';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 describe('TokenService', () => {
   let service: TokenService;
@@ -34,11 +36,19 @@ describe('TokenService', () => {
           useValue: {},
         },
         {
+          provide: UserWorkspaceService,
+          useValue: {},
+        },
+        {
           provide: getRepositoryToken(User, 'core'),
           useValue: {},
         },
         {
           provide: getRepositoryToken(RefreshToken, 'core'),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {},
         },
       ],

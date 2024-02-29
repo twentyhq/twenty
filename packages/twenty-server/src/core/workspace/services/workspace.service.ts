@@ -11,11 +11,16 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(UserWorkspace, 'core')
+    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userService: UserService,
   ) {
@@ -43,6 +48,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
+
+    await this.userWorkspaceRepository.delete({ workspaceId: id });
+
+    const users = await this.userRepository.find({
+      where: {
+        defaultWorkspaceId: workspace.id,
+      },
+    });
+
+    await this.userRepository.remove(users);
 
     await this.workspaceManagerService.delete(id);
     if (shouldDeleteCoreWorkspace) {
