@@ -9,11 +9,11 @@ import {
   IconApps,
   IconAt,
   IconCalendarEvent,
+  IconCode,
   IconColorSwatch,
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
-  IconRobot,
   IconSettings,
   IconUserCircle,
   IconUsers,
@@ -98,7 +98,7 @@ export const SettingsNavigationDrawerItems = () => {
         <SettingsNavigationDrawerItem
           label="Developers"
           path={SettingsPath.Developers}
-          Icon={IconRobot}
+          Icon={IconCode}
         />
         <SettingsNavigationDrawerItem
           label="Integrations"
