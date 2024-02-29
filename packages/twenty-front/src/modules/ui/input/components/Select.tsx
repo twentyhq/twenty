@@ -32,10 +32,11 @@ export type SelectProps<Value extends string | number | null> = {
   withSearchInput?: boolean;
 };
 
-const StyledControlContainer = styled.div<{
-  disabled?: boolean;
-  fullWidth?: boolean;
-}>`
+const StyledContainer = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+`;
+
+const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -43,7 +44,7 @@ const StyledControlContainer = styled.div<{
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: ${({ fullWidth }) => (fullWidth ? 'flex' : 'inline-flex')};
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
@@ -100,7 +101,7 @@ export const Select = <Value extends string | number | null>({
   const { closeDropdown } = useDropdown(dropdownId);
 
   const selectControl = (
-    <StyledControlContainer disabled={disabled} fullWidth={fullWidth}>
+    <StyledControlContainer disabled={disabled}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
           <selectedOption.Icon
@@ -115,50 +116,49 @@ export const Select = <Value extends string | number | null>({
     </StyledControlContainer>
   );
 
-  return disabled ? (
-    <div>
+  return (
+    <StyledContainer className={className} fullWidth={fullWidth}>
       {!!label && <StyledLabel>{label}</StyledLabel>}
-      {selectControl}
-    </div>
-  ) : (
-    <div className={className}>
-      {!!label && <StyledLabel>{label}</StyledLabel>}
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownMenuWidth={dropdownWidth}
-        dropdownPlacement="bottom-start"
-        clickableComponent={selectControl}
-        dropdownComponents={
-          <>
-            {!!withSearchInput && (
-              <DropdownMenuSearchInput
-                autoFocus
-                value={searchInputValue}
-                onChange={(event) => setSearchInputValue(event.target.value)}
-              />
-            )}
-            {!!withSearchInput && !!filteredOptions.length && (
-              <DropdownMenuSeparator />
-            )}
-            {!!filteredOptions.length && (
-              <DropdownMenuItemsContainer hasMaxHeight>
-                {filteredOptions.map((option) => (
-                  <MenuItem
-                    key={option.value}
-                    LeftIcon={option.Icon}
-                    text={option.label}
-                    onClick={() => {
-                      onChange?.(option.value);
-                      closeDropdown();
-                    }}
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            )}
-          </>
-        }
-        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
-      />
-    </div>
+      {disabled ? (
+        selectControl
+      ) : (
+        <Dropdown
+          dropdownId={dropdownId}
+          dropdownMenuWidth={dropdownWidth}
+          dropdownPlacement="bottom-start"
+          clickableComponent={selectControl}
+          dropdownComponents={
+            <>
+              {!!withSearchInput && (
+                <DropdownMenuSearchInput
+                  autoFocus
+                  value={searchInputValue}
+                  onChange={(event) => setSearchInputValue(event.target.value)}
+                />
+              )}
+              {!!withSearchInput && !!filteredOptions.length && (
+                <DropdownMenuSeparator />
+              )}
+              {!!filteredOptions.length && (
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  {filteredOptions.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      LeftIcon={option.Icon}
+                      text={option.label}
+                      onClick={() => {
+                        onChange?.(option.value);
+                        closeDropdown();
+                      }}
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              )}
+            </>
+          }
+          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+        />
+      )}
+    </StyledContainer>
   );
 };

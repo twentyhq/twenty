@@ -103,11 +103,15 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('FindManyCompanies', () => {
+    graphql.query('FindManyCompanies', ({ variables }) => {
+      const mockedData = variables.limit
+        ? mockedCompaniesData.slice(0, variables.limit)
+        : mockedCompaniesData;
+
       return HttpResponse.json({
         data: {
           companies: {
-            edges: mockedCompaniesData.map((company) => ({
+            edges: mockedData.map((company) => ({
               node: {
                 ...company,
                 favorites: {
