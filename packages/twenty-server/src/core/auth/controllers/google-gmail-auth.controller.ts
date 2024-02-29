@@ -43,6 +43,10 @@ export class GoogleGmailAuthController {
       throw new Error('Cannot connect Gmail account to demo workspace');
     }
 
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
     if (workspaceId)
       await this.googleGmailService.saveConnectedAccount({
         handle: email,

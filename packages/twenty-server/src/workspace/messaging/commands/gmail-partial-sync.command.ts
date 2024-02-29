@@ -1,10 +1,7 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { Inject } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
@@ -23,8 +20,6 @@ interface GmailPartialSyncOptions {
 })
 export class GmailPartialSyncCommand extends CommandRunner {
   constructor(
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly connectedAccountService: ConnectedAccountService,

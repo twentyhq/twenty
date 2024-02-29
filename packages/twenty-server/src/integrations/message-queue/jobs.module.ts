@@ -28,7 +28,6 @@ import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-w
 import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -41,7 +40,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
     UserModule,
     EnvironmentModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     ConnectedAccountModule,
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,

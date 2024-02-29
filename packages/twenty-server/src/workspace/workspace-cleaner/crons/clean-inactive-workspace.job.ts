@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 import {
   CleanInactiveWorkspaceEmail,
   DeleteInactiveWorkspaceEmail,
@@ -17,7 +16,6 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/workspace-cleaner/commands/clean-inactive-workspaces.command';
@@ -45,8 +43,6 @@ export class CleanInactiveWorkspaceJob
     private readonly userService: UserService,
     private readonly emailService: EmailService,
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     this.inactiveDaysBeforeDelete =
       this.environmentService.getInactiveDaysBeforeDelete();
