@@ -48,8 +48,6 @@ export class AuthResolver {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
@@ -138,44 +136,12 @@ export class AuthResolver {
     return result;
   }
 
-  @Mutation(() => Verify)
+  @Mutation(() => AuthTokens)
   @UseGuards(JwtAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<Verify> {
-    const userExists = await this.userService.findById(user.id);
-
-    assert(userExists, 'User not found', NotFoundException);
-
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: args.workspaceId,
-    });
-
-    assert(workspace, 'workspace doesnt exist', NotFoundException);
-
-    const userWorkspace =
-      await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        workspace.id,
-      );
-
-    assert(userWorkspace, 'cannot access workspace', ForbiddenException);
-
-    await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-      updatedAt: new Date().toISOString(),
-    });
-
-    const workspaceMember = await this.userService.loadWorkspaceMember(user);
-
-    if (workspaceMember) {
-      user.workspaceMember = workspaceMember;
-    }
-
-    user.defaultWorkspace = workspace;
-
+  ): Promise<AuthTokens> {
     const token = await this.tokenService.generateSwitchWorkspaceToken(
       user,
       args.workspaceId,

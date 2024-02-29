@@ -228,7 +228,7 @@ export type Mutation = {
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
-  generateJWT: Verify;
+  generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;

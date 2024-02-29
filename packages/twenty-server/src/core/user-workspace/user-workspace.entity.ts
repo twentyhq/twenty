@@ -23,11 +23,10 @@ export class UserWorkspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @Field(() => [User])
-  // @ManyToMany(() => User, (user) => user.userWorkspaces)
-  // users: User[];
-
   @Field(() => User)
+  @ManyToOne(() => User, (user) => user.workspaceUsers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -35,13 +34,9 @@ export class UserWorkspace {
   @Column()
   userId: string;
 
-  // @Field(() => [Workspace])
-  // @ManyToMany(() => Workspace, (workspace) => workspace.workspaceUsers)
-  // workspaces: Workspace[];
-
   @Field(() => Workspace)
-  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'SET NULL',
+  @ManyToOne(() => Workspace, (workspace) => workspace.workspaceUsers, {
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Workspace;

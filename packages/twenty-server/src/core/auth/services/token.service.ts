@@ -29,6 +29,7 @@ import { assert } from 'src/utils/assert';
 import {
   ApiKeyToken,
   AuthToken,
+  AuthTokens,
   PasswordResetToken,
 } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -39,7 +40,8 @@ import { EmailService } from 'src/integrations/email/email.service';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/core/auth/types/jwt-data.type';
-import { Verify } from 'src/core/auth/dto/verify.entity';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Injectable()
 export class TokenService {
@@ -51,7 +53,10 @@ export class TokenService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken, 'core')
     private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   async generateAccessToken(
@@ -239,12 +244,34 @@ export class TokenService {
   async generateSwitchWorkspaceToken(
     user: User,
     workspaceId: string,
-  ): Promise<Verify> {
+  ): Promise<AuthTokens> {
+    const userExists = await this.userRepository.findBy({ id: user.id });
+
+    assert(userExists, 'User not found', NotFoundException);
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    assert(workspace, 'workspace doesnt exist', NotFoundException);
+
+    const userWorkspace =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      );
+
+    assert(userWorkspace, 'cannot access workspace', ForbiddenException);
+
+    await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+    });
+
     const token = await this.generateAccessToken(user.id, workspaceId);
     const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
-      user,
       tokens: {
         accessToken: token,
         refreshToken,

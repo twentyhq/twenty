@@ -4,12 +4,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { User } from 'src/core/user/user.entity';
 
 import { AuthResolver } from './auth.resolver';
 
 import { TokenService } from './services/token.service';
 import { AuthService } from './services/auth.service';
-import { User } from 'src/core/user/user.entity';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;

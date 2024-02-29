@@ -73,6 +73,10 @@ export class User {
   })
   defaultWorkspace: Workspace;
 
+  @Field()
+  @Column()
+  defaultWorkspaceId: string;
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   passwordResetToken: string;
@@ -89,9 +93,10 @@ export class User {
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
 
-  // @Field(() => [Workspace], { nullable: true })
-  // @ManyToMany(() => Workspace, (workspace) => workspace.workspaceUsers)
-  // userWorkspaces: Workspace[];
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user, {
+    onDelete: 'CASCADE',
+  })
+  workspaceUsers: UserWorkspace[];
 
   @Field(() => [UserWorkspace], { nullable: true })
   workspaces: UserWorkspace[];
