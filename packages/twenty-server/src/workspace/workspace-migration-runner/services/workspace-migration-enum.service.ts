@@ -186,6 +186,6 @@ export class WorkspaceMigrationEnumService {
   }
 
   private getStringifyValue(value: any) {
-    return typeof value === 'string' ? value : `'${value}'`;
+    return `'${value}'`;
   }
 }
