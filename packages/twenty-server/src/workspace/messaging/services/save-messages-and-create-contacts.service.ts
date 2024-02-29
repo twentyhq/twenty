@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
@@ -82,10 +84,15 @@ export class SaveMessagesAndCreateContactsService {
     if (isContactAutoCreationEnabled) {
       startTime = Date.now();
 
-      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-        connectedAccount.handle,
-        contactsToCreate,
-        workspaceId,
+      await workspaceDataSource?.transaction(
+        async (transactionManager: EntityManager) => {
+          await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+            connectedAccount.handle,
+            contactsToCreate,
+            workspaceId,
+            transactionManager,
+          );
+        },
       );
 
       const handles = participantsWithMessageId.map(

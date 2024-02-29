@@ -12,6 +12,8 @@ import { ConnectedAccountService } from 'src/workspace/messaging/repositories/co
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
+import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 
 @Injectable()
@@ -26,6 +28,7 @@ export class GmailFullSyncService {
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly blocklistService: BlocklistService,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
   ) {}
 
@@ -41,6 +44,7 @@ export class GmailFullSyncService {
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
+    const workspaceMemberId = connectedAccount.accountOwnerId;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
@@ -57,12 +61,19 @@ export class GmailFullSyncService {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
+    const blocklist = await this.blocklistService.getByWorkspaceMemberId(
+      workspaceMemberId,
+      workspaceId,
+    );
+
+    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
 
     const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults: 500,
       pageToken: nextPageToken,
+      q: gmailSearchFilterExcludeEmails(blocklistedEmails),
     });
 
     let endTime = Date.now();
@@ -80,6 +91,10 @@ export class GmailFullSyncService {
       : [];
 
     if (!messageExternalIds || messageExternalIds?.length === 0) {
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+      );
+
       return;
     }
 
