@@ -56,6 +56,7 @@ export {
   IconEyeOff,
   IconFile,
   IconFileCheck,
+  IconFileExport,
   IconFileImport,
   IconFileText,
   IconFileUpload,

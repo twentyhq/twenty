@@ -10,6 +10,7 @@ import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/u
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
+  IconFileExport,
   IconFileImport,
   IconTag,
 } from '@/ui/display/icon';
@@ -25,6 +26,8 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
+
+import { useExportTableData } from '../hooks/useExportTableData';
 
 type RecordIndexOptionsMenu = 'fields';
 
@@ -119,6 +122,13 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openRecordSpreadsheetImport } =
     useSpreadsheetRecordImport(objectNameSingular);
 
+  const { progress, download } = useExportTableData({
+    delayMs: 100,
+    filename: `${objectNameSingular}.csv`,
+    objectNameSingular,
+    recordIndexId,
+  });
+
   return (
     <>
       {!currentMenu && (
@@ -146,6 +156,11 @@ export const RecordIndexOptionsDropdownContent = ({
               onClick={() => openRecordSpreadsheetImport()}
               LeftIcon={IconFileImport}
               text="Import"
+            />
+            <MenuItem
+              onClick={download}
+              LeftIcon={IconFileExport}
+              text={progress === undefined ? `Export` : `Export (${progress}%)`}
             />
           </DropdownMenuItemsContainer>
         </>
