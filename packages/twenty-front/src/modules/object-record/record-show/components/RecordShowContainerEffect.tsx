@@ -6,7 +6,7 @@ import { Activity } from '@/activities/types/Activity';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const RecordShowContainer = ({
   objectRecordId,
@@ -38,7 +38,7 @@ export const RecordShowContainer = ({
   const { makeActivityWithoutConnection } = useActivityConnectionUtils();
 
   useEffect(() => {
-    if (!loading && isDefined(record)) {
+    if (!loading && isNonNullable(record)) {
       const { activity: activityWithoutConnection } =
         makeActivityWithoutConnection(record as any);
 

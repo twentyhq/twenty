@@ -22,8 +22,8 @@ import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMat
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const isAndFilter = (
   filter: ObjectRecordQueryFilter,
@@ -102,7 +102,7 @@ export const isRecordMatchingFilter = ({
   if (isNotFilter(filter)) {
     const filterValue = filter.not;
 
-    if (!isDefined(filterValue)) {
+    if (!isNonNullable(filterValue)) {
       throw new Error('Unexpected value for "not" filter : ' + filterValue);
     }
 
@@ -117,7 +117,7 @@ export const isRecordMatchingFilter = ({
   }
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {
-    if (!isDefined(filterValue)) {
+    if (!isNonNullable(filterValue)) {
       throw new Error(
         'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
       );
@@ -129,7 +129,7 @@ export const isRecordMatchingFilter = ({
       (field) => field.name === filterKey,
     );
 
-    if (!isDefined(objectMetadataField)) {
+    if (!isNonNullable(objectMetadataField)) {
       throw new Error(
         'Field metadata item "' +
           filterKey +

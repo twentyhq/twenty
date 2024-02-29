@@ -2,7 +2,7 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const triggerAttachRelationOptimisticEffect = ({
@@ -43,7 +43,7 @@ export const triggerAttachRelationOptimisticEffect = ({
           __typename: sourceRecordTypeName,
         });
 
-        if (!isDefined(sourceRecordReference)) {
+        if (!isNonNullable(sourceRecordReference)) {
           return targetRecordFieldValue;
         }
 
