@@ -10,7 +10,7 @@ import {
   IconCalendarEvent,
   IconCheckbox,
   IconColorSwatch,
-  IconLogout,
+  IconDoorEnter,
   IconMail,
   IconSearch,
   IconSettings,
@@ -139,7 +139,7 @@ export const Submenu: Story = {
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Other" />
-          <NavigationDrawerItem label="Logout" Icon={IconLogout} />
+          <NavigationDrawerItem label="Logout" Icon={IconDoorEnter} />
         </NavigationDrawerSection>
       </>
     ),
