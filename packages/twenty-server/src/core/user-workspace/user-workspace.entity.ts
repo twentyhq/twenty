@@ -35,7 +35,7 @@ export class UserWorkspace {
   userId: string;
 
   @Field(() => Workspace, { nullable: true })
-  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
+  @ManyToOne(() => Workspace, (workspace) => workspace.workspaceUsers, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
