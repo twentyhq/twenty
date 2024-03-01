@@ -27,26 +27,33 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
+import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
+import { BillingModule } from 'src/core/billing/billing.module';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
+import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
-    ObjectMetadataModule,
+    BillingModule,
     DataSourceModule,
-    HttpModule,
-    TypeORMModule,
-    MessagingModule,
-    UserModule,
-    EnvironmentModule,
-    TypeORMModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
     ConnectedAccountModule,
-    MessageParticipantModule,
     CreateCompaniesAndContactsModule,
-    MessageChannelModule,
     DataSeedDemoWorkspaceModule,
+    EnvironmentModule,
+    HttpModule,
+    MessagingModule,
+    MessageParticipantModule,
+    MessageChannelModule,
+    ObjectMetadataModule,
+    StripeModule,
     ThreadCleanerModule,
+    TypeORMModule,
+    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    UserModule,
+    UserWorkspaceModule,
+    WorkspaceDataSourceModule,
   ],
   providers: [
     {
@@ -90,6 +97,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
       provide: DeleteConnectedAccountAssociatedDataJob.name,
       useClass: DeleteConnectedAccountAssociatedDataJob,
     },
+    { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
   ],
 })
 export class JobsModule {

@@ -11,13 +11,13 @@ import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subsc
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
-import { assert } from 'src/utils/assert';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
 }
 
 export enum WebhookEvent {
+  CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
 }
 
@@ -42,9 +42,8 @@ export class BillingService {
   }
 
   async getProductPrices(stripeProductId: string) {
-    const productPrices = await this.stripeService.stripe.prices.search({
-      query: `product: '${stripeProductId}'`,
-    });
+    const productPrices =
+      await this.stripeService.getProductPrices(stripeProductId);
 
     return this.formatProductPrices(productPrices.data);
   }
@@ -74,63 +73,101 @@ export class BillingService {
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
-  async checkout(user: User, priceId: string, successUrlPath?: string) {
-    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
-    const session = await this.stripeService.stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      subscription_data: {
-        metadata: {
-          workspaceId: user.defaultWorkspace.id,
-        },
-      },
-      customer_email: user.email,
-      success_url: successUrlPath
-        ? frontBaseUrl + successUrlPath
-        : frontBaseUrl,
-      cancel_url: frontBaseUrl,
+  async getBillingSubscription(workspaceId: string) {
+    return await this.billingSubscriptionRepository.findOneOrFail({
+      where: { workspaceId },
+      relations: ['billingSubscriptionItems'],
     });
-
-    assert(session.url, 'Error: missing checkout.session.url');
-
-    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
-
-    return session.url;
   }
 
-  async createBillingSubscription(
+  async getBillingSubscriptionItem(
     workspaceId: string,
-    data: Stripe.CustomerSubscriptionUpdatedEvent.Data,
+    stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription = this.billingSubscriptionRepository.create({
-      workspaceId: workspaceId,
-      stripeCustomerId: data.object.customer as string,
-      stripeSubscriptionId: data.object.id,
-      status: data.object.status,
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
+
+    const billingSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.filter(
+        (billingSubscriptionItem) =>
+          billingSubscriptionItem.stripeProductId === stripeProductId,
+      )?.[0];
+
+    if (!billingSubscriptionItem) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+      );
+    }
+
+    return billingSubscriptionItem;
+  }
+
+  async checkout(user: User, priceId: string, successUrlPath?: string) {
+    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const successUrl = successUrlPath
+      ? frontBaseUrl + successUrlPath
+      : frontBaseUrl;
+
+    return await this.stripeService.createCheckoutSession(
+      user,
+      priceId,
+      successUrl,
+      frontBaseUrl,
+    );
+  }
+
+  async deleteSubscription(workspaceId: string) {
+    const subscriptionToCancel =
+      await this.billingSubscriptionRepository.findOneBy({
+        workspaceId,
+      });
+
+    if (subscriptionToCancel) {
+      await this.stripeService.cancelSubscription(
+        subscriptionToCancel.stripeSubscriptionId,
+      );
+      await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
+    }
+  }
+
+  async upsertBillingSubscription(
+    workspaceId: string,
+    data:
+      | Stripe.CustomerSubscriptionUpdatedEvent.Data
+      | Stripe.CustomerSubscriptionCreatedEvent.Data,
+  ) {
+    await this.billingSubscriptionRepository.upsert(
+      {
+        workspaceId: workspaceId,
+        stripeCustomerId: data.object.customer as string,
+        stripeSubscriptionId: data.object.id,
+        status: data.object.status,
+      },
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: data.object.status,
     });
 
-    await this.billingSubscriptionRepository.save(billingSubscription);
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
 
-    for (const item of data.object.items.data) {
-      const billingSubscriptionItem =
-        this.billingSubscriptionItemRepository.create({
+    await this.billingSubscriptionItemRepository.upsert(
+      data.object.items.data.map((item) => {
+        return {
           billingSubscriptionId: billingSubscription.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
+          stripeSubscriptionItemId: item.id,
           quantity: item.quantity,
-        });
-
-      await this.billingSubscriptionItemRepository.save(
-        billingSubscriptionItem,
-      );
-    }
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: 'active',
-    });
+        };
+      }),
+      {
+        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }
