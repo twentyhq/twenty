@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
-import * as bodyParser from 'body-parser';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
@@ -14,9 +14,10 @@ import { LoggerService } from './integrations/logger/logger.service';
 import { EnvironmentService } from './integrations/environment/environment.service';
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
+    rawBody: true,
   });
   const logger = app.get(LoggerService);
 
@@ -32,14 +33,11 @@ const bootstrap = async () => {
       transform: true,
     }),
   );
-
-  app.use(bodyParser.json({ limit: settings.storage.maxFileSize }));
-  app.use(
-    bodyParser.urlencoded({
-      limit: settings.storage.maxFileSize,
-      extended: true,
-    }),
-  );
+  app.useBodyParser('json', { limit: settings.storage.maxFileSize });
+  app.useBodyParser('urlencoded', {
+    limit: settings.storage.maxFileSize,
+    extended: true,
+  });
 
   // Graphql file upload
   app.use(

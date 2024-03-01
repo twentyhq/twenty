@@ -6,7 +6,7 @@ export enum CoreObjectNameSingular {
   Blocklist = 'blocklist',
   Comment = 'comment',
   Company = 'company',
-  ConenctedAccount = 'conenctedAccount',
+  ConnectedAccount = 'connectedAccount',
   Favorite = 'favorite',
   Message = 'message',
   MessageChannel = 'messageChannel',

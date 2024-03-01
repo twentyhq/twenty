@@ -6,7 +6,7 @@ import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 export const triggerDeleteRecordsOptimisticEffect = ({
@@ -38,7 +38,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const { fieldArguments: rootQueryVariables } =
+        const { fieldVariables: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
@@ -68,7 +68,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         // TODO: same as in update, should we trigger DELETE ?
         if (
-          isDefined(rootQueryVariables?.first) &&
+          isNonNullable(rootQueryVariables?.first) &&
           cachedEdges?.length === rootQueryVariables.first
         ) {
           return DELETE;

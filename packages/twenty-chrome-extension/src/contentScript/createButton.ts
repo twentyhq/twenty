@@ -1,7 +1,8 @@
-function createNewButton(
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
+const createNewButton = (
   text: string,
   onClickHandler: () => void,
-): HTMLButtonElement {
+): HTMLButtonElement => {
   const newButton: HTMLButtonElement = document.createElement('button');
   newButton.textContent = text;
 
@@ -52,6 +53,6 @@ function createNewButton(
   });
 
   return newButton;
-}
+};
 
 export default createNewButton;

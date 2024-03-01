@@ -1,11 +1,10 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
 import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
 
 type SettingsObjectFieldDataTypeProps = {
   onClick?: () => void;
@@ -50,8 +49,8 @@ const StyledLabelContainer = styled.div`
 export const SettingsObjectFieldDataType = ({
   onClick,
   value,
-  Icon = settingsFieldMetadataTypes[value]?.Icon ?? IconTwentyStar,
-  label = settingsFieldMetadataTypes[value]?.label,
+  Icon = SETTINGS_FIELD_METADATA_TYPES[value]?.Icon ?? IconTwentyStar,
+  label = SETTINGS_FIELD_METADATA_TYPES[value]?.label,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 

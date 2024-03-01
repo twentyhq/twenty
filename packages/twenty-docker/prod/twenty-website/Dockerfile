@@ -4,11 +4,10 @@ FROM node:18.17.1-alpine as twenty-website-build
 WORKDIR /app
 
 COPY ./package.json .
-COPY ./.eslintrc.js .
-COPY ./.prettierrc .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
+COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-website/package.json /app/packages/twenty-website/package.json
 
 RUN yarn

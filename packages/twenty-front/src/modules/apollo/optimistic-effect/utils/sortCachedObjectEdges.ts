@@ -4,7 +4,7 @@ import { ReadFieldFunction } from '@apollo/client/cache/core/types/common';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
 export const sortCachedObjectEdges = ({
@@ -31,7 +31,7 @@ export const sortCachedObjectEdges = ({
         orderByFieldName,
         recordFromCache,
       ) ?? null;
-    const isSubFieldFilter = isDefined(fieldValue) && !!orderBySubFieldName;
+    const isSubFieldFilter = isNonNullable(fieldValue) && !!orderBySubFieldName;
 
     if (!isSubFieldFilter) return fieldValue as string | number | null;
 

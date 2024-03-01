@@ -3,7 +3,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 export type TextAreaInputProps = {
   disabled?: boolean;
@@ -21,7 +21,7 @@ export type TextAreaInputProps = {
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
   width: 100%;
   resize: none;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};

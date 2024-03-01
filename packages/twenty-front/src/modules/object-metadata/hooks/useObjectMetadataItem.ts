@@ -16,11 +16,12 @@ import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGe
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
+import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -62,7 +63,7 @@ export const useObjectMetadataItem = (
     objectMetadataItems = mockObjectMetadataItems;
   }
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isNonNullable(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
       objectNameSingular,
       objectMetadataItems,
@@ -87,6 +88,13 @@ export const useObjectMetadataItem = (
 
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const findManyRecordsQuery = generateFindManyRecordsQuery({
+    objectMetadataItem,
+    depth,
+  });
+
+  const generateFindDuplicateRecordsQuery =
+    useGenerateFindDuplicateRecordsQuery();
+  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
     objectMetadataItem,
     depth,
   });
@@ -136,6 +144,7 @@ export const useObjectMetadataItem = (
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,
+    findDuplicateRecordsQuery,
     findOneRecordQuery,
     createOneRecordMutation,
     updateOneRecordMutation,

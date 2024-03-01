@@ -1,4 +1,4 @@
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { Field, Relation } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItem = Omit<
@@ -26,7 +26,7 @@ export type FieldMetadataItem = Omit<
         >;
       })
     | null;
-  defaultValue?: unknown;
+  defaultValue?: any;
   options?: {
     color: ThemeColor;
     id: string;

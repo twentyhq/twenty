@@ -6,7 +6,7 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordQueryResult } from '@/object-record/types/ObjectRecordQueryResult';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useReadFindManyRecordsQueryInCache = ({
   objectMetadataItem,
@@ -38,7 +38,7 @@ export const useReadFindManyRecordsQueryInCache = ({
     const existingRecordConnection =
       existingRecordsQueryResult?.[objectMetadataItem.namePlural];
 
-    const existingObjectRecords = isDefined(existingRecordConnection)
+    const existingObjectRecords = isNonNullable(existingRecordConnection)
       ? getRecordsFromRecordConnection({
           recordConnection: existingRecordConnection,
         })

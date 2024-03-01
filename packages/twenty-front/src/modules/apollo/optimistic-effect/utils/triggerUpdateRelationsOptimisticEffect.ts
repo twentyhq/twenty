@@ -6,13 +6,13 @@ import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH as CORE_OBJECT_NAMES_TO_DELETE_ON_OPTIMISTIC_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
+import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
@@ -36,7 +36,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     }
 
     const fieldDoesNotExist =
-      isDefined(updatedSourceRecord) &&
+      isNonNullable(updatedSourceRecord) &&
       !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
 
     if (fieldDoesNotExist) {
@@ -74,6 +74,8 @@ export const triggerUpdateRelationsOptimisticEffect = ({
       return;
     }
 
+    // TODO: replace this by a relation type check, if it's one to many,
+    //   it's an object record connection (we can still check it though as a safeguard)
     const currentFieldValueOnSourceRecordIsARecordConnection =
       isObjectRecordConnection(
         targetObjectMetadataItem.nameSingular,
@@ -85,7 +87,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? currentFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [currentFieldValueOnSourceRecord].filter(isDefined);
+        : [currentFieldValueOnSourceRecord].filter(isNonNullable);
 
     const updatedFieldValueOnSourceRecordIsARecordConnection =
       isObjectRecordConnection(
@@ -98,18 +100,21 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? updatedFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [updatedFieldValueOnSourceRecord].filter(isDefined);
+        : [updatedFieldValueOnSourceRecord].filter(isNonNullable);
 
     const shouldDetachSourceFromAllTargets =
-      isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
+      isNonNullable(currentSourceRecord) &&
+      targetRecordsToDetachFrom.length > 0;
 
     if (shouldDetachSourceFromAllTargets) {
-      const shouldStartByDeletingRelationTargetRecordsFromCache =
-        CORE_OBJECT_NAMES_TO_DELETE_ON_OPTIMISTIC_RELATION_DETACH.includes(
+      // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
+      //   Instead of hardcoding it here
+      const shouldCascadeDeleteTargetRecords =
+        CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
           targetObjectMetadataItem.nameSingular as CoreObjectNameSingular,
         );
 
-      if (shouldStartByDeletingRelationTargetRecordsFromCache) {
+      if (shouldCascadeDeleteTargetRecords) {
         triggerDeleteRecordsOptimisticEffect({
           cache,
           objectMetadataItem: targetObjectMetadataItem,

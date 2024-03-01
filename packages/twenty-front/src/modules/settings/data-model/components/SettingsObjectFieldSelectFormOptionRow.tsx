@@ -19,7 +19,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { mainColorNames } from '@/ui/theme/constants/colors';
+import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
@@ -89,7 +89,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
         dropdownComponents={
           <DropdownMenu>
             <DropdownMenuItemsContainer>
-              {mainColorNames.map((colorName) => (
+              {MAIN_COLOR_NAMES.map((colorName) => (
                 <MenuItemSelectColor
                   key={colorName}
                   onClick={() => {

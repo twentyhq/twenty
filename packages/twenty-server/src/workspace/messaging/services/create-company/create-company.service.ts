@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import axios, { AxiosInstance } from 'axios';
 
 import { CompanyService } from 'src/workspace/messaging/repositories/company/company.service';
-import { capitalize } from 'src/utils/capitalize';
+import { getCompanyNameFromDomainName } from 'src/workspace/messaging/utils/get-company-name-from-domain-name.util';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
@@ -77,11 +77,13 @@ export class CreateCompanyService {
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
     this.companyService.createCompany(
-      companyId,
-      name,
-      domainName,
-      city,
       workspaceId,
+      {
+        id: companyId,
+        domainName,
+        name,
+        city,
+      },
       transactionManager,
     );
 
@@ -98,12 +100,12 @@ export class CreateCompanyService {
       const data = response.data;
 
       return {
-        name: data.name,
+        name: data.name ?? getCompanyNameFromDomainName(domainName),
         city: data.city,
       };
     } catch (e) {
       return {
-        name: capitalize(domainName.split('.')[0]),
+        name: getCompanyNameFromDomainName(domainName),
         city: '',
       };
     }

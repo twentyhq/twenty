@@ -72,14 +72,24 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
-          setSignInUpMode(SignInUpMode.SignIn);
+          isMatchingLocation(AppPath.Invite)
+            ? setSignInUpMode(SignInUpMode.Invite)
+            : setSignInUpMode(SignInUpMode.SignIn);
         } else {
-          setSignInUpMode(SignInUpMode.SignUp);
+          isMatchingLocation(AppPath.Invite)
+            ? setSignInUpMode(SignInUpMode.Invite)
+            : setSignInUpMode(SignInUpMode.SignUp);
         }
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [setSignInUpStep, checkUserExistsQuery, form, setSignInUpMode]);
+  }, [
+    isMatchingLocation,
+    setSignInUpStep,
+    checkUserExistsQuery,
+    form,
+    setSignInUpMode,
+  ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -136,7 +146,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     PageHotkeyScope.SignInUp,
-    [continueWithEmail],
+    [
+      continueWithEmail,
+      signInUpStep,
+      continueWithCredentials,
+      form,
+      submitCredentials,
+    ],
   );
 
   return {

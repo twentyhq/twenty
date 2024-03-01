@@ -43,9 +43,90 @@ export class WorkspaceMigrationRelationFactory {
           originalObjectMetadataMap,
           relationMetadataCollection,
         );
+      case WorkspaceMigrationBuilderAction.UPDATE:
+        return this.updateRelationMigration(
+          originalObjectMetadataMap,
+          relationMetadataCollection,
+        );
       default:
         return [];
     }
+  }
+
+  private async updateRelationMigration(
+    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
+    relationMetadataCollection: RelationMetadataEntity[],
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+    for (const relationMetadata of relationMetadataCollection) {
+      const toObjectMetadata =
+        originalObjectMetadataMap[relationMetadata.toObjectMetadataId];
+      const fromObjectMetadata =
+        originalObjectMetadataMap[relationMetadata.fromObjectMetadataId];
+
+      if (!toObjectMetadata) {
+        throw new Error(
+          `ObjectMetadata with id ${relationMetadata.toObjectMetadataId} not found`,
+        );
+      }
+
+      if (!fromObjectMetadata) {
+        throw new Error(
+          `ObjectMetadata with id ${relationMetadata.fromObjectMetadataId} not found`,
+        );
+      }
+
+      const toFieldMetadata = toObjectMetadata.fields.find(
+        (field) => field.id === relationMetadata.toFieldMetadataId,
+      );
+
+      if (!toFieldMetadata) {
+        throw new Error(
+          `FieldMetadata with id ${relationMetadata.toFieldMetadataId} not found`,
+        );
+      }
+
+      const migrations: WorkspaceMigrationTableAction[] = [
+        {
+          name: computeObjectTargetTable(toObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY,
+              columnName: `${camelCase(toFieldMetadata.name)}Id`,
+            },
+          ],
+        },
+        {
+          name: computeObjectTargetTable(toObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+              columnName: `${camelCase(toFieldMetadata.name)}Id`,
+              referencedTableName: computeObjectTargetTable(fromObjectMetadata),
+              referencedTableColumnName: 'id',
+              isUnique:
+                relationMetadata.relationType ===
+                RelationMetadataType.ONE_TO_ONE,
+              onDelete: relationMetadata.onDeleteAction,
+            },
+          ],
+        },
+      ];
+
+      workspaceMigrations.push({
+        workspaceId: relationMetadata.workspaceId,
+        name: generateMigrationName(
+          `update-relation-from-${fromObjectMetadata.nameSingular}-to-${toObjectMetadata.nameSingular}`,
+        ),
+        isCustom: false,
+        migrations,
+      });
+    }
+
+    return workspaceMigrations;
   }
 
   private async createRelationMigration(
@@ -88,13 +169,14 @@ export class WorkspaceMigrationRelationFactory {
           action: 'alter',
           columns: [
             {
-              action: WorkspaceMigrationColumnActionType.RELATION,
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
               columnName: `${camelCase(toFieldMetadata.name)}Id`,
               referencedTableName: computeObjectTargetTable(fromObjectMetadata),
               referencedTableColumnName: 'id',
               isUnique:
                 relationMetadata.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
+              onDelete: relationMetadata.onDeleteAction,
             },
           ],
         },

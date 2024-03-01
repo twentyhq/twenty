@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
+import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -31,11 +32,11 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, initialized } = useTimelineActivities({
-    targetableObject,
-  });
+  const { initialized, noActivities } = useRecoilValue(
+    timelineActivitiesNetworkingState,
+  );
 
-  const showEmptyState = initialized && activities.length === 0;
+  const showEmptyState = noActivities;
 
   const showLoadingState = !initialized;
 
@@ -63,7 +64,7 @@ export const Timeline = ({
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities} />
+      <TimelineItemsContainer />
     </StyledMainContainer>
   );
 };

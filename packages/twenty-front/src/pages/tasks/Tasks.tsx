@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
@@ -52,7 +52,7 @@ export const Tasks = () => {
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
         <TasksEffect filterDropdownId={filterDropdownId} />
         <PageHeader title="Tasks" Icon={IconCheckbox}>
-          <PageAddTaskButton filterDropdownId={filterDropdownId} />
+          <PageAddTaskButton />
         </PageHeader>
         <PageBody>
           <StyledTasksContainer>

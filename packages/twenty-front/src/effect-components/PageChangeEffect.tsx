@@ -89,7 +89,8 @@ export const PageChangeEffect = () => {
       navigate(AppPath.PlanRequired);
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
-      !isMatchingLocation(AppPath.CreateWorkspace)
+      !isMatchingLocation(AppPath.CreateWorkspace) &&
+      !isMatchingLocation(AppPath.PlanRequiredSuccess)
     ) {
       navigate(AppPath.CreateWorkspace);
     } else if (
@@ -218,7 +219,8 @@ export const PageChangeEffect = () => {
         label: 'Create Task',
         type: CommandType.Create,
         Icon: IconCheckbox,
-        onCommandClick: () => openCreateActivity({ type: 'Task' }),
+        onCommandClick: () =>
+          openCreateActivity({ type: 'Task', targetableObjects: [] }),
       },
     ]);
   }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);

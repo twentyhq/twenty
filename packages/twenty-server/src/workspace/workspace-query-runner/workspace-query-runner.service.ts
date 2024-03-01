@@ -1,5 +1,12 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+import isEmpty from 'lodash.isempty';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -12,6 +19,7 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   UpdateManyResolverArgs,
@@ -35,6 +43,7 @@ import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/ob
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { NotFoundError } from 'src/filters/utils/graphql-errors.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -45,6 +54,8 @@ import { computePgGraphQLError } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
+  private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
+
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -82,7 +93,7 @@ export class WorkspaceQueryRunnerService {
     const result = await this.execute(query, workspaceId);
     const end = performance.now();
 
-    console.log(
+    this.logger.log(
       `query time: ${end - start} ms on query ${
         options.objectMetadataItem.nameSingular
       }`,
@@ -127,6 +138,74 @@ export class WorkspaceQueryRunnerService {
     );
 
     return parsedResult?.edges?.[0]?.node;
+  }
+
+  async findDuplicates<TRecord extends IRecord = IRecord>(
+    args: FindDuplicatesResolverArgs<TRecord>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<TRecord> | undefined> {
+    if (!args.data && !args.id) {
+      throw new BadRequestException(
+        'You have to provide either "data" or "id" argument',
+      );
+    }
+
+    if (!args.id && isEmpty(args.data)) {
+      throw new BadRequestException(
+        'The "data" condition can not be empty when ID input not provided',
+      );
+    }
+
+    const { workspaceId, userId, objectMetadataItem } = options;
+
+    let existingRecord: Record<string, unknown> | undefined;
+
+    if (args.id) {
+      const existingRecordQuery =
+        this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
+          args.id,
+          options,
+        );
+
+      const existingRecordResult = await this.execute(
+        existingRecordQuery,
+        workspaceId,
+      );
+
+      const parsedResult = this.parseResult<Record<string, unknown>>(
+        existingRecordResult,
+        objectMetadataItem,
+        '',
+      );
+
+      existingRecord = parsedResult?.edges?.[0]?.node;
+
+      if (!existingRecord) {
+        throw new NotFoundError(`Object with id ${args.id} not found`);
+      }
+    }
+
+    const query = await this.workspaceQueryBuilderFactory.findDuplicates(
+      args,
+      options,
+      existingRecord,
+    );
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'findDuplicates',
+      args,
+    );
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<IConnection<TRecord>>(
+      result,
+      objectMetadataItem,
+      '',
+    );
   }
 
   async createMany<Record extends IRecord = IRecord>(
@@ -364,7 +443,18 @@ export class WorkspaceQueryRunnerService {
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
-    if (['update', 'deleteFrom'].includes(command) && !result.affectedCount) {
+    if (!result) {
+      this.logger.log(
+        `No result found for ${entityKey}, graphqlResult: ` +
+          JSON.stringify(graphqlResult, null, 3),
+      );
+    }
+
+    if (
+      result &&
+      ['update', 'deleteFrom'].includes(command) &&
+      !result.affectedCount
+    ) {
       throw new BadRequestException('No rows were affected.');
     }
 

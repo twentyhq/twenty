@@ -3,7 +3,9 @@ import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { Preview, ReactRenderer } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 
-import { darkTheme, lightTheme } from '../src/modules/ui/theme/constants/theme';
+import { THEME_DARK } from '@/ui/theme/constants/ThemeDark';
+import { THEME_LIGHT } from '@/ui/theme/constants/ThemeLight';
+
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
@@ -29,8 +31,8 @@ const preview: Preview = {
   decorators: [
     withThemeFromJSXProvider<ReactRenderer>({
       themes: {
-        light: lightTheme,
-        dark: darkTheme,
+        light: THEME_LIGHT,
+        dark: THEME_DARK,
       },
       defaultTheme: 'light',
       Provider: ThemeProvider,

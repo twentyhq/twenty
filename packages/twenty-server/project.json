@@ -1,4 +1,6 @@
 {
+    "name": "twenty-server",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "projectType": "application",
     "targets": {
         "build:packageJson": {
@@ -11,6 +13,16 @@
                 "tsConfig": "packages/twenty-server/tsconfig.json",
                 "outputPath": "packages/twenty-server/dist",
                 "updateBuildableProjectDepsInPackageJson": true
+            }
+        },
+        "command": {
+            "executor": "nx:run-commands",
+            "dependsOn": [
+                "build"
+            ],
+            "options": {
+                "cwd": "packages/twenty-server",
+                "command": "node dist/src/command.js"
             }
         },
         "test:debug": {

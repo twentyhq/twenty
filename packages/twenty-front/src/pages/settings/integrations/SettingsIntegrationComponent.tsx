@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { IconArrowUpRight, IconBolt } from '@/ui/display/icon';
-import { SoonPill } from '@/ui/display/pill/components/SoonPill';
+import { Pill } from '@/ui/display/pill/components/Pill';
 import { Button } from '@/ui/input/button/components/Button';
 import { SettingsIntegration } from '~/pages/settings/integrations/types/SettingsIntegration';
 
@@ -36,7 +36,7 @@ const StyledIntegrationLogo = styled.div`
   color: ${({ theme }) => theme.border.color.strong};
 `;
 
-const StyledSoonPill = styled(SoonPill)`
+const StyledSoonPill = styled(Pill)`
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -69,7 +69,7 @@ export const SettingsIntegrationComponent = ({
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
-        <StyledSoonPill />
+        <StyledSoonPill label="Soon" />
       ) : (
         <Button
           onClick={() => openLinkInTab(integration.link)}

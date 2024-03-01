@@ -17,6 +17,16 @@ export function generateDefaultValue(
         firstName: '',
         lastName: '',
       };
+    case FieldMetadataType.LINK:
+      return {
+        url: '',
+        label: '',
+      };
+    case FieldMetadataType.CURRENCY:
+      return {
+        amountMicros: null,
+        currencyCode: '',
+      };
     default:
       return null;
   }

@@ -1,7 +1,7 @@
 import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-import { rgba } from '../../theme/constants/colors';
+import { RGBA } from '@/ui/theme/constants/Rgba';
 
 export enum TooltipPosition {
   Top = 'top',
@@ -12,7 +12,7 @@ export enum TooltipPosition {
 
 const StyledAppTooltip = styled(Tooltip)`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => rgba(theme.color.gray80, 0.8)};
+  background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-shadow: ${({ theme }) => theme.boxShadow.light};

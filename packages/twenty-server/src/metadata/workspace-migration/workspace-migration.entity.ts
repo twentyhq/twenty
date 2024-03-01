@@ -5,10 +5,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { RelationOnDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
+
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
   ALTER = 'ALTER',
-  RELATION = 'RELATION',
+  CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
+  DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
 }
 
@@ -34,12 +37,18 @@ export type WorkspaceMigrationColumnAlter = {
   alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
-export type WorkspaceMigrationColumnRelation = {
-  action: WorkspaceMigrationColumnActionType.RELATION;
+export type WorkspaceMigrationColumnCreateRelation = {
+  action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY;
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
   isUnique?: boolean;
+  onDelete?: RelationOnDeleteAction;
+};
+
+export type WorkspaceMigrationColumnDropRelation = {
+  action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY;
+  columnName: string;
 };
 
 export type WorkspaceMigrationColumnDrop = {
@@ -52,7 +61,8 @@ export type WorkspaceMigrationColumnAction = {
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
-  | WorkspaceMigrationColumnRelation
+  | WorkspaceMigrationColumnCreateRelation
+  | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
 );
 

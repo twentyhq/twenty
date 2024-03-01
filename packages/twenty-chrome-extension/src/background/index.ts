@@ -1,16 +1,14 @@
-import { openOptionsPage } from './utils/openOptionsPage';
-
-console.log('Background Script Works');
+import { openOptionsPage } from '~/background/utils/openOptionsPage';
 
 // Open options page programmatically in a new tab.
-chrome.runtime.onInstalled.addListener(function (details) {
+chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
     openOptionsPage();
   }
 });
 
 // Open options page when extension icon is clicked.
-chrome.action.onClicked.addListener(function () {
+chrome.action.onClicked.addListener(() => {
   openOptionsPage();
 });
 

@@ -7,13 +7,15 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import {
   ParticipantWithId,
-  Participant,
+  ParticipantWithMessageId,
 } from 'src/workspace/messaging/types/gmail-message';
+import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly personService: PersonService,
   ) {}
 
   public async getByHandles(
@@ -66,7 +68,7 @@ export class MessageParticipantService {
     );
   }
 
-  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -88,11 +90,12 @@ export class MessageParticipantService {
         "messageParticipant"."workspaceMemberId",
         "messageParticipant"."messageId"
         FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
-        LEFT JOIN ${dataSourceSchema}."message" ON "messageParticipant"."messageId" = ${dataSourceSchema}."message"."id"
+        LEFT JOIN ${dataSourceSchema}."message" ON "messageParticipant"."messageId" = ${dataSourceSchema}."message"."id" 
         LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" ON ${dataSourceSchema}."messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
         WHERE ${dataSourceSchema}."messageChannelMessageAssociation"."messageChannelId" = $1
         AND "messageParticipant"."personId" IS NULL
-        AND "messageParticipant"."workspaceMemberId" IS NULL`,
+        AND "messageParticipant"."workspaceMemberId" IS NULL
+        AND ${dataSourceSchema}."message"."direction" = 'outgoing'`,
         [messageChannelId],
         workspaceId,
         transactionManager,
@@ -101,9 +104,41 @@ export class MessageParticipantService {
     return messageParticipants;
   }
 
+  public async getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+    handles: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!workspaceId) {
+      throw new Error('WorkspaceId is required');
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageParticipants: ParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageParticipant".id,
+        "messageParticipant"."role",
+        "messageParticipant"."handle",
+        "messageParticipant"."displayName",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
+        "messageParticipant"."messageId"
+        FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
+        WHERE "messageParticipant"."personId" IS NULL
+        AND "messageParticipant"."workspaceMemberId" IS NULL
+        AND "messageParticipant"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageParticipants;
+  }
+
   public async saveMessageParticipants(
-    participants: Participant[],
-    messageId: string,
+    participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -133,7 +168,7 @@ export class MessageParticipantService {
       );
 
     const messageParticipantsToSave = participants.map((participant) => [
-      messageId,
+      participant.messageId,
       participant.role,
       participant.handle,
       participant.displayName,
@@ -173,13 +208,11 @@ export class MessageParticipantService {
 
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
-      );
+    const participantPersonIds = await this.personService.getByEmails(
+      handles,
+      workspaceId,
+      transactionManager,
+    );
 
     const messageParticipantsToUpdate = participants.map((participant) => [
       participant.id,
