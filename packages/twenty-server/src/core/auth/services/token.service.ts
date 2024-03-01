@@ -249,14 +249,17 @@ export class TokenService {
 
     assert(userExists, 'User not found', NotFoundException);
 
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      relations: ['workspaceUsers'],
     });
 
     assert(workspace, 'workspace doesnt exist', NotFoundException);
 
     assert(
-      workspace.workspaceUsers.map((u) => u.id).includes(user.id),
+      workspace.workspaceUsers
+        .map((userWorkspace) => userWorkspace.userId)
+        .includes(user.id),
       'user does not belong to workspace',
       ForbiddenException,
     );
