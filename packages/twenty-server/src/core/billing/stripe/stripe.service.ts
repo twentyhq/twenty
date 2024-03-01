@@ -61,6 +61,8 @@ export class StripeService {
         metadata: {
           workspaceId: user.defaultWorkspace.id,
         },
+        trial_period_days:
+          this.environmentService.getBillingFreeTrialDurationInDays(),
       },
       customer_email: user.email,
       success_url: successUrl,
