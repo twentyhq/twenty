@@ -23,14 +23,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { ADD_CAMPAIGN } from '@/users/graphql/queries/addCampaign';
 import { GET_SPECIALTY } from '@/users/graphql/queries/getSpecialtyDetails';
-import { size } from '@floating-ui/react';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
-`;
-
-const StyledRadio = styled(Radio)`
-  margin-right: 16;
 `;
 
 const StyledSection = styled(Section)`
@@ -73,6 +68,9 @@ export const Campaigns = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [selectedMessaging, setSelectedMessaging] = useState(new Set());
   const { loading: queryLoading, data: queryData } = useQuery(GET_SPECIALTY);
+
+  const [showSmsInput, setShowSmsInput] = useState(false);
+  const [smsMessage, setSmsMessage] = useState('');
 
   if (!queryLoading) {
     const specialtyTypes = queryData?.subspecialties.edges.map(
@@ -130,12 +128,17 @@ export const Campaigns = () => {
   const onSelectCheckBoxChange = (event: any, checkedOption: string) => {
     const { checked } = event.target;
     if (checked) {
-      setSelectedMessaging(selectedMessaging.add(checkedOption));
+      setSelectedMessaging(selectedMessaging.add(checkedOption))
+      if (checkedOption === 'SMS') {
+        setShowSmsInput(true);
+      }
     } else {
-      selectedMessaging.delete(checkedOption);
-      setSelectedMessaging(selectedMessaging);
+      selectedMessaging.delete(checkedOption)
+      setSelectedMessaging(selectedMessaging)
+      if (checkedOption === 'SMS') {
+        setShowSmsInput(false);
+      }
     }
-    console.log(selectedMessaging);
   };
   const resetCampaignData = () => {
     setCampaignName('');
@@ -170,10 +173,37 @@ export const Campaigns = () => {
       enqueueSnackBar('Campaign added successfully', {
         variant: 'success',
       });
+      
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+      myHeaders.append("Authorization", "Basic QUM1ZGQxNjZiMDhjN2M3MGQ0YzZjNDM1N2I2OTFkODMwZjo0NDdmZmU0OWU1N2VhZmM4ZmIxNjAxZDNiOGEwMDVjYg==");
+
+      const urlencoded = new URLSearchParams();
+      urlencoded.append("To", " 919108223419");
+      urlencoded.append("From", " 16506035403");
+      urlencoded.append("Body", smsMessage)
+
+      const requestOptions : Object = {
+        method: "POST",
+        headers: myHeaders,
+        body: urlencoded,
+        redirect: "follow"
+      };
+
+      const response: any = await fetch("https://api.twilio.com/2010-04-01/Accounts/AC5dd166b08c7c70d4c6c4357b691d830f/Messages.json", requestOptions)
+        .catch((error) => console.error(error));
+        const respData=await response.json()
+
+      if(respData.body)
+      {
+        enqueueSnackBar('SMS sent successfully', {
+          variant: 'success',
+        });
+      }   
+
+      
       resetCampaignData();
     } catch (errors: any) {
-      resetCampaignData();
-
       console.error('Error updating user:', error);
       enqueueSnackBar(errors.message + 'Error while Submitting Campaign', {
         variant: 'error',
@@ -299,7 +329,22 @@ export const Campaigns = () => {
             />
             Call
           </StyledCheckboxLabel>
+          
         </StyledSection>
+        <StyledCheckboxLabel>
+          {showSmsInput && (
+              <Section>
+                    <StyledLabel>SMS Message Body</StyledLabel>
+                    <TextInput
+                      value={smsMessage}
+                      onChange={(value) => setSmsMessage(value)} 
+                      placeholder="Enter SMS message body"
+                      fullWidth
+                    />
+                  </Section>
+                )}
+        </StyledCheckboxLabel>
+        
 
         <SaveButtonContainer>
           <Button
