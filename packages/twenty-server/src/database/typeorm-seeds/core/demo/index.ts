@@ -8,9 +8,7 @@ import {
   seedWorkspaces,
   deleteWorkspaces,
 } from 'src/database/typeorm-seeds/core/demo/workspaces';
-import {
-  deleteFeatureFlags,
-} from 'src/database/typeorm-seeds/core/demo/feature-flags';
+import { deleteFeatureFlags } from 'src/database/typeorm-seeds/core/demo/feature-flags';
 import {
   deleteUserWorkspaces,
   seedUserWorkspaces,

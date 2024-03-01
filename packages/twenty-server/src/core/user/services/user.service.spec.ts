@@ -4,7 +4,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/core/user/user.entity';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 import { UserService } from './user.service';
 
@@ -17,10 +16,6 @@ describe('UserService', () => {
         UserService,
         {
           provide: getRepositoryToken(User, 'core'),
-          useValue: {},
-        },
-        {
-          provide: getRepositoryToken(UserWorkspace, 'core'),
           useValue: {},
         },
         {

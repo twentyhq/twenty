@@ -9,14 +9,11 @@ import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
   ) {
@@ -106,8 +103,6 @@ export class UserService extends TypeOrmQueryService<User> {
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
-
-    await this.userWorkspaceRepository.delete({ userId });
 
     await this.userRepository.delete(user.id);
 
