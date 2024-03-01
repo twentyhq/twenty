@@ -16,7 +16,7 @@ import { objectShowPageTargetableObjectState } from '@/activities/timeline/state
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 // TODO: create a generic way to have records only in cache for create mode and delete them afterwards ?
 export const useUpsertActivity = () => {
@@ -85,7 +85,7 @@ export const useUpsertActivity = () => {
         makeActivityWithConnection(activityToCreate);
 
       if (weAreOnTaskPage) {
-        if (isDefined(activityWithConnection.completedAt)) {
+        if (isNonNullable(activityWithConnection.completedAt)) {
           injectActivitiesQueries({
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
@@ -125,7 +125,7 @@ export const useUpsertActivity = () => {
         const injectOnlyInIdFilterForNotesQueries =
           activityWithConnection.type !== 'Note';
 
-        if (isDefined(currentCompletedTaskQueryVariables)) {
+        if (isNonNullable(currentCompletedTaskQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
@@ -137,7 +137,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        if (isDefined(currentIncompleteTaskQueryVariables)) {
+        if (isNonNullable(currentIncompleteTaskQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters:
               currentIncompleteTaskQueryVariables?.filter ?? {},
@@ -150,7 +150,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        if (isDefined(currentNotesQueryVariables)) {
+        if (isNonNullable(currentNotesQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters: currentNotesQueryVariables?.filter,
             activitiesOrderByVariables: currentNotesQueryVariables?.orderBy,

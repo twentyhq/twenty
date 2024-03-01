@@ -10,7 +10,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
@@ -84,7 +84,7 @@ export const RightDrawer = () => {
       : theme.rightDrawerWidth
     : '0';
 
-  if (!isDefined(rightDrawerPage)) {
+  if (!isNonNullable(rightDrawerPage)) {
     return <></>;
   }
 

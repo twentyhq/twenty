@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { StyledInput } from './TextInput';
 
@@ -147,7 +147,7 @@ export const DoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    enabled: isDefined(onClickOutside),
+    enabled: isNonNullable(onClickOutside),
   });
 
   return (

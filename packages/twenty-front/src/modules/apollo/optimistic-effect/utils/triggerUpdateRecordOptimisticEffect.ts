@@ -9,7 +9,7 @@ import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRec
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 // TODO: add extensive unit tests for this function
@@ -56,7 +56,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
         const rootQueryConnection = rootQueryCachedResponse;
 
-        const { fieldArguments: rootQueryVariables } =
+        const { fieldVariables: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
@@ -71,7 +71,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
         const rootQueryLimit = rootQueryVariables?.first;
 
-        const shouldTryToMatchFilter = isDefined(rootQueryFilter);
+        const shouldTryToMatchFilter = isNonNullable(rootQueryFilter);
 
         if (shouldTryToMatchFilter) {
           const updatedRecordMatchesThisRootQueryFilter =
@@ -101,7 +101,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           if (updatedRecordShouldBeAddedToRootQueryEdges) {
             const updatedRecordNodeReference = toReference(updatedRecord);
 
-            if (isDefined(updatedRecordNodeReference)) {
+            if (isNonNullable(updatedRecordNodeReference)) {
               rootQueryNextEdges.push({
                 __typename: objectEdgeTypeName,
                 node: updatedRecordNodeReference,
@@ -115,7 +115,8 @@ export const triggerUpdateRecordOptimisticEffect = ({
           }
         }
 
-        const rootQueryNextEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
+        const rootQueryNextEdgesShouldBeSorted =
+          isNonNullable(rootQueryOrderBy);
 
         if (
           rootQueryNextEdgesShouldBeSorted &&
@@ -128,7 +129,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           });
         }
 
-        const shouldLimitNextRootQueryEdges = isDefined(rootQueryLimit);
+        const shouldLimitNextRootQueryEdges = isNonNullable(rootQueryLimit);
 
         // TODO: not sure that we should trigger a DELETE here, as it will trigger a network request
         // Is it the responsibility of this optimistic effect function to delete a root query that will trigger a network request ?

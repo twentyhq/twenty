@@ -17,9 +17,9 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { assertNotNull } from '~/utils/assert';
+import { isNonNullable } from '~/utils/isNonNullable';
 
-const isValueEmpty = (value: unknown) => !assertNotNull(value) || value === '';
+const isValueEmpty = (value: unknown) => !isNonNullable(value) || value === '';
 
 export const isFieldValueEmpty = ({
   fieldDefinition,
@@ -46,7 +46,7 @@ export const isFieldValueEmpty = ({
   }
 
   if (isFieldSelect(fieldDefinition)) {
-    return isFieldSelectValue(fieldValue) && !assertNotNull(fieldValue);
+    return isFieldSelectValue(fieldValue) && !isNonNullable(fieldValue);
   }
 
   if (isFieldCurrency(fieldDefinition)) {

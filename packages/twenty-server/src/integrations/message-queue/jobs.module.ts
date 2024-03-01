@@ -16,7 +16,6 @@ import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
@@ -28,6 +27,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cle
     UserModule,
     EnvironmentModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     ConnectedAccountModule,
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,
