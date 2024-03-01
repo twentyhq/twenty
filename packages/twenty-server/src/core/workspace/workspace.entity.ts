@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import Stripe from 'stripe';
 
 import { User } from 'src/core/user/user.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
@@ -69,7 +70,7 @@ export class Workspace {
 
   @Field()
   @Column({ default: 'incomplete' })
-  subscriptionStatus: 'incomplete' | 'active' | 'canceled';
+  subscriptionStatus: Stripe.Subscription.Status;
 
   @Field()
   activationStatus: 'active' | 'inactive';

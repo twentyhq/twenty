@@ -105,6 +105,14 @@ export class GmailPartialSyncService {
       return;
     }
 
+    if (error && error.code === 429) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: Error 429: ${error.message}, partial sync will be retried later.`,
+      );
+
+      return;
+    }
+
     if (error) {
       throw new Error(
         `Error getting history for ${connectedAccountId} in workspace ${workspaceId} during partial-sync:

@@ -9,9 +9,10 @@ import { Repository } from 'typeorm';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
-import { UserService } from 'src/core/user/services/user.service';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
 import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { BillingService } from 'src/core/billing/billing.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -22,7 +23,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly billingService: BillingService,
   ) {
     super(workspaceRepository);
   }
@@ -35,7 +37,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       displayName: data.displayName,
     });
     await this.workspaceManagerService.init(user.defaultWorkspace.id);
-    await this.userService.createWorkspaceMember(user);
+    await this.userWorkspaceService.createWorkspaceMember(
+      user.defaultWorkspace.id,
+      user,
+    );
 
     return user.defaultWorkspace;
   }
@@ -50,6 +55,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     assert(workspace, 'Workspace not found');
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
+    await this.billingService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
     if (shouldDeleteCoreWorkspace) {

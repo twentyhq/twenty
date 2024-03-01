@@ -29,7 +29,7 @@ export class BillingController {
     @Res() res: Response,
   ) {
     if (!req.rawBody) {
-      res.status(400).send('Missing raw body');
+      res.status(400).end();
 
       return;
     }
@@ -38,27 +38,23 @@ export class BillingController {
       req.rawBody,
     );
 
-    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED) {
-      if (event.data.object.status !== 'active') {
-        res.status(402).send('Payment did not succeeded');
-
-        return;
-      }
-
+    if (
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
+    ) {
       const workspaceId = event.data.object.metadata?.workspaceId;
 
       if (!workspaceId) {
-        res.status(404).send('Missing workspaceId in webhook event metadata');
+        res.status(404).end();
 
         return;
       }
 
-      await this.billingService.createBillingSubscription(
+      await this.billingService.upsertBillingSubscription(
         workspaceId,
         event.data,
       );
-
-      res.status(200).send('Subscription successfully updated');
     }
+    res.status(200).end();
   }
 }
