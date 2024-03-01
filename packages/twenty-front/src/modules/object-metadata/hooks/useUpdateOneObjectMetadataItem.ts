@@ -1,6 +1,8 @@
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
+import { z } from 'zod';
 
+import { updateObjectMetadataItemPayloadSchema } from '@/object-metadata/schemas/updateObjectMetadataItemPayloadSchema';
 import {
   UpdateOneObjectMetadataItemMutation,
   UpdateOneObjectMetadataItemMutationVariables,
@@ -27,21 +29,13 @@ export const useUpdateOneObjectMetadataItem = () => {
     updatePayload,
   }: {
     idToUpdate: UpdateOneObjectMetadataItemMutationVariables['idToUpdate'];
-    updatePayload: Pick<
-      UpdateOneObjectMetadataItemMutationVariables['updatePayload'],
-      | 'description'
-      | 'icon'
-      | 'isActive'
-      | 'labelPlural'
-      | 'labelSingular'
-      | 'namePlural'
-      | 'nameSingular'
-    >;
+    updatePayload: z.input<typeof updateObjectMetadataItemPayloadSchema>;
   }) => {
     return await mutate({
       variables: {
         idToUpdate,
-        updatePayload,
+        updatePayload:
+          updateObjectMetadataItemPayloadSchema.parse(updatePayload),
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],

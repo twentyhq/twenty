@@ -3,14 +3,14 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { useCreateOneObjectRecordMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
+import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 
 import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
   variables,
-} from '../__mocks__/useCreateOneObjectRecordMetadataItem';
+} from '../__mocks__/useCreateOneObjectMetadataItem';
 
 const mocks = [
   {
@@ -38,19 +38,15 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useCreateOneObjectRecordMetadataItem', () => {
   it('should work as expected', async () => {
-    const { result } = renderHook(
-      () => useCreateOneObjectRecordMetadataItem(),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(() => useCreateOneObjectMetadataItem(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       const res = await result.current.createOneObjectMetadataItem({
+        icon: 'IconPlus',
         labelPlural: 'View Filters',
         labelSingular: 'View Filter',
-        nameSingular: 'viewFilter',
-        namePlural: 'viewFilters',
       });
 
       expect(res.data).toEqual({ createOneObject: responseData });
