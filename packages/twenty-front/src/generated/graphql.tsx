@@ -607,7 +607,7 @@ export type UserExists = {
 export type UserWorkspace = {
   __typename?: 'UserWorkspace';
   createdAt: Scalars['DateTime'];
-  deletedAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   user: User;
