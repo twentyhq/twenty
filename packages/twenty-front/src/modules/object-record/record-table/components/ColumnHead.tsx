@@ -11,7 +11,6 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type ColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
-  isLabelIdentifier: boolean;
 };
 
 const StyledTitle = styled.div<{ hideTitle?: boolean }>`
@@ -48,7 +47,7 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({ isLabelIdentifier, column }: ColumnHeadProps) => {
+export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const theme = useTheme();
 
   const { getIcon } = useIcons();
@@ -57,7 +56,7 @@ export const ColumnHead = ({ isLabelIdentifier, column }: ColumnHeadProps) => {
   const scrollLeft = useRecoilValue(scrollLeftState);
 
   return (
-    <StyledTitle hideTitle={!!isLabelIdentifier && scrollLeft > 0}>
+    <StyledTitle hideTitle={!!column.isLabelIdentifier && scrollLeft > 0}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

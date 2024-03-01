@@ -185,10 +185,7 @@ export const RecordTableHeaderCell = ({
     >
       <StyledColumnHeadContainer>
         {column.isLabelIdentifier ? (
-          <ColumnHead
-            isLabelIdentifier={!!column.isLabelIdentifier}
-            column={column}
-          />
+          <ColumnHead column={column} />
         ) : (
           <ColumnHeadWithDropdown column={column} />
         )}
