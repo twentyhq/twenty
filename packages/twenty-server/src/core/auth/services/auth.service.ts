@@ -98,7 +98,7 @@ export class AuthService {
       where: {
         email,
       },
-      relations: ['defaultWorkspace'],
+      relations: ['defaultWorkspace', 'workspaces'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);

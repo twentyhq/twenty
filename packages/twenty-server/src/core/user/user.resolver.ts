@@ -48,12 +48,10 @@ export class UserResolver {
   @Query(() => User)
   async currentUser(@AuthUser() { id }: User): Promise<User> {
     const user = await this.userService.findById(id, {
-      relations: [{ name: 'defaultWorkspace', query: {} }],
+      relations: [{ name: 'defaultWorkspace', query: {} }, { name: 'workspaces', query: {} }],
     });
 
     assert(user, 'User not found');
-
-    user.workspaces = await this.userWorkspaceService.findUserWorkspaces(id);
 
     return user;
   }

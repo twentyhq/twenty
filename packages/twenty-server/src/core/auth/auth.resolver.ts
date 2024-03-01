@@ -128,11 +128,6 @@ export class AuthResolver {
 
     const result = await this.authService.verify(email);
 
-    if (result.user.id) {
-      result.user.workspaces =
-        await this.userWorkspaceService.findUserWorkspaces(result.user.id);
-    }
-
     return result;
   }
 

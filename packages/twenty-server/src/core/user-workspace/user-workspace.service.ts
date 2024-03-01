@@ -45,15 +45,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     );
   }
 
-  async findUserWorkspaces(userId: string): Promise<UserWorkspace[]> {
-    return this.userWorkspaceRepository.find({
-      where: {
-        userId,
-      },
-      relations: ['workspace'],
-    });
-  }
-
   async checkUserWorkspaceExists(
     userId: string,
     workspaceId: string,

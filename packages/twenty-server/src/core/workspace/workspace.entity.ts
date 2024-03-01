@@ -55,11 +55,6 @@ export class Workspace {
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: User[];
 
-  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
-    onDelete: 'CASCADE',
-  })
-  workspaceUsers: UserWorkspace[];
-
   @Field()
   @Column({ default: true })
   allowImpersonation: boolean;

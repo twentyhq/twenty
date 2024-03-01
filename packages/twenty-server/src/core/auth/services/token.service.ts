@@ -255,13 +255,7 @@ export class TokenService {
 
     assert(workspace, 'workspace doesnt exist', NotFoundException);
 
-    const userWorkspace =
-      await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        workspace.id,
-      );
-
-    assert(userWorkspace, 'cannot access workspace', ForbiddenException);
+    assert(workspace.users.map((u) => u.id).includes(user.id), 'user does not belong to workspace', ForbiddenException);
 
     await this.userRepository.save({
       id: user.id,

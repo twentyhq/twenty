@@ -51,14 +51,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
 
-    const users = await this.userRepository.find({
-      where: {
-        defaultWorkspaceId: workspace.id,
-      },
-    });
-
-    await this.userRepository.remove(users);
-
     await this.workspaceManagerService.delete(id);
     if (shouldDeleteCoreWorkspace) {
       await this.workspaceRepository.delete(id);

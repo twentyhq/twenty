@@ -93,11 +93,7 @@ export class User {
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;
 
-  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user, {
-    onDelete: 'CASCADE',
-  })
-  workspaceUsers: UserWorkspace[];
-
-  @Field(() => [UserWorkspace], { nullable: true })
+  @Field(() => [UserWorkspace])
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: UserWorkspace[];
 }
