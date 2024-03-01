@@ -97,7 +97,6 @@ export const ShowPageRightContainer = ({
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
-      disabled: targetableObjectMetadataItem.isCustom,
     },
     {
       id: 'emails',
