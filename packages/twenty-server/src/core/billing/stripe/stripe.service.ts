@@ -64,6 +64,8 @@ export class StripeService {
         trial_period_days:
           this.environmentService.getBillingFreeTrialDurationInDays(),
       },
+      automatic_tax: { enabled: true },
+      tax_id_collection: { enabled: true },
       customer_email: user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
