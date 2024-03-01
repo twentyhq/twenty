@@ -1,8 +1,10 @@
 import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataType, RelationOnDeleteAction } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -199,9 +201,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'blocklist',
     inverseSideFieldName: 'workspaceMember',
-  })
-  @Gate({
-    featureFlag: 'IS_BLOCKLIST_ENABLED',
   })
   @IsNullable()
   blocklist: BlocklistObjectMetadata[];
