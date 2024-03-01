@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -11,23 +10,16 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
-> = {
+export type SelectOption<Value extends string | number | null> = {
   value: Value;
   label: string;
-  avatarOrIcon?: IconType;
+  Icon?: IconComponent;
 };
 
-export type SelectProps<
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
-> = {
+export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
   dropdownId: string;
@@ -35,15 +27,16 @@ export type SelectProps<
   fullWidth?: boolean;
   label?: string;
   onChange?: (value: Value) => void;
-  options: SelectOption<Value, IconType>[];
+  options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
 };
 
-const StyledControlContainer = styled.div<{
-  disabled?: boolean;
-  fullWidth?: boolean;
-}>`
+const StyledContainer = styled.div<{ fullWidth?: boolean }>`
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+`;
+
+const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -51,7 +44,7 @@ const StyledControlContainer = styled.div<{
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: ${({ fullWidth }) => (fullWidth ? 'flex' : 'inline-flex')};
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
@@ -78,10 +71,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;
 
-export const Select = <
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
->({
+export const Select = <Value extends string | number | null>({
   className,
   disabled,
   dropdownId,
@@ -92,7 +82,7 @@ export const Select = <
   options,
   value,
   withSearchInput,
-}: SelectProps<Value, IconType>) => {
+}: SelectProps<Value>) => {
   const theme = useTheme();
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -110,92 +100,65 @@ export const Select = <
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const renderIconOrAvatar = <IconType extends IconComponent | React.ReactNode>(
-    iconOrAvatar: IconType,
-  ) => {
-    if (iconOrAvatar) {
-      if (React.isValidElement(iconOrAvatar)) {
-        return iconOrAvatar;
-      } else {
-        const IconComponent = iconOrAvatar as IconComponent;
-        return (
-          <IconComponent
+  const selectControl = (
+    <StyledControlContainer disabled={disabled}>
+      <StyledControlLabel>
+        {!!selectedOption?.Icon && (
+          <selectedOption.Icon
             color={disabled ? theme.font.color.light : theme.font.color.primary}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />
-        );
-      }
-    }
-    return null;
-  };
-
-  const selectControl = (
-    <StyledControlContainer disabled={disabled} fullWidth={fullWidth}>
-      <StyledControlLabel>
-        {renderIconOrAvatar(selectedOption?.avatarOrIcon)}
+        )}
         {selectedOption?.label}
       </StyledControlLabel>
       <StyledIconChevronDown disabled={disabled} size={theme.icon.size.md} />
     </StyledControlContainer>
   );
 
-  return disabled ? (
-    <div>
+  return (
+    <StyledContainer className={className} fullWidth={fullWidth}>
       {!!label && <StyledLabel>{label}</StyledLabel>}
-      {selectControl}
-    </div>
-  ) : (
-    <div className={className}>
-      {!!label && <StyledLabel>{label}</StyledLabel>}
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownMenuWidth={dropdownWidth}
-        dropdownPlacement="bottom-start"
-        clickableComponent={selectControl}
-        dropdownComponents={
-          <>
-            {!!withSearchInput && (
-              <DropdownMenuSearchInput
-                autoFocus
-                value={searchInputValue}
-                onChange={(event) => setSearchInputValue(event.target.value)}
-              />
-            )}
-            {!!withSearchInput && !!filteredOptions.length && (
-              <DropdownMenuSeparator />
-            )}
-            {!!filteredOptions.length && (
-              <DropdownMenuItemsContainer hasMaxHeight>
-                {filteredOptions.map((option) =>
-                  React.isValidElement(option.avatarOrIcon) ? (
-                    <MenuItemSelectAvatar
-                      avatar={option.avatarOrIcon}
-                      text={option.label}
-                      selected={option === selectedOption}
-                      onClick={() => {
-                        onChange?.(option.value);
-                        closeDropdown();
-                      }}
-                    />
-                  ) : (
+      {disabled ? (
+        selectControl
+      ) : (
+        <Dropdown
+          dropdownId={dropdownId}
+          dropdownMenuWidth={dropdownWidth}
+          dropdownPlacement="bottom-start"
+          clickableComponent={selectControl}
+          dropdownComponents={
+            <>
+              {!!withSearchInput && (
+                <DropdownMenuSearchInput
+                  autoFocus
+                  value={searchInputValue}
+                  onChange={(event) => setSearchInputValue(event.target.value)}
+                />
+              )}
+              {!!withSearchInput && !!filteredOptions.length && (
+                <DropdownMenuSeparator />
+              )}
+              {!!filteredOptions.length && (
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  {filteredOptions.map((option) => (
                     <MenuItem
                       key={option.value}
-                      LeftIcon={option.avatarOrIcon as IconComponent}
+                      LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {
                         onChange?.(option.value);
                         closeDropdown();
                       }}
                     />
-                  ),
-                )}
-              </DropdownMenuItemsContainer>
-            )}
-          </>
-        }
-        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
-      />
-    </div>
+                  ))}
+                </DropdownMenuItemsContainer>
+              )}
+            </>
+          }
+          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+        />
+      )}
+    </StyledContainer>
   );
 };

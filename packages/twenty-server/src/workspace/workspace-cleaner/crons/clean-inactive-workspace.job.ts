@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 import {
   CleanInactiveWorkspaceEmail,
   DeleteInactiveWorkspaceEmail,
@@ -17,10 +16,6 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/workspace-cleaner/commands/clean-inactive-workspaces.command';
@@ -48,8 +43,6 @@ export class CleanInactiveWorkspaceJob
     private readonly userService: UserService,
     private readonly emailService: EmailService,
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     this.inactiveDaysBeforeDelete =
       this.environmentService.getInactiveDaysBeforeDelete();
@@ -149,20 +142,6 @@ export class CleanInactiveWorkspaceJob
     });
   }
 
-  async isWorkspaceCleanable(dataSource: DataSourceEntity): Promise<boolean> {
-    const workspaceFeatureFlags = await this.featureFlagRepository.find({
-      where: { workspaceId: dataSource.workspaceId },
-    });
-
-    return (
-      workspaceFeatureFlags.filter(
-        (workspaceFeatureFlag) =>
-          workspaceFeatureFlag.key === FeatureFlagKeys.IsWorkspaceCleanable &&
-          workspaceFeatureFlag.value,
-      ).length > 0
-    );
-  }
-
   chunkArray(array: any[], chunkSize = 6): any[][] {
     const chunkedArray: any[][] = [];
     let index = 0;
@@ -241,15 +220,6 @@ export class CleanInactiveWorkspaceJob
       });
 
       for (const dataSource of dataSourcesChunk) {
-        if (!(await this.isWorkspaceCleanable(dataSource))) {
-          this.logger.log(
-            `${getDryRunLogHeader(isDryRun)}Workspace ${
-              dataSource.workspaceId
-            } not cleanable`,
-          );
-          continue;
-        }
-
         this.logger.log(
           `${getDryRunLogHeader(isDryRun)}Cleaning Workspace ${
             dataSource.workspaceId

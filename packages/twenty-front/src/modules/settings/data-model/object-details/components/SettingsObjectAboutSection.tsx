@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
@@ -38,7 +38,7 @@ const StyledName = styled.div`
   margin-right: auto;
 `;
 
-const StyledTag = styled(Tag)`
+const StyledIsCustomTag = styled(SettingsDataModelIsCustomTag)`
   box-sizing: border-box;
   height: ${({ theme }) => theme.spacing(6)};
 `;
@@ -77,11 +77,7 @@ export const SettingsAboutSection = ({
             {!!Icon && <Icon size={theme.icon.size.md} />}
             {name}
           </StyledName>
-          {isCustom ? (
-            <StyledTag color="orange" text="Custom" weight="medium" />
-          ) : (
-            <StyledTag color="blue" text="Standard" weight="medium" />
-          )}
+          <StyledIsCustomTag isCustom={isCustom} />
           <Dropdown
             dropdownId={dropdownId}
             clickableComponent={

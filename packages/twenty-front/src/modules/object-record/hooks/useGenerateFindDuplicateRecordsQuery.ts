@@ -4,6 +4,10 @@ import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMa
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
+export const getFindDuplicateRecordsQueryResponseField = (
+  objectNameSingular: string,
+) => `${objectNameSingular}Duplicates`;
+
 export const useGenerateFindDuplicateRecordsQuery = () => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 
@@ -15,7 +19,9 @@ export const useGenerateFindDuplicateRecordsQuery = () => {
     depth?: number;
   }) => gql`
     query FindDuplicate${capitalize(objectMetadataItem.nameSingular)}($id: ID) {
-      ${objectMetadataItem.nameSingular}Duplicates(id: $id){
+      ${getFindDuplicateRecordsQueryResponseField(
+        objectMetadataItem.nameSingular,
+      )}(id: $id) {
         edges {
           node {
             id
