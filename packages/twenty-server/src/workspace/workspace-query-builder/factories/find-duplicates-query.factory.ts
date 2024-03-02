@@ -113,14 +113,20 @@ export class FindDuplicatesQueryFactory {
       this.getApplicableDuplicateCriteriaCollection(objectMetadataItem);
 
     const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
-      criteria.columnNames.every((columnName) => !!argsData[columnName]),
+      criteria.columnNames.every((columnName) => {
+        const argExists = !!argsData[columnName];
+        const isArgLengthValid =
+          argExists && (argsData[columnName] as string)?.length >= 3;
+
+        return argExists && isArgLengthValid;
+      }),
     );
 
     const filterCriteria = criteriaWithMatchingArgs.map((criteria) =>
       Object.fromEntries(
         criteria.columnNames.map((columnName) => [
           columnName,
-          { ilike: `%${argsData[columnName]}%` },
+          { eq: `%${argsData[columnName]}%` },
         ]),
       ),
     );
