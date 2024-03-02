@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
-import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/messaging.constants';
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { useEmailThreadStates } from '@/activities/emails/hooks/internal/useEmailThreadStates';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';

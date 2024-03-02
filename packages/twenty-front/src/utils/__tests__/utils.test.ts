@@ -42,8 +42,6 @@ describe('getLogoUrlFromDomainName', () => {
   });
 
   test('should handle undefined input', () => {
-    expect(getLogoUrlFromDomainName(undefined)).toBe(
-      'https://favicon.twenty.com/',
-    );
+    expect(getLogoUrlFromDomainName(undefined)).toBe(undefined);
   });
 });

@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';
 
 import { CommentHeader } from '../CommentHeader';
@@ -32,7 +32,7 @@ const meta: Meta<typeof CommentHeader> = {
         <Story />
       </>
     ),
-    ComponentDecorator,
+    ComponentWithRouterDecorator,
   ],
   argTypes: {
     actionBar: {

@@ -48,6 +48,28 @@ describe('WorkspaceRelationComparator', () => {
     ]);
   });
 
+  it('should generate UPDATE action for changed relations', () => {
+    const original = [
+      createMockRelationMetadata({ onDeleteAction: 'CASCADE' }),
+    ];
+    const standard = [
+      createMockRelationMetadata({ onDeleteAction: 'SET_NULL' }),
+    ];
+
+    const result = comparator.compare(original, standard);
+
+    expect(result).toEqual([
+      {
+        action: ComparatorAction.UPDATE,
+        object: expect.objectContaining({
+          fromObjectMetadataId: 'object-1',
+          fromFieldMetadataId: 'field-1',
+          onDeleteAction: 'SET_NULL',
+        }),
+      },
+    ]);
+  });
+
   it('should not generate any action for identical relations', () => {
     const relation = createMockRelationMetadata({});
     const original = [{ id: '1', ...relation }];

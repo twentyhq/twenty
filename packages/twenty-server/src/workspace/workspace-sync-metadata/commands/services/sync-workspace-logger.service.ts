@@ -64,6 +64,12 @@ export class SyncWorkspaceLoggerService {
       storage.relationMetadataCreateCollection,
     );
 
+    // Save relation metadata update collection
+    await this.commandLogger.writeLog(
+      'relation-metadata-update-collection',
+      storage.relationMetadataUpdateCollection,
+    );
+
     // Save relation metadata delete collection
     await this.commandLogger.writeLog(
       'relation-metadata-delete-collection',

@@ -1,17 +1,19 @@
 import { useCallback } from 'react';
-import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import {
   IconApps,
   IconAt,
   IconCalendarEvent,
+  IconCode,
   IconColorSwatch,
+  IconDoorEnter,
   IconHierarchy2,
-  IconLogout,
   IconMail,
-  IconRobot,
   IconSettings,
   IconUserCircle,
   IconUsers,
@@ -31,123 +33,74 @@ export const SettingsNavigationDrawerItems = () => {
     navigate(AppPath.SignIn);
   }, [signOut, navigate]);
 
-  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
-  const isIntegrationsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/integrations').pathname,
-    end: true,
-  });
-
-  const isAccountsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/accounts').pathname,
-    end: true,
-  });
-  const isAccountsEmailsItemActive = !!useMatch({
-    path: useResolvedPath('/settings/accounts/emails').pathname,
-    end: true,
-  });
+  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
 
   return (
     <>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="User" />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Profile"
-          to="/settings/profile"
+          path={SettingsPath.ProfilePage}
           Icon={IconUserCircle}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/profile').pathname,
-              end: true,
-            })
-          }
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Appearance"
-          to="/settings/profile/appearance"
+          path={SettingsPath.Appearance}
           Icon={IconColorSwatch}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/profile/appearance').pathname,
-              end: true,
-            })
-          }
         />
-        {isMessagingEnabled && (
-          <NavigationDrawerItemGroup>
-            <NavigationDrawerItem
-              label="Accounts"
-              to="/settings/accounts"
-              Icon={IconAt}
-              active={isAccountsItemActive}
-            />
-            <NavigationDrawerItem
-              level={2}
-              label="Emails"
-              to="/settings/accounts/emails"
-              Icon={IconMail}
-              active={isAccountsEmailsItemActive}
-            />
-            <NavigationDrawerItem
-              level={2}
-              label="Calendars"
-              Icon={IconCalendarEvent}
-              soon
-            />
-          </NavigationDrawerItemGroup>
-        )}
+
+        <NavigationDrawerItemGroup>
+          <SettingsNavigationDrawerItem
+            label="Accounts"
+            path={SettingsPath.Accounts}
+            Icon={IconAt}
+          />
+          <SettingsNavigationDrawerItem
+            level={2}
+            label="Emails"
+            path={SettingsPath.AccountsEmails}
+            Icon={IconMail}
+            matchSubPages
+          />
+          <SettingsNavigationDrawerItem
+            level={2}
+            label="Calendars"
+            path={SettingsPath.AccountsCalendars}
+            Icon={IconCalendarEvent}
+            matchSubPages
+            soon={!isCalendarEnabled}
+          />
+        </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="General"
-          to="/settings/workspace"
+          path={SettingsPath.Workspace}
           Icon={IconSettings}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/workspace').pathname,
-              end: true,
-            })
-          }
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Members"
-          to="/settings/workspace-members"
+          path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/workspace-members').pathname,
-              end: true,
-            })
-          }
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Data model"
-          to="/settings/objects"
+          path={SettingsPath.Objects}
           Icon={IconHierarchy2}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/objects').pathname,
-              end: false,
-            })
-          }
+          matchSubPages
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Developers"
-          to="/settings/developers"
-          Icon={IconRobot}
-          active={
-            !!useMatch({
-              path: useResolvedPath('/settings/developers').pathname,
-              end: true,
-            })
-          }
+          path={SettingsPath.Developers}
+          Icon={IconCode}
         />
-        <NavigationDrawerItem
+        <SettingsNavigationDrawerItem
           label="Integrations"
-          to="/settings/integrations"
+          path={SettingsPath.Integrations}
           Icon={IconApps}
-          active={isIntegrationsItemActive}
         />
       </NavigationDrawerSection>
 
@@ -156,7 +109,7 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerItem
           label="Logout"
           onClick={handleLogout}
-          Icon={IconLogout}
+          Icon={IconDoorEnter}
         />
       </NavigationDrawerSection>
     </>

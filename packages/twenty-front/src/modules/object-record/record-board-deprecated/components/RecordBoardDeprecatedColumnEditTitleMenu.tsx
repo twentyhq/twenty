@@ -7,8 +7,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useRecordBoardDeprecated } from '../hooks/useRecordBoardDeprecated';
@@ -27,7 +30,7 @@ const StyledEditTitleContainer = styled.div`
 `;
 
 const StyledEditModeInput = styled.input`
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
 
   background: ${({ theme }) => theme.background.transparent.lighter};
   border-color: ${({ theme }) => theme.color.blue};
@@ -109,7 +112,7 @@ export const RecordBoardDeprecatedColumnEditTitleMenu = ({
         />
       </StyledEditTitleContainer>
       <DropdownMenuSeparator />
-      {mainColorNames.map((colorName) => (
+      {MAIN_COLOR_NAMES.map((colorName) => (
         <MenuItemSelectColor
           key={colorName}
           onClick={() => handleColorChange(colorName)}

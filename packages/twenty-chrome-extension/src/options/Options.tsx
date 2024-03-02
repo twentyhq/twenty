@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
-import { ApiKeyForm } from './modules/api-key/components/ApiKeyForm';
+
+import { ApiKeyForm } from '@/api-key/components/ApiKeyForm';
 
 const StyledContainer = styled.div`
+  align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
+  justify-content: center;
 `;
 
 const Options = () => {

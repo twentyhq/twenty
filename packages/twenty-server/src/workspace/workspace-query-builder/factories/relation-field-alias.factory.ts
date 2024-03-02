@@ -72,7 +72,7 @@ export class RelationFieldAliasFactory {
     }
 
     const relationDirection = deduceRelationDirection(
-      fieldMetadata.objectMetadataId,
+      fieldMetadata,
       relationMetadata,
     );
     // Retrieve the referenced object metadata based on the relation direction

@@ -25,9 +25,11 @@ export enum WorkspaceHealthIssueType {
   COLUMN_DEFAULT_VALUE_CONFLICT = 'COLUMN_DEFAULT_VALUE_CONFLICT',
   COLUMN_DEFAULT_VALUE_NOT_VALID = 'COLUMN_DEFAULT_VALUE_NOT_VALID',
   COLUMN_OPTIONS_NOT_VALID = 'COLUMN_OPTIONS_NOT_VALID',
+  RELATION_METADATA_NOT_VALID = 'RELATION_METADATA_NOT_VALID',
   RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID = 'RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID',
   RELATION_FOREIGN_KEY_NOT_VALID = 'RELATION_FOREIGN_KEY_NOT_VALID',
   RELATION_FOREIGN_KEY_CONFLICT = 'RELATION_FOREIGN_KEY_CONFLICT',
+  RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT = 'RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT',
   RELATION_TYPE_NOT_VALID = 'RELATION_TYPE_NOT_VALID',
 }
 
@@ -80,18 +82,20 @@ export interface WorkspaceHealthColumnIssue<
  * Relation issues
  */
 export type WorkspaceRelationIssueTypes =
+  | WorkspaceHealthIssueType.RELATION_METADATA_NOT_VALID
   | WorkspaceHealthIssueType.RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID
   | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID
   | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_CONFLICT
+  | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT
   | WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID;
 
 export interface WorkspaceHealthRelationIssue<
   T extends WorkspaceRelationIssueTypes,
 > {
   type: T;
-  fromFieldMetadata: FieldMetadataEntity | undefined;
-  toFieldMetadata: FieldMetadataEntity | undefined;
-  relationMetadata: RelationMetadataEntity;
+  fromFieldMetadata?: FieldMetadataEntity | undefined;
+  toFieldMetadata?: FieldMetadataEntity | undefined;
+  relationMetadata?: RelationMetadataEntity;
   columnStructure?: WorkspaceTableStructure;
   message: string;
 }

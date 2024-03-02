@@ -110,6 +110,7 @@ export class StandardRelationFactory {
           fromFieldMetadataId: fromFieldMetadata?.id,
           toFieldMetadataId: toFieldMetadata?.id,
           workspaceId: context.workspaceId,
+          onDeleteAction: relationMetadata.onDelete,
         };
       });
   }

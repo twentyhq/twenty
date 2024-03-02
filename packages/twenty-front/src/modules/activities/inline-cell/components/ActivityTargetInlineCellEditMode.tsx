@@ -5,10 +5,10 @@ import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
+import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
+import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -27,19 +27,19 @@ const StyledSelectContainer = styled.div`
 
 type ActivityTargetInlineCellEditModeProps = {
   activity: Activity;
-  activityTargetObjectRecords: ActivityTargetObjectRecord[];
+  activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
 };
 
 export const ActivityTargetInlineCellEditMode = ({
   activity,
-  activityTargetObjectRecords,
+  activityTargetWithTargetRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
-  const [isCreatingActivity] = useRecoilState(isCreatingActivityState);
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
-  const selectedObjectRecordIds = activityTargetObjectRecords.map(
+  const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({
       objectNameSingular: activityTarget.targetObjectNameSingular,
-      id: activityTarget.targetObjectRecord.id,
+      id: activityTarget.targetObject.id,
     }),
   );
 
@@ -73,90 +73,89 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
     closeEditableField();
-    const activityTargetRecordsToDelete = activityTargetObjectRecords.filter(
+
+    const activityTargetsToDelete = activityTargetWithTargetRecords.filter(
       (activityTargetObjectRecord) =>
         !selectedRecords.some(
           (selectedRecord) =>
             selectedRecord.recordIdentifier.id ===
-            activityTargetObjectRecord.targetObjectRecord.id,
+            activityTargetObjectRecord.targetObject.id,
         ),
     );
 
-    const activityTargetRecordsToCreate = selectedRecords.filter(
+    const selectedTargetObjectsToCreate = selectedRecords.filter(
       (selectedRecord) =>
-        !activityTargetObjectRecords.some(
-          (activityTargetObjectRecord) =>
-            activityTargetObjectRecord.targetObjectRecord.id ===
+        !activityTargetWithTargetRecords.some(
+          (activityTargetWithTargetRecord) =>
+            activityTargetWithTargetRecord.targetObject.id ===
             selectedRecord.recordIdentifier.id,
         ),
     );
 
-    if (isCreatingActivity) {
-      let activityTargetsForCreation = activity.activityTargets;
+    const existingActivityTargets = activityTargetWithTargetRecords.map(
+      (activityTargetObjectRecord) => activityTargetObjectRecord.activityTarget,
+    );
 
-      if (isNonEmptyArray(activityTargetsForCreation)) {
-        const generatedActivityTargets = activityTargetRecordsToCreate.map(
-          (selectedRecord) => {
-            const emptyActivityTarget =
-              generateObjectRecordOptimisticResponse<ActivityTarget>({
-                id: v4(),
-                activityId: activity.id,
-                activity,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                [getActivityTargetObjectFieldIdName({
-                  nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-                })]: selectedRecord.recordIdentifier.id,
-              });
+    let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
-            return emptyActivityTarget;
-          },
-        );
-
-        activityTargetsForCreation.push(...generatedActivityTargets);
-      }
-
-      if (isNonEmptyArray(activityTargetRecordsToDelete)) {
-        activityTargetsForCreation = activityTargetsForCreation.filter(
-          (activityTarget) =>
-            !activityTargetRecordsToDelete.some(
-              (activityTargetObjectRecord) =>
-                activityTargetObjectRecord.targetObjectRecord.id ===
-                activityTarget.id,
-            ),
-        );
-      }
-
-      injectIntoActivityTargetInlineCellCache({
-        activityId: activity.id,
-        activityTargetsToInject: activityTargetsForCreation,
-      });
-
-      upsertActivity({
-        activity,
-        input: {
-          activityTargets: activityTargetsForCreation,
-        },
-      });
-    } else {
-      if (activityTargetRecordsToCreate.length > 0) {
-        await createManyActivityTargets(
-          activityTargetRecordsToCreate.map((selectedRecord) => ({
+    const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
+      (selectedRecord) => {
+        const emptyActivityTarget =
+          generateObjectRecordOptimisticResponse<ActivityTarget>({
             id: v4(),
             activityId: activity.id,
+            activity,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             [getActivityTargetObjectFieldIdName({
               nameSingular: selectedRecord.objectMetadataItem.nameSingular,
             })]: selectedRecord.recordIdentifier.id,
-          })),
-        );
+          });
+
+        return emptyActivityTarget;
+      },
+    );
+
+    activityTargetsAfterUpdate.push(...activityTargetsToCreate);
+
+    if (isNonEmptyArray(activityTargetsToDelete)) {
+      activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
+        (activityTarget) =>
+          !activityTargetsToDelete.some(
+            (activityTargetToDelete) =>
+              activityTargetToDelete.activityTarget.id === activityTarget.id,
+          ),
+      );
+    }
+
+    injectIntoActivityTargetInlineCellCache({
+      activityId: activity.id,
+      activityTargetsToInject: activityTargetsAfterUpdate,
+    });
+
+    if (isActivityInCreateMode) {
+      upsertActivity({
+        activity,
+        input: {
+          activityTargets: activityTargetsAfterUpdate,
+        },
+      });
+    } else {
+      if (activityTargetsToCreate.length > 0) {
+        await createManyActivityTargets(activityTargetsToCreate, {
+          skipOptimisticEffect: true,
+        });
       }
 
-      if (activityTargetRecordsToDelete.length > 0) {
+      if (activityTargetsToDelete.length > 0) {
         await deleteManyActivityTargets(
-          activityTargetRecordsToDelete.map(
+          activityTargetsToDelete.map(
             (activityTargetObjectRecord) =>
-              activityTargetObjectRecord.activityTargetRecord.id,
+              activityTargetObjectRecord.activityTarget.id,
           ),
+          {
+            skipOptimisticEffect: true,
+          },
         );
       }
     }
@@ -169,7 +168,7 @@ export const ActivityTargetInlineCellEditMode = ({
   return (
     <StyledSelectContainer>
       <MultipleObjectRecordSelect
-        selectedObjectRecordIds={selectedObjectRecordIds}
+        selectedObjectRecordIds={selectedTargetObjectIds}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />

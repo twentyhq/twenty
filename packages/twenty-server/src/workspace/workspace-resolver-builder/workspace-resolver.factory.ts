@@ -9,6 +9,7 @@ import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-buil
 import { DeleteManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { ExecuteQuickActionOnOneResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/execute-quick-action-on-one-resolver.factory';
 
+import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
 import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
@@ -28,6 +29,7 @@ export class WorkspaceResolverFactory {
   constructor(
     private readonly findManyResolverFactory: FindManyResolverFactory,
     private readonly findOneResolverFactory: FindOneResolverFactory,
+    private readonly findDuplicatesResolverFactory: FindDuplicatesResolverFactory,
     private readonly createManyResolverFactory: CreateManyResolverFactory,
     private readonly createOneResolverFactory: CreateOneResolverFactory,
     private readonly updateOneResolverFactory: UpdateOneResolverFactory,
@@ -49,6 +51,7 @@ export class WorkspaceResolverFactory {
     >([
       ['findMany', this.findManyResolverFactory],
       ['findOne', this.findOneResolverFactory],
+      ['findDuplicates', this.findDuplicatesResolverFactory],
       ['createMany', this.createManyResolverFactory],
       ['createOne', this.createOneResolverFactory],
       ['updateOne', this.updateOneResolverFactory],

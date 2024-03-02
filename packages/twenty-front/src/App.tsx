@@ -7,9 +7,11 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
+import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
@@ -18,8 +20,9 @@ import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
-import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
+import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
@@ -43,9 +46,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
-  const isNewRecordBoardEnabled = useIsFeatureEnabled(
-    'IS_NEW_RECORD_BOARD_ENABLED',
-  );
+  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
     <>
@@ -61,17 +62,19 @@ export const App = () => {
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
+          <Route
+            path={AppPath.PlanRequired}
+            element={
+              isSelfBillingEnabled ? <ChooseYourPlan /> : <PlanRequired />
+            }
+          />
+          <Route
+            path={AppPath.PlanRequiredSuccess}
+            element={<PaymentSuccess />}
+          />
           <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
-
-          {!isNewRecordBoardEnabled && (
-            <Route
-              path={AppPath.OpportunitiesPage}
-              element={<Opportunities />}
-            />
-          )}
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
 
@@ -94,6 +97,14 @@ export const App = () => {
                 <Route
                   path={SettingsPath.NewAccount}
                   element={<SettingsNewAccount />}
+                />
+                <Route
+                  path={SettingsPath.AccountsCalendars}
+                  element={<SettingsAccountsCalendars />}
+                />
+                <Route
+                  path={SettingsPath.AccountsCalendarsSettings}
+                  element={<SettingsAccountsCalendarsSettings />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
@@ -128,13 +139,13 @@ export const App = () => {
                   element={<SettingsNewObject />}
                 />
                 <Route
+                  path={SettingsPath.Developers}
+                  element={<SettingsDevelopers />}
+                />
+                <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
                     <Routes>
-                      <Route
-                        path={SettingsPath.Developers}
-                        element={<SettingsDevelopers />}
-                      />
                       <Route
                         path={SettingsPath.DevelopersNewApiKey}
                         element={<SettingsDevelopersApiKeysNew />}

@@ -1,9 +1,8 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { useModifyActivityTargetsOnActivityCache } from '@/activities/hooks/useModifyActivityTargetsOnActivityCache';
+import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { useActivityConnectionUtils } from '@/activities/utils/useActivityConnectionUtils';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -19,9 +18,6 @@ export const useCreateActivityInDB = () => {
     });
 
   const { makeActivityWithConnection } = useActivityConnectionUtils();
-
-  const { modifyActivityTargetsOnActivityCache } =
-    useModifyActivityTargetsOnActivityCache();
 
   const createActivityInDB = async (activityToCreate: ActivityForEditor) => {
     const { activityWithConnection } = makeActivityWithConnection(
@@ -45,12 +41,6 @@ export const useCreateActivityInDB = () => {
         skipOptimisticEffect: true,
       });
     }
-
-    // TODO: replace by trigger optimistic effect
-    modifyActivityTargetsOnActivityCache({
-      activityId: activityToCreate.id,
-      activityTargets: activityTargetsToCreate,
-    });
   };
 
   return {

@@ -7,8 +7,8 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
-import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
@@ -116,9 +116,7 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFields = viewFields
-          .map((viewField) => viewField)
-          .filter(assertNotNull);
+        const queriedViewFields = viewFields.filter(isNonNullable);
 
         if (isPersistingView) {
           return;
@@ -173,7 +171,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableFilterDefinition,
             };
           })
-          .filter(assertNotNull);
+          .filter(isNonNullable);
 
         if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
           set(savedViewFiltersState, queriedViewFilters);
@@ -220,7 +218,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableSortDefinition,
             };
           })
-          .filter(assertNotNull);
+          .filter(isNonNullable);
 
         if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
           set(savedViewSortsState, queriedViewSorts);

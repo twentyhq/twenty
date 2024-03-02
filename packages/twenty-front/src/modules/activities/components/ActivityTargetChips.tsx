@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
+import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 
 const StyledContainer = styled.div`
@@ -12,14 +12,14 @@ const StyledContainer = styled.div`
 export const ActivityTargetChips = ({
   activityTargetObjectRecords,
 }: {
-  activityTargetObjectRecords: ActivityTargetObjectRecord[];
+  activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
 }) => {
   return (
     <StyledContainer>
       {activityTargetObjectRecords?.map((activityTargetObjectRecord) => (
         <RecordChip
-          key={activityTargetObjectRecord.targetObjectRecord.id}
-          record={activityTargetObjectRecord.targetObjectRecord}
+          key={activityTargetObjectRecord.targetObject.id}
+          record={activityTargetObjectRecord.targetObject}
           objectNameSingular={
             activityTargetObjectRecord.targetObjectMetadataItem.nameSingular
           }

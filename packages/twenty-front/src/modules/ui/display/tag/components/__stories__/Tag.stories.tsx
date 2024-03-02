@@ -1,7 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeColor,
+} from '@/ui/theme/constants/MainColorNames';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
@@ -55,7 +58,7 @@ export const Catalog: CatalogStory<Story, typeof Tag> = {
       dimensions: [
         {
           name: 'colors',
-          values: mainColorNames,
+          values: MAIN_COLOR_NAMES,
           props: (color: ThemeColor) => ({ color }),
         },
       ],

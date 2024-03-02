@@ -49,7 +49,10 @@ export class UserService extends TypeOrmQueryService<User> {
       return;
     }
 
-    assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
+    assert(
+      workspaceMembers.length === 1,
+      'WorkspaceMember not found or too many found',
+    );
 
     const userWorkspaceMember = new WorkspaceMember();
 
@@ -76,24 +79,6 @@ export class UserService extends TypeOrmQueryService<User> {
       INNER JOIN core.user AS u 
       ON s."userId" = u.id
     `,
-    );
-  }
-
-  async createWorkspaceMember(user: User) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        user.defaultWorkspace.id,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-      ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-      VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
-        user.id
-      }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
   }
 

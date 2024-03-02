@@ -4,6 +4,13 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
+export type CompanyToCreate = {
+  id: string;
+  domainName: string;
+  name?: string;
+  city?: string;
+};
+
 // TODO: Move outside of the messaging module
 @Injectable()
 export class CompanyService {
@@ -31,20 +38,22 @@ export class CompanyService {
   }
 
   public async createCompany(
-    id: string,
-    name: string,
-    domainName: string,
-    city: string,
     workspaceId: string,
+    companyToCreate: CompanyToCreate,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.company (id, name, "domainName", address)
+      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, address)
       VALUES ($1, $2, $3, $4)`,
-      [id, name, domainName, city],
+      [
+        companyToCreate.id,
+        companyToCreate.domainName,
+        companyToCreate.name ?? '',
+        companyToCreate.city ?? '',
+      ],
       workspaceId,
       transactionManager,
     );
