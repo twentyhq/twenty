@@ -1,12 +1,10 @@
-/* eslint-disable simple-import-sort/imports */
-/* eslint-disable prettier/prettier */
 'use client';
 
 import React from 'react';
 import styled from '@emotion/styled';
 
-import mq from '@/app/_components/ui/theme/mq';
 import { ExternalArrow } from '@/app/_components/ui/icons/SvgIcons';
+import mq from '@/app/_components/ui/theme/mq';
 
 import { GithubIcon } from '../icons/SvgIcons';
 
@@ -34,7 +32,7 @@ const LinkList = styled.div`
   flex-direction: row;
   gap: 2px;
   ${mq({
-    marginRight: ['auto', 'auto', '0']
+    marginRight: ['auto', 'auto', '0'],
   })}
 `;
 
@@ -58,7 +56,7 @@ const LogoContainer = styled.div`
   align-items: center;
   gap: 8px;
   ${mq({
-    width: ['auto', 'auto', '202px']
+    width: ['auto', 'auto', '202px'],
   })}
 `;
 
