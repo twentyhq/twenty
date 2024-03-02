@@ -1,8 +1,11 @@
+/* eslint-disable simple-import-sort/imports */
+/* eslint-disable prettier/prettier */
 'use client';
 
 import React from 'react';
 import styled from '@emotion/styled';
 
+import mq from '@/app/_components/ui/theme/mq';
 import { ExternalArrow } from '@/app/_components/ui/icons/SvgIcons';
 
 import { GithubIcon } from '../icons/SvgIcons';
@@ -30,6 +33,9 @@ const LinkList = styled.div`
   display: flex;
   flex-direction: row;
   gap: 2px;
+  ${mq({
+    marginRight: ['auto', 'auto', '0']
+  })}
 `;
 
 const ListItem = styled.a`
@@ -51,7 +57,9 @@ const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 202px;
+  ${mq({
+    width: ['auto', 'auto', '202px']
+  })}
 `;
 
 const StyledButton = styled.div`
@@ -108,8 +116,8 @@ export const HeaderDesktop = () => {
         <Logo />
       </LogoContainer>
       <LinkList>
-        <ListItem href="/pricing">Pricing</ListItem>
         <ListItem href="/story">Story</ListItem>
+        <ListItem href="/pricing">Pricing</ListItem>
         <ListItem href="https://docs.twenty.com">
           Docs <ExternalArrow />
         </ListItem>
