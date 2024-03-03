@@ -16,18 +16,14 @@ export class ExceptionHandlerSentryDriver
     Sentry.init({
       dsn: options.dsn,
       integrations: [
-        // enable HTTP calls tracing
         new Sentry.Integrations.Http({ tracing: true }),
-        // enable Express.js middleware tracing
         new Sentry.Integrations.Express({ app: options.serverInstance }),
         new Sentry.Integrations.GraphQL(),
-        new Sentry.Integrations.Postgres({
-          usePgNative: true,
-        }),
+        new Sentry.Integrations.Postgres(),
         new ProfilingIntegration(),
       ],
-      tracesSampleRate: 1.0,
-      profilesSampleRate: 1.0,
+      tracesSampleRate: 1,
+      profilesSampleRate: 0.05,
       environment: options.debug ? 'development' : 'production',
       debug: options.debug,
     });

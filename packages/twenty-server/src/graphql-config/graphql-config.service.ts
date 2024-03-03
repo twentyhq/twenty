@@ -23,6 +23,7 @@ import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/us
 import { User } from 'src/core/user/user.entity';
 import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
 import { JwtData } from 'src/core/auth/types/jwt-data.type';
+import { useTracing } from 'src/integrations/tracing/useTracing';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -112,6 +113,7 @@ export class GraphQLConfigService
         useExceptionHandler({
           exceptionHandlerService: this.exceptionHandlerService,
         }),
+        useTracing(),
       ],
     };
 
