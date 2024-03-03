@@ -11,7 +11,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
-import { workspacesState } from '@/auth/states/workspaces';
+import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -103,9 +103,15 @@ export const useAuth = () => {
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
       if (verifyResult.data?.verify.user.workspaces) {
-        const workspaces = verifyResult.data.verify.user.workspaces.map(
-          (obj) => obj.workspace,
-        );
+        const validWorkspaces =
+          verifyResult.data?.verify.user.workspaces.filter(
+            ({ workspace }) => workspace !== null && workspace !== undefined,
+          );
+        const workspaces: Workspaces[] = [];
+        validWorkspaces.forEach((validWorkspace) => {
+          const workspace = validWorkspace.workspace!;
+          workspaces.push(workspace);
+        });
         setWorkspaces(workspaces);
       }
       return {

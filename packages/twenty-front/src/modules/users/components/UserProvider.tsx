@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { workspacesState } from '@/auth/states/workspaces';
+import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
@@ -38,9 +38,14 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
       });
     }
     if (queryData?.currentUser?.workspaces) {
-      const workspaces = queryData.currentUser.workspaces.map(
-        (obj: any) => obj.workspace,
+      const validWorkspaces = queryData.currentUser.workspaces.filter(
+        (obj: any) => obj.workspace !== null && obj.workspace !== undefined,
       );
+      const workspaces: Workspaces[] = [];
+      validWorkspaces.forEach((validWorkspace: any) => {
+        const workspace = validWorkspace.workspace! as Workspaces;
+        workspaces.push(workspace);
+      });
 
       setWorkspaces(workspaces);
     }

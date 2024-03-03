@@ -1,4 +1,5 @@
 import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -19,11 +20,13 @@ export const SettingsDataModelFieldTypeSelect = ({
 }: SettingsDataModelFieldTypeSelectProps) => {
   const fieldTypeOptions = Object.entries(SETTINGS_FIELD_METADATA_TYPES)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
-    .map<SelectOption<FieldMetadataType>>(([key, dataTypeConfig]) => ({
-      Icon: dataTypeConfig.Icon,
-      label: dataTypeConfig.label,
-      value: key as FieldMetadataType,
-    }));
+    .map<SelectOption<FieldMetadataType, IconComponent>>(
+      ([key, dataTypeConfig]) => ({
+        Icon: dataTypeConfig.Icon,
+        label: dataTypeConfig.label,
+        value: key as FieldMetadataType,
+      }),
+    );
 
   return (
     <Select
