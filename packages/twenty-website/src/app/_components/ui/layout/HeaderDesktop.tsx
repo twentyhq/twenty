@@ -1,115 +1,20 @@
 'use client';
 
 import React from 'react';
-import styled from '@emotion/styled';
 
-import { ExternalArrow } from '@/app/_components/ui/icons/SvgIcons';
-import mq from '@/app/_components/ui/theme/mq';
-
-import { GithubIcon } from '../icons/SvgIcons';
-
-import { Logo } from './Logo';
-
-const Nav = styled.nav`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  overflow: visible;
-  padding: 12px 16px 12px 16px;
-  position: relative;
-  transform-origin: 50% 50% 0px;
-  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
-
-  @media (max-width: 809px) {
-    display: none;
-  }
-`;
-
-const LinkList = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  ${mq({
-    marginRight: ['auto', 'auto', '0'],
-  })}
-`;
-
-const ListItem = styled.a`
-  color: rgb(71, 71, 71);
-  text-decoration: none;
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  border-radius: 8px;
-  height: 40px;
-  padding-left: 16px;
-  padding-right: 16px;
-  &:hover {
-    background-color: #f1f1f1;
-  }
-`;
-
-const LogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  ${mq({
-    width: ['auto', 'auto', '202px'],
-  })}
-`;
-
-const StyledButton = styled.div`
-  display: flex;
-  height: 40px;
-  padding-left: 16px;
-  padding-right: 16px;
-  align-items: center;
-  background-color: #000;
-  color: #fff;
-  border-radius: 8px;
-  font-weight: 500;
-  border: none;
-  outline: inherit;
-  cursor: pointer;
-`;
-
-const CallToActionContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  a {
-    text-decoration: none;
-  }
-`;
-
-const LinkNextToCTA = styled.a`
-  display: flex;
-  align-items: center;
-  color: rgb(71, 71, 71);
-  padding: 0px 16px 0px 16px;
-  span {
-    text-decoration: underline;
-  }
-`;
-
-const CallToAction = () => {
-  return (
-    <CallToActionContainer>
-      <LinkNextToCTA href="https://github.com/twentyhq/twenty">
-        Sign in
-      </LinkNextToCTA>
-      <a href="https://twenty.com/stripe-redirection">
-        <StyledButton>Get Started</StyledButton>
-      </a>
-    </CallToActionContainer>
-  );
-};
+import { ExternalArrow, GithubIcon } from '@/app/_components/ui/icons/SvgIcons';
+import { Logo } from '@/app/_components/ui/layout/Logo';
+import { CallToAction } from '@/app/_components/ui/shared/callToAction';
+import {
+  DesktopNav,
+  LinkList,
+  ListItem,
+  LogoContainer,
+} from '@/app/_components/ui/shared/header';
 
 export const HeaderDesktop = () => {
   return (
-    <Nav>
+    <DesktopNav>
       <LogoContainer>
         <Logo />
       </LogoContainer>
@@ -124,6 +29,6 @@ export const HeaderDesktop = () => {
         </ListItem>
       </LinkList>
       <CallToAction />
-    </Nav>
+    </DesktopNav>
   );
 };
