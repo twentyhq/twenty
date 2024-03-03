@@ -60,6 +60,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     description: 'Workspace member avatar',
     icon: 'IconFileUpload',
   })
+  @IsNullable()
   avatarUrl: string;
 
   @FieldMetadata({
