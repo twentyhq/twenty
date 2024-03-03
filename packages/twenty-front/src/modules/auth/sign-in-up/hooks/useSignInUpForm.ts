@@ -10,10 +10,11 @@ import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilled
 const validationSchema = z
   .object({
     exist: z.boolean(),
-    email: z.string().trim().email('Email must be a valid email'),
+    email: z.string() .trim().email('Email must be a valid email'),
     password: z
       .string()
       .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+    captchaToken: z.string().default(''),
   })
   .required();
 

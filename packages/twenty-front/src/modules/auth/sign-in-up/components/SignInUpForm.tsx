@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
+import { useGenerateCaptchaToken } from '@/auth/hooks/useGenerateCaptchaToken';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
@@ -16,6 +17,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -61,7 +63,11 @@ export const SignInUpForm = () => {
     submitCredentials,
   } = useSignInUp(form);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const isCaptchaScriptLoaded = useInsertCaptchaScript();
+
+  const { generateCaptchaToken } = useGenerateCaptchaToken();
+
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
 
@@ -71,6 +77,8 @@ export const SignInUpForm = () => {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
+        const captchaToken = await generateCaptchaToken();
+        form.setValue('captchaToken', captchaToken);
         form.handleSubmit(submitCredentials)();
       }
     }
@@ -203,7 +211,7 @@ export const SignInUpForm = () => {
             variant="secondary"
             title={buttonTitle}
             type="submit"
-            onClick={() => {
+            onClick={async () => {
               if (signInUpStep === SignInUpStep.Init) {
                 continueWithEmail();
                 return;
@@ -213,6 +221,8 @@ export const SignInUpForm = () => {
                 return;
               }
               setShowErrors(true);
+              const captchaToken = await generateCaptchaToken();
+              form.setValue('captchaToken', captchaToken);
               form.handleSubmit(submitCredentials)();
             }}
             Icon={() => form.formState.isSubmitting && <Loader />}

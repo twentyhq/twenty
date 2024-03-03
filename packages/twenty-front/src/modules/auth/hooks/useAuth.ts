@@ -29,6 +29,7 @@ import {
 
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
@@ -51,11 +52,12 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const handleChallenge = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, captchaToken: string) => {
       const challengeResult = await challenge({
         variables: {
           email,
           password,
+          captchaToken,
         },
       });
 
@@ -117,8 +119,8 @@ export const useAuth = () => {
   );
 
   const handleCrendentialsSignIn = useCallback(
-    async (email: string, password: string) => {
-      const { loginToken } = await handleChallenge(email, password);
+    async (email: string, password: string, captchaToken: string) => {
+      const { loginToken } = await handleChallenge(email, password, captchaToken);
       setIsVerifyPendingState(true);
 
       const { user, workspaceMember, workspace } = await handleVerify(
@@ -151,6 +153,7 @@ export const useAuth = () => {
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const telemetry = snapshot.getLoadable(telemetryState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+        const captchaProvider = snapshot.getLoadable(captchaProviderState).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -160,6 +163,7 @@ export const useAuth = () => {
           set(supportChatState, supportChat);
           set(telemetryState, telemetry);
           set(isDebugModeState, isDebugMode);
+          set(captchaProviderState, captchaProvider);
           return undefined;
         });
 
@@ -172,7 +176,7 @@ export const useAuth = () => {
   );
 
   const handleCredentialsSignUp = useCallback(
-    async (email: string, password: string, workspaceInviteHash?: string) => {
+    async (email: string, password: string, workspaceInviteHash?: string, captchaToken?: string) => {
       setIsVerifyPendingState(true);
 
       const signUpResult = await signUp({
@@ -180,6 +184,7 @@ export const useAuth = () => {
           email,
           password,
           workspaceInviteHash,
+          captchaToken,
         },
       });
 

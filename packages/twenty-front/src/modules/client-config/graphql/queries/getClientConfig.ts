@@ -26,6 +26,10 @@ export const GET_CLIENT_CONFIG = gql`
       sentry {
         dsn
       }
+      captcha {
+        provider
+        siteKey
+      }
     }
   }
 `;

@@ -106,11 +106,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
+                data.captchaToken,
               )
             : await signUpWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
                 workspaceInviteHash,
+                data.captchaToken,
               );
 
         navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
