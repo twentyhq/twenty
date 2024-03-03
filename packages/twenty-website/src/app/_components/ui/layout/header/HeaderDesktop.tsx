@@ -3,14 +3,14 @@
 import React from 'react';
 
 import { ExternalArrow, GithubIcon } from '@/app/_components/ui/icons/SvgIcons';
-import { Logo } from '@/app/_components/ui/layout/Logo';
-import { CallToAction } from '@/app/_components/ui/shared/callToAction';
+import { CallToAction } from '@/app/_components/ui/layout/header/callToAction';
 import {
   DesktopNav,
   LinkList,
   ListItem,
   LogoContainer,
-} from '@/app/_components/ui/shared/header';
+} from '@/app/_components/ui/layout/header/styled';
+import { Logo } from '@/app/_components/ui/layout/Logo';
 
 export const HeaderDesktop = () => {
   return (

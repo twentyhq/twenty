@@ -2,7 +2,7 @@ import {
   CallToActionContainer,
   LinkNextToCTA,
   StyledButton,
-} from '@/app/_components/ui/shared/header';
+} from '@/app/_components/ui/layout/header/styled';
 
 export const CallToAction = () => {
   return (

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { IBM_Plex_Mono } from 'next/font/google';
 
 import { ExternalArrow, GithubIcon } from '@/app/_components/ui/icons/SvgIcons';
+import { CallToAction } from '@/app/_components/ui/layout/header/callToAction';
 import { Logo } from '@/app/_components/ui/layout/Logo';
-import { CallToAction } from '@/app/_components/ui/shared/callToAction';
 import {
   HamburgerContainer,
   HamburgerLine1,
@@ -17,7 +17,7 @@ import {
   MobileMenu,
   MobileNav,
   NavOpen,
-} from '@/app/_components/ui/shared/header';
+} from '@/app/_components/ui/layout/header/styled';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',
