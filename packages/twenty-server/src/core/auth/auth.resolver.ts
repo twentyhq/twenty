@@ -25,6 +25,7 @@ import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-passw
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLinkInput } from 'src/core/auth/dto/email-password-reset-link.input';
+import { CaptchaGuard } from 'src/integrations/captcha/captcha.guard';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -80,6 +81,7 @@ export class AuthResolver {
     });
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
@@ -88,6 +90,7 @@ export class AuthResolver {
     return { loginToken };
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
     const user = await this.authService.signUp(signUpInput);

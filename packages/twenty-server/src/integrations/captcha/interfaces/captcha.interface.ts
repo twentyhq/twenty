@@ -1,10 +1,15 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
+import { registerEnumType } from '@nestjs/graphql';
 
 export enum CaptchaDriverType {
   GoogleRecatpcha = 'google-recaptcha',
   HCaptcha = 'hcaptcha',
   Turnstile = 'turnstile',
 }
+
+registerEnumType(CaptchaDriverType, {
+  name: 'CaptchaDriverType',
+});
 
 export type CaptchaDriverOptions = {
   siteKey: string;

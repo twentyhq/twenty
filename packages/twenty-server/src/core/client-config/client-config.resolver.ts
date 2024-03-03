@@ -37,6 +37,10 @@ export class ClientConfigResolver {
       sentry: {
         dsn: this.environmentService.getSentryDSN(),
       },
+      captcha: {
+        provider: this.environmentService.getCaptchaDriver(),
+        siteKey: this.environmentService.getCaptchaSiteKey(),
+      },
     };
 
     return Promise.resolve(clientConfig);
