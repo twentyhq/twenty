@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   margin: 0 auto;
   display: flex;
   font-weight: 400;
+  gap: 40px;
 
   @media (max-width: 810px) {
     width: auto;
