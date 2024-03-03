@@ -17,12 +17,12 @@ const Home = async () => {
 
   return (
     <ContentContainer>
-      <Title />
+      <Title style = {{ color: '#141414'}} />
 
       {releases.map((note, index) => (
         <React.Fragment key={note.slug}>
           <Release release={note} />
-          {index != releases.length - 1 && <Line />}
+          {index != releases.length - 1 && <Line style={{ marginBottom: '40px' }} />}
         </React.Fragment>
       ))}
     </ContentContainer>
