@@ -3,7 +3,7 @@ import insertButtonForPerson from '~/contentScript/extractPersonProfile';
 
 // Inject buttons into the DOM when SPA is reloaded on the resource url.
 // e.g. reload the page when on https://www.linkedin.com/in/mabdullahabaid/
-insertButtonForCompany();
+await insertButtonForCompany();
 insertButtonForPerson();
 
 // The content script gets executed upon load, so the the content script is executed when a user visits https://www.linkedin.com/feed/.

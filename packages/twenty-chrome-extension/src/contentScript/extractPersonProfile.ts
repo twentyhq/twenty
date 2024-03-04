@@ -11,7 +11,7 @@ const insertButtonForPerson = (): void => {
 
   // Create the button with desired callback funciton to execute upon click.
   if (parentDiv) {
-    const newButtonPerson: HTMLButtonElement = createNewButton(
+    const newButtonPerson: HTMLDivElement = createNewButton(
       'Add to Twenty',
       async () => {
         // Extract person-specific data from the DOM.
