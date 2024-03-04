@@ -24,7 +24,9 @@ export class GmailRefreshAccessTokenService {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
-      throw new Error('No refresh token found');
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     const accessToken = await this.refreshAccessToken(refreshToken);

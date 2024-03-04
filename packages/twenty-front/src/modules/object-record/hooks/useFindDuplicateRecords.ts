@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
@@ -29,6 +30,10 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { enqueueSnackBar } = useSnackBar();
 
+  const queryResponseField = getFindDuplicateRecordsQueryResponseField(
+    objectMetadataItem.nameSingular,
+  );
+
   const { data, loading, error } = useQuery<ObjectRecordQueryResult<T>>(
     findDuplicateRecordsQuery,
     {
@@ -36,7 +41,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
         id: objectRecordId,
       },
       onCompleted: (data) => {
-        onCompleted?.(data[objectMetadataItem.nameSingular]);
+        onCompleted?.(data[queryResponseField]);
       },
       onError: (error) => {
         logError(
@@ -53,8 +58,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     },
   );
 
-  const objectRecordConnection =
-    data?.[`${objectMetadataItem.nameSingular}Duplicates`];
+  const objectRecordConnection = data?.[queryResponseField];
 
   const mapConnectionToRecords = useMapConnectionToRecords();
 

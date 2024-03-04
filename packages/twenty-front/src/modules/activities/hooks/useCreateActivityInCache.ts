@@ -14,7 +14,7 @@ import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRec
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useCreateActivityInCache = () => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
@@ -71,7 +71,7 @@ export const useCreateActivityInCache = () => {
 
             return targetObject;
           })
-          .filter(isDefined);
+          .filter(isNonNullable);
 
         const activityTargetsToCreate =
           makeActivityTargetsToCreateFromTargetableObjects({

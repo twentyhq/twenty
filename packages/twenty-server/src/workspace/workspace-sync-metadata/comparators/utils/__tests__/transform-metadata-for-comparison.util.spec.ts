@@ -21,7 +21,7 @@ describe('transformMetadataForComparison', () => {
       { name: 'Test2', value: { c: 3 }, extra: 'keepMe' },
     ];
     const result = transformMetadataForComparison(input, {
-      propertiesToIgnore: ['ignored'],
+      shouldIgnoreProperty: (property) => ['ignored'].includes(property),
       propertiesToStringify: ['value'],
       keyFactory: (datum) => datum.name,
     });

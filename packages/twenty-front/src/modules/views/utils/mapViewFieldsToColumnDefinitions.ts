@@ -2,7 +2,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { assertNotNull } from '~/utils/assert';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ViewField } from '../types/ViewField';
 
@@ -48,7 +48,7 @@ export const mapViewFieldsToColumnDefinitions = ({
         viewFieldId: viewField.id,
       };
     })
-    .filter(assertNotNull);
+    .filter(isNonNullable);
 
   // No label identifier set for this object
   if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;

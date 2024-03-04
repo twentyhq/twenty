@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useObjectNameSingularFromPlural = ({
   objectNamePlural,
@@ -29,7 +29,7 @@ export const useObjectNameSingularFromPlural = ({
       ) ?? null;
   }
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isNonNullable(objectMetadataItem)) {
     throw new Error(
       `Object metadata item not found for ${objectNamePlural} object`,
     );

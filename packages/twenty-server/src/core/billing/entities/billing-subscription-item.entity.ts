@@ -4,12 +4,21 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
+@Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
+  'billingSubscriptionId',
+  'stripeProductId',
+])
+@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
+  'billingSubscriptionId',
+  'stripeSubscriptionItemId',
+])
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -40,6 +49,9 @@ export class BillingSubscriptionItem {
 
   @Column({ nullable: false })
   stripePriceId: string;
+
+  @Column({ nullable: false })
+  stripeSubscriptionItemId: string;
 
   @Column({ nullable: false })
   quantity: number;

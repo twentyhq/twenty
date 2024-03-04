@@ -141,7 +141,7 @@ export const CreateProfile = () => {
 
   return (
     <>
-      <Title>Create profile</Title>
+      <Title withMarginTop={false}>Create profile</Title>
       <SubTitle>How you'll be identified on the app.</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>

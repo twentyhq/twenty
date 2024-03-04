@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser, AddressObject } from 'mailparser';
@@ -14,6 +14,7 @@ import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-
 @Injectable()
 export class FetchMessagesByBatchesService {
   private readonly httpService: AxiosInstance;
+  private readonly logger = new Logger(FetchMessagesByBatchesService.name);
 
   constructor() {
     this.httpService = axios.create({
@@ -24,14 +25,38 @@ export class FetchMessagesByBatchesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
+    jobName?: string,
+    workspaceId?: string,
+    connectedAccountId?: string,
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
+    let startTime = Date.now();
     const batchResponses = await this.fetchAllByBatches(
       queries,
       accessToken,
       'batch_gmail_messages',
     );
+    let endTime = Date.now();
 
-    return this.formatBatchResponsesAsGmailMessages(batchResponses);
+    this.logger.log(
+      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
+        queries.length
+      } messages in ${endTime - startTime}ms`,
+    );
+
+    startTime = Date.now();
+
+    const formattedResponse =
+      await this.formatBatchResponsesAsGmailMessages(batchResponses);
+
+    endTime = Date.now();
+
+    this.logger.log(
+      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
+        queries.length
+      } messages in ${endTime - startTime}ms`,
+    );
+
+    return formattedResponse;
   }
 
   async fetchAllByBatches(
@@ -39,7 +64,7 @@ export class FetchMessagesByBatchesService {
     accessToken: string,
     boundary: string,
   ): Promise<AxiosResponse<any, any>[]> {
-    const batchLimit = 100;
+    const batchLimit = 50;
 
     let batchOffset = 0;
 
@@ -174,19 +199,15 @@ export class FetchMessagesByBatchesService {
         const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
         try {
-          const parsed = await simpleParser(body);
+          const parsed = await simpleParser(body, {
+            skipHtmlToText: true,
+            skipImageLinks: true,
+            skipTextToHtml: true,
+            maxHtmlLengthToParse: 0,
+          });
 
-          const {
-            subject,
-            messageId,
-            from,
-            to,
-            cc,
-            bcc,
-            text,
-            html,
-            attachments,
-          } = parsed;
+          const { subject, messageId, from, to, cc, bcc, text, attachments } =
+            parsed;
 
           if (!from) throw new Error('From value is missing');
 
@@ -223,7 +244,6 @@ export class FetchMessagesByBatchesService {
             fromDisplayName: from.value[0].name || '',
             participants,
             text: textWithoutReplyQuotations || '',
-            html: html || '',
             attachments,
           };
 
