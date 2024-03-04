@@ -5,7 +5,7 @@ import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/Object
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -34,7 +34,7 @@ export const useObjectMetadataItemOnly = ({
     objectMetadataItems = mockObjectMetadataItems;
   }
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isNonNullable(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
       objectNameSingular,
       objectMetadataItems,

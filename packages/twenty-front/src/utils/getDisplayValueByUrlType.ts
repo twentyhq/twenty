@@ -11,7 +11,7 @@ export const getDisplayValueByUrlType = ({
 }: getUrlDisplayValueByUrlTypeProps) => {
   if (type === 'linkedin') {
     const matches = href.match(
-      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company)\/(.*)/,
+      /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company|school)\/(.*)/,
     );
     if (matches && matches[1]) {
       return matches[1];

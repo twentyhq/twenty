@@ -24,6 +24,8 @@ export class ClientConfigResolver {
       billing: {
         isBillingEnabled: this.environmentService.isBillingEnabled(),
         billingUrl: this.environmentService.getBillingUrl(),
+        billingFreeTrialDurationInDays:
+          this.environmentService.getBillingFreeTrialDurationInDays(),
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
       signUpDisabled: this.environmentService.isSignUpDisabled(),

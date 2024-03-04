@@ -199,19 +199,15 @@ export class FetchMessagesByBatchesService {
         const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
         try {
-          const parsed = await simpleParser(body);
+          const parsed = await simpleParser(body, {
+            skipHtmlToText: true,
+            skipImageLinks: true,
+            skipTextToHtml: true,
+            maxHtmlLengthToParse: 0,
+          });
 
-          const {
-            subject,
-            messageId,
-            from,
-            to,
-            cc,
-            bcc,
-            text,
-            html,
-            attachments,
-          } = parsed;
+          const { subject, messageId, from, to, cc, bcc, text, attachments } =
+            parsed;
 
           if (!from) throw new Error('From value is missing');
 
@@ -248,7 +244,6 @@ export class FetchMessagesByBatchesService {
             fromDisplayName: from.value[0].name || '',
             participants,
             text: textWithoutReplyQuotations || '',
-            html: html || '',
             attachments,
           };
 

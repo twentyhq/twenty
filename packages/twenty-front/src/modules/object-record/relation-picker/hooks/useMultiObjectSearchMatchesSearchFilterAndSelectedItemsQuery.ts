@@ -13,7 +13,7 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
@@ -71,7 +71,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
             },
           ];
         })
-        .filter(isDefined),
+        .filter(isNonNullable),
     );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
@@ -99,7 +99,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
         ...orderByFieldPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isDefined(multiSelectQueryForSelectedIds),
+      skip: !isNonNullable(multiSelectQueryForSelectedIds),
     },
   );
 

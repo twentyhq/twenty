@@ -16,7 +16,6 @@ import { GmailPartialSyncJob } from 'src/workspace/messaging/jobs/gmail-partial-
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
@@ -28,25 +27,33 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
+import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
+import { BillingModule } from 'src/core/billing/billing.module';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
+import { StripeModule } from 'src/core/billing/stripe/stripe.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
-    WorkspaceDataSourceModule,
-    ObjectMetadataModule,
+    BillingModule,
     DataSourceModule,
-    HttpModule,
-    TypeORMModule,
-    MessagingModule,
-    UserModule,
-    EnvironmentModule,
-    TypeORMModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     ConnectedAccountModule,
-    MessageParticipantModule,
     CreateCompaniesAndContactsModule,
-    MessageChannelModule,
     DataSeedDemoWorkspaceModule,
+    EnvironmentModule,
+    HttpModule,
+    MessagingModule,
+    MessageParticipantModule,
+    MessageChannelModule,
+    ObjectMetadataModule,
+    StripeModule,
     ThreadCleanerModule,
+    TypeORMModule,
+    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    UserModule,
+    UserWorkspaceModule,
+    WorkspaceDataSourceModule,
   ],
   providers: [
     {
@@ -90,6 +97,7 @@ import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cle
       provide: DeleteConnectedAccountAssociatedDataJob.name,
       useClass: DeleteConnectedAccountAssociatedDataJob,
     },
+    { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
   ],
 })
 export class JobsModule {

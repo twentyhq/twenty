@@ -11,7 +11,7 @@ import {
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
@@ -38,7 +38,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       );
     }
 
-    if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
+    if (!isNonNullable(rawUIFilter.value) || rawUIFilter.value === '') {
       return undefined;
     }
 

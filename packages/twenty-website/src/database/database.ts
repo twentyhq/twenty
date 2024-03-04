@@ -49,6 +49,18 @@ const migrate = async () => {
   throw new Error('Unsupported database driver');
 };
 
+const findOne = (model: SQLiteTableWithColumns<any>, orderBy: any) => {
+  if (isSqliteDriver) {
+    return sqliteDb.select().from(model).orderBy(orderBy).limit(1).execute();
+  }
+
+  if (isPgDriver) {
+    return pgDb.select().from(model).orderBy(orderBy).limit(1).execute();
+  }
+
+  throw new Error('Unsupported database driver');
+};
+
 const findAll = (model: SQLiteTableWithColumns<any>) => {
   if (isSqliteDriver) {
     return sqliteDb.select().from(model).all();
@@ -92,4 +104,4 @@ const insertMany = async (
   throw new Error('Unsupported database driver');
 };
 
-export { findAll, insertMany, migrate };
+export { findAll, findOne, insertMany, migrate };

@@ -1,7 +1,10 @@
 import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { LinkMetadata } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -139,6 +142,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -165,6 +169,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
@@ -178,6 +183,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];

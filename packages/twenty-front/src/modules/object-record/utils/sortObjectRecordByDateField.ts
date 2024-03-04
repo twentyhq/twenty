@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const SORT_BEFORE = -1;
 const SORT_AFTER = 1;
@@ -14,11 +14,11 @@ export const sortObjectRecordByDateField =
     const aDate = a[dateField];
     const bDate = b[dateField];
 
-    if (!isDefined(aDate) && !isDefined(bDate)) {
+    if (!isNonNullable(aDate) && !isNonNullable(bDate)) {
       return SORT_EQUAL;
     }
 
-    if (!isDefined(aDate)) {
+    if (!isNonNullable(aDate)) {
       if (sortDirection === 'AscNullsFirst') {
         return SORT_BEFORE;
       } else if (sortDirection === 'DescNullsFirst') {
@@ -32,7 +32,7 @@ export const sortObjectRecordByDateField =
       throw new Error(`Invalid sortDirection: ${sortDirection}`);
     }
 
-    if (!isDefined(bDate)) {
+    if (!isNonNullable(bDate)) {
       if (sortDirection === 'AscNullsFirst') {
         return SORT_AFTER;
       } else if (sortDirection === 'DescNullsFirst') {

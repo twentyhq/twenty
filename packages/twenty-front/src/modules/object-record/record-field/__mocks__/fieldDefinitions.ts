@@ -9,18 +9,25 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import {
   mockedCompaniesMetadata,
+  mockedCustomMetadata,
   mockedPeopleMetadata,
 } from '~/testing/mock-data/metadata';
 
 export const fieldMetadataId = 'fieldMetadataId';
 
-const mockedPersonObjectMetadataItem = {
+export const mockedPersonObjectMetadataItem = {
   ...mockedPeopleMetadata.node,
   fields: mockedPeopleMetadata.node.fields.edges.map(({ node }) => node),
 };
-const mockedCompanyObjectMetadataItem = {
+
+export const mockedCompanyObjectMetadataItem = {
   ...mockedCompaniesMetadata.node,
   fields: mockedCompaniesMetadata.node.fields.edges.map(({ node }) => node),
+};
+
+export const mockedCustomObjectMetadataItem = {
+  ...mockedCustomMetadata.node,
+  fields: mockedCustomMetadata.node.fields.edges.map(({ node }) => node),
 };
 
 export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {

@@ -38,7 +38,9 @@ export class MessageChannelService {
     );
 
     if (!messageChannels || messageChannels.length === 0) {
-      throw new Error('No message channel found');
+      throw new Error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     return messageChannels[0];

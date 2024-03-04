@@ -6,7 +6,7 @@ import { useRecordBoardDeprecatedActionBarEntriesInternal } from '@/object-recor
 import { useRecordBoardDeprecatedContextMenuEntriesInternal } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedContextMenuEntriesInternal';
 import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
 import { useUpdateCompanyBoardColumnsInternal } from '@/object-record/record-board-deprecated/hooks/internal/useUpdateCompanyBoardColumnsInternal';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export type RecordBoardDeprecatedInternalEffectProps = {
   onFieldsChange: (fields: any) => void;
@@ -40,13 +40,13 @@ export const RecordBoardDeprecatedInternalEffect = () => {
   }, [opportunities, setSavedOpportunities]);
 
   useEffect(() => {
-    if (isDefined(fetchMoreOpportunities)) {
+    if (isNonNullable(fetchMoreOpportunities)) {
       fetchMoreOpportunities();
     }
   }, [fetchMoreOpportunities]);
 
   useEffect(() => {
-    if (isDefined(fetchMoreCompanies)) {
+    if (isNonNullable(fetchMoreCompanies)) {
       fetchMoreCompanies();
     }
   }, [fetchMoreCompanies]);

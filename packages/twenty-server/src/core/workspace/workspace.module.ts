@@ -8,7 +8,8 @@ import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspac
 import { WorkspaceResolver } from 'src/core/workspace/workspace.resolver';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { UserModule } from 'src/core/user/user.module';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
+import { BillingModule } from 'src/core/billing/billing.module';
 
 import { Workspace } from './workspace.entity';
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -20,13 +21,14 @@ import { WorkspaceService } from './services/workspace.service';
     TypeORMModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
+        BillingModule,
+        FileModule,
         NestjsQueryTypeOrmModule.forFeature(
           [Workspace, FeatureFlagEntity],
           'core',
         ),
+        UserWorkspaceModule,
         WorkspaceManagerModule,
-        UserModule,
-        FileModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

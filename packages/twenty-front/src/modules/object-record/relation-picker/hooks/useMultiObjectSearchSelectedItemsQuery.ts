@@ -12,7 +12,7 @@ import {
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const EMPTY_QUERY = gql`
@@ -56,7 +56,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
           },
         ];
       })
-      .filter(isDefined),
+      .filter(isNonNullable),
   );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
@@ -83,7 +83,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
         ...orderByFieldPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isDefined(multiSelectQueryForSelectedIds),
+      skip: !isNonNullable(multiSelectQueryForSelectedIds),
     },
   );
 

@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectOrderByField } from '@/object-metadata/utils/getObjectOrderByField';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useOrderByFieldPerMetadataItem = ({
@@ -20,7 +20,7 @@ export const useOrderByFieldPerMetadataItem = ({
           },
         ];
       })
-      .filter(isDefined),
+      .filter(isNonNullable),
   );
 
   return {
