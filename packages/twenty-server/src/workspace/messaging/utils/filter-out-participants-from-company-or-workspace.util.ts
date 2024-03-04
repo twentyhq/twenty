@@ -19,9 +19,10 @@ export function filterOutParticipantsFromCompanyOrWorkspace(
     new Map<string, boolean>(),
   );
 
-  return participants.filter(
-    (participant) =>
+  return participants.filter((participant) => {
+    return (
       getDomainNameFromHandle(participant.handle) !== selfDomainName &&
-      !workspaceMembersMap[participant.handle],
-  );
+      !workspaceMembersMap[participant.handle]
+    );
+  });
 }
