@@ -3,7 +3,7 @@ import psl from 'psl';
 import { capitalize } from 'src/utils/capitalize';
 
 export const getDomainNameFromHandle = (handle: string): string => {
-  const wholeDomain = handle?.split('@')?.[1];
+  const wholeDomain = handle?.split('@')?.[1] || '';
 
   const { domain } = psl.parse(wholeDomain);
 
