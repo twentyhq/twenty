@@ -257,19 +257,20 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'SELECT': {
-        if (!isNonEmptyString(rawUIFilter.value)) {
+        const stringifiedSelectValues = rawUIFilter.value;
+        let parsedOptionValues: string[] = [];
+
+        if (!isNonEmptyString(stringifiedSelectValues)) {
           break;
         }
 
         try {
-          JSON.parse(rawUIFilter.value);
+          parsedOptionValues = JSON.parse(stringifiedSelectValues);
         } catch (e) {
           throw new Error(
-            `Cannot parse filter value for SELECT filter : "${rawUIFilter.value}"`,
+            `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
           );
         }
-
-        const parsedOptionValues = JSON.parse(rawUIFilter.value) as string[];
 
         if (parsedOptionValues.length > 0) {
           switch (rawUIFilter.operand) {
