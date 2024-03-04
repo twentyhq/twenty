@@ -15,7 +15,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     schema: [],
     messages: {
       invalidWayToGetAtoms:
-        "Expected to use method 'getValue()' with 'getLoadable()' but instead found '{{ propertyName}}'",
+        "Expected to use method 'getValue()' with 'getLoadable()' but instead found '{{ propertyName }}'",
     },
   },
   defaultOptions: [],
