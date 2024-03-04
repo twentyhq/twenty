@@ -36,7 +36,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useCreateOneObjectRecordMetadataItem', () => {
+describe('useCreateOneObjectMetadataItem', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(() => useCreateOneObjectMetadataItem(), {
       wrapper: Wrapper,
@@ -47,6 +47,8 @@ describe('useCreateOneObjectRecordMetadataItem', () => {
         icon: 'IconPlus',
         labelPlural: 'View Filters',
         labelSingular: 'View Filter',
+        namePlural: 'viewFilters',
+        nameSingular: 'viewFilter',
       });
 
       expect(res.data).toEqual({ createOneObject: responseData });

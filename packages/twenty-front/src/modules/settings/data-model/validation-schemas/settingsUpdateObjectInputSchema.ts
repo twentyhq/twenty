@@ -1,18 +1,10 @@
 import camelCase from 'lodash.camelcase';
-import { z, ZodTypeDef } from 'zod';
 
-import { objectMetadataItemSchema } from '@/object-metadata/schemas/objectMetadataItemSchema';
+import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { UpdateObjectInput } from '~/generated-metadata/graphql';
 
-type Input = Omit<UpdateObjectInput, 'nameSingular' | 'namePlural'>;
-type Output = UpdateObjectInput;
-
-export const updateObjectMetadataItemPayloadSchema: z.ZodType<
-  Output,
-  ZodTypeDef,
-  Input
-> = objectMetadataItemSchema
-  .pick<Record<keyof Input, true>>({
+export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
+  .pick({
     description: true,
     icon: true,
     imageIdentifierFieldMetadataId: true,
@@ -22,7 +14,7 @@ export const updateObjectMetadataItemPayloadSchema: z.ZodType<
     labelSingular: true,
   })
   .partial()
-  .transform((value) => ({
+  .transform<UpdateObjectInput>((value) => ({
     ...value,
     nameSingular: value.labelSingular
       ? camelCase(value.labelSingular)

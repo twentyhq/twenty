@@ -2,9 +2,9 @@ import { SafeParseSuccess } from 'zod';
 
 import { CreateObjectInput } from '~/generated-metadata/graphql';
 
-import { createObjectMetadataItemPayloadSchema } from '../createObjectMetadataItemPayloadSchema';
+import { settingsCreateObjectInputSchema } from '..//settingsCreateObjectInputSchema';
 
-describe('createObjectMetadataItemPayloadSchema', () => {
+describe('settingsCreateObjectInputSchema', () => {
   it('validates a valid input and adds name properties', () => {
     // Given
     const validInput = {
@@ -15,7 +15,7 @@ describe('createObjectMetadataItemPayloadSchema', () => {
     };
 
     // When
-    const result = createObjectMetadataItemPayloadSchema.safeParse(validInput);
+    const result = settingsCreateObjectInputSchema.safeParse(validInput);
 
     // Then
     expect(result.success).toBe(true);
@@ -39,8 +39,7 @@ describe('createObjectMetadataItemPayloadSchema', () => {
     };
 
     // When
-    const result =
-      createObjectMetadataItemPayloadSchema.safeParse(invalidInput);
+    const result = settingsCreateObjectInputSchema.safeParse(invalidInput);
 
     // Then
     expect(result.success).toBe(false);

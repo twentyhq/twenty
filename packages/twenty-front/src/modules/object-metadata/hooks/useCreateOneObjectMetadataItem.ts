@@ -1,9 +1,8 @@
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
-import { z } from 'zod';
 
-import { createObjectMetadataItemPayloadSchema } from '@/object-metadata/schemas/createObjectMetadataItemPayloadSchema';
 import {
+  CreateObjectInput,
   CreateOneObjectMetadataItemMutation,
   CreateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -23,12 +22,10 @@ export const useCreateOneObjectMetadataItem = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneObjectMetadataItem = async (
-    input: z.input<typeof createObjectMetadataItemPayloadSchema>,
-  ) => {
+  const createOneObjectMetadataItem = async (input: CreateObjectInput) => {
     return await mutate({
       variables: {
-        input: { object: createObjectMetadataItemPayloadSchema.parse(input) },
+        input: { object: input },
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],

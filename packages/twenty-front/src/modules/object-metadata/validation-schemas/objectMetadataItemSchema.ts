@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { camelCaseStringSchema } from '@/object-metadata/schemas/camelCaseStringSchema';
-import { fieldMetadataItemSchema } from '@/object-metadata/schemas/fieldMetadataItemSchema';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
   __typename: z.literal('object').optional(),

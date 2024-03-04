@@ -7,6 +7,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconSettings } from '@/ui/display/icon';
@@ -31,7 +32,9 @@ export const SettingsNewObject = () => {
 
   const handleSave = async () => {
     try {
-      const createdObject = await createOneObjectMetadataItem(formValues);
+      const createdObject = await createOneObjectMetadataItem(
+        settingsCreateObjectInputSchema.parse(formValues),
+      );
 
       navigate(
         createdObject.data?.createOneObject.isActive

@@ -9,6 +9,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -79,7 +80,7 @@ export const SettingsObjectEdit = () => {
     try {
       await updateOneObjectMetadataItem({
         idToUpdate: activeObjectMetadataItem.id,
-        updatePayload: formValues,
+        updatePayload: settingsUpdateObjectInputSchema.parse(formValues),
       });
 
       navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
