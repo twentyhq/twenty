@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
+import { Request } from 'express';
+
 import { anonymize } from 'src/utils/anonymize';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
@@ -19,6 +21,7 @@ export class AnalyticsService {
     createEventInput: CreateAnalyticsInput,
     user: User | undefined,
     workspace: Workspace | undefined,
+    request: Request,
   ) {
     if (!this.environmentService.isTelemetryEnabled()) {
       return { success: true };
@@ -30,6 +33,7 @@ export class AnalyticsService {
     const data = {
       type: createEventInput.type,
       data: {
+        hostname: request.hostname,
         userUUID: user
           ? anonymizationEnabled
             ? anonymize(user.id)
@@ -40,13 +44,14 @@ export class AnalyticsService {
             ? anonymize(workspace.id)
             : workspace.id
           : undefined,
-        workspaceDomain: workspace ? workspace.domainName : undefined,
+        workspaceDisplayName: workspace ? workspace.displayName : undefined,
+        workspaceDomainName: workspace ? workspace.domainName : undefined,
         ...createEventInput.data,
       },
     };
 
     try {
-      await this.httpService.post('/event?noToken', data);
+      await this.httpService.axiosRef.post('/v1', data);
     } catch {}
 
     return { success: true };
