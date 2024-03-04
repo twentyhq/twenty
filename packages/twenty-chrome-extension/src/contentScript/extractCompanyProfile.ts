@@ -2,8 +2,7 @@ import createNewButton from '~/contentScript/createButton';
 import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
 import extractDomain from '~/contentScript/utils/extractDomain';
 import { createCompany, fetchCompany } from '~/db/company';
-import handleQueryParams from '~/utils/handleQueryParams';
-import requestDb from '~/utils/requestDb';
+import { Company } from '~/graphql/types/company';
 
 const insertButtonForCompany = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -47,8 +46,8 @@ const insertButtonForCompany = async (): Promise<void> => {
       : 0;
 
     // Prepare company data to send to the backend
-    const companyData = {
-      name: companyName,
+    const companyData: Company = {
+      name: companyName ?? '',
       domainName: domainName,
       address: address,
       employees: employees,
@@ -64,30 +63,31 @@ const insertButtonForCompany = async (): Promise<void> => {
     const companyURL = extractCompanyLinkedinLink(activeTabUrl);
     companyData.linkedinLink = { url: companyURL, label: companyURL };
 
-    const company = await fetchCompany(companyURL);
+    const company = await fetchCompany(companyData);
     if (company) {
-      const SavedCompany: HTMLDivElement = createNewButton('Saved', async () => {
-
-      })
+      const savedCompany: HTMLDivElement = createNewButton(
+        'Saved',
+        async () => {},
+      );
       // Include the button in the DOM.
-      parentDiv.prepend(SavedCompany);
-  
+      parentDiv.prepend(savedCompany);
+
       // Write button specific styles here - common ones can be found in createButton.ts.
       const buttonSpecificStyles = {
         alignSelf: 'end',
       };
-  
-      Object.assign(SavedCompany.style, buttonSpecificStyles);
+
+      Object.assign(savedCompany.style, buttonSpecificStyles);
     } else {
       const newButtonCompany: HTMLDivElement = createNewButton(
         'Add to Twenty',
         async () => {
           const response = await createCompany(companyData);
-  
+
           if (response) {
             newButtonCompany.textContent = 'Saved';
             newButtonCompany.setAttribute('disabled', 'true');
-  
+
             // Button specific styles once the button is unclickable after successfully sending data to server.
             newButtonCompany.addEventListener('mouseenter', () => {
               const hoverStyles = {
@@ -102,15 +102,15 @@ const insertButtonForCompany = async (): Promise<void> => {
           }
         },
       );
-  
+
       // Include the button in the DOM.
       parentDiv.prepend(newButtonCompany);
-  
+
       // Write button specific styles here - common ones can be found in createButton.ts.
       const buttonSpecificStyles = {
         alignSelf: 'end',
       };
-  
+
       Object.assign(newButtonCompany.style, buttonSpecificStyles);
     }
   }

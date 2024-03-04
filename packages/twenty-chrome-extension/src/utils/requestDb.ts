@@ -1,10 +1,10 @@
-const requestDb = async (query: string) => {
+const requestDb = async (query: string, params?: object) => {
   const { apiKey } = await chrome.storage.local.get('apiKey');
   const { serverBaseUrl } = await chrome.storage.local.get('serverBaseUrl');
 
   const options = {
     method: 'POST',
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, variables: params }),
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

@@ -1,43 +1,49 @@
-export const fetchCompany = async (linkedinLink: string) => {
-    try {
-        const localStorage = await chrome.storage.local.get();
-        if(localStorage.apiKey && localStorage.serverBaseUrl) {
-            const res = await fetch(`${localStorage.serverBaseUrl}/rest/companies`, {
-                method: "GET", // *GET, POST, PUT, DELETE, etc.
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization : `Bearer ${localStorage.apiKey}`,
-                }
-            });
-            const data = await res.json();
-            if (data.companies) {
-                const company = data.companies.filter((company: any) => company.linkedinLink.url === linkedinLink)
-                return company;
-            }
-        }
-    } catch (error) {
-        throw error;
-    }
-}
+import { Company } from '~/graphql/types/company';
 
-export const createCompany = async (company: any) => {
-    try {
-        const localStorage = await chrome.storage.local.get();
-        if(localStorage.apiKey && localStorage.serverBaseUrl) {
-            const res = await fetch(`${localStorage.serverBaseUrl}/rest/companies`, {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                mode: 'no-cors',
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization : `Bearer ${localStorage.apiKey}`,
-                },
-                body: JSON.stringify(company)
-            });
-            const data = await res.json();
-            console.log(data);
-            return data;
+import handleQueryParams from '../utils/handleQueryParams';
+import requestDb from '../utils/requestDb';
+
+export const fetchCompany = async (companyData: Company) => {
+  const query = `
+    query FindManyCompanies {
+      companies {
+        edges {
+          node {
+            linkedinLink {
+              url
+              label
+            }
+          }
         }
-    } catch (error) {
-        throw error;
+      }
     }
-}
+  `;
+  const res = await requestDb(query);
+  if (res.errors) {
+    throw Error(res.Errors);
+  }
+  if (res.data) {
+    const company = res.data.companies.edges.filter(
+      (edge: any) =>
+        edge.node.linkedinLink?.url === companyData.linkedinLink?.url,
+    );
+    if (company.length > 0) return company[0];
+    else return null;
+  }
+};
+
+export const createCompany = async (company: Company) => {
+  const query = `
+    mutation CreateOneCompany {
+      createCompany(data:{${handleQueryParams(company)}})
+      {id}
+    }
+  `;
+  const res = await requestDb(query);
+  if (res.errors) {
+    throw Error(res.Errors);
+  }
+  if (res.data) {
+    return res;
+  }
+};
