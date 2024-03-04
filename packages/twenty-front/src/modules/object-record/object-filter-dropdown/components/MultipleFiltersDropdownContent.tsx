@@ -1,7 +1,4 @@
-import {
-  ObjectFilterDropdownOptionSearchInput,
-  ObjectFilterDropdownRecordSearchInput,
-} from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
+import { ObjectFilterDropdownEntitySearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
@@ -50,14 +47,14 @@ export const MultipleFiltersDropdownContent = ({
             )}
             {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <>
-                <ObjectFilterDropdownRecordSearchInput />
+                <ObjectFilterDropdownEntitySearchInput />
                 <DropdownMenuSeparator />
                 <ObjectFilterDropdownRecordSelect />
               </>
             )}
             {filterDefinitionUsedInDropdown.type === 'SELECT' && (
               <>
-                <ObjectFilterDropdownOptionSearchInput />
+                <ObjectFilterDropdownEntitySearchInput />
                 <DropdownMenuSeparator />
                 <ObjectFilterDropdownOptionSelect />
               </>
