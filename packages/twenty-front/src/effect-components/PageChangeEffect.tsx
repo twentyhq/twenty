@@ -89,7 +89,8 @@ export const PageChangeEffect = () => {
       navigate(AppPath.PlanRequired);
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
-      !isMatchingLocation(AppPath.CreateWorkspace)
+      !isMatchingLocation(AppPath.CreateWorkspace) &&
+      !isMatchingLocation(AppPath.PlanRequiredSuccess)
     ) {
       navigate(AppPath.CreateWorkspace);
     } else if (

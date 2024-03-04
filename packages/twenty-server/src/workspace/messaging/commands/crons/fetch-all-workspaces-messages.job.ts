@@ -5,10 +5,6 @@ import { Repository } from 'typeorm';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/core/feature-flag/feature-flag.entity';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
@@ -16,29 +12,29 @@ import {
   GmailPartialSyncJobData,
   GmailPartialSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Injectable()
 export class FetchAllWorkspacesMessagesJob
   implements MessageQueueJob<undefined>
 {
   constructor(
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
   ) {}
 
   async handle(): Promise<void> {
-    const featureFlagsWithMessagingEnabled =
-      await this.featureFlagRepository.findBy({
-        key: FeatureFlagKeys.IsMessagingEnabled,
-        value: true,
-      });
-
-    const workspaceIds = featureFlagsWithMessagingEnabled.map(
-      (featureFlag) => featureFlag.workspaceId,
-    );
+    const workspaceIds = (
+      await this.workspaceRepository.find({
+        where: {
+          subscriptionStatus: 'active',
+        },
+        select: ['id'],
+      })
+    ).map((workspace) => workspace.id);
 
     for (const workspaceId of workspaceIds) {
       await this.fetchWorkspaceMessages(workspaceId);

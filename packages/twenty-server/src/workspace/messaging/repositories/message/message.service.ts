@@ -13,7 +13,6 @@ import { MessageChannelService } from 'src/workspace/messaging/repositories/mess
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
-import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
 import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
 @Injectable()
 export class MessageService {
@@ -25,6 +24,25 @@ export class MessageService {
     private readonly messageChannelService: MessageChannelService,
     private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
+
+  public async getNonAssociatedMessages(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT m.* FROM ${dataSourceSchema}."message" m
+        WHERE NOT EXISTS (
+            SELECT 1 FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+            WHERE mcma."messageId" = m.id
+        )`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
 
   public async getFirstByHeaderMessageId(
     headerMessageId: string,
@@ -103,59 +121,68 @@ export class MessageService {
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     gmailMessageChannelId: string,
     workspaceId: string,
-  ) {
-    for (const message of messages) {
-      if (this.shouldSkipImport(message)) {
-        continue;
-      }
+  ): Promise<Map<string, string>> {
+    const messageExternalIdsAndIdsMap = new Map<string, string>();
 
-      await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-        const existingMessageChannelMessageAssociationsCount =
-          await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
-            [message.externalId],
-            gmailMessageChannelId,
-            workspaceId,
-            manager,
-          );
+    try {
+      for (const message of messages) {
+        await workspaceDataSource?.transaction(
+          async (manager: EntityManager) => {
+            const existingMessageChannelMessageAssociationsCount =
+              await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
+                [message.externalId],
+                gmailMessageChannelId,
+                workspaceId,
+                manager,
+              );
 
-        if (existingMessageChannelMessageAssociationsCount > 0) {
-          return;
-        }
+            if (existingMessageChannelMessageAssociationsCount > 0) {
+              return;
+            }
 
-        const savedOrExistingMessageThreadId =
-          await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
-            message.messageThreadExternalId,
-            dataSourceMetadata,
-            workspaceId,
-            manager,
-          );
+            const savedOrExistingMessageThreadId =
+              await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+                message.messageThreadExternalId,
+                dataSourceMetadata,
+                workspaceId,
+                manager,
+              );
 
-        const savedOrExistingMessageId =
-          await this.saveMessageOrReturnExistingMessage(
-            message,
-            savedOrExistingMessageThreadId,
-            connectedAccount,
-            dataSourceMetadata,
-            workspaceId,
-            manager,
-          );
+            const savedOrExistingMessageId =
+              await this.saveMessageOrReturnExistingMessage(
+                message,
+                savedOrExistingMessageThreadId,
+                connectedAccount,
+                dataSourceMetadata,
+                workspaceId,
+                manager,
+              );
 
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
-          [
-            gmailMessageChannelId,
-            savedOrExistingMessageId,
-            message.externalId,
-            savedOrExistingMessageThreadId,
-            message.messageThreadExternalId,
-          ],
+            messageExternalIdsAndIdsMap.set(
+              message.externalId,
+              savedOrExistingMessageId,
+            );
+
+            await manager.query(
+              `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+              [
+                gmailMessageChannelId,
+                savedOrExistingMessageId,
+                message.externalId,
+                savedOrExistingMessageThreadId,
+                message.messageThreadExternalId,
+              ],
+            );
+          },
         );
-      });
+      }
+    } catch (error) {
+      throw new Error(
+        `Error saving connected account ${connectedAccount.id} messages to workspace ${workspaceId}: ${error.message}`,
+      );
     }
-  }
 
-  private shouldSkipImport(message: GmailMessage): boolean {
-    return !isPersonEmail(message.fromHandle);
+    return messageExternalIdsAndIdsMap;
   }
 
   private async saveMessageOrReturnExistingMessage(
@@ -184,7 +211,7 @@ export class MessageService {
     const receivedAt = new Date(parseInt(message.internalDate));
 
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text", "html") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
         newMessageId,
         message.headerMessageId,
@@ -193,57 +220,22 @@ export class MessageService {
         messageDirection,
         messageThreadId,
         message.text,
-        message.html,
       ],
-    );
-
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    if (isContactAutoCreationEnabled && messageDirection === 'outgoing') {
-      await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-        connectedAccount.handle,
-        message.participants,
-        workspaceId,
-        manager,
-      );
-
-      const handles = message.participants.map(
-        (participant) => participant.handle,
-      );
-
-      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-          handles,
-          workspaceId,
-        );
-
-      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-        workspaceId,
-        manager,
-      );
-    }
-
-    await this.messageParticipantService.saveMessageParticipants(
-      message.participants,
-      newMessageId,
-      workspaceId,
-      manager,
     );
 
     return Promise.resolve(newMessageId);
   }
 
   public async deleteMessages(
-    workspaceDataSource: DataSource,
     messagesDeletedMessageExternalIds: string[],
     gmailMessageChannelId: string,
     workspaceId: string,
   ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
     await workspaceDataSource?.transaction(async (manager: EntityManager) => {
       const messageChannelMessageAssociationsToDelete =
         await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(

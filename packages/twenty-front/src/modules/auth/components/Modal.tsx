@@ -11,7 +11,7 @@ const StyledContent = styled(UIModal.Content)`
 type AuthModalProps = { children: React.ReactNode };
 
 export const AuthModal = ({ children }: AuthModalProps) => (
-  <UIModal isOpen={true}>
+  <UIModal isOpen={true} padding={'none'}>
     <StyledContent>{children}</StyledContent>
   </UIModal>
 );

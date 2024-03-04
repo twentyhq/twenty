@@ -10,10 +10,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import Stripe from 'stripe';
 
 import { User } from 'src/core/user/user.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -54,6 +56,11 @@ export class Workspace {
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: User[];
 
+  @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
+    onDelete: 'CASCADE',
+  })
+  workspaceUsers: UserWorkspace[];
+
   @Field()
   @Column({ default: true })
   allowImpersonation: boolean;
@@ -63,7 +70,7 @@ export class Workspace {
 
   @Field()
   @Column({ default: 'incomplete' })
-  subscriptionStatus: 'incomplete' | 'active' | 'canceled';
+  subscriptionStatus: Stripe.Subscription.Status;
 
   @Field()
   activationStatus: 'active' | 'inactive';

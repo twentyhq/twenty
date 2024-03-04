@@ -18,7 +18,6 @@ import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
-import { IsContactAutoCreationEnabledListener } from 'src/workspace/messaging/listeners/is-contact-auto-creation-enabled-listener';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
@@ -26,6 +25,9 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
 import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
+import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
+import { MessagingConnectedAccountListener } from 'src/workspace/messaging/listeners/messaging-connected-account.listener';
+import { BlocklistModule } from 'src/workspace/messaging/repositories/blocklist/blocklist.module';
 @Module({
   imports: [
     EnvironmentModule,
@@ -41,6 +43,7 @@ import { PersonModule } from 'src/workspace/messaging/repositories/person/person
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     CompanyModule,
     PersonModule,
+    BlocklistModule,
   ],
   providers: [
     GmailFullSyncService,
@@ -52,9 +55,10 @@ import { PersonModule } from 'src/workspace/messaging/repositories/person/person
     CreateCompanyService,
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
-    IsContactAutoCreationEnabledListener,
     MessagingMessageChannelListener,
     MessageService,
+    SaveMessagesAndCreateContactsService,
+    MessagingConnectedAccountListener,
   ],
   exports: [
     GmailPartialSyncService,

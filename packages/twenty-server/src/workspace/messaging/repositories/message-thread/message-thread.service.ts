@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
+import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
+import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class MessageThreadService {
@@ -13,6 +15,25 @@ export class MessageThreadService {
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
+
+  public async getOrphanThreads(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageThreadObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT mt.* FROM ${dataSourceSchema}."messageThread" mt
+      WHERE NOT EXISTS (
+          SELECT 1 FROM ${dataSourceSchema}."message" m
+          WHERE m."messageThreadId" = mt.id
+      )`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
 
   public async deleteByIds(
     messageThreadIds: string[],

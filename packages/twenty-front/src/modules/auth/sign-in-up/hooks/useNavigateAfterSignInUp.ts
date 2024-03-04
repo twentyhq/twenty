@@ -17,7 +17,7 @@ export const useNavigateAfterSignInUp = () => {
     ) => {
       if (
         billing?.isBillingEnabled &&
-        currentWorkspace.subscriptionStatus !== 'active'
+        !['active', 'trialing'].includes(currentWorkspace.subscriptionStatus)
       ) {
         navigate(AppPath.PlanRequired);
         return;

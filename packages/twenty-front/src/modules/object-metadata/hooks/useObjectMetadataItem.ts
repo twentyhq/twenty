@@ -21,7 +21,7 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -63,7 +63,7 @@ export const useObjectMetadataItem = (
     objectMetadataItems = mockObjectMetadataItems;
   }
 
-  if (!isDefined(objectMetadataItem)) {
+  if (!isNonNullable(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
       objectNameSingular,
       objectMetadataItems,

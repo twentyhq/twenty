@@ -11,7 +11,6 @@ export type GmailMessage = {
   fromDisplayName: string;
   participants: Participant[];
   text: string;
-  html: string;
   attachments: Attachment[];
 };
 
@@ -20,6 +19,8 @@ export type Participant = {
   handle: string;
   displayName: string;
 };
+
+export type ParticipantWithMessageId = Participant & { messageId: string };
 
 export type ParticipantWithId = Participant & {
   id: string;

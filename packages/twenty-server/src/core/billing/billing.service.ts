@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -9,24 +9,21 @@ import { StripeService } from 'src/core/billing/stripe/stripe.service';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
+import { User } from 'src/core/user/user.entity';
 
-export type PriceData = Partial<
-  Record<Stripe.Price.Recurring.Interval, Stripe.Price>
->;
 export enum AvailableProduct {
   BasePlan = 'base-plan',
 }
-export enum RecurringInterval {
-  MONTH = 'month',
-  YEAR = 'year',
-}
 
 export enum WebhookEvent {
+  CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
 }
 
 @Injectable()
 export class BillingService {
+  protected readonly logger = new Logger(BillingService.name);
   constructor(
     private readonly stripeService: StripeService,
     private readonly environmentService: EnvironmentService,
@@ -45,61 +42,132 @@ export class BillingService {
   }
 
   async getProductPrices(stripeProductId: string) {
-    const productPrices = await this.stripeService.stripe.prices.search({
-      query: `product: '${stripeProductId}'`,
-    });
+    const productPrices =
+      await this.stripeService.getProductPrices(stripeProductId);
 
     return this.formatProductPrices(productPrices.data);
   }
 
   formatProductPrices(prices: Stripe.Price[]) {
-    const result: PriceData = {};
+    const result: Record<string, ProductPriceEntity> = {};
 
     prices.forEach((item) => {
-      const recurringInterval = item.recurring?.interval;
+      const interval = item.recurring?.interval;
 
-      if (!recurringInterval) {
+      if (!interval || !item.unit_amount) {
         return;
       }
       if (
-        !result[recurringInterval] ||
-        item.created > (result[recurringInterval]?.created || 0)
+        !result[interval] ||
+        item.created > (result[interval]?.created || 0)
       ) {
-        result[recurringInterval] = item;
+        result[interval] = {
+          unitAmount: item.unit_amount,
+          recurringInterval: interval,
+          created: item.created,
+          stripePriceId: item.id,
+        };
       }
     });
 
-    return result;
+    return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
-  async createBillingSubscription(
+  async getBillingSubscription(workspaceId: string) {
+    return await this.billingSubscriptionRepository.findOneOrFail({
+      where: { workspaceId },
+      relations: ['billingSubscriptionItems'],
+    });
+  }
+
+  async getBillingSubscriptionItem(
     workspaceId: string,
-    data: Stripe.CustomerSubscriptionUpdatedEvent.Data,
+    stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription = this.billingSubscriptionRepository.create({
-      workspaceId: workspaceId,
-      stripeCustomerId: data.object.customer as string,
-      stripeSubscriptionId: data.object.id,
-      status: data.object.status,
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
+
+    const billingSubscriptionItem =
+      billingSubscription.billingSubscriptionItems.filter(
+        (billingSubscriptionItem) =>
+          billingSubscriptionItem.stripeProductId === stripeProductId,
+      )?.[0];
+
+    if (!billingSubscriptionItem) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+      );
+    }
+
+    return billingSubscriptionItem;
+  }
+
+  async checkout(user: User, priceId: string, successUrlPath?: string) {
+    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const successUrl = successUrlPath
+      ? frontBaseUrl + successUrlPath
+      : frontBaseUrl;
+
+    return await this.stripeService.createCheckoutSession(
+      user,
+      priceId,
+      successUrl,
+      frontBaseUrl,
+    );
+  }
+
+  async deleteSubscription(workspaceId: string) {
+    const subscriptionToCancel =
+      await this.billingSubscriptionRepository.findOneBy({
+        workspaceId,
+      });
+
+    if (subscriptionToCancel) {
+      await this.stripeService.cancelSubscription(
+        subscriptionToCancel.stripeSubscriptionId,
+      );
+      await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
+    }
+  }
+
+  async upsertBillingSubscription(
+    workspaceId: string,
+    data:
+      | Stripe.CustomerSubscriptionUpdatedEvent.Data
+      | Stripe.CustomerSubscriptionCreatedEvent.Data,
+  ) {
+    await this.billingSubscriptionRepository.upsert(
+      {
+        workspaceId: workspaceId,
+        stripeCustomerId: data.object.customer as string,
+        stripeSubscriptionId: data.object.id,
+        status: data.object.status,
+      },
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
+
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: data.object.status,
     });
 
-    await this.billingSubscriptionRepository.save(billingSubscription);
+    const billingSubscription = await this.getBillingSubscription(workspaceId);
 
-    for (const item of data.object.items.data) {
-      const billingSubscriptionItem =
-        this.billingSubscriptionItemRepository.create({
+    await this.billingSubscriptionItemRepository.upsert(
+      data.object.items.data.map((item) => {
+        return {
           billingSubscriptionId: billingSubscription.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
+          stripeSubscriptionItemId: item.id,
           quantity: item.quantity,
-        });
-
-      await this.billingSubscriptionItemRepository.save(
-        billingSubscriptionItem,
-      );
-    }
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: 'active',
-    });
+        };
+      }),
+      {
+        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }

@@ -21,6 +21,7 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
+import { convertOnDeleteActionToOnDelete } from 'src/workspace/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -343,7 +344,7 @@ export class WorkspaceMigrationRunnerService {
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
         referencedSchema: schemaName,
-        onDelete: migrationColumn.onDelete?.replace(/_/g, ' '),
+        onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
       }),
     );
 

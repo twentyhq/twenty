@@ -22,6 +22,11 @@ export function generateDefaultValue(
         url: '',
         label: '',
       };
+    case FieldMetadataType.CURRENCY:
+      return {
+        amountMicros: null,
+        currencyCode: '',
+      };
     default:
       return null;
   }

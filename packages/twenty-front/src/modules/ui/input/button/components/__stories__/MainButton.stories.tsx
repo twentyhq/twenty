@@ -42,6 +42,10 @@ export const FullWidth: Story = {
   args: { fullWidth: true },
 };
 
+export const Width: Story = {
+  args: { width: 200 },
+};
+
 export const Secondary: Story = {
   args: { title: 'A secondary Button', variant: 'secondary' },
 };

@@ -8,7 +8,7 @@ type TransformToString<T, Keys extends keyof T> = {
 export function transformMetadataForComparison<T, Keys extends keyof T>(
   fieldMetadataCollection: T[],
   options: {
-    propertiesToIgnore?: readonly Keys[];
+    shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
     propertiesToStringify?: readonly Keys[];
     keyFactory: (datum: T) => string;
   },
@@ -18,7 +18,7 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
 export function transformMetadataForComparison<T, Keys extends keyof T>(
   fieldMetadataCollection: T,
   options: {
-    propertiesToIgnore?: readonly Keys[];
+    shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
     propertiesToStringify?: readonly Keys[];
   },
 ): TransformToString<T, Keys>;
@@ -26,13 +26,11 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
 export function transformMetadataForComparison<T, Keys extends keyof T>(
   metadata: T[] | T,
   options: {
-    propertiesToIgnore?: readonly Keys[];
+    shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
     propertiesToStringify?: readonly Keys[];
     keyFactory?: (datum: T) => string;
   },
 ): Record<string, TransformToString<T, Keys>> | TransformToString<T, Keys> {
-  const propertiesToIgnore = (options.propertiesToIgnore ??
-    []) as readonly string[];
   const propertiesToStringify = (options.propertiesToStringify ??
     []) as readonly string[];
 
@@ -40,7 +38,10 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
     const transformedField = {} as TransformToString<T, Keys>;
 
     for (const property in datum) {
-      if (propertiesToIgnore.includes(property)) {
+      if (
+        options.shouldIgnoreProperty &&
+        options.shouldIgnoreProperty(property, datum)
+      ) {
         continue;
       }
       if (

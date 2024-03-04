@@ -23,6 +23,7 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { createRelationForeignKeyFieldMetadataName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
 import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
+import { convertOnDeleteActionToOnDelete } from 'src/workspace/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 
 @Injectable()
 export class RelationMetadataHealthService {
@@ -210,7 +211,7 @@ export class RelationMetadataHealthService {
     }
 
     if (
-      relationMetadata.onDeleteAction?.replace(/_/g, ' ') !==
+      convertOnDeleteActionToOnDelete(relationMetadata.onDeleteAction) !==
       relationColumn.onDeleteAction
     ) {
       issues.push({
