@@ -11,6 +11,7 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
 import { duplicateCriteriaCollection } from 'src/workspace/workspace-resolver-builder/constants/duplicate-criteria.constants';
+import { settings } from 'src/constants/settings';
 
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -114,11 +115,11 @@ export class FindDuplicatesQueryFactory {
 
     const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
       criteria.columnNames.every((columnName) => {
-        const argExists = !!argsData[columnName];
-        const isArgLengthValid =
-          argExists && (argsData[columnName] as string)?.length >= 3;
+        const value = argsData[columnName] as string | undefined;
 
-        return argExists && isArgLengthValid;
+        return (
+          !!value && value.length >= settings.minLengthOfStringForDuplicateCheck
+        );
       }),
     );
 
@@ -126,7 +127,7 @@ export class FindDuplicatesQueryFactory {
       Object.fromEntries(
         criteria.columnNames.map((columnName) => [
           columnName,
-          { eq: `%${argsData[columnName]}%` },
+          { eq: argsData[columnName] },
         ]),
       ),
     );
