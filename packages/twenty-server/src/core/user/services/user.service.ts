@@ -83,11 +83,26 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async deleteUser(userId: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['defaultWorkspace'],
     });
 
     assert(user, 'User not found');
+
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        user.defaultWorkspace.id,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
+    );
 
     await this.userRepository.delete(user.id);
 

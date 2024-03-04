@@ -23,8 +23,11 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { UserService } from './services/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -38,15 +41,21 @@ const getHMACKey = (email?: string, key?: string | null) => {
 @Resolver(() => User)
 export class UserResolver {
   constructor(
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
   ) {}
 
   @Query(() => User)
-  async currentUser(@AuthUser() { id }: User) {
-    const user = await this.userService.findById(id, {
-      relations: [{ name: 'defaultWorkspace', query: {} }],
+  async currentUser(@AuthUser() { id }: User): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
     assert(user, 'User not found');

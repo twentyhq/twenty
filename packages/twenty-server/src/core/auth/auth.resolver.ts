@@ -25,6 +25,8 @@ import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-passw
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLinkInput } from 'src/core/auth/dto/email-password-reset-link.input';
+import { GenerateJwtInput } from 'src/core/auth/dto/generate-jwt.input';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -49,6 +51,7 @@ export class AuthResolver {
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
+    private userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Query(() => UserExists)
@@ -126,6 +129,20 @@ export class AuthResolver {
     const result = await this.authService.verify(email);
 
     return result;
+  }
+
+  @Mutation(() => AuthTokens)
+  @UseGuards(JwtAuthGuard)
+  async generateJWT(
+    @AuthUser() user: User,
+    @Args() args: GenerateJwtInput,
+  ): Promise<AuthTokens> {
+    const token = await this.tokenService.generateSwitchWorkspaceToken(
+      user,
+      args.workspaceId,
+    );
+
+    return token;
   }
 
   @Mutation(() => AuthTokens)
