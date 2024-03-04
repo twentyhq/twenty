@@ -12,7 +12,10 @@ export class DataSourceService {
     private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,
   ) {}
 
-  async createDataSourceMetadata(workspaceId: string, workspaceSchema: string) {
+  async createDataSourceMetadata(
+    workspaceId: string,
+    workspaceSchema: string,
+  ): Promise<DataSourceEntity> {
     // TODO: Double check if this is the correct way to do this
     const dataSource = await this.dataSourceMetadataRepository.findOne({
       where: { workspaceId },
@@ -30,25 +33,29 @@ export class DataSourceService {
 
   async getManyDataSourceMetadata(
     options: FindManyOptions<DataSourceEntity> = {},
-  ) {
+  ): Promise<DataSourceEntity[]> {
     return this.dataSourceMetadataRepository.find(options);
   }
 
-  async getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {
+  async getDataSourcesMetadataFromWorkspaceId(
+    workspaceId: string,
+  ): Promise<DataSourceEntity[]> {
     return this.dataSourceMetadataRepository.find({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
     });
   }
 
-  async getLastDataSourceMetadataFromWorkspaceIdOrFail(workspaceId: string) {
+  async getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    workspaceId: string,
+  ): Promise<DataSourceEntity> {
     return this.dataSourceMetadataRepository.findOneOrFail({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
     });
   }
 
-  async delete(workspaceId: string) {
+  async delete(workspaceId: string): Promise<void> {
     await this.dataSourceMetadataRepository.delete({ workspaceId });
   }
 }

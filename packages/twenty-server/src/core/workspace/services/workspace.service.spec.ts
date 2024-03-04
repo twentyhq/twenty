@@ -3,7 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
-import { UserService } from 'src/core/user/services/user.service';
+import { BillingService } from 'src/core/billing/billing.service';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -23,7 +24,11 @@ describe('WorkspaceService', () => {
           useValue: {},
         },
         {
-          provide: UserService,
+          provide: UserWorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: BillingService,
           useValue: {},
         },
       ],

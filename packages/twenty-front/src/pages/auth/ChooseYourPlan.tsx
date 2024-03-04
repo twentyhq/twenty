@@ -8,6 +8,7 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit.ts
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
+import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
@@ -44,6 +45,8 @@ export const ChooseYourPlan = () => {
 
   const [planSelected, setPlanSelected] = useState('month');
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { enqueueSnackBar } = useSnackBar();
 
   const { data: prices } = useGetProductPricesQuery({
@@ -77,12 +80,14 @@ export const ChooseYourPlan = () => {
   };
 
   const handleButtonClick = async () => {
+    setIsSubmitting(true);
     const { data } = await checkout({
       variables: {
         recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
       },
     });
+    setIsSubmitting(false);
     if (!data?.checkout.url) {
       enqueueSnackBar(
         'Checkout session error. Please retry or contact Twenty team',
@@ -126,7 +131,13 @@ export const ChooseYourPlan = () => {
           <SubscriptionBenefit>Frequent updates</SubscriptionBenefit>
           <SubscriptionBenefit>And much more</SubscriptionBenefit>
         </StyledBenefitsContainer>
-        <MainButton title="Continue" onClick={handleButtonClick} width={200} />
+        <MainButton
+          title="Continue"
+          onClick={handleButtonClick}
+          width={200}
+          Icon={() => isSubmitting && <Loader />}
+          disabled={isSubmitting}
+        />
       </>
     )
   );

@@ -101,11 +101,13 @@ export const Relation: Story = {
   },
 };
 
-export const CustomObject: Story = {
-  args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ isCustom }) => isCustom,
-    ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
-  },
-};
+// Todo: re-enable this test once useObjectMetadataItem has been split and refactored into smaller functions.
+// Right now, as the workspace is not set, the hook things the user is not logged in and it is not possible to have a custom object
+// export const Custom: Story = {
+//   args: {
+//     fieldMetadataItem: mockedCustomObjectMetadataItem.fields.find(
+//       ({ type }) => type === FieldMetadataType.Text,
+//     ),
+//     objectMetadataItem: mockedCustomObjectMetadataItem,
+//   },
+// };

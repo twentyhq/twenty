@@ -40,12 +40,10 @@ if (
 ) {
   markdown(
     getMdSection(
-      'CLA',
+      'Welcome!',
       `
-Hello there and welcome to our project!
-By submitting your Pull Request, you acknowledge that you agree with the terms of our [Contributor License Agreement](https://github.com/twentyhq/twenty/blob/main/.github/CLA.md).
-Although we don't have a dedicated legal counsel, having this kind of agreement can protect us from potential legal issues or patent trolls.
-Thank you for your understanding.`,
+Hello there, congrats on your first PR! We're excited to have you contributing to this project.
+By submitting your Pull Request, you acknowledge that you agree with the terms of our [Contributor License Agreement](https://github.com/twentyhq/twenty/blob/main/.github/CLA.md).`,
     ),
   );
 }

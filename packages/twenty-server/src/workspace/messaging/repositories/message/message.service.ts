@@ -124,54 +124,62 @@ export class MessageService {
   ): Promise<Map<string, string>> {
     const messageExternalIdsAndIdsMap = new Map<string, string>();
 
-    for (const message of messages) {
-      await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-        const existingMessageChannelMessageAssociationsCount =
-          await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
-            [message.externalId],
-            gmailMessageChannelId,
-            workspaceId,
-            manager,
-          );
+    try {
+      for (const message of messages) {
+        await workspaceDataSource?.transaction(
+          async (manager: EntityManager) => {
+            const existingMessageChannelMessageAssociationsCount =
+              await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
+                [message.externalId],
+                gmailMessageChannelId,
+                workspaceId,
+                manager,
+              );
 
-        if (existingMessageChannelMessageAssociationsCount > 0) {
-          return;
-        }
+            if (existingMessageChannelMessageAssociationsCount > 0) {
+              return;
+            }
 
-        const savedOrExistingMessageThreadId =
-          await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
-            message.messageThreadExternalId,
-            dataSourceMetadata,
-            workspaceId,
-            manager,
-          );
+            const savedOrExistingMessageThreadId =
+              await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+                message.messageThreadExternalId,
+                dataSourceMetadata,
+                workspaceId,
+                manager,
+              );
 
-        const savedOrExistingMessageId =
-          await this.saveMessageOrReturnExistingMessage(
-            message,
-            savedOrExistingMessageThreadId,
-            connectedAccount,
-            dataSourceMetadata,
-            workspaceId,
-            manager,
-          );
+            const savedOrExistingMessageId =
+              await this.saveMessageOrReturnExistingMessage(
+                message,
+                savedOrExistingMessageThreadId,
+                connectedAccount,
+                dataSourceMetadata,
+                workspaceId,
+                manager,
+              );
 
-        messageExternalIdsAndIdsMap.set(
-          message.externalId,
-          savedOrExistingMessageId,
+            messageExternalIdsAndIdsMap.set(
+              message.externalId,
+              savedOrExistingMessageId,
+            );
+
+            await manager.query(
+              `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+              [
+                gmailMessageChannelId,
+                savedOrExistingMessageId,
+                message.externalId,
+                savedOrExistingMessageThreadId,
+                message.messageThreadExternalId,
+              ],
+            );
+          },
         );
-
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
-          [
-            gmailMessageChannelId,
-            savedOrExistingMessageId,
-            message.externalId,
-            savedOrExistingMessageThreadId,
-            message.messageThreadExternalId,
-          ],
-        );
-      });
+      }
+    } catch (error) {
+      throw new Error(
+        `Error saving connected account ${connectedAccount.id} messages to workspace ${workspaceId}: ${error.message}`,
+      );
     }
 
     return messageExternalIdsAndIdsMap;

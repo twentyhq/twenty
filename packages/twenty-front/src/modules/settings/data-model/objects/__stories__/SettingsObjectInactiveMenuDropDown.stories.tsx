@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { SettingsObjectDisabledMenuDropDown } from '../SettingsObjectDisabledMenuDropDown';
+import { SettingsObjectInactiveMenuDropDown } from '../SettingsObjectInactiveMenuDropDown';
 
 const handleActivateMockFunction = fn();
 const handleEraseMockFunction = fn();
@@ -16,11 +16,11 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
   return <Story />;
 };
 
-const meta: Meta<typeof SettingsObjectDisabledMenuDropDown> = {
-  title: 'Modules/Settings/DataModel/SettingsObjectDisabledMenuDropDown',
-  component: SettingsObjectDisabledMenuDropDown,
+const meta: Meta<typeof SettingsObjectInactiveMenuDropDown> = {
+  title: 'Modules/Settings/DataModel/SettingsObjectInactiveMenuDropDown',
+  component: SettingsObjectInactiveMenuDropDown,
   args: {
-    scopeKey: 'settings-object-disabled-menu-dropdown',
+    scopeKey: 'settings-object-inactive-menu-dropdown',
     onActivate: handleActivateMockFunction,
     onErase: handleEraseMockFunction,
   },
@@ -31,7 +31,7 @@ const meta: Meta<typeof SettingsObjectDisabledMenuDropDown> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsObjectDisabledMenuDropDown>;
+type Story = StoryObj<typeof SettingsObjectInactiveMenuDropDown>;
 
 export const Default: Story = {};
 
