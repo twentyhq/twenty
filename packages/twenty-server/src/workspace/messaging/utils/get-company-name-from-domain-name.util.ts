@@ -1,15 +1,9 @@
-import { parseDomain, fromUrl, ParseResultType } from 'parse-domain';
+import psl from 'psl';
 
 import { capitalize } from 'src/utils/capitalize';
 
 export const getCompanyNameFromDomainName = (domainName: string) => {
-  const parseResult = parseDomain(fromUrl(domainName));
+  const { sld } = psl.parse(domainName);
 
-  if (parseResult.type === ParseResultType.Listed) {
-    const { domain } = parseResult;
-
-    return domain ? capitalize(domain) : '';
-  }
-
-  return '';
+  return sld ? capitalize(sld) : '';
 };

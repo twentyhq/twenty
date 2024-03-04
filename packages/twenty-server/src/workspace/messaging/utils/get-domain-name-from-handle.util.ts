@@ -1,34 +1,22 @@
-import { fromUrl, parseDomain, ParseResultType } from 'parse-domain';
+import psl from 'psl';
 
 import { capitalize } from 'src/utils/capitalize';
 
-export function getDomainNameFromHandle(handle: string): string {
-  const wholeDomain = handle.split('@')?.[1];
+export const getDomainNameFromHandle = (handle: string): string => {
+  const wholeDomain = handle?.split('@')?.[1];
 
-  const parseResult = parseDomain(fromUrl(wholeDomain));
+  const { domain } = psl.parse(wholeDomain);
 
-  if (parseResult.type === ParseResultType.Listed) {
-    const { domain } = parseResult;
-
-    return domain || '';
-  } else {
-    return '';
-  }
-}
+  return domain || '';
+};
 
 export function getCompanyNameAndDomainNameFromHandle(handle: string) {
-  const wholeDomain = handle.split('@')?.[1];
+  const wholeDomain = handle?.split('@')?.[1];
 
-  const parseResult = parseDomain(fromUrl(wholeDomain));
+  const { domain, sld } = psl.parse(wholeDomain);
 
-  if (parseResult.type === ParseResultType.Listed) {
-    const { domain, topLevelDomains } = parseResult;
-
-    return {
-      domainName: `${domain}.${topLevelDomains.join('.')}`,
-      companyName: domain ? capitalize(domain) : '',
-    };
-  } else {
-    return { domain: '', companyName: '' };
-  }
+  return {
+    domainName: domain || '',
+    companyName: sld ? capitalize(sld) : '',
+  };
 }
