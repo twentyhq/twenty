@@ -94,7 +94,7 @@ export const SettingsObjectDetail = () => {
           iconKey={activeObjectMetadataItem.icon ?? undefined}
           name={activeObjectMetadataItem.labelPlural || ''}
           isCustom={activeObjectMetadataItem.isCustom}
-          onDisable={handleDisableObject}
+          onDeactivate={handleDisableObject}
           onEdit={() => navigate('./edit')}
         />
         <Section>
