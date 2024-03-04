@@ -16,7 +16,7 @@ export const useObjectMetadataItemForSettings = () => {
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );
-  const disabledObjectMetadataItems = objectMetadataItems.filter(
+  const inactiveObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
@@ -88,7 +88,7 @@ export const useObjectMetadataItemForSettings = () => {
     activateObjectMetadataItem,
     activeObjectMetadataItems,
     createObjectMetadataItem,
-    disabledObjectMetadataItems,
+    inactiveObjectMetadataItems,
     disableObjectMetadataItem,
     editObjectMetadataItem,
     eraseObjectMetadataItem,

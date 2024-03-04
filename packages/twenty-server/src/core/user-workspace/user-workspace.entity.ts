@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -22,15 +23,25 @@ export class UserWorkspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.workspaces, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
+  @Field({ nullable: false })
   @Column()
   userId: string;
 
+  @Field(() => Workspace, { nullable: true })
+  @ManyToOne(() => Workspace, (workspace) => workspace.workspaceUsers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Workspace;
 
+  @Field({ nullable: false })
   @Column()
   workspaceId: string;
 

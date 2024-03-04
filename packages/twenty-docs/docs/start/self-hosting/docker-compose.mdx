@@ -1,6 +1,6 @@
 ---
 title: Docker Compose
-sidebar_position: 1
+sidebar_position: 3
 sidebar_custom_props:
   icon: TbBrandDocker
 ---
@@ -68,7 +68,6 @@ services:
       - twenty-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
-  
 volumes:
   twenty-db-data:
 ```

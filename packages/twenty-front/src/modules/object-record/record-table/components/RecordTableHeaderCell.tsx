@@ -11,6 +11,8 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
@@ -70,9 +72,7 @@ const StyledColumnHeadContainer = styled.div`
 `;
 
 const StyledHeaderIcon = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin: ${({ theme }) => theme.spacing(1, 1, 1, 1.5)};
 `;
 
 export const RecordTableHeaderCell = ({
@@ -164,6 +164,12 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
+  const isMobile = useIsMobile();
+  const scrollLeft = useRecoilValue(scrollLeftState);
+
+  const disableColumnResize =
+    column.isLabelIdentifier && isMobile && scrollLeft > 0;
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -174,17 +180,16 @@ export const RecordTableHeaderCell = ({
           24,
         COLUMN_MIN_WIDTH,
       )}
+      onMouseEnter={() => setIconVisibility(true)}
+      onMouseLeave={() => setIconVisibility(false)}
     >
-      <StyledColumnHeadContainer
-        onMouseEnter={() => setIconVisibility(true)}
-        onMouseLeave={() => setIconVisibility(false)}
-      >
+      <StyledColumnHeadContainer>
         {column.isLabelIdentifier ? (
           <ColumnHead column={column} />
         ) : (
           <ColumnHeadWithDropdown column={column} />
         )}
-        {iconVisibility && !!column.isLabelIdentifier && (
+        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}
@@ -195,13 +200,15 @@ export const RecordTableHeaderCell = ({
           </StyledHeaderIcon>
         )}
       </StyledColumnHeadContainer>
-      <StyledResizeHandler
-        className="cursor-col-resize"
-        role="separator"
-        onPointerDown={() => {
-          setResizedFieldKey(column.fieldMetadataId);
-        }}
-      />
+      {!disableColumnResize && (
+        <StyledResizeHandler
+          className="cursor-col-resize"
+          role="separator"
+          onPointerDown={() => {
+            setResizedFieldKey(column.fieldMetadataId);
+          }}
+        />
+      )}
     </StyledColumnHeaderCell>
   );
 };

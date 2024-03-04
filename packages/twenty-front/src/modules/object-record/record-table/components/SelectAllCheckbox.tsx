@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   height: 32px;
 
   justify-content: center;
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const SelectAllCheckbox = () => {
