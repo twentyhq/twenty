@@ -320,6 +320,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
     );
 
+    const { attachmentObjectMetadata } = await this.createAttachmentRelation(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+    );
+
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
@@ -357,6 +362,37 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               ),
               referencedTableColumnName: 'id',
               onDelete: RelationOnDeleteAction.CASCADE,
+            },
+          ],
+        },
+        // Add attachment relation
+        {
+          name: computeObjectTargetTable(attachmentObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
+              columnType: 'uuid',
+              isNullable: true,
+            } satisfies WorkspaceMigrationColumnCreate,
+          ],
+        },
+        {
+          name: computeObjectTargetTable(attachmentObjectMetadata),
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
+              referencedTableName: computeObjectTargetTable(
+                createdObjectMetadata,
+              ),
+              referencedTableColumnName: 'id',
             },
           ],
         },
@@ -619,6 +655,94 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     ]);
 
     return { activityTargetObjectMetadata };
+  }
+
+  private async createAttachmentRelation(
+    workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity,
+  ) {
+    const attachmentObjectMetadata =
+      await this.objectMetadataRepository.findOneByOrFail({
+        nameSingular: 'attachment',
+        workspaceId: workspaceId,
+      });
+
+    const attachmentRelationFieldMetadata =
+      await this.fieldMetadataRepository.save([
+        // FROM
+        {
+          objectMetadataId: createdObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: true,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: 'attachments',
+          label: 'Attachments',
+          targetColumnMap: {},
+          description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconFileImport',
+          isNullable: true,
+        },
+        // TO
+        {
+          objectMetadataId: attachmentObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: true,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: createdObjectMetadata.nameSingular,
+          label: createdObjectMetadata.labelSingular,
+          targetColumnMap: {},
+          description: `Attachment ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconBuildingSkyscraper',
+          isNullable: true,
+        },
+        // Foreign key
+        {
+          objectMetadataId: attachmentObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: true,
+          isActive: true,
+          type: FieldMetadataType.UUID,
+          name: `${createdObjectMetadata.nameSingular}Id`,
+          label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
+          targetColumnMap: {
+            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
+          },
+          description: `Attachment ${createdObjectMetadata.labelSingular} id foreign key`,
+          icon: undefined,
+          isNullable: true,
+          isSystem: true,
+          defaultValue: undefined,
+        },
+      ]);
+
+    const attachmentRelationFieldMetadataMap =
+      attachmentRelationFieldMetadata.reduce(
+        (acc, fieldMetadata: FieldMetadataEntity) => {
+          if (fieldMetadata.type === FieldMetadataType.RELATION) {
+            acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: attachmentObjectMetadata.id,
+        fromFieldMetadataId:
+          attachmentRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          attachmentRelationFieldMetadataMap[attachmentObjectMetadata.id].id,
+      },
+    ]);
+
+    return { attachmentObjectMetadata };
   }
 
   private async createFavoriteRelation(
