@@ -11,11 +11,11 @@ export class CacheStorageService {
     private readonly namespace: CacheStorageNamespace,
   ) {}
 
-  async get(key: string) {
+  async get<T>(key: string): Promise<T | undefined> {
     return this.cacheManager.get(`${this.namespace}:${key}`);
   }
 
-  async set(key: string, value: any, ttl?: number) {
+  async set<T>(key: string, value: T, ttl?: number) {
     return this.cacheManager.set(`${this.namespace}:${key}`, value, ttl);
   }
 }

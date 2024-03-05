@@ -333,7 +333,7 @@ export class EnvironmentService {
     return this.configService.get<string>('CACHE_STORAGE_TYPE') ?? 'memory';
   }
 
-  getCacheTtl(): number {
-    return this.configService.get<number>('CACHE_TTL') ?? 3600;
+  getCacheStorageTtl(): number {
+    return this.configService.get<number>('CACHE_STORAGE_TTL') ?? 3600;
   }
 }

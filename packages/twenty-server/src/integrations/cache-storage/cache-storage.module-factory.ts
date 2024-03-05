@@ -8,14 +8,14 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 export const cacheStorageModuleFactory = (
   environmentService: EnvironmentService,
 ): CacheModuleOptions => {
-  const storageType = environmentService.getCacheStorageType();
-  const cacheTtl = environmentService.getCacheTtl();
+  const cacheStorageType = environmentService.getCacheStorageType();
+  const cacheStorageTtl = environmentService.getCacheStorageTtl();
   const cacheModuleOptions: CacheModuleOptions = {
     isGlobal: true,
-    ttl: cacheTtl * 1000,
+    ttl: cacheStorageTtl * 1000,
   };
 
-  switch (storageType) {
+  switch (cacheStorageType) {
     case CacheStorageType.Memory: {
       return cacheModuleOptions;
     }
@@ -25,7 +25,7 @@ export const cacheStorageModuleFactory = (
 
       if (!(host && port)) {
         throw new Error(
-          `${storageType} cache storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${cacheStorageType} cache storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
         );
       }
 
@@ -40,7 +40,7 @@ export const cacheStorageModuleFactory = (
     }
     default:
       throw new Error(
-        `Invalid cache-storage (${storageType}), check your .env file`,
+        `Invalid cache-storage (${cacheStorageType}), check your .env file`,
       );
   }
 };
