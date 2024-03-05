@@ -4,7 +4,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import Stripe from 'stripe';
 
 @ArgsType()
-export class CheckoutInput {
+export class CheckoutSessionInput {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()

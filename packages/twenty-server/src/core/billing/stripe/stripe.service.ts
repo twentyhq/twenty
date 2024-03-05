@@ -4,7 +4,6 @@ import Stripe from 'stripe';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
-import { assert } from 'src/utils/assert';
 
 @Injectable()
 export class StripeService {
@@ -43,13 +42,23 @@ export class StripeService {
     await this.stripe.subscriptions.cancel(stripeSubscriptionId);
   }
 
+  async createBillingPortalSession(
+    stripeCustomerId: string,
+    returnUrlPath?: string,
+  ): Promise<Stripe.BillingPortal.Session> {
+    return await this.stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId,
+      return_url: returnUrlPath ?? this.environmentService.getFrontBaseUrl(),
+    });
+  }
+
   async createCheckoutSession(
     user: User,
     priceId: string,
     successUrl?: string,
     cancelUrl?: string,
-  ) {
-    const session = await this.stripe.checkout.sessions.create({
+  ): Promise<Stripe.Checkout.Session> {
+    return await this.stripe.checkout.sessions.create({
       line_items: [
         {
           price: priceId,
@@ -70,11 +79,5 @@ export class StripeService {
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
-
-    assert(session.url, 'Error: missing checkout.session.url');
-
-    this.logger.log(`Stripe Checkout Session Url Redirection: ${session.url}`);
-
-    return session.url;
   }
 }

@@ -11,6 +11,7 @@ import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subsc
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
+import { assert } from 'src/utils/assert';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -101,18 +102,45 @@ export class BillingService {
     return billingSubscriptionItem;
   }
 
-  async checkout(user: User, priceId: string, successUrlPath?: string) {
+  async computeBillingPortalSessionURL(
+    workspaceId: string,
+    returnUrlPath?: string,
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+      });
+
+    const session = await this.stripeService.createBillingPortalSession(
+      billingSubscription.stripeCustomerId,
+      returnUrlPath,
+    );
+
+    assert(session.url, 'Error: missing billingPortal.session.url');
+
+    return session.url;
+  }
+
+  async computeCheckoutSessionURL(
+    user: User,
+    priceId: string,
+    successUrlPath?: string,
+  ): Promise<string> {
     const frontBaseUrl = this.environmentService.getFrontBaseUrl();
     const successUrl = successUrlPath
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
 
-    return await this.stripeService.createCheckoutSession(
+    const session = await this.stripeService.createCheckoutSession(
       user,
       priceId,
       successUrl,
       frontBaseUrl,
     );
+
+    assert(session.url, 'Error: missing checkout.session.url');
+
+    return session.url;
   }
 
   async deleteSubscription(workspaceId: string) {
