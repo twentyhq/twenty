@@ -2,7 +2,7 @@ import createNewButton from '~/contentScript/createButton';
 import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
 import extractDomain from '~/contentScript/utils/extractDomain';
 import { createCompany, fetchCompany } from '~/db/company';
-import { Company } from '~/graphql/types/company';
+import { Company } from '~/db/types/company';
 
 const insertButtonForCompany = async (): Promise<void> => {
   // Select the element in which to create the button.

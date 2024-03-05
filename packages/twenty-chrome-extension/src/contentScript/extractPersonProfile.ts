@@ -1,6 +1,7 @@
 import createNewButton from '~/contentScript/createButton';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
 import { createPerson, fetchPerson } from '~/db/person';
+import { Person } from '~/db/types/person';
 
 const insertButtonForPerson = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -43,10 +44,10 @@ const insertButtonForPerson = async (): Promise<void> => {
     const { firstName, lastName } = extractFirstAndLastName(String(personName));
 
     // Prepare person data to send to the backend.
-    const personData = {
+    const personData: Person = {
       name: { firstName, lastName },
       city: personCity,
-      avatarUrl: profilePicture,
+      avatarUrl: profilePicture ?? '',
       jobTitle,
       linkedinLink: { url: '', label: '' },
     };

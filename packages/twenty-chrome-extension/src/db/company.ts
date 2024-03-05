@@ -1,4 +1,4 @@
-import { Company } from '~/graphql/types/company';
+import { Company } from '~/db/types/company';
 
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb from '../utils/requestDb';
@@ -23,7 +23,7 @@ export const fetchCompany = async (companyData: Company) => {
     throw Error(res.Errors);
   }
   if (res.data) {
-    const company = res.data.companies.edges.filter(
+    const company: Company[] = res.data.companies.edges.filter(
       (edge: any) =>
         edge.node.linkedinLink?.url === companyData.linkedinLink?.url,
     );
@@ -36,7 +36,9 @@ export const createCompany = async (company: Company) => {
   const query = `
     mutation CreateOneCompany {
       createCompany(data:{${handleQueryParams(company)}})
-      {id}
+      {
+        id
+      }
     }
   `;
   const res = await requestDb(query);
@@ -44,6 +46,6 @@ export const createCompany = async (company: Company) => {
     throw Error(res.Errors);
   }
   if (res.data) {
-    return res;
+    return res.data.createCompany.id;
   }
 };

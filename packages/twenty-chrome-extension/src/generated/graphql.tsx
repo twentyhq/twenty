@@ -1,8 +1,14 @@
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -127,7 +133,7 @@ export type FeatureFlagSort = {
 };
 
 export enum FeatureFlagSortFields {
-  Id = 'id'
+  Id = 'id',
 }
 
 export type FieldConnection = {
@@ -175,14 +181,14 @@ export enum FieldMetadataType {
   Relation = 'RELATION',
   Select = 'SELECT',
   Text = 'TEXT',
-  Uuid = 'UUID'
+  Uuid = 'UUID',
 }
 
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
-  WorkspaceLogo = 'WorkspaceLogo'
+  WorkspaceLogo = 'WorkspaceLogo',
 }
 
 export type FullName = {
@@ -246,55 +252,45 @@ export type Mutation = {
   verify: Verify;
 };
 
-
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
-
 
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
 
-
 export type MutationCheckoutArgs = {
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
 };
 
-
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
 
-
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
 };
-
 
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
 };
 
-
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
 };
 
-
 export type MutationRenewTokenArgs = {
   refreshToken: Scalars['String'];
 };
-
 
 export type MutationSignUpArgs = {
   email: Scalars['String'];
@@ -302,39 +298,32 @@ export type MutationSignUpArgs = {
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
 };
 
-
 export type MutationUpdateWorkspaceArgs = {
   data: UpdateWorkspaceInput;
 };
-
 
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
-
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
-
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload'];
 };
 
-
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
 };
-
 
 export type MutationVerifyArgs = {
   loginToken: Scalars['String'];
@@ -402,26 +391,21 @@ export type Query = {
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
-
 export type QueryCheckUserExistsArgs = {
   email: Scalars['String'];
 };
-
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
 };
 
-
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
 };
 
-
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
-
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['ID'];
@@ -429,13 +413,11 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
-
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['ID'];
 };
-
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
@@ -483,7 +465,7 @@ export type RelationDeleteResponse = {
 export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
   OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
+  OneToOne = 'ONE_TO_ONE',
 }
 
 export type Sentry = {
@@ -494,13 +476,13 @@ export type Sentry = {
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
-  Desc = 'DESC'
+  Desc = 'DESC',
 }
 
 /** Sort Nulls Options */
 export enum SortNulls {
   NullsFirst = 'NULLS_FIRST',
-  NullsLast = 'NULLS_LAST'
+  NullsLast = 'NULLS_LAST',
 }
 
 export type Support = {
@@ -621,7 +603,6 @@ export type Workspace = {
   updatedAt: Scalars['DateTime'];
 };
 
-
 export type WorkspaceFeatureFlagsArgs = {
   filter?: FeatureFlagFilter;
   sorting?: Array<FeatureFlagSort>;
@@ -705,7 +686,6 @@ export type Object = {
   nameSingular: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
-
 
 export type ObjectFieldsArgs = {
   filter?: FieldFilter;
