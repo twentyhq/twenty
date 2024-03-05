@@ -6,10 +6,10 @@ import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'calendarEvents',
-  labelSingular: 'Calendar event',
-  labelPlural: 'Calendar events',
-  description: 'Calendar events',
+  namePlural: 'calendarEventAttendees',
+  labelSingular: 'Calendar event attendee',
+  labelPlural: 'Calendar event attendees',
+  description: 'Calendar event attendees',
   icon: 'IconCalendar',
 })
 @IsSystem()
