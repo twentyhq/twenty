@@ -12,7 +12,8 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { User } from 'src/core/user/user.entity';
 import { CheckoutInput } from 'src/core/billing/dto/checkout.input';
-import { CheckoutEntity } from 'src/core/billing/dto/checkout.entity';
+import { SessionEntity } from 'src/core/billing/dto/session.entity';
+import { BillingSessionInput } from 'src/core/billing/dto/billing-session.input';
 
 @Resolver()
 export class BillingResolver {
@@ -38,7 +39,21 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => CheckoutEntity)
+  @Query(() => SessionEntity)
+  @UseGuards(JwtAuthGuard)
+  async billingPortalSession(
+    @AuthUser() user: User,
+    @Args() { returnUrlPath }: BillingSessionInput,
+  ) {
+    return {
+      url: await this.billingService.billingPortalSession(
+        user.defaultWorkspaceId,
+        returnUrlPath,
+      ),
+    };
+  }
+
+  @Mutation(() => SessionEntity)
   @UseGuards(JwtAuthGuard)
   async checkout(
     @AuthUser() user: User,

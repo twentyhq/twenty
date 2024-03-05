@@ -43,6 +43,18 @@ export class StripeService {
     await this.stripe.subscriptions.cancel(stripeSubscriptionId);
   }
 
+  async createBillingPortalSession(
+    stripeCustomerId: string,
+    returnUrlPath?: string,
+  ) {
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId,
+      return_url: returnUrlPath ?? this.environmentService.getFrontBaseUrl(),
+    });
+
+    return session.url;
+  }
+
   async createCheckoutSession(
     user: User,
     priceId: string,

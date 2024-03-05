@@ -170,4 +170,16 @@ export class BillingService {
       },
     );
   }
+
+  async billingPortalSession(workspaceId: string, returnUrlPath?: string) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+      });
+
+    return this.stripeService.createBillingPortalSession(
+      billingSubscription.stripeCustomerId,
+      returnUrlPath,
+    );
+  }
 }

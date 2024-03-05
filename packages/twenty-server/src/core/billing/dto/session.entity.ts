@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class CheckoutEntity {
+export class SessionEntity {
   @Field(() => String)
   url: string;
 }
