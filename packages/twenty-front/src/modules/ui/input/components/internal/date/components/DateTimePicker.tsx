@@ -264,6 +264,10 @@ export default function DateTimePicker({
     onChange?.(newDate);
     setOpenCalendar(false);
   };
+  const date = showTimeInput
+    ? selectedDate?.toString()
+    : selectedDate?.toDateString();
+
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
@@ -287,10 +291,7 @@ export default function DateTimePicker({
           isMenuOpen={false}
         >
           {/* <input onClick={(event)=>setOpen(true)} placeholder={selectedDate} disabled/> */}
-          <StyledButton
-            LeftIcon={IconCalendar}
-            text={selectedDate?.toDateString()}
-          />
+          <StyledButton LeftIcon={IconCalendar} text={date} />
         </StyledButtonContainer>
       )}
     </StyledContainer>

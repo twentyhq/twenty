@@ -22,6 +22,7 @@ import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
+import CampaignContext from '~/pages/campaigns/CampaignContext';
 
 import '@emotion/react';
 
@@ -51,10 +52,12 @@ root.render(
                             <SnackBarProvider>
                               <DialogManagerScope dialogManagerScopeId="dialog-manager">
                                 <DialogManager>
-                                  <StrictMode>
-                                    <PromiseRejectionEffect />
-                                    <App />
-                                  </StrictMode>
+                                  <CampaignContext>
+                                    <StrictMode>
+                                      <PromiseRejectionEffect />
+                                      <App />
+                                    </StrictMode>
+                                  </CampaignContext>
                                 </DialogManager>
                               </DialogManagerScope>
                             </SnackBarProvider>
