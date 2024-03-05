@@ -13,6 +13,7 @@ import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorato
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
@@ -112,7 +113,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
@@ -126,7 +126,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
     inverseSideFieldName: 'pointOfContact',
   })
-  @IsNullable()
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -140,7 +139,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'activityTarget',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -154,7 +152,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'favorite',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -168,7 +165,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'attachment',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
@@ -182,6 +178,18 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageParticipant',
     inverseSideFieldName: 'person',
   })
-  @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Event Attendees',
+    description: 'Calendar Event Attendees',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarEventAttendee',
+    inverseSideFieldName: 'person',
+  })
+  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
 }
