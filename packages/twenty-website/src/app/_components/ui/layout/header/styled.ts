@@ -33,9 +33,6 @@ export const MobileNav = styled.nav`
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
   height: 64px;
   width: 100%;
-  @media (min-width: 810px) {
-    display: none;
-  }
 `;
 
 export const LinkList = styled.div`
@@ -188,4 +185,7 @@ export const MobileMenu = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  @media (min-width: 810px) {
+    display: none;
+  }
 `;

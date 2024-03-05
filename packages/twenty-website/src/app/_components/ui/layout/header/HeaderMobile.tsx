@@ -5,7 +5,6 @@ import { IBM_Plex_Mono } from 'next/font/google';
 
 import { ExternalArrow, GithubIcon } from '@/app/_components/ui/icons/SvgIcons';
 import { CallToAction } from '@/app/_components/ui/layout/header/callToAction';
-import { Logo } from '@/app/_components/ui/layout/Logo';
 import {
   HamburgerContainer,
   HamburgerLine1,
@@ -18,6 +17,7 @@ import {
   MobileNav,
   NavOpen,
 } from '@/app/_components/ui/layout/header/styled';
+import { Logo } from '@/app/_components/ui/layout/Logo';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',
