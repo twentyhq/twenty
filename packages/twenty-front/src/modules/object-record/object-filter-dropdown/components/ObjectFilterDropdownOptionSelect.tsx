@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { MenuItem, MenuItemMultiSelect } from 'tsup.ui.index';
 
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
-import { SelectableOption } from '@/object-record/select/types/SelectableOption';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
+
+type SelectOptionForFilter = FieldMetadataItemOption & {
+  isSelected: boolean;
+};
 
 export const ObjectFilterDropdownOptionSelect = () => {
   const {
@@ -23,7 +27,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
   const { selectOptions } = useOptionsForSelect(fieldMetaDataId);
 
   const [selectableOptions, setSelectableOptions] = useState<
-    SelectableOption[]
+    SelectOptionForFilter[]
   >([]);
 
   useEffect(() => {
@@ -44,7 +48,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
   }, [objectFilterDropdownSelectedOptionValues, selectOptions]);
 
   const handleMultipleOptionSelectChange = (
-    optionChanged: SelectableOption,
+    optionChanged: SelectOptionForFilter,
     isSelected: boolean,
   ) => {
     if (!selectOptions) {
