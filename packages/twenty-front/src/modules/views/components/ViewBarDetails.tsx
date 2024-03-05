@@ -9,6 +9,7 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
@@ -107,10 +108,11 @@ export const ViewBarDetails = ({
   const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
   const canPersistSorts = useRecoilValue(canPersistSortsSelector);
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
-
+  const { hasFiltersQueryParams } = useFiltersFromQueryParams();
   const { resetViewBar } = useViewBar();
 
   const canPersistView = canPersistFilters || canPersistSorts;
+  const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const handleCancelClick = () => {
     resetViewBar();
@@ -170,7 +172,7 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canPersistView && (
+      {canResetView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}

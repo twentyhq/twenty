@@ -83,10 +83,13 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const changeViewInUrl = useCallback(
     (viewId: string) => {
-      setSearchParams((previousSearchParams) => {
-        previousSearchParams.set('view', viewId);
-        return previousSearchParams;
-      });
+      setSearchParams(
+        (previousSearchParams) => {
+          previousSearchParams.set('view', viewId);
+          return previousSearchParams;
+        },
+        { replace: true },
+      );
     },
     [setSearchParams],
   );

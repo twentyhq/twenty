@@ -10,6 +10,8 @@ import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEff
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
+import { ViewObjectFilterButton } from '@/views/components/ViewObjectFilterButton';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewField } from '@/views/types/ViewField';
@@ -55,6 +57,7 @@ export const ViewBar = ({
     viewBarId,
   });
   const { objectNamePlural } = useParams();
+  const { hasFiltersQueryParams } = useFiltersFromQueryParams();
 
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
@@ -82,11 +85,15 @@ export const ViewBar = ({
       <TopBar
         className={className}
         leftComponent={
-          <ViewsDropdownButton
-            onViewEditModeChange={openOptionsDropdownButton}
-            hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
-            optionsDropdownScopeId={optionsDropdownScopeId}
-          />
+          hasFiltersQueryParams ? (
+            <ViewObjectFilterButton />
+          ) : (
+            <ViewsDropdownButton
+              onViewEditModeChange={openOptionsDropdownButton}
+              hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
+              optionsDropdownScopeId={optionsDropdownScopeId}
+            />
+          )
         }
         displayBottomBorder={false}
         rightComponent={
@@ -112,10 +119,12 @@ export const ViewBar = ({
             hasFilterButton
             viewBarId={viewBarId}
             rightComponent={
-              <UpdateViewButtonGroup
-                onViewEditModeChange={openOptionsDropdownButton}
-                hotkeyScope={{ scope: ViewsHotkeyScope.CreateDropdown }}
-              />
+              !hasFiltersQueryParams ? (
+                <UpdateViewButtonGroup
+                  onViewEditModeChange={openOptionsDropdownButton}
+                  hotkeyScope={{ scope: ViewsHotkeyScope.CreateDropdown }}
+                />
+              ) : null
             }
           />
         }
