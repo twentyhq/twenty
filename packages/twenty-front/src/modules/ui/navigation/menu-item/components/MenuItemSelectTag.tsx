@@ -8,20 +8,7 @@ import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuIte
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-export const colorLabels: Record<ThemeColor, string> = {
-  green: 'Green',
-  turquoise: 'Turquoise',
-  sky: 'Sky',
-  blue: 'Blue',
-  purple: 'Purple',
-  pink: 'Pink',
-  red: 'Red',
-  orange: 'Orange',
-  yellow: 'Yellow',
-  gray: 'Gray',
-};
-
-type MenuItemSelectOptionProps = {
+type MenuItemSelectTagProps = {
   selected: boolean;
   className?: string;
   onClick?: () => void;
@@ -29,13 +16,13 @@ type MenuItemSelectOptionProps = {
   text: string;
 };
 
-export const MenuItemSelectOption = ({
+export const MenuItemSelectTag = ({
   color,
   selected,
   className,
   onClick,
   text,
-}: MenuItemSelectOptionProps) => {
+}: MenuItemSelectTagProps) => {
   const theme = useTheme();
 
   return (

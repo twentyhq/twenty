@@ -7,7 +7,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItemSelectOption } from '@/ui/navigation/menu-item/components/MenuItemSelectOption';
+import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -46,7 +46,7 @@ export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsInDropDown.map((option) => {
             return (
-              <MenuItemSelectOption
+              <MenuItemSelectTag
                 selected={option.value === fieldValue}
                 text={option.label}
                 color={option.color}
