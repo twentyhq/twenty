@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 import { z } from 'zod';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
-import { objectMetadataItemSchema } from '@/object-metadata/schemas/objectMetadataItemSchema';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
+import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { IconCircleOff } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Select, SelectOption } from '@/ui/input/components/Select';
