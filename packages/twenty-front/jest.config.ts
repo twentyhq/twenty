@@ -1,4 +1,5 @@
 export default {
+  silent: true,
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   testEnvironment: 'jsdom',
   transform: {
@@ -38,6 +39,5 @@ export default {
     '__stories__/*',
     'display/icon/index.ts',
   ],
-  reporters: ['<rootDir>/jest-custom-reporter.cjs'],
   // coverageDirectory: '<rootDir>/coverage/',
 };
