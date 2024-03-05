@@ -47,7 +47,8 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
 
       if (
         object.callee?.type === 'MemberExpression' &&
-        object.callee.property.name === 'getLoadable'
+        object.callee.object?.name === 'snapshot' &&
+        object.callee.property?.name === 'getLoadable'
       ) {
         const propertyName = property.name;
 
