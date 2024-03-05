@@ -48,8 +48,6 @@ import {
  * ```sh
  * npx nx g @nx/eslint:workspace-rule {{ NEW_RULE_NAME }}
  * ```
- *
- * See https://nx.dev/nx-api/eslint/generators/workspace-rule for more details
  */
 
 module.exports = {

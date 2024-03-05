@@ -14,6 +14,9 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     fixable: 'code',
     schema: [],
     messages: {
+      redundantAwait: 'Redundant await on non-promise',
+      invalidAccessorOnSnapshot:
+        "Expected to use method 'getLoadable()' on 'snapshot' but instead found '{{ propertyName }}'",
       invalidWayToGetAtoms:
         "Expected to use method 'getValue()' with 'getLoadable()' but instead found '{{ propertyName }}'",
     },
@@ -21,37 +24,21 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
   defaultOptions: [],
   create: (context) => ({
     AwaitExpression: (node) => {
-      const { argument: arg }: any = node;
+      const { argument, range }: any = node;
       if (
-        arg.callee &&
-        arg.callee.type === 'MemberExpression' &&
-        arg.callee.object.name === 'snapshot' &&
-        arg.callee.property.name === 'getPromise' &&
-        arg.arguments &&
-        arg.arguments[0]
+        (argument.callee?.object?.callee?.object?.name === 'snapshot' &&
+          argument?.callee?.object?.callee?.property?.name === 'getLoadable') ||
+        (argument.callee?.object?.name === 'snapshot' &&
+          argument?.callee?.property?.name === 'getLoadable')
       ) {
-        let actualWayToGetAtoms: string;
-        let expectedWayToGetAtoms: string;
-
-        if (arg.arguments[0].callee) {
-          const familyKey = arg.arguments[0].arguments[0].name;
-          const familyName = arg.arguments[0].callee.name;
-          actualWayToGetAtoms = `await snapshot.getPromise(${familyName}(${familyKey}))`;
-          expectedWayToGetAtoms = `snapshot.getLoadable(${familyName}(${familyKey})).getValue()`;
-        } else {
-          const recoilValue = arg.arguments[0].name;
-          actualWayToGetAtoms = `await snapshot.getPromise(${recoilValue})`;
-          expectedWayToGetAtoms = `snapshot.getLoadable(${recoilValue}).getValue()`;
-        }
-
+        // remove await
         context.report({
           node,
-          messageId: 'invalidWayToGetAtoms',
+          messageId: 'redundantAwait',
           data: {
-            expectedWayToGetAtoms,
-            actualWayToGetAtoms,
+            propertyName: argument.callee.property.name,
           },
-          fix: (fixer) => fixer.replaceText(node, expectedWayToGetAtoms),
+          fix: (fixer) => fixer.removeRange([range[0], range[0] + 5]),
         });
       }
     },
@@ -59,8 +46,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
       const { object, property }: any = node;
 
       if (
-        object.callee &&
-        object.callee.type === 'MemberExpression' &&
+        object.callee?.type === 'MemberExpression' &&
         object.callee.property.name === 'getLoadable'
       ) {
         const propertyName = property.name;
@@ -72,9 +58,29 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
             data: {
               propertyName,
             },
+            // replace the property with `getValue`
             fix: (fixer) => fixer.replaceText(property, 'getValue'),
           });
         }
+      }
+    },
+    CallExpression: (node) => {
+      const { callee }: any = node;
+
+      if (
+        callee.type === 'MemberExpression' &&
+        callee.object?.name === 'snapshot' &&
+        callee.property?.name === 'getPromise'
+      ) {
+        context.report({
+          node: callee.property,
+          messageId: 'invalidAccessorOnSnapshot',
+          data: {
+            propertyName: callee.property.name,
+          },
+          // Replace `getPromise` with `getLoadable`
+          fix: (fixer) => fixer.replaceText(callee.property, 'getLoadable'),
+        });
       }
     },
   }),
