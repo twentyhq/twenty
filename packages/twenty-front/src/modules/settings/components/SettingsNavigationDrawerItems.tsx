@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
@@ -85,6 +86,11 @@ export const SettingsNavigationDrawerItems = () => {
           label="Members"
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
+        />
+        <SettingsNavigationDrawerItem
+          label="Billing"
+          path={SettingsPath.Billing}
+          Icon={IconCurrencyDollar}
         />
         <SettingsNavigationDrawerItem
           label="Data model"
