@@ -86,9 +86,6 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   messageChannels: MessageChannelObjectMetadata[];
 
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
-  })
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Calendar Channel',
@@ -101,5 +98,8 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
   calendarChannels: CalendarChannelObjectMetadata[];
 }
