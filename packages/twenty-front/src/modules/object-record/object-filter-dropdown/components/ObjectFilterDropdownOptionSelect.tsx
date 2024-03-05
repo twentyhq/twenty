@@ -87,7 +87,9 @@ export const ObjectFilterDropdownOptionSelect = () => {
   };
 
   const optionsInDropdown = selectableOptions?.filter((option) =>
-    option.label.toLowerCase().includes(objectFilterDropdownSearchInput),
+    option.label
+      .toLowerCase()
+      .includes(objectFilterDropdownSearchInput.toLowerCase()),
   );
 
   const showNoResult = optionsInDropdown?.length === 0;
