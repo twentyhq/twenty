@@ -6,12 +6,6 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
-export enum CalendarEventStatus {
-  CONFIRMED = 'CONFIRMED',
-  TENTATIVE = 'TENTATIVE',
-  CANCELED = 'CANCELED',
-}
-
 @ObjectMetadata({
   namePlural: 'calendarEvents',
   labelSingular: 'Calendar event',
@@ -33,33 +27,12 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   title: string;
 
   @FieldMetadata({
-    type: FieldMetadataType.SELECT,
-    label: 'Status',
-    description: 'Status',
-    icon: 'IconCheckbox',
-    options: [
-      {
-        value: CalendarEventStatus.CONFIRMED,
-        label: 'Confirmed',
-        position: 0,
-        color: 'green',
-      },
-      {
-        value: CalendarEventStatus.TENTATIVE,
-        label: 'Tentative',
-        position: 1,
-        color: 'blue',
-      },
-      {
-        value: CalendarEventStatus.CANCELED,
-        label: 'Canceled',
-        position: 2,
-        color: 'red',
-      },
-    ],
-    defaultValue: { value: CalendarEventStatus.CONFIRMED },
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is cancelled',
+    description: 'Is cancelled',
+    icon: 'IconCalendarCancel',
   })
-  status: string;
+  isCancelled: boolean;
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
