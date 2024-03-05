@@ -46,7 +46,7 @@ export class BillingResolver {
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
-      url: await this.billingService.billingPortalSession(
+      url: await this.billingService.computeBillingPortalSessionURL(
         user.defaultWorkspaceId,
         returnUrlPath,
       ),
@@ -81,7 +81,7 @@ export class BillingResolver {
     );
 
     return {
-      url: await this.billingService.checkout(
+      url: await this.billingService.computeCheckoutSessionURL(
         user,
         stripePriceId,
         successUrlPath,
