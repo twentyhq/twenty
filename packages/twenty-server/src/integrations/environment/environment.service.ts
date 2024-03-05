@@ -328,4 +328,12 @@ export class EnvironmentService {
       this.configService.get<number>('MUTATION_MAXIMUM_RECORD_AFFECTED') ?? 100
     );
   }
+
+  getCacheStorageType(): string {
+    return this.configService.get<string>('CACHE_STORAGE_TYPE') ?? 'memory';
+  }
+
+  getCacheTtl(): number {
+    return this.configService.get<number>('CACHE_TTL') ?? 3600;
+  }
 }
