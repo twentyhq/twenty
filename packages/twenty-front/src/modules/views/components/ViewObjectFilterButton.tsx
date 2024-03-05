@@ -67,7 +67,7 @@ export const ViewObjectFilterButton = () => {
     <StyledObjectFilterButtonContainer>
       <StyledViewIcon size={theme.icon.size.md} />
       <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
-      <StyledDeleteLabelAdornment style={{ whiteSpace: 'pre-wrap' }}>
+      <StyledDeleteLabelAdornment>
         {' '}
         · {entityCountInCurrentView}
       </StyledDeleteLabelAdornment>
