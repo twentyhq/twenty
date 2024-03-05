@@ -1,3 +1,6 @@
+import { Gate } from 'packages/twenty-server/dist/src/workspace/workspace-sync-metadata/decorators/gate.decorator';
+import { CalendarChannelObjectMetadata } from 'packages/twenty-server/dist/src/workspace/workspace-sync-metadata/standard-objects/calendar-channel.object-metadata';
+
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -83,4 +86,21 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   messageChannels: MessageChannelObjectMetadata[];
+
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Channel',
+    description: 'Calendar Channel',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarChannel',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  calendarChannels: CalendarChannelObjectMetadata[];
 }
