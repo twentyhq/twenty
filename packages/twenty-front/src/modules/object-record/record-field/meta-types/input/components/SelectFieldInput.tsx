@@ -34,7 +34,10 @@ export const SelectFieldInput = ({
   );
   const optionsToSelect =
     fieldDefinition.metadata.options.filter((option) => {
-      return option.value !== fieldValue && option.label.includes(searchFilter);
+      return (
+        option.value !== fieldValue &&
+        option.label.toLowerCase().includes(searchFilter.toLowerCase())
+      );
     }) || [];
   const optionsInDropDown = selectedOption
     ? [selectedOption, ...optionsToSelect]
