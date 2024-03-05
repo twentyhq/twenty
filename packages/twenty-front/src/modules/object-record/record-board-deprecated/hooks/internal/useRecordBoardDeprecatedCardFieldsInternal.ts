@@ -35,7 +35,7 @@ export const useRecordBoardDeprecatedCardFieldsInternal = (
       async (
         field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
       ) => {
-        const existingFields = await snapshot
+        const existingFields = snapshot
           .getLoadable(recordBoardCardFieldsScopedState({ scopeId }))
           .getValue();
 
