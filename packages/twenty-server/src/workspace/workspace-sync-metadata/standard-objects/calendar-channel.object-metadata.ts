@@ -1,3 +1,4 @@
+import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
@@ -15,7 +16,7 @@ import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-met
 })
 @IsSystem()
 @Gate({
-  featureFlag: 'IS_CALENDAR_ENABLED',
+  featureFlag: FeatureFlagKeys.IsCalendarEnabled,
 })
 export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({

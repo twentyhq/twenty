@@ -1,9 +1,9 @@
 import { ChangeEvent } from 'react';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 
-export const ObjectFilterDropdownNumberSearchInput = () => {
+export const ObjectFilterDropdownNumberInput = () => {
   const {
     selectedOperandInDropdown,
     filterDefinitionUsedInDropdown,
@@ -13,7 +13,7 @@ export const ObjectFilterDropdownNumberSearchInput = () => {
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
-      <DropdownMenuSearchInput
+      <DropdownMenuInput
         autoFocus
         type="number"
         placeholder={filterDefinitionUsedInDropdown.label}

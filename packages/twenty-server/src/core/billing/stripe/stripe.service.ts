@@ -44,11 +44,11 @@ export class StripeService {
 
   async createBillingPortalSession(
     stripeCustomerId: string,
-    returnUrlPath?: string,
+    returnUrl?: string,
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrlPath ?? this.environmentService.getFrontBaseUrl(),
+      return_url: returnUrl ?? this.environmentService.getFrontBaseUrl(),
     });
   }
 

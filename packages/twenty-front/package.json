@@ -18,7 +18,7 @@
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "jest",
-    "test-watch": "jest --coverage=false --watch",
+    "test-watch": "jest --watch",
     "tsup": "tsup",
     "coverage": "jest --coverage",
     "storybook:modules:dev": "STORYBOOK_SCOPE=modules yarn storybook:dev",

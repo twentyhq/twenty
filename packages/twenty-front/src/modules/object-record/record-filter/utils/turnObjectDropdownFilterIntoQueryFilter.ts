@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   CurrencyFilter,
   DateFilter,
@@ -254,6 +256,48 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'SELECT': {
+        const stringifiedSelectValues = rawUIFilter.value;
+        let parsedOptionValues: string[] = [];
+
+        if (!isNonEmptyString(stringifiedSelectValues)) {
+          break;
+        }
+
+        try {
+          parsedOptionValues = JSON.parse(stringifiedSelectValues);
+        } catch (e) {
+          throw new Error(
+            `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
+          );
+        }
+
+        if (parsedOptionValues.length > 0) {
+          switch (rawUIFilter.operand) {
+            case ViewFilterOperand.Is:
+              objectRecordFilters.push({
+                [correspondingField.name]: {
+                  in: parsedOptionValues,
+                } as UUIDFilter,
+              });
+              break;
+            case ViewFilterOperand.IsNot:
+              objectRecordFilters.push({
+                not: {
+                  [correspondingField.name]: {
+                    in: parsedOptionValues,
+                  } as UUIDFilter,
+                },
+              });
+              break;
+            default:
+              throw new Error(
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+              );
+          }
+        }
+        break;
+      }
       default:
         throw new Error('Unknown filter type');
     }
