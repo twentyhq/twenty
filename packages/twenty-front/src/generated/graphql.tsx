@@ -70,11 +70,6 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CheckoutEntity = {
-  __typename?: 'CheckoutEntity';
-  url: Scalars['String'];
-};
-
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
@@ -226,7 +221,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
   challenge: LoginToken;
-  checkout: CheckoutEntity;
+  checkoutSession: SessionEntity;
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
@@ -262,7 +257,7 @@ export type MutationChallengeArgs = {
 };
 
 
-export type MutationCheckoutArgs = {
+export type MutationCheckoutSessionArgs = {
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
@@ -397,6 +392,7 @@ export type ProductPricesEntity = {
 
 export type Query = {
   __typename?: 'Query';
+  billingPortalSession: SessionEntity;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -409,6 +405,11 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
+};
+
+
+export type QueryBillingPortalSessionArgs = {
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -498,6 +499,11 @@ export enum RelationMetadataType {
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']>;
+};
+
+export type SessionEntity = {
+  __typename?: 'SessionEntity';
+  url: Scalars['String'];
 };
 
 /** Sort Directions */
@@ -883,13 +889,13 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
-export type CheckoutMutationVariables = Exact<{
+export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CheckoutMutation = { __typename?: 'Mutation', checkout: { __typename?: 'CheckoutEntity', url: string } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url: string } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
@@ -1582,40 +1588,43 @@ export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.Lazy
 export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
 export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
 export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
-export const CheckoutDocument = gql`
-    mutation Checkout($recurringInterval: String!, $successUrlPath: String) {
-  checkout(recurringInterval: $recurringInterval, successUrlPath: $successUrlPath) {
+export const CheckoutSessionDocument = gql`
+    mutation CheckoutSession($recurringInterval: String!, $successUrlPath: String) {
+  checkoutSession(
+    recurringInterval: $recurringInterval
+    successUrlPath: $successUrlPath
+  ) {
     url
   }
 }
     `;
-export type CheckoutMutationFn = Apollo.MutationFunction<CheckoutMutation, CheckoutMutationVariables>;
+export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
 
 /**
- * __useCheckoutMutation__
+ * __useCheckoutSessionMutation__
  *
- * To run a mutation, you first call `useCheckoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCheckoutMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCheckoutSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutSessionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [checkoutMutation, { data, loading, error }] = useCheckoutMutation({
+ * const [checkoutSessionMutation, { data, loading, error }] = useCheckoutSessionMutation({
  *   variables: {
  *      recurringInterval: // value for 'recurringInterval'
  *      successUrlPath: // value for 'successUrlPath'
  *   },
  * });
  */
-export function useCheckoutMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutMutation, CheckoutMutationVariables>) {
+export function useCheckoutSessionMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CheckoutMutation, CheckoutMutationVariables>(CheckoutDocument, options);
+        return Apollo.useMutation<CheckoutSessionMutation, CheckoutSessionMutationVariables>(CheckoutSessionDocument, options);
       }
-export type CheckoutMutationHookResult = ReturnType<typeof useCheckoutMutation>;
-export type CheckoutMutationResult = Apollo.MutationResult<CheckoutMutation>;
-export type CheckoutMutationOptions = Apollo.BaseMutationOptions<CheckoutMutation, CheckoutMutationVariables>;
+export type CheckoutSessionMutationHookResult = ReturnType<typeof useCheckoutSessionMutation>;
+export type CheckoutSessionMutationResult = Apollo.MutationResult<CheckoutSessionMutation>;
+export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
 export const GetProductPricesDocument = gql`
     query GetProductPrices($product: String!) {
   getProductPrices(product: $product) {

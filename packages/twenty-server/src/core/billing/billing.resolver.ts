@@ -11,7 +11,7 @@ import { ProductPricesEntity } from 'src/core/billing/dto/product-prices.entity'
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { User } from 'src/core/user/user.entity';
-import { CheckoutInput } from 'src/core/billing/dto/checkout.input';
+import { CheckoutSessionInput } from 'src/core/billing/dto/checkout-session.input';
 import { SessionEntity } from 'src/core/billing/dto/session.entity';
 import { BillingSessionInput } from 'src/core/billing/dto/billing-session.input';
 
@@ -55,9 +55,9 @@ export class BillingResolver {
 
   @Mutation(() => SessionEntity)
   @UseGuards(JwtAuthGuard)
-  async checkout(
+  async checkoutSession(
     @AuthUser() user: User,
-    @Args() { recurringInterval, successUrlPath }: CheckoutInput,
+    @Args() { recurringInterval, successUrlPath }: CheckoutSessionInput,
   ) {
     const stripeProductId = this.billingService.getProductStripeId(
       AvailableProduct.BasePlan,
