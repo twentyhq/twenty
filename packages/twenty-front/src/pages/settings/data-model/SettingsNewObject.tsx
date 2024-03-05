@@ -1,19 +1,30 @@
-import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import {
+  SettingsDataModelObjectAboutForm,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconSettings } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+
+const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
+
+type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -21,27 +32,29 @@ export const SettingsNewObject = () => {
 
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
-  const [formValues, setFormValues] = useState<{
-    description?: string;
-    icon: string;
-    labelPlural: string;
-    labelSingular: string;
-  }>({ icon: 'IconListNumbers', labelPlural: '', labelSingular: '' });
+  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
-  const canSave = !!formValues.labelPlural && !!formValues.labelSingular;
+  const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(newObjectFormSchema),
+  });
+
+  const canSave = formConfig.formState.isValid;
 
   const handleSave = async () => {
+    const formValues = formConfig.getValues();
+
     try {
-      const createdObject = await createOneObjectMetadataItem(
+      const { data: response } = await createOneObjectMetadataItem(
         settingsCreateObjectInputSchema.parse(formValues),
       );
 
       navigate(
-        createdObject.data?.createOneObject.isActive
-          ? `/settings/objects/${getObjectSlug(
-              createdObject.data.createOneObject,
+        response
+          ? `${settingsObjectsPagePath}/${getObjectSlug(
+              response.createOneObject,
             )}`
-          : '/settings/objects',
+          : settingsObjectsPagePath,
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
@@ -51,37 +64,35 @@ export const SettingsNewObject = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              {
-                children: 'Objects',
-                href: getSettingsPagePath(SettingsPath.Objects),
-              },
-              { children: 'New' },
-            ]}
-          />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => navigate(getSettingsPagePath(SettingsPath.Objects))}
-            onSave={handleSave}
-          />
-        </SettingsHeaderContainer>
-        <SettingsObjectFormSection
-          icon={formValues.icon}
-          singularName={formValues.labelSingular}
-          pluralName={formValues.labelPlural}
-          description={formValues.description}
-          onChange={(formValues) => {
-            setFormValues((previousValues) => ({
-              ...previousValues,
-              ...formValues,
-            }));
-          }}
-        />
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                {
+                  children: 'Objects',
+                  href: settingsObjectsPagePath,
+                },
+                { children: 'New' },
+              ]}
+            />
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(settingsObjectsPagePath)}
+              onSave={handleSave}
+            />
+          </SettingsHeaderContainer>
+          <Section>
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
+            <SettingsDataModelObjectAboutForm />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

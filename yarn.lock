@@ -15636,6 +15636,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.pick@npm:^4.3.7":
+  version: 4.4.9
+  resolution: "@types/lodash.pick@npm:4.4.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 61ae2fb9fe817a2f398863d10dc57e3cb864ebadefb7f3554d8d0c189448e08a174d6bfdd6e0220988ea084a2d47c3377908cf037e2b3ce552aa79ce0f36bc9f
+  languageName: node
+  linkType: hard
+
 "@types/lodash.snakecase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.snakecase@npm:4.1.9"
@@ -44428,6 +44437,7 @@ __metadata:
     "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.kebabcase": "npm:^4.1.7"
     "@types/lodash.merge": "npm:^4.6.7"
+    "@types/lodash.pick": "npm:^4.3.7"
     "@types/lodash.snakecase": "npm:^4.1.7"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/luxon": "npm:^3.3.0"
@@ -44525,6 +44535,7 @@ __metadata:
     lodash.kebabcase: "npm:^4.1.1"
     lodash.merge: "npm:^4.6.2"
     lodash.omit: "npm:^4.5.0"
+    lodash.pick: "npm:^4.4.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"
