@@ -52,6 +52,12 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_BASE_PLAN_PRODUCT_ID?: string;
 
+  @IsNumber()
+  @CastToPositiveNumber()
+  @IsOptional()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_FREE_TRIAL_DURATION_IN_DAYS?: number;
+
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_API_KEY?: string;

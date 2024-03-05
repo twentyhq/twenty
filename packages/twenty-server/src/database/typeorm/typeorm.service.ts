@@ -10,6 +10,7 @@ import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -26,6 +27,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
       entities: [
         User,
         Workspace,
+        UserWorkspace,
         RefreshToken,
         FeatureFlagEntity,
         BillingSubscription,

@@ -11,6 +11,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
+  IconCalendarEvent,
   IconCheckbox,
   IconMail,
   IconNotes,
@@ -60,8 +61,6 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
-
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(getActiveTabIdState());
 
@@ -70,6 +69,7 @@ export const ShowPageRightContainer = ({
       objectNameSingular: targetableObject.targetObjectNameSingular,
     });
 
+  const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const shouldDisplayEmailsTab =
     (emails &&
       targetableObject.targetObjectNameSingular ===
@@ -107,8 +107,13 @@ export const ShowPageRightContainer = ({
       title: 'Emails',
       Icon: IconMail,
       hide: !shouldDisplayEmailsTab,
-      disabled: !isMessagingEnabled,
       hasBetaPill: true,
+    },
+    {
+      id: 'calendar',
+      title: 'Calendar',
+      Icon: IconCalendarEvent,
+      hide: !shouldDisplayCalendarTab,
     },
   ];
 

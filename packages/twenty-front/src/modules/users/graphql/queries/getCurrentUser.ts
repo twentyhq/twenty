@@ -36,6 +36,14 @@ export const GET_CURRENT_USER = gql`
           workspaceId
         }
       }
+      workspaces {
+        workspace {
+          id
+          displayName
+          logo
+          domainName
+        }
+      }
     }
   }
 `;

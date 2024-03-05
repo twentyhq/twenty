@@ -1,9 +1,9 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { actionBarOpenState } from '../../states/actionBarIsOpenState';
 import { ActionBar } from '../ActionBar';
@@ -18,14 +18,13 @@ const meta: Meta<typeof ActionBar> = {
   title: 'UI/Navigation/ActionBar/ActionBar',
   component: FilledActionBar,
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <RecordTableScope
         recordTableScopeId="companies"
         onColumnsChange={() => {}}
       >
-        <MemoryRouter>
-          <Story />
-        </MemoryRouter>
+        <Story />
       </RecordTableScope>
     ),
     ComponentDecorator,

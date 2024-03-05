@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import * as Sentry from '@sentry/node';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
@@ -26,6 +27,11 @@ const bootstrap = async () => {
 
   // Use our logger
   app.useLogger(logger);
+
+  if (Sentry.isInitialized()) {
+    app.use(Sentry.Handlers.requestHandler());
+    app.use(Sentry.Handlers.tracingHandler());
+  }
 
   // Apply validation pipes globally
   app.useGlobalPipes(

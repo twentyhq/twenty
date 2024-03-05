@@ -37,14 +37,25 @@ export class GoogleGmailAuthController {
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
 
-    await this.googleGmailService.saveConnectedAccount({
-      handle: email,
-      workspaceMemberId: workspaceMemberId,
-      workspaceId: workspaceId,
-      provider: 'gmail',
-      accessToken,
-      refreshToken,
-    });
+    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+
+    if (demoWorkspaceIds.includes(workspaceId)) {
+      throw new Error('Cannot connect Gmail account to demo workspace');
+    }
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
+    if (workspaceId)
+      await this.googleGmailService.saveConnectedAccount({
+        handle: email,
+        workspaceMemberId: workspaceMemberId,
+        workspaceId: workspaceId,
+        provider: 'gmail',
+        accessToken,
+        refreshToken,
+      });
 
     return res.redirect(
       `${this.environmentService.getFrontBaseUrl()}/settings/accounts`,

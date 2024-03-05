@@ -29,6 +29,7 @@ import { assert } from 'src/utils/assert';
 import {
   ApiKeyToken,
   AuthToken,
+  AuthTokens,
   PasswordResetToken,
 } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -39,6 +40,8 @@ import { EmailService } from 'src/integrations/email/email.service';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/core/auth/types/jwt-data.type';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Injectable()
 export class TokenService {
@@ -50,10 +53,16 @@ export class TokenService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken, 'core')
     private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
-  async generateAccessToken(userId: string): Promise<AuthToken> {
+  async generateAccessToken(
+    userId: string,
+    workspaceId?: string,
+  ): Promise<AuthToken> {
     const expiresIn = this.environmentService.getAccessTokenExpiresIn();
 
     assert(expiresIn, '', InternalServerErrorException);
@@ -74,7 +83,7 @@ export class TokenService {
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: user.defaultWorkspace.id,
+      workspaceId: workspaceId ? workspaceId : user.defaultWorkspace.id,
     };
 
     return {
@@ -229,6 +238,45 @@ export class TokenService {
     return {
       workspaceMemberId: payload.sub,
       workspaceId: payload.workspaceId,
+    };
+  }
+
+  async generateSwitchWorkspaceToken(
+    user: User,
+    workspaceId: string,
+  ): Promise<AuthTokens> {
+    const userExists = await this.userRepository.findBy({ id: user.id });
+
+    assert(userExists, 'User not found', NotFoundException);
+
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      relations: ['workspaceUsers'],
+    });
+
+    assert(workspace, 'workspace doesnt exist', NotFoundException);
+
+    assert(
+      workspace.workspaceUsers
+        .map((userWorkspace) => userWorkspace.userId)
+        .includes(user.id),
+      'user does not belong to workspace',
+      ForbiddenException,
+    );
+
+    await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+    });
+
+    const token = await this.generateAccessToken(user.id, workspaceId);
+    const refreshToken = await this.generateRefreshToken(user.id);
+
+    return {
+      tokens: {
+        accessToken: token,
+        refreshToken,
+      },
     };
   }
 

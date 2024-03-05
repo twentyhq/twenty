@@ -16,18 +16,14 @@ export class ExceptionHandlerSentryDriver
     Sentry.init({
       dsn: options.dsn,
       integrations: [
-        // enable HTTP calls tracing
         new Sentry.Integrations.Http({ tracing: true }),
-        // enable Express.js middleware tracing
         new Sentry.Integrations.Express({ app: options.serverInstance }),
         new Sentry.Integrations.GraphQL(),
-        new Sentry.Integrations.Postgres({
-          usePgNative: true,
-        }),
+        new Sentry.Integrations.Postgres(),
         new ProfilingIntegration(),
       ],
-      tracesSampleRate: 1.0,
-      profilesSampleRate: 1.0,
+      tracesSampleRate: 1,
+      profilesSampleRate: 0.05,
       environment: options.debug ? 'development' : 'production',
       debug: options.debug,
     });
@@ -52,9 +48,11 @@ export class ExceptionHandlerSentryDriver
       if (options?.user) {
         scope.setUser({
           id: options.user.id,
-          ip_address: options.user.ipAddress,
           email: options.user.email,
-          username: options.user.username,
+          firstName: options.user.firstName,
+          lastName: options.user.lastName,
+          workspaceId: options.user.workspaceId,
+          workspaceDisplayName: options.user.workspaceDisplayName,
         });
       }
 
@@ -98,9 +96,11 @@ export class ExceptionHandlerSentryDriver
       if (user) {
         scope.setUser({
           id: user.id,
-          ip_address: user.ipAddress,
           email: user.email,
-          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          workspaceId: user.workspaceId,
+          workspaceDisplayName: user.workspaceDisplayName,
         });
       }
 

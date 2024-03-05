@@ -8,6 +8,7 @@ const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
+  max-width: 280px;
   text-align: center;
 `;
 

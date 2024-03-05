@@ -11,7 +11,6 @@ export type GmailMessage = {
   fromDisplayName: string;
   participants: Participant[];
   text: string;
-  html: string;
   attachments: Attachment[];
 };
 

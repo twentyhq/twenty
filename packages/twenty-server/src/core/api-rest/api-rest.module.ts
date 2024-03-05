@@ -12,5 +12,6 @@ import { ApiRestMetadataService } from 'src/core/api-rest/metadata-rest.service'
   imports: [ApiRestQueryBuilderModule, AuthModule, HttpModule],
   controllers: [ApiRestMetadataController, ApiRestController],
   providers: [ApiRestMetadataService, ApiRestService],
+  exports: [ApiRestMetadataService],
 })
 export class ApiRestModule {}

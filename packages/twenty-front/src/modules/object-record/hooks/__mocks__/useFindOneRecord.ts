@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
-  query FindOneperson($objectRecordId: UUID!) {
+  query FindOnePerson($objectRecordId: UUID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
       id
       opportunities {

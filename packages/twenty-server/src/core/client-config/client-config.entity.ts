@@ -28,6 +28,9 @@ class Billing {
 
   @Field(() => String)
   billingUrl: string;
+
+  @Field(() => Number, { nullable: true })
+  billingFreeTrialDurationInDays: number | undefined;
 }
 
 @ObjectType()

@@ -7,6 +7,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
         NestjsQueryTypeOrmModule.forFeature([UserWorkspace], 'core'),
         TypeORMModule,
         DataSourceModule,
+        WorkspaceDataSourceModule,
       ],
       services: [UserWorkspaceService],
     }),

@@ -171,7 +171,6 @@ li.coming-soon a::after {
 }
 
 .theme-doc-sidebar-item-category-level-1 > .menu__link {
-  text-transform: uppercase;
   font-size: 12px;
   color: var(--level-1-color);
 }
@@ -282,6 +281,9 @@ a.table-of-contents__link:hover{
 
 .card{
   text-decoration: none;
+  border-radius: 8px !important;
+  margin-right: -28px;
+
 }
 
 

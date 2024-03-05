@@ -10,6 +10,7 @@ import { GraphQLSchema, GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
+import * as Sentry from '@sentry/node';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { CoreModule } from 'src/core/core.module';
@@ -23,6 +24,7 @@ import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/us
 import { User } from 'src/core/user/user.entity';
 import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
 import { JwtData } from 'src/core/auth/types/jwt-data.type';
+import { useSentryTracing } from 'src/integrations/tracing/useSentryTracing';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -45,12 +47,30 @@ export class GraphQLConfigService
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode = this.environmentService.isDebugMode();
+    const plugins = [
+      useThrottler({
+        ttl: this.environmentService.getApiRateLimitingTtl(),
+        limit: this.environmentService.getApiRateLimitingLimit(),
+        identifyFn: (context) => {
+          return context.user?.id ?? context.req.ip ?? 'anonymous';
+        },
+      }),
+      useExceptionHandler({
+        exceptionHandlerService: this.exceptionHandlerService,
+      }),
+    ];
+
+    if (Sentry.isInitialized()) {
+      plugins.push(useSentryTracing());
+    }
+
     const config: YogaDriverConfig = {
       context: (context) => this.createContextFactory.create(context),
       autoSchemaFile: true,
       include: [CoreModule],
       conditionalSchema: async (context) => {
         let user: User | undefined;
+        let workspace: Workspace | undefined;
 
         try {
           if (!this.tokenService.isTokenPresent(context.req)) {
@@ -60,6 +80,7 @@ export class GraphQLConfigService
           const data = await this.tokenService.validateToken(context.req);
 
           user = data.user;
+          workspace = data.workspace;
 
           return await this.createSchema(context, data);
         } catch (error) {
@@ -95,24 +116,17 @@ export class GraphQLConfigService
               ? {
                   id: user.id,
                   email: user.email,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  workspaceId: workspace?.id,
+                  workspaceDisplayName: workspace?.displayName,
                 }
               : undefined,
           );
         }
       },
       resolvers: { JSON: GraphQLJSON },
-      plugins: [
-        useThrottler({
-          ttl: this.environmentService.getApiRateLimitingTtl(),
-          limit: this.environmentService.getApiRateLimitingLimit(),
-          identifyFn: (context) => {
-            return context.user?.id ?? context.req.ip ?? 'anonymous';
-          },
-        }),
-        useExceptionHandler({
-          exceptionHandlerService: this.exceptionHandlerService,
-        }),
-      ],
+      plugins: plugins,
     };
 
     if (isDebugMode) {
