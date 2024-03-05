@@ -1,3 +1,4 @@
+import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -96,7 +97,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
+    featureFlag: FeatureFlagKeys.IsCalendarEnabled,
   })
   calendarChannels: CalendarChannelObjectMetadata[];
 }
