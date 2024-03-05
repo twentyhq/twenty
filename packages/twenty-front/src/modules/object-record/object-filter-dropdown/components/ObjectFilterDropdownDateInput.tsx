@@ -2,7 +2,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { isNonNullable } from '~/utils/isNonNullable';
 
-export const ObjectFilterDropdownDateSearchInput = () => {
+export const ObjectFilterDropdownDateInput = () => {
   const {
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
