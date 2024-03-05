@@ -40,6 +40,7 @@ import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/we
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
@@ -113,6 +114,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.AccountsEmailsInboxSettings}
                   element={<SettingsAccountsEmailsInboxSettings />}
+                />
+                <Route
+                  path={SettingsPath.Billing}
+                  element={<SettingsBilling />}
                 />
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
