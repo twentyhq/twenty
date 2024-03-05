@@ -49,35 +49,35 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Start Date',
-    description: 'Start Date',
+    label: 'Start DateTime',
+    description: 'Start DateTime',
     icon: 'IconCalendarClock',
   })
-  startDate: string;
+  startsAt: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'End Date',
-    description: 'End Date',
+    label: 'End DateTime',
+    description: 'End DateTime',
     icon: 'IconCalendarClock',
   })
-  endDate: string;
+  endsAt: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Creation Date',
-    description: 'Creation Date',
+    label: 'Creation DateTime',
+    description: 'Creation DateTime',
     icon: 'IconCalendarPlus',
   })
-  creationDate: string;
+  externalCreatedAt: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Update Date',
-    description: 'Update Date',
+    label: 'Update DateTime',
+    description: 'Update DateTime',
     icon: 'IconCalendarCog',
   })
-  updateDate: string;
+  externalUpdatedAt: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
