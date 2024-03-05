@@ -111,9 +111,14 @@ export class BillingService {
         where: { workspaceId },
       });
 
+    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const returnUrl = returnUrlPath
+      ? frontBaseUrl + returnUrlPath
+      : frontBaseUrl;
+
     const session = await this.stripeService.createBillingPortalSession(
       billingSubscription.stripeCustomerId,
-      returnUrlPath,
+      returnUrl,
     );
 
     assert(session.url, 'Error: missing billingPortal.session.url');
