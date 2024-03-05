@@ -1,4 +1,4 @@
-import { compareDesc, startOfDay } from 'date-fns';
+import { startOfDay } from 'date-fns';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -12,26 +12,25 @@ type CalendarMonthCardProps = {
 export const CalendarMonthCard = ({
   calendarEvents,
 }: CalendarMonthCardProps) => {
-  const calendarEventsByDayDate = groupArrayItemsBy(
+  const calendarEventsByDayTime = groupArrayItemsBy(
     calendarEvents,
-    ({ startDate }) => startOfDay(startDate).toISOString(),
+    ({ startDate }) => startOfDay(startDate).getTime(),
   );
-  const sortedDayDates = Object.keys(calendarEventsByDayDate).sort(
-    ([dateISOStringA], [dateISOStringB]) =>
-      compareDesc(new Date(dateISOStringA), new Date(dateISOStringB)),
+  const sortedDayTimes = Object.keys(calendarEventsByDayTime).sort(
+    (timeA, timeB) => +timeB - +timeA,
   );
 
   return (
     <Card fullWidth>
-      {sortedDayDates.map((dayDate, index) => {
-        const dayCalendarEvents = calendarEventsByDayDate[dayDate];
+      {sortedDayTimes.map((dayTime, index) => {
+        const dayCalendarEvents = calendarEventsByDayTime[+dayTime];
 
         return (
           !!dayCalendarEvents?.length && (
             <CalendarDayCardContent
-              key={dayDate}
+              key={dayTime}
               calendarEvents={dayCalendarEvents}
-              divider={index < sortedDayDates.length - 1}
+              divider={index < sortedDayTimes.length - 1}
             />
           )
         );

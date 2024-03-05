@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { compareDesc, startOfMonth } from 'date-fns';
+import { startOfMonth } from 'date-fns';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { mockedCalendarEvents } from '~/testing/mock-data/calendar';
@@ -15,24 +15,26 @@ const StyledContainer = styled.div`
 `;
 
 export const Calendar = () => {
-  const calendarEventsByMonthDate = groupArrayItemsBy(
-    mockedCalendarEvents,
-    ({ startDate }) => startOfMonth(startDate).toISOString(),
+  const sortedCalendarEvents = mockedCalendarEvents.sort(
+    (eventA, eventB) => eventB.startDate.getTime() - eventA.startDate.getTime(),
   );
-  const sortedMonthDates = Object.keys(calendarEventsByMonthDate).sort(
-    ([dateISOStringA], [dateISOStringB]) =>
-      compareDesc(new Date(dateISOStringA), new Date(dateISOStringB)),
+  const calendarEventsByMonthTime = groupArrayItemsBy(
+    sortedCalendarEvents,
+    ({ startDate }) => startOfMonth(startDate).getTime(),
+  );
+  const sortedMonthTimes = Object.keys(calendarEventsByMonthTime).sort(
+    (timeA, timeB) => +timeB - +timeA,
   );
 
   return (
     <StyledContainer>
-      {sortedMonthDates.map((monthDate) => {
-        const monthCalendarEvents = calendarEventsByMonthDate[monthDate];
+      {sortedMonthTimes.map((monthTime) => {
+        const monthCalendarEvents = calendarEventsByMonthTime[+monthTime];
 
         return (
           !!monthCalendarEvents?.length && (
             <CalendarMonthCard
-              key={monthDate}
+              key={monthTime}
               calendarEvents={monthCalendarEvents}
             />
           )
