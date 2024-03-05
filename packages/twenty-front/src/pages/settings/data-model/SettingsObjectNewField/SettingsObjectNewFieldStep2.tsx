@@ -259,7 +259,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   };
 
   const excludedFieldTypes = [
-    FieldMetadataType.Currency,
     FieldMetadataType.Email,
     FieldMetadataType.FullName,
     FieldMetadataType.Link,
