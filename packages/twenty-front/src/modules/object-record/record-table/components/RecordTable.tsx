@@ -1,17 +1,19 @@
-import { useRef } from 'react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
-import { RecordTableFirstColumnScrollEffect } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 
-const StyledTable = styled.table`
+const StyledTable = styled.table<{ freezeFirstColumns?: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
@@ -67,29 +69,37 @@ const StyledTable = styled.table`
   tbody td:nth-of-type(1) {
     left: 0;
   }
+
+  // Label identifier column
   thead th:nth-of-type(2),
   tbody td:nth-of-type(2) {
     left: calc(${({ theme }) => theme.table.checkboxColumnWidth} - 2px);
-  }
 
-  tbody td:nth-of-type(2)::after,
-  thead th:nth-of-type(2)::after {
-    content: '';
-    height: calc(100% + 1px);
-    position: absolute;
-    top: 0;
-    width: 4px;
-    right: -4px;
-  }
+    ${({ freezeFirstColumns }) =>
+      freezeFirstColumns &&
+      css`
+        @media (max-width: ${MOBILE_VIEWPORT}px) {
+          width: 35px;
+          max-width: 35px;
+        }
+      `}
 
-  &.freeze-first-columns-shadow thead th:nth-of-type(2)::after,
-  &.freeze-first-columns-shadow tbody td:nth-of-type(2)::after {
-    box-shadow: ${({ theme }) =>
-      `4px 0px 4px -4px ${
-        theme.name === 'dark'
-          ? RGBA(theme.grayScale.gray50, 0.8)
-          : RGBA(theme.grayScale.gray100, 0.25)
-      } inset`};
+    &::after {
+      content: '';
+      height: calc(100% + 1px);
+      position: absolute;
+      top: 0;
+      width: 4px;
+      right: -4px;
+
+      ${({ freezeFirstColumns, theme }) =>
+        freezeFirstColumns &&
+        css`
+          box-shadow: 4px 0px 4px -4px ${theme.name === 'dark'
+              ? RGBA(theme.grayScale.gray50, 0.8)
+              : RGBA(theme.grayScale.gray100, 0.25)} inset;
+        `}
+    }
   }
 
   thead th:nth-of-type(3),
@@ -111,8 +121,8 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const recordTableRef = useRef<HTMLTableElement>(null);
   const { scopeId } = useRecordTableStates(recordTableId);
+  const scrollLeft = useRecoilValue(scrollLeftState);
 
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
@@ -127,11 +137,12 @@ export const RecordTable = ({
         <RecordTableContext.Provider
           value={{
             objectMetadataItem,
-            recordTableRef,
           }}
         >
-          <RecordTableFirstColumnScrollEffect />
-          <StyledTable ref={recordTableRef} className="entity-table-cell">
+          <StyledTable
+            freezeFirstColumns={scrollLeft > 0}
+            className="entity-table-cell"
+          >
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
             <RecordTableBody objectNameSingular={objectNameSingular} />

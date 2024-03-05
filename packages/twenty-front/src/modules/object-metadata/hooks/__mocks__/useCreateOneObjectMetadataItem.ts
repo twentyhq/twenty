@@ -24,6 +24,7 @@ export const query = gql`
 export const variables = {
   input: {
     object: {
+      icon: 'IconPlus',
       labelPlural: 'View Filters',
       labelSingular: 'View Filter',
       nameSingular: 'viewFilter',

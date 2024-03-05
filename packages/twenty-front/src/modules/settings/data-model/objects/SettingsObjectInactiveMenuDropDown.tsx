@@ -6,20 +6,20 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-type SettingsObjectDisabledMenuDropDownProps = {
+type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;
 };
 
-export const SettingsObjectDisabledMenuDropDown = ({
+export const SettingsObjectInactiveMenuDropDown = ({
   onActivate,
   scopeKey,
   onErase,
   isCustomObject,
-}: SettingsObjectDisabledMenuDropDownProps) => {
-  const dropdownId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
+}: SettingsObjectInactiveMenuDropDownProps) => {
+  const dropdownId = `${scopeKey}-settings-object-inactive-menu-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);
 

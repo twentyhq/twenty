@@ -2,7 +2,9 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { computeOpenApiPath } from 'src/core/open-api/utils/path.utils';
 
-export const baseSchema = (): OpenAPIV3_1.Document => {
+export const baseSchema = (
+  schemaName: 'core' | 'metadata',
+): OpenAPIV3_1.Document => {
   return {
     openapi: '3.0.3',
     info: {
@@ -21,7 +23,9 @@ export const baseSchema = (): OpenAPIV3_1.Document => {
     // Testing purposes
     servers: [
       {
-        url: 'https://api.twenty.com/rest',
+        url: `https://api.twenty.com/rest/${
+          schemaName !== 'core' ? schemaName : ''
+        }`,
         description: 'Production Development',
       },
     ],
@@ -45,6 +49,6 @@ export const baseSchema = (): OpenAPIV3_1.Document => {
       description: 'Find out more about **Twenty**',
       url: 'https://twenty.com',
     },
-    paths: { '/open-api': computeOpenApiPath() },
+    paths: { [`/open-api/${schemaName}`]: computeOpenApiPath() },
   };
 };

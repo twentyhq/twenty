@@ -36,7 +36,8 @@
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
-    "passport": "^0.7.0"
+    "passport": "^0.7.0",
+    "psl": "^1.9.0"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",

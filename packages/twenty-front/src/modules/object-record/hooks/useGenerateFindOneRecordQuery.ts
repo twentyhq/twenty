@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindOneRecordQuery = () => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
@@ -14,7 +15,9 @@ export const useGenerateFindOneRecordQuery = () => {
     depth?: number;
   }) => {
     return gql`
-      query FindOne${objectMetadataItem.nameSingular}($objectRecordId: UUID!) {
+      query FindOne${capitalize(
+        objectMetadataItem.nameSingular,
+      )}($objectRecordId: UUID!) {
         ${objectMetadataItem.nameSingular}(filter: {
           id: {
             eq: $objectRecordId

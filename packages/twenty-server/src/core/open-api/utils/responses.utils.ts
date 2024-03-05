@@ -1,7 +1,9 @@
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
-export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
+export const getManyResultResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
   return {
     description: 'Successful operation',
     content: {
@@ -37,7 +39,9 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const getSingleResultSuccessResponse = (item: ObjectMetadataEntity) => {
+export const getSingleResultSuccessResponse = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
   return {
     description: 'Successful operation',
     content: {
@@ -60,7 +64,9 @@ export const getSingleResultSuccessResponse = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const getDeleteResponse200 = (item) => {
+export const getDeleteResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
   return {
     description: 'Successful operation',
     content: {
@@ -96,6 +102,49 @@ export const getJsonResponse = () => {
       'application/json': {
         schema: {
           type: 'object',
+          properties: {
+            openapi: { type: 'string' },
+            info: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                description: { type: 'string' },
+                termsOfService: { type: 'string' },
+                contact: {
+                  type: 'object',
+                  properties: { email: { type: 'string' } },
+                },
+                license: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    url: { type: 'string' },
+                  },
+                },
+              },
+            },
+            servers: {
+              type: 'array',
+              items: {
+                url: { type: 'string' },
+                description: { type: 'string' },
+              },
+            },
+            components: {
+              type: 'object',
+              properties: {
+                schemas: { type: 'object' },
+                parameters: { type: 'object' },
+                responses: { type: 'object' },
+              },
+            },
+            paths: {
+              type: 'object',
+            },
+            tags: {
+              type: 'object',
+            },
+          },
         },
       },
     },

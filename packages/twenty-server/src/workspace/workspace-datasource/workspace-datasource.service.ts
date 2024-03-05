@@ -4,6 +4,7 @@ import { DataSource, EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
 export class WorkspaceDataSourceService {
@@ -30,7 +31,7 @@ export class WorkspaceDataSourceService {
 
   public async connectedToWorkspaceDataSourceAndReturnMetadata(
     workspaceId: string,
-  ) {
+  ): Promise<{ dataSource: DataSource; dataSourceMetadata: DataSourceEntity }> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -114,16 +115,18 @@ export class WorkspaceDataSourceService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<any> {
-    if (transactionManager) {
-      return await transactionManager.query(query, parameters);
-    }
-    const workspaceDataSource =
-      await this.connectToWorkspaceDataSource(workspaceId);
+    try {
+      if (transactionManager) {
+        return await transactionManager.query(query, parameters);
+      }
+      const workspaceDataSource =
+        await this.connectToWorkspaceDataSource(workspaceId);
 
-    if (workspaceDataSource) {
       return await workspaceDataSource.query(query, parameters);
+    } catch (error) {
+      throw new Error(
+        `Error executing raw query for workspace ${workspaceId}: ${error.message}`,
+      );
     }
-
-    throw new Error('No data source found or transaction manager provided');
   }
 }
