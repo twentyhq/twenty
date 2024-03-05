@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
@@ -8,6 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -17,11 +18,16 @@ const StyledRelationPickerContainer = styled.div`
 
 export type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;
+  onCancel?: () => void;
 };
 
-export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
+export const SelectFieldInput = ({
+  onSubmit,
+  onCancel,
+}: SelectFieldInputProps) => {
   const { persistField, fieldDefinition, fieldValue } = useSelectField();
   const [searchFilter, setSearchFilter] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = fieldDefinition.metadata.options.find(
     (option) => option.value === fieldValue,
@@ -34,8 +40,23 @@ export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
     ? [selectedOption, ...optionsToSelect]
     : optionsToSelect;
 
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      event.stopImmediatePropagation();
+
+      const weAreNotInAnHTMLInput = !(
+        event.target instanceof HTMLInputElement &&
+        event.target.tagName === 'INPUT'
+      );
+      if (weAreNotInAnHTMLInput && onCancel) {
+        onCancel();
+      }
+    },
+  });
+
   return (
-    <StyledRelationPickerContainer>
+    <StyledRelationPickerContainer ref={containerRef}>
       <DropdownMenu data-select-disable>
         <DropdownMenuSearchInput
           value={searchFilter}
@@ -47,6 +68,7 @@ export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
           {optionsInDropDown.map((option) => {
             return (
               <MenuItemSelectTag
+                key={option.value}
                 selected={option.value === fieldValue}
                 text={option.label}
                 color={option.color}
