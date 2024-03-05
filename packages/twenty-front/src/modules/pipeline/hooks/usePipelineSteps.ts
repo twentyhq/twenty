@@ -19,8 +19,10 @@ export const usePipelineSteps = () => {
 
   const handlePipelineStepAdd = useRecoilCallback(
     ({ snapshot }) =>
-      async (boardColumn: BoardColumnDefinition) => {
-        const currentPipeline = await snapshot.getPromise(currentPipelineState);
+      (boardColumn: BoardColumnDefinition) => {
+        const currentPipeline = snapshot
+          .getLoadable(currentPipelineState)
+          .getValue();
         if (!currentPipeline?.id) return;
 
         return createOnePipelineStep?.({
@@ -35,8 +37,10 @@ export const usePipelineSteps = () => {
 
   const handlePipelineStepDelete = useRecoilCallback(
     ({ snapshot }) =>
-      async (boardColumnId: string) => {
-        const currentPipeline = await snapshot.getPromise(currentPipelineState);
+      (boardColumnId: string) => {
+        const currentPipeline = snapshot
+          .getLoadable(currentPipelineState)
+          .getValue();
         if (!currentPipeline?.id) return;
 
         return deleteOnePipelineStep?.(boardColumnId);

@@ -14,7 +14,7 @@ export const usePreviousHotkeyScope = () => {
       () => {
         const previousHotkeyScope = snapshot
           .getLoadable(previousHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         if (!previousHotkeyScope) {
           return;
@@ -35,7 +35,7 @@ export const usePreviousHotkeyScope = () => {
       (scope: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         setHotkeyScope(scope, customScopes);
         set(previousHotkeyScopeState, currentHotkeyScope);

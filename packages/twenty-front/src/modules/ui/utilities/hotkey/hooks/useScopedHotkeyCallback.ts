@@ -25,7 +25,7 @@ export const useScopedHotkeyCallback = () =>
       }) => {
         const currentHotkeyScopes = snapshot
           .getLoadable(internalHotkeysEnabledScopesState)
-          .valueOrThrow();
+          .getValue();
 
         if (!currentHotkeyScopes.includes(scope)) {
           if (DEBUG_HOTKEY_SCOPE) {

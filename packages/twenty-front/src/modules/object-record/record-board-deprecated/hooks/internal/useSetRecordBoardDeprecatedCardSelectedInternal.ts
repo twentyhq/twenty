@@ -19,7 +19,9 @@ export const useSetRecordBoardDeprecatedCardSelectedInternal = (props: any) => {
   const setCardSelected = useRecoilCallback(
     ({ set, snapshot }) =>
       (cardId: string, selected: boolean) => {
-        const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
+        const activeCardIds = snapshot
+          .getLoadable(activeCardIdsState)
+          .getValue();
 
         set(isRecordBoardDeprecatedCardSelectedFamilyState(cardId), selected);
         set(actionBarOpenState, selected || activeCardIds.length > 0);
@@ -39,7 +41,9 @@ export const useSetRecordBoardDeprecatedCardSelectedInternal = (props: any) => {
   const unselectAllActiveCards = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
-        const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
+        const activeCardIds = snapshot
+          .getLoadable(activeCardIdsState)
+          .getValue();
 
         activeCardIds.forEach((cardId: string) => {
           set(isRecordBoardDeprecatedCardSelectedFamilyState(cardId), false);

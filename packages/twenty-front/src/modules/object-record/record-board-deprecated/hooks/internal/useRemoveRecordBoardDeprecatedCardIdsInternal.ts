@@ -11,16 +11,14 @@ export const useRemoveRecordBoardDeprecatedCardIdsInternal = () => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (cardIdToRemove: string[]) => {
-        const boardColumns = snapshot
-          .getLoadable(boardColumnsState)
-          .valueOrThrow();
+        const boardColumns = snapshot.getLoadable(boardColumnsState).getValue();
 
         boardColumns.forEach((boardColumn) => {
           const columnCardIds = snapshot
             .getLoadable(
               recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
             )
-            .valueOrThrow();
+            .getValue();
           set(
             recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
             columnCardIds.filter((cardId) => !cardIdToRemove.includes(cardId)),
