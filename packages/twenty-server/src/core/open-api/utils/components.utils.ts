@@ -150,3 +150,146 @@ export const computeParameterComponents = (): Record<
     limit: computeLimitParameters(),
   };
 };
+
+export const computeMetadataSchemaComponents = (
+  metadataSchema: { nameSingular: string; namePlural: string }[],
+): Record<string, OpenAPIV3_1.SchemaObject> => {
+  return metadataSchema.reduce(
+    (schemas, item) => {
+      switch (item.nameSingular) {
+        case 'object': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            properties: {
+              dataSourceId: { type: 'string' },
+              nameSingular: { type: 'string' },
+              namePlural: { type: 'string' },
+              labelSingular: { type: 'string' },
+              labelPlural: { type: 'string' },
+              description: { type: 'string' },
+              icon: { type: 'string' },
+              isCustom: { type: 'boolean' },
+              isActive: { type: 'boolean' },
+              isSystem: { type: 'boolean' },
+              createdAt: { type: 'string' },
+              updatedAt: { type: 'string' },
+              labelIdentifierFieldMetadataId: { type: 'string' },
+              imageIdentifierFieldMetadataId: { type: 'string' },
+              fields: {
+                type: 'object',
+                properties: {
+                  edges: {
+                    type: 'object',
+                    properties: {
+                      node: {
+                        type: 'array',
+                        items: {
+                          $ref: '#/components/schemas/Field',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          };
+
+          return schemas;
+        }
+        case 'field': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            properties: {
+              type: { type: 'string' },
+              name: { type: 'string' },
+              label: { type: 'string' },
+              description: { type: 'string' },
+              icon: { type: 'string' },
+              isCustom: { type: 'boolean' },
+              isActive: { type: 'boolean' },
+              isSystem: { type: 'boolean' },
+              isNullable: { type: 'boolean' },
+              createdAt: { type: 'string' },
+              updatedAt: { type: 'string' },
+              fromRelationMetadata: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  relationType: { type: 'string' },
+                  toObjectMetadata: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      dataSourceId: { type: 'string' },
+                      nameSingular: { type: 'string' },
+                      namePlural: { type: 'string' },
+                      isSystem: { type: 'boolean' },
+                    },
+                  },
+                  toFieldMetadataId: { type: 'string' },
+                },
+              },
+              toRelationMetadata: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  relationType: { type: 'string' },
+                  fromObjectMetadata: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      dataSourceId: { type: 'string' },
+                      nameSingular: { type: 'string' },
+                      namePlural: { type: 'string' },
+                      isSystem: { type: 'boolean' },
+                    },
+                  },
+                  fromFieldMetadataId: { type: 'string' },
+                },
+              },
+              defaultValue: { type: 'object' },
+              options: { type: 'object' },
+            },
+          };
+
+          return schemas;
+        }
+        case 'relation': {
+          schemas[`${capitalize(item.nameSingular)}`] = {
+            type: 'object',
+            properties: {
+              relationType: { type: 'string' },
+              fromObjectMetadata: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  dataSourceId: { type: 'string' },
+                  nameSingular: { type: 'string' },
+                  namePlural: { type: 'string' },
+                  isSystem: { type: 'boolean' },
+                },
+              },
+              fromObjectMetadataId: { type: 'string' },
+              toObjectMetadata: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  dataSourceId: { type: 'string' },
+                  nameSingular: { type: 'string' },
+                  namePlural: { type: 'string' },
+                  isSystem: { type: 'boolean' },
+                },
+              },
+              toObjectMetadataId: { type: 'string' },
+              fromFieldMetadataId: { type: 'string' },
+              toFieldMetadataId: { type: 'string' },
+            },
+          };
+        }
+      }
+
+      return schemas;
+    },
+    {} as Record<string, OpenAPIV3_1.SchemaObject>,
+  );
+};
