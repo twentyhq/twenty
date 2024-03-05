@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
@@ -7,8 +8,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectOption } from '@/ui/navigation/menu-item/components/MenuItemSelectOption';
-
-import { useSelectFieldSearch } from '../hooks/useSelectFieldSearch';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -22,7 +21,7 @@ export type SelectFieldInputProps = {
 
 export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
   const { persistField, fieldDefinition, fieldValue } = useSelectField();
-  const { searchFilter, handleSearchFilterChange } = useSelectFieldSearch();
+  const [searchFilter, setSearchFilter] = useState('');
 
   const selectedOption = fieldDefinition.metadata.options.find(
     (option) => option.value === fieldValue,
@@ -40,7 +39,7 @@ export const SelectFieldInput = ({ onSubmit }: SelectFieldInputProps) => {
       <DropdownMenu data-select-disable>
         <DropdownMenuSearchInput
           value={searchFilter}
-          onChange={handleSearchFilterChange}
+          onChange={(event) => setSearchFilter(event.currentTarget.value)}
           autoFocus
         />
         <DropdownMenuSeparator />
