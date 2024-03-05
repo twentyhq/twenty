@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { ManageYourSubscription } from '@/billing/components/ManageYourSubscription.tsx';
+import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
 import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
@@ -16,6 +17,7 @@ export const SettingsBilling = () => (
   <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
     <SettingsPageContainer>
       <StyledH1Title title="Billing" />
+      <SettingsBillingCoverImage />
       <Section>
         <H2Title
           title="Manage your subscription"
