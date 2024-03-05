@@ -1,9 +1,16 @@
+import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+
+export enum CalendarEventStatus {
+  CONFIRMED = 'CONFIRMED',
+  TENTATIVE = 'TENTATIVE',
+  CANCELED = 'CANCELED',
+}
 
 @ObjectMetadata({
   namePlural: 'calendarEvents',
@@ -14,7 +21,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 })
 @IsSystem()
 @Gate({
-  featureFlag: 'IS_CALENDAR_ENABLED',
+  featureFlag: FeatureFlagKeys.IsCalendarEnabled,
 })
 export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -31,11 +38,26 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Status',
     icon: 'IconCheckbox',
     options: [
-      { value: 'confirmed', label: 'Confirmed', position: 0, color: 'green' },
-      { value: 'tentative', label: 'Tentative', position: 1, color: 'blue' },
-      { value: 'cancelled', label: 'Cancelled', position: 2, color: 'orange' },
+      {
+        value: CalendarEventStatus.CONFIRMED,
+        label: 'Confirmed',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: CalendarEventStatus.TENTATIVE,
+        label: 'Tentative',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: CalendarEventStatus.CANCELED,
+        label: 'Canceled',
+        position: 2,
+        color: 'red',
+      },
     ],
-    defaultValue: { value: 'confirmed' },
+    defaultValue: { value: CalendarEventStatus.CONFIRMED },
   })
   status: string;
 
