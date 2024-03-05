@@ -4,11 +4,12 @@ import {
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CalendarChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
@@ -81,6 +82,21 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageChannel',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   messageChannels: MessageChannelObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Channel',
+    description: 'Calendar Channel',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarChannel',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarChannels: CalendarChannelObjectMetadata[];
 }

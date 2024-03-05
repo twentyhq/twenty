@@ -11,8 +11,9 @@ import { ProductPricesEntity } from 'src/core/billing/dto/product-prices.entity'
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { User } from 'src/core/user/user.entity';
-import { CheckoutInput } from 'src/core/billing/dto/checkout.input';
-import { CheckoutEntity } from 'src/core/billing/dto/checkout.entity';
+import { CheckoutSessionInput } from 'src/core/billing/dto/checkout-session.input';
+import { SessionEntity } from 'src/core/billing/dto/session.entity';
+import { BillingSessionInput } from 'src/core/billing/dto/billing-session.input';
 
 @Resolver()
 export class BillingResolver {
@@ -38,11 +39,25 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => CheckoutEntity)
+  @Query(() => SessionEntity)
   @UseGuards(JwtAuthGuard)
-  async checkout(
+  async billingPortalSession(
     @AuthUser() user: User,
-    @Args() { recurringInterval, successUrlPath }: CheckoutInput,
+    @Args() { returnUrlPath }: BillingSessionInput,
+  ) {
+    return {
+      url: await this.billingService.computeBillingPortalSessionURL(
+        user.defaultWorkspaceId,
+        returnUrlPath,
+      ),
+    };
+  }
+
+  @Mutation(() => SessionEntity)
+  @UseGuards(JwtAuthGuard)
+  async checkoutSession(
+    @AuthUser() user: User,
+    @Args() { recurringInterval, successUrlPath }: CheckoutSessionInput,
   ) {
     const stripeProductId = this.billingService.getProductStripeId(
       AvailableProduct.BasePlan,
@@ -66,7 +81,7 @@ export class BillingResolver {
     );
 
     return {
-      url: await this.billingService.checkout(
+      url: await this.billingService.computeCheckoutSessionURL(
         user,
         stripePriceId,
         successUrlPath,

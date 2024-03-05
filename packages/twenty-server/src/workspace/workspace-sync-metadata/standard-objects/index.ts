@@ -4,6 +4,7 @@ import { ApiKeyObjectMetadata } from 'src/workspace/workspace-sync-metadata/stan
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BlocklistObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/blocklist.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
+import { CalendarChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
@@ -48,4 +49,5 @@ export const standardObjectMetadataCollection = [
   MessageParticipantObjectMetadata,
   MessageChannelMessageAssociationObjectMetadata,
   CalendarEventObjectMetadata,
+  CalendarChannelObjectMetadata,
 ];
