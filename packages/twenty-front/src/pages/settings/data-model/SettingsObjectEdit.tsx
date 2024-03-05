@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,11 +26,9 @@ export const SettingsObjectEdit = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    editObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-  } = useObjectMetadataItemForSettings();
+  const { findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -76,7 +78,10 @@ export const SettingsObjectEdit = () => {
     };
 
     try {
-      await editObjectMetadataItem(editedObjectMetadataItem);
+      await updateOneObjectMetadataItem({
+        idToUpdate: activeObjectMetadataItem.id,
+        updatePayload: settingsUpdateObjectInputSchema.parse(formValues),
+      });
 
       navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
     } catch (error) {
@@ -87,8 +92,11 @@ export const SettingsObjectEdit = () => {
   };
 
   const handleDisable = async () => {
-    await disableObjectMetadataItem(activeObjectMetadataItem);
-    navigate('/settings/objects');
+    await updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: { isActive: false },
+    });
+    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   return (

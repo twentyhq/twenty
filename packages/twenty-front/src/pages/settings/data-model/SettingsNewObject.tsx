@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconSettings } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -16,27 +19,22 @@ export const SettingsNewObject = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createObjectMetadataItem: createObject } =
-    useObjectMetadataItemForSettings();
+  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
-  const [customFormValues, setCustomFormValues] = useState<{
+  const [formValues, setFormValues] = useState<{
     description?: string;
     icon: string;
     labelPlural: string;
     labelSingular: string;
   }>({ icon: 'IconListNumbers', labelPlural: '', labelSingular: '' });
 
-  const canSave =
-    !!customFormValues.labelPlural && !!customFormValues.labelSingular;
+  const canSave = !!formValues.labelPlural && !!formValues.labelSingular;
 
   const handleSave = async () => {
     try {
-      const createdObject = await createObject({
-        labelPlural: customFormValues.labelPlural,
-        labelSingular: customFormValues.labelSingular,
-        description: customFormValues.description,
-        icon: customFormValues.icon,
-      });
+      const createdObject = await createOneObjectMetadataItem(
+        settingsCreateObjectInputSchema.parse(formValues),
+      );
 
       navigate(
         createdObject.data?.createOneObject.isActive
@@ -58,25 +56,26 @@ export const SettingsNewObject = () => {
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
+              {
+                children: 'Objects',
+                href: getSettingsPagePath(SettingsPath.Objects),
+              },
               { children: 'New' },
             ]}
           />
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate('/settings/objects');
-            }}
+            onCancel={() => navigate(getSettingsPagePath(SettingsPath.Objects))}
             onSave={handleSave}
           />
         </SettingsHeaderContainer>
         <SettingsObjectFormSection
-          icon={customFormValues.icon}
-          singularName={customFormValues.labelSingular}
-          pluralName={customFormValues.labelPlural}
-          description={customFormValues.description}
+          icon={formValues.icon}
+          singularName={formValues.labelSingular}
+          pluralName={formValues.labelPlural}
+          description={formValues.description}
           onChange={(formValues) => {
-            setCustomFormValues((previousValues) => ({
+            setFormValues((previousValues) => ({
               ...previousValues,
               ...formValues,
             }));
