@@ -1,22 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import styled from '@emotion/styled';
-import { IBM_Plex_Mono } from 'next/font/google';
 
-import { ExternalArrow } from '@/app/_components/ui/icons/SvgIcons';
+import mq from '@/app/_components/ui/theme/mq';
 
-import { GithubIcon } from '../icons/SvgIcons';
+export const DesktopNav = styled.nav`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  overflow: visible;
+  padding: 12px 16px 12px 16px;
+  position: relative;
+  transform-origin: 50% 50% 0px;
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
 
-import { Logo } from './Logo';
+  @media (max-width: 809px) {
+    display: none;
+  }
+`;
 
-const IBMPlexMono = IBM_Plex_Mono({
-  weight: '500',
-  subsets: ['latin'],
-  display: 'swap',
-});
-
-const Nav = styled.nav`
+export const MobileNav = styled.nav`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -28,26 +33,32 @@ const Nav = styled.nav`
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
   height: 64px;
   width: 100%;
-  @media (min-width: 810px) {
-    display: none;
-  }
 `;
 
-const LinkList = styled.div`
+export const LinkList = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  ${mq({
+    marginRight: ['auto', 'auto', '0'],
+  })}
+`;
+
+export const MobileLinkList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
   align-items: center;
 `;
 
-const ListItem = styled.a`
+export const ListItem = styled.a`
   color: rgb(71, 71, 71);
   text-decoration: none;
   display: flex;
   gap: 4px;
   align-items: center;
   border-radius: 8px;
-  height: 48px;
+  height: 40px;
   padding-left: 16px;
   padding-right: 16px;
   &:hover {
@@ -55,21 +66,23 @@ const ListItem = styled.a`
   }
 `;
 
-const LogoContainer = styled.div`
+export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 202px;
+  ${mq({
+    width: ['auto', 'auto', '202px'],
+  })}
 `;
 
-const LogoAddon = styled.div`
+export const LogoAddon = styled.div`
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
   line-height: 150%;
 `;
 
-const StyledButton = styled.div`
+export const StyledButton = styled.div`
   display: flex;
   height: 40px;
   padding-left: 16px;
@@ -84,7 +97,7 @@ const StyledButton = styled.div`
   cursor: pointer;
 `;
 
-const CallToActionContainer = styled.div`
+export const CallToActionContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -93,7 +106,7 @@ const CallToActionContainer = styled.div`
   }
 `;
 
-const LinkNextToCTA = styled.a`
+export const LinkNextToCTA = styled.a`
   display: flex;
   align-items: center;
   color: rgb(71, 71, 71);
@@ -103,20 +116,7 @@ const LinkNextToCTA = styled.a`
   }
 `;
 
-const CallToAction = () => {
-  return (
-    <CallToActionContainer>
-      <LinkNextToCTA href="https://github.com/twentyhq/twenty">
-        Sign in
-      </LinkNextToCTA>
-      <a href="#">
-        <StyledButton>Get Started</StyledButton>
-      </a>
-    </CallToActionContainer>
-  );
-};
-
-const HamburgerContainer = styled.div`
+export const HamburgerContainer = styled.div`
   height: 44px;
   width: 44px;
   cursor: pointer;
@@ -146,7 +146,7 @@ const HamburgerContainer = styled.div`
   }
 `;
 
-const HamburgerLine1 = styled.div`
+export const HamburgerLine1 = styled.div`
   height: 2px;
   left: calc(50.00000000000002% - 20px / 2);
   position: absolute;
@@ -156,7 +156,7 @@ const HamburgerLine1 = styled.div`
   background-color: rgb(179, 179, 179);
 `;
 
-const HamburgerLine2 = styled.div`
+export const HamburgerLine2 = styled.div`
   height: 2px;
   left: calc(50.00000000000002% - 20px / 2);
   position: absolute;
@@ -166,7 +166,7 @@ const HamburgerLine2 = styled.div`
   background-color: rgb(179, 179, 179);
 `;
 
-const NavOpen = styled.div`
+export const NavOpen = styled.div`
   flex-direction: column;
   align-items: center;
   position: fixed;
@@ -181,55 +181,11 @@ const NavOpen = styled.div`
   transform-origin: top;
 `;
 
-const MobileMenu = styled.div`
+export const MobileMenu = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  @media (min-width: 810px) {
+    display: none;
+  }
 `;
-
-export const HeaderMobile = () => {
-  const isTwentyDev = false;
-
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  return (
-    <MobileMenu>
-      <Nav>
-        <LogoContainer>
-          <Logo />
-          {isTwentyDev && (
-            <LogoAddon className={IBMPlexMono.className}>
-              for Developers
-            </LogoAddon>
-          )}
-        </LogoContainer>
-        <HamburgerContainer>
-          <input type="checkbox" id="menu-input" onChange={toggleMenu} />
-          <HamburgerLine1 id="line1" />
-          <HamburgerLine2 id="line2" />
-        </HamburgerContainer>
-      </Nav>
-      <NavOpen
-        style={{
-          transform: `scaleY(${menuOpen ? '1' : '0'})`,
-        }}
-      >
-        <LinkList>
-          <ListItem href="/story">Story</ListItem>
-          <ListItem href="/pricing">Pricing</ListItem>
-          <ListItem href="https://docs.twenty.com">
-            Docs <ExternalArrow />
-          </ListItem>
-          <ListItem href="https://github.com/twentyhq/twenty">
-            <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
-          </ListItem>
-        </LinkList>
-        <CallToAction />
-      </NavOpen>
-    </MobileMenu>
-  );
-};
