@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { ManageYourSubscription } from '@/billing/components/ManageYourSubscription.tsx';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { IconCurrencyDollar } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
 import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';

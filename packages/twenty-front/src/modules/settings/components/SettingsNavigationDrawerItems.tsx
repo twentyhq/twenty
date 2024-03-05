@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
@@ -12,6 +11,7 @@ import {
   IconCalendarEvent,
   IconCode,
   IconColorSwatch,
+  IconCurrencyDollar,
   IconDoorEnter,
   IconHierarchy2,
   IconMail,

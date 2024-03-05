@@ -1,5 +1,4 @@
-import { IconCreditCard } from '@tabler/icons-react';
-
+import { IconCreditCard } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { useBillingPortalSessionQuery } from '~/generated/graphql.tsx';
 export const ManageYourSubscription = () => {

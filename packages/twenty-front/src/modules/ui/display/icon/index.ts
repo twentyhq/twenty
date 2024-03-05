@@ -42,6 +42,7 @@ export {
   IconColorSwatch,
   IconMessageCircle as IconComment,
   IconCopy,
+  IconCreditCard,
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
