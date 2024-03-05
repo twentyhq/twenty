@@ -64,15 +64,6 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   endDate: string;
 
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
-    label: 'Web Link',
-    description:
-      'Web Link. This is the URL to the event in the calendar application.',
-    icon: 'IconLink',
-  })
-  webLink: string;
-
-  @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
     label: 'Creation Date',
     description: 'Creation Date',
