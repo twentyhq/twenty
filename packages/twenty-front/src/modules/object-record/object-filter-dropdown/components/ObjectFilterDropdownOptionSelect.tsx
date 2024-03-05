@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
+import { MenuItem, MenuItemMultiSelect } from 'tsup.ui.index';
+
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { MultipleOptionSelectDropdown } from '@/object-record/select/components/MultipleOptionSelectDropdown';
-import { useOptionsForSelect } from '@/object-record/select/hooks/useOptionsForSelect';
+import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { SelectableOption } from '@/object-record/select/types/SelectableOption';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
@@ -11,54 +14,62 @@ export const ObjectFilterDropdownOptionSelect = () => {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
     selectedOperandInDropdown,
-    setObjectFilterDropdownSelectedOptionValues,
     objectFilterDropdownSelectedOptionValues,
     selectFilter,
   } = useFilterDropdown();
 
   const fieldMetaDataId = filterDefinitionUsedInDropdown?.fieldMetadataId ?? '';
 
-  const { filteredSelectedOptions, optionsToSelect, selectedOptions } =
-    useOptionsForSelect({
-      searchFilterText: objectFilterDropdownSearchInput,
-      selectedValues: objectFilterDropdownSelectedOptionValues,
-      fieldMetaDataId,
-      limit: 10,
-    });
+  const { selectOptions } = useOptionsForSelect(fieldMetaDataId);
+
+  const [selectableOptions, setSelectableOptions] = useState<
+    SelectableOption[]
+  >([]);
+
+  useEffect(() => {
+    if (selectOptions) {
+      const options = selectOptions.map((option) => {
+        const isSelected =
+          objectFilterDropdownSelectedOptionValues?.includes(option.value) ??
+          false;
+
+        return {
+          ...option,
+          isSelected,
+        };
+      });
+
+      setSelectableOptions(options);
+    }
+  }, [objectFilterDropdownSelectedOptionValues, selectOptions]);
 
   const handleMultipleOptionSelectChange = (
-    optionToSelect: SelectableOption,
-    newSelectedValue: boolean,
+    optionChanged: SelectableOption,
+    isSelected: boolean,
   ) => {
-    const newSelectedOptionValues = newSelectedValue
-      ? [...objectFilterDropdownSelectedOptionValues, optionToSelect.value]
-      : objectFilterDropdownSelectedOptionValues.filter(
-          (value) => value !== optionToSelect.value,
-        );
+    if (!selectOptions) {
+      return;
+    }
 
-    setObjectFilterDropdownSelectedOptionValues(newSelectedOptionValues);
+    const newSelectableOptions = selectableOptions.map((option) =>
+      option.id === optionChanged.id ? { ...option, isSelected } : option,
+    );
 
-    const selectedOptionLabels = [
-      ...optionsToSelect,
-      ...selectedOptions,
-      ...filteredSelectedOptions,
-    ]
-      .filter(
-        (option, index, self) =>
-          self.findIndex((r) => r.id === option.id) === index,
-      )
-      .filter((option) => newSelectedOptionValues.includes(option.value))
-      .map((option) => option.label);
+    setSelectableOptions(newSelectableOptions);
+
+    const selectedOptions = newSelectableOptions.filter(
+      (option) => option.isSelected,
+    );
 
     const filterDisplayValue =
-      selectedOptionLabels.length > MAX_OPTIONS_TO_DISPLAY
-        ? `${selectedOptionLabels.length} options`
-        : selectedOptionLabels.join(', ');
+      selectedOptions.length > MAX_OPTIONS_TO_DISPLAY
+        ? `${selectedOptions.length} options`
+        : selectedOptions.map((option) => option.label).join(', ');
 
     if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
       const newFilterValue =
-        newSelectedOptionValues.length > 0
-          ? JSON.stringify(newSelectedOptionValues)
+        selectedOptions.length > 0
+          ? JSON.stringify(selectedOptions.map((option) => option.value))
           : EMPTY_FILTER_VALUE;
 
       selectFilter({
@@ -71,12 +82,26 @@ export const ObjectFilterDropdownOptionSelect = () => {
     }
   };
 
+  const optionsInDropdown = selectableOptions?.filter((option) =>
+    option.label.toLowerCase().includes(objectFilterDropdownSearchInput),
+  );
+
+  const showNoResult = optionsInDropdown?.length === 0;
+
   return (
-    <MultipleOptionSelectDropdown
-      optionsToSelect={optionsToSelect}
-      filteredSelectedOptions={filteredSelectedOptions}
-      onChange={handleMultipleOptionSelectChange}
-      searchFilter={objectFilterDropdownSearchInput}
-    />
+    <DropdownMenuItemsContainer hasMaxHeight>
+      {optionsInDropdown?.map((option) => (
+        <MenuItemMultiSelect
+          key={option.id}
+          selected={option.isSelected}
+          onSelectChange={(selected) =>
+            handleMultipleOptionSelectChange(option, selected)
+          }
+          text={option.label}
+          className=""
+        />
+      ))}
+      {showNoResult && <MenuItem text="No result" />}
+    </DropdownMenuItemsContainer>
   );
 };
