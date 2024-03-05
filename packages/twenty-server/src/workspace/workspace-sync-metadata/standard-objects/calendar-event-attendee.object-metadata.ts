@@ -21,10 +21,11 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 })
 export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.RELATION,
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
+    joinColumn: 'eventId',
   })
   eventId: string;
 
