@@ -65,11 +65,12 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'HTML Link',
-    description: 'HTML Link',
+    label: 'Web Link',
+    description:
+      'Web Link. This is the URL to the event in the calendar application.',
     icon: 'IconLink',
   })
-  htmlLink: string;
+  webLink: string;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -133,13 +134,5 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Recurring Event ID',
     icon: 'IconHistory',
   })
-  recurringEventId: string;
-
-  @FieldMetadata({
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Original Start Time',
-    description: 'Original Start Time',
-    icon: 'IconCalendarClock',
-  })
-  originalStartTime: string;
+  recurringEventExternalId: string;
 }
