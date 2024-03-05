@@ -43,7 +43,6 @@ export const SelectFieldInput = ({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      console.log('coucou');
       event.stopImmediatePropagation();
 
       const weAreNotInAnHTMLInput = !(
