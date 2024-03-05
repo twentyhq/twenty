@@ -334,6 +334,6 @@ export class EnvironmentService {
   }
 
   getCacheStorageTtl(): number {
-    return this.configService.get<number>('CACHE_STORAGE_TTL') ?? 3600;
+    return this.configService.get<number>('CACHE_STORAGE_TTL') ?? 3600 * 24 * 7;
   }
 }
