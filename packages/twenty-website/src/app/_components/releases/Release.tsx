@@ -74,7 +74,7 @@ const StlyedContent = styled.div`
       margin: 24px 0 40px;
     }
     p {
-      margin-bottom : 40px;
+      margin-bottom : 64px;
     }
     
   }
