@@ -95,9 +95,9 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   avatarUrl: string;
 
   @FieldMetadata({
-    type: FieldMetadataType.NUMBER,
+    type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Record Position',
+    description: 'Person record Position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()
