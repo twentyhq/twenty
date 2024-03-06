@@ -17,6 +17,7 @@ export const computeStandardObject = (
 
   for (const partialFieldMetadata of standardObjectMetadata.fields) {
     if ('factory' in partialFieldMetadata) {
+      // Compute standard fields of custom object
       for (const customObjectMetadata of customObjectMetadataCollection) {
         const { factory, ...rest } = partialFieldMetadata;
         const { joinColumn, ...data } = factory(customObjectMetadata);

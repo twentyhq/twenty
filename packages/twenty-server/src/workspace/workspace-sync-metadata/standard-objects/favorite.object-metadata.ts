@@ -69,11 +69,11 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   opportunity: OpportunityObjectMetadata;
 
-  @ComputedRelationFieldMetadata((objectMetadata) => ({
-    name: objectMetadata.nameSingular,
-    label: objectMetadata.labelSingular,
-    description: `ActivityTarget ${objectMetadata.nameSingular}`,
-    joinColumn: `${objectMetadata.nameSingular}Id`,
+  @ComputedRelationFieldMetadata((oppositeObjectMetadata) => ({
+    name: oppositeObjectMetadata.nameSingular,
+    label: oppositeObjectMetadata.labelSingular,
+    description: `ActivityTarget ${oppositeObjectMetadata.nameSingular}`,
+    joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
   custom: CustomObjectMetadata;

@@ -51,15 +51,10 @@ export class WorkspaceSyncObjectMetadataService {
         },
         relations: ['dataSource', 'fields'],
       });
-
-    const customObjectMetadataCollection = await objectMetadataRepository.find({
-      where: {
-        workspaceId: context.workspaceId,
-        isCustom: true,
-        fields: { isCustom: false },
-      },
-      relations: ['dataSource', 'fields'],
-    });
+    const customObjectMetadataCollection =
+      originalObjectMetadataCollection.filter(
+        (objectMetadata) => objectMetadata.isCustom,
+      );
 
     // Create standard object metadata collection
     const standardObjectMetadataCollection = this.standardObjectFactory.create(

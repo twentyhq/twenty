@@ -1,11 +1,10 @@
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-
-import { ReflectObjectMetadata } from './reflect-object-metadata.interface';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 export type ComputedRelationFieldMetadataDecoratorParams = (
-  objectMetadata: ReflectObjectMetadata,
+  oppositeObjectMetadata: ObjectMetadataEntity,
 ) => {
   name: string;
   label: string;

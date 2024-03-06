@@ -63,7 +63,6 @@ export class WorkspaceSyncFieldMetadataService {
 
     // Loop over all standard objects and compare them with the objects in DB
     for (const customObjectMetadata of customObjectMetadataCollection) {
-      // TODO: Move everything in this for-loop to a separate file/method so we can call it from object-metadata.service
       // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
       const standardObjectMetadata = computeStandardObject(
         {
