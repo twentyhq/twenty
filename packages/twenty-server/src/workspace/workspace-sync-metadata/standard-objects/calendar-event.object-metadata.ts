@@ -34,11 +34,11 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
-    label: 'Is cancelled',
-    description: 'Is cancelled',
+    label: 'Is canceled',
+    description: 'Is canceled',
     icon: 'IconCalendarCancel',
   })
-  isCancelled: boolean;
+  isCanceled: boolean;
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
