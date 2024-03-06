@@ -6,6 +6,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -13,6 +14,7 @@ import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorato
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
@@ -112,7 +114,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
@@ -126,7 +127,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
     inverseSideFieldName: 'pointOfContact',
   })
-  @IsNullable()
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -140,7 +140,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'activityTarget',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -154,7 +153,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'favorite',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -168,7 +166,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'attachment',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
@@ -182,6 +179,21 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageParticipant',
     inverseSideFieldName: 'person',
   })
-  @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Event Attendees',
+    description: 'Calendar Event Attendees',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarEventAttendee',
+    inverseSideFieldName: 'person',
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
 }
