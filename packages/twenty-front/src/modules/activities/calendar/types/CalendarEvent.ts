@@ -1,10 +1,10 @@
 // TODO: use backend CalendarEvent type when ready
 export type CalendarEvent = {
-  endDate?: Date;
+  endsAt?: Date;
   id: string;
   isFullDay: boolean;
-  startDate: Date;
-  status: 'confirmed' | 'tentative' | 'cancelled';
+  startsAt: Date;
+  isCanceled?: boolean;
   title?: string;
-  visibility: 'metadata' | 'share_everything';
+  visibility: 'METADATA' | 'SHARE_EVERYTHING';
 };

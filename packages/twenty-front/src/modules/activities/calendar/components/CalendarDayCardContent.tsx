@@ -57,7 +57,7 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
-  const endOfDayDate = endOfDay(calendarEvents[0].startDate);
+  const endOfDayDate = endOfDay(calendarEvents[0].startsAt);
   const isPastDay = isPast(endOfDayDate);
 
   return (

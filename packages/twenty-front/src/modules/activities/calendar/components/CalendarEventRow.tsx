@@ -46,7 +46,7 @@ const StyledTime = styled.div`
   width: ${({ theme }) => theme.spacing(26)};
 `;
 
-const StyledTitle = styled.div<{ active: boolean; cancelled: boolean }>`
+const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
   flex: 1 0 auto;
 
   ${({ theme, active }) =>
@@ -56,8 +56,8 @@ const StyledTitle = styled.div<{ active: boolean; cancelled: boolean }>`
       font-weight: ${theme.font.weight.medium};
     `}
 
-  ${({ cancelled }) =>
-    cancelled &&
+  ${({ canceled }) =>
+    canceled &&
     css`
       text-decoration: line-through;
     `}
@@ -87,9 +87,9 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const theme = useTheme();
 
-  const hasEventEnded = calendarEvent.endDate
-    ? isPast(calendarEvent.endDate)
-    : calendarEvent.isFullDay && isPast(endOfDay(calendarEvent.startDate));
+  const hasEventEnded = calendarEvent.endsAt
+    ? isPast(calendarEvent.endsAt)
+    : calendarEvent.isFullDay && isPast(endOfDay(calendarEvent.startsAt));
 
   return (
     <StyledContainer className={className}>
@@ -100,17 +100,17 @@ export const CalendarEventRow = ({
             'All Day'
           ) : (
             <>
-              {format(calendarEvent.startDate, 'HH:mm')}
-              {!!calendarEvent.endDate && (
+              {format(calendarEvent.startsAt, 'HH:mm')}
+              {!!calendarEvent.endsAt && (
                 <>
                   <IconArrowRight size={theme.icon.size.sm} />
-                  {format(calendarEvent.endDate, 'HH:mm')}
+                  {format(calendarEvent.endsAt, 'HH:mm')}
                 </>
               )}
             </>
           )}
         </StyledTime>
-        {calendarEvent.visibility === 'metadata' ? (
+        {calendarEvent.visibility === 'METADATA' ? (
           <StyledVisibilityCard active={!hasEventEnded}>
             <StyledVisibilityCardContent>
               <IconLock size={theme.icon.size.sm} />
@@ -120,7 +120,7 @@ export const CalendarEventRow = ({
         ) : (
           <StyledTitle
             active={!hasEventEnded}
-            cancelled={calendarEvent.status === 'cancelled'}
+            canceled={!!calendarEvent.isCanceled}
           >
             {calendarEvent.title}
           </StyledTitle>

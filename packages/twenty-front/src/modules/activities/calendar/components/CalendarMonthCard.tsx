@@ -14,7 +14,7 @@ export const CalendarMonthCard = ({
 }: CalendarMonthCardProps) => {
   const calendarEventsByDayTime = groupArrayItemsBy(
     calendarEvents,
-    ({ startDate }) => startOfDay(startDate).getTime(),
+    ({ startsAt }) => startOfDay(startsAt).getTime(),
   );
   const sortedDayTimes = Object.keys(calendarEventsByDayTime).sort(
     (timeA, timeB) => +timeB - +timeA,

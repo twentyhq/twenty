@@ -16,11 +16,11 @@ const StyledContainer = styled.div`
 
 export const Calendar = () => {
   const sortedCalendarEvents = mockedCalendarEvents.sort(
-    (eventA, eventB) => eventB.startDate.getTime() - eventA.startDate.getTime(),
+    (eventA, eventB) => eventB.startsAt.getTime() - eventA.startsAt.getTime(),
   );
   const calendarEventsByMonthTime = groupArrayItemsBy(
     sortedCalendarEvents,
-    ({ startDate }) => startOfMonth(startDate).getTime(),
+    ({ startsAt }) => startOfMonth(startsAt).getTime(),
   );
   const sortedMonthTimes = Object.keys(calendarEventsByMonthTime).sort(
     (timeA, timeB) => +timeB - +timeA,
