@@ -84,9 +84,10 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Next Sync Token',
-    description: 'Next Sync Token',
+    label: 'Sync Cursor',
+    description:
+      'Sync Cursor. Used for syncing events from the calendar provider',
     icon: 'IconReload',
   })
-  nextSyncToken: string;
+  syncCursor: string;
 }

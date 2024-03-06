@@ -5,6 +5,7 @@ import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
@@ -25,9 +26,9 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
-    joinColumn: 'eventId',
+    joinColumn: 'calendarEventId',
   })
-  eventId: string;
+  calendarEvent: CalendarEventObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
