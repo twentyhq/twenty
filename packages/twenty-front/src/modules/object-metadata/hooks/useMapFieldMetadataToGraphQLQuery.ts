@@ -10,17 +10,11 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
   const mapFieldMetadataToGraphQLQuery = ({
     field,
-    maxDepthForRelations = 2,
-    onlyTypenameAndIdOnDeepestRelationFields = false,
+    depth = 2,
   }: {
     field: FieldMetadataItem;
-    maxDepthForRelations?: number;
-    onlyTypenameAndIdOnDeepestRelationFields?: boolean;
+    depth?: number;
   }): any => {
-    if (maxDepthForRelations <= 0) {
-      return '';
-    }
-
     // TODO: parse
     const fieldType = field.type as FieldType;
 
@@ -50,26 +44,23 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
-      let subfieldQuery = '';
-
-      if (maxDepthForRelations > 0) {
-        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
-          .map((field) =>
-            mapFieldMetadataToGraphQLQuery({
-              field,
-              maxDepthForRelations: maxDepthForRelations - 1,
-              onlyTypenameAndIdOnDeepestRelationFields,
-            }),
-          )
-          .join('\n')}`;
+      if (depth > 1) {
+        return `${field.name}
+        {
+          __typename
+          id
+          ${(relationMetadataItem?.fields ?? [])
+            .map((field) =>
+              mapFieldMetadataToGraphQLQuery({
+                field,
+                depth: depth - 1,
+              }),
+            )
+            .join('\n')}
+        }`;
+      } else {
+        return '';
       }
-
-      return `${field.name}
-    {
-      __typename
-      id
-      ${subfieldQuery}
-    }`;
     } else if (
       fieldType === 'RELATION' &&
       field.toRelationMetadata?.relationType === 'ONE_TO_ONE'
@@ -80,26 +71,23 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
-      let subfieldQuery = '';
-
-      if (maxDepthForRelations > 0) {
-        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
-          .map((field) =>
-            mapFieldMetadataToGraphQLQuery({
-              field,
-              maxDepthForRelations: maxDepthForRelations - 1,
-              onlyTypenameAndIdOnDeepestRelationFields,
-            }),
-          )
-          .join('\n')}`;
+      if (depth > 1) {
+        return `${field.name}
+        {
+          __typename
+          id
+          ${(relationMetadataItem?.fields ?? [])
+            .map((field) =>
+              mapFieldMetadataToGraphQLQuery({
+                field,
+                depth: depth - 1,
+              }),
+            )
+            .join('\n')}
+        }`;
+      } else {
+        return '';
       }
-
-      return `${field.name}
-    {
-      __typename
-      id
-      ${subfieldQuery}
-    }`;
     } else if (
       fieldType === 'RELATION' &&
       field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
@@ -110,30 +98,27 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
       );
 
-      let subfieldQuery = '';
-
-      if (maxDepthForRelations > 0) {
-        subfieldQuery = `${(relationMetadataItem?.fields ?? [])
-          .map((field) =>
-            mapFieldMetadataToGraphQLQuery({
-              field,
-              maxDepthForRelations: maxDepthForRelations - 1,
-              onlyTypenameAndIdOnDeepestRelationFields,
-            }),
-          )
-          .join('\n')}`;
-      }
-
-      return `${field.name}
-      {
-        edges {
-          node {
-            __typename
-            id
-            ${subfieldQuery}
+      if (depth > 1) {
+        return `${field.name}
+        {
+          edges {
+            node {
+              __typename
+              id
+              ${(relationMetadataItem?.fields ?? [])
+                .map((field) =>
+                  mapFieldMetadataToGraphQLQuery({
+                    field,
+                    depth: depth - 1,
+                  }),
+                )
+                .join('\n')}
+            }
           }
-        }
-      }`;
+        }`;
+      } else {
+        return '';
+      }
     } else if (fieldType === 'LINK') {
       return `
       ${field.name}
