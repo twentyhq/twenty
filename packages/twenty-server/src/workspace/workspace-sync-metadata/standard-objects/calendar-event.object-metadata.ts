@@ -143,7 +143,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarChannelEventAssociations',
+    objectName: 'calendarChannelEventAssociation',
+    onDelete: RelationOnDeleteAction.CASCADE,
     inverseSideFieldName: 'event',
   })
   @Gate({
@@ -161,6 +162,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'calendarEventAttendee',
     onDelete: RelationOnDeleteAction.CASCADE,
+    inverseSideFieldName: 'event',
   })
   eventAttendees: CalendarEventAttendeeObjectMetadata[];
 }

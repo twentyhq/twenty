@@ -33,7 +33,7 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
-    joinColumn: 'calendarEventId',
+    joinColumn: 'eventId',
   })
   event: CalendarEventObjectMetadata;
 

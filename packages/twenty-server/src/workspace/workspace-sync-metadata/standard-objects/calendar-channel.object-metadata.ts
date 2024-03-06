@@ -102,7 +102,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarChannelEventAssociations',
+    objectName: 'calendarChannelEventAssociation',
     inverseSideFieldName: 'calendarChannel',
   })
   @Gate({
