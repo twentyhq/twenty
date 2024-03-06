@@ -66,6 +66,7 @@ const StlyedContent = styled.div`
 
   img {
     max-width: 100%;
+    margin-bottom = 160px
   }
   @media (max-width : 810px) {    
     h3 {
