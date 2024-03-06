@@ -13,7 +13,7 @@ const StyledTitle = styled.div`
   }
 `;
 const StyledHeader = styled.h1`
-  color: #b3b3b3;
+  color: #141414;
   margin: 0;
 `;
 const StyledSubHeader = styled.h1`
