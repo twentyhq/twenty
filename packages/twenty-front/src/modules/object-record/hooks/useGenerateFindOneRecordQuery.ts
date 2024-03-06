@@ -28,7 +28,7 @@ export const useGenerateFindOneRecordQuery = () => {
             .map((field) =>
               mapFieldMetadataToGraphQLQuery({
                 field,
-                maxDepthForRelations: depth,
+                depth,
               }),
             )
             .join('\n')}

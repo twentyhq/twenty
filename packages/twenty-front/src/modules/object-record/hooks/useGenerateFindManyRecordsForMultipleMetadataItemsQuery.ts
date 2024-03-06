@@ -74,7 +74,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
                 .map((field) =>
                   mapFieldMetadataToGraphQLQuery({
                     field,
-                    maxDepthForRelations: depth,
+                    depth,
                   }),
                 )
                 .join('\n')}
