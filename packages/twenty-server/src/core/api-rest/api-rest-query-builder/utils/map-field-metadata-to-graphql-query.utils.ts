@@ -22,6 +22,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.EMAIL,
     FieldMetadataType.NUMBER,
     FieldMetadataType.BOOLEAN,
+    FieldMetadataType.POSITION,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
