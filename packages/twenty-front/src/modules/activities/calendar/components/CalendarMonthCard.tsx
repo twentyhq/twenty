@@ -4,6 +4,7 @@ import { CalendarDayCardContent } from '@/activities/calendar/components/Calenda
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { Card } from '@/ui/layout/card/components/Card';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
+import { sortDesc } from '~/utils/sort';
 
 type CalendarMonthCardProps = {
   calendarEvents: CalendarEvent[];
@@ -16,14 +17,14 @@ export const CalendarMonthCard = ({
     calendarEvents,
     ({ startsAt }) => startOfDay(startsAt).getTime(),
   );
-  const sortedDayTimes = Object.keys(calendarEventsByDayTime).sort(
-    (timeA, timeB) => +timeB - +timeA,
-  );
+  const sortedDayTimes = Object.keys(calendarEventsByDayTime)
+    .map(Number)
+    .sort(sortDesc);
 
   return (
     <Card fullWidth>
       {sortedDayTimes.map((dayTime, index) => {
-        const dayCalendarEvents = calendarEventsByDayTime[+dayTime];
+        const dayCalendarEvents = calendarEventsByDayTime[dayTime];
 
         return (
           !!dayCalendarEvents?.length && (
