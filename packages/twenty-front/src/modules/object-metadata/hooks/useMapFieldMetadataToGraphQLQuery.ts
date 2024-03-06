@@ -52,7 +52,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
       let subfieldQuery = '';
 
-      if (maxDepthForRelations > 0) {
+      if (maxDepthForRelations > 1) {
         subfieldQuery = `${(relationMetadataItem?.fields ?? [])
           .map((field) =>
             mapFieldMetadataToGraphQLQuery({
@@ -62,6 +62,8 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
             }),
           )
           .join('\n')}`;
+      } else {
+        return '';
       }
 
       return `${field.name}
@@ -82,7 +84,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
       let subfieldQuery = '';
 
-      if (maxDepthForRelations > 0) {
+      if (maxDepthForRelations > 1) {
         subfieldQuery = `${(relationMetadataItem?.fields ?? [])
           .map((field) =>
             mapFieldMetadataToGraphQLQuery({
@@ -92,6 +94,8 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
             }),
           )
           .join('\n')}`;
+      } else {
+        return '';
       }
 
       return `${field.name}
@@ -112,7 +116,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
       let subfieldQuery = '';
 
-      if (maxDepthForRelations > 0) {
+      if (maxDepthForRelations > 1) {
         subfieldQuery = `${(relationMetadataItem?.fields ?? [])
           .map((field) =>
             mapFieldMetadataToGraphQLQuery({
@@ -122,6 +126,8 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
             }),
           )
           .join('\n')}`;
+      } else {
+        return '';
       }
 
       return `${field.name}
