@@ -3,21 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
+import { FetchCalendarsByBatchesService } from 'src/workspace/messaging/services/fetch-calendars-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import { CalendarQueue } from 'src/integrations/calendar-queue/calendar-queue.constants';
+import { CalendarQueueService } from 'src/integrations/calendar-queue/services/calendar-queue.service';
 import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
-import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
-import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
+import { CalendarChannelService } from 'src/workspace/messaging/repositories/calendar-channel/calendar-channel.service';
+import { CalendarChannelCalendarAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
+import { createQueriesFromCalendarIds } from 'src/workspace/messaging/utils/create-queries-from-calendar-ids.util';
 import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
-import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
+import { SaveCalendarsAndCreateContactsService } from 'src/workspace/messaging/services/save-calendars-and-create-contacts.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -29,14 +29,14 @@ export class GmailFullSyncService {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    @Inject(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly fetchCalendarsByBatchesService: FetchCalendarsByBatchesService,
+    @Inject(CalendarQueue.messagingQueue)
+    private readonly calendarQueueService: CalendarQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
-    private readonly messageChannelService: MessageChannelService,
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly calendarChannelService: CalendarChannelService,
+    private readonly calendarChannelCalendarAssociationService: CalendarChannelCalendarAssociationService,
     private readonly blocklistService: BlocklistService,
-    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    private readonly saveCalendarsAndCreateContactsService: SaveCalendarsAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -61,13 +61,13 @@ export class GmailFullSyncService {
       );
     }
 
-    const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+    const gmailCalendarChannel =
+      await this.calendarChannelService.getFirstByConnectedAccountIdOrFail(
         connectedAccountId,
         workspaceId,
       );
 
-    const gmailMessageChannelId = gmailMessageChannel.id;
+    const gmailCalendarChannelId = gmailCalendarChannel.id;
 
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
@@ -92,7 +92,7 @@ export class GmailFullSyncService {
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
 
-    const messages = await gmailClient.users.messages.list({
+    const calendars = await gmailClient.users.calendars.list({
       userId: 'me',
       maxResults: 500,
       pageToken: nextPageToken,
@@ -102,18 +102,18 @@ export class GmailFullSyncService {
     let endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting messages list in ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting calendars list in ${
         endTime - startTime
       }ms.`,
     );
 
-    const messagesData = messages.data.messages;
+    const calendarsData = calendars.data.calendars;
 
-    const messageExternalIds = messagesData
-      ? messagesData.map((message) => message.id || '')
+    const calendarExternalIds = calendarsData
+      ? calendarsData.map((calendar) => calendar.id || '')
       : [];
 
-    if (!messageExternalIds || messageExternalIds?.length === 0) {
+    if (!calendarExternalIds || calendarExternalIds?.length === 0) {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
@@ -123,41 +123,41 @@ export class GmailFullSyncService {
 
     startTime = Date.now();
 
-    const existingMessageChannelMessageAssociations =
-      await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
-        messageExternalIds,
-        gmailMessageChannelId,
+    const existingCalendarChannelCalendarAssociations =
+      await this.calendarChannelCalendarAssociationService.getByCalendarExternalIdsAndCalendarChannelId(
+        calendarExternalIds,
+        gmailCalendarChannelId,
         workspaceId,
       );
 
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing message channel message associations in ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel calendar associations in ${
         endTime - startTime
       }ms.`,
     );
 
-    const existingMessageChannelMessageAssociationsExternalIds =
-      existingMessageChannelMessageAssociations.map(
-        (messageChannelMessageAssociation) =>
-          messageChannelMessageAssociation.messageExternalId,
+    const existingCalendarChannelCalendarAssociationsExternalIds =
+      existingCalendarChannelCalendarAssociations.map(
+        (calendarChannelCalendarAssociation) =>
+          calendarChannelCalendarAssociation.calendarExternalId,
       );
 
-    const messagesToFetch = messageExternalIds.filter(
-      (messageExternalId) =>
-        !existingMessageChannelMessageAssociationsExternalIds.includes(
-          messageExternalId,
+    const calendarsToFetch = calendarExternalIds.filter(
+      (calendarExternalId) =>
+        !existingCalendarChannelCalendarAssociationsExternalIds.includes(
+          calendarExternalId,
         ),
     );
 
-    const messageQueries = createQueriesFromMessageIds(messagesToFetch);
+    const calendarQueries = createQueriesFromCalendarIds(calendarsToFetch);
 
     startTime = Date.now();
 
-    const { messages: messagesToSave, errors } =
-      await this.fetchMessagesByBatchesService.fetchAllMessages(
-        messageQueries,
+    const { calendars: calendarsToSave, errors } =
+      await this.fetchCalendarsByBatchesService.fetchAllCalendars(
+        calendarQueries,
         accessToken,
         'gmail full-sync',
         workspaceId,
@@ -167,17 +167,17 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all messages in ${
+      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all calendars in ${
         endTime - startTime
       }ms.`,
     );
 
-    if (messagesToSave.length > 0) {
-      this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
-        messagesToSave,
+    if (calendarsToSave.length > 0) {
+      this.saveCalendarsAndCreateContactsService.saveCalendarsAndCreateContacts(
+        calendarsToSave,
         connectedAccount,
         workspaceId,
-        gmailMessageChannelId,
+        gmailCalendarChannelId,
         'gmail full-sync',
       );
     } else {
@@ -188,13 +188,13 @@ export class GmailFullSyncService {
 
     if (errors.length) {
       throw new Error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `Error fetching calendars for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
       );
     }
-    const lastModifiedMessageId = messagesToFetch[0];
+    const lastModifiedCalendarId = calendarsToFetch[0];
 
-    const historyId = messagesToSave.find(
-      (message) => message.externalId === lastModifiedMessageId,
+    const historyId = calendarsToSave.find(
+      (calendar) => calendar.externalId === lastModifiedCalendarId,
     )?.historyId;
 
     if (!historyId) {
@@ -225,13 +225,13 @@ export class GmailFullSyncService {
       }done.`,
     );
 
-    if (messages.data.nextPageToken) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
+    if (calendars.data.nextPageToken) {
+      await this.calendarQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         {
           workspaceId,
           connectedAccountId,
-          nextPageToken: messages.data.nextPageToken,
+          nextPageToken: calendars.data.nextPageToken,
         },
         {
           retryLimit: 2,
