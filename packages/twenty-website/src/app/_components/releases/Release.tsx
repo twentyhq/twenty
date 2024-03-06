@@ -61,12 +61,21 @@ const StlyedContent = styled.div`
     color: #474747;
     font-size: 16px;
     line-height: 28.8px;
-    color: #818181;
     font-weight: 400;
   }
 
   img {
     max-width: 100%;
+  }
+  @media (max-width : 810px) {    
+    h3 {
+      font-size = 24px;     
+      margin: 24px 0 40px;
+    }
+    p {
+      margin-bottom : 40px;
+    }
+    
   }
 `;
 
