@@ -41,6 +41,7 @@ type FieldMetadataDefaultValueMapping = {
     | FieldMetadataDynamicDefaultValueNow;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
+  [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;

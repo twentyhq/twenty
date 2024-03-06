@@ -19,6 +19,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'numeric';
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.PROBABILITY:
+    case FieldMetadataType.POSITION:
       return 'float';
     case FieldMetadataType.BOOLEAN:
       return 'boolean';
