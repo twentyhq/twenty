@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
@@ -17,6 +19,7 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const SettingsBilling = () => {
+  const onboardingStatus = useOnboardingStatus();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -32,12 +35,14 @@ export const SettingsBilling = () => {
       <SettingsPageContainer>
         <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
-        <Info
-          text={'Last payment failed. Please update your billing details.'}
-          buttonTitle={'Update'}
-          accent={'danger'}
-          onClick={handleButtonClick}
-        />
+        {onboardingStatus === OnboardingStatus.Canceled && (
+          <Info
+            text={'Last payment failed. Please update your billing details.'}
+            buttonTitle={'Update'}
+            accent={'danger'}
+            onClick={handleButtonClick}
+          />
+        )}
         <Section>
           <H2Title
             title="Manage your subscription"

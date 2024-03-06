@@ -81,12 +81,18 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignIn);
     } else if (
       onboardingStatus &&
-      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
-        onboardingStatus,
-      ) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
+    } else if (
+      onboardingStatus &&
+      onboardingStatus === OnboardingStatus.Canceled &&
+      !isMatchingLocation(SettingsPath.Billing)
+    ) {
+      navigate(
+        `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
+      );
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace) &&
