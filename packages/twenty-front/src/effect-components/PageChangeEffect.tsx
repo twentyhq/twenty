@@ -64,7 +64,8 @@ export const PageChangeEffect = () => {
       isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired);
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess);
 
     const navigateToSignUp = () => {
       enqueueSnackBar('workspace does not exist', {
@@ -81,13 +82,15 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignIn);
     } else if (
       onboardingStatus &&
-      onboardingStatus === OnboardingStatus.Incomplete &&
+      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
+        onboardingStatus,
+      ) &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
       onboardingStatus &&
-      onboardingStatus === OnboardingStatus.Canceled &&
+      onboardingStatus === OnboardingStatus.Unpaid &&
       !isMatchingLocation(SettingsPath.Billing)
     ) {
       navigate(

@@ -20,6 +20,7 @@ export enum AvailableProduct {
 export enum WebhookEvent {
   CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
+  CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
 }
 
 @Injectable()
@@ -160,6 +161,16 @@ export class BillingService {
       );
       await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
     }
+  }
+
+  async deleteBillingSubscription(
+    workspaceId: string,
+    data: Stripe.CustomerSubscriptionDeletedEvent.Data,
+  ) {
+    await this.billingSubscriptionRepository.delete({ workspaceId });
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: data.object.status,
+    });
   }
 
   async upsertBillingSubscription(

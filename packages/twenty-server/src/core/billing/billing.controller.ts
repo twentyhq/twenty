@@ -55,6 +55,20 @@ export class BillingController {
         event.data,
       );
     }
+    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED) {
+      const workspaceId = event.data.object.metadata?.workspaceId;
+
+      if (!workspaceId) {
+        res.status(404).end();
+
+        return;
+      }
+
+      await this.billingService.deleteBillingSubscription(
+        workspaceId,
+        event.data,
+      );
+    }
     res.status(200).end();
   }
 }

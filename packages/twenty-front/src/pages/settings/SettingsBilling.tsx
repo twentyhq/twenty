@@ -25,6 +25,11 @@ export const SettingsBilling = () => {
       returnUrlPath: '/settings/billing',
     },
   });
+
+  const displayPaymentFailInfo =
+    onboardingStatus === OnboardingStatus.PastDue ||
+    onboardingStatus === OnboardingStatus.Unpaid;
+
   const handleButtonClick = () => {
     if (data) {
       window.location.replace(data.billingPortalSession.url);
@@ -35,7 +40,7 @@ export const SettingsBilling = () => {
       <SettingsPageContainer>
         <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
-        {onboardingStatus === OnboardingStatus.Canceled && (
+        {displayPaymentFailInfo && (
           <Info
             text={'Last payment failed. Please update your billing details.'}
             buttonTitle={'Update'}

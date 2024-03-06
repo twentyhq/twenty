@@ -78,6 +78,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
     return (
       (onboardingStatus &&
         [
+          OnboardingStatus.Canceled,
           OnboardingStatus.Incomplete,
           OnboardingStatus.OngoingUserCreation,
           OnboardingStatus.OngoingProfileCreation,
