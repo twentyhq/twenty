@@ -10,8 +10,10 @@ import { CalendarEventFromGoogleParsedResponse } from 'src/workspace/calendar/ty
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 
 @Injectable()
-export class FetchCalendarsByBatchesService {
-  private readonly logger = new Logger(FetchCalendarsByBatchesService.name);
+export class FetchCalendarEventsByBatchesService {
+  private readonly logger = new Logger(
+    FetchCalendarEventsByBatchesService.name,
+  );
 
   constructor(private readonly fetchByBatchesService: FetchByBatchesService) {}
 
@@ -21,7 +23,7 @@ export class FetchCalendarsByBatchesService {
     jobName?: string,
     workspaceId?: string,
     connectedAccountId?: string,
-  ): Promise<{ calendars: CalendarEvent[]; errors: any[] }> {
+  ): Promise<{ calendarEvents: CalendarEvent[]; errors: any[] }> {
     let startTime = Date.now();
     const batchResponses = await this.fetchByBatchesService.fetchAllByBatches(
       queries,
@@ -33,7 +35,7 @@ export class FetchCalendarsByBatchesService {
     this.logger.log(
       `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
         queries.length
-      } calendars in ${endTime - startTime}ms`,
+      } calendarEvents in ${endTime - startTime}ms`,
     );
 
     startTime = Date.now();
@@ -46,7 +48,7 @@ export class FetchCalendarsByBatchesService {
     this.logger.log(
       `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
         queries.length
-      } calendars in ${endTime - startTime}ms`,
+      } calendarEvents in ${endTime - startTime}ms`,
     );
 
     return formattedResponse;
@@ -55,7 +57,7 @@ export class FetchCalendarsByBatchesService {
   async formatBatchResponseAsCalendarEvent(
     responseCollection: AxiosResponse<any, any>,
   ): Promise<{
-    calendars: CalendarEventFromGoogleParsedResponse[];
+    calendarEvents: CalendarEventFromGoogleParsedResponse[];
     errors: any[];
   }> {
     const parsedResponses = this.fetchByBatchesService.parseBatch(
@@ -119,11 +121,11 @@ export class FetchCalendarsByBatchesService {
       ),
     );
 
-    const filteredCalendars = (await formattedResponse).filter(
+    const filteredCalendarEvents = (await formattedResponse).filter(
       (calendar) => calendar,
     ) as CalendarEvent[];
 
-    return { calendars: filteredCalendars, errors };
+    return { calendarEvents: filteredCalendarEvents, errors };
   }
 
   formatAddressObjectAsArray(
@@ -158,17 +160,19 @@ export class FetchCalendarsByBatchesService {
 
   async formatBatchResponsesAsCalendarEvents(
     batchResponses: AxiosResponse<any, any>[],
-  ): Promise<{ calendars: CalendarEvent[]; errors: any[] }> {
-    const calendarsAndErrors = await Promise.all(
+  ): Promise<{ calendarEvents: CalendarEvent[]; errors: any[] }> {
+    const calendarEventsAndErrors = await Promise.all(
       batchResponses.map(async (response) => {
         return this.formatBatchResponseAsCalendarEvent(response);
       }),
     );
 
-    const calendars = calendarsAndErrors.map((item) => item.calendars).flat();
+    const calendarEvents = calendarEventsAndErrors
+      .map((item) => item.calendarEvents)
+      .flat();
 
-    const errors = calendarsAndErrors.map((item) => item.errors).flat();
+    const errors = calendarEventsAndErrors.map((item) => item.errors).flat();
 
-    return { calendars, errors };
+    return { calendarEvents, errors };
   }
 }
