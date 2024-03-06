@@ -9,6 +9,13 @@ import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metada
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
+export enum CalendarEventAttendeeResponseStatus {
+  NEEDS_ACTION = 'NEEDS_ACTION',
+  DECLINED = 'DECLINED',
+  TENTATIVE = 'TENTATIVE',
+  ACCEPTED = 'ACCEPTED',
+}
+
 @ObjectMetadata({
   namePlural: 'calendarEventAttendees',
   labelSingular: 'Calendar event attendee',
@@ -55,10 +62,37 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   isOrganizer: boolean;
 
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Response Status',
     description: 'Response Status',
     icon: 'IconUser',
+    options: [
+      {
+        value: CalendarEventAttendeeResponseStatus.NEEDS_ACTION,
+        label: 'Needs Action',
+        position: 0,
+        color: 'orange',
+      },
+      {
+        value: CalendarEventAttendeeResponseStatus.DECLINED,
+        label: 'Declined',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: CalendarEventAttendeeResponseStatus.TENTATIVE,
+        label: 'Tentative',
+        position: 2,
+        color: 'yellow',
+      },
+      {
+        value: CalendarEventAttendeeResponseStatus.ACCEPTED,
+        label: 'Accepted',
+        position: 3,
+        color: 'green',
+      },
+    ],
+    defaultValue: { value: CalendarEventAttendeeResponseStatus.NEEDS_ACTION },
   })
   responseStatus: string;
 
