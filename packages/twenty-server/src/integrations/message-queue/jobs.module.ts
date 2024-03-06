@@ -33,6 +33,7 @@ import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.modu
 import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { CalendarModule } from 'src/workspace/calendar/calendar.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
     MessagingModule,
     MessageParticipantModule,
     MessageChannelModule,
+    CalendarModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
