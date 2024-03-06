@@ -52,7 +52,7 @@ export class PipelineStepObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
+    inverseSideTarget: () => OpportunityObjectMetadata,
   })
   @IsNullable()
   opportunities: OpportunityObjectMetadata[];
