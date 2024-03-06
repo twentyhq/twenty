@@ -105,10 +105,13 @@ export const CurrencyInput = ({
 
   const currencies = useMemo<Currency[]>(
     () =>
-      Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(([key, value]) => ({
-        value: key,
-        ...value,
-      })),
+      Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
+        ([key, { Icon, label }]) => ({
+          value: key,
+          Icon,
+          label,
+        }),
+      ),
     [],
   );
 
