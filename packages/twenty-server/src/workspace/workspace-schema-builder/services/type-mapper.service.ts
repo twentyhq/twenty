@@ -31,7 +31,6 @@ import {
   IntFilterType,
   BooleanFilterType,
   BigFloatFilterType,
-  PositionFilterType,
 } from 'src/workspace/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/workspace/workspace-schema-builder/graphql-types/enum';
 import { BigFloatScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
@@ -99,7 +98,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
-      [FieldMetadataType.POSITION, PositionFilterType],
+      [FieldMetadataType.POSITION, FloatFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
