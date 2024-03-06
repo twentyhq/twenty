@@ -7,7 +7,10 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedActivities } from '~/testing/mock-data/activities';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import {
+  mockedCompaniesData,
+  mockedDuplicateCompanyData,
+} from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 import { mockedUsersData } from '~/testing/mock-data/users';
@@ -52,8 +55,8 @@ export const graphqlMocks = {
       },
     ),
     graphql.query('FindManyViews', ({ variables }) => {
-      const objectMetadataId = variables.filter.objectMetadataId.eq;
-      const viewType = variables.filter.type.eq;
+      const objectMetadataId = variables.filter?.objectMetadataId?.eq;
+      const viewType = variables.filter?.type?.eq;
 
       return HttpResponse.json({
         data: {
@@ -61,8 +64,8 @@ export const graphqlMocks = {
             edges: mockedViewsData
               .filter(
                 (view) =>
-                  view.objectMetadataId === objectMetadataId &&
-                  view.type === viewType,
+                  view?.objectMetadataId === objectMetadataId &&
+                  view?.type === viewType,
               )
               .map((view) => ({
                 node: view,
@@ -100,11 +103,15 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.query('FindManyCompanies', () => {
+    graphql.query('FindManyCompanies', ({ variables }) => {
+      const mockedData = variables.limit
+        ? mockedCompaniesData.slice(0, variables.limit)
+        : mockedCompaniesData;
+
       return HttpResponse.json({
         data: {
           companies: {
-            edges: mockedCompaniesData.map((company) => ({
+            edges: mockedData.map((company) => ({
               node: {
                 ...company,
                 favorites: {
@@ -136,6 +143,49 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
+          },
+        },
+      });
+    }),
+    graphql.query('FindDuplicateCompany', () => {
+      return HttpResponse.json({
+        data: {
+          companyDuplicates: {
+            edges: [
+              {
+                node: {
+                  ...mockedDuplicateCompanyData,
+                  favorites: {
+                    edges: [],
+                    __typename: 'FavoriteConnection',
+                  },
+                  attachments: {
+                    edges: [],
+                    __typename: 'AttachmentConnection',
+                  },
+                  people: {
+                    edges: [],
+                    __typename: 'PersonConnection',
+                  },
+                  opportunities: {
+                    edges: [],
+                    __typename: 'OpportunityConnection',
+                  },
+                  activityTargets: {
+                    edges: [],
+                    __typename: 'ActivityTargetConnection',
+                  },
+                },
+                cursor: null,
+              },
+            ],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+            totalCount: 1,
           },
         },
       });

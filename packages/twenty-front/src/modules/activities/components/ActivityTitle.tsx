@@ -1,17 +1,20 @@
 import { useRef } from 'react';
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
+import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   Checkbox,
   CheckboxShape,
@@ -19,7 +22,7 @@ import {
 } from '@/ui/input/components/Checkbox';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
@@ -53,11 +56,23 @@ const StyledContainer = styled.div`
 `;
 
 type ActivityTitleProps = {
-  activity: Activity;
+  activityId: string;
 };
 
-export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
-  const [internalTitle, setInternalTitle] = useState(activity.title);
+export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
+  const [activityInStore, setActivityInStore] = useRecoilState(
+    recordStoreFamilyState(activityId),
+  );
+
+  const [activityTitle, setActivityTitle] = useRecoilState(
+    activityTitleFamilyState({ activityId }),
+  );
+
+  const activity = activityInStore as Activity;
+
+  const [canCreateActivity, setCanCreateActivity] = useRecoilState(
+    canCreateActivityState,
+  );
 
   const { upsertActivity } = useUpsertActivity();
 
@@ -88,7 +103,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
     }),
   );
 
@@ -114,14 +129,30 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     }
   }, 500);
 
-  const handleTitleChange = (newTitle: string) => {
-    setInternalTitle(newTitle);
+  const setTitleDebounced = useDebouncedCallback((newTitle: string) => {
+    setActivityInStore((currentActivity) => {
+      return {
+        ...currentActivity,
+        id: activity.id,
+        title: newTitle,
+      };
+    });
+
+    if (isNonEmptyString(newTitle) && !canCreateActivity) {
+      setCanCreateActivity(true);
+    }
 
     modifyActivityFromCache(activity.id, {
       title: () => {
         return newTitle;
       },
     });
+  }, 500);
+
+  const handleTitleChange = (newTitle: string) => {
+    setActivityTitle(newTitle);
+
+    setTitleDebounced(newTitle);
 
     persistTitleDebounced(newTitle);
   };
@@ -135,7 +166,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     });
   };
 
-  const completed = isDefined(activity.completedAt);
+  const completed = isNonNullable(activity.completedAt);
 
   return (
     <StyledContainer>
@@ -153,7 +184,7 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
         ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={internalTitle}
+        value={activityTitle}
         completed={completed}
         onBlur={handleBlur}
         onFocus={handleFocus}

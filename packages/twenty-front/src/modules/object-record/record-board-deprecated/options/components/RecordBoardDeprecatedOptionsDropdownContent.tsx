@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
-import { BoardOptionsDropdownId } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
+import { BOARD_OPTIONS_DROPDOWN_ID } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
 import { useRecordBoardDeprecatedScopedStates } from '@/object-record/record-board-deprecated/hooks/internal/useRecordBoardDeprecatedScopedStates';
 import {
   IconBaselineDensitySmall,
@@ -106,7 +106,7 @@ export const RecordBoardDeprecatedOptionsDropdownContent = ({
       recordBoardScopeId: recordBoardId,
     });
 
-  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
+  const { closeDropdown } = useDropdown(BOARD_OPTIONS_DROPDOWN_ID);
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {

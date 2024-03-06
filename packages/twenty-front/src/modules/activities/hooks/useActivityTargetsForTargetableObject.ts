@@ -22,6 +22,9 @@ export const useActivityTargetsForTargetableObject = ({
 
   const skipRequest = !isNonEmptyString(targetableObjectId);
 
+  // TODO: We want to optimistically remove from this request
+  //   If we are on a show page and we remove the current show page object corresponding activity target
+  //   See also if we need to update useTimelineActivities
   const { records: activityTargets, loading: loadingActivityTargets } =
     useFindManyRecords({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,

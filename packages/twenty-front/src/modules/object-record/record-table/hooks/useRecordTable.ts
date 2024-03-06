@@ -5,6 +5,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -126,6 +127,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     const disableSoftFocus = useDisableSoftFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
 
+    const setIsSoftFocusUsingMouseState = useSetRecoilState(
+      isSoftFocusUsingMouseState,
+    );
+
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
       () => {
@@ -148,6 +153,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
       () => {
         moveLeft();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveLeft],
@@ -157,6 +163,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowRight, Key.Tab],
       () => {
         moveRight();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveRight],

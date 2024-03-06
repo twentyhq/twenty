@@ -38,7 +38,9 @@ export class MessageChannelService {
     );
 
     if (!messageChannels || messageChannels.length === 0) {
-      throw new Error('No message channel found');
+      throw new Error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     return messageChannels[0];
@@ -54,23 +56,6 @@ export class MessageChannelService {
     );
 
     return messageChannel.isContactAutoCreationEnabled;
-  }
-
-  public async getIsContactAutoCreationEnabledByMessageChannelId(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<boolean> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const messageChannels =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1 LIMIT 1`,
-        [messageChannelId],
-        workspaceId,
-      );
-
-    return messageChannels[0]?.isContactAutoCreationEnabled;
   }
 
   public async getByIds(

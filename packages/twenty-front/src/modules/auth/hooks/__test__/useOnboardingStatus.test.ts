@@ -18,7 +18,7 @@ const billing = {
   isBillingEnabled: true,
 };
 const currentWorkspace = {
-  displayName: 'testing',
+  activationStatus: 'active',
   id: '1',
   allowImpersonation: true,
 };
@@ -119,25 +119,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentWorkspace({
         ...currentWorkspace,
-        displayName: '',
-        subscriptionStatus: 'active',
-      });
-    });
-
-    expect(result.current.onboardingStatus).toBe(
-      'ongoing_workspace_activation',
-    );
-  });
-
-  it('should return "ongoing_workspace_activation"', async () => {
-    const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentWorkspace } = result.current;
-
-    act(() => {
-      setTokenPair(tokenPair);
-      setBilling(billing);
-      setCurrentWorkspace({
-        ...currentWorkspace,
+        activationStatus: 'inactive',
         subscriptionStatus: 'active',
       });
     });

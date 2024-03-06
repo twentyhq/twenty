@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { ObjectFilterDropdownId } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { SingleEntitySelectMenuItems } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
@@ -22,7 +22,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     selectFilter,
   } = useFilterDropdown();
 
-  const { closeDropdown } = useDropdown(ObjectFilterDropdownId);
+  const { closeDropdown } = useDropdown(OBJECT_FILTER_DROPDOWN_ID);
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 

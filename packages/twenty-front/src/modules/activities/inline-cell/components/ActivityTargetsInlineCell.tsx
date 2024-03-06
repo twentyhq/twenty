@@ -39,10 +39,11 @@ export const ActivityTargetsInlineCell = ({
           scope: ActivityEditorHotkeyScope.ActivityTargets,
         }}
         IconLabel={IconArrowUpRight}
+        showLabel={true}
         editModeContent={
           <ActivityTargetInlineCellEditMode
             activity={activity}
-            activityTargetObjectRecords={activityTargetObjectRecords}
+            activityTargetWithTargetRecords={activityTargetObjectRecords}
           />
         }
         label="Relations"

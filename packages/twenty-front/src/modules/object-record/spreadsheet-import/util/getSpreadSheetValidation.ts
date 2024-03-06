@@ -13,7 +13,7 @@ export const getSpreadSheetValidation = (
       return [
         {
           rule: 'regex',
-          value: '^d+$',
+          value: '^\\d+$',
           errorMessage: fieldName + ' must be a number',
           level: 'error',
         },

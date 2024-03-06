@@ -25,6 +25,7 @@ import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
+import { generateNullable } from 'src/metadata/field-metadata/utils/generate-nullable';
 
 import {
   FieldMetadataEntity,
@@ -33,6 +34,7 @@ import {
 
 import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
+import { generateDefaultValue } from './utils/generate-default-value';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -101,6 +103,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         true,
         fieldMetadataInput.name,
       ),
+      isNullable: generateNullable(
+        fieldMetadataInput.type,
+        fieldMetadataInput.isNullable,
+      ),
+      defaultValue:
+        fieldMetadataInput.defaultValue ??
+        generateDefaultValue(fieldMetadataInput.type),
       options: fieldMetadataInput.options
         ? fieldMetadataInput.options.map((option) => ({
             ...option,
@@ -224,9 +233,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           )
         : fieldMetadataInput;
 
-    const updatedFieldMetadata = await super.updateOne(id, updatableFieldInput);
+    const updatedFieldMetadata = await super.updateOne(id, {
+      ...updatableFieldInput,
+      defaultValue:
+        // Todo: we need to handle default value for all field types. Right now we are only allowing update for SELECt
+        existingFieldMetadata.type !== FieldMetadataType.SELECT
+          ? existingFieldMetadata.defaultValue
+          : updatableFieldInput.defaultValue
+            ? // Todo: we need to rework DefaultValue typing and format to be simpler, there is no need to have this complexity
+              { value: updatableFieldInput.defaultValue as unknown as string }
+            : null,
+      // If the name is updated, the targetColumnMap should be updated as well
+      targetColumnMap: updatableFieldInput.name
+        ? generateTargetColumnMap(
+            existingFieldMetadata.type,
+            existingFieldMetadata.isCustom,
+            updatableFieldInput.name,
+          )
+        : existingFieldMetadata.targetColumnMap,
+    });
 
-    if (updatableFieldInput.options || updatableFieldInput.defaultValue) {
+    if (
+      fieldMetadataInput.name ||
+      updatableFieldInput.options ||
+      updatableFieldInput.defaultValue
+    ) {
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`update-${updatedFieldMetadata.name}`),
         existingFieldMetadata.workspaceId,

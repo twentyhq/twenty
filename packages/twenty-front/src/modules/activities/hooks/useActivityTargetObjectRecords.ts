@@ -1,12 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
-import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Nullable } from '~/types/Nullable';
-import { isDefined } from '~/utils/isDefined';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useActivityTargetObjectRecords = ({
   activityId,
@@ -16,7 +17,7 @@ export const useActivityTargetObjectRecords = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { records: activityTargets, loading: loadingActivityTargets } =
-    useFindManyRecords({
+    useFindManyRecords<ActivityTarget>({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
       skip: !isNonEmptyString(activityId),
       filter: {
@@ -27,10 +28,10 @@ export const useActivityTargetObjectRecords = ({
     });
 
   const activityTargetObjectRecords = activityTargets
-    .map<Nullable<ActivityTargetObjectRecord>>((activityTarget) => {
+    .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
       const correspondingObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
-          isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
+          isNonNullable(activityTarget[objectMetadataItem.nameSingular]) &&
           !objectMetadataItem.isSystem,
       );
 
@@ -39,14 +40,14 @@ export const useActivityTargetObjectRecords = ({
       }
 
       return {
-        activityTargetRecord: activityTarget,
-        targetObjectRecord:
+        activityTarget: activityTarget,
+        targetObject:
           activityTarget[correspondingObjectMetadataItem.nameSingular],
         targetObjectMetadataItem: correspondingObjectMetadataItem,
         targetObjectNameSingular: correspondingObjectMetadataItem.nameSingular,
       };
     })
-    .filter(isDefined);
+    .filter(isNonNullable);
 
   return {
     activityTargetObjectRecords,

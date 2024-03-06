@@ -12,6 +12,11 @@ import { FieldsStringFactory } from 'src/workspace/workspace-query-builder/facto
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
+export interface UpdateManyQueryFactoryOptions
+  extends WorkspaceQueryBuilderOptions {
+  atMost?: number;
+}
+
 @Injectable()
 export class UpdateManyQueryFactory {
   constructor(
@@ -24,7 +29,7 @@ export class UpdateManyQueryFactory {
     Filter extends RecordFilter = RecordFilter,
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: UpdateManyQueryFactoryOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
@@ -47,6 +52,7 @@ export class UpdateManyQueryFactory {
       update${computeObjectTargetTable(options.objectMetadataItem)}Collection(
         set: ${stringifyWithoutKeyQuote(argsData)},
         filter: ${stringifyWithoutKeyQuote(args.filter)},
+        atMost: ${options.atMost ?? 1},
       ) {
         affectedCount
         records {

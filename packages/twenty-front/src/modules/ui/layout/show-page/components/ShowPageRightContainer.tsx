@@ -6,6 +6,7 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -19,7 +20,6 @@ import {
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -42,7 +42,10 @@ const StyledTabListContainer = styled.div`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
-  targetableObject: ActivityTargetableObject;
+  targetableObject: Pick<
+    ActivityTargetableObject,
+    'targetObjectNameSingular' | 'id'
+  >;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -56,8 +59,6 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
-
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(getActiveTabIdState());
 
@@ -103,7 +104,7 @@ export const ShowPageRightContainer = ({
       title: 'Emails',
       Icon: IconMail,
       hide: !shouldDisplayEmailsTab,
-      disabled: !isMessagingEnabled,
+      hasBetaPill: true,
     },
   ];
 
@@ -113,7 +114,10 @@ export const ShowPageRightContainer = ({
         <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
-        <Timeline targetableObject={targetableObject} />
+        <>
+          <TimelineQueryEffect targetableObject={targetableObject} />
+          <Timeline targetableObject={targetableObject} />
+        </>
       )}
       {activeTabId === 'tasks' && (
         <ObjectTasks targetableObject={targetableObject} />

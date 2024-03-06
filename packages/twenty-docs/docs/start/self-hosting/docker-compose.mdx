@@ -4,12 +4,24 @@ sidebar_position: 1
 sidebar_custom_props:
   icon: TbBrandDocker
 ---
+# Step by step instructions:
 
+1) Copy the [.env.example](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/.env.example) into a `.env` in the same directory where your `docker-compose.yml` file will be
+2) Run the command `openssl rand -base64 32` three times, make note of the string for each
+3) Replace the three "replace_me_with_a_random_string_access" with the three random strings you just generated.
+4) Create a `docker-compose.yml` file from the example below.
+5) Run the command `docker-compose up -d`
+6) Go to http://localhost:3001 and see your docker instance.
+
+- If you encounter errors, (not able to log into the application after inputting an email) after the inital setup, try running `docker exec -it twenty_backend_1 yarn database:reset` and see if that solves your issue. 
 ## Production docker containers
 
 Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
 
-You will need to set environment variables, a example configuration can be found [here](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/.env.example).
+## Environment Variables
+
+- Copy this `.env.example` file into a `.env` in the same directory as your `docker-compose.yml` file
+- Find the `.env.example` [here](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/.env.example).
 
 ## Docker Compose file
 
@@ -29,7 +41,7 @@ services:
       - SIGN_IN_PREFILLED=${SIGN_IN_PREFILLED}
       - REACT_APP_SERVER_BASE_URL=${LOCAL_SERVER_URL}
       - REACT_APP_SERVER_AUTH_URL=${LOCAL_SERVER_URL}/auth
-      - REACT_APP_SERVER_FILES_URL ${LOCAL_SERVER_URL}/files
+      - REACT_APP_SERVER_FILES_URL=${LOCAL_SERVER_URL}/files
     depends_on:
       - backend
 

@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { grayScale } from '@/ui/theme/constants/colors';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${grayScale.gray40};
+  color: ${GRAY_SCALE.gray40};
   display: flex;
   height: 32px;
   margin-left: ${({ theme }) => theme.spacing(8)};

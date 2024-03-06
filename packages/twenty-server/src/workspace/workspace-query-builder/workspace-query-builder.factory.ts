@@ -14,6 +14,7 @@ import {
   DeleteOneResolverArgs,
   UpdateManyResolverArgs,
   DeleteManyResolverArgs,
+  FindDuplicatesResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { FindManyQueryFactory } from './factories/find-many-query.factory';
@@ -21,8 +22,15 @@ import { FindOneQueryFactory } from './factories/find-one-query.factory';
 import { CreateManyQueryFactory } from './factories/create-many-query.factory';
 import { UpdateOneQueryFactory } from './factories/update-one-query.factory';
 import { DeleteOneQueryFactory } from './factories/delete-one-query.factory';
-import { UpdateManyQueryFactory } from './factories/update-many-query.factory';
-import { DeleteManyQueryFactory } from './factories/delete-many-query.factory';
+import {
+  UpdateManyQueryFactory,
+  UpdateManyQueryFactoryOptions,
+} from './factories/update-many-query.factory';
+import {
+  DeleteManyQueryFactory,
+  DeleteManyQueryFactoryOptions,
+} from './factories/delete-many-query.factory';
+import { FindDuplicatesQueryFactory } from './factories/find-duplicates-query.factory';
 
 @Injectable()
 export class WorkspaceQueryBuilderFactory {
@@ -31,6 +39,7 @@ export class WorkspaceQueryBuilderFactory {
   constructor(
     private readonly findManyQueryFactory: FindManyQueryFactory,
     private readonly findOneQueryFactory: FindOneQueryFactory,
+    private readonly findDuplicatesQueryFactory: FindDuplicatesQueryFactory,
     private readonly createManyQueryFactory: CreateManyQueryFactory,
     private readonly updateOneQueryFactory: UpdateOneQueryFactory,
     private readonly deleteOneQueryFactory: DeleteOneQueryFactory,
@@ -53,6 +62,28 @@ export class WorkspaceQueryBuilderFactory {
     options: WorkspaceQueryBuilderOptions,
   ): Promise<string> {
     return this.findOneQueryFactory.create<Filter>(args, options);
+  }
+
+  findDuplicates<Filter extends RecordFilter = RecordFilter>(
+    args: FindDuplicatesResolverArgs<Filter>,
+    options: WorkspaceQueryBuilderOptions,
+    existingRecord?: Record<string, unknown>,
+  ): Promise<string> {
+    return this.findDuplicatesQueryFactory.create<Filter>(
+      args,
+      options,
+      existingRecord,
+    );
+  }
+
+  findDuplicatesExistingRecord(
+    id: string,
+    options: WorkspaceQueryBuilderOptions,
+  ): string {
+    return this.findDuplicatesQueryFactory.buildQueryForExistingRecord(
+      id,
+      options,
+    );
   }
 
   createMany<Record extends IRecord = IRecord>(
@@ -81,14 +112,14 @@ export class WorkspaceQueryBuilderFactory {
     Filter extends RecordFilter = RecordFilter,
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: UpdateManyQueryFactoryOptions,
   ): Promise<string> {
     return this.updateManyQueryFactory.create(args, options);
   }
 
   deleteMany<Filter extends RecordFilter = RecordFilter>(
     args: DeleteManyResolverArgs<Filter>,
-    options: WorkspaceQueryBuilderOptions,
+    options: DeleteManyQueryFactoryOptions,
   ): Promise<string> {
     return this.deleteManyQueryFactory.create(args, options);
   }

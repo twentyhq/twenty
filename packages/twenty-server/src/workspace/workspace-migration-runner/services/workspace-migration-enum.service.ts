@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 
 import { WorkspaceMigrationColumnAlter } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 
 @Injectable()
 export class WorkspaceMigrationEnumService {
@@ -25,7 +26,7 @@ export class WorkspaceMigrationEnumService {
       }) ?? [];
 
     if (!columnDefinition.isNullable && !columnDefinition.defaultValue) {
-      columnDefinition.defaultValue = columnDefinition.enum?.[0];
+      columnDefinition.defaultValue = serializeDefaultValue(enumValues[0]);
     }
 
     // Create new enum type with new values
@@ -66,6 +67,7 @@ export class WorkspaceMigrationEnumService {
       tableName,
       columnDefinition.columnName,
       newEnumTypeName,
+      columnDefinition.defaultValue,
     );
 
     // Drop old enum type
@@ -138,13 +140,13 @@ export class WorkspaceMigrationEnumService {
           .map((e) => `'${e}'`)
           .join(', ')}]`;
       } else {
-        defaultValue = this.getStringifyValue(columnDefinition.defaultValue);
+        defaultValue = columnDefinition.defaultValue;
       }
     }
 
     await queryRunner.query(`
       UPDATE "${schemaName}"."${tableName}"
-      SET "${columnDefinition.columnName}" = '${defaultValue}'
+      SET "${columnDefinition.columnName}" = ${defaultValue}
       WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
         .map((e) => `'${e}'`)
         .join(', ')})
@@ -157,9 +159,12 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     columnName: string,
     newEnumTypeName: string,
+    newDefaultValue: string,
   ) {
     await queryRunner.query(
-      `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP DEFAULT, ALTER COLUMN "${columnName}" TYPE "${schemaName}"."${newEnumTypeName}" USING ("${columnName}"::text::"${schemaName}"."${newEnumTypeName}")`,
+      `ALTER TABLE "${schemaName}"."${tableName}" ALTER COLUMN "${columnName}" DROP DEFAULT,
+      ALTER COLUMN "${columnName}" TYPE "${schemaName}"."${newEnumTypeName}" USING ("${columnName}"::text::"${schemaName}"."${newEnumTypeName}"),
+      ALTER COLUMN "${columnName}" SET DEFAULT ${newDefaultValue}`,
     );
   }
 
@@ -183,9 +188,5 @@ export class WorkspaceMigrationEnumService {
       ALTER TYPE "${schemaName}"."${newEnumTypeName}"
       RENAME TO "${oldEnumTypeName}"
     `);
-  }
-
-  private getStringifyValue(value: any) {
-    return typeof value === 'string' ? value : `'${value}'`;
   }
 }

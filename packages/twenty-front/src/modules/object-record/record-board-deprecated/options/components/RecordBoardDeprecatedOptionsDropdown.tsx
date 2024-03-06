@@ -1,4 +1,4 @@
-import { BoardOptionsDropdownId } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
+import { BOARD_OPTIONS_DROPDOWN_ID } from '@/object-record/record-board-deprecated/constants/BoardOptionsDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { Dropdown } from '../../../../ui/layout/dropdown/components/Dropdown';
@@ -23,7 +23,7 @@ export const RecordBoardDeprecatedOptionsDropdown = ({
 
   return (
     <Dropdown
-      dropdownId={BoardOptionsDropdownId}
+      dropdownId={BOARD_OPTIONS_DROPDOWN_ID}
       clickableComponent={<RecordBoardDeprecatedOptionsDropdownButton />}
       dropdownComponents={
         <RecordBoardDeprecatedOptionsDropdownContent

@@ -10,6 +10,7 @@ export enum AppPath {
   CreateWorkspace = '/create/workspace',
   CreateProfile = '/create/profile',
   PlanRequired = '/plan-required',
+  PlanRequiredSuccess = '/plan-required/payment-success',
 
   // Onboarded
   Index = '/',

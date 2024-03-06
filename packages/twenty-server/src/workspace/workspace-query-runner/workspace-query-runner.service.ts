@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
+import isEmpty from 'lodash.isempty';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -17,6 +19,7 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   UpdateManyResolverArgs,
@@ -39,15 +42,20 @@ import { ObjectRecordDeleteEvent } from 'src/integrations/event-emitter/types/ob
 import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { NotFoundError } from 'src/filters/utils/graphql-errors.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
 } from './interfaces/pg-graphql.interface';
+import { computePgGraphQLError } from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
+  private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
+
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -55,6 +63,7 @@ export class WorkspaceQueryRunnerService {
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async findMany<
@@ -84,7 +93,7 @@ export class WorkspaceQueryRunnerService {
     const result = await this.execute(query, workspaceId);
     const end = performance.now();
 
-    console.log(
+    this.logger.log(
       `query time: ${end - start} ms on query ${
         options.objectMetadataItem.nameSingular
       }`,
@@ -129,6 +138,74 @@ export class WorkspaceQueryRunnerService {
     );
 
     return parsedResult?.edges?.[0]?.node;
+  }
+
+  async findDuplicates<TRecord extends IRecord = IRecord>(
+    args: FindDuplicatesResolverArgs<TRecord>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<IConnection<TRecord> | undefined> {
+    if (!args.data && !args.id) {
+      throw new BadRequestException(
+        'You have to provide either "data" or "id" argument',
+      );
+    }
+
+    if (!args.id && isEmpty(args.data)) {
+      throw new BadRequestException(
+        'The "data" condition can not be empty when ID input not provided',
+      );
+    }
+
+    const { workspaceId, userId, objectMetadataItem } = options;
+
+    let existingRecord: Record<string, unknown> | undefined;
+
+    if (args.id) {
+      const existingRecordQuery =
+        this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
+          args.id,
+          options,
+        );
+
+      const existingRecordResult = await this.execute(
+        existingRecordQuery,
+        workspaceId,
+      );
+
+      const parsedResult = this.parseResult<Record<string, unknown>>(
+        existingRecordResult,
+        objectMetadataItem,
+        '',
+      );
+
+      existingRecord = parsedResult?.edges?.[0]?.node;
+
+      if (!existingRecord) {
+        throw new NotFoundError(`Object with id ${args.id} not found`);
+      }
+    }
+
+    const query = await this.workspaceQueryBuilderFactory.findDuplicates(
+      args,
+      options,
+      existingRecord,
+    );
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'findDuplicates',
+      args,
+    );
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<IConnection<TRecord>>(
+      result,
+      objectMetadataItem,
+      '',
+    );
   }
 
   async createMany<Record extends IRecord = IRecord>(
@@ -218,10 +295,12 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
-    const query = await this.workspaceQueryBuilderFactory.updateMany(
-      args,
-      options,
-    );
+    const maximumRecordAffected =
+      this.environmentService.getMutationMaximumRecordAffected();
+    const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
+      ...options,
+      atMost: maximumRecordAffected,
+    });
 
     const result = await this.execute(query, workspaceId);
 
@@ -248,10 +327,12 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
-    const query = await this.workspaceQueryBuilderFactory.deleteMany(
-      args,
-      options,
-    );
+    const maximumRecordAffected =
+      this.environmentService.getMutationMaximumRecordAffected();
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
+      ...options,
+      atMost: maximumRecordAffected,
+    });
 
     const result = await this.execute(query, workspaceId);
 
@@ -337,16 +418,16 @@ export class WorkspaceQueryRunnerService {
       );
 
     await workspaceDataSource?.query(`
-      SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-        workspaceId,
-      )};
-    `);
+        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+          workspaceId,
+        )};
+      `);
 
     const results = await workspaceDataSource?.query<PGGraphQLResult>(`
-      SELECT graphql.resolve($$
-        ${query}
-      $$);
-    `);
+        SELECT graphql.resolve($$
+          ${query}
+        $$);
+      `);
 
     return results;
   }
@@ -362,12 +443,29 @@ export class WorkspaceQueryRunnerService {
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
-    if (errors && errors.length > 0) {
-      throw new InternalServerErrorException(
-        `GraphQL errors on ${command}${
-          objectMetadataItem.nameSingular
-        }: ${JSON.stringify(errors)}`,
+    if (!result) {
+      this.logger.log(
+        `No result found for ${entityKey}, graphqlResult: ` +
+          JSON.stringify(graphqlResult, null, 3),
       );
+    }
+
+    if (
+      result &&
+      ['update', 'deleteFrom'].includes(command) &&
+      !result.affectedCount
+    ) {
+      throw new BadRequestException('No rows were affected.');
+    }
+
+    if (errors && errors.length > 0) {
+      const error = computePgGraphQLError(
+        command,
+        objectMetadataItem.nameSingular,
+        errors,
+      );
+
+      throw error;
     }
 
     return parseResult(result);

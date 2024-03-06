@@ -8,6 +8,8 @@ import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -21,7 +23,14 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
       type: 'postgres',
       logging: false,
       schema: 'core',
-      entities: [User, Workspace, RefreshToken, FeatureFlagEntity],
+      entities: [
+        User,
+        Workspace,
+        RefreshToken,
+        FeatureFlagEntity,
+        BillingSubscription,
+        BillingSubscriptionItem,
+      ],
     });
   }
 

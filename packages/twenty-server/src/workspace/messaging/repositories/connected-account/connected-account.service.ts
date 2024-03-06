@@ -60,7 +60,9 @@ export class ConnectedAccountService {
       );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new NotFoundException('No connected account found');
+      throw new NotFoundException(
+        `No connected account found for id ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     return connectedAccounts[0];
@@ -78,6 +80,41 @@ export class ConnectedAccountService {
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1 WHERE "id" = $2`,
       [historyId, connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateLastSyncHistoryIdIfHigher(
+    historyId: string,
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = $1
+      WHERE "id" = $2
+      AND ("lastSyncHistoryId" < $1 OR "lastSyncHistoryId" = '')`,
+      [historyId, connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async deleteHistoryId(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "lastSyncHistoryId" = '' WHERE "id" = $1`,
+      [connectedAccountId],
       workspaceId,
       transactionManager,
     );

@@ -8,19 +8,22 @@ export const parseApolloStoreFieldName = <
 >(
   storeFieldName: string,
 ) => {
-  const matches = storeFieldName.match(/([a-zA-Z][a-zA-Z0-9 ]*)\((.*)\)/);
+  const matches = storeFieldName.match(/([a-zA-Z][a-zA-Z0-9 ]*)(\((.*)\))?/);
 
-  if (!matches?.[1]) return {};
+  const fieldName = matches?.[1];
 
-  const [, , stringifiedVariables] = matches;
-  const fieldName = matches[1] as string;
+  if (!fieldName) {
+    return {};
+  }
+
+  const stringifiedVariables = matches[3];
 
   try {
-    const fieldArguments = stringifiedVariables
+    const fieldVariables = stringifiedVariables
       ? (JSON.parse(stringifiedVariables) as Variables)
       : undefined;
 
-    return { fieldName, fieldArguments };
+    return { fieldName, fieldVariables };
   } catch {
     return { fieldName };
   }

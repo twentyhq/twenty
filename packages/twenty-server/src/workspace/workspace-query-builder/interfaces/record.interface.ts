@@ -19,3 +19,8 @@ export enum OrderByDirection {
 export type RecordOrderBy = {
   [Property in keyof Record]?: OrderByDirection;
 };
+
+export interface RecordDuplicateCriteria {
+  objectName: string;
+  columnNames: string[];
+}

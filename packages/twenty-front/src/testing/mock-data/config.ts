@@ -23,6 +23,7 @@ export const mockedClientConfig = {
   billing: {
     isBillingEnabled: true,
     billingUrl: '',
+    billingFreeTrialDurationInDays: 10,
     __typename: 'Billing',
   },
   __typename: 'ClientConfig',

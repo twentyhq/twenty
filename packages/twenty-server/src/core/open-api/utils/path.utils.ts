@@ -1,4 +1,4 @@
-import { OpenAPIV3 } from 'openapi-types';
+import { OpenAPIV3_1 } from 'openapi-types';
 
 import { capitalize } from 'src/utils/capitalize';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -12,7 +12,7 @@ import { getRequestBody } from 'src/core/open-api/utils/request-body.utils';
 
 export const computeManyResultPath = (
   item: ObjectMetadataEntity,
-): OpenAPIV3.PathItemObject => {
+): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
       tags: [item.namePlural],
@@ -44,12 +44,12 @@ export const computeManyResultPath = (
         '401': { $ref: '#/components/responses/401' },
       },
     },
-  } as OpenAPIV3.PathItemObject;
+  } as OpenAPIV3_1.PathItemObject;
 };
 
 export const computeSingleResultPath = (
   item: ObjectMetadataEntity,
-): OpenAPIV3.PathItemObject => {
+): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
       tags: [item.namePlural],
@@ -92,10 +92,10 @@ export const computeSingleResultPath = (
         '401': { $ref: '#/components/responses/401' },
       },
     },
-  } as OpenAPIV3.PathItemObject;
+  } as OpenAPIV3_1.PathItemObject;
 };
 
-export const computeOpenApiPath = (): OpenAPIV3.PathItemObject => {
+export const computeOpenApiPath = (): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
       tags: ['General'],
@@ -105,5 +105,5 @@ export const computeOpenApiPath = (): OpenAPIV3.PathItemObject => {
         '200': getJsonResponse(),
       },
     },
-  } as OpenAPIV3.PathItemObject;
+  } as OpenAPIV3_1.PathItemObject;
 };
