@@ -7,7 +7,7 @@ import { Button } from '@/ui/input/button/components/Button.tsx';
 
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {
-  accent: InfoAccent;
+  accent?: InfoAccent;
   text: string;
   buttonTitle: string;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
