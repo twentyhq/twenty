@@ -23,6 +23,7 @@ import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view.object-metadata';
 import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 
 export const standardObjectMetadataCollection = [
   ActivityTargetObjectMetadata,
@@ -50,4 +51,5 @@ export const standardObjectMetadataCollection = [
   MessageChannelMessageAssociationObjectMetadata,
   CalendarEventObjectMetadata,
   CalendarChannelObjectMetadata,
+  CalendarChannelEventAssociationObjectMetadata,
 ];
