@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
 const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
+  align-items: center;
+  display: flex;
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
   overflow: hidden;
   text-overflow: ellipsis;
