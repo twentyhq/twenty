@@ -10,6 +10,11 @@ import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-met
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 
+export enum CalendarChannelVisibility {
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+}
+
 @ObjectMetadata({
   namePlural: 'calendarChannels',
   labelSingular: 'Calendar Channel',
@@ -45,15 +50,20 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Visibility',
     icon: 'IconEyeglass',
     options: [
-      { value: 'metadata', label: 'Metadata', position: 0, color: 'green' },
       {
-        value: 'share_everything',
+        value: CalendarChannelVisibility.METADATA,
+        label: 'Metadata',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: CalendarChannelVisibility.SHARE_EVERYTHING,
         label: 'Share Everything',
         position: 1,
         color: 'orange',
       },
     ],
-    defaultValue: { value: 'share_everything' },
+    defaultValue: { value: CalendarChannelVisibility.SHARE_EVERYTHING },
   })
   visibility: string;
 
@@ -77,11 +87,12 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Next Sync Token',
-    description: 'Next Sync Token',
+    label: 'Sync Cursor',
+    description:
+      'Sync Cursor. Used for syncing events from the calendar provider',
     icon: 'IconReload',
   })
-  nextSyncToken: string;
+  syncCursor: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
