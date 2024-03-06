@@ -18,7 +18,7 @@ import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metada
 @Gate({
   featureFlag: FeatureFlagKeys.IsCalendarEnabled,
 })
-export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
+export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Channel ID',

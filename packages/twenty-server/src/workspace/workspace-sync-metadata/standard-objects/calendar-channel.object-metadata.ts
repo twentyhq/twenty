@@ -1,3 +1,4 @@
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -6,6 +7,8 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
+import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 
 @ObjectMetadata({
   namePlural: 'calendarChannels',
@@ -79,4 +82,20 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconReload',
   })
   nextSyncToken: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Channel Event Associations',
+    description: 'Calendar Channel Event Associations',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarChannelEventAssociations',
+    inverseSideFieldName: 'calendarChannel',
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 }
