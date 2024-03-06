@@ -23,6 +23,7 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.NUMBER
   | FieldMetadataType.PROBABILITY
   | FieldMetadataType.BOOLEAN
+  | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME;
 
 @Injectable()
