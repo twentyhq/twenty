@@ -12,7 +12,7 @@ export class CalendarEventAttendeesService {
   ) {}
 
   public async getByIds(
-    calendarEventAttendeesIds: string[],
+    calendarEventAttendeeIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarEventAttendeesObjectMetadata>[]> {
@@ -21,14 +21,14 @@ export class CalendarEventAttendeesService {
 
     return await this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
-      [calendarEventAttendeesIds],
+      [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
     );
   }
 
   public async deleteByIds(
-    calendarEventAttendeesIds: string[],
+    calendarEventAttendeeIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -37,7 +37,7 @@ export class CalendarEventAttendeesService {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `DELETE FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
-      [calendarEventAttendeesIds],
+      [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
     );
