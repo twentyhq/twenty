@@ -114,6 +114,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
+  @IsNullable()
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
