@@ -5,6 +5,7 @@ import { CalendarChannelEventAssociationObjectMetadata } from 'packages/twenty-s
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
 
 @Injectable()
 export class CalendarChannelEventAssociationService {
@@ -28,26 +29,6 @@ export class CalendarChannelEventAssociationService {
       workspaceId,
       transactionManager,
     );
-  }
-
-  public async countByEventExternalIdsAndCalendarChannelId(
-    eventExternalIds: string[],
-    calendarChannelId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<number> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const result = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT COUNT(*) FROM ${dataSourceSchema}."calendarChannelEventAssociation"
-    WHERE "eventExternalId" = ANY($1) AND "calendarChannelId" = $2`,
-      [eventExternalIds, calendarChannelId],
-      workspaceId,
-      transactionManager,
-    );
-
-    return result[0]?.count;
   }
 
   public async deleteByEventExternalIdsAndCalendarChannelId(
@@ -132,8 +113,8 @@ export class CalendarChannelEventAssociationService {
     );
   }
 
-  public async getByEventIds(
-    eventIds: string[],
+  public async getByCalendarEventIds(
+    calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
@@ -142,25 +123,39 @@ export class CalendarChannelEventAssociationService {
 
     return await this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."calendarChannelEventAssociation"
-    WHERE "eventId" = ANY($1)`,
-      [eventIds],
+    WHERE "calendarEventId" = ANY($1)`,
+      [calendarEventIds],
       workspaceId,
       transactionManager,
     );
   }
 
-  public async getByEventThreadId(
-    eventThreadId: string,
+  public async saveCalendarChannelEventAssociations(
+    calendarChannelEventAssociations: ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+  ) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."calendarChannelEventAssociation"
-    WHERE "eventThreadId" = $1`,
-      [eventThreadId],
+    const valuesString = valuesStringForBatchRawQuery(
+      calendarChannelEventAssociations,
+    );
+
+    const calendarChannelEventAssociationValues =
+      calendarChannelEventAssociations
+        .map((association) => [
+          association.id,
+          association.calendarChannelId,
+          association.calendarEventId,
+          association.eventExternalId,
+        ])
+        .flat();
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("id", "calendarChannelId", "calendarEventId", "eventExternalId")
+      VALUES ${valuesString}`,
+      [calendarChannelEventAssociationValues],
       workspaceId,
       transactionManager,
     );

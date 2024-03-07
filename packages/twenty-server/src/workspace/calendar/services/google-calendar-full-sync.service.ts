@@ -161,6 +161,12 @@ export class GmailFullSyncService {
 
       dataSourceMetadata?.transaction(async (transactionManager) => {
         this.calendarEventsService.saveEvents();
+
+        this.calendarChannelEventAssociationService.saveCalendarChannelEventAssociations(
+          events,
+          workspaceId,
+          transactionManager,
+        );
         this.calendarEventAttendeesService.saveEventAttendees();
       });
     } else {
