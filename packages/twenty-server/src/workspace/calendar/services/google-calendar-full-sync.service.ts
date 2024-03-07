@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { FetchCalendarsByBatchesService } from 'src/workspace/messaging/services/fetch-calendars-by-batches.service';
-import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
 import { CalendarQueue } from 'src/integrations/calendar-queue/calendar-queue.constants';
 import { CalendarQueueService } from 'src/integrations/calendar-queue/services/calendar-queue.service';
 import {
@@ -15,20 +14,20 @@ import { ConnectedAccountService } from 'src/workspace/messaging/repositories/co
 import { CalendarChannelService } from 'src/workspace/messaging/repositories/calendar-channel/calendar-channel.service';
 import { CalendarChannelCalendarAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
 import { createQueriesFromCalendarIds } from 'src/workspace/messaging/utils/create-queries-from-calendar-ids.util';
-import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveCalendarsAndCreateContactsService } from 'src/workspace/messaging/services/save-calendars-and-create-contacts.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
+import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/providers/google-calendar/google-calendar.provider';
 
 @Injectable()
 export class GmailFullSyncService {
   private readonly logger = new Logger(GmailFullSyncService.name);
 
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
+    private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
     private readonly fetchCalendarsByBatchesService: FetchCalendarsByBatchesService,
     @Inject(CalendarQueue.messagingQueue)
     private readonly calendarQueueService: CalendarQueueService,
@@ -61,16 +60,18 @@ export class GmailFullSyncService {
       );
     }
 
-    const gmailCalendarChannel =
+    const calendarChannel =
       await this.calendarChannelService.getFirstByConnectedAccountIdOrFail(
         connectedAccountId,
         workspaceId,
       );
 
-    const gmailCalendarChannelId = gmailCalendarChannel.id;
+    const calendarChannelId = calendarChannel.id;
 
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
+    const googleCalendarClient =
+      await this.googleCalendarClientProvider.getGoogleCalendarClient(
+        refreshToken,
+      );
 
     const isBlocklistEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
@@ -92,30 +93,30 @@ export class GmailFullSyncService {
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
 
-    const calendars = await gmailClient.users.calendars.list({
-      userId: 'me',
+    const primaryCalendar = await googleCalendarClient.calendars.get({
+      calendarId: 'primary',
+    });
+
+    const googleCalendarEvents = await googleCalendarClient.events.list({
+      calendarId: 'primary',
       maxResults: 500,
       pageToken: nextPageToken,
-      q: gmailSearchFilterExcludeEmails(blocklistedEmails),
+      q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
     });
 
     let endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting calendars list in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
         endTime - startTime
       }ms.`,
     );
 
-    const calendarsData = calendars.data.calendars;
+    const events = googleCalendarEvents.data.items;
 
-    const calendarExternalIds = calendarsData
-      ? calendarsData.map((calendar) => calendar.id || '')
-      : [];
-
-    if (!calendarExternalIds || calendarExternalIds?.length === 0) {
+    if (!events || events?.length === 0) {
       this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
 
       return;
@@ -126,14 +127,14 @@ export class GmailFullSyncService {
     const existingCalendarChannelCalendarAssociations =
       await this.calendarChannelCalendarAssociationService.getByCalendarExternalIdsAndCalendarChannelId(
         calendarExternalIds,
-        gmailCalendarChannelId,
+        calendarChannelId,
         workspaceId,
       );
 
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel calendar associations in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel calendar associations in ${
         endTime - startTime
       }ms.`,
     );
@@ -159,7 +160,7 @@ export class GmailFullSyncService {
       await this.fetchCalendarsByBatchesService.fetchAllCalendars(
         calendarQueries,
         accessToken,
-        'gmail full-sync',
+        'google calendar full-sync',
         workspaceId,
         connectedAccountId,
       );
@@ -167,7 +168,7 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all calendars in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all calendars in ${
         endTime - startTime
       }ms.`,
     );
@@ -177,12 +178,12 @@ export class GmailFullSyncService {
         calendarsToSave,
         connectedAccount,
         workspaceId,
-        gmailCalendarChannelId,
-        'gmail full-sync',
+        calendarChannelId,
+        'google calendar full-sync',
       );
     } else {
       this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
     }
 
@@ -214,13 +215,13 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
         endTime - startTime
       }ms.`,
     );
 
     this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
         nextPageToken ? `and ${nextPageToken} pageToken` : ''
       }done.`,
     );
