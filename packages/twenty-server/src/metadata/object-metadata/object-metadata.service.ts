@@ -340,8 +340,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               columnType: 'uuid',
               isNullable: true,
@@ -354,8 +355,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               referencedTableName: computeObjectTargetTable(
                 createdObjectMetadata,
@@ -372,8 +374,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               columnType: 'uuid',
               isNullable: true,
@@ -386,8 +389,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               referencedTableName: computeObjectTargetTable(
                 createdObjectMetadata,
@@ -403,8 +407,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               columnType: 'uuid',
               isNullable: true,
@@ -417,8 +422,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               referencedTableName: computeObjectTargetTable(
                 createdObjectMetadata,
@@ -582,7 +588,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: 'activityTargets',
@@ -596,7 +602,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
@@ -610,13 +616,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           targetColumnMap: {
-            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
+            value: `${computeCustomName(
+              createdObjectMetadata.nameSingular,
+              false,
+            )}Id`,
           },
           description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
@@ -673,7 +682,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: 'attachments',
@@ -687,7 +696,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
@@ -701,13 +710,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           targetColumnMap: {
-            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
+            value: `${computeCustomName(
+              createdObjectMetadata.nameSingular,
+              false,
+            )}Id`,
           },
           description: `Attachment ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
@@ -739,6 +751,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           attachmentRelationFieldMetadataMap[createdObjectMetadata.id].id,
         toFieldMetadataId:
           attachmentRelationFieldMetadataMap[attachmentObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
       },
     ]);
 
@@ -761,7 +774,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: 'favorites',
@@ -775,7 +788,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
@@ -789,13 +802,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
-          isCustom: true,
+          isCustom: false,
           isActive: true,
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           targetColumnMap: {
-            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
+            value: `${computeCustomName(
+              createdObjectMetadata.nameSingular,
+              false,
+            )}Id`,
           },
           description: `Favorite ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,

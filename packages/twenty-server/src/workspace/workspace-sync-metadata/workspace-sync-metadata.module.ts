@@ -13,6 +13,7 @@ import { workspaceSyncMetadataComparators } from 'src/workspace/workspace-sync-m
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
+import { WorkspaceSyncFieldMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migration-builder/workspace-migration-builder.module';
 
 @Module({
@@ -36,6 +37,7 @@ import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migrati
     WorkspaceMetadataUpdaterService,
     WorkspaceSyncObjectMetadataService,
     WorkspaceSyncRelationMetadataService,
+    WorkspaceSyncFieldMetadataService,
     WorkspaceSyncMetadataService,
   ],
   exports: [WorkspaceSyncMetadataService],

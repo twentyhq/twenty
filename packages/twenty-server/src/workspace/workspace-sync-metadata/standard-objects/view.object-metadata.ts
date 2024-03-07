@@ -57,7 +57,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewField',
+    inverseSideTarget: () => ViewFieldObjectMetadata,
   })
   @IsNullable()
   viewFields: ViewFieldObjectMetadata[];
@@ -70,7 +70,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewFilter',
+    inverseSideTarget: () => ViewFilterObjectMetadata,
   })
   @IsNullable()
   viewFilters: ViewFilterObjectMetadata[];
@@ -83,7 +83,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewSort',
+    inverseSideTarget: () => ViewSortObjectMetadata,
   })
   @IsNullable()
   viewSorts: ViewSortObjectMetadata[];

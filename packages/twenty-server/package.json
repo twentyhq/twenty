@@ -28,6 +28,7 @@
     "database:seed:dev": "npx nx command -- workspace:seed:dev",
     "database:seed:demo": "npx nx command -- workspace:seed:demo",
     "database:reset": "npx nx database:truncate && npx nx database:init",
+    "command": "node dist/src/command",
     "queue:work": "node dist/src/queue-worker"
   },
   "dependencies": {
