@@ -13,12 +13,6 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
-export enum CalendarEventStatus {
-  CONFIRMED = 'CONFIRMED',
-  TENTATIVE = 'TENTATIVE',
-  CANCELED = 'CANCELED',
-}
-
 @ObjectMetadata({
   namePlural: 'calendarEvents',
   labelSingular: 'Calendar event',
@@ -145,7 +139,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'calendarChannelEventAssociation',
     onDelete: RelationOnDeleteAction.CASCADE,
-    inverseSideFieldName: 'event',
+    inverseSideFieldName: 'calendarEvent',
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
@@ -162,7 +156,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'calendarEventAttendee',
     onDelete: RelationOnDeleteAction.CASCADE,
-    inverseSideFieldName: 'event',
+    inverseSideFieldName: 'calendarEvent',
   })
   eventAttendees: CalendarEventAttendeeObjectMetadata[];
 }

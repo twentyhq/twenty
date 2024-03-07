@@ -33,9 +33,9 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
-    joinColumn: 'eventId',
+    joinColumn: 'calendarEventId',
   })
-  event: CalendarEventObjectMetadata;
+  calendarEvent: CalendarEventObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
