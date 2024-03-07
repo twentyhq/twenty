@@ -15,7 +15,7 @@ export function DynamicRelationFieldMetadata(
       'dynamicRelationFieldMetadataMap',
       {
         type: FieldMetadataType.RELATION,
-        factory: params,
+        paramsFactory: params,
         isCustom: false,
         isNullable: true,
         isSystem,

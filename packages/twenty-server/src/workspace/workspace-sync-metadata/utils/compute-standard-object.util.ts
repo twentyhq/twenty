@@ -16,11 +16,11 @@ export const computeStandardObject = (
   const fields: ComputedPartialFieldMetadata[] = [];
 
   for (const partialFieldMetadata of standardObjectMetadata.fields) {
-    if ('factory' in partialFieldMetadata) {
+    if ('paramsFactory' in partialFieldMetadata) {
       // Compute standard fields of custom object
       for (const customObjectMetadata of customObjectMetadataCollection) {
-        const { factory, ...rest } = partialFieldMetadata;
-        const { joinColumn, ...data } = factory(customObjectMetadata);
+        const { paramsFactory, ...rest } = partialFieldMetadata;
+        const { joinColumn, ...data } = paramsFactory(customObjectMetadata);
 
         // Relation
         fields.push({

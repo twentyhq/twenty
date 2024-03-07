@@ -9,9 +9,7 @@ import {
 
 export interface RelationMetadataDecoratorParams<T> {
   type: RelationMetadataType;
-  // TODO: Rename this into toObjectType
   inverseSideTarget: () => ObjectType<T>;
-  // TODO: Rename this into toFieldKey
   inverseSideFieldKey?: keyof T;
   onDelete?: RelationOnDeleteAction;
 }

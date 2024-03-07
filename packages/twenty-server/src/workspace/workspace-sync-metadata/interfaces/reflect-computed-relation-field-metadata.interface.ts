@@ -15,7 +15,7 @@ export type DynamicRelationFieldMetadataDecoratorParams = (
 
 export interface ReflectDynamicRelationFieldMetadata {
   type: FieldMetadataType.RELATION;
-  factory: DynamicRelationFieldMetadataDecoratorParams;
+  paramsFactory: DynamicRelationFieldMetadataDecoratorParams;
   isNullable: boolean;
   isSystem: boolean;
   isCustom: boolean;

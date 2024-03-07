@@ -189,8 +189,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarEventAttendee',
-    inverseSideFieldName: 'person',
+    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideFieldKey: 'person',
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
