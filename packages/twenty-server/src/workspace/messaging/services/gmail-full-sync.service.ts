@@ -16,7 +16,7 @@ import { MessageChannelService } from 'src/workspace/messaging/repositories/mess
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter.util';
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,

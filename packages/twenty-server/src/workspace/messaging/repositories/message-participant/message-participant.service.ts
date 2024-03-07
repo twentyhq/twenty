@@ -9,7 +9,7 @@ import {
   ParticipantWithId,
   ParticipantWithMessageId,
 } from 'src/workspace/messaging/types/gmail-message';
-import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
+import { PersonService } from 'src/workspace/repositories/person/person.service';
 
 @Injectable()
 export class MessageParticipantService {

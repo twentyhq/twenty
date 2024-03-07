@@ -5,10 +5,10 @@ import compact from 'lodash/compact';
 
 import { Participant } from 'src/workspace/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/workspace/messaging/utils/get-domain-name-from-handle.util';
-import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
-import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
-import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
-import { WorkspaceMemberService } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.service';
+import { CreateCompanyService } from 'src/workspace/auto-companies-and-contacts-creation/create-company/create-company.service';
+import { CreateContactService } from 'src/workspace/auto-companies-and-contacts-creation/create-contact/create-contact.service';
+import { PersonService } from 'src/workspace/repositories/person/person.service';
+import { WorkspaceMemberService } from 'src/workspace/repositories/workspace-member/workspace-member.service';
 import { getUniqueParticipantsAndHandles } from 'src/workspace/messaging/utils/get-unique-participants-and-handles.util';
 import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/workspace/messaging/utils/filter-out-participants-from-company-or-workspace.util';
 import { isWorkEmail } from 'src/utils/is-work-email';

@@ -9,8 +9,8 @@ import { EnvironmentModule } from 'src/integrations/environment/environment.modu
 import { MessagingPersonListener } from 'src/workspace/messaging/listeners/messaging-person.listener';
 import { MessageModule } from 'src/workspace/messaging/repositories/message/message.module';
 import { GmailClientProvider } from 'src/workspace/messaging/services/providers/gmail/gmail-client.provider';
-import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
-import { CreateCompanyService } from 'src/workspace/messaging/services/create-company/create-company.service';
+import { CreateContactService } from 'src/workspace/auto-companies-and-contacts-creation/create-contact/create-contact.service';
+import { CreateCompanyService } from 'src/workspace/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
@@ -20,14 +20,14 @@ import { MessageParticipantModule } from 'src/workspace/messaging/repositories/m
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
 import { MessagingMessageChannelListener } from 'src/workspace/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
-import { WorkspaceMemberModule } from 'src/workspace/messaging/repositories/workspace-member/workspace-member.module';
+import { WorkspaceMemberModule } from 'src/workspace/repositories/workspace-member/workspace-member.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-companies-and-contacts/create-companies-and-contacts.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
-import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
+import { PersonModule } from 'src/workspace/repositories/person/person.module';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import { MessagingConnectedAccountListener } from 'src/workspace/messaging/listeners/messaging-connected-account.listener';
-import { BlocklistModule } from 'src/workspace/messaging/repositories/blocklist/blocklist.module';
+import { BlocklistModule } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.module';
 @Module({
   imports: [
     EnvironmentModule,

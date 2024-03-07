@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { PersonService } from 'src/workspace/repositories/person/person.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [WorkspaceDataSourceModule],
-  providers: [BlocklistService],
-  exports: [BlocklistService],
+  providers: [PersonService],
+  exports: [PersonService],
 })
-export class BlocklistModule {}
+export class PersonModule {}

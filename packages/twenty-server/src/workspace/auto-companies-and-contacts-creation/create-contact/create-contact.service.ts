@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { PersonService } from 'src/workspace/messaging/repositories/person/person.service';
+import { PersonService } from 'src/workspace/repositories/person/person.service';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/workspace/messaging/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 
 type ContactToCreate = {

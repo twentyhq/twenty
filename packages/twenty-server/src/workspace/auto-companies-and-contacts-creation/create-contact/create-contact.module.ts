@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
-import { CreateContactService } from 'src/workspace/messaging/services/create-contact/create-contact.service';
-import { PersonModule } from 'src/workspace/messaging/repositories/person/person.module';
+import { CreateContactService } from 'src/workspace/auto-companies-and-contacts-creation/create-contact/create-contact.service';
+import { PersonModule } from 'src/workspace/repositories/person/person.module';
 
 @Module({
   imports: [WorkspaceDataSourceModule, PersonModule],

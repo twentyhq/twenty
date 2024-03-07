@@ -18,7 +18,7 @@ import { MessageService } from 'src/workspace/messaging/repositories/message/mes
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
