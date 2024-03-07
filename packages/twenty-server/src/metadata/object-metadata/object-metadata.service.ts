@@ -374,8 +374,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               columnType: 'uuid',
               isNullable: true,
@@ -388,8 +389,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeObjectTargetTable(
-                createdObjectMetadata,
+              columnName: `${computeCustomName(
+                createdObjectMetadata.nameSingular,
+                false,
               )}Id`,
               referencedTableName: computeObjectTargetTable(
                 createdObjectMetadata,
