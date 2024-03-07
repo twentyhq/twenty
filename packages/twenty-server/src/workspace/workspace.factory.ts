@@ -47,7 +47,9 @@ export class WorkspaceFactory {
 
     // Get object metadata from cache
     let objectMetadataCollection =
-      await this.workspaceSchemaStorageService.getObjectMetadataCollection(workspaceId);
+      await this.workspaceSchemaStorageService.getObjectMetadataCollection(
+        workspaceId,
+      );
 
     // If object metadata is not cached, get it from the database
     if (!objectMetadataCollection) {
