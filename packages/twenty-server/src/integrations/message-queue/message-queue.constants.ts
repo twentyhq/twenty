@@ -6,5 +6,6 @@ export enum MessageQueue {
   webhookQueue = 'webhook-queue',
   cronQueue = 'cron-queue',
   emailQueue = 'email-queue',
+  calendarQueue = 'calendar-queue',
   billingQueue = 'billing-queue',
 }

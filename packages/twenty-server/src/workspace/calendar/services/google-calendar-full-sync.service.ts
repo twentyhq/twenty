@@ -17,6 +17,8 @@ import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/pr
 import { googleCalendarSearchFilterExcludeEmails } from 'src/workspace/calendar/utils/google-calendar-search-filter.util';
 import { CalendarChannelEventAssociationService } from 'src/workspace/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.service';
 import { CalendarChannelService } from 'src/workspace/calendar/repositories/calendar-channel/calendar-channel.service';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -24,8 +26,8 @@ export class GmailFullSyncService {
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @Inject(CalendarQueue.calendarQueue)
-    private readonly calendarQueueService: CalendarQueueService,
+    @Inject(MessageQueue.calendarQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly calendarChannelService: CalendarChannelService,
     private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
@@ -187,7 +189,7 @@ export class GmailFullSyncService {
     );
 
     if (nextPageToken) {
-      await this.calendarQueueService.add<GmailFullSyncJobData>(
+      await this.messageQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         {
           workspaceId,
