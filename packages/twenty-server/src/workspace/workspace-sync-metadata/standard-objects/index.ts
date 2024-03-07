@@ -25,7 +25,7 @@ import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
-export const standardObjectMetadataCollection = [
+export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,

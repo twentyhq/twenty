@@ -26,6 +26,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
@@ -125,7 +126,7 @@ export const ActivityBodyEditor = ({
   const [uploadFile] = useUploadFileMutation();
 
   const handleUploadAttachment = async (file: File): Promise<string> => {
-    if (isNonNullable(!file)) {
+    if (isNullable(file)) {
       return '';
     }
     const result = await uploadFile({

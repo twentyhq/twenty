@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -219,7 +220,7 @@ export const CommandMenu = () => {
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
-    if (isNonNullable(cmd.label)) {
+    if (isNonEmptyString(cmd.label)) {
       return cmd.label.toLowerCase().includes(search.toLowerCase());
     }
     return false;

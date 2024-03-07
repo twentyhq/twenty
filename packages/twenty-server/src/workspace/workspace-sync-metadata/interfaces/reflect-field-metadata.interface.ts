@@ -4,13 +4,14 @@ import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/fie
 import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 export interface FieldMetadataDecoratorParams<
   T extends FieldMetadataType | 'default',
 > {
   type: T;
-  label: string;
-  description?: string;
+  label: string | ((objectMetadata: ObjectMetadataEntity) => string);
+  description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   joinColumn?: string;
@@ -28,7 +29,6 @@ export interface ReflectFieldMetadata {
     isNullable: boolean;
     isSystem: boolean;
     isCustom: boolean;
-    description?: string;
     defaultValue: FieldMetadataDefaultValue<'default'> | null;
     gate?: GateDecoratorParams;
     options?: FieldMetadataOptions<'default'> | null;

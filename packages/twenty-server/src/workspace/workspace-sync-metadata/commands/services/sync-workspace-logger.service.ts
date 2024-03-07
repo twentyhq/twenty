@@ -13,66 +13,70 @@ export class SyncWorkspaceLoggerService {
   constructor() {}
 
   async saveLogs(
+    workspaceId: string,
     storage: WorkspaceSyncStorage,
     workspaceMigrations: WorkspaceMigrationEntity[],
   ) {
+    // Create sub directory
+    await this.commandLogger.createSubDirectory(workspaceId);
+
     // Save workspace migrations
     await this.commandLogger.writeLog(
-      'workspace-migrations',
+      `${workspaceId}/workspace-migrations`,
       workspaceMigrations,
     );
 
     // Save object metadata create collection
     await this.commandLogger.writeLog(
-      'object-metadata-create-collection',
+      `${workspaceId}/object-metadata-create-collection`,
       storage.objectMetadataCreateCollection,
     );
 
     // Save object metadata update collection
     await this.commandLogger.writeLog(
-      'object-metadata-update-collection',
+      `${workspaceId}/object-metadata-update-collection`,
       storage.objectMetadataUpdateCollection,
     );
 
     // Save object metadata delete collection
     await this.commandLogger.writeLog(
-      'object-metadata-delete-collection',
+      `${workspaceId}/object-metadata-delete-collection`,
       storage.objectMetadataDeleteCollection,
     );
 
     // Save field metadata create collection
     await this.commandLogger.writeLog(
-      'field-metadata-create-collection',
+      `${workspaceId}/field-metadata-create-collection`,
       storage.fieldMetadataCreateCollection,
     );
 
     // Save field metadata update collection
     await this.commandLogger.writeLog(
-      'field-metadata-update-collection',
+      `${workspaceId}/field-metadata-update-collection`,
       storage.fieldMetadataUpdateCollection,
     );
 
     // Save field metadata delete collection
     await this.commandLogger.writeLog(
-      'field-metadata-delete-collection',
+      `${workspaceId}/field-metadata-delete-collection`,
       storage.fieldMetadataDeleteCollection,
     );
 
     // Save relation metadata create collection
     await this.commandLogger.writeLog(
-      'relation-metadata-create-collection',
+      `${workspaceId}/relation-metadata-create-collection`,
       storage.relationMetadataCreateCollection,
     );
 
     // Save relation metadata update collection
     await this.commandLogger.writeLog(
-      'relation-metadata-update-collection',
+      `${workspaceId}/relation-metadata-update-collection`,
       storage.relationMetadataUpdateCollection,
     );
 
     // Save relation metadata delete collection
     await this.commandLogger.writeLog(
-      'relation-metadata-delete-collection',
+      `${workspaceId}/relation-metadata-delete-collection`,
       storage.relationMetadataDeleteCollection,
     );
   }

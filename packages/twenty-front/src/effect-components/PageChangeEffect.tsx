@@ -19,6 +19,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -65,7 +66,8 @@ export const PageChangeEffect = () => {
       isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired);
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess);
 
     const navigateToSignUp = () => {
       enqueueSnackBar('workspace does not exist', {
@@ -82,12 +84,20 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignIn);
     } else if (
       isNonNullable(onboardingStatus) &&
-      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
-        onboardingStatus,
-      ) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
+    } else if (
+      isNonNullable(onboardingStatus) &&
+      [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
+        onboardingStatus,
+      ) &&
+      !isMatchingLocation(SettingsPath.Billing)
+    ) {
+      navigate(
+        `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
+      );
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace) &&
@@ -114,7 +124,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (isNonNullable(!data.findWorkspaceFromInviteHash)) {
+          if (isNullable(data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },

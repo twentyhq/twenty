@@ -78,7 +78,9 @@ export const ChooseYourPlan = () => {
     if (
       isNonNullable(monthPrice) &&
       isNumber(monthPrice.unitAmount) &&
-      isNumber(price.unitAmount)
+      monthPrice.unitAmount > 0 &&
+      isNumber(price.unitAmount) &&
+      price.unitAmount > 0
     ) {
       return `Save $${(12 * monthPrice.unitAmount - price.unitAmount) / 100}`;
     }

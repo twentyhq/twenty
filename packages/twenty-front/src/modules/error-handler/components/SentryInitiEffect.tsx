@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -19,7 +20,7 @@ export const SentryInitEffect = () => {
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
 
   useEffect(() => {
-    if (isNonNullable(sentryConfig?.dsn) && !isSentryInitialized) {
+    if (isNonEmptyString(sentryConfig?.dsn) && !isSentryInitialized) {
       Sentry.init({
         dsn: sentryConfig?.dsn,
         integrations: [

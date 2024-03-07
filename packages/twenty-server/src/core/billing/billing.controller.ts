@@ -38,9 +38,14 @@ export class BillingController {
       req.rawBody,
     );
 
+    if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
+      await this.billingService.handleUnpaidInvoices(event.data);
+    }
+
     if (
       event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED ||
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
       const workspaceId = event.data.object.metadata?.workspaceId;
 

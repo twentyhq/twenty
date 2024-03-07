@@ -9,6 +9,16 @@ import { kebabCase } from 'src/utils/kebab-case';
 export class CommandLogger {
   constructor(private readonly className: string) {}
 
+  async createSubDirectory(subDirectory: string): Promise<void> {
+    const path = `./logs/${kebabCase(this.className)}/${subDirectory}`;
+
+    if (existsSync(path) === false) {
+      await fs.mkdir(path, { recursive: true });
+    }
+
+    return;
+  }
+
   async writeLog(
     fileName: string,
     data: unknown,

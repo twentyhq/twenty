@@ -80,4 +80,23 @@ export class StripeService {
       cancel_url: cancelUrl,
     });
   }
+
+  async collectLastInvoice(stripeSubscriptionId: string) {
+    const subscription = await this.stripe.subscriptions.retrieve(
+      stripeSubscriptionId,
+      { expand: ['latest_invoice'] },
+    );
+    const latestInvoice = subscription.latest_invoice;
+
+    if (
+      !(
+        latestInvoice &&
+        typeof latestInvoice !== 'string' &&
+        latestInvoice.status === 'draft'
+      )
+    ) {
+      return;
+    }
+    await this.stripe.invoices.pay(latestInvoice.id);
+  }
 }

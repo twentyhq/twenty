@@ -108,7 +108,7 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (isNonNullable(viewableActivityId)) {
+        if (isNonEmptyString(viewableActivityId)) {
           if (
             isActivityInCreateMode &&
             isNonNullable(temporaryActivityForEditor)
@@ -223,7 +223,10 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (isNonNullable(record && objectShowPageTargetableObject)) {
+    if (
+      isNonNullable(record) &&
+      isNonNullable(objectShowPageTargetableObject)
+    ) {
       openCreateActivity({
         type: record?.type,
         customAssignee: record?.assignee,

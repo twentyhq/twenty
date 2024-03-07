@@ -136,12 +136,9 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     }
 
     const shouldAttachSourceToAllTargets =
-      updatedSourceRecord && targetRecordsToAttachTo.length;
+      isNonNullable(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
 
-    if (
-      isNonNullable(shouldAttachSourceToAllTargets) &&
-      isNonNullable(updatedSourceRecord)
-    ) {
+    if (shouldAttachSourceToAllTargets) {
       targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
         triggerAttachRelationOptimisticEffect({
           cache,

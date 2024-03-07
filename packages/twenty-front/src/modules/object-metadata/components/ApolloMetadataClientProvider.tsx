@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isNonNullable } from '~/utils/isNonNullable';
 
 import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
 
@@ -15,7 +15,7 @@ export const ApolloMetadataClientProvider = ({
 }) => {
   const [tokenPair] = useRecoilState(tokenPairState);
   const apolloMetadataClient = useMemo(() => {
-    if (isNonNullable(tokenPair?.accessToken.token)) {
+    if (isNonEmptyString(tokenPair?.accessToken.token)) {
       return new ApolloClient({
         uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         cache: new InMemoryCache(),

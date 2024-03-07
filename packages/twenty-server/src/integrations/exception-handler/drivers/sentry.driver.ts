@@ -22,8 +22,8 @@ export class ExceptionHandlerSentryDriver
         new Sentry.Integrations.Postgres(),
         new ProfilingIntegration(),
       ],
-      tracesSampleRate: 1,
-      profilesSampleRate: 0.05,
+      tracesSampleRate: 0.1,
+      profilesSampleRate: 0.3,
       environment: options.debug ? 'development' : 'production',
       debug: options.debug,
     });

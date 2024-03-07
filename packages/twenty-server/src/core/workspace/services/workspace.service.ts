@@ -64,4 +64,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     return workspace;
   }
+
+  async getWorkspaceIds() {
+    return this.workspaceRepository
+      .find()
+      .then((workspaces) => workspaces.map((workspace) => workspace.id));
+  }
 }

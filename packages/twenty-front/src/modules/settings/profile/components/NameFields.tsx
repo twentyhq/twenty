@@ -8,7 +8,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isNonNullable } from '~/utils/isNonNullable';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -48,12 +47,9 @@ export const NameFields = ({
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
-    if (isNonNullable(onFirstNameUpdate)) {
-      onFirstNameUpdate(firstName);
-    }
-    if (isNonNullable(onLastNameUpdate)) {
-      onLastNameUpdate(lastName);
-    }
+    onFirstNameUpdate?.(firstName);
+    onLastNameUpdate?.(lastName);
+
     try {
       if (!currentWorkspaceMember?.id) {
         throw new Error('User is not logged in');

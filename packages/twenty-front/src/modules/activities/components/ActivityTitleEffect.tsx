@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
 import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
@@ -17,7 +16,6 @@ export const ActivityTitleEffect = ({ activityId }: { activityId: string }) => {
 
   useEffect(() => {
     if (
-      isNonEmptyString(activityTitle) &&
       activityTitle === '' &&
       isNonNullable(activityFromStore) &&
       activityTitle !== activityFromStore.title

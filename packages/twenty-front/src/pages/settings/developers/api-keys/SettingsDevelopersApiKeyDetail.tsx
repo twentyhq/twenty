@@ -111,7 +111,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
       await deleteIntegration(false);
 
-      if (isNonNullable(apiKey) && isNonEmptyString(apiKey.token)) {
+      if (isNonEmptyString(apiKey?.token)) {
         setGeneratedApi(apiKey.id, apiKey.token);
         navigate(`/settings/developers/api-keys/${apiKey.id}`);
       }

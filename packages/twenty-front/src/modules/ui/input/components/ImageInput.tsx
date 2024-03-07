@@ -133,10 +133,11 @@ export const ImageInput = ({
             ref={hiddenFileInput}
             accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
-              if (isNonNullable(onUpload)) {
-                if (isNonNullable(event.target.files)) {
-                  onUpload(event.target.files[0]);
-                }
+              if (
+                isNonNullable(onUpload) &&
+                isNonNullable(event.target.files)
+              ) {
+                onUpload(event.target.files[0]);
               }
             }}
           />

@@ -128,7 +128,7 @@ export const filterAndSortData = <DataT>(
     });
   }
 
-  if (isNumber(limit)) {
+  if (isNumber(limit) && limit > 0) {
     filteredData = filteredData.slice(0, limit);
   }
 

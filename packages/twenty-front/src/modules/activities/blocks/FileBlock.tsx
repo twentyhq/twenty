@@ -13,6 +13,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Button } from '@/ui/input/button/components/Button';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { AttachmentIcon } from '../files/components/AttachmentIcon';
 import { AttachmentType } from '../files/types/Attachment';
@@ -79,7 +80,7 @@ const FileBlockRenderer = ({
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleUploadAttachment = async (file: File) => {
-    if (isNonNullable(!file)) {
+    if (isNullable(file)) {
       return '';
     }
     const fileUrl = await editor.uploadFile?.(file);
