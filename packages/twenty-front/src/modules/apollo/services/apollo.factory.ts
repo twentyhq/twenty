@@ -78,7 +78,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
       const errorLink = onError(
         ({ graphQLErrors, networkError, forward, operation }) => {
-          if (graphQLErrors) {
+          if (isNonNullable(graphQLErrors)) {
             onErrorCb?.(graphQLErrors);
 
             for (const graphQLError of graphQLErrors) {
@@ -86,7 +86,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 return fromPromise(
                   renewToken(uri, this.tokenPair)
                     .then((tokens) => {
-                      onTokenPairChange?.(tokens);
+                      if (isNonNullable(tokens)) {
+                        onTokenPairChange?.(tokens);
+                      }
                     })
                     .catch(() => {
                       onUnauthenticatedError?.();
@@ -99,7 +101,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return fromPromise(
                     renewToken(uri, this.tokenPair)
                       .then((tokens) => {
-                        onTokenPairChange?.(tokens);
+                        if (isNonNullable(tokens)) {
+                          onTokenPairChange?.(tokens);
+                        }
                       })
                       .catch(() => {
                         onUnauthenticatedError?.();
@@ -107,7 +111,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   ).flatMap(() => forward(operation));
                 }
                 default:
-                  if (isDebugMode) {
+                  if (isDebugMode === true) {
                     logDebug(
                       `[GraphQL error]: Message: ${
                         graphQLError.message
@@ -122,8 +126,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             }
           }
 
-          if (networkError) {
-            if (isDebugMode) {
+          if (isNonNullable(networkError)) {
+            if (isDebugMode === true) {
               logDebug(`[Network error]: ${networkError}`);
             }
             onNetworkError?.(networkError);

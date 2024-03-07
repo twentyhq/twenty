@@ -14,6 +14,7 @@ import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogMa
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';
@@ -94,7 +95,7 @@ export const ValidationStep = <T extends string>({
   );
 
   const deleteSelectedRows = () => {
-    if (selectedRows.size) {
+    if (selectedRows.size > 0) {
       const newData = data.filter((value) => !selectedRows.has(value.__index));
       updateData(newData);
       setSelectedRows(new Set());
@@ -129,7 +130,7 @@ export const ValidationStep = <T extends string>({
   const tableData = useMemo(() => {
     if (filterByErrors) {
       return data.filter((value) => {
-        if (value?.__errors) {
+        if (isNonNullable(value?.__errors)) {
           return Object.values(value.__errors)?.filter(
             (err) => err.level === 'error',
           ).length;
@@ -146,7 +147,7 @@ export const ValidationStep = <T extends string>({
     const calculatedData = data.reduce(
       (acc, value) => {
         const { __index, __errors, ...values } = value;
-        if (__errors) {
+        if (isNonNullable(__errors)) {
           for (const key in __errors) {
             if (__errors[key].level === 'error') {
               acc.invalidData.push(values as unknown as Data<T>);
@@ -165,7 +166,7 @@ export const ValidationStep = <T extends string>({
   };
   const onContinue = () => {
     const invalidData = data.find((value) => {
-      if (value?.__errors) {
+      if (isNonNullable(value?.__errors)) {
         return !!Object.values(value.__errors)?.filter(
           (err) => err.level === 'error',
         ).length;

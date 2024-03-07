@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
 import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const ActivityTitleEffect = ({ activityId }: { activityId: string }) => {
   const [activityFromStore] = useRecoilState(
@@ -15,8 +17,9 @@ export const ActivityTitleEffect = ({ activityId }: { activityId: string }) => {
 
   useEffect(() => {
     if (
+      isNonEmptyString(activityTitle) &&
       activityTitle === '' &&
-      activityFromStore &&
+      isNonNullable(activityFromStore) &&
       activityTitle !== activityFromStore.title
     ) {
       setActivityTitle(activityFromStore.title);

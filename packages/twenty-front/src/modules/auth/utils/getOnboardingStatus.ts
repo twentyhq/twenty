@@ -35,13 +35,16 @@ export const getOnboardingStatus = ({
   }
 
   if (
-    isBillingEnabled &&
+    isBillingEnabled === true &&
     currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
+  if (
+    isBillingEnabled === true &&
+    currentWorkspace.subscriptionStatus === 'canceled'
+  ) {
     return OnboardingStatus.Canceled;
   }
 

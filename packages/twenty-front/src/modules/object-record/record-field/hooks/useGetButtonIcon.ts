@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { IconPencil } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { isNullable } from '~/utils/isNullable';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
@@ -12,7 +13,7 @@ import { isFieldPhone } from '../types/guards/isFieldPhone';
 export const useGetButtonIcon = (): IconComponent | undefined => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  if (!fieldDefinition) return undefined;
+  if (isNullable(fieldDefinition)) return undefined;
 
   if (
     isFieldLink(fieldDefinition) ||

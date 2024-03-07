@@ -1,5 +1,7 @@
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
+import { isTruthy } from '~/utils/isTruthy';
+
 import { logError } from './logError';
 
 const DEBUG_MODE = false;
@@ -8,25 +10,26 @@ export const canBeCastAsIntegerOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): probableNumberOrNull is number | null => {
   if (probableNumberOrNull === undefined) {
-    if (DEBUG_MODE) logError('probableNumberOrNull === undefined');
+    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === undefined');
 
     return false;
   }
 
   if (isNumber(probableNumberOrNull)) {
-    if (DEBUG_MODE) logError('typeof probableNumberOrNull === "number"');
+    if (isTruthy(DEBUG_MODE))
+      logError('typeof probableNumberOrNull === "number"');
 
     return Number.isInteger(probableNumberOrNull);
   }
 
   if (isNull(probableNumberOrNull)) {
-    if (DEBUG_MODE) logError('probableNumberOrNull === null');
+    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === null');
 
     return true;
   }
 
   if (probableNumberOrNull === '') {
-    if (DEBUG_MODE) logError('probableNumberOrNull === ""');
+    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === ""');
 
     return true;
   }
@@ -35,12 +38,12 @@ export const canBeCastAsIntegerOrNull = (
     const stringAsNumber = +probableNumberOrNull;
 
     if (isNaN(stringAsNumber)) {
-      if (DEBUG_MODE) logError('isNaN(stringAsNumber)');
+      if (isTruthy(DEBUG_MODE)) logError('isNaN(stringAsNumber)');
 
       return false;
     }
     if (Number.isInteger(stringAsNumber)) {
-      if (DEBUG_MODE) logError('Number.isInteger(stringAsNumber)');
+      if (isTruthy(DEBUG_MODE)) logError('Number.isInteger(stringAsNumber)');
 
       return true;
     }

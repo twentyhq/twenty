@@ -1,4 +1,4 @@
-import { isArray } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 
 export const getActivitySummary = (activityBody: string) => {
   const noteBody = activityBody ? JSON.parse(activityBody) : [];
@@ -13,7 +13,7 @@ export const getActivitySummary = (activityBody: string) => {
     return '';
   }
 
-  if (firstNoteBlockContent.text) {
+  if (isNonEmptyString(firstNoteBlockContent.text)) {
     return noteBody[0].content.text;
   }
 

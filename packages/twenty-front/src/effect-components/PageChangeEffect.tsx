@@ -18,6 +18,7 @@ import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -80,7 +81,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.SignIn);
     } else if (
-      onboardingStatus &&
+      isNonNullable(onboardingStatus) &&
       [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
         onboardingStatus,
       ) &&
@@ -113,7 +114,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
+          if (isNonNullable(!data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },

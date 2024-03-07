@@ -5,6 +5,7 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_OPTIONS_TO_DISPLAY = 3;
@@ -31,7 +32,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
   >([]);
 
   useEffect(() => {
-    if (selectOptions) {
+    if (isNonNullable(selectOptions)) {
       const options = selectOptions.map((option) => {
         const isSelected =
           objectFilterDropdownSelectedOptionValues?.includes(option.value) ??
@@ -70,7 +71,10 @@ export const ObjectFilterDropdownOptionSelect = () => {
         ? `${selectedOptions.length} options`
         : selectedOptions.map((option) => option.label).join(', ');
 
-    if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
+    if (
+      isNonNullable(filterDefinitionUsedInDropdown) &&
+      isNonNullable(selectedOperandInDropdown)
+    ) {
       const newFilterValue =
         selectedOptions.length > 0
           ? JSON.stringify(selectedOptions.map((option) => option.value))

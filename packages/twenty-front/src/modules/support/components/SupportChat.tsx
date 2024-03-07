@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -9,6 +10,7 @@ import { IconHelpCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -24,9 +26,9 @@ const insertScript = ({
   onLoad?: (...args: any[]) => void;
 }) => {
   const script = document.createElement('script');
-  if (src) script.src = src;
-  if (innerHTML) script.innerHTML = innerHTML;
-  if (onLoad) script.onload = onLoad;
+  if (isNonEmptyString(src)) script.src = src;
+  if (isNonEmptyString(innerHTML)) script.innerHTML = innerHTML;
+  if (isNonNullable(onLoad)) script.onload = onLoad;
   document.body.appendChild(script);
 };
 
@@ -70,9 +72,9 @@ export const SupportChat = () => {
   useEffect(() => {
     if (
       supportChat?.supportDriver === 'front' &&
-      supportChat.supportFrontChatId &&
-      currentUser?.email &&
-      currentWorkspaceMember &&
+      isNonEmptyString(supportChat.supportFrontChatId) &&
+      isNonEmptyString(currentUser?.email) &&
+      isNonNullable(currentWorkspaceMember) &&
       !isFrontChatLoaded
     ) {
       configureFront(

@@ -1,3 +1,5 @@
+import { isNonNullable } from '~/utils/isNonNullable';
+
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const flattenTargetableObjectsAndTheirRelatedTargetableObjects = (
@@ -9,7 +11,7 @@ export const flattenTargetableObjectsAndTheirRelatedTargetableObjects = (
     []) {
     flattenedTargetableObjects.push(targetableObject);
 
-    if (targetableObject.relatedTargetableObjects) {
+    if (isNonNullable(targetableObject.relatedTargetableObjects)) {
       for (const relatedEntity of targetableObject.relatedTargetableObjects ??
         []) {
         flattenedTargetableObjects.push(relatedEntity);

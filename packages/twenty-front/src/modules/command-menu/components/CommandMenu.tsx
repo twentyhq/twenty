@@ -22,6 +22,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -218,7 +219,7 @@ export const CommandMenu = () => {
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
-    if (cmd.label) {
+    if (isNonNullable(cmd.label)) {
       return cmd.label.toLowerCase().includes(search.toLowerCase());
     }
     return false;
@@ -276,7 +277,7 @@ export const CommandMenu = () => {
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
 
-                    if (command) {
+                    if (isNonNullable(command)) {
                       const { to, onCommandClick } = command;
                       onItemClick(onCommandClick, to);
                     }

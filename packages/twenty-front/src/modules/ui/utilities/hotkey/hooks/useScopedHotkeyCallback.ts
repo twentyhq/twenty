@@ -1,6 +1,7 @@
 import { Hotkey } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 
+import { isTruthy } from '~/utils/isTruthy';
 import { logDebug } from '~/utils/logDebug';
 
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
@@ -28,7 +29,7 @@ export const useScopedHotkeyCallback = () =>
           .getValue();
 
         if (!currentHotkeyScopes.includes(scope)) {
-          if (DEBUG_HOTKEY_SCOPE) {
+          if (isTruthy(DEBUG_HOTKEY_SCOPE)) {
             logDebug(
               `%cI can't call hotkey (${
                 hotkeysEvent.keys
@@ -42,7 +43,7 @@ export const useScopedHotkeyCallback = () =>
           return;
         }
 
-        if (DEBUG_HOTKEY_SCOPE) {
+        if (isTruthy(DEBUG_HOTKEY_SCOPE)) {
           logDebug(
             `%cI can call hotkey (${
               hotkeysEvent.keys

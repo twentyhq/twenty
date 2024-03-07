@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -108,7 +108,7 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (viewableActivityId) {
+        if (isNonNullable(viewableActivityId)) {
           if (
             isActivityInCreateMode &&
             isNonNullable(temporaryActivityForEditor)
@@ -116,7 +116,7 @@ export const ActivityActionBar = () => {
             deleteActivityFromCache(temporaryActivityForEditor);
             setTemporaryActivityForEditor(null);
           } else {
-            if (activityIdInDrawer) {
+            if (isNonEmptyString(activityIdInDrawer)) {
               const activityTargetIdsToDelete: string[] =
                 activityTargets.map(mapToRecordId) ?? [];
 
@@ -223,10 +223,10 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (record && objectShowPageTargetableObject) {
+    if (isNonNullable(record && objectShowPageTargetableObject)) {
       openCreateActivity({
-        type: record.type,
-        customAssignee: record.assignee,
+        type: record?.type,
+        customAssignee: record?.assignee,
         targetableObjects: activityTargetableEntityArray,
       });
     }

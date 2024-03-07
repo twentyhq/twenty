@@ -3,6 +3,7 @@ import { gql, useApolloClient } from '@apollo/client';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isNullable } from '~/utils/isNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGetRecordFromCache = ({
@@ -17,7 +18,7 @@ export const useGetRecordFromCache = ({
     recordId: string,
     cache = apolloClient.cache,
   ) => {
-    if (!objectMetadataItem) {
+    if (isNullable(objectMetadataItem)) {
       return null;
     }
 

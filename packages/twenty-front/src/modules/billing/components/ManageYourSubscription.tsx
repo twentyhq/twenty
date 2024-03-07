@@ -1,6 +1,7 @@
 import { IconCreditCard } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { useBillingPortalSessionQuery } from '~/generated/graphql.tsx';
+import { isNonNullable } from '~/utils/isNonNullable';
 export const ManageYourSubscription = () => {
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
@@ -8,7 +9,7 @@ export const ManageYourSubscription = () => {
     },
   });
   const handleButtonClick = () => {
-    if (data) {
+    if (isNonNullable(data)) {
       window.location.replace(data.billingPortalSession.url);
     }
   };

@@ -2,6 +2,8 @@ import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
+import { isTruthy } from '~/utils/isTruthy';
+
 import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
@@ -122,11 +124,12 @@ export const beautifyDateDiff = (
     ['years', 'days'],
   );
   let result = '';
-  if (dateDiff.years) result = result + `${dateDiff.years} year`;
+  if (isTruthy(dateDiff.years)) result = result + `${dateDiff.years} year`;
   if (![0, 1].includes(dateDiff.years)) result = result + 's';
-  if (short && dateDiff.years) return result;
-  if (dateDiff.years && dateDiff.days) result = result + ' and ';
-  if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
+  if (isTruthy(short && dateDiff.years)) return result;
+  if (isTruthy(dateDiff.years && dateDiff.days)) result = result + ' and ';
+  if (isTruthy(dateDiff.days))
+    result = result + `${Math.floor(dateDiff.days)} day`;
   if (![0, 1].includes(dateDiff.days)) result = result + 's';
   return result;
 };

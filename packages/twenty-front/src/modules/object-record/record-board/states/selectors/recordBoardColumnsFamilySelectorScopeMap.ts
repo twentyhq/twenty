@@ -80,7 +80,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
               true,
             );
 
-            if (lastColumn) {
+            if (isNonNullable(lastColumn)) {
               set(
                 isLastRecordBoardColumnFamilyStateScopeMap({
                   scopeId,
@@ -100,7 +100,7 @@ export const recordBoardColumnsFamilySelectorScopeMap =
               true,
             );
 
-            if (firstColumn) {
+            if (isNonNullable(firstColumn)) {
               set(
                 isFirstRecordBoardColumnFamilyStateScopeMap({
                   scopeId,

@@ -8,6 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useImpersonateMutation } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export const ImpersonateEffect = () => {
       variables: { userId },
     });
 
-    if (impersonateResult.errors) {
+    if (isNonNullable(impersonateResult.errors)) {
       throw impersonateResult.errors;
     }
 
@@ -47,7 +48,11 @@ export const ImpersonateEffect = () => {
   }, [userId, impersonate, setCurrentUser, setTokenPair]);
 
   useEffect(() => {
-    if (isLogged && currentUser?.canImpersonate && isNonEmptyString(userId)) {
+    if (
+      isLogged &&
+      currentUser?.canImpersonate === true &&
+      isNonEmptyString(userId)
+    ) {
       handleImpersonate();
     } else {
       // User is not allowed to impersonate or not logged in

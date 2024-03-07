@@ -63,15 +63,15 @@ export const useSetHotkeyScope = () =>
 
         const scopesToSet: string[] = [];
 
-        if (newHotkeyScope.customScopes?.commandMenu) {
+        if (newHotkeyScope.customScopes?.commandMenu === true) {
           scopesToSet.push(AppHotkeyScope.CommandMenu);
         }
 
-        if (newHotkeyScope?.customScopes?.goto) {
+        if (newHotkeyScope?.customScopes?.goto === true) {
           scopesToSet.push(AppHotkeyScope.Goto);
         }
 
-        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu) {
+        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu === true) {
           scopesToSet.push(AppHotkeyScope.KeyboardShortcutMenu);
         }
 

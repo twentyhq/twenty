@@ -49,7 +49,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
             })
             .filter(isNonNullable);
 
-        if (relatedEntities) {
+        if (isNonNullable(relatedEntities)) {
           activityTargetableObjectArray =
             activityTargetableObjectArray.concat(relatedEntities);
         }
