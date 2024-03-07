@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { CalendarEventAttendeesService } from 'src/workspace/calendar/repositories/calendar-event-attendees/calendar-event-attendees.service';
+import { CalendarEventAttendeesService } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 
 @Module({

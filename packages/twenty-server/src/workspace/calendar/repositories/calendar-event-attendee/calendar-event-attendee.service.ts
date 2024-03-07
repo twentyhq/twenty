@@ -4,6 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
 @Injectable()
 export class CalendarEventAttendeesService {
@@ -15,7 +16,7 @@ export class CalendarEventAttendeesService {
     calendarEventAttendeeIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventAttendeesObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

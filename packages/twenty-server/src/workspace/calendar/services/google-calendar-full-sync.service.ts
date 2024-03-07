@@ -3,24 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FetchCalendarsByBatchesService } from 'src/workspace/messaging/services/fetch-calendars-by-batches.service';
-import { CalendarQueue } from 'src/integrations/calendar-queue/calendar-queue.constants';
-import { CalendarQueueService } from 'src/integrations/calendar-queue/services/calendar-queue.service';
 import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
-import { CalendarChannelService } from 'src/workspace/messaging/repositories/calendar-channel/calendar-channel.service';
-import { CalendarChannelEventAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
 import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
-import { SaveCalendarsAndCreateContactsService } from 'src/workspace/messaging/services/save-calendars-and-create-contacts.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/providers/google-calendar/google-calendar.provider';
 import { googleCalendarSearchFilterExcludeEmails } from 'src/workspace/calendar/utils/google-calendar-search-filter.util';
+import { CalendarChannelEventAssociationService } from 'src/workspace/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.service';
+import { CalendarChannelService } from 'src/workspace/calendar/repositories/calendar-channel/calendar-channel.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -28,14 +24,12 @@ export class GmailFullSyncService {
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    private readonly fetchCalendarsByBatchesService: FetchCalendarsByBatchesService,
-    @Inject(CalendarQueue.messagingQueue)
+    @Inject(CalendarQueue.calendarQueue)
     private readonly calendarQueueService: CalendarQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly calendarChannelService: CalendarChannelService,
     private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
     private readonly blocklistService: BlocklistService,
-    private readonly saveCalendarsAndCreateContactsService: SaveCalendarsAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -50,7 +44,6 @@ export class GmailFullSyncService {
       workspaceId,
     );
 
-    const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
     const workspaceMemberId = connectedAccount.accountOwnerId;
 
@@ -122,7 +115,7 @@ export class GmailFullSyncService {
       return;
     }
 
-    const eventExternalIds = events.map((event) => event.id);
+    const eventExternalIds = events.map((event) => event.id as string);
 
     startTime = Date.now();
 
@@ -149,11 +142,11 @@ export class GmailFullSyncService {
       );
 
     const eventsToSave = events.filter(
-      (event) => !existingEventExternalIds.includes(event.id),
+      (event) => !existingEventExternalIds.includes(event.id as string),
     );
 
     const eventsToUpdate = events.filter((event) =>
-      existingEventExternalIds.includes(event.id),
+      existingEventExternalIds.includes(event.id as string),
     );
 
     if (events.length > 0) {
