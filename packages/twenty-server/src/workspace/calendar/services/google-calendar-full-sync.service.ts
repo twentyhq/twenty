@@ -12,7 +12,7 @@ import {
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { CalendarChannelService } from 'src/workspace/messaging/repositories/calendar-channel/calendar-channel.service';
-import { CalendarChannelCalendarAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
+import { CalendarChannelEventAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
 import { createQueriesFromCalendarIds } from 'src/workspace/messaging/utils/create-queries-from-calendar-ids.util';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveCalendarsAndCreateContactsService } from 'src/workspace/messaging/services/save-calendars-and-create-contacts.service';
@@ -21,7 +21,7 @@ import {
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/providers/google-calendar/google-calendar.provider';
-import { googleCalendarSearchFilterExcludeEmails } from 'src/workspace/calendar/utils/google-calendar-search-filter';
+import { googleCalendarSearchFilterExcludeEmails } from 'src/workspace/calendar/utils/google-calendar-search-filter.util';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -34,7 +34,7 @@ export class GmailFullSyncService {
     private readonly calendarQueueService: CalendarQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
     private readonly calendarChannelService: CalendarChannelService,
-    private readonly calendarChannelCalendarAssociationService: CalendarChannelCalendarAssociationService,
+    private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
     private readonly blocklistService: BlocklistService,
     private readonly saveCalendarsAndCreateContactsService: SaveCalendarsAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
@@ -121,9 +121,11 @@ export class GmailFullSyncService {
 
     startTime = Date.now();
 
-    const existingCalendarChannelCalendarAssociations =
-      await this.calendarChannelCalendarAssociationService.getByCalendarExternalIdsAndCalendarChannelId(
-        calendarExternalIds,
+    const eventExternalIds = events.map((event) => event.id);
+
+    const existingCalendarChannelEventAssociations =
+      await this.calendarChannelEventAssociationService.getByEventExternalIdsAndCalendarChannelId(
+        eventExternalIds,
         calendarChannelId,
         workspaceId,
       );
@@ -131,20 +133,20 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel calendar associations in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel event associations in ${
         endTime - startTime
       }ms.`,
     );
 
-    const existingCalendarChannelCalendarAssociationsExternalIds =
-      existingCalendarChannelCalendarAssociations.map(
-        (calendarChannelCalendarAssociation) =>
-          calendarChannelCalendarAssociation.calendarExternalId,
+    const existingCalendarChannelEventAssociationsExternalIds =
+      existingCalendarChannelEventAssociations.map(
+        (calendarChannelEventAssociation) =>
+          calendarChannelEventAssociation.calendarExternalId,
       );
 
-    const calendarsToFetch = calendarExternalIds.filter(
+    const calendarsToFetch = eventExternalIds.filter(
       (calendarExternalId) =>
-        !existingCalendarChannelCalendarAssociationsExternalIds.includes(
+        !existingCalendarChannelEventAssociationsExternalIds.includes(
           calendarExternalId,
         ),
     );
