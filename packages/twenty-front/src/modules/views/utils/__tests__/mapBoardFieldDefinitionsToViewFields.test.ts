@@ -1,10 +1,10 @@
-import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
-import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFieldDefinitionsToViewFields';
 
 describe('mapBoardFieldDefinitionsToViewFields', () => {
   it('should map board field definitions to view fields', () => {
-    const fieldDefinitions: BoardFieldDefinition<FieldMetadata>[] = [
+    const fieldDefinitions: RecordBoardFieldDefinition<FieldMetadata>[] = [
       {
         fieldMetadataId: 'fieldMetadataId',
         label: 'label',
