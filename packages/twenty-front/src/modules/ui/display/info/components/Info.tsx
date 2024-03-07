@@ -19,13 +19,13 @@ const StyledTextContainer = styled.div`
 `;
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  width: 100%;
+  display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  justify-content: space-between;
+  max-width: 512px;
+  padding: ${({ theme }) => theme.spacing(2)};
   ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
