@@ -19,6 +19,7 @@ import { CalendarChannelEventAssociationService } from 'src/workspace/calendar/r
 import { CalendarChannelService } from 'src/workspace/calendar/repositories/calendar-channel/calendar-channel.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -34,6 +35,7 @@ export class GmailFullSyncService {
     private readonly blocklistService: BlocklistService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   public async startGoogleCalendarFullSync(
@@ -152,8 +154,15 @@ export class GmailFullSyncService {
     );
 
     if (events.length > 0) {
-      // this.calendarEventsService.saveEvents();
-      // this.calendarEventAttendeesService.saveEventAttendees();
+      const dataSourceMetadata =
+        await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+          workspaceId,
+        );
+
+      dataSourceMetadata?.transaction(async (transactionManager) => {
+        this.calendarEventsService.saveEvents();
+        this.calendarEventAttendeesService.saveEventAttendees();
+      });
     } else {
       this.logger.log(
         `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
