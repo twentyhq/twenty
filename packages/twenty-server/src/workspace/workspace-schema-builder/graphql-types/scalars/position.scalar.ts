@@ -12,6 +12,7 @@ const checkPosition = (value: any): PositionType => {
   if (isValidNumberPosition(value) || isValidStringPosition(value)) {
     return value;
   }
+
   throw new Error('Invalid position found');
 };
 

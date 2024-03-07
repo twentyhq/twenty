@@ -82,9 +82,9 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   stage: string;
 
   @FieldMetadata({
-    type: FieldMetadataType.NUMBER,
+    type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Position',
+    description: 'Opportunity record position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()

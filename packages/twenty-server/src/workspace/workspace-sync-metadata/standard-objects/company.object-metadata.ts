@@ -99,9 +99,9 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   idealCustomerProfile: boolean;
 
   @FieldMetadata({
-    type: FieldMetadataType.NUMBER,
+    type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Position',
+    description: 'Company record position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()

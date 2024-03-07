@@ -36,6 +36,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.NUMERIC:
       case FieldMetadataType.PROBABILITY:
       case FieldMetadataType.RATING:
+      case FieldMetadataType.POSITION:
         itemProperty.type = 'number';
         break;
       case FieldMetadataType.BOOLEAN:
