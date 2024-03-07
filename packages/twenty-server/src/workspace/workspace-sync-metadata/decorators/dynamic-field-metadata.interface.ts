@@ -1,10 +1,10 @@
-import { ComputedRelationFieldMetadataDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
+import { DynamicRelationFieldMetadataDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
 
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export function ComputedRelationFieldMetadata(
-  params: ComputedRelationFieldMetadataDecoratorParams,
+export function DynamicRelationFieldMetadata(
+  params: DynamicRelationFieldMetadataDecoratorParams,
 ): PropertyDecorator {
   return (target: object, fieldKey: string) => {
     const isSystem =
@@ -12,7 +12,7 @@ export function ComputedRelationFieldMetadata(
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
 
     TypedReflect.defineMetadata(
-      'computedRelationFieldMetadataMap',
+      'dynamicRelationFieldMetadataMap',
       {
         type: FieldMetadataType.RELATION,
         factory: params,

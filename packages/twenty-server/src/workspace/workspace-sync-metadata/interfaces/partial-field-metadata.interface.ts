@@ -1,4 +1,4 @@
-import { ReflectComputedRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
+import { ReflectDynamicRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
 import { ReflectFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
 
 export type PartialFieldMetadata = Omit<
@@ -10,7 +10,7 @@ export type PartialFieldMetadata = Omit<
 };
 
 export type PartialComputedFieldMetadata =
-  ReflectComputedRelationFieldMetadata & {
+  ReflectDynamicRelationFieldMetadata & {
     workspaceId: string;
     objectMetadataId?: string;
   };

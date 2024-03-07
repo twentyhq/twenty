@@ -8,7 +8,7 @@ import {
 } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { ReflectFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
 import { ReflectObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-object-metadata.interface';
-import { ReflectComputedRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
+import { ReflectDynamicRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
 
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
@@ -26,8 +26,8 @@ export class StandardFieldFactory {
     );
     const reflectFieldMetadataMap =
       TypedReflect.getMetadata('fieldMetadataMap', target) ?? [];
-    const reflectComputedRelationFieldMetadataMap = TypedReflect.getMetadata(
-      'computedRelationFieldMetadataMap',
+    const reflectDynamicRelationFieldMetadataMap = TypedReflect.getMetadata(
+      'dynamicRelationFieldMetadataMap',
       target,
     );
     const partialFieldMetadataCollection: (
@@ -44,7 +44,7 @@ export class StandardFieldFactory {
       )
       .filter((metadata): metadata is PartialFieldMetadata => !!metadata);
     const partialComputedFieldMetadata = this.createComputedFieldMetadata(
-      reflectComputedRelationFieldMetadataMap,
+      reflectDynamicRelationFieldMetadataMap,
       context,
       workspaceFeatureFlagsMap,
     );
@@ -77,16 +77,16 @@ export class StandardFieldFactory {
   }
 
   private createComputedFieldMetadata(
-    reflectComputedRelationFieldMetadata:
-      | ReflectComputedRelationFieldMetadata
+    reflectDynamicRelationFieldMetadata:
+      | ReflectDynamicRelationFieldMetadata
       | undefined,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialComputedFieldMetadata | undefined {
     if (
-      !reflectComputedRelationFieldMetadata ||
+      !reflectDynamicRelationFieldMetadata ||
       isGatedAndNotEnabled(
-        reflectComputedRelationFieldMetadata.gate,
+        reflectDynamicRelationFieldMetadata.gate,
         workspaceFeatureFlagsMap,
       )
     ) {
@@ -94,9 +94,9 @@ export class StandardFieldFactory {
     }
 
     return {
-      ...reflectComputedRelationFieldMetadata,
+      ...reflectDynamicRelationFieldMetadata,
       workspaceId: context.workspaceId,
-      isSystem: reflectComputedRelationFieldMetadata.isSystem,
+      isSystem: reflectDynamicRelationFieldMetadata.isSystem,
     };
   }
 }

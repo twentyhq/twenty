@@ -3,7 +3,7 @@ import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/inter
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
-export type ComputedRelationFieldMetadataDecoratorParams = (
+export type DynamicRelationFieldMetadataDecoratorParams = (
   oppositeObjectMetadata: ObjectMetadataEntity,
 ) => {
   name: string;
@@ -13,9 +13,9 @@ export type ComputedRelationFieldMetadataDecoratorParams = (
   icon?: string;
 };
 
-export interface ReflectComputedRelationFieldMetadata {
+export interface ReflectDynamicRelationFieldMetadata {
   type: FieldMetadataType.RELATION;
-  factory: ComputedRelationFieldMetadataDecoratorParams;
+  factory: DynamicRelationFieldMetadataDecoratorParams;
   isNullable: boolean;
   isSystem: boolean;
   isCustom: boolean;

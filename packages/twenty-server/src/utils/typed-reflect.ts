@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 import { ReflectExtendCustomObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-custom-object-metadata.interface';
-import { ReflectComputedRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
+import { ReflectDynamicRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
 import { ReflectFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
 import { ReflectObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-object-metadata.interface';
 import { ReflectRelationMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
@@ -11,7 +11,7 @@ export interface ReflectMetadataTypeMap {
   objectMetadata: ReflectObjectMetadata;
   extendObjectMetadata: ReflectExtendCustomObjectMetadata;
   fieldMetadataMap: ReflectFieldMetadata;
-  computedRelationFieldMetadataMap: ReflectComputedRelationFieldMetadata;
+  dynamicRelationFieldMetadataMap: ReflectDynamicRelationFieldMetadata;
   reflectRelationMetadataCollection: ReflectRelationMetadata[];
   gate: GateDecoratorParams;
   isNullable: true;
