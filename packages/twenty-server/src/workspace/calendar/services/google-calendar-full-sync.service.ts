@@ -21,6 +21,7 @@ import {
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/providers/google-calendar/google-calendar.provider';
+import { googleCalendarSearchFilterExcludeEmails } from 'src/workspace/calendar/utils/google-calendar-search-filter';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -92,10 +93,6 @@ export class GmailFullSyncService {
 
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
     let startTime = Date.now();
-
-    const primaryCalendar = await googleCalendarClient.calendars.get({
-      calendarId: 'primary',
-    });
 
     const googleCalendarEvents = await googleCalendarClient.events.list({
       calendarId: 'primary',
