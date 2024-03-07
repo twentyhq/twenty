@@ -104,7 +104,13 @@ describe('useOnboardingStatus', () => {
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
       });
-      setCurrentWorkspaceMember(currentWorkspaceMember);
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
     });
 
     expect(result.current.onboardingStatus).toBe('canceled');
@@ -177,5 +183,61 @@ describe('useOnboardingStatus', () => {
     });
 
     expect(result.current.onboardingStatus).toBe('completed');
+  });
+
+  it('should return "past_due"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'past_due',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('past_due');
+  });
+
+  it('should return "unpaid"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'unpaid',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('unpaid');
   });
 });
