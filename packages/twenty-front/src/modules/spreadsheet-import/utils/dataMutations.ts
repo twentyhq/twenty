@@ -50,7 +50,10 @@ export const addErrorsAndRunHooks = <T extends string>(
           const duplicates = new Set(); // Set of items used multiple times
 
           values.forEach((value) => {
-            if (validation.allowEmpty === true && isNullable(value)) {
+            if (
+              validation.allowEmpty === true &&
+              (isNullable(value) || value === '' || !value)
+            ) {
               // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
             }
