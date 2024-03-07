@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -26,35 +26,20 @@ const StyledRelationsListContainer = styled(StyledContainer)`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
 `;
 
+const showMoreRelationsHandler = (event?: React.MouseEvent<HTMLDivElement>) => {
+  event?.preventDefault();
+  event?.stopPropagation();
+};
+
 export const ActivityTargetChips = ({
   activityTargetObjectRecords,
 }: {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
 }) => {
   const dropdownId = useMemo(() => `multiple-relations-dropdown-${v4()}`, []);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0); // controls the width of dropdown component
-
-  const showMoreRelationsHandler = useCallback(
-    (event?: React.MouseEvent<HTMLDivElement>) => {
-      event?.preventDefault();
-      event?.stopPropagation();
-
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth);
-      }
-    },
-    [containerRef],
-  );
-
-  useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth);
-    }
-  }, [containerRef, activityTargetObjectRecords.length]);
 
   return (
-    <StyledContainer ref={containerRef}>
+    <StyledContainer>
       {activityTargetObjectRecords
         ?.slice(0, MAX_RECORD_CHIPS_DISPLAY)
         .map((activityTargetObjectRecord) => (
@@ -83,7 +68,6 @@ export const ActivityTargetChips = ({
               />
             }
             dropdownOffset={{ x: 0, y: -20 }}
-            dropdownMenuWidth={containerWidth}
             dropdownComponents={
               <StyledRelationsListContainer>
                 {activityTargetObjectRecords.map(
