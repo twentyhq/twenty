@@ -62,6 +62,9 @@ export class ArgsStringFactory {
     // PgGraphql is expecting the orderBy argument to be an array of objects
     if (key === 'orderBy') {
       const orderByString = Object.keys(obj)
+        .sort((_, b) => {
+          return b === 'position' ? -1 : 0;
+        })
         .map((orderByKey) => `{${orderByKey}: ${obj[orderByKey]}}`)
         .join(', ');
 

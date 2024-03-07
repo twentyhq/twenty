@@ -59,6 +59,10 @@ You need to set some environment variables before you can work on the project. L
 cd twenty
 cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
 cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+echo "# ———————— Docker setup ———————— " >> ./packages/twenty-server/.env
+echo "TAG=latest" >> ./packages/twenty-server/.env
+echo "POSTGRES_ADMIN_PASSWORD=twenty" >> ./packages/twenty-server/.env
+echo "LOCAL_SERVER_URL=http://localhost:3001" >> ./packages/twenty-server/.env
 ```
 
 The default values should work out of the box, except for the postgres URL, which requires a small modification.

@@ -101,6 +101,11 @@ export const computeOpenApiPath = (): OpenAPIV3_1.PathItemObject => {
       tags: ['General'],
       summary: 'Get Open Api Schema',
       operationId: 'GetOpenApiSchema',
+      servers: [
+        {
+          url: 'https://api.twenty.com/',
+        },
+      ],
       responses: {
         '200': getJsonResponse(),
       },

@@ -1,4 +1,6 @@
 export default {
+  // to enable logs, comment out the following line
+  silent: true,
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   testEnvironment: 'jsdom',
   transform: {
@@ -19,7 +21,6 @@ export default {
       functions: 60,
     },
   },
-  collectCoverage: true,
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',

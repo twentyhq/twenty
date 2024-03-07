@@ -34,6 +34,7 @@ import {
 } from 'src/workspace/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/workspace/workspace-schema-builder/graphql-types/enum';
 import { BigFloatScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
+import { PositionScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars/position.scalar';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -66,6 +67,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, GraphQLID],
+      [FieldMetadataType.POSITION, PositionScalarType],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -96,6 +98,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
+      [FieldMetadataType.POSITION, FloatFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -118,6 +121,7 @@ export class TypeMapperService {
       [FieldMetadataType.RATING, OrderByDirectionType],
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
+      [FieldMetadataType.POSITION, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

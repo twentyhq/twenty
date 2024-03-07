@@ -27,7 +27,7 @@ export const useSetHotkeyScope = () =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isNonNullable(customScopes)) {

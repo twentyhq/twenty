@@ -7,7 +7,6 @@ import {
   SettingsAccountsEventVisibilitySettingsCard,
 } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import { SettingsAccountsColorSettingCard } from '@/settings/accounts/components/SettingsAccountsColorSettingCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -46,16 +45,6 @@ export const SettingsAccountsCalendarsSettings = () => {
             { children: connectedAccount?.handle || '' },
           ]}
         />
-        <Section>
-          <H2Title
-            title="Color"
-            description="Define the color associated with this calendar"
-          />
-          <SettingsAccountsColorSettingCard
-            value="blue"
-            onChange={(_colorName) => {}}
-          />
-        </Section>
         <Section>
           <H2Title
             title="Event visibility"

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -16,7 +17,9 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
@@ -38,11 +41,9 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    editObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-  } = useObjectMetadataItemForSettings();
+  const { findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -64,8 +65,11 @@ export const SettingsObjectDetail = () => {
   );
 
   const handleDisableObject = async () => {
-    await disableObjectMetadataItem(activeObjectMetadataItem);
-    navigate('/settings/objects');
+    await updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: { isActive: false },
+    });
+    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   const handleDisableField = (activeFieldMetadatItem: FieldMetadataItem) => {
@@ -74,12 +78,13 @@ export const SettingsObjectDetail = () => {
 
   const handleSetLabelIdentifierField = (
     activeFieldMetadatItem: FieldMetadataItem,
-  ) => {
-    editObjectMetadataItem({
-      ...activeObjectMetadataItem,
-      labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
+  ) =>
+    updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: {
+        labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
+      },
     });
-  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

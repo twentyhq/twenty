@@ -1,10 +1,9 @@
 import { Metadata } from 'next';
 import { Gabarito, Inter } from 'next/font/google';
 
-import { HeaderMobile } from '@/app/_components/ui/layout/HeaderMobile';
+import { AppHeader } from '@/app/_components/ui/layout/header';
 
 import { FooterDesktop } from './_components/ui/layout/FooterDesktop';
-import { HeaderDesktop } from './_components/ui/layout/HeaderDesktop';
 import EmotionRootStyleRegistry from './emotion-root-style-registry';
 
 import './layout.css';
@@ -40,11 +39,8 @@ export default function RootLayout({
     <html lang="en" className={`${gabarito.variable} ${inter.variable}`}>
       <body>
         <EmotionRootStyleRegistry>
-          <HeaderDesktop />
-          <div className="container">
-            <HeaderMobile />
-            {children}
-          </div>
+          <AppHeader />
+          <div className="container">{children}</div>
           <FooterDesktop />
         </EmotionRootStyleRegistry>
       </body>

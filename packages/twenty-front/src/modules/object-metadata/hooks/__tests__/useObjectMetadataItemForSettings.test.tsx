@@ -103,28 +103,4 @@ describe('useObjectMetadataItemForSettings', () => {
       expect(res?.namePlural).toBe('opportunities');
     });
   });
-
-  it('should editObjectMetadataItem', async () => {
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
-
-        return useObjectMetadataItemForSettings();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    await act(async () => {
-      const res = await result.current.editObjectMetadataItem({
-        id: 'idToUpdate',
-        description: 'newDescription',
-        labelPlural: 'labelPlural',
-        labelSingular: 'labelSingular',
-      });
-      expect(res.data).toEqual({ updateOneObject: responseData });
-    });
-  });
 });

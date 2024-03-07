@@ -1,3 +1,4 @@
+import { PositionScalarType } from './position.scalar';
 import { CursorScalarType } from './cursor.scalar';
 import { BigFloatScalarType } from './big-float.scalar';
 import { BigIntScalarType } from './big-int.scalar';
@@ -22,4 +23,5 @@ export const scalars = [
   TimeScalarType,
   UUIDScalarType,
   CursorScalarType,
+  PositionScalarType,
 ];
