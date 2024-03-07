@@ -17,7 +17,7 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
-import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
+import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-companies-and-contacts/create-companies-and-contacts.module';

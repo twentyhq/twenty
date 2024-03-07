@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { CalendarChannelEventAssociationObjectMetadata } from 'packages/twenty-server/dist/src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';

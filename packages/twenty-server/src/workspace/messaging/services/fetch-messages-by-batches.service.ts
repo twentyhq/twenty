@@ -10,7 +10,7 @@ import {
 } from 'src/workspace/messaging/types/gmail-message';
 import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
-import { FetchByBatchesService } from 'src/workspace/calendar-and-messaging/services/fetch-by-batch.service';
+import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by-batch.service';
 
 @Injectable()
 export class FetchMessagesByBatchesService {
