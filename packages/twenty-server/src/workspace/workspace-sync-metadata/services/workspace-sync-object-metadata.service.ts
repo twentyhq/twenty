@@ -16,7 +16,6 @@ import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationObjectFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-object.factory';
-import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { computeStandardObject } from 'src/workspace/workspace-sync-metadata/utils/compute-standard-object.util';
 import { standardObjectMetadataDefinitions } from 'src/workspace/workspace-sync-metadata/standard-objects';
 
@@ -30,7 +29,6 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
-    private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {}
 
   async synchronize(
