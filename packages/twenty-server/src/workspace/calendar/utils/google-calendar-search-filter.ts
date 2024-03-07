@@ -5,5 +5,5 @@ export const googleCalendarSearchFilterExcludeEmails = (
     return '';
   }
 
-  return `email=-(${emails.join(' OR ')})`;
+  return `email=-${emails.join(', -')}`;
 };
