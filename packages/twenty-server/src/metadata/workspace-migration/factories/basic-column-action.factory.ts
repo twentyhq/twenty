@@ -23,7 +23,9 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.NUMBER
   | FieldMetadataType.PROBABILITY
   | FieldMetadataType.BOOLEAN
-  | FieldMetadataType.DATE_TIME;
+  | FieldMetadataType.POSITION
+  | FieldMetadataType.DATE_TIME
+  | FieldMetadataType.POSITION;
 
 @Injectable()
 export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicFieldMetadataType> {

@@ -168,6 +168,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Position = 'POSITION',
   Probability = 'PROBABILITY',
   Rating = 'RATING',
   Relation = 'RELATION',

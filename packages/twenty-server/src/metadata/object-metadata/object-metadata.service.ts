@@ -291,7 +291,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'now' },
           },
           {
-            type: FieldMetadataType.NUMBER,
+            type: FieldMetadataType.POSITION,
             name: 'position',
             label: 'Position',
             targetColumnMap: {

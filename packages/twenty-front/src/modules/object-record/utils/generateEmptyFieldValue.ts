@@ -32,6 +32,7 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.Number:
     case FieldMetadataType.Rating:
+    case FieldMetadataType.Position:
     case FieldMetadataType.Numeric: {
       return null;
     }
