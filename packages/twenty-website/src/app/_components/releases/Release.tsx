@@ -51,6 +51,8 @@ const StyledDate = styled.span`
 const StlyedContent = styled.div`
   flex: 1;
 
+  gap: 64px;
+
   h3 {
     color: #141414;
     font-size: 40px;
@@ -66,17 +68,13 @@ const StlyedContent = styled.div`
 
   img {
     max-width: 100%;
-    margin-bottom = 160px
   }
-  @media (max-width : 810px) {    
+
+  @media (max-width: 810px) {
     h3 {
-      font-size = 24px;     
+      font-size: 24px;
       margin: 24px 0 40px;
     }
-    p {
-      margin-bottom : 64px;
-    }
-    
   }
 `;
 
