@@ -1,3 +1,9 @@
-export function getDomainNameFromHandle(handle: string): string {
-  return handle.split('@')?.[1].split('.').slice(-2).join('.').toLowerCase();
-}
+import psl from 'psl';
+
+export const getDomainNameFromHandle = (handle: string): string => {
+  const wholeDomain = handle?.split('@')?.[1] || '';
+
+  const { domain } = psl.parse(wholeDomain);
+
+  return domain || '';
+};

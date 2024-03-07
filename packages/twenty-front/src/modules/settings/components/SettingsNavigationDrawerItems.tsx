@@ -11,6 +11,7 @@ import {
   IconCalendarEvent,
   IconCode,
   IconColorSwatch,
+  IconCurrencyDollar,
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
@@ -34,6 +35,7 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
     <>
@@ -85,6 +87,12 @@ export const SettingsNavigationDrawerItems = () => {
           label="Members"
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
+        />
+        <SettingsNavigationDrawerItem
+          label="Billing"
+          path={SettingsPath.Billing}
+          Icon={IconCurrencyDollar}
+          soon={!isSelfBillingEnabled}
         />
         <SettingsNavigationDrawerItem
           label="Data model"

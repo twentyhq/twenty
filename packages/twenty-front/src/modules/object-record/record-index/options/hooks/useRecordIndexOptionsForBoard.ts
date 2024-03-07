@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilState } from 'recoil';
 
-import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -12,6 +11,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { useViews } from '@/views/hooks/internal/useViews';
 import { GraphQLView } from '@/views/types/GraphQLView';
+import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFieldDefinitionsToViewFields';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

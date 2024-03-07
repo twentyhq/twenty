@@ -164,7 +164,7 @@ export const NavigationDrawerItem = ({
       danger={danger}
       soon={soon}
     >
-      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
+      {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
       {!!count && <StyledItemCount>{count}</StyledItemCount>}

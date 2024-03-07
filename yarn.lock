@@ -15704,6 +15704,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.pick@npm:^4.3.7":
+  version: 4.4.9
+  resolution: "@types/lodash.pick@npm:4.4.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 61ae2fb9fe817a2f398863d10dc57e3cb864ebadefb7f3554d8d0c189448e08a174d6bfdd6e0220988ea084a2d47c3377908cf037e2b3ce552aa79ce0f36bc9f
+  languageName: node
+  linkType: hard
+
 "@types/lodash.snakecase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.snakecase@npm:4.1.9"
@@ -38957,7 +38966,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"psl@npm:^1.1.28, psl@npm:^1.1.33":
+"psl@npm:^1.1.28, psl@npm:^1.1.33, psl@npm:^1.9.0":
   version: 1.9.0
   resolution: "psl@npm:1.9.0"
   checksum: 6a3f805fdab9442f44de4ba23880c4eba26b20c8e8e0830eff1cb31007f6825dace61d17203c58bfe36946842140c97a1ba7f67bc63ca2d88a7ee052b65d97ab
@@ -44429,6 +44438,7 @@ __metadata:
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
     passport: "npm:^0.7.0"
+    psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -44567,6 +44577,7 @@ __metadata:
     "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.kebabcase": "npm:^4.1.7"
     "@types/lodash.merge": "npm:^4.6.7"
+    "@types/lodash.pick": "npm:^4.3.7"
     "@types/lodash.snakecase": "npm:^4.1.7"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/luxon": "npm:^3.3.0"
@@ -44664,6 +44675,7 @@ __metadata:
     lodash.kebabcase: "npm:^4.1.1"
     lodash.merge: "npm:^4.6.2"
     lodash.omit: "npm:^4.5.0"
+    lodash.pick: "npm:^4.4.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"

@@ -82,5 +82,41 @@ describe('ArgsStringFactory', () => {
         'orderBy: [{id: AscNullsFirst}, {name: AscNullsFirst}]',
       );
     });
+
+    it('when orderBy is present with position criteria, should return position at the end of the list', () => {
+      const args = {
+        orderBy: {
+          position: 'AscNullsFirst',
+          id: 'AscNullsFirst',
+          name: 'AscNullsFirst',
+        },
+      };
+
+      argsAliasCreate.mockReturnValue(args);
+
+      const result = service.create(args, []);
+
+      expect(result).toEqual(
+        'orderBy: [{id: AscNullsFirst}, {name: AscNullsFirst}, {position: AscNullsFirst}]',
+      );
+    });
+
+    it('when orderBy is present with position in the middle, should return position at the end of the list', () => {
+      const args = {
+        orderBy: {
+          id: 'AscNullsFirst',
+          position: 'AscNullsFirst',
+          name: 'AscNullsFirst',
+        },
+      };
+
+      argsAliasCreate.mockReturnValue(args);
+
+      const result = service.create(args, []);
+
+      expect(result).toEqual(
+        'orderBy: [{id: AscNullsFirst}, {name: AscNullsFirst}, {position: AscNullsFirst}]',
+      );
+    });
   });
 });

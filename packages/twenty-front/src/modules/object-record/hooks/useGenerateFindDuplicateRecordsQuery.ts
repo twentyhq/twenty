@@ -29,7 +29,7 @@ export const useGenerateFindDuplicateRecordsQuery = () => {
               .map((field) =>
                 mapFieldMetadataToGraphQLQuery({
                   field,
-                  maxDepthForRelations: depth,
+                  depth,
                 }),
               )
               .join('\n')}

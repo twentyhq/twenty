@@ -20,43 +20,20 @@ const getOneToManyRelation = () => {
   return {
     field: objectMetadataItem.fields.find((field) => field.name === 'company')!,
     res: `company
-    {
-      __typename
-      id
+        {
+          __typename
+          id
       xLink
       {
         label
         url
       }
-accountOwner
-    {
-      __typename
-      id
-    }
       linkedinLink
       {
         label
         url
       }
-attachments
-      {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
 domainName
-opportunities
-      {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
       annualRecurringRevenue
       {
         amountMicros
@@ -65,39 +42,12 @@ opportunities
 createdAt
 address
 updatedAt
-activityTargets
-      {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
-favorites
-      {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
-people
-      {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
 name
 accountOwnerId
 employees
 id
 idealCustomerProfile
-    }`,
+        }`,
   };
 };
 
@@ -133,27 +83,17 @@ const getOneToManyFromRelationField = () => {
   return {
     field,
     res: `opportunities
-      {
-        edges {
-          node {
-            __typename
-            id
-            personId
+        {
+          edges {
+            node {
+              __typename
+              id
+              personId
 pointOfContactId
 updatedAt
-company
-    {
-      __typename
-      id
-    }
 companyId
 pipelineStepId
 probability
-pipelineStep
-    {
-      __typename
-      id
-    }
 closeDate
       amount
       {
@@ -162,19 +102,9 @@ closeDate
       }
 id
 createdAt
-pointOfContact
-    {
-      __typename
-      id
-    }
-person
-    {
-      __typename
-      id
-    }
+            }
           }
-        }
-      }`,
+        }`,
   };
 };
 

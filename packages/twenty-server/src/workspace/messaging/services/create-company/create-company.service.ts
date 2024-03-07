@@ -23,6 +23,10 @@ export class CreateCompanyService {
   ): Promise<{
     [domainName: string]: string;
   }> {
+    if (domainNames.length === 0) {
+      return {};
+    }
+
     const uniqueDomainNames = [...new Set(domainNames)];
 
     const existingCompanies =

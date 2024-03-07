@@ -36,7 +36,7 @@ export const useAddRecordInCache = ({
               .map((field) =>
                 mapFieldMetadataToGraphQLQuery({
                   field,
-                  maxDepthForRelations: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
+                  depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
                 }),
               )
               .join('\n')}

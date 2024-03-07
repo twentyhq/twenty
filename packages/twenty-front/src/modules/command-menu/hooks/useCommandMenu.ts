@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -42,17 +43,22 @@ export const useCommandMenu = () => {
     [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
   );
 
-  const toggleCommandMenu = useRecoilCallback(({ snapshot }) => async () => {
-    const isCommandMenuOpened = snapshot
-      .getLoadable(isCommandMenuOpenedState)
-      .getValue();
+  const toggleCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
 
-    if (isCommandMenuOpened) {
-      closeCommandMenu();
-    } else {
-      openCommandMenu();
-    }
-  });
+        set(commandMenuSearchState, '');
+
+        if (isCommandMenuOpened) {
+          closeCommandMenu();
+        } else {
+          openCommandMenu();
+        }
+      },
+  );
 
   const addToCommandMenu = useCallback(
     (addCommand: Command[]) => {

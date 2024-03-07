@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
@@ -11,6 +12,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
+  IconCalendarEvent,
   IconCheckbox,
   IconMail,
   IconNotes,
@@ -20,6 +22,7 @@ import {
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -67,6 +70,7 @@ export const ShowPageRightContainer = ({
       objectNameSingular: targetableObject.targetObjectNameSingular,
     });
 
+  const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const shouldDisplayEmailsTab =
     (emails &&
       targetableObject.targetObjectNameSingular ===
@@ -106,6 +110,12 @@ export const ShowPageRightContainer = ({
       hide: !shouldDisplayEmailsTab,
       hasBetaPill: true,
     },
+    {
+      id: 'calendar',
+      title: 'Calendar',
+      Icon: IconCalendarEvent,
+      hide: !shouldDisplayCalendarTab,
+    },
   ];
 
   return (
@@ -127,6 +137,7 @@ export const ShowPageRightContainer = ({
         <Attachments targetableObject={targetableObject} />
       )}
       {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
+      {activeTabId === 'calendar' && <Calendar />}
     </StyledShowPageRightContainer>
   );
 };

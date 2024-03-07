@@ -5,6 +5,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -13,6 +14,7 @@ import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { BlocklistObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/blocklist.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
@@ -90,7 +92,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'activity',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
@@ -105,8 +106,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldName: 'assignee',
   })
   @IsNullable()
-  assignedActivities: ActivityObjectMetadata[];
-
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
@@ -118,7 +117,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'favorite',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -132,7 +130,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'company',
     inverseSideFieldName: 'accountOwner',
   })
-  @IsNullable()
   accountOwnerForCompanies: CompanyObjectMetadata[];
 
   @FieldMetadata({
@@ -146,7 +143,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'attachment',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredAttachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
@@ -160,7 +156,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'comment',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredComments: CommentObjectMetadata[];
 
   @FieldMetadata({
@@ -174,7 +169,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'connectedAccount',
     inverseSideFieldName: 'accountOwner',
   })
-  @IsNullable()
   connectedAccounts: ConnectedAccountObjectMetadata[];
 
   @FieldMetadata({
@@ -188,7 +182,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageParticipant',
     inverseSideFieldName: 'workspaceMember',
   })
-  @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
@@ -202,6 +195,21 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'blocklist',
     inverseSideFieldName: 'workspaceMember',
   })
-  @IsNullable()
   blocklist: BlocklistObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Event Attendees',
+    description: 'Calendar Event Attendees',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'calendarEventAttendee',
+    inverseSideFieldName: 'workspaceMember',
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
 }
