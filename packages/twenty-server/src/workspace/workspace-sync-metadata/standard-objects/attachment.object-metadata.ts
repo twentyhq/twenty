@@ -97,7 +97,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
-    description: `ActivityTarget ${oppositeObjectMetadata.nameSingular}`,
+    description: `Attachment ${oppositeObjectMetadata.labelSingular}`,
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))

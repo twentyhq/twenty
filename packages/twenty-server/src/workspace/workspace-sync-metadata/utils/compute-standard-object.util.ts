@@ -36,7 +36,7 @@ export const computeStandardObject = (
           name: joinColumn,
           type: FieldMetadataType.UUID,
           label: `${data.label} ID (foreign key)`,
-          description: `${data.description} ID foreign key`,
+          description: `${data.description} id foreign key`,
           defaultValue: null,
           icon: undefined,
           targetColumnMap: generateTargetColumnMap(

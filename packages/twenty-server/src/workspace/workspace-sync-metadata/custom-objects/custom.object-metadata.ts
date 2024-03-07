@@ -4,7 +4,10 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
@@ -24,7 +27,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     label: 'Position',
     description: 'Position',
-    type: FieldMetadataType.NUMBER,
+    type: FieldMetadataType.POSITION,
     icon: 'IconHierarchy2',
   })
   @IsNullable()
@@ -35,12 +38,13 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: (objectMetadata) =>
-      `Activity tied to the ${objectMetadata.nameSingular}`,
+      `Activities tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconCheckbox',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityTargetObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -49,12 +53,13 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: (objectMetadata) =>
-      `Favorites tied to the ${objectMetadata.nameSingular}`,
+      `Favorites tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconHeart',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => FavoriteObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   favorites: FavoriteObjectMetadata[];
@@ -63,12 +68,13 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: (objectMetadata) =>
-      `Attachments tied to the ${objectMetadata.nameSingular}`,
+      `Attachments tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconFileImport',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];

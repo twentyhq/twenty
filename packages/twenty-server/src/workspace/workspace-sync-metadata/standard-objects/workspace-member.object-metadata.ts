@@ -6,7 +6,6 @@ import {
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
-import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -105,7 +104,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => ActivityObjectMetadata,
     inverseSideFieldKey: 'assignee',
   })
-  @IsNullable()
+  assignedActivities: ActivityObjectMetadata[];
+
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
