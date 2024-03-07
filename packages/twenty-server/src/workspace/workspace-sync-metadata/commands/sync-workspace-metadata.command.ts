@@ -5,12 +5,13 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceHealthService } from 'src/workspace/workspace-health/workspace-health.service';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
 // TODO: implement dry-run
 interface RunWorkspaceMigrationsOptions {
-  workspaceId: string;
+  workspaceId?: string;
   dryRun?: boolean;
   force?: boolean;
 }
@@ -27,6 +28,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    private readonly workspaceService: WorkspaceService,
   ) {
     super();
   }
@@ -35,56 +37,63 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     _passedParam: string[],
     options: RunWorkspaceMigrationsOptions,
   ): Promise<void> {
-    const issues = await this.workspaceHealthService.healthCheck(
-      options.workspaceId,
-    );
+    const workspaceIds = options.workspaceId
+      ? [options.workspaceId]
+      : await this.workspaceService.getWorkspaceIds();
 
-    // Security: abort if there are issues.
-    if (issues.length > 0) {
-      if (!options.force) {
-        this.logger.error(
-          `Workspace contains ${issues.length} issues, aborting.`,
+    for (const workspaceId of workspaceIds) {
+      const issues = await this.workspaceHealthService.healthCheck(workspaceId);
+
+      // Security: abort if there are issues.
+      if (issues.length > 0) {
+        if (!options.force) {
+          this.logger.error(
+            `Workspace contains ${issues.length} issues, aborting.`,
+          );
+
+          this.logger.log(
+            'If you want to force the migration, use --force flag',
+          );
+          this.logger.log(
+            'Please use `workspace:health` command to check issues and fix them before running this command.',
+          );
+
+          return;
+        }
+
+        this.logger.warn(
+          `Workspace contains ${issues.length} issues, sync has been forced.`,
         );
-
-        this.logger.log('If you want to force the migration, use --force flag');
-        this.logger.log(
-          'Please use `workspace:health` command to check issues and fix them before running this command.',
-        );
-
-        return;
       }
 
-      this.logger.warn(
-        `Workspace contains ${issues.length} issues, sync has been forced.`,
-      );
-    }
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          workspaceId,
+        );
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        options.workspaceId,
-      );
+      const { storage, workspaceMigrations } =
+        await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+          {
+            workspaceId,
+            dataSourceId: dataSourceMetadata.id,
+          },
+          { applyChanges: !options.dryRun },
+        );
 
-    const { storage, workspaceMigrations } =
-      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        {
-          workspaceId: options.workspaceId,
-          dataSourceId: dataSourceMetadata.id,
-        },
-        { applyChanges: !options.dryRun },
-      );
-
-    if (options.dryRun) {
-      await this.syncWorkspaceLoggerService.saveLogs(
-        storage,
-        workspaceMigrations,
-      );
+      if (options.dryRun) {
+        await this.syncWorkspaceLoggerService.saveLogs(
+          workspaceId,
+          storage,
+          workspaceMigrations,
+        );
+      }
     }
   }
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
-    required: true,
+    required: false,
   })
   parseWorkspaceId(value: string): string {
     return value;
