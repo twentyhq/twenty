@@ -2,10 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilState } from 'recoil';
 
-import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { mapBoardFieldDefinitionsToViewFields } from '@/object-record/record-board/utils/mapBoardFieldDefinitionsToViewFields';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
