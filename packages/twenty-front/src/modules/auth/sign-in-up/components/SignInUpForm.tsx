@@ -54,6 +54,7 @@ export const SignInUpForm = () => {
   const { form } = useSignInUpForm();
 
   const {
+    userExists,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
@@ -85,8 +86,16 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
+    if (userExists && signInUpMode === SignInUpMode.Invite) {
+      return 'Sign in';
+    }
+
+    if (!userExists && signInUpMode === SignInUpMode.Invite) {
+      return 'Sign up';
+    }
+
     return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
-  }, [signInUpMode, signInUpStep]);
+  }, [signInUpMode, signInUpStep, userExists]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {

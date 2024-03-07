@@ -33,6 +33,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
 
+  const [userExists, setUserExists] = useState(false);
+
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
@@ -75,10 +77,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           isMatchingLocation(AppPath.Invite)
             ? setSignInUpMode(SignInUpMode.Invite)
             : setSignInUpMode(SignInUpMode.SignIn);
+          setUserExists(true);
         } else {
           isMatchingLocation(AppPath.Invite)
             ? setSignInUpMode(SignInUpMode.Invite)
             : setSignInUpMode(SignInUpMode.SignUp);
+          setUserExists(false);
         }
         setSignInUpStep(SignInUpStep.Password);
       },
@@ -88,6 +92,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep,
     checkUserExistsQuery,
     form,
+    setUserExists,
     setSignInUpMode,
   ]);
 
@@ -156,6 +161,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   );
 
   return {
+    userExists,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
