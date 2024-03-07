@@ -104,7 +104,13 @@ describe('useOnboardingStatus', () => {
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
       });
-      setCurrentWorkspaceMember(currentWorkspaceMember);
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
     });
 
     expect(result.current.onboardingStatus).toBe('canceled');
