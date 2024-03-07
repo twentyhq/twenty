@@ -12,7 +12,7 @@ export const checkUrlType = (url: string) => {
   }
   if (
     isNonNullable(
-      url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i),
+      /^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url),
     )
   ) {
     return LinkType.Twitter;
