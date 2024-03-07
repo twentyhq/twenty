@@ -50,7 +50,7 @@ export const SettingsBilling = () => {
   };
 
   const openChat = () => {
-    if (!supportChat.supportDriver) {
+    if (supportChat.supportDriver) {
       window.FrontChat?.('show');
     } else {
       window.location.href =
