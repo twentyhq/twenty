@@ -43,10 +43,6 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Incomplete;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
-    return OnboardingStatus.Canceled;
-  }
-
   if (currentWorkspace.activationStatus !== 'active') {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
@@ -56,6 +52,10 @@ export const getOnboardingStatus = ({
     !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
+  }
+
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
+    return OnboardingStatus.Canceled;
   }
 
   if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {

@@ -40,7 +40,8 @@ export class BillingController {
 
     if (
       event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED ||
-      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED ||
+      event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
       const workspaceId = event.data.object.metadata?.workspaceId;
 
@@ -51,20 +52,6 @@ export class BillingController {
       }
 
       await this.billingService.upsertBillingSubscription(
-        workspaceId,
-        event.data,
-      );
-    }
-    if (event.type === WebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED) {
-      const workspaceId = event.data.object.metadata?.workspaceId;
-
-      if (!workspaceId) {
-        res.status(404).end();
-
-        return;
-      }
-
-      await this.billingService.deleteBillingSubscription(
         workspaceId,
         event.data,
       );

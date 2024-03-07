@@ -163,16 +163,6 @@ export class BillingService {
     }
   }
 
-  async deleteBillingSubscription(
-    workspaceId: string,
-    data: Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ) {
-    await this.billingSubscriptionRepository.delete({ workspaceId });
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: data.object.status,
-    });
-  }
-
   async upsertBillingSubscription(
     workspaceId: string,
     data:
@@ -187,7 +177,7 @@ export class BillingService {
         status: data.object.status,
       },
       {
-        conflictPaths: ['stripeSubscriptionId'],
+        conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
@@ -209,7 +199,7 @@ export class BillingService {
         };
       }),
       {
-        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
