@@ -82,15 +82,15 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignIn);
     } else if (
       onboardingStatus &&
-      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
-        onboardingStatus,
-      ) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
       onboardingStatus &&
-      onboardingStatus === OnboardingStatus.Unpaid &&
+      [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
+        onboardingStatus,
+      ) &&
       !isMatchingLocation(SettingsPath.Billing)
     ) {
       navigate(
