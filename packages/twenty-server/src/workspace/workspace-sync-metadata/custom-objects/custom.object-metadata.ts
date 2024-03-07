@@ -1,4 +1,4 @@
-import { ExtendCustomObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/extend-custom-object-metadata.decorator';
+import { BaseCustomObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/base-custom-object-metadata.decorator';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -10,7 +10,7 @@ import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorato
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 
-@ExtendCustomObjectMetadata()
+@BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     label: 'Name',

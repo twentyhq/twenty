@@ -1,10 +1,10 @@
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
-export type ExtendCustomObjectMetadataDecoratorParams =
+export type BaseCustomObjectMetadataDecoratorParams =
   | { allowObjectNameList?: string[] }
   | { denyObjectNameList?: string[] };
 
-export type ReflectExtendCustomObjectMetadata =
-  ExtendCustomObjectMetadataDecoratorParams & {
+export type ReflectBaseCustomObjectMetadata =
+  BaseCustomObjectMetadataDecoratorParams & {
     gate?: GateDecoratorParams;
   };
