@@ -13,7 +13,6 @@ import {
 import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
 import { CalendarChannelService } from 'src/workspace/messaging/repositories/calendar-channel/calendar-channel.service';
 import { CalendarChannelEventAssociationService } from 'src/workspace/messaging/repositories/calendar-channel-calendar-association/calendar-channel-calendar-association.service';
-import { createQueriesFromCalendarIds } from 'src/workspace/messaging/utils/create-queries-from-calendar-ids.util';
 import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
 import { SaveCalendarsAndCreateContactsService } from 'src/workspace/messaging/services/save-calendars-and-create-contacts.service';
 import {
@@ -44,7 +43,7 @@ export class GmailFullSyncService {
   public async startGoogleCalendarFullSync(
     workspaceId: string,
     connectedAccountId: string,
-    nextPageToken?: string,
+    pageToken?: string,
   ): Promise<void> {
     const connectedAccount = await this.connectedAccountService.getByIdOrFail(
       connectedAccountId,
@@ -97,7 +96,7 @@ export class GmailFullSyncService {
     const googleCalendarEvents = await googleCalendarClient.events.list({
       calendarId: 'primary',
       maxResults: 500,
-      pageToken: nextPageToken,
+      pageToken: pageToken,
       q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
     });
 
@@ -109,7 +108,11 @@ export class GmailFullSyncService {
       }ms.`,
     );
 
-    const events = googleCalendarEvents.data.items;
+    const {
+      items: events,
+      nextPageToken,
+      nextSyncToken,
+    } = googleCalendarEvents.data;
 
     if (!events || events?.length === 0) {
       this.logger.log(
@@ -119,9 +122,9 @@ export class GmailFullSyncService {
       return;
     }
 
-    startTime = Date.now();
-
     const eventExternalIds = events.map((event) => event.id);
+
+    startTime = Date.now();
 
     const existingCalendarChannelEventAssociations =
       await this.calendarChannelEventAssociationService.getByEventExternalIdsAndCalendarChannelId(
@@ -138,75 +141,40 @@ export class GmailFullSyncService {
       }ms.`,
     );
 
-    const existingCalendarChannelEventAssociationsExternalIds =
+    // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
+
+    const existingEventExternalIds =
       existingCalendarChannelEventAssociations.map(
-        (calendarChannelEventAssociation) =>
-          calendarChannelEventAssociation.calendarExternalId,
+        (association) => association.eventExternalId,
       );
 
-    const calendarsToFetch = eventExternalIds.filter(
-      (calendarExternalId) =>
-        !existingCalendarChannelEventAssociationsExternalIds.includes(
-          calendarExternalId,
-        ),
+    const eventsToSave = events.filter(
+      (event) => !existingEventExternalIds.includes(event.id),
     );
 
-    const calendarQueries = createQueriesFromCalendarIds(calendarsToFetch);
-
-    startTime = Date.now();
-
-    const { calendars: calendarsToSave, errors } =
-      await this.fetchCalendarsByBatchesService.fetchAllCalendars(
-        calendarQueries,
-        accessToken,
-        'google calendar full-sync',
-        workspaceId,
-        connectedAccountId,
-      );
-
-    endTime = Date.now();
-
-    this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all calendars in ${
-        endTime - startTime
-      }ms.`,
+    const eventsToUpdate = events.filter((event) =>
+      existingEventExternalIds.includes(event.id),
     );
 
-    if (calendarsToSave.length > 0) {
-      this.saveCalendarsAndCreateContactsService.saveCalendarsAndCreateContacts(
-        calendarsToSave,
-        connectedAccount,
-        workspaceId,
-        calendarChannelId,
-        'google calendar full-sync',
-      );
+    if (events.length > 0) {
+      // this.calendarEventsService.saveEvents();
+      // this.calendarEventAttendeesService.saveEventAttendees();
     } else {
       this.logger.log(
         `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
     }
 
-    if (errors.length) {
+    if (!nextSyncToken) {
       throw new Error(
-        `Error fetching calendars for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
-      );
-    }
-    const lastModifiedCalendarId = calendarsToFetch[0];
-
-    const historyId = calendarsToSave.find(
-      (calendar) => calendar.externalId === lastModifiedCalendarId,
-    )?.historyId;
-
-    if (!historyId) {
-      throw new Error(
-        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `No next sync token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
       );
     }
 
     startTime = Date.now();
 
-    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
-      historyId,
+    await this.calendarChannelService.updateSyncCursor(
+      nextSyncToken,
       connectedAccount.id,
       workspaceId,
     );
@@ -214,7 +182,7 @@ export class GmailFullSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating sync cursor in ${
         endTime - startTime
       }ms.`,
     );
@@ -222,16 +190,16 @@ export class GmailFullSyncService {
     this.logger.log(
       `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
         nextPageToken ? `and ${nextPageToken} pageToken` : ''
-      }done.`,
+      } done.`,
     );
 
-    if (calendars.data.nextPageToken) {
+    if (nextPageToken) {
       await this.calendarQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         {
           workspaceId,
           connectedAccountId,
-          nextPageToken: calendars.data.nextPageToken,
+          nextPageToken,
         },
         {
           retryLimit: 2,

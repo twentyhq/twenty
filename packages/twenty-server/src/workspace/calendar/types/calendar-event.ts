@@ -1,11 +1,10 @@
 import { CalendarEventAttendeeResponseStatus } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
 export type CalendarEvent = {
-  id: string;
   title: string;
   isCanceled: boolean;
   isFullDay: boolean;
-  startsAt: Date;
+  startsAt: string;
   endsAt?: string;
   externalCreatedAt: string;
   externalUpdatedAt: string;
