@@ -22,7 +22,6 @@ export type ButtonProps = {
   soon?: boolean;
   disabled?: boolean;
   focus?: boolean;
-  EndIcon?: IconComponent;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -268,7 +267,6 @@ export const Button = ({
   soon = false,
   disabled = false,
   focus = false,
-  EndIcon,
   onClick,
 }: ButtonProps) => {
   const theme = useTheme();
@@ -287,7 +285,6 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {EndIcon && <EndIcon size={theme.icon.size.sm} />}
       {soon && <StyledSoonPill label="Soon" />}
     </StyledButton>
   );
