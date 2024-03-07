@@ -1,11 +1,11 @@
 import { v4 } from 'uuid';
 
-import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ViewField } from '@/views/types/ViewField';
 
 export const mapBoardFieldDefinitionsToViewFields = (
-  fieldsDefinitions: BoardFieldDefinition<FieldMetadata>[],
+  fieldsDefinitions: RecordBoardFieldDefinition<FieldMetadata>[],
 ): ViewField[] => {
   return fieldsDefinitions.map(
     (fieldDefinition): ViewField => ({
