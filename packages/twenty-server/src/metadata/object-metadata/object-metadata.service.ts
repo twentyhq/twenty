@@ -751,6 +751,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           attachmentRelationFieldMetadataMap[createdObjectMetadata.id].id,
         toFieldMetadataId:
           attachmentRelationFieldMetadataMap[attachmentObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
       },
     ]);
 
