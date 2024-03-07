@@ -44,6 +44,7 @@ import { ObjectRecordUpdateEvent } from 'src/integrations/event-emitter/types/ob
 import { WorkspacePreQueryHookService } from 'src/workspace/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { NotFoundError } from 'src/filters/utils/graphql-errors.util';
+import { ArgsSettersFactory } from 'src/workspace/workspace-query-runner/factories/arg-setters.factory';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -59,6 +60,7 @@ export class WorkspaceQueryRunnerService {
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly argSettersFactory: ArgsSettersFactory,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
@@ -213,8 +215,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
+    const computedArgs = await this.argSettersFactory.create(args, options);
+
     const query = await this.workspaceQueryBuilderFactory.createMany(
-      args,
+      computedArgs,
       options,
     );
 
