@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -10,23 +9,17 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
-> = {
+export type SelectOption<Value extends string | number | null> = {
   value: Value;
   label: string;
-  avatarOrIcon?: IconType;
+  Icon?: IconComponent;
 };
 
-export type SelectProps<
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
-> = {
+export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
   dropdownId: string;
@@ -34,7 +27,7 @@ export type SelectProps<
   fullWidth?: boolean;
   label?: string;
   onChange?: (value: Value) => void;
-  options: SelectOption<Value, IconType>[];
+  options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
 };
@@ -78,10 +71,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;
 
-export const Select = <
-  Value extends string | number | null,
-  IconType extends IconComponent | React.ReactNode | null,
->({
+export const Select = <Value extends string | number | null>({
   className,
   disabled,
   dropdownId,
@@ -92,29 +82,9 @@ export const Select = <
   options,
   value,
   withSearchInput,
-}: SelectProps<Value, IconType>) => {
+}: SelectProps<Value>) => {
   const theme = useTheme();
   const [searchInputValue, setSearchInputValue] = useState('');
-
-  const renderIconOrAvatar = <IconType extends IconComponent | React.ReactNode>(
-    iconOrAvatar: IconType,
-  ) => {
-    if (iconOrAvatar) {
-      if (React.isValidElement(iconOrAvatar)) {
-        return iconOrAvatar;
-      } else {
-        const IconComponent = iconOrAvatar as IconComponent;
-        return (
-          <IconComponent
-            color={disabled ? theme.font.color.light : theme.font.color.primary}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        );
-      }
-    }
-    return null;
-  };
 
   const selectedOption =
     options.find(({ value: key }) => key === value) || options[0];
@@ -133,7 +103,13 @@ export const Select = <
   const selectControl = (
     <StyledControlContainer disabled={disabled}>
       <StyledControlLabel>
-        {renderIconOrAvatar(selectedOption?.avatarOrIcon)}
+        {!!selectedOption?.Icon && (
+          <selectedOption.Icon
+            color={disabled ? theme.font.color.light : theme.font.color.primary}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        )}
         {selectedOption?.label}
       </StyledControlLabel>
       <StyledIconChevronDown disabled={disabled} size={theme.icon.size.md} />
@@ -166,10 +142,10 @@ export const Select = <
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
-                    <MenuItemSelectAvatar
-                      avatar={renderIconOrAvatar(option.avatarOrIcon)}
+                    <MenuItem
+                      key={option.value}
+                      LeftIcon={option.Icon}
                       text={option.label}
-                      selected={option === selectedOption}
                       onClick={() => {
                         onChange?.(option.value);
                         closeDropdown();
