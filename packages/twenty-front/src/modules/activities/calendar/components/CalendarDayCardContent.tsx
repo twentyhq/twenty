@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { css } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { endOfDay, format, isPast, isToday } from 'date-fns';
+import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { findNextCalendarEvent } from '@/activities/calendar/utils/findNextCalendarEvent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 type CalendarDayCardContentProps = {
@@ -13,19 +11,13 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)<{ active: boolean }>`
+const StyledCardContent = styled(CardContent)`
   align-items: flex-start;
   border-color: ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(2, 3)};
-
-  ${({ active }) =>
-    !active &&
-    css`
-      background-color: transparent;
-    `}
 `;
 
 const StyledDayContainer = styled.div`
@@ -59,34 +51,39 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
+  const theme = useTheme();
+
   const endOfDayDate = endOfDay(calendarEvents[0].startsAt);
-  const isDayToday = isToday(endOfDayDate);
-  const isPastDay = isPast(endOfDayDate);
+  const endsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');
   const monthDayLabel = format(endOfDayDate, 'dd');
 
-  const [nextCalendarEvent, setNextCalendarEvent] = useState(
-    isDayToday ? findNextCalendarEvent(calendarEvents) : undefined,
-  );
+  const upcomingDayCardContentVariants = {
+    upcoming: {},
+    ended: { backgroundColor: theme.background.primary },
+  };
 
   return (
-    <StyledCardContent active={!isPastDay} divider={divider}>
+    <StyledCardContent
+      divider={divider}
+      initial="upcoming"
+      animate="ended"
+      variants={upcomingDayCardContentVariants}
+      transition={{
+        delay: Math.max(0, endsIn),
+        duration: theme.animation.duration.fast,
+      }}
+    >
       <StyledDayContainer>
         <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
         <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
       </StyledDayContainer>
       <StyledEvents>
-        {calendarEvents.map((calendarEvent, index) => (
+        {calendarEvents.map((calendarEvent) => (
           <StyledEventRow
             key={calendarEvent.id}
             calendarEvent={calendarEvent}
-            isNextEvent={nextCalendarEvent?.id === calendarEvent.id}
-            onEventEnd={() =>
-              setNextCalendarEvent(
-                index === 0 ? undefined : calendarEvents[index - 1],
-              )
-            }
           />
         ))}
       </StyledEvents>

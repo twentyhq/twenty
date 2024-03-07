@@ -2,7 +2,7 @@ import { addDays, addHours, startOfDay, subDays, subHours } from 'date-fns';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 
-import { findNextCalendarEvent } from '../findNextCalendarEvent';
+import { findUpcomingCalendarEvent } from '../findUpcomingCalendarEvent';
 
 const pastEvent: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'> = {
   startsAt: subHours(new Date(), 2),
@@ -34,7 +34,7 @@ const fullDayFutureEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
   isFullDay: false,
 };
 
-describe('findNextCalendarEvent', () => {
+describe('findUpcomingCalendarEvent', () => {
   it('returns the first current event by chronological order', () => {
     // Given
     const calendarEvents = [
@@ -45,7 +45,7 @@ describe('findNextCalendarEvent', () => {
     ];
 
     // When
-    const result = findNextCalendarEvent(calendarEvents);
+    const result = findUpcomingCalendarEvent(calendarEvents);
 
     // Then
     expect(result).toEqual(currentFullDayEvent);
@@ -61,7 +61,7 @@ describe('findNextCalendarEvent', () => {
     ];
 
     // When
-    const result = findNextCalendarEvent(calendarEvents);
+    const result = findUpcomingCalendarEvent(calendarEvents);
 
     // Then
     expect(result).toEqual(futureEvent);
@@ -72,7 +72,7 @@ describe('findNextCalendarEvent', () => {
     const calendarEvents = [pastEvent, fullDayPastEvent];
 
     // When
-    const result = findNextCalendarEvent(calendarEvents);
+    const result = findUpcomingCalendarEvent(calendarEvents);
 
     // Then
     expect(result).toBeUndefined();
