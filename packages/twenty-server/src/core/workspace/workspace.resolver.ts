@@ -22,6 +22,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { User } from 'src/core/user/user.entity';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
+import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
 
 import { Workspace } from './workspace.entity';
 
@@ -107,5 +108,26 @@ export class WorkspaceResolver {
     }
 
     return 'inactive';
+  }
+
+  @ResolveField(() => BillingSubscription)
+  async currentBillingSubscription(
+    @Parent() workspace: Workspace,
+  ): Promise<BillingSubscription | null> {
+    const billingSubscriptions =
+      await this.workspaceService.getWorkspaceBillingSubscriptions(
+        workspace.id,
+      );
+
+    const notCanceledSubscriptions = billingSubscriptions?.filter(
+      (billingSubscription) => billingSubscription.status !== 'canceled',
+    );
+
+    assert(
+      notCanceledSubscriptions && notCanceledSubscriptions.length <= 1,
+      `More than on not canceled subscription for workspace ${workspace.id}`,
+    );
+
+    return notCanceledSubscriptions?.[0];
   }
 }

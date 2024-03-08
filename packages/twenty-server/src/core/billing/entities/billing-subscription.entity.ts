@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
@@ -18,6 +19,7 @@ import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subsc
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @ObjectType('BillingSubscription')
 export class BillingSubscription {
+  @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -12,7 +12,7 @@ export type CurrentWorkspace = Pick<
   | 'featureFlags'
   | 'subscriptionStatus'
   | 'activationStatus'
-  | 'billingSubscription'
+  | 'currentBillingSubscription'
 >;
 
 export const currentWorkspaceState = atom<CurrentWorkspace | null>({

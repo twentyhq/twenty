@@ -49,6 +49,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
+  async getWorkspaceBillingSubscriptions(id: string) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id },
+      relations: ['billingSubscriptions'],
+    });
+
+    return workspace?.billingSubscriptions;
+  }
+
   async deleteWorkspace(id: string, shouldDeleteCoreWorkspace = true) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
