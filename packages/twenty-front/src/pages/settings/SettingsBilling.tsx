@@ -1,13 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
-import { supportChatState } from '@/client-config/states/supportChatState.ts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat.tsx';
 import { AppPath } from '@/types/AppPath.ts';
@@ -31,8 +28,6 @@ const StyledInvisibleChat = styled.div`
 export const SettingsBilling = () => {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
-  const supportChat = useRecoilValue(supportChatState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -59,37 +54,25 @@ export const SettingsBilling = () => {
     navigate(AppPath.PlanRequired);
   };
 
-  const openChat = () => {
-    if (supportChat.supportDriver) {
-      window.FrontChat?.('show');
-    } else {
-      window.location.href =
-        'mailto:felix@twenty.com?' +
-        `subject=Subscription Recovery for workspace ${currentWorkspace?.id}&` +
-        'body=Hey,%0D%0A%0D%0AMy subscription is canceled and I would like to subscribe a new one.' +
-        'Can you help me?%0D%0A%0D%0ACheers';
-    }
-  };
-
   return (
     <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
       <SettingsPageContainer>
         <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
-        {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please contact us to start a new one'}
-            buttonTitle={'Contact Us'}
-            accent={'danger'}
-            onClick={openChat}
-          />
-        )}
         {displayPaymentFailInfo && (
           <Info
             text={'Last payment failed. Please update your billing details.'}
             buttonTitle={'Update'}
             accent={'danger'}
             onClick={openBillingPortal}
+          />
+        )}
+        {displaySubscriptionCanceledInfo && (
+          <Info
+            text={'Subscription canceled. Please start a new one'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            onClick={redirectToSubscribePage}
           />
         )}
         {displaySubscribeInfo && (

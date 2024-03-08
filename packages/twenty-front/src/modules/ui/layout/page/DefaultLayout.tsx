@@ -85,7 +85,8 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         ].includes(onboardingStatus)) ||
       isMatchingLocation(AppPath.ResetPassword) ||
       (isMatchingLocation(AppPath.PlanRequired) &&
-        OnboardingStatus.CompletedWithoutSubscription)
+        (OnboardingStatus.CompletedWithoutSubscription ||
+          OnboardingStatus.Canceled))
     );
   }, [isMatchingLocation, onboardingStatus]);
 

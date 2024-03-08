@@ -91,7 +91,10 @@ export const PageChangeEffect = () => {
       [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
         onboardingStatus,
       ) &&
-      !isMatchingLocation(AppPath.SettingsCatchAll)
+      !(
+        isMatchingLocation(AppPath.SettingsCatchAll) ||
+        isMatchingLocation(AppPath.PlanRequired)
+      )
     ) {
       navigate(
         `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
