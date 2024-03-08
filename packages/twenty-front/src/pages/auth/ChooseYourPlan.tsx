@@ -14,7 +14,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import {
   ProductPriceEntity,
-  useCheckoutMutation,
+  useCheckoutSessionMutation,
   useGetProductPricesQuery,
 } from '~/generated/graphql.tsx';
 
@@ -53,7 +53,7 @@ export const ChooseYourPlan = () => {
     variables: { product: 'base-plan' },
   });
 
-  const [checkout] = useCheckoutMutation();
+  const [checkoutSession] = useCheckoutSessionMutation();
 
   const handlePlanChange = (type?: string) => {
     return () => {
@@ -81,14 +81,14 @@ export const ChooseYourPlan = () => {
 
   const handleButtonClick = async () => {
     setIsSubmitting(true);
-    const { data } = await checkout({
+    const { data } = await checkoutSession({
       variables: {
         recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
       },
     });
     setIsSubmitting(false);
-    if (!data?.checkout.url) {
+    if (!data?.checkoutSession.url) {
       enqueueSnackBar(
         'Checkout session error. Please retry or contact Twenty team',
         {
@@ -97,7 +97,7 @@ export const ChooseYourPlan = () => {
       );
       return;
     }
-    window.location.replace(data.checkout.url);
+    window.location.replace(data.checkoutSession.url);
   };
 
   return (

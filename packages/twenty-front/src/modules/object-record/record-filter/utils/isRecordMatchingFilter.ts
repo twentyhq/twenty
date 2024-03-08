@@ -141,6 +141,7 @@ export const isRecordMatchingFilter = ({
     switch (objectMetadataField.type) {
       case FieldMetadataType.Email:
       case FieldMetadataType.Phone:
+      case FieldMetadataType.Select:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,

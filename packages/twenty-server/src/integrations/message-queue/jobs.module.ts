@@ -33,6 +33,7 @@ import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.modu
 import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
     ThreadCleanerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,

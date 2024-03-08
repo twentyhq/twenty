@@ -126,7 +126,7 @@ export const FieldInput = ({
       ) : isFieldRating(fieldDefinition) ? (
         <RatingFieldInput onSubmit={onSubmit} />
       ) : isFieldSelect(fieldDefinition) ? (
-        <SelectFieldInput onSubmit={onSubmit} />
+        <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : (
         <></>
       )}

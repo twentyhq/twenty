@@ -81,7 +81,35 @@ describe('FindDuplicatesQueryFactory', () => {
       });
 
       expect(query.trim()).toEqual(`query {
-        personCollection(filter: {or:[{nameFirstName:{ilike:\"%John%\"},nameLastName:{ilike:\"%Doe%\"}}]}) {
+        personCollection(filter: {or:[{nameFirstName:{eq:\"John\"},nameLastName:{eq:\"Doe\"}}]}) {
+          fieldsString
+        }
+      }`);
+    });
+
+    it('should ignore an argument if the string length is less than 3', async () => {
+      argAliasCreate.mockReturnValue({
+        linkedinLinkUrl: 'ab',
+        email: 'test@test.com',
+      });
+
+      const args: FindDuplicatesResolverArgs<RecordFilter> = {
+        data: {
+          linkedinLinkUrl: 'ab',
+          email: 'test@test.com',
+        } as unknown as RecordFilter,
+      };
+
+      const query = await service.create(args, {
+        ...workspaceQueryBuilderOptions,
+        objectMetadataItem: {
+          ...workspaceQueryBuilderOptions.objectMetadataItem,
+          nameSingular: 'person',
+        },
+      });
+
+      expect(query.trim()).toEqual(`query {
+        personCollection(filter: {or:[{email:{eq:"test@test.com"}}]}) {
           fieldsString
         }
       }`);
@@ -140,7 +168,7 @@ describe('FindDuplicatesQueryFactory', () => {
       );
 
       expect(query.trim()).toEqual(`query {
-        personCollection(filter: {id:{neq:\"uuid\"},or:[{nameFirstName:{ilike:\"%Peter%\"},nameLastName:{ilike:\"%Parker%\"}}]}) {
+        personCollection(filter: {id:{neq:\"uuid\"},or:[{nameFirstName:{eq:\"Peter\"},nameLastName:{eq:\"Parker\"}}]}) {
           fieldsString
         }
       }`);

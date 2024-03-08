@@ -46,7 +46,7 @@ export const useGetRelationMetadata = () =>
               objectNameType: 'singular',
             }),
           )
-          .valueOrThrow();
+          .getValue();
 
         if (!relationObjectMetadataItem) return null;
 

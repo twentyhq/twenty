@@ -4,42 +4,80 @@ import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/inte
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { standardObjectMetadataCollection } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { assert } from 'src/utils/assert';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { convertClassNameToObjectMetadataName } from 'src/workspace/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+
+interface CustomRelationFactory {
+  object: ObjectMetadataEntity;
+  metadata: typeof BaseObjectMetadata;
+}
 
 @Injectable()
 export class StandardRelationFactory {
   create(
+    customObjectFactories: CustomRelationFactory[],
+    context: WorkspaceSyncContext,
+    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
+  ): Partial<RelationMetadataEntity>[];
+
+  create(
+    standardObjectMetadataDefinitions: (typeof BaseObjectMetadata)[],
+    context: WorkspaceSyncContext,
+    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
+  ): Partial<RelationMetadataEntity>[];
+
+  create(
+    standardObjectMetadataDefinitionsOrCustomObjectFactories:
+      | (typeof BaseObjectMetadata)[]
+      | {
+          object: ObjectMetadataEntity;
+          metadata: typeof BaseObjectMetadata;
+        }[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
-    return standardObjectMetadataCollection.flatMap((standardObjectMetadata) =>
-      this.createRelationMetadata(
-        standardObjectMetadata,
-        context,
-        originalObjectMetadataMap,
-        workspaceFeatureFlagsMap,
-      ),
+    return standardObjectMetadataDefinitionsOrCustomObjectFactories.flatMap(
+      (
+        standardObjectMetadata:
+          | typeof BaseObjectMetadata
+          | CustomRelationFactory,
+      ) =>
+        this.createRelationMetadata(
+          standardObjectMetadata,
+          context,
+          originalObjectMetadataMap,
+          workspaceFeatureFlagsMap,
+        ),
     );
   }
 
   private createRelationMetadata(
-    standardObjectMetadata: typeof BaseObjectMetadata,
+    standardObjectMetadataOrCustomRelationFactory:
+      | typeof BaseObjectMetadata
+      | CustomRelationFactory,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
+    const standardObjectMetadata =
+      'metadata' in standardObjectMetadataOrCustomRelationFactory
+        ? standardObjectMetadataOrCustomRelationFactory.metadata
+        : standardObjectMetadataOrCustomRelationFactory;
     const objectMetadata = TypedReflect.getMetadata(
-      'objectMetadata',
+      'metadata' in standardObjectMetadataOrCustomRelationFactory
+        ? 'extendObjectMetadata'
+        : 'objectMetadata',
       standardObjectMetadata,
     );
-    const relationMetadataCollection = TypedReflect.getMetadata(
-      'relationMetadataCollection',
+    const reflectRelationMetadataCollection = TypedReflect.getMetadata(
+      'reflectRelationMetadataCollection',
       standardObjectMetadata,
     );
 
@@ -50,67 +88,81 @@ export class StandardRelationFactory {
     }
 
     if (
-      !relationMetadataCollection ||
-      isGatedAndNotEnabled(objectMetadata.gate, workspaceFeatureFlagsMap)
+      !reflectRelationMetadataCollection ||
+      isGatedAndNotEnabled(objectMetadata?.gate, workspaceFeatureFlagsMap)
     ) {
       return [];
     }
 
-    return relationMetadataCollection
+    return reflectRelationMetadataCollection
       .filter(
-        (relationMetadata) =>
+        (reflectRelationMetadata) =>
           !isGatedAndNotEnabled(
-            relationMetadata.gate,
+            reflectRelationMetadata.gate,
             workspaceFeatureFlagsMap,
           ),
       )
-      .map((relationMetadata) => {
+      .map((reflectRelationMetadata) => {
+        // Compute reflect relation metadata
+        const fromObjectNameSingular =
+          'object' in standardObjectMetadataOrCustomRelationFactory
+            ? standardObjectMetadataOrCustomRelationFactory.object.nameSingular
+            : convertClassNameToObjectMetadataName(
+                reflectRelationMetadata.target.constructor.name,
+              );
+        const toObjectNameSingular = convertClassNameToObjectMetadataName(
+          reflectRelationMetadata.inverseSideTarget().name,
+        );
+        const fromFieldMetadataName = reflectRelationMetadata.fieldKey;
+        const toFieldMetadataName =
+          (reflectRelationMetadata.inverseSideFieldKey as string | undefined) ??
+          fromObjectNameSingular;
         const fromObjectMetadata =
-          originalObjectMetadataMap[relationMetadata.fromObjectNameSingular];
+          originalObjectMetadataMap[fromObjectNameSingular];
 
         assert(
           fromObjectMetadata,
-          `Object ${relationMetadata.fromObjectNameSingular} not found in DB 
-        for relation FROM defined in class ${objectMetadata.nameSingular}`,
+          `Object ${fromObjectNameSingular} not found in DB 
+        for relation FROM defined in class ${fromObjectNameSingular}`,
         );
 
         const toObjectMetadata =
-          originalObjectMetadataMap[relationMetadata.toObjectNameSingular];
+          originalObjectMetadataMap[toObjectNameSingular];
 
         assert(
           toObjectMetadata,
-          `Object ${relationMetadata.toObjectNameSingular} not found in DB
-        for relation TO defined in class ${objectMetadata.nameSingular}`,
+          `Object ${toObjectNameSingular} not found in DB
+        for relation TO defined in class ${fromObjectNameSingular}`,
         );
 
         const fromFieldMetadata = fromObjectMetadata?.fields.find(
-          (field) => field.name === relationMetadata.fromFieldMetadataName,
+          (field) => field.name === fromFieldMetadataName,
         );
 
         assert(
           fromFieldMetadata,
-          `Field ${relationMetadata.fromFieldMetadataName} not found in object ${relationMetadata.fromObjectNameSingular}
-        for relation FROM defined in class ${objectMetadata.nameSingular}`,
+          `Field ${fromFieldMetadataName} not found in object ${fromObjectNameSingular}
+        for relation FROM defined in class ${fromObjectNameSingular}`,
         );
 
         const toFieldMetadata = toObjectMetadata?.fields.find(
-          (field) => field.name === relationMetadata.toFieldMetadataName,
+          (field) => field.name === toFieldMetadataName,
         );
 
         assert(
           toFieldMetadata,
-          `Field ${relationMetadata.toFieldMetadataName} not found in object ${relationMetadata.toObjectNameSingular}
-        for relation TO defined in class ${objectMetadata.nameSingular}`,
+          `Field ${toFieldMetadataName} not found in object ${toObjectNameSingular}
+        for relation TO defined in class ${fromObjectNameSingular}`,
         );
 
         return {
-          relationType: relationMetadata.type,
+          relationType: reflectRelationMetadata.type,
           fromObjectMetadataId: fromObjectMetadata?.id,
           toObjectMetadataId: toObjectMetadata?.id,
           fromFieldMetadataId: fromFieldMetadata?.id,
           toFieldMetadataId: toFieldMetadata?.id,
           workspaceId: context.workspaceId,
-          onDeleteAction: relationMetadata.onDelete,
+          onDeleteAction: reflectRelationMetadata.onDelete,
         };
       });
   }

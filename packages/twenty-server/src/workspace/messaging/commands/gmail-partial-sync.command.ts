@@ -56,9 +56,6 @@ export class GmailPartialSyncCommand extends CommandRunner {
           workspaceId,
           connectedAccountId: connectedAccount.id,
         },
-        {
-          retryLimit: 2,
-        },
       );
     }
   }

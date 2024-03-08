@@ -65,13 +65,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             workspaceId,
             schemaName,
           );
-
-        await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-          {
-            workspaceId: workspaceId,
-            dataSourceId: dataSourceMetadata.id,
-          },
-        );
+  
+        await this.workspaceSyncMetadataService.synchronize({
+          workspaceId: workspaceId,
+          dataSourceId: dataSourceMetadata.id,
+        });
       }
     } catch (error) {
       console.error(error);

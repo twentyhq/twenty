@@ -2,13 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 
-import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
-import { formatObjectMetadataItemInput } from '../utils/formatObjectMetadataItemInput';
 import { getObjectSlug } from '../utils/getObjectSlug';
-
-import { useCreateOneObjectRecordMetadataItem } from './useCreateOneObjectMetadataItem';
-import { useDeleteOneObjectMetadataItem } from './useDeleteOneObjectMetadataItem';
-import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem';
 
 export const useObjectMetadataItemForSettings = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -36,65 +30,12 @@ export const useObjectMetadataItemForSettings = () => {
       (objectMetadataItem) => objectMetadataItem.namePlural === namePlural,
     );
 
-  const { createOneObjectMetadataItem } =
-    useCreateOneObjectRecordMetadataItem();
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-
-  const createObjectMetadataItem = (
-    input: Pick<
-      ObjectMetadataItem,
-      'labelPlural' | 'labelSingular' | 'icon' | 'description'
-    >,
-  ) => createOneObjectMetadataItem(formatObjectMetadataItemInput(input));
-
-  const editObjectMetadataItem = (
-    input: Pick<
-      ObjectMetadataItem,
-      | 'description'
-      | 'icon'
-      | 'id'
-      | 'labelIdentifierFieldMetadataId'
-      | 'labelPlural'
-      | 'labelSingular'
-    >,
-  ) =>
-    updateOneObjectMetadataItem({
-      idToUpdate: input.id,
-      updatePayload: formatObjectMetadataItemInput(input),
-    });
-
-  const activateObjectMetadataItem = (
-    objectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
-  ) =>
-    updateOneObjectMetadataItem({
-      idToUpdate: objectMetadataItem.id,
-      updatePayload: { isActive: true },
-    });
-
-  const disableObjectMetadataItem = (
-    objectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
-  ) =>
-    updateOneObjectMetadataItem({
-      idToUpdate: objectMetadataItem.id,
-      updatePayload: { isActive: false },
-    });
-
-  const eraseObjectMetadataItem = (
-    objectMetadataItem: Pick<ObjectMetadataItem, 'id'>,
-  ) => deleteOneObjectMetadataItem(objectMetadataItem.id);
-
   return {
-    activateObjectMetadataItem,
     activeObjectMetadataItems,
-    createObjectMetadataItem,
-    inactiveObjectMetadataItems,
-    disableObjectMetadataItem,
-    editObjectMetadataItem,
-    eraseObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
+    inactiveObjectMetadataItems,
     objectMetadataItems,
   };
 };

@@ -1,14 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
+import { z } from 'zod';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import {
+  SettingsDataModelObjectAboutForm,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
+import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,68 +29,58 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
+const objectEditFormSchema = z
+  .object({})
+  .merge(settingsDataModelObjectAboutFormSchema)
+  .merge(settingsDataModelObjectIdentifiersFormSchema);
+
+type SettingsDataModelObjectEditFormValues = z.infer<
+  typeof objectEditFormSchema
+>;
+
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    editObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-  } = useObjectMetadataItemForSettings();
+  const { findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const [formValues, setFormValues] = useState<
-    Partial<{
-      icon: string;
-      labelSingular: string;
-      labelPlural: string;
-      description: string;
-    }>
-  >({});
+  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
+
+  const formConfig = useForm<SettingsDataModelObjectEditFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(objectEditFormSchema),
+  });
 
   useEffect(() => {
-    if (!activeObjectMetadataItem) {
-      navigate(AppPath.NotFound);
-      return;
-    }
-
-    if (!Object.keys(formValues).length) {
-      setFormValues({
-        icon: activeObjectMetadataItem.icon ?? undefined,
-        labelSingular: activeObjectMetadataItem.labelSingular,
-        labelPlural: activeObjectMetadataItem.labelPlural,
-        description: activeObjectMetadataItem.description ?? undefined,
-      });
-    }
-  }, [activeObjectMetadataItem, formValues, navigate]);
+    if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
+  }, [activeObjectMetadataItem, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 
-  const areRequiredFieldsFilled =
-    !!formValues.labelSingular && !!formValues.labelPlural;
-
-  const hasChanges =
-    formValues.description !== activeObjectMetadataItem.description ||
-    formValues.icon !== activeObjectMetadataItem.icon ||
-    formValues.labelPlural !== activeObjectMetadataItem.labelPlural ||
-    formValues.labelSingular !== activeObjectMetadataItem.labelSingular;
-
-  const canSave = areRequiredFieldsFilled && hasChanges;
+  const { isDirty, isValid } = formConfig.formState;
+  const canSave = isDirty && isValid;
 
   const handleSave = async () => {
-    const editedObjectMetadataItem = {
-      ...activeObjectMetadataItem,
-      ...formValues,
-    };
+    const formValues = formConfig.getValues();
+    const dirtyFieldKeys = Object.keys(
+      formConfig.formState.dirtyFields,
+    ) as (keyof SettingsDataModelObjectEditFormValues)[];
 
     try {
-      await editObjectMetadataItem(editedObjectMetadataItem);
+      await updateOneObjectMetadataItem({
+        idToUpdate: activeObjectMetadataItem.id,
+        updatePayload: settingsUpdateObjectInputSchema.parse(
+          pick(formValues, dirtyFieldKeys),
+        ),
+      });
 
-      navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
+      navigate(`${settingsObjectsPagePath}/${getObjectSlug(formValues)}`);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: 'error',
@@ -87,64 +89,72 @@ export const SettingsObjectEdit = () => {
   };
 
   const handleDisable = async () => {
-    await disableObjectMetadataItem(activeObjectMetadataItem);
-    navigate('/settings/objects');
+    await updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: { isActive: false },
+    });
+    navigate(settingsObjectsPagePath);
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              {
-                children: activeObjectMetadataItem.labelPlural,
-                href: `/settings/objects/${objectSlug}`,
-              },
-              { children: 'Edit' },
-            ]}
-          />
-          {activeObjectMetadataItem.isCustom && (
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-              onSave={handleSave}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                {
+                  children: 'Objects',
+                  href: settingsObjectsPagePath,
+                },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `${settingsObjectsPagePath}/${objectSlug}`,
+                },
+                { children: 'Edit' },
+              ]}
             />
-          )}
-        </SettingsHeaderContainer>
-        <SettingsObjectFormSection
-          disabled={!activeObjectMetadataItem.isCustom}
-          icon={formValues.icon}
-          singularName={formValues.labelSingular}
-          pluralName={formValues.labelPlural}
-          description={formValues.description}
-          onChange={(values) =>
-            setFormValues((previousFormValues) => ({
-              ...previousFormValues,
-              ...values,
-            }))
-          }
-        />
-        <Section>
-          <H2Title
-            title="Settings"
-            description="Choose the fields that will identify your records"
-          />
-          <SettingsDataModelObjectSettingsFormCard
-            objectMetadataItem={activeObjectMetadataItem}
-          />
-        </Section>
-        <Section>
-          <H2Title title="Danger zone" description="Disable object" />
-          <Button
-            Icon={IconArchive}
-            title="Disable"
-            size="small"
-            onClick={handleDisable}
-          />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+            {activeObjectMetadataItem.isCustom && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                onCancel={() =>
+                  navigate(`${settingsObjectsPagePath}/${objectSlug}`)
+                }
+                onSave={handleSave}
+              />
+            )}
+          </SettingsHeaderContainer>
+          <Section>
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
+            <SettingsDataModelObjectAboutForm
+              disabled={!activeObjectMetadataItem.isCustom}
+              objectMetadataItem={activeObjectMetadataItem}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title="Settings"
+              description="Choose the fields that will identify your records"
+            />
+            <SettingsDataModelObjectSettingsFormCard
+              objectMetadataItem={activeObjectMetadataItem}
+            />
+          </Section>
+          <Section>
+            <H2Title title="Danger zone" description="Disable object" />
+            <Button
+              Icon={IconArchive}
+              title="Disable"
+              size="small"
+              onClick={handleDisable}
+            />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

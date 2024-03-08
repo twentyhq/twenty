@@ -153,8 +153,8 @@ export class WorkspaceMetadataUpdaterService {
         // https://github.com/typeorm/typeorm/issues/3490
         // To avoid calling update in a for loop, we did this hack.
         return {
-          ...oldFieldMetadata,
-          ...updateFieldMetadata,
+          ...omit(oldFieldMetadata, ['objectMetadataId', 'workspaceId']),
+          ...omit(updateFieldMetadata, ['objectMetadataId', 'workspaceId']),
           options: updateFieldMetadata.options ?? oldFieldMetadata.options,
         };
       });
@@ -197,7 +197,11 @@ export class WorkspaceMetadataUpdaterService {
 
           return {
             current: oldFieldMetadata as FieldMetadataEntity,
-            altered: alteredFieldMetadata as FieldMetadataEntity,
+            altered: {
+              ...alteredFieldMetadata,
+              objectMetadataId: oldFieldMetadata.objectMetadataId,
+              workspaceId: oldFieldMetadata.workspaceId,
+            } as FieldMetadataEntity,
           };
         },
       ),

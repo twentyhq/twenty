@@ -11,6 +11,7 @@ import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subsc
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
+import { assert } from 'src/utils/assert';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -19,6 +20,8 @@ export enum AvailableProduct {
 export enum WebhookEvent {
   CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
+  CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
+  SETUP_INTENT_SUCCEEDED = 'setup_intent.succeeded',
 }
 
 @Injectable()
@@ -73,9 +76,12 @@ export class BillingService {
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
-  async getBillingSubscription(workspaceId: string) {
+  async getBillingSubscription(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }) {
     return await this.billingSubscriptionRepository.findOneOrFail({
-      where: { workspaceId },
+      where: criteria,
       relations: ['billingSubscriptionItems'],
     });
   }
@@ -84,7 +90,9 @@ export class BillingService {
     workspaceId: string,
     stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription = await this.getBillingSubscription(workspaceId);
+    const billingSubscription = await this.getBillingSubscription({
+      workspaceId,
+    });
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -101,18 +109,50 @@ export class BillingService {
     return billingSubscriptionItem;
   }
 
-  async checkout(user: User, priceId: string, successUrlPath?: string) {
+  async computeBillingPortalSessionURL(
+    workspaceId: string,
+    returnUrlPath?: string,
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { workspaceId },
+      });
+
+    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const returnUrl = returnUrlPath
+      ? frontBaseUrl + returnUrlPath
+      : frontBaseUrl;
+
+    const session = await this.stripeService.createBillingPortalSession(
+      billingSubscription.stripeCustomerId,
+      returnUrl,
+    );
+
+    assert(session.url, 'Error: missing billingPortal.session.url');
+
+    return session.url;
+  }
+
+  async computeCheckoutSessionURL(
+    user: User,
+    priceId: string,
+    successUrlPath?: string,
+  ): Promise<string> {
     const frontBaseUrl = this.environmentService.getFrontBaseUrl();
     const successUrl = successUrlPath
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
 
-    return await this.stripeService.createCheckoutSession(
+    const session = await this.stripeService.createCheckoutSession(
       user,
       priceId,
       successUrl,
       frontBaseUrl,
     );
+
+    assert(session.url, 'Error: missing checkout.session.url');
+
+    return session.url;
   }
 
   async deleteSubscription(workspaceId: string) {
@@ -126,6 +166,22 @@ export class BillingService {
         subscriptionToCancel.stripeSubscriptionId,
       );
       await this.billingSubscriptionRepository.delete(subscriptionToCancel.id);
+    }
+  }
+
+  async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
+    try {
+      const billingSubscription = await this.getBillingSubscription({
+        stripeCustomerId: data.object.customer as string,
+      });
+
+      if (billingSubscription.status === 'unpaid') {
+        await this.stripeService.collectLastInvoice(
+          billingSubscription.stripeSubscriptionId,
+        );
+      }
+    } catch (err) {
+      return;
     }
   }
 
@@ -143,7 +199,7 @@ export class BillingService {
         status: data.object.status,
       },
       {
-        conflictPaths: ['stripeSubscriptionId'],
+        conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
@@ -152,7 +208,9 @@ export class BillingService {
       subscriptionStatus: data.object.status,
     });
 
-    const billingSubscription = await this.getBillingSubscription(workspaceId);
+    const billingSubscription = await this.getBillingSubscription({
+      workspaceId,
+    });
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
@@ -165,7 +223,7 @@ export class BillingService {
         };
       }),
       {
-        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );

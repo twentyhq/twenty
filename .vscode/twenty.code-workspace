@@ -42,10 +42,59 @@
     },
   ],
   "settings": {
+    "editor.formatOnSave": false,
+    "files.eol": "auto",
+    "[typescript]": {
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.addMissingImports": "always"
+      }
+    },
+    "[javascript]": {
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.addMissingImports": "always"
+      }
+    },
+    "[typescriptreact]": {
+      "editor.formatOnSave": false,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.addMissingImports": "always"
+      }
+    },
+    "[json]": {
+      "editor.formatOnSave": true
+    },
+    "javascript.format.enable": false,
+    "typescript.format.enable": false,
+    "cSpell.enableFiletypes": [
+      "!javascript",
+      "!json",
+      "!typescript",
+      "!typescriptreact",
+      "md",
+      "mdx"
+    ],
+    "cSpell.words": [
+      "twentyhq"
+    ],
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "[javascript][typescript][typescriptreact]": {
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.addMissingImports": "always"
+      }
+    },
+    "search.exclude": {
+      "**/.yarn": true,
+    },
     "files.exclude": {
       "packages/": true
     },
-    "jest.autoEnable": false,
+    "jest.runMode": "on-demand",
     "jest.disabledWorkspaceFolders": [
       "ROOT",
       "packages/twenty-zapier",

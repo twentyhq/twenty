@@ -34,6 +34,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
+    case FieldMetadataType.POSITION:
       return {
         value: columnName,
       };

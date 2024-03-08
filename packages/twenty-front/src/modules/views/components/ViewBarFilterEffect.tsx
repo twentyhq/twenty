@@ -26,6 +26,7 @@ export const ViewBarFilterEffect = ({
     setOnFilterSelect,
     filterDefinitionUsedInDropdown,
     setObjectFilterDropdownSelectedRecordIds,
+    setObjectFilterDropdownSelectedOptionValues,
     isObjectFilterDropdownUnfolded,
   } = useFilterDropdown({ filterDropdownId });
 
@@ -61,12 +62,29 @@ export const ViewBarFilterEffect = ({
         : [];
 
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
+    } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
+      const viewFilterUsedInDropdown = currentViewFilters.find(
+        (filter) =>
+          filter.fieldMetadataId ===
+          filterDefinitionUsedInDropdown.fieldMetadataId,
+      );
+
+      const viewFilterSelectedOptionValues = isNonEmptyString(
+        viewFilterUsedInDropdown?.value,
+      )
+        ? JSON.parse(viewFilterUsedInDropdown.value)
+        : [];
+
+      setObjectFilterDropdownSelectedOptionValues(
+        viewFilterSelectedOptionValues,
+      );
     }
   }, [
     filterDefinitionUsedInDropdown,
     currentViewFilters,
     setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownUnfolded,
+    setObjectFilterDropdownSelectedOptionValues,
   ]);
 
   return <></>;
