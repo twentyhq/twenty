@@ -23,6 +23,8 @@ export function FieldMetadata<T extends FieldMetadataType>(
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
     const { joinColumn, ...restParams } = params;
 
+    validateFieldMetadataOptions(restParams, target);
+
     TypedReflect.defineMetadata(
       'fieldMetadataMap',
       {
@@ -56,6 +58,23 @@ export function FieldMetadata<T extends FieldMetadataType>(
       target.constructor,
     );
   };
+}
+
+function validateFieldMetadataOptions<T extends FieldMetadataType>(
+  params: FieldMetadataDecoratorParams<T>,
+  target: object,
+) {
+  if (!params.options) {
+    return;
+  }
+
+  params.options.forEach((option) => {
+    if (option.value.toUpperCase() !== option.value) {
+      throw new Error(
+        `FieldMetadata options value must be uppercase, got ${option.value} for field ${params.label} inside object ${target.constructor.name}`,
+      );
+    }
+  });
 }
 
 function generateFieldMetadata<T extends FieldMetadataType>(
