@@ -220,7 +220,9 @@ export class GmailPartialSyncService {
           2,
         )}`,
       );
-      const errorsAreOnly404 = errors.every((error) => error.code === 404);
+      const errorsAreOnly404 = errors.every(
+        (error) => error.code === 404 || error.code === 429,
+      );
 
       if (errorsAreOnly404) {
         return;
