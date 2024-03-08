@@ -137,9 +137,9 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarChannelEventAssociation',
+    inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
-    inverseSideFieldName: 'calendarEvent',
+    inverseSideFieldKey: 'calendarEvent',
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
@@ -156,7 +156,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
-    inverseSideFieldName: 'calendarEvent',
+    inverseSideFieldKey: 'calendarEvent',
   })
   eventAttendees: CalendarEventAttendeeObjectMetadata[];
 }
