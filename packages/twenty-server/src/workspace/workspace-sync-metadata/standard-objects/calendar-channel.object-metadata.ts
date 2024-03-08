@@ -1,4 +1,7 @@
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -103,10 +106,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
-    inverseSideFieldKey: 'calendarChannel',
-  })
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 }

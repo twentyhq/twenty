@@ -156,7 +156,6 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
-    inverseSideFieldKey: 'calendarEvent',
   })
   eventAttendees: CalendarEventAttendeeObjectMetadata[];
 }
