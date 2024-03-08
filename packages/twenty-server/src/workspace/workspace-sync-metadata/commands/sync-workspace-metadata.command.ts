@@ -72,7 +72,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         );
 
       const { storage, workspaceMigrations } =
-        await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+        await this.workspaceSyncMetadataService.synchronize(
           {
             workspaceId,
             dataSourceId: dataSourceMetadata.id,

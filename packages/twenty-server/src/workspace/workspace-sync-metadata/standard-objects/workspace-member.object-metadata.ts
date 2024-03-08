@@ -6,7 +6,6 @@ import {
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
-import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -89,8 +88,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activity',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
   authoredActivities: ActivityObjectMetadata[];
 
@@ -102,10 +101,11 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activity',
-    inverseSideFieldName: 'assignee',
+    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideFieldKey: 'assignee',
   })
-  @IsNullable()
+  assignedActivities: ActivityObjectMetadata[];
+
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
@@ -114,7 +114,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: FavoriteObjectMetadata[];
@@ -127,8 +127,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'company',
-    inverseSideFieldName: 'accountOwner',
+    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'accountOwner',
   })
   accountOwnerForCompanies: CompanyObjectMetadata[];
 
@@ -140,8 +140,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
   authoredAttachments: AttachmentObjectMetadata[];
 
@@ -153,8 +153,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'comment',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => CommentObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
   authoredComments: CommentObjectMetadata[];
 
@@ -166,8 +166,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'connectedAccount',
-    inverseSideFieldName: 'accountOwner',
+    inverseSideTarget: () => ConnectedAccountObjectMetadata,
+    inverseSideFieldKey: 'accountOwner',
   })
   connectedAccounts: ConnectedAccountObjectMetadata[];
 
@@ -179,8 +179,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageParticipant',
-    inverseSideFieldName: 'workspaceMember',
+    inverseSideTarget: () => MessageParticipantObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
   })
   messageParticipants: MessageParticipantObjectMetadata[];
 
@@ -192,8 +192,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'blocklist',
-    inverseSideFieldName: 'workspaceMember',
+    inverseSideTarget: () => BlocklistObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
   })
   blocklist: BlocklistObjectMetadata[];
 
@@ -205,8 +205,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarEventAttendee',
-    inverseSideFieldName: 'workspaceMember',
+    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',

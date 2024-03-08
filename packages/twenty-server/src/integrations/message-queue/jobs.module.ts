@@ -34,6 +34,7 @@ import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CalendarModule } from 'src/workspace/calendar/calendar.module';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { CalendarModule } from 'src/workspace/calendar/calendar.module';
     ThreadCleanerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,

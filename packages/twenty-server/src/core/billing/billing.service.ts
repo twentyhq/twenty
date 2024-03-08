@@ -20,6 +20,8 @@ export enum AvailableProduct {
 export enum WebhookEvent {
   CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
+  CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
+  SETUP_INTENT_SUCCEEDED = 'setup_intent.succeeded',
 }
 
 @Injectable()
@@ -74,9 +76,12 @@ export class BillingService {
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
-  async getBillingSubscription(workspaceId: string) {
+  async getBillingSubscription(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }) {
     return await this.billingSubscriptionRepository.findOneOrFail({
-      where: { workspaceId },
+      where: criteria,
       relations: ['billingSubscriptionItems'],
     });
   }
@@ -85,7 +90,9 @@ export class BillingService {
     workspaceId: string,
     stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription = await this.getBillingSubscription(workspaceId);
+    const billingSubscription = await this.getBillingSubscription({
+      workspaceId,
+    });
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -162,6 +169,22 @@ export class BillingService {
     }
   }
 
+  async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
+    try {
+      const billingSubscription = await this.getBillingSubscription({
+        stripeCustomerId: data.object.customer as string,
+      });
+
+      if (billingSubscription.status === 'unpaid') {
+        await this.stripeService.collectLastInvoice(
+          billingSubscription.stripeSubscriptionId,
+        );
+      }
+    } catch (err) {
+      return;
+    }
+  }
+
   async upsertBillingSubscription(
     workspaceId: string,
     data:
@@ -176,7 +199,7 @@ export class BillingService {
         status: data.object.status,
       },
       {
-        conflictPaths: ['stripeSubscriptionId'],
+        conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
@@ -185,7 +208,9 @@ export class BillingService {
       subscriptionStatus: data.object.status,
     });
 
-    const billingSubscription = await this.getBillingSubscription(workspaceId);
+    const billingSubscription = await this.getBillingSubscription({
+      workspaceId,
+    });
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
@@ -198,7 +223,7 @@ export class BillingService {
         };
       }),
       {
-        conflictPaths: ['stripeSubscriptionItemId', 'billingSubscriptionId'],
+        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );

@@ -72,6 +72,7 @@ export const useInjectIntoActivityTargetsQueries = () => {
     overwriteFindManyActivityTargetsQueryInCache({
       objectRecordsToOverwrite: newActivityTargets,
       queryVariables: findManyActivitiyTargetsQueryVariables,
+      depth: 2,
     });
   };
 
