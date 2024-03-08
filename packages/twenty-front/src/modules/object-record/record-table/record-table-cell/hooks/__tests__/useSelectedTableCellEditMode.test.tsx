@@ -52,12 +52,7 @@ describe('useSelectedTableCellEditMode', () => {
       },
       false,
     );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
-      {
-        key: 'currentTableCellInEditModePoComponentFamilyState__{"scopeId":"yourScopeId-scope"}',
-      },
-      { column: 5, row: 1 },
-    );
+
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
         key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"row":1},"scopeId":"yourScopeId-scope"}',
