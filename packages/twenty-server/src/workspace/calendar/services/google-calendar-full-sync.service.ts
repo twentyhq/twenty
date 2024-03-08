@@ -153,11 +153,11 @@ export class GmailFullSyncService {
       );
 
     const eventsToSave = formattedEvents.filter(
-      (event) => !existingEventExternalIds.includes(event.externalId as string),
+      (event) => !existingEventExternalIds.includes(event.externalId),
     );
 
-    const eventsToUpdate = events.filter((event) =>
-      existingEventExternalIds.includes(event.id as string),
+    const eventsToUpdate = formattedEvents.filter((event) =>
+      existingEventExternalIds.includes(event.externalId),
     );
 
     if (events.length > 0) {

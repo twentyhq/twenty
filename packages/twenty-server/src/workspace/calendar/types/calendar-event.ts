@@ -4,6 +4,7 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 
 export type CalendarEventWithAttendees =
   ObjectRecord<CalendarEventObjectMetadata> & {
+    externalId: string;
     attendees: Omit<
       ObjectRecord<CalendarEventAttendeeObjectMetadata>,
       'id' | 'createdAt' | 'updatedAt' | 'personId' | 'workspaceMemberId'
