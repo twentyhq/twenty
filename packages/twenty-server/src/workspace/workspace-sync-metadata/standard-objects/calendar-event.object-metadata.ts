@@ -11,6 +11,7 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
+import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 
 @ObjectMetadata({
   namePlural: 'calendarEvents',
@@ -62,6 +63,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'End DateTime',
     icon: 'IconCalendarClock',
   })
+  @IsNullable()
   endsAt: string;
 
   @FieldMetadata({

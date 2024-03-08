@@ -1,20 +1,11 @@
-import { CalendarEventAttendeeResponseStatus } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
+import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 
-export type CalendarEvent = {
-  title: string;
-  isCanceled: boolean;
-  isFullDay: boolean;
-  startsAt: string;
-  endsAt?: string;
-  externalCreatedAt: string;
-  externalUpdatedAt: string;
-  attendees: CalendarEventAttendee[];
-};
-
-export type CalendarEventAttendee = {
-  id: string;
-  handle: string;
-  displayName: string;
-  isOrganizer: boolean;
-  responseStatus: CalendarEventAttendeeResponseStatus;
-};
+export type CalendarEventWithAttendees =
+  ObjectRecord<CalendarEventObjectMetadata> & {
+    attendees: Omit<
+      ObjectRecord<CalendarEventAttendeeObjectMetadata>,
+      'id' | 'createdAt' | 'updatedAt' | 'personId' | 'workspaceMemberId'
+    >[];
+  };

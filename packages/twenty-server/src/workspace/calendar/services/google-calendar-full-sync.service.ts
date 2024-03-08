@@ -21,6 +21,7 @@ import { MessageQueue } from 'src/integrations/message-queue/message-queue.const
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { CalendarEventService } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.service';
+import { formatGoogleCalendarEvent } from 'src/workspace/calendar/utils/format-google-calendar-event.util';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -140,6 +141,10 @@ export class GmailFullSyncService {
       }ms.`,
     );
 
+    const formattedEvents = events.map((event) =>
+      formatGoogleCalendarEvent(event),
+    );
+
     // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
 
     const existingEventExternalIds =
@@ -147,8 +152,8 @@ export class GmailFullSyncService {
         (association) => association.eventExternalId,
       );
 
-    const eventsToSave = events.filter(
-      (event) => !existingEventExternalIds.includes(event.id as string),
+    const eventsToSave = formattedEvents.filter(
+      (event) => !existingEventExternalIds.includes(event.externalId as string),
     );
 
     const eventsToUpdate = events.filter((event) =>
@@ -162,13 +167,24 @@ export class GmailFullSyncService {
         );
 
       dataSourceMetadata?.transaction(async (transactionManager) => {
-        this.calendarEventService.saveEvents();
+        this.calendarEventService.saveCalendarEvents(
+          eventsToSave,
+          workspaceId,
+          transactionManager,
+        );
+
+        this.calendarEventService.updateCalendarEvents(
+          eventsToUpdate,
+          workspaceId,
+          transactionManager,
+        );
 
         this.calendarChannelEventAssociationService.saveCalendarChannelEventAssociations(
           events,
           workspaceId,
           transactionManager,
         );
+
         this.calendarEventAttendeesService.saveEventAttendees();
       });
     } else {
