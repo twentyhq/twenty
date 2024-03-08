@@ -10,6 +10,7 @@ import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.deco
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
 @ObjectMetadata({
@@ -127,6 +128,23 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     icon: 'IconHistory',
   })
   recurringEventExternalId: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Channel Event Associations',
+    description: 'Calendar Channel Event Associations',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+    inverseSideFieldKey: 'calendarEvent',
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
