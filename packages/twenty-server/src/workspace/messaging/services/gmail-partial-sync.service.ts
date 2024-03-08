@@ -213,12 +213,21 @@ export class GmailPartialSyncService {
     }
 
     if (errors.length) {
-      throw new Error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync with errors: ${JSON.stringify(
+      console.error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${JSON.stringify(
           errors,
           null,
           2,
         )}`,
+      );
+      const errorsAreOnly404 = errors.every((error) => error.code === 404);
+
+      if (errorsAreOnly404) {
+        return;
+      }
+
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
       );
     }
     startTime = Date.now();
