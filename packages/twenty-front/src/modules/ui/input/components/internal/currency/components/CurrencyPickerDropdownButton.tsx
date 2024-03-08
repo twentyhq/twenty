@@ -17,14 +17,12 @@ type StyledDropdownButtonProps = {
 
 export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
   border-right: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   height: 32px;
   padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   &:hover {
@@ -37,7 +35,9 @@ const StyledIconContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: center;
+
   svg {
     align-items: center;
     display: flex;

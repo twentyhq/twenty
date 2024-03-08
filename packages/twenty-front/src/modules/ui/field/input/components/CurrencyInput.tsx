@@ -135,7 +135,11 @@ export const CurrencyInput = ({
         onChange={handleCurrencyChange}
         currencies={currencies}
       />
-      <StyledIcon>{Icon && <Icon size={theme.icon.size.md} />}</StyledIcon>
+      <StyledIcon>
+        {Icon && (
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
+      </StyledIcon>
       <StyledInput
         autoComplete="off"
         placeholder={placeholder}
