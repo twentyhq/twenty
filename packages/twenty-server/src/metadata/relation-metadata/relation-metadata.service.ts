@@ -26,6 +26,7 @@ import { generateMigrationName } from 'src/metadata/workspace-migration/utils/ge
 import {
   RelationMetadataEntity,
   RelationMetadataType,
+  RelationOnDeleteAction,
 } from './relation-metadata.entity';
 
 @Injectable()
@@ -209,6 +210,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
               isUnique:
                 relationMetadataInput.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
+              onDelete: RelationOnDeleteAction.SET_NULL,
             },
           ],
         },
