@@ -1,4 +1,4 @@
-import { formatNumber } from '~/utils/format/number';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

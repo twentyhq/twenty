@@ -1,4 +1,4 @@
-import { formatNumber } from '../number';
+import { formatNumber } from '../formatNumber';
 
 // This tests the en-US locale by default
 describe('formatNumber', () => {
