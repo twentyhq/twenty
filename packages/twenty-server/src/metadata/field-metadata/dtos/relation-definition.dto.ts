@@ -6,19 +6,19 @@ import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadat
 import { ObjectMetadataDTO } from 'src/metadata/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataDTO } from 'src/metadata/relation-metadata/dtos/relation-metadata.dto';
 
-export enum RelationFromOneSideType {
+export enum RelationDefinitionType {
   'MANY_TO_ONE',
   'ONE_TO_MANY',
   'ONE_TO_ONE',
 }
 
-registerEnumType(RelationFromOneSideType, {
-  name: 'RelationFromOneSideType',
-  description: 'Relation from one side type',
+registerEnumType(RelationDefinitionType, {
+  name: 'RelationDefinitionType',
+  description: 'Relation definition type',
 });
 
-@ObjectType('RelationFromOneSide')
-export class RelationFromOneSideDTO {
+@ObjectType('RelationDefinition')
+export class RelationDefinitionDTO {
   @Field(() => ObjectMetadataDTO, { nullable: true })
   sourceObjectMetadata: ObjectMetadataDTO;
 
@@ -31,17 +31,11 @@ export class RelationFromOneSideDTO {
   @Field(() => FieldMetadataDTO, { nullable: true })
   targetFieldMetadataForOppositeSide: FieldMetadataDTO;
 
-  @IsEnum(RelationFromOneSideType)
+  @IsEnum(RelationDefinitionType)
   @IsNotEmpty()
-  @Field(() => RelationFromOneSideType)
-  direction: RelationFromOneSideType;
+  @Field(() => RelationDefinitionType)
+  direction: RelationDefinitionType;
 
   @Field(() => RelationMetadataDTO, { nullable: true })
   originalRelationMetadata: RelationMetadataDTO;
-
-  @Field(() => String, { nullable: true })
-  description?: string;
-
-  @Field(() => String, { nullable: true })
-  fieldMappingOverview?: string;
 }

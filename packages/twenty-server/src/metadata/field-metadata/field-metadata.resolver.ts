@@ -16,9 +16,9 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/metadata/field-metadata/dtos/create-field.input';
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import {
-  RelationFromOneSideDTO as RelationFromOneSideDTO,
-  RelationFromOneSideType,
-} from 'src/metadata/field-metadata/dtos/relation-from-one-side.dto';
+  RelationDefinitionDTO,
+  RelationDefinitionType,
+} from 'src/metadata/field-metadata/dtos/relation-definition.dto';
 import { UpdateOneFieldMetadataInput } from 'src/metadata/field-metadata/dtos/update-field.input';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
@@ -26,7 +26,6 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => FieldMetadataDTO)
@@ -59,10 +58,10 @@ export class FieldMetadataResolver {
     });
   }
 
-  @ResolveField(() => RelationFromOneSideDTO, { nullable: true })
-  async relationFromThisFieldPointOfView(
+  @ResolveField(() => RelationDefinitionDTO, { nullable: true })
+  async relationDefinition(
     @Parent() fieldMetadata: FieldMetadataDTO,
-  ): Promise<RelationFromOneSideDTO | null> {
+  ): Promise<RelationDefinitionDTO | null> {
     if (fieldMetadata.type !== FieldMetadataType.RELATION) {
       return null;
     }
@@ -101,21 +100,8 @@ export class FieldMetadataResolver {
     if (isRelationFromSource) {
       const direction =
         foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationFromOneSideType.ONE_TO_ONE
-          : RelationFromOneSideType.ONE_TO_MANY;
-
-      const description =
-        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? `A ${foundRelationMetadata.fromObjectMetadata.nameSingular} has one ${foundRelationMetadata.toObjectMetadata.nameSingular}`
-          : `A ${foundRelationMetadata.fromObjectMetadata.nameSingular} has many ${foundRelationMetadata.toObjectMetadata.namePlural}`;
-
-      const fieldMappingOverview =
-        `${foundRelationMetadata.fromObjectMetadata.nameSingular}.${foundRelationMetadata.fromFieldMetadata.name} -> ` +
-        (foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? `${capitalize(foundRelationMetadata.toObjectMetadata.nameSingular)}`
-          : `${capitalize(
-              foundRelationMetadata.toObjectMetadata.nameSingular,
-            )}[]`);
+          ? RelationDefinitionType.ONE_TO_ONE
+          : RelationDefinitionType.ONE_TO_MANY;
 
       return {
         sourceObjectMetadata: foundRelationMetadata.fromObjectMetadata,
@@ -125,29 +111,12 @@ export class FieldMetadataResolver {
           foundRelationMetadata.toFieldMetadata,
         direction,
         originalRelationMetadata: foundRelationMetadata,
-        description,
-        fieldMappingOverview,
       };
     } else {
       const direction =
         foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationFromOneSideType.ONE_TO_ONE
-          : RelationFromOneSideType.MANY_TO_ONE;
-
-      const description =
-        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? `A ${foundRelationMetadata.toObjectMetadata.nameSingular} has one ${foundRelationMetadata.fromObjectMetadata.nameSingular}`
-          : `Multiple ${foundRelationMetadata.toObjectMetadata.namePlural} have a ${foundRelationMetadata.fromObjectMetadata.nameSingular}`;
-
-      const fieldMappingOverview =
-        `${foundRelationMetadata.toObjectMetadata.nameSingular}.${foundRelationMetadata.toFieldMetadata.name} -> ` +
-        (foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? `${capitalize(
-              foundRelationMetadata.fromObjectMetadata.nameSingular,
-            )}`
-          : `${capitalize(
-              foundRelationMetadata.fromObjectMetadata.nameSingular,
-            )}`);
+          ? RelationDefinitionType.ONE_TO_ONE
+          : RelationDefinitionType.MANY_TO_ONE;
 
       return {
         sourceObjectMetadata: foundRelationMetadata.toObjectMetadata,
@@ -157,8 +126,6 @@ export class FieldMetadataResolver {
           foundRelationMetadata.fromFieldMetadata,
         direction,
         originalRelationMetadata: foundRelationMetadata,
-        description,
-        fieldMappingOverview,
       };
     }
   }
