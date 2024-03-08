@@ -213,6 +213,13 @@ export class GmailPartialSyncService {
     }
 
     if (errors.length) {
+      this.logger.error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${JSON.stringify(
+          errors,
+          null,
+          2,
+        )}`,
+      );
       const errorsCanBeIgnored = errors.every((error) => error.code === 404);
       const errorsShouldBeRetried = errors.some((error) => error.code === 429);
 
