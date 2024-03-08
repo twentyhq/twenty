@@ -10,10 +10,12 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { BillingResolver } from 'src/core/billing/billing.resolver';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { BillingWorkspaceMemberListener } from 'src/core/billing/listeners/billing-workspace-member.listener';
+import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 
 @Module({
   imports: [
     StripeModule,
+    UserWorkspaceModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,

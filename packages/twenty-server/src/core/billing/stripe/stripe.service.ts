@@ -55,6 +55,7 @@ export class StripeService {
   async createCheckoutSession(
     user: User,
     priceId: string,
+    quantity: number,
     successUrl?: string,
     cancelUrl?: string,
   ): Promise<Stripe.Checkout.Session> {
@@ -62,7 +63,7 @@ export class StripeService {
       line_items: [
         {
           price: priceId,
-          quantity: 1,
+          quantity,
         },
       ],
       mode: 'subscription',

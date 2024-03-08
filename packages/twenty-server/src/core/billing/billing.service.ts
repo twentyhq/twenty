@@ -12,6 +12,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/core/billing/dto/product-price.entity';
 import { User } from 'src/core/user/user.entity';
 import { assert } from 'src/utils/assert';
+import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -29,6 +30,7 @@ export class BillingService {
   protected readonly logger = new Logger(BillingService.name);
   constructor(
     private readonly stripeService: StripeService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
@@ -143,9 +145,18 @@ export class BillingService {
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
 
+    let quantity = 1;
+
+    try {
+      quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
+        user.defaultWorkspaceId,
+      );
+    } catch (e) {}
+
     const session = await this.stripeService.createCheckoutSession(
       user,
       priceId,
+      quantity,
       successUrl,
       frontBaseUrl,
     );
