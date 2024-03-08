@@ -9,10 +9,10 @@ export const createState = <ValueType>({
   defaultValue: ValueType;
   effects?: ReadonlyArray<AtomEffect<ValueType>>;
 }) => {
-  return () =>
-    atom<ValueType>({
-      key,
-      default: defaultValue,
-      effects,
-    });
+  const recoilState = atom<ValueType>({
+    key,
+    default: defaultValue,
+    effects,
+  });
+  return () => recoilState;
 };

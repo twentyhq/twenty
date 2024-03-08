@@ -1,8 +1,8 @@
-import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
+import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 import { ViewField } from '../types/ViewField';
 
-export const savedViewFieldsScopedFamilyState = createFamilyStateScopeMap<
+export const savedViewFieldsScopedFamilyState = createComponentFamilyState<
   ViewField[],
   string
 >({

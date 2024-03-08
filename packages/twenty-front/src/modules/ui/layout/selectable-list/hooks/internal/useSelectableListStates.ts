@@ -1,11 +1,10 @@
 import { SelectableListScopeInternalContext } from '@/ui/layout/selectable-list/scopes/scope-internal-context/SelectableListScopeInternalContext';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { selectableListOnEnterStateScopeMap } from '@/ui/layout/selectable-list/states/selectableListOnEnterStateScopeMap';
-import { selectedItemIdStateScopeMap } from '@/ui/layout/selectable-list/states/selectedItemIdStateScopeMap';
-import { isSelectedItemIdFamilySelectorScopeMap } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdFamilySelectorScopeMap';
+import { selectableListOnEnterComponentState } from '@/ui/layout/selectable-list/states/selectableListOnEnterComponentState';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { isSelectedItemIdFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdFamilySelector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type useSelectableListStatesProps = {
@@ -22,18 +21,21 @@ export const useSelectableListStates = ({
 
   return {
     scopeId,
-    isSelectedItemIdSelector: getFamilyState(
-      isSelectedItemIdFamilySelectorScopeMap,
+    isSelectedItemIdSelector: extractComponentFamilyState(
+      isSelectedItemIdFamilySelector,
       scopeId,
     ),
     selectableItemIdsState: extractComponentState(
       selectableItemIdsComponentState,
       scopeId,
     ),
-    selectableListOnEnterState: getState(
-      selectableListOnEnterStateScopeMap,
+    selectableListOnEnterState: extractComponentState(
+      selectableListOnEnterComponentState,
       scopeId,
     ),
-    selectedItemIdState: getState(selectedItemIdStateScopeMap, scopeId),
+    selectedItemIdState: extractComponentState(
+      selectedItemIdComponentState,
+      scopeId,
+    ),
   };
 };

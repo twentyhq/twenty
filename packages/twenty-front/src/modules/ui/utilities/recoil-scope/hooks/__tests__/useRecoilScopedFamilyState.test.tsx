@@ -1,12 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, RecoilState } from 'recoil';
-import { undefined } from 'zod';
 
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
-import { FamilyStateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/FamilyStateScopeMapKey';
-import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
+import { ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
+import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
-const testState = createFamilyStateScopeMap({
+const testState = createComponentFamilyState({
   key: 'sampleKey',
   defaultValue: 'defaultValue',
 });
@@ -20,7 +19,7 @@ describe('useRecoilScopedFamilyState', () => {
         familyKey,
       }: {
         recoilState: (
-          scopedFamilyKey: FamilyStateScopeMapKey<string>,
+          scopedFamilyKey: ComponentFamilyStateKey<string>,
         ) => RecoilState<string>;
         scopeId: string;
         familyKey?: string;

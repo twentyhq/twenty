@@ -1,7 +1,7 @@
 import { TabListScopeInternalContext } from '@/ui/layout/tab/scopes/scope-internal-context/TabListScopeInternalContext';
-import { activeTabIdStateScopeMap } from '@/ui/layout/tab/states/activeTabIdStateScopeMap';
+import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type useTabListStatesProps = {
   tabListScopeId?: string;
@@ -15,6 +15,9 @@ export const useTabListStates = ({ tabListScopeId }: useTabListStatesProps) => {
 
   return {
     scopeId,
-    getActiveTabIdState: getState(activeTabIdStateScopeMap, scopeId),
+    getActiveTabIdState: extractComponentState(
+      activeTabIdComponentState,
+      scopeId,
+    ),
   };
 };

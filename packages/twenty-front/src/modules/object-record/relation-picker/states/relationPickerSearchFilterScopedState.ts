@@ -1,7 +1,7 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 export const relationPickerSearchFilterScopedState =
-  createStateScopeMap<string>({
+  createComponentState<string>({
     key: 'relationPickerSearchFilterScopedState',
     defaultValue: '',
   });
