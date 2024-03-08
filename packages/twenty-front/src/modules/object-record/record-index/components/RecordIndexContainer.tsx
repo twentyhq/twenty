@@ -61,7 +61,7 @@ export const RecordIndexContainer = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
-  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
+  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState());
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
     recordIndexIsCompactModeActiveState,
   );

@@ -42,7 +42,7 @@ export const useLoadRecordIndexBoard = ({
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
-  const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+  const recordIndexSorts = useRecoilValue(recordIndexSortsState());
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],

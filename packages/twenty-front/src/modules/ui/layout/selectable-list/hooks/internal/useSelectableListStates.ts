@@ -1,11 +1,12 @@
 import { SelectableListScopeInternalContext } from '@/ui/layout/selectable-list/scopes/scope-internal-context/SelectableListScopeInternalContext';
-import { selectableItemIdsStateScopeMap } from '@/ui/layout/selectable-list/states/selectableItemIdsStateScopeMap';
+import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectableListOnEnterStateScopeMap } from '@/ui/layout/selectable-list/states/selectableListOnEnterStateScopeMap';
 import { selectedItemIdStateScopeMap } from '@/ui/layout/selectable-list/states/selectedItemIdStateScopeMap';
 import { isSelectedItemIdFamilySelectorScopeMap } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdFamilySelectorScopeMap';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type useSelectableListStatesProps = {
   selectableListScopeId?: string;
@@ -25,7 +26,10 @@ export const useSelectableListStates = ({
       isSelectedItemIdFamilySelectorScopeMap,
       scopeId,
     ),
-    selectableItemIdsState: getState(selectableItemIdsStateScopeMap, scopeId),
+    selectableItemIdsState: extractComponentState(
+      selectableItemIdsComponentState,
+      scopeId,
+    ),
     selectableListOnEnterState: getState(
       selectableListOnEnterStateScopeMap,
       scopeId,
