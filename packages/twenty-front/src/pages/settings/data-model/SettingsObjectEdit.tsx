@@ -15,6 +15,7 @@ import {
   SettingsDataModelObjectAboutForm,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -28,7 +29,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
-const objectEditFormSchema = settingsDataModelObjectAboutFormSchema;
+const objectEditFormSchema = z
+  .object({})
+  .merge(settingsDataModelObjectAboutFormSchema)
+  .merge(settingsDataModelObjectIdentifiersFormSchema);
 
 type SettingsDataModelObjectEditFormValues = z.infer<
   typeof objectEditFormSchema
