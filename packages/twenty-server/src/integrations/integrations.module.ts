@@ -9,6 +9,7 @@ import { loggerModuleFactory } from 'src/integrations/logger/logger.module-facto
 import { messageQueueModuleFactory } from 'src/integrations/message-queue/message-queue.module-factory';
 import { EmailModule } from 'src/integrations/email/email.module';
 import { emailModuleFactory } from 'src/integrations/email/email.module-factory';
+import { CacheStorageModule } from 'src/integrations/cache-storage/cache-storage.module';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -40,6 +41,7 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       inject: [EnvironmentService],
     }),
     EventEmitterModule.forRoot(),
+    CacheStorageModule,
   ],
   exports: [],
   providers: [],

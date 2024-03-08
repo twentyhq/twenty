@@ -60,15 +60,15 @@ const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-right: none;
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
-
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  height: 32px;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
-
   width: 100%;
 
   &::placeholder,

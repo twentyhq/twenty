@@ -9,8 +9,13 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factories/feature-flags.factory';
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
+import { WorkspaceSyncFieldMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
+
+interface SynchronizeOptions {
+  applyChanges?: boolean;
+}
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -23,6 +28,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
+    private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
   ) {}
 
   /**
@@ -33,9 +39,9 @@ export class WorkspaceSyncMetadataService {
    * @param dataSourceId
    * @param workspaceId
    */
-  public async syncStandardObjectsAndFieldsMetadata(
+  public async synchronize(
     context: WorkspaceSyncContext,
-    options: { applyChanges?: boolean } = { applyChanges: true },
+    options: SynchronizeOptions = { applyChanges: true },
   ): Promise<{
     workspaceMigrations: WorkspaceMigrationEntity[];
     storage: WorkspaceSyncStorage;
@@ -62,6 +68,7 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log('Syncing standard objects and fields metadata');
 
+      // 1 - Sync standard objects
       const workspaceObjectMigrations =
         await this.workspaceSyncObjectMetadataService.synchronize(
           context,
@@ -70,6 +77,16 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
+      // 2 - Sync standard fields on custom objects
+      const workspaceFieldMigrations =
+        await this.workspaceSyncFieldMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
+
+      // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrations =
         await this.workspaceSyncRelationMetadataService.synchronize(
           context,
@@ -81,6 +98,7 @@ export class WorkspaceSyncMetadataService {
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([
         ...workspaceObjectMigrations,
+        ...workspaceFieldMigrations,
         ...workspaceRelationMigrations,
       ]);
 

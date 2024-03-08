@@ -26,7 +26,7 @@ import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 
-export const standardObjectMetadataCollection = [
+export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,

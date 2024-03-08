@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
 import { WorkspaceHealthModule } from 'src/workspace/workspace-health/workspace-health.module';
+import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
@@ -12,6 +13,7 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
   imports: [
     WorkspaceSyncMetadataModule,
     WorkspaceHealthModule,
+    WorkspaceModule,
     DataSourceModule,
   ],
   providers: [SyncWorkspaceMetadataCommand, SyncWorkspaceLoggerService],

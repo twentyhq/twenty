@@ -7,7 +7,7 @@ import {
   ComparatorAction,
   ObjectComparatorResult,
 } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
-import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { ComputedPartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -28,7 +28,7 @@ export class WorkspaceObjectComparator {
 
   public compare(
     originalObjectMetadata: ObjectMetadataEntity | undefined,
-    standardObjectMetadata: PartialObjectMetadata,
+    standardObjectMetadata: ComputedPartialObjectMetadata,
   ): ObjectComparatorResult {
     // If the object doesn't exist in the original metadata, we need to create it
     if (!originalObjectMetadata) {
@@ -38,7 +38,7 @@ export class WorkspaceObjectComparator {
       };
     }
 
-    const objectPropertiesToUpdate: Partial<PartialObjectMetadata> = {};
+    const objectPropertiesToUpdate: Partial<ComputedPartialObjectMetadata> = {};
 
     // Only compare properties that are not ignored
     const partialOriginalObjectMetadata = transformMetadataForComparison(

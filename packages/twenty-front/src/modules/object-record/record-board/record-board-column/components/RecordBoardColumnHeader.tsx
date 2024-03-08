@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { BoardColumnHotkeyScope } from '@/object-record/record-board-deprecated/types/BoardColumnHotkeyScope';
+import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { IconDotsVertical } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -57,9 +57,12 @@ export const RecordBoardColumnHeader = () => {
 
   const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
-    setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
-      goto: false,
-    });
+    setHotkeyScopeAndMemorizePreviousScope(
+      RecordBoardColumnHotkeyScope.BoardColumn,
+      {
+        goto: false,
+      },
+    );
   };
 
   const handleBoardColumnMenuClose = () => {

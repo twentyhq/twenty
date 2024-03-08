@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
@@ -8,7 +9,6 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   IconCalendarEvent,
@@ -64,11 +64,6 @@ export const ShowPageRightContainer = ({
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(getActiveTabIdState());
 
-  const { objectMetadataItem: targetableObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: targetableObject.targetObjectNameSingular,
-    });
-
   const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const shouldDisplayEmailsTab =
     (emails &&
@@ -100,7 +95,6 @@ export const ShowPageRightContainer = ({
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
-      disabled: targetableObjectMetadataItem.isCustom,
     },
     {
       id: 'emails',
@@ -136,6 +130,7 @@ export const ShowPageRightContainer = ({
         <Attachments targetableObject={targetableObject} />
       )}
       {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
+      {activeTabId === 'calendar' && <Calendar />}
     </StyledShowPageRightContainer>
   );
 };
