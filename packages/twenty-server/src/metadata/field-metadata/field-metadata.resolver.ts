@@ -63,11 +63,6 @@ export class FieldMetadataResolver {
   async relationFromThisFieldPointOfView(
     @Parent() fieldMetadata: FieldMetadataDTO,
   ): Promise<RelationFromOneSideDTO | null> {
-    console.log({
-      fieldMetadata,
-      _this: this,
-    });
-
     if (fieldMetadata.type !== FieldMetadataType.RELATION) {
       return null;
     }
