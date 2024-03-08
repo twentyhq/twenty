@@ -90,9 +90,7 @@ export const MultiWorkspaceDropdownButton = ({
                 : currentWorkspace?.logo ?? ''
             }
           />
-          <StyledLabel>
-            {currentWorkspace?.displayName ?? ''}
-          </StyledLabel>
+          <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
           <StyledIconChevronDown
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
