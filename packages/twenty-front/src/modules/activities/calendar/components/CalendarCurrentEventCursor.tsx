@@ -15,11 +15,11 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { hasCalendarEventStarted } from '@/activities/calendar/utils/hasCalendarEventStarted';
 
-type CalendarCurrentEventIndicatorProps = {
+type CalendarCurrentEventCursorProps = {
   calendarEvent: CalendarEvent;
 };
 
-const StyledCurrentEventIndicator = styled(motion.div)`
+const StyledCurrentEventCursor = styled(motion.div)`
   align-items: center;
   background-color: ${({ theme }) => theme.font.color.danger};
   display: inline-flex;
@@ -40,9 +40,9 @@ const StyledCurrentEventIndicator = styled(motion.div)`
   }
 `;
 
-export const CalendarCurrentEventIndicator = ({
+export const CalendarCurrentEventCursor = ({
   calendarEvent,
-}: CalendarCurrentEventIndicatorProps) => {
+}: CalendarCurrentEventCursorProps) => {
   const theme = useTheme();
   const {
     calendarEventsByDayTime,
@@ -74,7 +74,7 @@ export const CalendarCurrentEventIndicator = ({
   const topOffset = isLastEventOfDay ? 9 : 6;
   const bottomOffset = isFirstEventOfDay ? 9 : 6;
 
-  const currentEventIndicatorVariants = {
+  const currentEventCursorVariants = {
     beforeEvent: { top: `calc(100% + ${bottomOffset}px)` },
     eventStart: {
       top: 'calc(100% + 3px)',
@@ -126,12 +126,12 @@ export const CalendarCurrentEventIndicator = ({
   return (
     <AnimatePresence>
       {isCurrent && (
-        <StyledCurrentEventIndicator
+        <StyledCurrentEventCursor
           key={calendarEvent.id}
           initial={animationSequence.initial}
           animate={animationSequence.animate}
           exit="fadeAway"
-          variants={currentEventIndicatorVariants}
+          variants={currentEventCursorVariants}
           onAnimationComplete={(stage) => {
             if (stage === 'eventStart') {
               setHasStarted(true);
@@ -144,10 +144,10 @@ export const CalendarCurrentEventIndicator = ({
                 updateCurrentCalendarEvent();
               }
               // If the next event is not the same month as the current event,
-              // we don't want the indicator to jump to the next month until the next month starts.
-              // => Wait for the upcoming event's month to start before moving the indicator.
+              // we don't want the cursor to jump to the next month until the next month starts.
+              // => Wait for the upcoming event's month to start before moving the cursor.
               // Example: we're in March. The previous event is February 15th, and the next event is April 10th.
-              // We want the indicator to stay in February until April starts.
+              // We want the cursor to stay in February until April starts.
               else {
                 setIsWaiting(true);
               }

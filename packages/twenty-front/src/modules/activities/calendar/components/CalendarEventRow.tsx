@@ -2,7 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 
-import { CalendarCurrentEventIndicator } from '@/activities/calendar/components/CalendarCurrentEventIndicator';
+import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
@@ -127,7 +127,7 @@ export const CalendarEventRow = ({
           </StyledTitle>
         )}
       </StyledLabels>
-      <CalendarCurrentEventIndicator calendarEvent={calendarEvent} />
+      <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
     </StyledContainer>
   );
 };
