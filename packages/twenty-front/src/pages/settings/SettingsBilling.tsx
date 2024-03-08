@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -9,6 +10,7 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { supportChatState } from '@/client-config/states/supportChatState.ts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat.tsx';
+import { AppPath } from '@/types/AppPath.ts';
 import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info.tsx';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
@@ -27,6 +29,7 @@ const StyledInvisibleChat = styled.div`
 `;
 
 export const SettingsBilling = () => {
+  const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
   const supportChat = useRecoilValue(supportChatState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -43,10 +46,17 @@ export const SettingsBilling = () => {
   const displaySubscriptionCanceledInfo =
     onboardingStatus === OnboardingStatus.Canceled;
 
+  const displaySubscribeInfo =
+    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
+
   const openBillingPortal = () => {
     if (data) {
       window.location.replace(data.billingPortalSession.url);
     }
+  };
+
+  const redirectToSubscribePage = () => {
+    navigate(AppPath.PlanRequired);
   };
 
   const openChat = () => {
@@ -82,19 +92,29 @@ export const SettingsBilling = () => {
             onClick={openBillingPortal}
           />
         )}
-        <Section>
-          <H2Title
-            title="Manage your subscription"
-            description="Edit payment method, see your invoices and more"
+        {displaySubscribeInfo && (
+          <Info
+            text={'Your workspace does not have an active subscription'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            onClick={redirectToSubscribePage}
           />
-          <Button
-            Icon={IconCreditCard}
-            title="View billing details"
-            variant="secondary"
-            onClick={openBillingPortal}
-            disabled={loading}
-          />
-        </Section>
+        )}
+        {!displaySubscribeInfo && (
+          <Section>
+            <H2Title
+              title="Manage your subscription"
+              description="Edit payment method, see your invoices and more"
+            />
+            <Button
+              Icon={IconCreditCard}
+              title="View billing details"
+              variant="secondary"
+              onClick={openBillingPortal}
+              disabled={loading}
+            />
+          </Section>
+        )}
       </SettingsPageContainer>
       <StyledInvisibleChat>
         <SupportChat />

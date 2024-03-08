@@ -1,3 +1,5 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -14,6 +16,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
+@ObjectType('BillingSubscription')
 export class BillingSubscription {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -42,6 +45,7 @@ export class BillingSubscription {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
+  @Field()
   @Column({ nullable: false })
   status: Stripe.Subscription.Status;
 

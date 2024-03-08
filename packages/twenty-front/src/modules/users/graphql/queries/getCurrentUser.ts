@@ -35,6 +35,9 @@ export const GET_CURRENT_USER = gql`
           value
           workspaceId
         }
+        billingSubscription {
+          status
+        }
       }
       workspaces {
         workspace {

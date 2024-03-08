@@ -83,7 +83,9 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
           OnboardingStatus.OngoingProfileCreation,
           OnboardingStatus.OngoingWorkspaceActivation,
         ].includes(onboardingStatus)) ||
-      isMatchingLocation(AppPath.ResetPassword)
+      isMatchingLocation(AppPath.ResetPassword) ||
+      (isMatchingLocation(AppPath.PlanRequired) &&
+        OnboardingStatus.CompletedWithoutSubscription)
     );
   }, [isMatchingLocation, onboardingStatus]);
 

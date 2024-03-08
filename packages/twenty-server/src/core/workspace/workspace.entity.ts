@@ -1,6 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
-import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
+import {
+  IDField,
+  Relation,
+  UnPagedRelation,
+} from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -20,6 +24,9 @@ import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 @UnPagedRelation('featureFlags', () => FeatureFlagEntity, { nullable: true })
+@Relation('billingSubscription', () => BillingSubscription, {
+  nullable: true,
+})
 export class Workspace {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')

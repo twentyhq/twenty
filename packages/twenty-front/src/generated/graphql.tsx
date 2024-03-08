@@ -65,6 +65,11 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean'];
 };
 
+export type BillingSubscription = {
+  __typename?: 'BillingSubscription';
+  status: Scalars['String'];
+};
+
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
@@ -134,8 +139,6 @@ export type FieldConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type FieldDeleteResponse = {
@@ -351,8 +354,6 @@ export type ObjectConnection = {
   edges: Array<ObjectEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type ObjectFieldsConnection = {
@@ -361,8 +362,6 @@ export type ObjectFieldsConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type PageInfo = {
@@ -474,8 +473,6 @@ export type RelationConnection = {
   edges: Array<RelationEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type RelationDeleteResponse = {
@@ -639,6 +636,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: Scalars['String'];
   allowImpersonation: Scalars['Boolean'];
+  billingSubscription?: Maybe<BillingSubscription>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
@@ -950,7 +948,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, billingSubscription?: { __typename?: 'BillingSubscription', status: string } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1924,6 +1922,9 @@ export const GetCurrentUserDocument = gql`
         key
         value
         workspaceId
+      }
+      billingSubscription {
+        status
       }
     }
     workspaces {
