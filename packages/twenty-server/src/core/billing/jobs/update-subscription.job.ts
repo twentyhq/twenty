@@ -25,16 +25,22 @@ export class UpdateSubscriptionJob
       return;
     }
 
-    const billingSubscriptionItem =
-      await this.billingService.getBillingSubscriptionItem(data.workspaceId);
+    try {
+      const billingSubscriptionItem =
+        await this.billingService.getBillingSubscriptionItem(data.workspaceId);
 
-    await this.stripeService.updateSubscriptionItem(
-      billingSubscriptionItem.stripeSubscriptionItemId,
-      workspaceMembersCount,
-    );
+      await this.stripeService.updateSubscriptionItem(
+        billingSubscriptionItem.stripeSubscriptionItemId,
+        workspaceMembersCount,
+      );
 
-    this.logger.log(
-      `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
-    );
+      this.logger.log(
+        `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
+      );
+    } catch (e) {
+      this.logger.warn(
+        `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
+      );
+    }
   }
 }
