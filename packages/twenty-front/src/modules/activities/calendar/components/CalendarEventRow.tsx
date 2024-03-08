@@ -1,13 +1,11 @@
-import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 
 import { CalendarCurrentEventIndicator } from '@/activities/calendar/components/CalendarCurrentEventIndicator';
-import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
-import { isPastCalendarEvent } from '@/activities/calendar/utils/isPastCalendarEvent';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -95,11 +93,8 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const theme = useTheme();
 
-  const { currentCalendarEvent } = useContext(CalendarContext);
-  const isCurrent = currentCalendarEvent?.id === calendarEvent?.id;
-
   const endsAt = getCalendarEventEndDate(calendarEvent);
-  const isPastEvent = isPastCalendarEvent(calendarEvent);
+  const hasEnded = hasCalendarEventEnded(calendarEvent);
 
   const startTimeLabel = calendarEvent.isFullDay
     ? 'All day'
@@ -120,17 +115,14 @@ export const CalendarEventRow = ({
           )}
         </StyledTime>
         {calendarEvent.visibility === 'METADATA' ? (
-          <StyledVisibilityCard active={!isPastEvent}>
+          <StyledVisibilityCard active={!hasEnded}>
             <StyledVisibilityCardContent>
               <IconLock size={theme.icon.size.sm} />
               Not shared
             </StyledVisibilityCardContent>
           </StyledVisibilityCard>
         ) : (
-          <StyledTitle
-            active={!isPastEvent}
-            canceled={!!calendarEvent.isCanceled}
-          >
+          <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
             {calendarEvent.title}
           </StyledTitle>
         )}

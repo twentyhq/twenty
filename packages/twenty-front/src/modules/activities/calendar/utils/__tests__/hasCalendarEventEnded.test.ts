@@ -1,8 +1,8 @@
 import { addDays, addHours, subDays, subHours } from 'date-fns';
 
-import { isPastCalendarEvent } from '../isPastCalendarEvent';
+import { hasCalendarEventEnded } from '../hasCalendarEventEnded';
 
-describe('isPastCalendarEvent', () => {
+describe('hasCalendarEventEnded', () => {
   describe('Event with end date', () => {
     it('returns true for an event with a past end date', () => {
       // Given
@@ -11,7 +11,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = false;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         endsAt,
         isFullDay,
@@ -28,7 +28,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = false;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         endsAt,
         isFullDay,
@@ -45,7 +45,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = false;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         endsAt,
         isFullDay,
@@ -63,7 +63,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = true;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         isFullDay,
       });
@@ -78,7 +78,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = true;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         isFullDay,
       });
@@ -93,7 +93,7 @@ describe('isPastCalendarEvent', () => {
       const isFullDay = true;
 
       // When
-      const result = isPastCalendarEvent({
+      const result = hasCalendarEventEnded({
         startsAt,
         isFullDay,
       });

@@ -1,5 +1,5 @@
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { isPastCalendarEvent } from '@/activities/calendar/utils/isPastCalendarEvent';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { sortCalendarEventsAsc } from '@/activities/calendar/utils/sortCalendarEvents';
 
 export const findUpcomingCalendarEvent = <
@@ -9,4 +9,4 @@ export const findUpcomingCalendarEvent = <
 ) =>
   [...calendarEvents]
     .sort(sortCalendarEventsAsc)
-    .find((calendarEvent) => !isPastCalendarEvent(calendarEvent));
+    .find((calendarEvent) => !hasCalendarEventEnded(calendarEvent));

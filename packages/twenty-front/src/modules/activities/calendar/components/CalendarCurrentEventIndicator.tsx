@@ -3,7 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   differenceInSeconds,
-  isPast,
   isThisMonth,
   startOfDay,
   startOfMonth,
@@ -13,7 +12,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
-import { isPastCalendarEvent } from '@/activities/calendar/utils/isPastCalendarEvent';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
+import { hasCalendarEventStarted } from '@/activities/calendar/utils/hasCalendarEventStarted';
 
 type CalendarCurrentEventIndicatorProps = {
   calendarEvent: CalendarEvent;
@@ -55,9 +55,15 @@ export const CalendarCurrentEventIndicator = ({
   const isNextEventThisMonth =
     !!nextCalendarEvent && isThisMonth(nextCalendarEvent.startsAt);
 
+  const calendarEventEndsAt = getCalendarEventEndDate(calendarEvent);
+
   const isCurrent = currentCalendarEvent.id === calendarEvent.id;
-  const [hasStarted, setHasStarted] = useState(isPast(calendarEvent.startsAt));
-  const [hasEnded, setHasEnded] = useState(isPastCalendarEvent(calendarEvent));
+  const [hasStarted, setHasStarted] = useState(
+    hasCalendarEventStarted(calendarEvent),
+  );
+  const [hasEnded, setHasEnded] = useState(
+    hasCalendarEventEnded(calendarEvent),
+  );
   const [isWaiting, setIsWaiting] = useState(hasEnded && !isNextEventThisMonth);
 
   const dayTime = startOfDay(calendarEvent.startsAt).getTime();
@@ -68,21 +74,24 @@ export const CalendarCurrentEventIndicator = ({
   const topOffset = isLastEventOfDay ? 9 : 6;
   const bottomOffset = isFirstEventOfDay ? 9 : 6;
 
-  const endsAt = getCalendarEventEndDate(calendarEvent);
-  const { startsAt } = calendarEvent;
-
   const currentEventIndicatorVariants = {
     beforeEvent: { top: `calc(100% + ${bottomOffset}px)` },
     eventStart: {
       top: 'calc(100% + 3px)',
       transition: {
-        delay: Math.max(0, differenceInSeconds(startsAt, new Date())),
+        delay: Math.max(
+          0,
+          differenceInSeconds(calendarEvent.startsAt, new Date()),
+        ),
       },
     },
     eventEnd: {
       top: `-${topOffset}px`,
       transition: {
-        delay: Math.max(0, differenceInSeconds(endsAt, new Date()) + 1),
+        delay: Math.max(
+          0,
+          differenceInSeconds(calendarEventEndsAt, new Date()) + 1,
+        ),
       },
     },
     fadeAway: {
