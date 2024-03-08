@@ -15,8 +15,8 @@ const fullDayPastEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
 };
 
 const currentEvent: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'> = {
-  startsAt: startOfDay(new Date()),
-  endsAt: addHours(new Date(), 1),
+  startsAt: addHours(new Date(), 1),
+  endsAt: addHours(new Date(), 2),
   isFullDay: false,
 };
 const currentFullDayEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
