@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedUserIds } from 'src/database/typeorm-seeds/core/users';
+import { FullName, WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'workspaceMember';
 
@@ -10,24 +12,16 @@ const WorkspaceMemberIds = {
   Phil: '20202020-1553-45c6-a028-5a9064cce07f',
 };
 
+type WorkspaceMembers = Pick<WorkspaceMember, 'id' | 'locale' | 'colorScheme'> & { nameFirstName: string, nameLastName: string, userEmail: string, userId: string }
+
 export const seedWorkspaceMember = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
-  await workspaceDataSource
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.${tableName}`, [
-      'id',
-      'nameFirstName',
-      'nameLastName',
-      'locale',
-      'colorScheme',
-      'userEmail',
-      'userId',
-    ])
-    .orIgnore()
-    .values([
+  let workspaceMembers: WorkspaceMembers[] = [];
+  if (workspaceId === SeedAppleWorkspaceId) {
+    workspaceMembers = [
       {
         id: WorkspaceMemberIds.Tim,
         nameFirstName: 'Tim',
@@ -55,6 +49,35 @@ export const seedWorkspaceMember = async (
         userEmail: 'phil.schiler@apple.dev',
         userId: SeedUserIds.Phil,
       },
+    ]
+  }
+
+  if (workspaceId === SeedTwentyWorkspaceId) {
+    workspaceMembers = [
+      {
+        id: WorkspaceMemberIds.Tim,
+        nameFirstName: 'Tim',
+        nameLastName: 'Apple',
+        locale: 'en',
+        colorScheme: 'Light',
+        userEmail: 'tim@apple.dev',
+        userId: SeedUserIds.Tim,
+      },
+    ]
+  }
+  await workspaceDataSource
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${tableName}`, [
+      'id',
+      'nameFirstName',
+      'nameLastName',
+      'locale',
+      'colorScheme',
+      'userEmail',
+      'userId',
     ])
+    .orIgnore()
+    .values(workspaceMembers)
     .execute();
 };

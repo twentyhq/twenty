@@ -1,3 +1,5 @@
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { DataSource } from 'typeorm';
 
 // import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
@@ -15,12 +17,9 @@ export const seedUserWorkspaces = async (
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.${tableName}`, ['userId', 'workspaceId'])
-    .orIgnore()
-    .values([
+  let userWorkspaces: Pick<UserWorkspace, 'userId' | 'workspaceId'>[] = [];
+  if (workspaceId === SeedAppleWorkspaceId) {
+    userWorkspaces = [
       {
         userId: SeedUserIds.Tim,
         workspaceId,
@@ -33,7 +32,23 @@ export const seedUserWorkspaces = async (
         userId: SeedUserIds.Phil,
         workspaceId,
       },
-    ])
+    ]
+  }
+
+  if (workspaceId === SeedTwentyWorkspaceId) {
+    userWorkspaces = [
+      {
+        userId: SeedUserIds.Tim,
+        workspaceId,
+      },
+    ]
+  }
+  await workspaceDataSource
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${tableName}`, ['userId', 'workspaceId'])
+    .orIgnore()
+    .values(userWorkspaces)
     .execute();
 };
 

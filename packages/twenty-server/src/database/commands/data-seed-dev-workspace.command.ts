@@ -14,6 +14,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
+import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 // TODO: implement dry-run
 @Command({
@@ -22,7 +23,10 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+  workspaceIds = [
+    SeedAppleWorkspaceId,
+    SeedTwentyWorkspaceId,
+  ];
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -44,80 +48,86 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         schema: 'core',
       });
 
-      await dataSource.initialize();
+      for (const workspaceId of this.workspaceIds) {
+        await dataSource.initialize();
 
-      await seedCoreSchema(dataSource, this.workspaceId);
+        await seedCoreSchema(dataSource, workspaceId);
 
-      await dataSource.destroy();
+        await dataSource.destroy();
 
-      const schemaName =
-        await this.workspaceDataSourceService.createWorkspaceDBSchema(
-          this.workspaceId,
+        const schemaName =
+          await this.workspaceDataSourceService.createWorkspaceDBSchema(
+            workspaceId,
+          );
+
+        const dataSourceMetadata =
+          await this.dataSourceService.createDataSourceMetadata(
+            workspaceId,
+            schemaName,
+          );
+
+        await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+          {
+            workspaceId: workspaceId,
+            dataSourceId: dataSourceMetadata.id,
+          },
         );
-
-      const dataSourceMetadata =
-        await this.dataSourceService.createDataSourceMetadata(
-          this.workspaceId,
-          schemaName,
-        );
-
-      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        {
-          workspaceId: this.workspaceId,
-          dataSourceId: dataSourceMetadata.id,
-        },
-      );
+      }
     } catch (error) {
       console.error(error);
 
       return;
     }
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        this.workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    if (!workspaceDataSource) {
-      throw new Error('Could not connect to workspace data source');
-    }
-
-    try {
-      const objectMetadata =
-        await this.objectMetadataService.findManyWithinWorkspace(
-          this.workspaceId,
+    for (const workspaceId of this.workspaceIds) {
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          workspaceId,
         );
-      const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-        acc[object.nameSingular] = {
-          id: object.id,
-          fields: object.fields.reduce((acc, field) => {
-            acc[field.name] = field.id;
 
-            return acc;
-          }, {}),
-        };
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-        return acc;
-      }, {});
+      if (!workspaceDataSource) {
+        throw new Error('Could not connect to workspace data source');
+      }
 
-      await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
-      await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
-      await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
-      await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
+      try {
+        const objectMetadata =
+          await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+        const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+          acc[object.nameSingular] = {
+            id: object.id,
+            fields: object.fields.reduce((acc, field) => {
+              acc[field.name] = field.id;
 
-      await seedViews(
-        workspaceDataSource,
-        dataSourceMetadata.schema,
-        objectMetadataMap,
-      );
-      await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);
-    } catch (error) {
-      console.error(error);
+              return acc;
+            }, {}),
+          };
+
+          return acc;
+        }, {});
+
+        await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
+        await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
+        await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
+        await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
+
+        await seedViews(
+          workspaceDataSource,
+          dataSourceMetadata.schema,
+          objectMetadataMap,
+        );
+        await seedWorkspaceMember(
+          workspaceDataSource,
+          dataSourceMetadata.schema,
+          workspaceId,
+        );
+      } catch (error) {
+        console.error(error);
+      }
+
+      await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
     }
-
-    await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
   }
 }
