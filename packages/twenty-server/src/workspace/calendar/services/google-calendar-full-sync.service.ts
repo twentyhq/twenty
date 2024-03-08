@@ -160,6 +160,28 @@ export class GmailFullSyncService {
       existingEventExternalIds.includes(event.externalId),
     );
 
+    const calendarChannelEventAssociationsToSave = eventsToSave.map(
+      (event) => ({
+        calendarEventId: event.id,
+        eventExternalId: event.externalId,
+        calendarChannelId,
+      }),
+    );
+
+    // const attendeesToSave = formattedEvents.flatMap((event) =>
+    //   event.attendees.map((attendee) => ({
+    //     ...attendee,
+    //     eventExternalId: event.externalId,
+    //   })),
+    // );
+
+    // const attendeesToUpdate = formattedEvents.flatMap((event) =>
+    //   event.attendees.map((attendee) => ({
+    //     ...attendee,
+    //     eventExternalId: event.externalId,
+    //   })),
+    // );
+
     if (events.length > 0) {
       const dataSourceMetadata =
         await this.workspaceDataSourceService.connectToWorkspaceDataSource(
@@ -180,12 +202,12 @@ export class GmailFullSyncService {
         );
 
         this.calendarChannelEventAssociationService.saveCalendarChannelEventAssociations(
-          events,
+          calendarChannelEventAssociationsToSave,
           workspaceId,
           transactionManager,
         );
 
-        this.calendarEventAttendeesService.saveEventAttendees();
+        // this.calendarEventAttendeesService.saveEventAttendees();
       });
     } else {
       this.logger.log(
@@ -201,11 +223,11 @@ export class GmailFullSyncService {
 
     startTime = Date.now();
 
-    await this.calendarChannelService.updateSyncCursor(
-      nextSyncToken,
-      connectedAccount.id,
-      workspaceId,
-    );
+    // await this.calendarChannelService.updateSyncCursor(
+    //   nextSyncToken,
+    //   connectedAccount.id,
+    //   workspaceId,
+    // );
 
     endTime = Date.now();
 

@@ -6,6 +6,7 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
 import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
+import { CalendarEvent } from 'src/workspace/calendar/types/calendar-event';
 
 @Injectable()
 export class CalendarEventService {
@@ -46,14 +47,14 @@ export class CalendarEventService {
   }
 
   public async saveCalendarEvents(
-    calendarEvents: ObjectRecord<CalendarEventObjectMetadata>[],
+    calendarEvents: CalendarEvent[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents);
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
 
     const values = calendarEvents.flatMap((calendarEvent) => [
       calendarEvent.title,
@@ -80,14 +81,14 @@ export class CalendarEventService {
   }
 
   public async updateCalendarEvents(
-    calendarEvents: ObjectRecord<CalendarEventObjectMetadata>[],
+    calendarEvents: CalendarEvent[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents);
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
 
     const values = calendarEvents.flatMap((calendarEvent) => [
       calendarEvent.title,

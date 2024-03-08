@@ -2,14 +2,17 @@ export const valuesStringForBatchRawQuery = (
   values: {
     [key: string]: any;
   }[],
+  numberOfColumns: number,
 ): string => {
   return values
     .map((_, row) => {
-      return `(${Object.keys(values[0])
-        .map((_, index) => {
-          return `$${row * Object.keys(values[0]).length + index + 1}`;
-        })
-        .join(', ')})`;
+      let value = '';
+
+      for (let index = 0; index < numberOfColumns; index++) {
+        value += `${row * numberOfColumns + index + 1}, `;
+      }
+
+      return `(${value.slice(0, -2)})`;
     })
     .join(', ');
 };

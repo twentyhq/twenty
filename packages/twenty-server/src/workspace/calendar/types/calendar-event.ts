@@ -2,11 +2,26 @@ import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-syn
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 
-export type CalendarEventWithAttendees =
-  ObjectRecord<CalendarEventObjectMetadata> & {
-    externalId: string;
-    attendees: Omit<
-      ObjectRecord<CalendarEventAttendeeObjectMetadata>,
-      'id' | 'createdAt' | 'updatedAt' | 'personId' | 'workspaceMemberId'
-    >[];
-  };
+export type CalendarEvent = Omit<
+  ObjectRecord<CalendarEventObjectMetadata>,
+  | 'createdAt'
+  | 'updatedAt'
+  | 'calendarChannelEventAssociations'
+  | 'calendarEventAttendees'
+  | 'eventAttendees'
+>;
+
+export type CalendarEventWithAttendees = CalendarEvent & {
+  externalId: string;
+  attendees: Omit<
+    ObjectRecord<CalendarEventAttendeeObjectMetadata>,
+    | 'id'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'personId'
+    | 'workspaceMemberId'
+    | 'person'
+    | 'workspaceMember'
+    | 'calendarEvent'
+  >[];
+};

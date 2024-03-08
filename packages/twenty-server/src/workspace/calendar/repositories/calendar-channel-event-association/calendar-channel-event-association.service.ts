@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-import { CalendarChannelEventAssociationObjectMetadata } from 'packages/twenty-server/dist/src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 
 @Injectable()
 export class CalendarChannelEventAssociationService {
@@ -131,7 +131,10 @@ export class CalendarChannelEventAssociationService {
   }
 
   public async saveCalendarChannelEventAssociations(
-    calendarChannelEventAssociations: ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[],
+    calendarChannelEventAssociations: Omit<
+      ObjectRecord<CalendarChannelEventAssociationObjectMetadata>,
+      'id' | 'createdAt' | 'updatedAt' | 'calendarChannel' | 'calendarEvent'
+    >[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -140,18 +143,18 @@ export class CalendarChannelEventAssociationService {
 
     const valuesString = valuesStringForBatchRawQuery(
       calendarChannelEventAssociations,
+      3,
     );
 
     const calendarChannelEventAssociationValues =
       calendarChannelEventAssociations.flatMap((association) => [
-        association.id,
         association.calendarChannelId,
         association.calendarEventId,
         association.eventExternalId,
       ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("id", "calendarChannelId", "calendarEventId", "eventExternalId")
+      `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("calendarChannelId", "calendarEventId", "eventExternalId")
       VALUES ${valuesString}`,
       [calendarChannelEventAssociationValues],
       workspaceId,
