@@ -1,6 +1,7 @@
 import { COLOR } from '@/ui/theme/constants/Colors';
 import { FONT_COMMON } from '@/ui/theme/constants/FontCommon';
 import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
+import { color } from 'framer-motion';
 
 export const FONT_LIGHT = {
   color: {
@@ -11,6 +12,7 @@ export const FONT_LIGHT = {
     extraLight: GRAY_SCALE.gray30,
     inverted: GRAY_SCALE.gray0,
     danger: COLOR.red,
+    blue:COLOR.blue,
   },
   ...FONT_COMMON,
 };

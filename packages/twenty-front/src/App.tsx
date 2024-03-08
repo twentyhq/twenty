@@ -51,6 +51,8 @@ import { TemplatesList } from '~/pages/Templates/TemplatesList';
 import { TextTemplate } from '~/pages/Templates/TextTemplate';
 import { VideoTemplate } from '~/pages/Templates/VideoTemplate';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { DefaultHomePage } from '~/pages/DefaultHomePage';
+import { Scrollbar } from '~/pages/campaigns/scrollbar';
 
 export const App = () => {
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
@@ -220,6 +222,7 @@ export const App = () => {
             element={<DocumentTemplate targetableObject={targetableObject} />}
           />
           <Route path={CustomPath.TemplatesPage} element={<TemplatesList />} />
+
         </Routes>
       </DefaultLayout>
     </>

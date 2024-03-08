@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { IconArrowRight } from '@tabler/icons-react';
 
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -31,9 +32,10 @@ const StyledInputCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 50%;
-  justify-content: space-evenly;
+  height: 65%;
+  justify-content: space-between;
   width: 70%;
+
   align-items: center;
 `;
 
@@ -119,17 +121,16 @@ export const Specialty = () => {
     <>
       <StyledCard>
         <StyledTitleCard>
-          <StyledTitle>
-            Select from a variety of specialties and sub-specialties to
-            customize your campaign and target specific segments of your
-            audience with precision.
-          </StyledTitle>
+          <StyledTitle></StyledTitle>
         </StyledTitleCard>
         <StyledInputCard>
           <Section>
+            <H2Title
+              title="Specialty Type"
+              description="Select a medical specialty that is focused on particular area of medical practice"
+            />
             <Select
               fullWidth
-              label="Specialty Type"
               dropdownId="Specialty Type"
               value={specialty}
               options={Specialty}
@@ -138,9 +139,13 @@ export const Specialty = () => {
           </Section>
           {specialty && (
             <Section>
+              <H2Title
+                title="Subspecialty Type"
+                description="Select sub specialization within a medical specialty"
+              />
+
               <Select
                 fullWidth
-                label="Sub Specialty Type"
                 dropdownId="Sub Specialty Type"
                 value={subSpecialty}
                 options={SpecialtyTypes[specialty]}

@@ -2,12 +2,17 @@
 /* eslint-disable no-restricted-imports */
 import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
-import { IconArrowLeft } from '@tabler/icons-react';
+import { IconArrowLeft, IconCheckbox } from '@tabler/icons-react';
 import { IconArrowRight } from '@tabler/icons-react';
 
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Button } from '@/ui/input/button/components/Button';
-import { Section } from '@/ui/layout/section/components/Section';
-import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { PreviewCampaignDetailsTab } from '~/pages/campaigns/PreviewCampaignDetailsTab';
+import { PreviewMessagingChannel } from '~/pages/campaigns/PreviewMessagingChannel';
+import { PreviewSpecialty } from '~/pages/campaigns/PreviewSpecialty';
+import { PreviewCampaignDate } from '~/pages/campaigns/StyledPreviewCampaignDate';
+// import { PreviewSpecialty } from '~/pages/campaigns/PreviewSpecialty';
+// import { PreviewCampaignDate } from '~/pages/campaigns/PriviewCampaignDate';
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -21,44 +26,51 @@ const StyledCard = styled.div`
   width: 70%;
   margin: auto;
   align-items: center;
+  overflow: scroll;
 `;
 
 const StyledInputCard = styled.div`
-  align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
-  height: 50%;
-  justify-content: space-evenly;
+  justify-content: center;
+  height: 65%;
+  justify-content: space-between;
   width: 70%;
+  align-items: center;
 `;
 
 const StyledTitleCard = styled.div`
-  align-items: center;
+  /* align-items: center; */
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
   height: 10%;
-  width: 70%;
+  width: 100%;
   justify-content: flex-start;
 `;
 
+const StyledAreaLabel = styled.span`
+  align-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2%;
+  width: 100%;
+`;
+const StyledSpecialtySection = styled.span`
+  align-content: center;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  flex: wrap;
+`;
 const StyledButton = styled.span`
   display: flex;
   justify-content: space-between;
   width: 100%;
-`;
-const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
-  display: flex;
-`;
-
-const StyledCheckboxLabel = styled.span`
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(10)};
+  margin-bottom: ${({ theme }) => theme.spacing(10)};
 `;
 
 const StyledTitle = styled.h3`
@@ -66,16 +78,8 @@ const StyledTitle = styled.h3`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   font-size: ${({ theme }) => theme.font.size.md};
 `;
-
-const StyledSection = styled(Section)`
-  align-items: flex-start;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  margin-left: 0;
-`;
 export const PreviewPage = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
+  // const { setCurrentStep, currentStep } = useCampaign();
 
   const onSelectCheckBoxChange = (
     _event: ChangeEvent<HTMLInputElement>,
@@ -83,19 +87,60 @@ export const PreviewPage = () => {
   ): void => {
     throw new Error('Function not implemented.');
   };
+  type SingleTabProps = {
+    title: string;
+    Icon?: IconComponent;
+    id: string;
+    hide?: boolean;
+    disabled?: boolean;
+  };
+
+  const tabs = [
+    {
+      id: 'Campaign Details',
+      title: 'Campaign Details',
+      Icon: IconCheckbox,
+      hide: false,
+    },
+    {
+      id: 'Specialty & Subspecialty',
+      title: 'Specialty & Subspecialty',
+      Icon: IconCheckbox,
+      hide: false,
+    },
+    {
+      id: 'Lead Extraction',
+      title: 'Lead Extraction',
+      Icon: IconCheckbox,
+      hide: false,
+    },
+    {
+      id: 'Campaign Date',
+      title: 'Campaign Date',
+      Icon: IconCheckbox,
+      hide: false,
+      disabled: false,
+    },
+    {
+      id: 'Messaging Channel',
+      title: 'Messaging Channel',
+      Icon: IconCheckbox,
+      hide: false,
+      disabled: false,
+    },
+  ];
 
   return (
     <>
       <StyledCard>
         <StyledTitleCard>
-          <StyledTitle>
-            Deliver your campaign seamlessly across multiple channels with our
-            flexible options. Choose the message channels that align with your
-            audience's behaviors and preferences.
-          </StyledTitle>
+          <StyledTitle></StyledTitle>
         </StyledTitleCard>
         <StyledInputCard>
-          <StyledLabel>Preview</StyledLabel>
+          <PreviewCampaignDetailsTab />
+          <PreviewSpecialty />
+          <PreviewCampaignDate />
+          <PreviewMessagingChannel />
           <StyledButton>
             <Button
               Icon={IconArrowLeft}

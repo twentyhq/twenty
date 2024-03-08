@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
 import { AnimatedCheckmark } from '@/ui/display/checkmark/components/AnimatedCheckmark';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
@@ -31,14 +31,14 @@ const StyledStepCircle = styled(motion.div)`
 `;
 
 const StyledStepIndex = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.blue};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledStepLabel = styled.span<{ isActive: boolean }>`
   color: ${({ theme, isActive }) =>
-    isActive ? theme.font.color.primary : theme.font.color.tertiary};
+    isActive ? theme.font.color.blue : theme.font.color.blue};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -73,20 +73,20 @@ export const Step = ({
 
   const variantsCircle = {
     active: {
-      backgroundColor: theme.font.color.primary,
-      borderColor: theme.font.color.primary,
+      backgroundColor: theme.font.color.blue,
+      borderColor: theme.font.color.blue,
       transition: { duration: 0.5 },
     },
     inactive: {
       backgroundColor: theme.background.transparent.lighter,
-      borderColor: theme.border.color.medium,
+      borderColor: theme.border.color.blue,
       transition: { duration: 0.5 },
     },
   };
 
   const variantsLine = {
     active: {
-      backgroundColor: theme.font.color.primary,
+      backgroundColor: theme.font.color.blue,
       transition: { duration: 0.5 },
     },
     inactive: {

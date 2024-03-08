@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { IconCalendar } from '@/ui/display/icon';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
-import { overlayBackground } from '@/ui/theme/constants/effects';
+// import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -91,7 +91,6 @@ const StyledContainer = styled.div`
   & .react-datepicker__month-dropdown,
   & .react-datepicker__year-dropdown {
     border: ${({ theme }) => theme.border.color.light};
-    ${overlayBackground}
     overflow-y: scroll;
     top: ${({ theme }) => theme.spacing(2)};
   }

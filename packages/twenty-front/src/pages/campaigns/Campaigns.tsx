@@ -6,14 +6,15 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+// import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { CampaignDate } from '~/pages/campaigns/CampaignDate';
 import { CampaignDetails } from '~/pages/campaigns/CampaignDetails';
-import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
 import { Lead } from '~/pages/campaigns/Lead';
 import { MessagingChannel } from '~/pages/campaigns/MessagingChannel';
 import { PreviewPage } from '~/pages/campaigns/PreviewPage';
 import { Specialty } from '~/pages/campaigns/Specialty';
+import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 const StyledBoardContainer = styled.div`
   display: flex;
@@ -48,7 +49,7 @@ const StyledCard = styled.div`
 `;
 export const Campaigns = () => {
   const { currentStep } = useCampaign();
-
+  // const currentStep = 2;
   const showCampaignStep = (step: number) => {
     switch (step) {
       case 2:

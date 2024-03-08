@@ -8,6 +8,7 @@ import { Button } from 'tsup.ui.index';
 
 import DateTimePicker from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -30,19 +31,18 @@ const StyledInputCard = styled.div`
   flex-direction: column;
   justify-content: center;
   height: 70%;
-  justify-content: space-evenly;
+  justify-content: space-around;
   width: 70%;
   align-items: center;
 `;
 
 const StyledTitleCard = styled.div`
-  align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
   height: 10%;
   width: 70%;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
 const StyledButton = styled.span`
@@ -58,12 +58,6 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
-const StyledTitle = styled.h3`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-size: ${({ theme }) => theme.font.size.md};
-`;
-
 export const CampaignDate = () => {
   const { setCurrentStep, currentStep } = useCampaign();
 
@@ -74,9 +68,10 @@ export const CampaignDate = () => {
     <>
       <StyledCard>
         <StyledTitleCard>
-          <StyledTitle>
-            The campaign date: where strategy meets opportunity
-          </StyledTitle>
+        <H2Title
+              title="Campaign Date"
+              description="Choose your when to run your campaigns"
+        />
         </StyledTitleCard>
         <StyledInputCard>
           <Section>

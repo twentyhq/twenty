@@ -1,9 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import styled from '@emotion/styled';
+import { Section } from '@react-email/components';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Button, TextArea, TextInput } from 'tsup.ui.index';
 
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
 
 const StyledCard = styled.div`
@@ -26,19 +28,19 @@ const StyledInputCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 50%;
-  justify-content: space-evenly;
+  height: 65%;
+  justify-content: space-between;
   width: 70%;
   align-items: center;
 `;
 
 const StyledTitleCard = styled.div`
-  align-items: center;
+  /* align-items: center; */
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
   height: 10%;
-  width: 70%;
+  width: 100%;
   justify-content: flex-start;
 `;
 
@@ -78,24 +80,32 @@ export const CampaignDetails = () => {
     <>
       <StyledCard>
         <StyledTitleCard>
-          <StyledTitle>
-            Get started on your campaign journey with our comprehensive
-            solution. Create, launch, and optimize campaigns with ease
-          </StyledTitle>
+          <StyledTitle></StyledTitle>
         </StyledTitleCard>
         <StyledInputCard>
-          <TextInput
-            label={'campaign name'}
-            // value={'campaignName'}
-            placeholder={'Enter campaign name'}
-            // eslint-disable-next-line no-restricted-globals
-            onChange={() => handleCampaignChange(event)}
-            name="campaignName"
-            required
-            fullWidth
-          />
+          <Section>
+            <H2Title
+              title="Campaign Name"
+              description="Your Campaign name will be displayed in Campaign List"
+            />
+            <TextInput
+              // value={'campaignName'}
+              placeholder={'Enter campaign name'}
+              // eslint-disable-next-line no-restricted-globals
+              onChange={() => handleCampaignChange(event)}
+              name="campaignName"
+              required
+              fullWidth
+            />
+          </Section>
+
           <StyledAreaLabel>
-            <StyledLabel>Description</StyledLabel>
+            <Section>
+              <H2Title
+                title="Campaign Description"
+                description="Describe the main objectives and goals of the campaign "
+              />
+            </Section>
             <TextArea
               value={''}
               placeholder={'Enter campaign description'}

@@ -14,6 +14,7 @@ import {
 import { Button } from '@/ui/input/button/components/Button';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -71,6 +72,7 @@ const StyledTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.secondary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   font-size: ${({ theme }) => theme.font.size.md};
+  justify-content: flex-start;
 `;
 
 const StyledSection = styled(Section)`
@@ -94,14 +96,12 @@ export const MessagingChannel = () => {
     <>
       <StyledCard>
         <StyledTitleCard>
-          <StyledTitle>
-            Deliver your campaign seamlessly across multiple channels with our
-            flexible options. Choose the message channels that align with your
-            audience's behaviors and preferences.
-          </StyledTitle>
-        </StyledTitleCard>
+          <H2Title
+              title="Messaging Channel"
+              description="Choose the message channels that align with your audience's behaviors and preferences."
+          />
+         </StyledTitleCard>
         <StyledInputCard>
-          <StyledLabel>Messaging</StyledLabel>
           <StyledSection>
             <StyledLabel>
               <Checkbox

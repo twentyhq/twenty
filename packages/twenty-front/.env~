@@ -1,0 +1,7 @@
+REACT_APP_SERVER_BASE_URL=http://localhost:3000
+GENERATE_SOURCEMAP=false
+
+# ———————— Optional ————————
+# REACT_APP_SERVER_AUTH_URL=http://localhost:3000/auth
+# REACT_APP_SERVER_FILES_URL=http://localhost:3000/files
+# CHROMATIC_PROJECT_TOKEN=
