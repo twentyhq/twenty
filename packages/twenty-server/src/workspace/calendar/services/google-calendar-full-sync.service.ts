@@ -20,6 +20,7 @@ import { CalendarChannelService } from 'src/workspace/calendar/repositories/cale
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { CalendarEventService } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.service';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -30,6 +31,7 @@ export class GmailFullSyncService {
     @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly connectedAccountService: ConnectedAccountService,
+    private readonly calendarEventService: CalendarEventService,
     private readonly calendarChannelService: CalendarChannelService,
     private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
     private readonly blocklistService: BlocklistService,
@@ -160,7 +162,7 @@ export class GmailFullSyncService {
         );
 
       dataSourceMetadata?.transaction(async (transactionManager) => {
-        this.calendarEventsService.saveEvents();
+        this.calendarEventService.saveEvents();
 
         this.calendarChannelEventAssociationService.saveCalendarChannelEventAssociations(
           events,

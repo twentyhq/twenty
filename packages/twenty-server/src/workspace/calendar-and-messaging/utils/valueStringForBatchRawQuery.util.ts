@@ -1,11 +1,15 @@
-export const valuesStringForBatchRawQuery = (values: any[]): string => {
+export const valuesStringForBatchRawQuery = (
+  values: {
+    [key: string]: any;
+  }[],
+): string => {
   return values
     .map((_, row) => {
-      values
+      return `(${Object.keys(values[0])
         .map((_, index) => {
-          return `$${row * values.length + index + 1}`;
+          return `$${row * Object.keys(values[0]).length + index + 1}`;
         })
-        .join(', ');
+        .join(', ')})`;
     })
     .join(', ');
 };

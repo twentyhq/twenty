@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
+import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
 
 @Injectable()
 export class CalendarEventService {
@@ -39,6 +40,89 @@ export class CalendarEventService {
     await this.workspaceDataSourceService.executeRawQuery(
       `DELETE FROM ${dataSourceSchema}."calendarEvent" WHERE "id" = ANY($1)`,
       [calendarEventIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async saveCalendarEvents(
+    calendarEvents: ObjectRecord<CalendarEventObjectMetadata>[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents);
+
+    const values = calendarEvents.flatMap((calendarEvent) => [
+      calendarEvent.title,
+      calendarEvent.isCanceled,
+      calendarEvent.isFullDay,
+      calendarEvent.startsAt,
+      calendarEvent.endsAt,
+      calendarEvent.externalCreatedAt,
+      calendarEvent.externalUpdatedAt,
+      calendarEvent.description,
+      calendarEvent.location,
+      calendarEvent.iCalUID,
+      calendarEvent.conferenceSolution,
+      calendarEvent.conferenceUri,
+      calendarEvent.recurringEventExternalId,
+    ]);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
+      values,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateCalendarEvents(
+    calendarEvents: ObjectRecord<CalendarEventObjectMetadata>[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents);
+
+    const values = calendarEvents.flatMap((calendarEvent) => [
+      calendarEvent.title,
+      calendarEvent.isCanceled,
+      calendarEvent.isFullDay,
+      calendarEvent.startsAt,
+      calendarEvent.endsAt,
+      calendarEvent.externalCreatedAt,
+      calendarEvent.externalUpdatedAt,
+      calendarEvent.description,
+      calendarEvent.location,
+      calendarEvent.iCalUID,
+      calendarEvent.conferenceSolution,
+      calendarEvent.conferenceUri,
+      calendarEvent.recurringEventExternalId,
+    ]);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEvent" AS "calendarEvent"
+      SET "title" = "newData"."title",
+      "isCanceled" = "newData"."isCanceled",
+      "isFullDay" = "newData"."isFullDay",
+      "startsAt" = "newData"."startsAt",
+      "endsAt" = "newData"."endsAt",
+      "externalCreatedAt" = "newData"."externalCreatedAt",
+      "externalUpdatedAt" = "newData"."externalUpdatedAt",
+      "description" = "newData"."description",
+      "location" = "newData"."location",
+      "conferenceSolution" = "newData"."conferenceSolution",
+      "conferenceUri" = "newData"."conferenceUri",
+      "recurringEventExternalId" = "newData"."recurringEventExternalId"
+      FROM (VALUES ${valuesString})
+      AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId")
+      WHERE "calendarEvent"."iCalUID" = "newData"."iCalUID"`,
+      values,
       workspaceId,
       transactionManager,
     );

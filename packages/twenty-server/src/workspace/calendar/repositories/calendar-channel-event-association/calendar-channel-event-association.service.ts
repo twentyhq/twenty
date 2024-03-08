@@ -143,14 +143,12 @@ export class CalendarChannelEventAssociationService {
     );
 
     const calendarChannelEventAssociationValues =
-      calendarChannelEventAssociations
-        .map((association) => [
-          association.id,
-          association.calendarChannelId,
-          association.calendarEventId,
-          association.eventExternalId,
-        ])
-        .flat();
+      calendarChannelEventAssociations.flatMap((association) => [
+        association.id,
+        association.calendarChannelId,
+        association.calendarEventId,
+        association.eventExternalId,
+      ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("id", "calendarChannelId", "calendarEventId", "eventExternalId")
