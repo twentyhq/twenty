@@ -1,8 +1,10 @@
 import { useContext } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { CurrencyDisplayWithIcons } from '@/ui/field/display/components/CurrencyDisplayWithIcon';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -17,10 +19,25 @@ const StyledEllipsisDisplay = styled(EllipsisDisplay)`
 
 export const CurrencyDisplay = ({ amount }: CurrencyDisplayProps) => {
   const { showCurrencySymbol, currencyValues } = useContext(FieldContext);
+
+  const theme = useTheme();
+
+  const currencyCode = currencyValues?.currencyCode || CurrencyCode.USD;
+
+  const currencyInfo = SETTINGS_FIELD_CURRENCY_CODES[currencyCode];
+
+  const { Icon } = currencyInfo;
+
   return (
     <StyledEllipsisDisplay>
       {showCurrencySymbol && (
-        <CurrencyDisplayWithIcons currencyValues={currencyValues} />
+        <>
+          <Icon
+            color={theme.font.color.primary}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />{' '}
+        </>
       )}
       {amount}
     </StyledEllipsisDisplay>
