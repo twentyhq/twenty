@@ -5,7 +5,6 @@ import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
@@ -14,7 +13,6 @@ import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
-import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
@@ -50,7 +48,6 @@ import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
-  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
     <>
@@ -66,12 +63,7 @@ export const App = () => {
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route
-            path={AppPath.PlanRequired}
-            element={
-              isSelfBillingEnabled ? <ChooseYourPlan /> : <PlanRequired />
-            }
-          />
+          <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={<PaymentSuccess />}

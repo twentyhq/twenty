@@ -37,7 +37,6 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
-  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
   const billing = useRecoilValue(billingState);
 
   return (
@@ -96,7 +95,6 @@ export const SettingsNavigationDrawerItems = () => {
             label="Billing"
             path={SettingsPath.Billing}
             Icon={IconCurrencyDollar}
-            soon={!isSelfBillingEnabled}
           />
         )}
         <SettingsNavigationDrawerItem
