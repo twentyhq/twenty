@@ -10,7 +10,6 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -82,9 +81,9 @@ export class Workspace {
   @Field()
   activationStatus: 'active' | 'inactive';
 
-  @OneToOne(
+  @OneToMany(
     () => BillingSubscription,
     (billingSubscription) => billingSubscription.workspace,
   )
-  billingSubscription: BillingSubscription;
+  billingSubscriptions: BillingSubscription[];
 }

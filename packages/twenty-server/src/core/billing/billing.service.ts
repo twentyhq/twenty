@@ -200,7 +200,8 @@ export class BillingService {
     workspaceId: string,
     data:
       | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data,
+      | Stripe.CustomerSubscriptionCreatedEvent.Data
+      | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
     await this.billingSubscriptionRepository.upsert(
       {
@@ -210,7 +211,7 @@ export class BillingService {
         status: data.object.status,
       },
       {
-        conflictPaths: ['workspaceId'],
+        conflictPaths: ['workspaceId', 'stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
