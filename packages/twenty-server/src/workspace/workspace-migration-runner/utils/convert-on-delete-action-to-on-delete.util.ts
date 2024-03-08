@@ -4,7 +4,7 @@ export const convertOnDeleteActionToOnDelete = (
   onDeleteAction: RelationOnDeleteAction | undefined,
 ): 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | undefined => {
   if (!onDeleteAction) {
-    return;
+    return 'SET NULL';
   }
 
   switch (onDeleteAction) {
