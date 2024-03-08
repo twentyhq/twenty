@@ -9,6 +9,8 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Avatar } from '@/users/components/Avatar';
+import { AvatarGroup } from '@/users/components/AvatarGroup';
 
 type CalendarEventRowProps = {
   calendarEvent: CalendarEvent;
@@ -127,6 +129,17 @@ export const CalendarEventRow = ({
           </StyledTitle>
         )}
       </StyledLabels>
+      {!!calendarEvent.attendees?.length && (
+        <AvatarGroup
+          avatars={calendarEvent.attendees.map((attendee) => (
+            <Avatar
+              key={attendee.name}
+              placeholder={attendee.name}
+              type="rounded"
+            />
+          ))}
+        />
+      )}
       <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
     </StyledContainer>
   );
