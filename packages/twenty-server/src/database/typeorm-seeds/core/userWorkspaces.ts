@@ -1,6 +1,10 @@
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
-import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { DataSource } from 'typeorm';
+
+import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import {
+  SeedAppleWorkspaceId,
+  SeedTwentyWorkspaceId,
+} from 'src/database/typeorm-seeds/core/workspaces';
 
 // import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
@@ -18,6 +22,7 @@ export const seedUserWorkspaces = async (
   workspaceId: string,
 ) => {
   let userWorkspaces: Pick<UserWorkspace, 'userId' | 'workspaceId'>[] = [];
+
   if (workspaceId === SeedAppleWorkspaceId) {
     userWorkspaces = [
       {
@@ -32,7 +37,7 @@ export const seedUserWorkspaces = async (
         userId: SeedUserIds.Phil,
         workspaceId,
       },
-    ]
+    ];
   }
 
   if (workspaceId === SeedTwentyWorkspaceId) {
@@ -41,7 +46,7 @@ export const seedUserWorkspaces = async (
         userId: SeedUserIds.Tim,
         workspaceId,
       },
-    ]
+    ];
   }
   await workspaceDataSource
     .createQueryBuilder()

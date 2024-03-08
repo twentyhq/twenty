@@ -14,7 +14,10 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+import {
+  SeedAppleWorkspaceId,
+  SeedTwentyWorkspaceId,
+} from 'src/database/typeorm-seeds/core/workspaces';
 
 // TODO: implement dry-run
 @Command({
@@ -23,10 +26,7 @@ import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeor
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceIds = [
-    SeedAppleWorkspaceId,
-    SeedTwentyWorkspaceId,
-  ];
+  workspaceIds = [SeedAppleWorkspaceId, SeedTwentyWorkspaceId];
 
   constructor(
     private readonly environmentService: EnvironmentService,
