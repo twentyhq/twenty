@@ -1,5 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
+import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
@@ -47,6 +49,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
+  const billing = useRecoilValue(billingState);
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
 
   return (
@@ -115,10 +118,12 @@ export const App = () => {
                   path={SettingsPath.AccountsEmailsInboxSettings}
                   element={<SettingsAccountsEmailsInboxSettings />}
                 />
-                <Route
-                  path={SettingsPath.Billing}
-                  element={<SettingsBilling />}
-                />
+                {billing?.isBillingEnabled && (
+                  <Route
+                    path={SettingsPath.Billing}
+                    element={<SettingsBilling />}
+                  />
+                )}
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
                   element={<SettingsWorkspaceMembers />}
