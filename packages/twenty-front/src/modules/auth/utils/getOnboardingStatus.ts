@@ -4,6 +4,8 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 export enum OnboardingStatus {
   Incomplete = 'incomplete',
   Canceled = 'canceled',
+  Unpaid = 'unpaid',
+  PastDue = 'past_due',
   OngoingUserCreation = 'ongoing_user_creation',
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
@@ -41,10 +43,6 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Incomplete;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
-    return OnboardingStatus.Canceled;
-  }
-
   if (currentWorkspace.activationStatus !== 'active') {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
@@ -54,6 +52,18 @@ export const getOnboardingStatus = ({
     !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
+  }
+
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
+    return OnboardingStatus.Canceled;
+  }
+
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {
+    return OnboardingStatus.PastDue;
+  }
+
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'unpaid') {
+    return OnboardingStatus.Unpaid;
   }
 
   return OnboardingStatus.Completed;

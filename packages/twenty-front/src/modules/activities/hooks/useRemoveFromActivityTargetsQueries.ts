@@ -63,6 +63,7 @@ export const useRemoveFromActivityTargetsQueries = () => {
     overwriteFindManyActivityTargetsQueryInCache({
       objectRecordsToOverwrite: newActivityTargetsForTargetableObject,
       queryVariables: findManyActivityTargetsQueryVariables,
+      depth: 2,
     });
   };
 

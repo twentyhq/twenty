@@ -114,6 +114,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
+  @IsNullable()
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
@@ -124,8 +125,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
-    inverseSideFieldName: 'pointOfContact',
+    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideFieldKey: 'pointOfContact',
   })
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
@@ -137,7 +138,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   activityTargets: ActivityTargetObjectMetadata[];
@@ -150,7 +151,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: FavoriteObjectMetadata[];
@@ -163,7 +164,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   attachments: AttachmentObjectMetadata[];
@@ -176,8 +177,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageParticipant',
-    inverseSideFieldName: 'person',
+    inverseSideTarget: () => MessageParticipantObjectMetadata,
+    inverseSideFieldKey: 'person',
   })
   messageParticipants: MessageParticipantObjectMetadata[];
 
@@ -189,8 +190,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'calendarEventAttendee',
-    inverseSideFieldName: 'person',
+    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',

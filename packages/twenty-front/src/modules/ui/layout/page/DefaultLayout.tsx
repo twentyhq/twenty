@@ -76,7 +76,13 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const isMatchingLocation = useIsMatchingLocation();
   const showAuthModal = useMemo(() => {
     return (
-      (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) ||
+      (onboardingStatus &&
+        [
+          OnboardingStatus.Incomplete,
+          OnboardingStatus.OngoingUserCreation,
+          OnboardingStatus.OngoingProfileCreation,
+          OnboardingStatus.OngoingWorkspaceActivation,
+        ].includes(onboardingStatus)) ||
       isMatchingLocation(AppPath.ResetPassword)
     );
   }, [isMatchingLocation, onboardingStatus]);

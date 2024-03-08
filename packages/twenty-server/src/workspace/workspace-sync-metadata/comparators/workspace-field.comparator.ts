@@ -6,8 +6,8 @@ import {
   ComparatorAction,
   FieldComparatorResult,
 } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
-import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { ComputedPartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { ComputedPartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
@@ -30,12 +30,12 @@ export class WorkspaceFieldComparator {
 
   public compare(
     originalObjectMetadata: ObjectMetadataEntity,
-    standardObjectMetadata: PartialObjectMetadata,
+    standardObjectMetadata: ComputedPartialObjectMetadata,
   ): FieldComparatorResult[] {
     const result: FieldComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
       string,
-      Partial<PartialFieldMetadata>
+      Partial<ComputedPartialFieldMetadata>
     > = {};
 
     // Double security to only compare non-custom fields
@@ -69,7 +69,7 @@ export class WorkspaceFieldComparator {
       standardObjectMetadata.fields,
       {
         shouldIgnoreProperty: (property, originalMetadata) => {
-          if (['options'].includes(property)) {
+          if (['options', 'gate'].includes(property)) {
             return true;
           }
 

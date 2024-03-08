@@ -80,7 +80,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -93,7 +93,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
@@ -106,7 +106,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'comment',
+    inverseSideTarget: () => CommentObjectMetadata,
   })
   @IsNullable()
   comments: CommentObjectMetadata[];
@@ -123,7 +123,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Assignee',
-    description: 'Acitivity assignee',
+    description: 'Activity assignee',
     icon: 'IconUserCircle',
     joinColumn: 'assigneeId',
   })

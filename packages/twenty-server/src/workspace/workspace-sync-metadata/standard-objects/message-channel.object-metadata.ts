@@ -87,7 +87,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannelMessageAssociation',
+    inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()

@@ -29,7 +29,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'message',
+    inverseSideTarget: () => MessageObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
@@ -43,7 +43,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannelMessageAssociation',
+    inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.RESTRICT,
   })
   @IsNullable()
