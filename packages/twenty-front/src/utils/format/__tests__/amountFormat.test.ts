@@ -1,6 +1,6 @@
 import { formatAmount } from '../formatAmount';
 
-describe('amountFormat', () => {
+describe('formatCurrency', () => {
   it('formats numbers less than 1000 correctly', () => {
     expect(formatAmount(500)).toBe('500');
     expect(formatAmount(123.456)).toBe('123.5');
