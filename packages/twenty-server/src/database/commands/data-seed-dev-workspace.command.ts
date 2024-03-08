@@ -65,7 +65,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             workspaceId,
             schemaName,
           );
-  
+
         await this.workspaceSyncMetadataService.synchronize({
           workspaceId: workspaceId,
           dataSourceId: dataSourceMetadata.id,
