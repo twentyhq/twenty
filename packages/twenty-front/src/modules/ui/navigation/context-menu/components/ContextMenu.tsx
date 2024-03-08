@@ -37,10 +37,10 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
 `;
 
 export const ContextMenu = () => {
-  const contextMenuPosition = useRecoilValue(contextMenuPositionState);
-  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
-  const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const contextMenuPosition = useRecoilValue(contextMenuPositionState());
+  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState());
+  const contextMenuEntries = useRecoilValue(contextMenuEntriesState());
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({

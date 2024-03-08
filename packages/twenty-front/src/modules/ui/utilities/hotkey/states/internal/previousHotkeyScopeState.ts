@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 import { HotkeyScope } from '../../types/HotkeyScope';
 
-export const previousHotkeyScopeState = atom<HotkeyScope | null>({
+export const previousHotkeyScopeState = createState<HotkeyScope | null>({
   key: 'previousHotkeyScopeState',
-  default: null,
+  defaultValue: null,
 });

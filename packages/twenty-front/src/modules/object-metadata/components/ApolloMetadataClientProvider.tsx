@@ -12,7 +12,7 @@ export const ApolloMetadataClientProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [tokenPair] = useRecoilState(tokenPairState);
+  const [tokenPair] = useRecoilState(tokenPairState());
   const apolloMetadataClient = useMemo(() => {
     if (tokenPair?.accessToken.token) {
       return new ApolloClient({

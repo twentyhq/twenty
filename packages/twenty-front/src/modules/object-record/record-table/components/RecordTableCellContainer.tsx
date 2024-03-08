@@ -22,8 +22,8 @@ const StyledContainer = styled.td<{ isSelected: boolean }>`
 `;
 
 export const RecordTableCellContainer = () => {
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 

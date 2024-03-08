@@ -78,7 +78,7 @@ export const RecordIndexBoardContainerEffect = ({
   ]);
 
   const recordIndexFieldDefinitions = useRecoilValue(
-    recordIndexFieldDefinitionsState,
+    recordIndexFieldDefinitionsState(),
   );
 
   useEffect(() => {

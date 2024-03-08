@@ -12,7 +12,7 @@ type TasksEffectProps = {
 };
 
 export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const {
     setSelectedFilter,
     setAvailableFilterDefinitions,

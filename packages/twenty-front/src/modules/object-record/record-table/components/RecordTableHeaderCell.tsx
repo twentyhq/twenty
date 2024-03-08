@@ -165,7 +165,7 @@ export const RecordTableHeaderCell = ({
   });
 
   const isMobile = useIsMobile();
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const scrollLeft = useRecoilValue(scrollLeftState());
 
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && scrollLeft > 0;

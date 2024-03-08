@@ -18,7 +18,8 @@ export const useSequenceHotkeys = (
   },
   deps: any[] = [],
 ) => {
-  const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
+  const [pendingHotkey, setPendingHotkey] =
+    useRecoilState(pendingHotkeyState());
 
   const callScopedHotkeyCallback = useScopedHotkeyCallback();
 

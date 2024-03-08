@@ -11,11 +11,11 @@ import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentUser = useSetRecoilState(currentUserState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
 
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const { loading: queryLoading, data: queryData } = useQuery(GET_CURRENT_USER);

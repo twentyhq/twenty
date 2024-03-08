@@ -28,7 +28,7 @@ export const useRecordIndexOptionsForBoard = ({
   viewBarId,
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
-    useRecoilState(recordIndexFieldDefinitionsState);
+    useRecoilState(recordIndexFieldDefinitionsState());
 
   const { persistViewFields } = useViewFields(viewBarId);
   const { updateView } = useViews(viewBarId);

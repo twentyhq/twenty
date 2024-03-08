@@ -1,7 +1,6 @@
 import { expect } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import {
-  atomFamily,
   RecoilRoot,
   selector,
   useRecoilCallback,
@@ -21,14 +20,14 @@ const scopeId = 'scopeId';
 
 // scoped state
 const defaultScopedState = 'defaultString';
-const scopedState = atomFamily<string, StateScopeMapKey>({
+const scopedState = createFamilyState<string, StateScopeMapKey>({
   key: 'ScopedStateKey',
   default: defaultScopedState,
 });
 const scopedStateScopeInjector = getScopeInjector(scopedState);
 
 // scoped selector
-const anotherScopedState = atomFamily<number[], StateScopeMapKey>({
+const anotherScopedState = createFamilyState<number[], StateScopeMapKey>({
   key: 'ScopedStateKey',
   default: [1, 2, 3, 4, 5],
 });

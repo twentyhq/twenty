@@ -31,9 +31,9 @@ const insertScript = ({
 };
 
 export const SupportChat = () => {
-  const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const supportChat = useRecoilValue(supportChatState);
+  const currentUser = useRecoilValue(currentUserState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const supportChat = useRecoilValue(supportChatState());
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
 
   const configureFront = useCallback(

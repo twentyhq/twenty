@@ -26,7 +26,7 @@ export const ShowPageMoreButton = ({
   objectNameSingular: string;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('more-show-page');
-  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
+  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState());
   const navigate = useNavigate();
 
   const { deleteOneRecord } = useDeleteOneRecord({

@@ -26,7 +26,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)``;
 
 export const TimelineItemsContainer = () => {
   const timelineActivitiesForGroup = useRecoilValue(
-    timelineActivitiesForGroupState,
+    timelineActivitiesForGroupState(),
   );
 
   const groupedActivities = groupActivitiesByMonth(timelineActivitiesForGroup);

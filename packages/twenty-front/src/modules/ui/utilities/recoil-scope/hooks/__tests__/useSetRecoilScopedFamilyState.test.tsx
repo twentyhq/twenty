@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
-import { atomFamily, RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedFamilyState';
 import { useSetRecoilScopedFamilyState } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedFamilyState';
 import { FamilyStateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/FamilyStateScopeMapKey';
 
-const mockedScopedFamilyState = atomFamily<
+const mockedScopedFamilyState = createFamilyState<
   string,
   FamilyStateScopeMapKey<string>
 >({

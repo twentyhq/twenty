@@ -13,8 +13,8 @@ export const ImpersonateEffect = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
 
-  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState());
+  const setTokenPair = useSetRecoilState(tokenPairState());
 
   const [impersonate] = useImpersonateMutation();
 

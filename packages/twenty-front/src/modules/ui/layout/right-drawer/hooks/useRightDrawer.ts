@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -7,14 +7,15 @@ import { RightDrawerPages } from '../types/RightDrawerPages';
 
 export const useRightDrawer = () => {
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
-    isRightDrawerOpenState,
+    isRightDrawerOpenState(),
   );
-  const [, setIsRightDrawerExpanded] = useRecoilState(
-    isRightDrawerExpandedState,
+  const setIsRightDrawerExpanded = useSetRecoilState(
+    isRightDrawerExpandedState(),
   );
 
-  const [rightDrawerPage, setRightDrawerPage] =
-    useRecoilState(rightDrawerPageState);
+  const [rightDrawerPage, setRightDrawerPage] = useRecoilState(
+    rightDrawerPageState(),
+  );
 
   const openRightDrawer = (rightDrawerPage: RightDrawerPages) => {
     setRightDrawerPage(rightDrawerPage);

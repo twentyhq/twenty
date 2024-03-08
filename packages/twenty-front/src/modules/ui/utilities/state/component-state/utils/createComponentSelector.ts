@@ -1,6 +1,6 @@
 import { selectorFamily } from 'recoil';
 
-import { StateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/StateScopeMapKey';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 
@@ -10,10 +10,10 @@ export const createComponentSelector = <ValueType>({
   set,
 }: {
   key: string;
-  get: SelectorGetter<ValueType, StateScopeMapKey>;
-  set: SelectorSetter<ValueType, StateScopeMapKey>;
+  get: SelectorGetter<ValueType, ComponentStateKey>;
+  set: SelectorSetter<ValueType, ComponentStateKey>;
 }) => {
-  return selectorFamily<ValueType, StateScopeMapKey>({
+  return selectorFamily<ValueType, ComponentStateKey>({
     key,
     get,
     set,

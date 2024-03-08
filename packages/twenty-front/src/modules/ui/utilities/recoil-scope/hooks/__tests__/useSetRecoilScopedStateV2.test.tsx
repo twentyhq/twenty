@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
-import { atomFamily, RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useRecoilScopedValueV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValueV2';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { StateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/StateScopeMapKey';
 
-const scopedAtom = atomFamily<string, StateScopeMapKey>({
+const scopedAtom = createFamilyState<string, StateScopeMapKey>({
   key: 'scopedAtomKey',
   default: 'initialValue',
 });

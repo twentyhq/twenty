@@ -14,17 +14,17 @@ import { useGetClientConfigQuery } from '~/generated/graphql';
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setIsDebugMode = useSetRecoilState(isDebugModeState);
+  const setAuthProviders = useSetRecoilState(authProvidersState());
+  const setIsDebugMode = useSetRecoilState(isDebugModeState());
 
-  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
-  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
+  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState());
+  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState());
 
-  const setBilling = useSetRecoilState(billingState);
-  const setTelemetry = useSetRecoilState(telemetryState);
-  const setSupportChat = useSetRecoilState(supportChatState);
+  const setBilling = useSetRecoilState(billingState());
+  const setTelemetry = useSetRecoilState(telemetryState());
+  const setSupportChat = useSetRecoilState(supportChatState());
 
-  const setSentryConfig = useSetRecoilState(sentryConfigState);
+  const setSentryConfig = useSetRecoilState(sentryConfigState());
 
   const { data, loading } = useGetClientConfigQuery();
 

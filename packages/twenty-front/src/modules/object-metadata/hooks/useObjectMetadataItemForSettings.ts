@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectSlug } from '../utils/getObjectSlug';
 
 export const useObjectMetadataItemForSettings = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,

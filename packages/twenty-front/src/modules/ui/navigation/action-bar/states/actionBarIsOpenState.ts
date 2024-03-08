@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const actionBarOpenState = atom<boolean>({
+export const actionBarOpenState = createState<boolean>({
   key: 'actionBarOpenState',
-  default: false,
+  defaultValue: false,
 });

@@ -31,8 +31,8 @@ export const useRecordActionBar = ({
   selectedRecordIds,
   callback,
 }: useRecordActionBarProps) => {
-  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
-  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
+  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState());
+  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState());
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 

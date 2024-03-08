@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const commandMenuSearchState = atom<string>({
+export const commandMenuSearchState = createState<string>({
   key: 'command-menu/commandMenuSearchState',
-  default: '',
+  defaultValue: '',
 });
