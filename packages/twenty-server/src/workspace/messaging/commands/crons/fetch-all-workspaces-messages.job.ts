@@ -57,17 +57,26 @@ export class FetchAllWorkspacesMessagesJob
   }
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
-    const connectedAccounts =
-      await this.connectedAccountService.getAll(workspaceId);
+    try {
+      const connectedAccounts =
+        await this.connectedAccountService.getAll(workspaceId);
 
-    for (const connectedAccount of connectedAccounts) {
-      await this.messageQueueService.add<GmailPartialSyncJobData>(
-        GmailPartialSyncJob.name,
-        {
-          workspaceId,
-          connectedAccountId: connectedAccount.id,
-        },
+      for (const connectedAccount of connectedAccounts) {
+        await this.messageQueueService.add<GmailPartialSyncJobData>(
+          GmailPartialSyncJob.name,
+          {
+            workspaceId,
+            connectedAccountId: connectedAccount.id,
+          },
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error while fetching workspace messages for workspace ${workspaceId}`,
       );
+      this.logger.error(error);
+
+      return;
     }
   }
 }
