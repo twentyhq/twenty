@@ -1,7 +1,7 @@
 import createNewButton from '~/contentScript/createButton';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
-import { createPerson, fetchPerson } from '~/db/person';
-import { Person } from '~/db/types/person';
+import { createPerson, fetchPerson } from '~/db/person.db';
+import { PersonInput } from '~/db/types/person.types';
 
 const insertButtonForPerson = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -44,11 +44,11 @@ const insertButtonForPerson = async (): Promise<void> => {
     const { firstName, lastName } = extractFirstAndLastName(String(personName));
 
     // Prepare person data to send to the backend.
-    const personData: Person = {
+    const personData: PersonInput = {
       name: { firstName, lastName },
-      city: personCity,
+      city: personCity ?? '',
       avatarUrl: profilePicture ?? '',
-      jobTitle,
+      jobTitle: jobTitle ?? '',
       linkedinLink: { url: '', label: '' },
     };
 
@@ -64,7 +64,13 @@ const insertButtonForPerson = async (): Promise<void> => {
 
     personData.linkedinLink = { url: activeTabUrl, label: activeTabUrl };
 
-    const person = await fetchPerson(personData);
+    const person = await fetchPerson({
+      name: {
+        firstName: { eq: firstName },
+        lastName: { eq: lastName },
+      },
+      linkedinLink: { url: { eq: activeTabUrl }, label: { eq: activeTabUrl } },
+    });
 
     if (person) {
       const savedPerson: HTMLDivElement = createNewButton(
@@ -86,7 +92,7 @@ const insertButtonForPerson = async (): Promise<void> => {
         'Add to Twenty',
         async () => {
           const response = await createPerson(personData);
-          if (response.data) {
+          if (response) {
             newButtonPerson.textContent = 'Saved';
             newButtonPerson.setAttribute('disabled', 'true');
 

@@ -1,8 +1,8 @@
 import createNewButton from '~/contentScript/createButton';
 import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
 import extractDomain from '~/contentScript/utils/extractDomain';
-import { createCompany, fetchCompany } from '~/db/company';
-import { Company } from '~/db/types/company';
+import { createCompany, fetchCompany } from '~/db/company.db';
+import { CompanyInput } from '~/db/types/company.types';
 
 const insertButtonForCompany = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -46,12 +46,11 @@ const insertButtonForCompany = async (): Promise<void> => {
       : 0;
 
     // Prepare company data to send to the backend
-    const companyData: Company = {
+    const companyInputData: CompanyInput = {
       name: companyName ?? '',
       domainName: domainName,
-      address: address,
+      address: address ?? '',
       employees: employees,
-      linkedinLink: { url: '', label: '' },
     };
 
     // Extract active tab url using chrome API - an event is triggered here and is caught by background script.
@@ -61,9 +60,14 @@ const insertButtonForCompany = async (): Promise<void> => {
 
     // Convert URLs like https://www.linkedin.com/company/twenty/about/ to https://www.linkedin.com/company/twenty
     const companyURL = extractCompanyLinkedinLink(activeTabUrl);
-    companyData.linkedinLink = { url: companyURL, label: companyURL };
+    companyInputData.linkedinLink = { url: companyURL, label: companyURL };
 
-    const company = await fetchCompany(companyData);
+    const company = await fetchCompany({
+      linkedinLink: {
+        url: { eq: companyURL },
+        label: { eq: companyURL },
+      },
+    });
     if (company) {
       const savedCompany: HTMLDivElement = createNewButton(
         'Saved',
@@ -82,7 +86,7 @@ const insertButtonForCompany = async (): Promise<void> => {
       const newButtonCompany: HTMLDivElement = createNewButton(
         'Add to Twenty',
         async () => {
-          const response = await createCompany(companyData);
+          const response = await createCompany(companyInputData);
 
           if (response) {
             newButtonCompany.textContent = 'Saved';
