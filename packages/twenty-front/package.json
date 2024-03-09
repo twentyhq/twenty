@@ -17,7 +17,7 @@
     "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "test": "jest src/modules/spreadsheet-import/utils/__tests__/dataMutations.test.ts",
+    "test": "jest",
     "test-watch": "jest --watch",
     "tsup": "tsup",
     "coverage": "jest --coverage",
