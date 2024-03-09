@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
@@ -23,10 +25,10 @@ export const useSearchFilterPerMetadataItem = ({
 
           let searchFilter: ObjectRecordQueryFilter = {};
 
-          if (labelIdentifierFieldMetadataItem) {
+          if (isNonNullable(labelIdentifierFieldMetadataItem)) {
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
-                if (searchFilterValue) {
+                if (isNonEmptyString(searchFilterValue)) {
                   const fullNameFilter = makeOrFilterVariables([
                     {
                       [labelIdentifierFieldMetadataItem.name]: {
@@ -44,14 +46,14 @@ export const useSearchFilterPerMetadataItem = ({
                     },
                   ]);
 
-                  if (fullNameFilter) {
+                  if (isNonNullable(fullNameFilter)) {
                     searchFilter = fullNameFilter;
                   }
                 }
                 break;
               }
               default: {
-                if (searchFilterValue) {
+                if (isNonEmptyString(searchFilterValue)) {
                   searchFilter = {
                     [labelIdentifierFieldMetadataItem.name]: {
                       ilike: `%${searchFilterValue}%`,

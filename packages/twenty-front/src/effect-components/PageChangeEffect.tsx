@@ -18,6 +18,8 @@ import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -81,13 +83,13 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.SignIn);
     } else if (
-      onboardingStatus &&
+      isNonNullable(onboardingStatus) &&
       onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus &&
+      isNonNullable(onboardingStatus) &&
       [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
         onboardingStatus,
       ) &&
@@ -122,7 +124,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
+          if (isNullable(data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },

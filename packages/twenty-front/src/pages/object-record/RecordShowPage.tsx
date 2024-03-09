@@ -60,7 +60,7 @@ export const RecordShowPage = () => {
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
 
-    if (isFavorite && record) {
+    if (isFavorite && isNonNullable(record)) {
       deleteFavorite(correspondingFavorite.id);
     } else {
       createFavorite(record, objectNameSingular);

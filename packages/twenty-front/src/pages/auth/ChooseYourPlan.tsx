@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
@@ -17,6 +18,7 @@ import {
   useCheckoutSessionMutation,
   useGetProductPricesQuery,
 } from '~/generated/graphql.tsx';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const StyledChoosePlanContainer = styled.div`
   display: flex;
@@ -57,7 +59,7 @@ export const ChooseYourPlan = () => {
 
   const handlePlanChange = (type?: string) => {
     return () => {
-      if (type && planSelected !== type) {
+      if (isNonEmptyString(type) && planSelected !== type) {
         setPlanSelected(type);
       }
     };
@@ -73,7 +75,13 @@ export const ChooseYourPlan = () => {
     const monthPrice = prices.filter(
       (price) => price.recurringInterval === 'month',
     )?.[0];
-    if (monthPrice && monthPrice.unitAmount && price.unitAmount) {
+    if (
+      isNonNullable(monthPrice) &&
+      isNumber(monthPrice.unitAmount) &&
+      monthPrice.unitAmount > 0 &&
+      isNumber(price.unitAmount) &&
+      price.unitAmount > 0
+    ) {
       return `Save $${(12 * monthPrice.unitAmount - price.unitAmount) / 100}`;
     }
     return 'Cancel anytime';

@@ -19,6 +19,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -152,7 +153,7 @@ export const MultipleObjectRecordSelect = ({
                     (entity) => entity.record.id === recordId,
                   );
 
-                  if (correspondingRecordForSelect) {
+                  if (isNonNullable(correspondingRecordForSelect)) {
                     handleSelectChange(
                       correspondingRecordForSelect,
                       !recordIsSelected,

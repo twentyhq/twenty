@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
@@ -25,6 +26,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -101,15 +103,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   const regenerateApiKey = async () => {
-    if (apiKeyData?.name) {
+    if (isNonEmptyString(apiKeyData?.name)) {
       const newExpiresAt = computeNewExpirationDate(
-        apiKeyData.expiresAt,
-        apiKeyData.createdAt,
+        apiKeyData?.expiresAt,
+        apiKeyData?.createdAt,
       );
-      const apiKey = await createIntegration(apiKeyData.name, newExpiresAt);
+      const apiKey = await createIntegration(apiKeyData?.name, newExpiresAt);
       await deleteIntegration(false);
 
-      if (apiKey && apiKey.token) {
+      if (isNonEmptyString(apiKey?.token)) {
         setGeneratedApi(apiKey.id, apiKey.token);
         navigate(`/settings/developers/api-keys/${apiKey.id}`);
       }
@@ -117,7 +119,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   useEffect(() => {
-    if (apiKeyData) {
+    if (isNonNullable(apiKeyData)) {
       return () => {
         setGeneratedApi(apiKeyId, null);
       };

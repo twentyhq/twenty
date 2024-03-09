@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -108,91 +108,87 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (viewableActivityId) {
+        if (isNonEmptyString(viewableActivityId)) {
           if (
             isActivityInCreateMode &&
             isNonNullable(temporaryActivityForEditor)
           ) {
             deleteActivityFromCache(temporaryActivityForEditor);
             setTemporaryActivityForEditor(null);
-          } else {
-            if (activityIdInDrawer) {
-              const activityTargetIdsToDelete: string[] =
-                activityTargets.map(mapToRecordId) ?? [];
+          } else if (isNonEmptyString(activityIdInDrawer)) {
+            const activityTargetIdsToDelete: string[] =
+              activityTargets.map(mapToRecordId) ?? [];
 
-              if (weAreOnTaskPage) {
+            if (weAreOnTaskPage) {
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [],
+                activitiesFilters: currentCompletedTaskQueryVariables?.filter,
+                activitiesOrderByVariables:
+                  currentCompletedTaskQueryVariables?.orderBy,
+              });
+
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [],
+                activitiesFilters: currentIncompleteTaskQueryVariables?.filter,
+                activitiesOrderByVariables:
+                  currentIncompleteTaskQueryVariables?.orderBy,
+              });
+            } else if (
+              weAreOnObjectShowPage &&
+              isNonNullable(objectShowPageTargetableObject)
+            ) {
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [objectShowPageTargetableObject],
+                activitiesFilters: {},
+                activitiesOrderByVariables:
+                  FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+              });
+
+              if (isNonNullable(currentCompletedTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
-                  targetableObjects: [],
+                  targetableObjects: [objectShowPageTargetableObject],
                   activitiesFilters: currentCompletedTaskQueryVariables?.filter,
                   activitiesOrderByVariables:
                     currentCompletedTaskQueryVariables?.orderBy,
                 });
+              }
 
+              if (isNonNullable(currentIncompleteTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
-                  targetableObjects: [],
+                  targetableObjects: [objectShowPageTargetableObject],
                   activitiesFilters:
                     currentIncompleteTaskQueryVariables?.filter,
                   activitiesOrderByVariables:
                     currentIncompleteTaskQueryVariables?.orderBy,
                 });
-              } else if (
-                weAreOnObjectShowPage &&
-                isNonNullable(objectShowPageTargetableObject)
-              ) {
+              }
+
+              if (isNonNullable(currentNotesQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
                   targetableObjects: [objectShowPageTargetableObject],
-                  activitiesFilters: {},
+                  activitiesFilters: currentNotesQueryVariables?.filter,
                   activitiesOrderByVariables:
-                    FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-                });
-
-                if (isNonNullable(currentCompletedTaskQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters:
-                      currentCompletedTaskQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentCompletedTaskQueryVariables?.orderBy,
-                  });
-                }
-
-                if (isNonNullable(currentIncompleteTaskQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters:
-                      currentIncompleteTaskQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentIncompleteTaskQueryVariables?.orderBy,
-                  });
-                }
-
-                if (isNonNullable(currentNotesQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters: currentNotesQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentNotesQueryVariables?.orderBy,
-                  });
-                }
-
-                removeFromActivityTargetsQueries({
-                  activityTargetsToRemove: activity?.activityTargets ?? [],
-                  targetableObjects: [objectShowPageTargetableObject],
+                    currentNotesQueryVariables?.orderBy,
                 });
               }
 
-              if (isNonEmptyArray(activityTargetIdsToDelete)) {
-                await deleteManyActivityTargets(activityTargetIdsToDelete);
-              }
-
-              await deleteOneActivity?.(viewableActivityId);
+              removeFromActivityTargetsQueries({
+                activityTargetsToRemove: activity?.activityTargets ?? [],
+                targetableObjects: [objectShowPageTargetableObject],
+              });
             }
+
+            if (isNonEmptyArray(activityTargetIdsToDelete)) {
+              await deleteManyActivityTargets(activityTargetIdsToDelete);
+            }
+
+            await deleteOneActivity?.(viewableActivityId);
           }
         }
       },
@@ -223,10 +219,13 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (record && objectShowPageTargetableObject) {
+    if (
+      isNonNullable(record) &&
+      isNonNullable(objectShowPageTargetableObject)
+    ) {
       openCreateActivity({
-        type: record.type,
-        customAssignee: record.assignee,
+        type: record?.type,
+        customAssignee: record?.assignee,
         targetableObjects: activityTargetableEntityArray,
       });
     }

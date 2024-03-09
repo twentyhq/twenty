@@ -14,6 +14,7 @@ import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isNonNullable } from '~/utils/isNonNullable';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -84,7 +85,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
       onCompleted?.(data[objectMetadataItem.namePlural], pageInfo);
 
-      if (data?.[objectMetadataItem.namePlural]) {
+      if (isNonNullable(data?.[objectMetadataItem.namePlural])) {
         setLastCursor(pageInfo.endCursor ?? '');
         setHasNextPage(pageInfo.hasNextPage ?? false);
       }
@@ -131,7 +132,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
             const pageInfo =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
-            if (data?.[objectMetadataItem.namePlural]) {
+            if (isNonNullable(data?.[objectMetadataItem.namePlural])) {
               setLastCursor(pageInfo.endCursor ?? '');
               setHasNextPage(pageInfo.hasNextPage ?? false);
             }

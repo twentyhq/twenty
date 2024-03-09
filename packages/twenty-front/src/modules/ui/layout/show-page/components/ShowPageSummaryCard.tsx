@@ -8,6 +8,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -85,7 +86,7 @@ export const ShowPageSummaryCard = ({
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) onUploadPicture?.(e.target.files[0]);
+    if (isNonNullable(e.target.files)) onUploadPicture?.(e.target.files[0]);
   };
 
   const handleAvatarClick = () => {

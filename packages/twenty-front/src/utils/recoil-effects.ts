@@ -2,6 +2,8 @@ import { AtomEffect } from 'recoil';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
+import { isNonNullable } from './isNonNullable';
+
 export const localStorageEffect =
   <T>(key: string): AtomEffect<T> =>
   ({ setSelf, onSet }) => {
@@ -21,7 +23,10 @@ export const cookieStorageEffect =
   <T>(key: string): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-    if (savedValue != null && JSON.parse(savedValue)['accessToken']) {
+    if (
+      isNonNullable(savedValue) &&
+      isNonNullable(JSON.parse(savedValue)['accessToken'])
+    ) {
       setSelf(JSON.parse(savedValue));
     }
 

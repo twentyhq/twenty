@@ -88,7 +88,7 @@ const submitJestFn = fn();
 const cancelJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     submitJestFn.mockClear();
     cancelJestFn.mockClear();
   }

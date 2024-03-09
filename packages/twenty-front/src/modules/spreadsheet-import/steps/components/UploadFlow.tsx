@@ -95,7 +95,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
             const isSingleSheet = workbook.SheetNames.length === 1;
             if (isSingleSheet) {
               if (
-                maxRecords &&
+                maxRecords > 0 &&
                 exceedsMaxRecords(
                   workbook.Sheets[workbook.SheetNames[0]],
                   maxRecords,
@@ -147,7 +147,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
           sheetNames={state.workbook.SheetNames}
           onContinue={async (sheetName) => {
             if (
-              maxRecords &&
+              maxRecords > 0 &&
               exceedsMaxRecords(state.workbook.Sheets[sheetName], maxRecords)
             ) {
               errorToast(

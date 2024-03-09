@@ -1,11 +1,13 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { COMMAND_MENU_COMMANDS } from '../constants/CommandMenuCommands';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -75,11 +77,11 @@ export const useCommandMenu = () => {
     (onClick?: () => void, to?: string) => {
       toggleCommandMenu();
 
-      if (onClick) {
+      if (isNonNullable(onClick)) {
         onClick();
         return;
       }
-      if (to) {
+      if (isNonEmptyString(to)) {
         navigate(to);
         return;
       }

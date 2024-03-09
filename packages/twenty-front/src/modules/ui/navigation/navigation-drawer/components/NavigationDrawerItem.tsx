@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export type NavigationDrawerItemProps = {
   className?: string;
@@ -36,13 +38,13 @@ const StyledItem = styled.div<StyledItemProps>`
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) => {
-    if (props.active) {
+    if (props.active === true) {
       return props.theme.font.color.primary;
     }
-    if (props.danger) {
+    if (props.danger === true) {
       return props.theme.color.red;
     }
-    if (props.soon) {
+    if (props.soon === true) {
       return props.theme.font.color.light;
     }
     return props.theme.font.color.secondary;
@@ -146,12 +148,12 @@ export const NavigationDrawerItem = ({
       setIsNavigationDrawerOpen(false);
     }
 
-    if (onClick) {
+    if (isNonNullable(onClick)) {
       onClick();
       return;
     }
 
-    if (to) navigate(to);
+    if (isNonEmptyString(to)) navigate(to);
   };
 
   return (

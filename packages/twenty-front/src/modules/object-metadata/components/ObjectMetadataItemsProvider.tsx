@@ -12,7 +12,7 @@ export const ObjectMetadataItemsProvider = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const shouldDisplayChildren = () => {
-    if (objectMetadataItems.length) {
+    if (objectMetadataItems.length > 0) {
       return true;
     }
     return !currentWorkspaceMember;
