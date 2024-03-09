@@ -101,13 +101,6 @@ export const RecordDetailRelationRecordsListItem = ({
     await deleteOneRelationRecord(relationRecord.id);
   };
 
-  const isOpportunityCompanyRelation =
-    (objectMetadataNameSingular === CoreObjectNameSingular.Opportunity &&
-      relationObjectMetadataNameSingular === CoreObjectNameSingular.Company) ||
-    (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
-      relationObjectMetadataNameSingular ===
-        CoreObjectNameSingular.Opportunity);
-
   const isAccountOwnerRelation =
     relationObjectMetadataNameSingular ===
     CoreObjectNameSingular.WorkspaceMember;
@@ -118,8 +111,7 @@ export const RecordDetailRelationRecordsListItem = ({
         record={relationRecord}
         objectNameSingular={relationObjectMetadataItem.nameSingular}
       />
-      {/* TODO: temporary to prevent removing a company from an opportunity */}
-      {!isOpportunityCompanyRelation && (
+      {
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
             dropdownId={dropdownScopeId}
@@ -153,7 +145,7 @@ export const RecordDetailRelationRecordsListItem = ({
             }}
           />
         </DropdownScope>
-      )}
+      }
     </StyledListItem>
   );
 };
