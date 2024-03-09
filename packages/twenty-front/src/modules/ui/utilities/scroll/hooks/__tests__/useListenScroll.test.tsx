@@ -24,7 +24,7 @@ describe('useListenScroll', () => {
     const { result } = renderHook(
       () => {
         useListenScroll({ scrollableRef: containerRef });
-        const isScrolling = useRecoilValue(isScrollingState);
+        const isScrolling = useRecoilValue(isScrollingState());
 
         return { isScrolling };
       },

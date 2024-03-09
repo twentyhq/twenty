@@ -15,7 +15,7 @@ export const ProfilePictureUploader = () => {
     useUploadProfilePictureMutation();
 
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const [uploadController, setUploadController] =

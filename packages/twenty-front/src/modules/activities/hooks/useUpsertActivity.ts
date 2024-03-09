@@ -21,7 +21,7 @@ import { isNonNullable } from '~/utils/isNonNullable';
 // TODO: create a generic way to have records only in cache for create mode and delete them afterwards ?
 export const useUpsertActivity = () => {
   const [isActivityInCreateMode, setIsActivityInCreateMode] = useRecoilState(
-    isActivityInCreateModeState,
+    isActivityInCreateModeState(),
   );
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
@@ -31,10 +31,10 @@ export const useUpsertActivity = () => {
   const { createActivityInDB } = useCreateActivityInDB();
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState,
+    isUpsertingActivityInDBState(),
   );
 
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState());
 
   const objectShowPageTargetableObject = useRecoilValue(
     objectShowPageTargetableObjectState,

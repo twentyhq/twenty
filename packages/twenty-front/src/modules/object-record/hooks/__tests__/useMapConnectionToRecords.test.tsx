@@ -18,7 +18,7 @@ import { isNonNullable } from '~/utils/isNonNullable';
 const Wrapper = getJestHookWrapper({
   apolloMocks: [],
   onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(objectMetadataItemsState, getObjectMetadataItemsMock());
+    snapshot.set(objectMetadataItemsState(), getObjectMetadataItemsMock());
   },
 });
 

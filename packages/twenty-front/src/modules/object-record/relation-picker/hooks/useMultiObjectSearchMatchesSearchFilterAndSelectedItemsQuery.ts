@@ -25,7 +25,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   searchFilterValue: string;
   limit?: number;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({

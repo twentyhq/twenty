@@ -118,7 +118,7 @@ export const ActivityBodyEditor = ({
   );
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
-    canCreateActivityState,
+    canCreateActivityState(),
   );
 
   const slashMenuItems = getSlashMenu();

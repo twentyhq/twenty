@@ -30,8 +30,8 @@ const StyledInvisibleChat = styled.div`
 
 export const SettingsBilling = () => {
   const onboardingStatus = useOnboardingStatus();
-  const supportChat = useRecoilValue(supportChatState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const supportChat = useRecoilValue(supportChatState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',

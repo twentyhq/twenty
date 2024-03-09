@@ -102,7 +102,7 @@ describe('useMultiObjectSearch', () => {
             },
           ],
         }),
-        setObjectMetadata: useSetRecoilState(objectMetadataItemsState),
+        setObjectMetadata: useSetRecoilState(objectMetadataItemsState()),
       }),
       {
         wrapper: Wrapper,

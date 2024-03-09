@@ -14,7 +14,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useFavorites = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
   const favoriteObjectNameSingular = 'favorite';
 

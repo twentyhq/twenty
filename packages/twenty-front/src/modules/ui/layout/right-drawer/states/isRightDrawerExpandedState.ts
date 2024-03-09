@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isRightDrawerExpandedState = atom<boolean>({
+export const isRightDrawerExpandedState = createState<boolean>({
   key: 'isRightDrawerExpandedState',
-  default: false,
+  defaultValue: false,
 });

@@ -29,15 +29,15 @@ export const ActivityEditorEffect = ({
     ({ snapshot, set }) =>
       () => {
         const isUpsertingActivityInDB = snapshot
-          .getLoadable(isUpsertingActivityInDBState)
+          .getLoadable(isUpsertingActivityInDBState())
           .getValue();
 
         const canCreateActivity = snapshot
-          .getLoadable(canCreateActivityState)
+          .getLoadable(canCreateActivityState())
           .getValue();
 
         const isActivityInCreateMode = snapshot
-          .getLoadable(isActivityInCreateModeState)
+          .getLoadable(isActivityInCreateModeState())
           .getValue();
 
         const activityFromStore = snapshot
@@ -71,7 +71,7 @@ export const ActivityEditorEffect = ({
             deleteActivityFromCache(activity);
           }
 
-          set(isActivityInCreateModeState, false);
+          set(isActivityInCreateModeState(), false);
         } else if (isNonNullable(activity)) {
           if (
             activity.title !== activityTitle ||

@@ -11,11 +11,11 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isNonNullable } from '~/utils/isNonNullable';
 
 export const SentryInitEffect = () => {
-  const sentryConfig = useRecoilValue(sentryConfigState);
+  const sentryConfig = useRecoilValue(sentryConfigState());
 
-  const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentUser = useRecoilValue(currentUserState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
 

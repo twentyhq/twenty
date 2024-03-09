@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const currentUserDueTaskCountState = atom<number>({
-  default: 0,
+export const currentUserDueTaskCountState = createState<number>({
+  defaultValue: 0,
   key: 'currentUserDueTaskCountState',
 });

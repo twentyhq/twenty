@@ -13,7 +13,7 @@ export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [updateWorkspce] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
+    currentWorkspaceState(),
   );
 
   const onUpload = async (file: File) => {

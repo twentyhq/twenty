@@ -19,7 +19,7 @@ const validationSchema = z
 
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState());
   const form = useForm<Form>({
     mode: 'onChange',
     defaultValues: {

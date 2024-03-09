@@ -28,7 +28,7 @@ const StyledRightDrawerBody = styled.div`
 `;
 
 export const RightDrawerRouter = () => {
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
+  const [rightDrawerPage] = useRecoilState(rightDrawerPageState());
 
   let page = <></>;
   let topBar = <></>;

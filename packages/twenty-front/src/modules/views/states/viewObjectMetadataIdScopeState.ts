@@ -1,6 +1,6 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const viewObjectMetadataIdScopeState = createStateScopeMap<
+export const viewObjectMetadataIdScopeState = createComponentState<
   string | undefined
 >({
   key: 'viewObjectMetadataIdScopeState',

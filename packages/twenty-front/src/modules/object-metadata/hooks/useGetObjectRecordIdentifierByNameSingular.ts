@@ -5,7 +5,7 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
 export const useGetObjectRecordIdentifierByNameSingular = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   return (record: any, objectNameSingular: string): ObjectRecordIdentifier => {
     const objectMetadataItem = objectMetadataItems.find(

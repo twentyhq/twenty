@@ -45,7 +45,7 @@ export const PageChangeEffect = () => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
+  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState());
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {

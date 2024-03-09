@@ -109,9 +109,9 @@ export const CommandMenu = () => {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
-    commandMenuSearchState,
+    commandMenuSearchState(),
   );
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  const commandMenuCommands = useRecoilValue(commandMenuCommandsState());
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
