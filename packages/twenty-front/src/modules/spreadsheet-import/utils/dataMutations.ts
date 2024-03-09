@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import {
@@ -11,6 +12,8 @@ import {
   RowHook,
   TableHook,
 } from '@/spreadsheet-import/types';
+import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 export const addErrorsAndRunHooks = <T extends string>(
   data: (Data<T> & Partial<Meta>)[],
@@ -27,11 +30,11 @@ export const addErrorsAndRunHooks = <T extends string>(
     };
   };
 
-  if (tableHook) {
+  if (isNonNullable(tableHook)) {
     data = tableHook(data, addHookError);
   }
 
-  if (rowHook) {
+  if (isNonNullable(rowHook)) {
     data = data.map((value, index) =>
       rowHook(value, (...props) => addHookError(index, ...props), data),
     );
@@ -47,7 +50,10 @@ export const addErrorsAndRunHooks = <T extends string>(
           const duplicates = new Set(); // Set of items used multiple times
 
           values.forEach((value) => {
-            if (validation.allowEmpty && !value) {
+            if (
+              validation.allowEmpty === true &&
+              (isNullable(value) || value === '' || !value)
+            ) {
               // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
             }
@@ -95,7 +101,7 @@ export const addErrorsAndRunHooks = <T extends string>(
           data.forEach((entry, index) => {
             const value = entry[field.key]?.toString();
 
-            if (value && !value.match(regex)) {
+            if (isNonEmptyString(value) && !value.match(regex)) {
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
@@ -113,7 +119,7 @@ export const addErrorsAndRunHooks = <T extends string>(
           data.forEach((entry, index) => {
             const value = entry[field.key]?.toString();
 
-            if (value && !validation.isValid(value)) {
+            if (isNonEmptyString(value) && !validation.isValid(value)) {
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
@@ -136,10 +142,10 @@ export const addErrorsAndRunHooks = <T extends string>(
     }
     const newValue = value as Data<T> & Meta;
 
-    if (errors[index]) {
+    if (isNonNullable(errors[index])) {
       return { ...newValue, __errors: errors[index] };
     }
-    if (!errors[index] && value?.__errors) {
+    if (isNullable(errors[index]) && isNonNullable(value?.__errors)) {
       return { ...newValue, __errors: null };
     }
     return newValue;

@@ -5,6 +5,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
@@ -39,7 +40,7 @@ export const useInlineCell = () => {
     setIsInlineCellInEditMode(true);
     initFieldInputDraftValue();
 
-    if (customEditHotkeyScopeForField) {
+    if (isNonNullable(customEditHotkeyScopeForField)) {
       setHotkeyScopeAndMemorizePreviousScope(
         customEditHotkeyScopeForField.scope,
         customEditHotkeyScopeForField.customScopes,

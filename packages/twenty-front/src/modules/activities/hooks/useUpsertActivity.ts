@@ -112,7 +112,10 @@ export const useUpsertActivity = () => {
       }
 
       // Call optimistic effects
-      if (weAreOnObjectShowPage && objectShowPageTargetableObject) {
+      if (
+        weAreOnObjectShowPage &&
+        isNonNullable(objectShowPageTargetableObject)
+      ) {
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
           activityToInject: activityWithConnection,

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
@@ -17,6 +18,7 @@ import { Button } from '@/ui/input/button/components/Button.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section.tsx';
 import { useBillingPortalSessionQuery } from '~/generated/graphql.tsx';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -44,13 +46,13 @@ export const SettingsBilling = () => {
     onboardingStatus === OnboardingStatus.Canceled;
 
   const openBillingPortal = () => {
-    if (data) {
+    if (isNonNullable(data)) {
       window.location.replace(data.billingPortalSession.url);
     }
   };
 
   const openChat = () => {
-    if (supportChat.supportDriver) {
+    if (isNonEmptyString(supportChat.supportDriver)) {
       window.FrontChat?.('show');
     } else {
       window.location.href =

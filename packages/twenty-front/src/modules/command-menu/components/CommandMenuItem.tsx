@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { IconArrowUpRight } from '@/ui/display/icon';
@@ -28,7 +29,7 @@ export const CommandMenuItem = ({
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenu();
 
-  if (to && !Icon) {
+  if (isNonEmptyString(to) && !Icon) {
     Icon = IconArrowUpRight;
   }
 

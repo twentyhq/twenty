@@ -5,6 +5,7 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
   objectNameSingular,
@@ -34,7 +35,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
       const generatedCachedObjectRecord =
         generateObjectRecordOptimisticResponse<T>(record);
 
-      if (generatedCachedObjectRecord) {
+      if (isNonNullable(generatedCachedObjectRecord)) {
         addRecordInCache(generatedCachedObjectRecord);
 
         createdRecordsInCache.push(generatedCachedObjectRecord);

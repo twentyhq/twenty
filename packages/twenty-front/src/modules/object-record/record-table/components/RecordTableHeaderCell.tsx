@@ -37,7 +37,7 @@ const StyledColumnHeaderCell = styled.th<{
     `;
   }};
   ${({ isResizing, theme }) => {
-    if (isResizing) {
+    if (isResizing === true) {
       return `&:after {
         background-color: ${theme.color.blue};
         bottom: 0;

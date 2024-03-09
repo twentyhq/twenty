@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -9,6 +10,7 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
@@ -112,7 +114,7 @@ export const useViewBar = (props?: UseViewProps) => {
             viewId: currentViewId,
           });
 
-        if (!availableFieldDefinitions) {
+        if (isNullable(availableFieldDefinitions)) {
           return;
         }
 
@@ -152,7 +154,7 @@ export const useViewBar = (props?: UseViewProps) => {
             viewId: currentViewId,
           });
 
-        if (!availableFilterDefinitions) {
+        if (isNullable(availableFilterDefinitions)) {
           return;
         }
 
@@ -267,11 +269,11 @@ export const useViewBar = (props?: UseViewProps) => {
           viewScopeId: scopeId,
         });
 
-        if (savedViewFilters) {
+        if (isNonNullable(savedViewFilters)) {
           set(currentViewFiltersState, savedViewFilters);
           onViewFiltersChange?.(savedViewFilters);
         }
-        if (savedViewSorts) {
+        if (isNonNullable(savedViewSorts)) {
           set(currentViewSortsState, savedViewSorts);
           onViewSortsChange?.(savedViewSorts);
         }
@@ -388,7 +390,7 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        if (viewEditMode === 'create' && name) {
+        if (viewEditMode === 'create' && isNonEmptyString(name)) {
           await createView(name);
 
           // Temporary to force refetch

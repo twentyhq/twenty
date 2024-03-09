@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import { isNonNullable } from '~/utils/isNonNullable';
+
 export const usePausableTimeout = (callback: () => void, delay: number) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const savedCallback = useRef<() => void>(callback);
@@ -11,7 +13,7 @@ export const usePausableTimeout = (callback: () => void, delay: number) => {
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const tick = () => {
-    if (savedCallback.current) {
+    if (isNonNullable(savedCallback.current)) {
       savedCallback.current();
     }
   };
@@ -31,7 +33,7 @@ export const usePausableTimeout = (callback: () => void, delay: number) => {
     if (delay !== null) {
       startTimeout();
       return () => {
-        if (timeoutId.current) {
+        if (isNonNullable(timeoutId.current)) {
           clearTimeout(timeoutId.current);
         }
       };
@@ -39,7 +41,7 @@ export const usePausableTimeout = (callback: () => void, delay: number) => {
   }, [delay, startTimeout]);
 
   const pauseTimeout = () => {
-    if (timeoutId.current) {
+    if (isNonNullable(timeoutId.current)) {
       clearTimeout(timeoutId.current);
     }
     const elapsedTime = Date.now() - startTime.current;

@@ -22,7 +22,7 @@ export const useHandleResetPassword = () => {
             variables: { email },
           });
 
-          if (data?.emailPasswordResetLink?.success) {
+          if (data?.emailPasswordResetLink?.success === true) {
             enqueueSnackBar('Password reset link has been sent to the email', {
               variant: 'success',
             });

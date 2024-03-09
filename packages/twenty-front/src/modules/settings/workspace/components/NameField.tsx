@@ -6,6 +6,8 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -37,7 +39,7 @@ export const NameField = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
     debounce(async (name: string) => {
-      if (onNameUpdate) {
+      if (isNonNullable(onNameUpdate)) {
         onNameUpdate(displayName);
       }
       if (!autoSave || !name) {
@@ -52,7 +54,7 @@ export const NameField = ({
           },
         });
 
-        if (errors || !data?.updateWorkspace) {
+        if (isNonNullable(errors) || isNullable(data?.updateWorkspace)) {
           throw errors;
         }
       } catch (error) {

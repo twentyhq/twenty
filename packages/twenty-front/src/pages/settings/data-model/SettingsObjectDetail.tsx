@@ -2,10 +2,13 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
+import { getDisabledFieldMetadataItems } from '@/object-metadata/utils/getDisabledFieldMetadataItems';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -29,7 +32,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -57,11 +59,11 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive && !metadataField.isSystem,
+  const activeMetadataFields = getActiveFieldMetadataItems(
+    activeObjectMetadataItem,
   );
-  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
+  const disabledMetadataFields = getDisabledFieldMetadataItems(
+    activeObjectMetadataItem,
   );
 
   const handleDisableObject = async () => {
@@ -128,7 +130,7 @@ export const SettingsObjectDetail = () => {
                   const canBeSetAsLabelIdentifier =
                     activeObjectMetadataItem.isCustom &&
                     !isLabelIdentifier &&
-                    [FieldMetadataType.Text, FieldMetadataType.Number].includes(
+                    LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(
                       activeMetadataField.type,
                     );
 

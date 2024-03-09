@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isNullable } from '~/utils/isNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getExecuteQuickActionOnOneRecordMutationGraphQLField = ({
@@ -20,7 +21,7 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 
-  if (!objectMetadataItem) {
+  if (isNullable(objectMetadataItem)) {
     return EMPTY_MUTATION;
   }
 
