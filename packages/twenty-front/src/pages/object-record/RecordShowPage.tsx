@@ -75,7 +75,7 @@ export const RecordShowPage = () => {
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : labelIdentifierFieldValue;
+      : `${labelIdentifierFieldValue}`;
 
   return (
     <PageContainer>
