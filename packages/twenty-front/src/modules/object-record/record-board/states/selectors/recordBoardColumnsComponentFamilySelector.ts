@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isFirstRecordBoardColumnComponentFamilyState';
 import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
@@ -82,7 +84,7 @@ export const recordBoardColumnsComponentFamilySelector =
             true,
           );
 
-          if (lastColumn) {
+          if (!isUndefined(lastColumn)) {
             set(
               isLastRecordBoardColumnComponentFamilyState({
                 scopeId,
@@ -102,7 +104,7 @@ export const recordBoardColumnsComponentFamilySelector =
             true,
           );
 
-          if (firstColumn) {
+          if (!isUndefined(firstColumn)) {
             set(
               isFirstRecordBoardColumnComponentFamilyState({
                 scopeId,
