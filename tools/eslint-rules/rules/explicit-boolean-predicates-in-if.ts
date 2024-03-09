@@ -33,16 +33,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           context.report({
             node: test,
             messageId: 'nonExplicitPredicate',
-            fix: (fixer) => {
-              const conditionText = context.getSourceCode().getText(test);
-
-              if (!conditionText.includes('isTruthy')) {
-                const newConditionText = `isTruthy(${conditionText})`;
-                return fixer.replaceText(test, newConditionText);
-              }
-
-              return null;
-            },
           });
         }
       },

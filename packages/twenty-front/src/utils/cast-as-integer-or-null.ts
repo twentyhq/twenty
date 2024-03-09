@@ -1,6 +1,5 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isNull, isNumber, isString } from '@sniptt/guards';
-
-import { isTruthy } from '~/utils/isTruthy';
 
 import { logError } from './logError';
 
@@ -10,26 +9,25 @@ export const canBeCastAsIntegerOrNull = (
   probableNumberOrNull: string | undefined | number | null,
 ): probableNumberOrNull is number | null => {
   if (probableNumberOrNull === undefined) {
-    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === undefined');
+    if (DEBUG_MODE) logError('probableNumberOrNull === undefined');
 
     return false;
   }
 
   if (isNumber(probableNumberOrNull)) {
-    if (isTruthy(DEBUG_MODE))
-      logError('typeof probableNumberOrNull === "number"');
+    if (DEBUG_MODE) logError('typeof probableNumberOrNull === "number"');
 
     return Number.isInteger(probableNumberOrNull);
   }
 
   if (isNull(probableNumberOrNull)) {
-    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === null');
+    if (DEBUG_MODE) logError('probableNumberOrNull === null');
 
     return true;
   }
 
   if (probableNumberOrNull === '') {
-    if (isTruthy(DEBUG_MODE)) logError('probableNumberOrNull === ""');
+    if (DEBUG_MODE) logError('probableNumberOrNull === ""');
 
     return true;
   }
@@ -38,12 +36,12 @@ export const canBeCastAsIntegerOrNull = (
     const stringAsNumber = +probableNumberOrNull;
 
     if (isNaN(stringAsNumber)) {
-      if (isTruthy(DEBUG_MODE)) logError('isNaN(stringAsNumber)');
+      if (DEBUG_MODE) logError('isNaN(stringAsNumber)');
 
       return false;
     }
     if (Number.isInteger(stringAsNumber)) {
-      if (isTruthy(DEBUG_MODE)) logError('Number.isInteger(stringAsNumber)');
+      if (DEBUG_MODE) logError('Number.isInteger(stringAsNumber)');
 
       return true;
     }
