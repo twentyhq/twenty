@@ -53,7 +53,6 @@ export const RecordDetailRelationRecordsListItem = ({
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
-    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
