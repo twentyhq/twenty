@@ -23,6 +23,7 @@ import { User } from 'src/core/user/user.entity';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
 import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
+import { BillingService } from 'src/core/billing/billing.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -35,6 +36,7 @@ export class WorkspaceResolver {
     private readonly workspaceService: WorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly environmentService: EnvironmentService,
+    private readonly billingService: BillingService,
   ) {}
 
   @Query(() => Workspace)
@@ -114,20 +116,8 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    const billingSubscriptions =
-      await this.workspaceService.getWorkspaceBillingSubscriptions(
-        workspace.id,
-      );
-
-    const notCanceledSubscriptions = billingSubscriptions?.filter(
-      (billingSubscription) => billingSubscription.status !== 'canceled',
-    );
-
-    assert(
-      notCanceledSubscriptions && notCanceledSubscriptions.length <= 1,
-      `More than on not canceled subscription for workspace ${workspace.id}`,
-    );
-
-    return notCanceledSubscriptions?.[0];
+    return this.billingService.getCurrentBillingSubscription({
+      workspaceId: workspace.id,
+    });
   }
 }

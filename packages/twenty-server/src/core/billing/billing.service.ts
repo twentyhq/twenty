@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { StripeService } from 'src/core/billing/stripe/stripe.service';
@@ -78,23 +78,37 @@ export class BillingService {
     return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
   }
 
-  async getBillingSubscription(criteria: {
+  async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
   }) {
-    return await this.billingSubscriptionRepository.findOneOrFail({
-      where: criteria,
-      relations: ['billingSubscriptionItems'],
-    });
+    const notCanceledSubscriptions =
+      await this.billingSubscriptionRepository.find({
+        where: { ...criteria, status: Not('canceled') },
+        relations: ['billingSubscriptionItems'],
+      });
+
+    assert(
+      notCanceledSubscriptions.length <= 1,
+      `More than on not canceled subscription for workspace ${criteria.workspaceId}`,
+    );
+
+    return notCanceledSubscriptions?.[0];
   }
 
   async getBillingSubscriptionItem(
     workspaceId: string,
     stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
   ) {
-    const billingSubscription = await this.getBillingSubscription({
+    const billingSubscription = await this.getCurrentBillingSubscription({
       workspaceId,
     });
+
+    if (!billingSubscription) {
+      throw new Error(
+        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
+      );
+    }
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -147,6 +161,12 @@ export class BillingService {
 
     let quantity = 1;
 
+    const stripeCustomerId = (
+      await this.billingSubscriptionRepository.findOneBy({
+        workspaceId: user.defaultWorkspaceId,
+      })
+    )?.stripeCustomerId;
+
     try {
       quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
         user.defaultWorkspaceId,
@@ -159,6 +179,7 @@ export class BillingService {
       quantity,
       successUrl,
       frontBaseUrl,
+      stripeCustomerId,
     );
 
     assert(session.url, 'Error: missing checkout.session.url');
@@ -181,18 +202,14 @@ export class BillingService {
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
-    try {
-      const billingSubscription = await this.getBillingSubscription({
-        stripeCustomerId: data.object.customer as string,
-      });
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      stripeCustomerId: data.object.customer as string,
+    });
 
-      if (billingSubscription.status === 'unpaid') {
-        await this.stripeService.collectLastInvoice(
-          billingSubscription.stripeSubscriptionId,
-        );
-      }
-    } catch (err) {
-      return;
+    if (billingSubscription?.status === 'unpaid') {
+      await this.stripeService.collectLastInvoice(
+        billingSubscription.stripeSubscriptionId,
+      );
     }
   }
 
@@ -211,7 +228,7 @@ export class BillingService {
         status: data.object.status,
       },
       {
-        conflictPaths: ['workspaceId', 'stripeSubscriptionId'],
+        conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
@@ -220,9 +237,13 @@ export class BillingService {
       subscriptionStatus: data.object.status,
     });
 
-    const billingSubscription = await this.getBillingSubscription({
+    const billingSubscription = await this.getCurrentBillingSubscription({
       workspaceId,
     });
+
+    if (!billingSubscription) {
+      return;
+    }
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
