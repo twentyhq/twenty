@@ -153,7 +153,7 @@ export const useRecordIndexOptionsForBoard = ({
           ...recordIndexFieldDefinitions,
           {
             ...correspondingFieldDefinition,
-            position: lastVisibleBoardField.position + 1,
+            position: (lastVisibleBoardField?.position || 0) + 1,
             isVisible: true,
           },
         ];
