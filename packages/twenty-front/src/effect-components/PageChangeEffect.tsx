@@ -111,7 +111,8 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.CreateProfile);
     } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
+      (onboardingStatus === OnboardingStatus.Completed ||
+        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription) &&
       isMatchingOnboardingRoute
     ) {
       navigate(AppPath.Index);
