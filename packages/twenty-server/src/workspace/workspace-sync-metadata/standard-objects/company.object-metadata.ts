@@ -172,6 +172,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
+  @IsSystem()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
