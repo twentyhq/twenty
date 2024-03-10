@@ -6,7 +6,7 @@ import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const useMapFieldMetadataToGraphQLQuery = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const mapFieldMetadataToGraphQLQuery = ({
     field,

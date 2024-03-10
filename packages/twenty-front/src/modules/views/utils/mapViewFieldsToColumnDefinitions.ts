@@ -3,6 +3,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 import { ViewField } from '../types/ViewField';
 
@@ -25,11 +26,11 @@ export const mapViewFieldsToColumnDefinitions = ({
       const correspondingColumnDefinition =
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
-      if (!correspondingColumnDefinition) return null;
+      if (isNullable(correspondingColumnDefinition)) return null;
 
       const { isLabelIdentifier } = correspondingColumnDefinition;
 
-      if (isLabelIdentifier) {
+      if (isLabelIdentifier === true) {
         labelIdentifierFieldMetadataId =
           correspondingColumnDefinition.fieldMetadataId;
       }

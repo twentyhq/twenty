@@ -136,7 +136,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               });
               break;
             case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length) {
+              if (parsedRecordIds.length > 0) {
                 objectRecordFilters.push({
                   not: {
                     [correspondingField.name + 'Id']: {

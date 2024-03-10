@@ -22,6 +22,7 @@ module.exports = {
     '**/*config.js',
     'codegen*',
     'tsup.ui.index.tsx',
+    '__mocks__',
   ],
   rules: {
     'no-restricted-imports': [
@@ -48,6 +49,7 @@ module.exports = {
     '@nx/workspace-styled-components-prefixed-with-styled': 'error',
     '@nx/workspace-no-state-useref': 'error',
     '@nx/workspace-component-props-naming': 'error',
+    '@nx/workspace-explicit-boolean-predicates-in-if': 'error',
     '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
 
     'react/no-unescaped-entities': 'off',
@@ -75,7 +77,7 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
       parserOptions: {
-        project: ['packages/twenty-front/tsconfig.*?.json'],
+        project: ['packages/twenty-front/tsconfig.{json,*.json}'],
       },
       rules: {},
     },

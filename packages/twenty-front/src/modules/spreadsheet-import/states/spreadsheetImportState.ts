@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 import { SpreadsheetOptions } from '../types';
 
@@ -7,9 +7,9 @@ export type SpreadsheetImportState<T extends string> = {
   options: Omit<SpreadsheetOptions<T>, 'isOpen' | 'onClose'> | null;
 };
 
-export const spreadsheetImportState = atom<SpreadsheetImportState<any>>({
+export const spreadsheetImportState = createState<SpreadsheetImportState<any>>({
   key: 'spreadsheetImportState',
-  default: {
+  defaultValue: {
     isOpen: false,
     options: null,
   },

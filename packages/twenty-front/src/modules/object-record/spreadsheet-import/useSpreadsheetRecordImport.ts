@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
@@ -7,6 +9,7 @@ import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 const firstName = 'Firstname';
 const lastName = 'Lastname';
@@ -128,14 +131,19 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 }
                 break;
               case FieldMetadataType.Relation:
-                if (value) {
+                if (
+                  isNonNullable(value) &&
+                  (isNonEmptyString(value) || value !== false)
+                ) {
                   fieldMapping[field.name + 'Id'] = value;
                 }
                 break;
               case FieldMetadataType.FullName:
                 if (
-                  record[`${firstName} (${field.name})`] ||
-                  record[`${lastName} (${field.name})`]
+                  isNonNullable(
+                    record[`${firstName} (${field.name})`] ||
+                      record[`${lastName} (${field.name})`],
+                  )
                 ) {
                   fieldMapping[field.name] = {
                     firstName: record[`${firstName} (${field.name})`] || '',

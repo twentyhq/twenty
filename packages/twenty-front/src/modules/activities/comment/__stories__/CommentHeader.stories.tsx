@@ -13,7 +13,7 @@ import { CommentHeader } from '../CommentHeader';
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
 const CommentHeaderSetterEffect = () => {
-  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+  const setViewableActivity = useSetRecoilState(viewableActivityIdState());
 
   useEffect(() => {
     setViewableActivity('test-id');

@@ -10,7 +10,7 @@ export const useObjectNamePluralFromSingular = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(

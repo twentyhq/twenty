@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const useDropdown = (dropdownId?: string) => {
   const {
@@ -35,7 +36,7 @@ export const useDropdown = (dropdownId?: string) => {
 
   const openDropdown = () => {
     setIsDropdownOpen(true);
-    if (dropdownHotkeyScope) {
+    if (isNonNullable(dropdownHotkeyScope)) {
       setHotkeyScopeAndMemorizePreviousScope(
         dropdownHotkeyScope.scope,
         dropdownHotkeyScope.customScopes,

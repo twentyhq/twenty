@@ -31,6 +31,7 @@ import {
   useUploadImageMutation,
 } from '~/generated/graphql';
 import { isNonNullable } from '~/utils/isNonNullable';
+import { isNullable } from '~/utils/isNullable';
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -92,7 +93,7 @@ export const RecordShowContainer = ({
     if (!avatarUrl) {
       return;
     }
-    if (!updateOneRecord) {
+    if (isNullable(updateOneRecord)) {
       return;
     }
     if (!recordFromStore) {

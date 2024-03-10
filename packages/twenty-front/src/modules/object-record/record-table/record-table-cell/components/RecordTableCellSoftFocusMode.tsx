@@ -24,7 +24,7 @@ export const RecordTableCellSoftFocusMode = ({
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState);
+  const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState());
 
   useEffect(() => {
     if (!isSoftFocusUsingMouse) {

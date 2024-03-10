@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const currentPageLocationState = atom<string>({
+export const currentPageLocationState = createState<string>({
   key: 'currentPageLocationState',
-  default: '',
+  defaultValue: '',
 });

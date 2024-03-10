@@ -38,7 +38,7 @@ export const getOnboardingStatus = ({
   }
 
   if (
-    isBillingEnabled &&
+    isBillingEnabled === true &&
     currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
@@ -55,15 +55,24 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
+  if (
+    isBillingEnabled === true &&
+    currentWorkspace.subscriptionStatus === 'canceled'
+  ) {
     return OnboardingStatus.Canceled;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {
+  if (
+    isBillingEnabled === true &&
+    currentWorkspace.subscriptionStatus === 'past_due'
+  ) {
     return OnboardingStatus.PastDue;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'unpaid') {
+  if (
+    isBillingEnabled === true &&
+    currentWorkspace.subscriptionStatus === 'unpaid'
+  ) {
     return OnboardingStatus.Unpaid;
   }
 

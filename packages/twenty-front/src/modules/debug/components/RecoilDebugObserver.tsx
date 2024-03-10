@@ -15,7 +15,7 @@ const formatTitle = (stateName: string) => {
 };
 
 export const RecoilDebugObserverEffect = () => {
-  const isDebugMode = useRecoilValue(isDebugModeState);
+  const isDebugMode = useRecoilValue(isDebugModeState());
 
   useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
     if (!isDebugMode) {

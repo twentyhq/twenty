@@ -5,6 +5,7 @@ import { Key } from 'ts-key-enum';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
@@ -104,7 +105,7 @@ export const Dialog = ({
 
       event.preventDefault();
 
-      if (confirmButton) {
+      if (isNonNullable(confirmButton)) {
         confirmButton?.onClick?.(event);
         closeSnackbar();
       }

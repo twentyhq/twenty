@@ -47,7 +47,7 @@ export const RecordIndexContainer = ({
   objectNamePlural,
 }: RecordIndexContainerProps) => {
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
-    recordIndexViewTypeState,
+    recordIndexViewTypeState(),
   );
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -60,10 +60,10 @@ export const RecordIndexContainer = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
-  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
+  const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState());
+  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState());
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
-    recordIndexIsCompactModeActiveState,
+    recordIndexIsCompactModeActiveState(),
   );
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
@@ -85,7 +85,7 @@ export const RecordIndexContainer = ({
         );
 
         const existingRecordIndexFieldDefinitions = snapshot
-          .getLoadable(recordIndexFieldDefinitionsState)
+          .getLoadable(recordIndexFieldDefinitionsState())
           .getValue();
 
         if (
@@ -94,7 +94,10 @@ export const RecordIndexContainer = ({
             newRecordIndexFieldDefinitions,
           )
         ) {
-          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+          set(
+            recordIndexFieldDefinitionsState(),
+            newRecordIndexFieldDefinitions,
+          );
         }
       },
     [columnDefinitions, setTableColumns],

@@ -9,7 +9,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const isLogged = useIsLogged();
-      const setTokenPair = useSetRecoilState(tokenPairState);
+      const setTokenPair = useSetRecoilState(tokenPairState());
 
       return {
         isLogged,

@@ -24,7 +24,7 @@ export const normalizeTableData = <T extends string>(
 
           if (
             'booleanMatches' in field.fieldType &&
-            Object.keys(field.fieldType).length
+            Object.keys(field.fieldType).length > 0
           ) {
             const booleanMatchKey = Object.keys(
               field.fieldType.booleanMatches || [],

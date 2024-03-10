@@ -4,6 +4,7 @@ import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/inte
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type SelectableListProps = {
   children: ReactNode;
@@ -39,11 +40,11 @@ export const SelectableList = ({
       );
     }
 
-    if (selectableItemIdMatrix) {
+    if (isNonNullable(selectableItemIdMatrix)) {
       setSelectableItemIds(selectableItemIdMatrix);
     }
 
-    if (selectableItemIdArray) {
+    if (isNonNullable(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
   }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);

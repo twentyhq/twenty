@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ScopeInternalContext } from '../types/ScopeInternalContext';
 
 import { useScopeInternalContext } from './useScopeInternalContext';
@@ -10,9 +12,9 @@ export const useAvailableScopeIdOrThrow = <T extends { scopeId: string }>(
 
   const scopeIdFromContext = scopeInternalContext?.scopeId;
 
-  if (scopeIdFromProps) {
+  if (isNonEmptyString(scopeIdFromProps)) {
     return scopeIdFromProps;
-  } else if (scopeIdFromContext) {
+  } else if (isNonEmptyString(scopeIdFromContext)) {
     return scopeIdFromContext;
   } else {
     throw new Error('Scope id is not provided and cannot be found in context.');
