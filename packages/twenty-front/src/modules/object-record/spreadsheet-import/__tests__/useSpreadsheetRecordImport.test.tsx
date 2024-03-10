@@ -16,10 +16,6 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => companyId),
 }));
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
-  useMapFieldMetadataToGraphQLQuery: () => () => '\n',
-}));
-
 const companyMocks = [
   {
     request: {

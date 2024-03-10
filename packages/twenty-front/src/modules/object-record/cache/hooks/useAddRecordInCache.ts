@@ -1,10 +1,10 @@
 import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useInjectIntoFindOneRecordQueryCache } from '@/object-record/cache/hooks/useInjectIntoFindOneRecordQueryCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -15,7 +15,7 @@ export const useAddRecordInCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
   const apolloClient = useApolloClient();
 
   const { injectIntoFindOneRecordQueryCache } =
@@ -29,18 +29,12 @@ export const useAddRecordInCache = ({
         const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
-          )}InCache on ${capitalize(objectMetadataItem.nameSingular)} {
-            __typename
-            id
-            ${objectMetadataItem.fields
-              .map((field) =>
-                mapFieldMetadataToGraphQLQuery({
-                  field,
-                  depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
-                }),
-              )
-              .join('\n')}
-          }
+          )}InCache on ${capitalize(
+            objectMetadataItem.nameSingular,
+          )} ${mapObjectMetadataToGraphQLQuery({
+            objectMetadataItems,
+            objectMetadataItem,
+          })}
         `;
 
         const cachedObjectRecord = {
@@ -62,8 +56,8 @@ export const useAddRecordInCache = ({
       },
     [
       objectMetadataItem,
+      objectMetadataItems,
       apolloClient,
-      mapFieldMetadataToGraphQLQuery,
       injectIntoFindOneRecordQueryCache,
     ],
   );

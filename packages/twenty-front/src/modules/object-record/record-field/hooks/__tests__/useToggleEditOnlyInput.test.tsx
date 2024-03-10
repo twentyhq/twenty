@@ -14,10 +14,6 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
-  useMapFieldMetadataToGraphQLQuery: () => () => '\n',
-}));
-
 const entityId = 'entityId';
 
 const mocks: MockedResponse[] = [

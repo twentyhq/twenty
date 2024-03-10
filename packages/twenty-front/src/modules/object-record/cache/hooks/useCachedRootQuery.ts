@@ -1,9 +1,11 @@
 import { useApolloClient } from '@apollo/client/react/hooks/useApolloClient';
 import gql from 'graphql-tag';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 
 export const useCachedRootQuery = ({
   objectMetadataItem,
@@ -12,19 +14,12 @@ export const useCachedRootQuery = ({
   objectMetadataItem: ObjectMetadataItem | undefined;
   queryMethodName: QueryMethodName;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   if (!objectMetadataItem) {
     return { cachedRootQuery: null };
   }
-
-  const buildRecordFieldsFragment = () => {
-    return objectMetadataItem.fields
-      .filter((field) => field.type !== 'RELATION')
-      .map((field) => mapFieldMetadataToGraphQLQuery({ field }))
-      .join(' \n');
-  };
 
   const cacheReadFragment = gql`
     fragment RootQuery on Query {
@@ -32,13 +27,15 @@ export const useCachedRootQuery = ({
         QueryMethodName.FindMany === queryMethodName
           ? objectMetadataItem.namePlural
           : objectMetadataItem.nameSingular
-      } {
-        ${QueryMethodName.FindMany === queryMethodName ? 'edges { node { ' : ''}
-            ${buildRecordFieldsFragment()}
-        ${QueryMethodName.FindMany === queryMethodName ? '}}' : ''}
-
       }
-    }
+        ${QueryMethodName.FindMany === queryMethodName ? '{ edges { node ' : ''}
+            ${mapObjectMetadataToGraphQLQuery({
+              objectMetadataItems,
+              objectMetadataItem,
+              depth: 0,
+            })}
+            ${QueryMethodName.FindMany === queryMethodName ? '}}' : ''}
+        }
   `;
 
   const cachedRootQuery = apolloClient.readFragment({
