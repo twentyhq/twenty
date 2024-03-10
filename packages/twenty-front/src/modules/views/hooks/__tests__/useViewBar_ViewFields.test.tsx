@@ -47,7 +47,15 @@ const mocks = [
       query: gql`
         mutation CreateOneViewField($input: ViewFieldCreateInput!) {
           createViewField(data: $input) {
+            __typename
+            position
+            isVisible
+            fieldMetadataId
+            viewId
             id
+            size
+            createdAt
+            updatedAt
           }
         }
       `,

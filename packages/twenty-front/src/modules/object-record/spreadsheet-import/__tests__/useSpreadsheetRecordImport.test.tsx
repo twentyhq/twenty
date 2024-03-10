@@ -22,7 +22,28 @@ const companyMocks = [
       query: gql`
         mutation CreateCompanies($data: [CompanyCreateInput!]!) {
           createCompanies(data: $data) {
+            __typename
+            xLink {
+              label
+              url
+            }
+            linkedinLink {
+              label
+              url
+            }
+            domainName
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            createdAt
+            address
+            updatedAt
+            name
+            accountOwnerId
+            employees
             id
+            idealCustomerProfile
           }
         }
       `,

@@ -7,7 +7,7 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItems,
   objectMetadataItem,
-  depth = 2,
+  depth = 1,
   eagerLoadedRelations,
 }: {
   objectMetadataItems: ObjectMetadataItem[];

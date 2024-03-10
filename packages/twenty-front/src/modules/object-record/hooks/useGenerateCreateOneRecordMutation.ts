@@ -31,7 +31,6 @@ export const useGenerateCreateOneRecordMutation = ({
 
   return gql`
     mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
-           depth,
       ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,

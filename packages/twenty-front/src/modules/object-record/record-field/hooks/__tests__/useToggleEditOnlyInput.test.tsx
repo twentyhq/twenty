@@ -25,7 +25,28 @@ const mocks: MockedResponse[] = [
           $input: CompanyUpdateInput!
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
+            __typename
+            xLink {
+              label
+              url
+            }
+            linkedinLink {
+              label
+              url
+            }
+            domainName
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            createdAt
+            address
+            updatedAt
+            name
+            accountOwnerId
+            employees
             id
+            idealCustomerProfile
           }
         }
       `,
