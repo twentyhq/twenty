@@ -7,10 +7,6 @@ import { RecoilRoot } from 'recoil';
 
 import { useEventTracker } from '../useEventTracker';
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
-  useMapFieldMetadataToGraphQLQuery: () => () => '\n',
-}));
-
 const mocks: MockedResponse[] = [
   {
     request: {

@@ -32,7 +32,7 @@ export const useCreateActivityInCache = () => {
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
-    depth: 3,
+    depth: 0,
   });
 
   const { injectIntoActivityTargetInlineCellCache } =

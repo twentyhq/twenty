@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -12,8 +12,6 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   objectMetadataItems: ObjectMetadataItem[];
   depth?: number;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
-
   const capitalizedObjectNameSingulars = objectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
@@ -59,26 +57,22 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
     ) {
       ${objectMetadataItems
         .map(
-          ({ namePlural, nameSingular, fields }) =>
-            `${namePlural}(filter: $filter${capitalize(
-              nameSingular,
+          (objectMetadataItem) =>
+            `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
+              objectMetadataItem.nameSingular,
             )}, orderBy: $orderBy${capitalize(
-              nameSingular,
+              objectMetadataItem.nameSingular,
             )}, first: $limit${capitalize(
-              nameSingular,
-            )}, after: $lastCursor${capitalize(nameSingular)}){
+              objectMetadataItem.nameSingular,
+            )}, after: $lastCursor${capitalize(
+              objectMetadataItem.nameSingular,
+            )}){
           edges {
-            node {
-              id
-              ${fields
-                .map((field) =>
-                  mapFieldMetadataToGraphQLQuery({
-                    field,
-                    depth,
-                  }),
-                )
-                .join('\n')}
-            }
+            node ${mapObjectMetadataToGraphQLQuery({
+              objectMetadataItems,
+              objectMetadataItem,
+              depth,
+            })}
             cursor
           }
           pageInfo {

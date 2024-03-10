@@ -6,6 +6,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { FieldMetadataType } from '~/generated/graphql';
 
 const query = gql`
   query FindManyRecordsMultipleMetadataItems(
@@ -22,6 +23,7 @@ const query = gql`
     ) {
       edges {
         node {
+          __typename
           id
         }
         cursor
@@ -36,7 +38,7 @@ const query = gql`
 `;
 const response = {
   namePlural: {
-    edges: [{ node: { id: 'nodeId' }, cursor: 'cursor' }],
+    edges: [{ node: { __typename: 'Custom', id: 'nodeId' }, cursor: 'cursor' }],
     pageInfo: { startCursor: '', hasNextPage: '', endCursor: '' },
   },
 };
@@ -120,7 +122,17 @@ describe('useMultiObjectSearch', () => {
         namePlural: 'namePlural',
         nameSingular: 'nameSingular',
         updatedAt: 'updatedAt',
-        fields: [],
+        fields: [
+          {
+            id: 'f6a0a73a-5ee6-442e-b764-39b682471240',
+            name: 'id',
+            label: 'id',
+            type: FieldMetadataType.Uuid,
+            createdAt: '2024-01-01T00:00:00.000Z',
+            updatedAt: '2024-01-01T00:00:00.000Z',
+            isActive: true,
+          },
+        ],
       },
     ];
     act(() => {
@@ -144,9 +156,19 @@ describe('useMultiObjectSearch', () => {
           namePlural: 'namePlural',
           nameSingular: 'nameSingular',
           updatedAt: 'updatedAt',
-          fields: [],
+          fields: [
+            {
+              id: 'f6a0a73a-5ee6-442e-b764-39b682471240',
+              name: 'id',
+              label: 'id',
+              isActive: true,
+              type: FieldMetadataType.Uuid,
+              createdAt: '2024-01-01T00:00:00.000Z',
+              updatedAt: '2024-01-01T00:00:00.000Z',
+            },
+          ],
         },
-        record: { id: 'nodeId' },
+        record: { id: 'nodeId', __typename: 'Custom' },
         recordIdentifier: {
           id: 'nodeId',
           name: '',

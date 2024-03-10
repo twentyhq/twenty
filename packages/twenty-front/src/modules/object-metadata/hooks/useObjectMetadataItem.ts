@@ -40,6 +40,7 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
+  eagerLoadedRelations?: Record<string, any>,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState());
 
@@ -90,6 +91,7 @@ export const useObjectMetadataItem = (
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
+    eagerLoadedRelations,
   });
 
   const generateFindDuplicateRecordsQuery =
