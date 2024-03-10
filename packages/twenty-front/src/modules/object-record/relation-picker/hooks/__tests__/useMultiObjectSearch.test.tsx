@@ -7,7 +7,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { FieldMetadataType } from '~/generated/graphql';
-import { type } from 'os';
 
 const query = gql`
   query FindManyRecordsMultipleMetadataItems(
@@ -169,7 +168,7 @@ describe('useMultiObjectSearch', () => {
             },
           ],
         },
-        record: { id: 'nodeId', __typename: 'Custom', id: 'nodeId' },
+        record: { id: 'nodeId', __typename: 'Custom' },
         recordIdentifier: {
           id: 'nodeId',
           name: '',
