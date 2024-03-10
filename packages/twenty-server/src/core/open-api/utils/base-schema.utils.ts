@@ -4,6 +4,7 @@ import { computeOpenApiPath } from 'src/core/open-api/utils/path.utils';
 
 export const baseSchema = (
   schemaName: 'core' | 'metadata',
+  serverUrl: string,
 ): OpenAPIV3_1.Document => {
   return {
     openapi: '3.0.3',
@@ -23,9 +24,7 @@ export const baseSchema = (
     // Testing purposes
     servers: [
       {
-        url: `https://api.twenty.com/rest/${
-          schemaName !== 'core' ? schemaName : ''
-        }`,
+        url: `${serverUrl}/rest/${schemaName !== 'core' ? schemaName : ''}`,
         description: 'Production Development',
       },
     ],
