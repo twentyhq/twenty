@@ -56,6 +56,8 @@ export class CalendarEventService {
 
     const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
 
+    console.log('valuesString', valuesString);
+
     const values = calendarEvents.flatMap((calendarEvent) => [
       calendarEvent.title,
       calendarEvent.isCanceled,

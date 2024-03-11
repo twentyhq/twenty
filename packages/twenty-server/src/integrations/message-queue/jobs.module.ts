@@ -35,6 +35,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CalendarModule } from 'src/workspace/calendar/calendar.module';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 
 @Module({
   imports: [
@@ -67,6 +68,10 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
     {
       provide: GmailPartialSyncJob.name,
       useClass: GmailPartialSyncJob,
+    },
+    {
+      provide: GoogleCalendarFullSyncJob.name,
+      useClass: GoogleCalendarFullSyncJob,
     },
     {
       provide: CallWebhookJobsJob.name,

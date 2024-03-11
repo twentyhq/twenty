@@ -9,7 +9,7 @@ export const valuesStringForBatchRawQuery = (
       let value = '';
 
       for (let index = 0; index < numberOfColumns; index++) {
-        value += `${row * numberOfColumns + index + 1}, `;
+        value += `$${row * numberOfColumns + index + 1}, `;
       }
 
       return `(${value.slice(0, -2)})`;

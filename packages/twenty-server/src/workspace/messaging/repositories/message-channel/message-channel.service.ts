@@ -21,7 +21,7 @@ export class MessageChannelService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
+      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "connectedAccountId" = $1 LIMIT 1`,
       [connectedAccountId],
       workspaceId,
       transactionManager,
