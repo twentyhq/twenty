@@ -29,16 +29,6 @@ const StyledLightIconButton = styled(LightIconButton)`
   display: inline-flex;
   margin-left: auto;
   margin-right: 0;
-
-  &:hover {
-    background: transparent;
-  }
-`;
-
-const StyledLightStartIconButton = styled(LightIconButton)`
-  &:hover {
-    background: transparent;
-  }
 `;
 
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
@@ -58,7 +48,7 @@ export const DropdownMenuHeader = ({
   return (
     <StyledHeader data-testid={testId} onClick={onClick}>
       {StartIcon && (
-        <StyledLightStartIconButton
+        <LightIconButton
           testId="dropdown-menu-header-end-icon"
           Icon={StartIcon}
           accent="tertiary"
