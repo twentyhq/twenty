@@ -1,3 +1,3 @@
-import { ArgsSettersFactory } from 'src/workspace/workspace-query-runner/factories/arg-setters.factory';
+import { QueryRunnerArgsFactory } from 'src/workspace/workspace-query-runner/factories/query-runner-args.factory';
 
-export const workspaceQueryRunnerFactories = [ArgsSettersFactory];
+export const workspaceQueryRunnerFactories = [QueryRunnerArgsFactory];

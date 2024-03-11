@@ -6,11 +6,13 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RecordPositionQueryFactory } from 'src/workspace/workspace-query-builder/factories/record-position-query.factory';
 
 @Injectable()
-export class ArgsSettersFactory {
+export class QueryRunnerArgsFactory {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly recordPositionQueryFactory: RecordPositionQueryFactory,
   ) {}
 
   async create(
@@ -26,10 +28,10 @@ export class ArgsSettersFactory {
       ]),
     );
 
-    return this.applySettersToArgsRecursive(args, options, fieldMetadataMap);
+    return this.createArgsRecursive(args, options, fieldMetadataMap);
   }
 
-  private async applySettersToArgsRecursive(
+  private async createArgsRecursive(
     args: Record<string, any>,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
@@ -43,43 +45,44 @@ export class ArgsSettersFactory {
     if (Array.isArray(args)) {
       return Promise.all(
         args.map((arg) =>
-          this.applySettersToArgsRecursive(arg, options, fieldMetadataMap),
+          this.createArgsRecursive(arg, options, fieldMetadataMap),
         ),
       );
     }
 
-    const newArgs = {};
+    const createArgPromisesByArgKey = Object.entries(args).map(
+      async ([key, value]) => {
+        const fieldMetadata = fieldMetadataMap.get(key);
 
-    for (const [key, value] of Object.entries(args)) {
-      const fieldMetadata = fieldMetadataMap.get(key);
+        if (!fieldMetadata) {
+          return [
+            key,
+            await this.createArgsRecursive(value, options, fieldMetadataMap),
+          ];
+        }
 
-      if (!fieldMetadata) {
-        newArgs[key] = await this.applySettersToArgsRecursive(
-          value,
-          options,
-          fieldMetadataMap,
-        );
-        continue;
-      }
+        switch (fieldMetadata.type) {
+          case FieldMetadataType.POSITION:
+            return [
+              key,
+              await this.buildPositionValue(
+                value,
+                options.objectMetadataItem,
+                options.workspaceId,
+              ),
+            ];
+          default:
+            return [
+              key,
+              await this.createArgsRecursive(value, options, fieldMetadataMap),
+            ];
+        }
+      },
+    );
 
-      switch (fieldMetadata.type) {
-        case FieldMetadataType.POSITION:
-          newArgs[key] = await this.buildPositionValue(
-            value,
-            options.objectMetadataItem,
-            options.workspaceId,
-          );
-          break;
-        default:
-          newArgs[key] = await this.applySettersToArgsRecursive(
-            value,
-            options,
-            fieldMetadataMap,
-          );
-      }
-    }
+    const newArgEntries = await Promise.all(createArgPromisesByArgKey);
 
-    return newArgs;
+    return Object.fromEntries(newArgEntries);
   }
 
   private async buildPositionValue(
@@ -91,27 +94,26 @@ export class ArgsSettersFactory {
       return value;
     }
 
-    const orderByDirection = value === 'first' ? 'ASC' : 'DESC';
-
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const name =
-      (objectMetadataItem.isCustom ? '_' : '') +
-      objectMetadataItem.nameSingular;
+    const query = await this.recordPositionQueryFactory.create(
+      value,
+      objectMetadataItem,
+      dataSourceSchema,
+    );
 
-    const record = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT position FROM ${dataSourceSchema}."${name}"
-            WHERE "position" IS NOT NULL ORDER BY "position" ${orderByDirection} LIMIT 1`,
+    const records = await this.workspaceDataSourceService.executeRawQuery(
+      query,
       [],
       workspaceId,
       undefined,
     );
 
-    const position =
-      (value === 'first' ? record[0]?.position / 2 : record[0]?.position + 1) ||
-      1;
-
-    return position;
+    return (
+      (value === 'first'
+        ? records[0]?.position / 2
+        : records[0]?.position + 1) || 1
+    );
   }
 }
