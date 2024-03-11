@@ -13,6 +13,15 @@ const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
 `;
 
+const StyledAvatar = styled(Avatar)`
+  :hover {
+    cursor: grab;
+  }
+  :active {
+    cursor: grabbing;
+  }
+`;
+
 export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites();
 
@@ -45,7 +54,7 @@ export const Favorites = () => {
                       key={id}
                       label={labelIdentifier}
                       Icon={() => (
-                        <Avatar
+                        <StyledAvatar
                           entityId={recordId}
                           avatarUrl={avatarUrl}
                           type={avatarType}
