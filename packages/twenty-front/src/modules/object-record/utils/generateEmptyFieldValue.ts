@@ -43,6 +43,8 @@ export const generateEmptyFieldValue = (
       return true;
     }
     case FieldMetadataType.Relation: {
+      // TODO: refactor with relationDefiniton once the PR is merged : https://github.com/twentyhq/twenty/pull/4378
+      // so we can directly check the relation type from this field point of view.
       if (
         !isNonEmptyString(
           fieldMetadataItem.fromRelationMetadata?.toObjectMetadata

@@ -1,9 +1,10 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { generateEmptyFieldValueForClear } from '@/object-record/utils/generateEmptyFieldValueForClear';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
@@ -18,23 +19,33 @@ export const useClearField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const clearField = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       () => {
         const fieldIsRelation = isFieldRelation(fieldDefinition);
 
         if (fieldIsRelation) {
+          const objectMetadataItems = snapshot
+            .getLoadable(objectMetadataItemsState())
+            .getValue();
+
+          const foundObjectMetadataItem = objectMetadataItems.find(
+            (item) =>
+              item.nameSingular ===
+              fieldDefinition.metadata.objectMetadataNameSingular,
+          );
+
+          const foundFieldMetadataItem = foundObjectMetadataItem?.fields.find(
+            (field) => field.name === fieldDefinition.metadata.fieldName,
+          );
+
+          if (!foundFieldMetadataItem || !foundFieldMetadataItem) {
+            throw new Error('Field metadata not found');
+          }
+
           const fieldName = fieldDefinition.metadata.fieldName;
 
-          const many =
-            fieldDefinition.metadata.relationType === 'TO_MANY_OBJECTS';
-
-          const targetNameSingular =
-            fieldDefinition.metadata.relationObjectMetadataNameSingular;
-
-          const emptyRelationFieldValue = generateEmptyFieldValueForClear(
-            FieldMetadataType.Relation,
-            many ? 'Many' : 'Single',
-            targetNameSingular,
+          const emptyRelationFieldValue = generateEmptyFieldValue(
+            foundFieldMetadataItem,
           );
 
           set(
