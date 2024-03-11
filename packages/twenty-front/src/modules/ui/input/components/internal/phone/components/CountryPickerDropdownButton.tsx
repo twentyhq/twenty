@@ -119,7 +119,7 @@ export const CountryPickerDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownMenuWidth={200}
+      dropdownMenuWidth={'100%'}
       dropdownId="country-picker-dropdown-id"
       dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
       clickableComponent={
