@@ -10,7 +10,10 @@ export class GoogleAPIsProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
-    if (!this.environmentService.isMessagingProviderGmailEnabled()) {
+    if (
+      !this.environmentService.isMessagingProviderGmailEnabled() &&
+      !this.environmentService.isCalendarProviderGoogleEnabled()
+    ) {
       throw new NotFoundException('Google apis auth is not enabled');
     }
 

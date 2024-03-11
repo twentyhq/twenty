@@ -2,17 +2,17 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import { GoogleAPIsProviderEnabledGuard } from 'src/core/auth/guards/google-gmail-provider-enabled.guard';
+import { GoogleAPIsProviderEnabledGuard } from 'src/core/auth/guards/google-apis-provider-enabled.guard';
 import { GoogleAPIsOauthGuard } from 'src/core/auth/guards/google-apis-oauth.guard';
 import { GoogleAPIsRequest } from 'src/core/auth/strategies/google-apis.auth.strategy';
-import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
+import { GoogleAPIsService } from 'src/core/auth/services/google-apis.service';
 import { TokenService } from 'src/core/auth/services/token.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
   constructor(
-    private readonly googleGmailService: GoogleGmailService,
+    private readonly googleGmailService: GoogleAPIsService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
   ) {}

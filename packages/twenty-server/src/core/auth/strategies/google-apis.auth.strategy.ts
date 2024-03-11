@@ -22,19 +22,24 @@ export type GoogleAPIsRequest = Request & {
 @Injectable()
 export class GoogleAPIsStrategy extends PassportStrategy(
   Strategy,
-  'google-gmail',
+  'google-apis',
 ) {
   constructor(environmentService: EnvironmentService) {
+    const scope = ['email', 'profile'];
+
+    if (environmentService.isMessagingProviderGmailEnabled()) {
+      scope.push('https://www.googleapis.com/auth/gmail.readonly');
+    }
+
+    if (environmentService.isCalendarProviderGoogleEnabled()) {
+      scope.push('https://www.googleapis.com/auth/calendar');
+    }
+
     super({
       clientID: environmentService.getAuthGoogleClientId(),
       clientSecret: environmentService.getAuthGoogleClientSecret(),
       callbackURL: environmentService.getMessagingProviderGmailCallbackUrl(),
-      scope: [
-        'email',
-        'profile',
-        'https://www.googleapis.com/auth/gmail.readonly',
-        'https://www.googleapis.com/auth/calendar',
-      ],
+      scope,
       passReqToCallback: true,
     });
   }

@@ -17,7 +17,7 @@ import { GoogleAuthController } from 'src/core/auth/controllers/google-auth.cont
 import { GoogleAPIsAuthController } from 'src/core/auth/controllers/google-apis-auth.controller';
 import { VerifyAuthController } from 'src/core/auth/controllers/verify-auth.controller';
 import { TokenService } from 'src/core/auth/services/token.service';
-import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
+import { GoogleAPIsService } from 'src/core/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/core/auth/services/sign-up.service';
 
@@ -60,7 +60,7 @@ const jwtModule = JwtModule.registerAsync({
     TokenService,
     JwtAuthStrategy,
     AuthResolver,
-    GoogleGmailService,
+    GoogleAPIsService,
   ],
   exports: [jwtModule, TokenService],
 })

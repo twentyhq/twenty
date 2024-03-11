@@ -17,7 +17,7 @@ import {
 } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 
 @Injectable()
-export class GoogleGmailService {
+export class GoogleAPIsService {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
