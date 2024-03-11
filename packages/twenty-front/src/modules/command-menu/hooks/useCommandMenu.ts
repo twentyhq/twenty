@@ -24,10 +24,10 @@ export const useCommandMenu = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const openCommandMenu = () => {
+  const openCommandMenu = useCallback(() => {
     setIsCommandMenuOpened(true);
     setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
-  };
+  }, [setHotkeyScopeAndMemorizePreviousScope, setIsCommandMenuOpened]);
 
   const closeCommandMenu = useRecoilCallback(
     ({ snapshot }) =>
@@ -60,6 +60,7 @@ export const useCommandMenu = () => {
           openCommandMenu();
         }
       },
+    [closeCommandMenu, openCommandMenu],
   );
 
   const addToCommandMenu = useCallback(
