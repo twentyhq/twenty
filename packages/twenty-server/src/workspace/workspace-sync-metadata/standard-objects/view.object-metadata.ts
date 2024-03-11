@@ -43,14 +43,28 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.SELECT,
-    label: 'Stage',
-    description: 'Opportunity stage',
-    icon: 'IconProgressCheck',
+    label: 'Key',
+    description: 'View key',
     options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
     defaultValue: { value: 'INDEX' },
   })
   @IsNullable()
   key: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Icon',
+    description: 'View icon',
+  })
+  icon: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.POSITION,
+    label: 'Position',
+    description: 'View position',
+  })
+  @IsNullable()
+  position: number;
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,
