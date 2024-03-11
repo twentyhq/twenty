@@ -33,6 +33,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
         'email',
         'profile',
         'https://www.googleapis.com/auth/gmail.readonly',
+        'https://www.googleapis.com/auth/calendar',
       ],
       passReqToCallback: true,
     });
