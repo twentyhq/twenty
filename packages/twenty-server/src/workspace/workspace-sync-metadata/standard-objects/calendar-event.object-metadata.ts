@@ -56,7 +56,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Start DateTime',
     icon: 'IconCalendarClock',
   })
-  startsAt: string;
+  @IsNullable()
+  startsAt: string | null;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -65,7 +66,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCalendarClock',
   })
   @IsNullable()
-  endsAt: string;
+  endsAt: string | null;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -73,7 +74,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Creation DateTime',
     icon: 'IconCalendarPlus',
   })
-  externalCreatedAt: string;
+  @IsNullable()
+  externalCreatedAt: string | null;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -81,7 +83,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Update DateTime',
     icon: 'IconCalendarCog',
   })
-  externalUpdatedAt: string;
+  @IsNullable()
+  externalUpdatedAt: string | null;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,

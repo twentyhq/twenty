@@ -56,8 +56,6 @@ export class CalendarEventService {
 
     const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
 
-    console.log('valuesString', valuesString);
-
     const values = calendarEvents.flatMap((calendarEvent) => [
       calendarEvent.title,
       calendarEvent.isCanceled,
@@ -87,6 +85,10 @@ export class CalendarEventService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEvents.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

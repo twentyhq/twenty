@@ -156,7 +156,7 @@ export class CalendarChannelEventAssociationService {
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("calendarChannelId", "calendarEventId", "eventExternalId")
       VALUES ${valuesString}`,
-      [calendarChannelEventAssociationValues],
+      calendarChannelEventAssociationValues,
       workspaceId,
       transactionManager,
     );
