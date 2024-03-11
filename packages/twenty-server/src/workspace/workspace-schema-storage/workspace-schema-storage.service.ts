@@ -20,7 +20,6 @@ export class WorkspaceSchemaStorageService {
         `cacheVersion:${workspaceId}`,
       )) ?? '0';
 
-    console.log('currentVersion', currentVersion);
     let latestVersion =
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
