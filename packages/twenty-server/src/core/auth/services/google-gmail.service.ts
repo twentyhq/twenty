@@ -70,6 +70,11 @@ export class GoogleGmailService {
         `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3, $4)`,
         ['share_everything', handle, connectedAccountId, 'email'],
       );
+
+      await manager.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."calendarChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3)`,
+        ['share_everything', handle, connectedAccountId],
+      );
     });
 
     await this.messageQueueService.add<GmailFullSyncJobData>(
