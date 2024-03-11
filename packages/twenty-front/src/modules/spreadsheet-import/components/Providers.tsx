@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const RsiContext = createContext({} as any);
 
@@ -14,7 +14,7 @@ export const Providers = <T extends string>({
   children,
   values,
 }: ProvidersProps<T>) => {
-  if (isNullable(values.fields)) {
+  if (isUndefinedOrNull(values.fields)) {
     throw new Error('Fields must be provided to spreadsheet-import');
   }
 

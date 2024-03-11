@@ -7,7 +7,7 @@ import { recordBoardColumnsComponentFamilyState } from '@/object-record/record-b
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { guardRecoilDefaultValue } from '@/ui/utilities/recoil-scope/utils/guardRecoilDefaultValue';
 import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const recordBoardColumnsComponentFamilySelector =
   createComponentFamilySelector<
@@ -61,7 +61,7 @@ export const recordBoardColumnsComponentFamilySelector =
               }),
             );
           })
-          .filter(isNonNullable);
+          .filter(isDefined);
 
         const lastColumn = [...columns].sort(
           (a, b) => b.position - a.position,

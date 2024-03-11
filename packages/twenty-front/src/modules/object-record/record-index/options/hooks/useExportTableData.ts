@@ -6,7 +6,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
@@ -53,7 +53,7 @@ export const generateCsv: GenerateExport = ({
       return hasSubFields;
     });
 
-    if (isNonNullable(fieldsWithSubFields)) {
+    if (isDefined(fieldsWithSubFields)) {
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
       )

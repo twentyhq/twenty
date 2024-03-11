@@ -1,15 +1,12 @@
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const getChildRelationArray = ({
   childRelation,
 }: {
   childRelation: any;
 }) => {
-  if (
-    isNonNullable(childRelation.edges) &&
-    Array.isArray(childRelation.edges)
-  ) {
+  if (isDefined(childRelation.edges) && Array.isArray(childRelation.edges)) {
     return childRelation.edges.map((edge: ObjectRecordEdge) => edge.node);
   } else {
     return childRelation;

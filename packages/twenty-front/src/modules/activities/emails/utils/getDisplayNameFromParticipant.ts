@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const getDisplayNameFromParticipant = ({
   participant,
@@ -10,14 +10,14 @@ export const getDisplayNameFromParticipant = ({
   participant: EmailThreadMessageParticipant;
   shouldUseFullName?: boolean;
 }) => {
-  if (isNonNullable(participant.person)) {
+  if (isDefined(participant.person)) {
     return (
       `${participant.person?.name?.firstName}` +
       (shouldUseFullName ? ` ${participant.person?.name?.lastName}` : '')
     );
   }
 
-  if (isNonNullable(participant.workspaceMember)) {
+  if (isDefined(participant.workspaceMember)) {
     return (
       participant.workspaceMember?.name?.firstName +
       (shouldUseFullName

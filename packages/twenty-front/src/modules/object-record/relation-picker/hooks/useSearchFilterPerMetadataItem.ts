@@ -5,7 +5,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
   objectMetadataItems,
@@ -25,7 +25,7 @@ export const useSearchFilterPerMetadataItem = ({
 
           let searchFilter: ObjectRecordQueryFilter = {};
 
-          if (isNonNullable(labelIdentifierFieldMetadataItem)) {
+          if (isDefined(labelIdentifierFieldMetadataItem)) {
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
                 if (isNonEmptyString(searchFilterValue)) {
@@ -46,7 +46,7 @@ export const useSearchFilterPerMetadataItem = ({
                     },
                   ]);
 
-                  if (isNonNullable(fullNameFilter)) {
+                  if (isDefined(fullNameFilter)) {
                     searchFilter = fullNameFilter;
                   }
                 }
@@ -66,7 +66,7 @@ export const useSearchFilterPerMetadataItem = ({
 
           return [objectMetadataItem.nameSingular, searchFilter] as const;
         })
-        .filter(isNonNullable),
+        .filter(isDefined),
     );
 
   return {

@@ -1,7 +1,7 @@
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type ComputeNodeDimensionsProps = {
   children: (
@@ -34,7 +34,7 @@ export const ComputeNodeDimensions = ({
       return;
     }
     const resizeObserver = new ResizeObserver(() => {
-      if (isNonNullable(nodeWrapperRef.current)) {
+      if (isDefined(nodeWrapperRef.current)) {
         setNodeDimensions({
           width: nodeWrapperRef.current.offsetWidth,
           height: nodeWrapperRef.current.offsetHeight,

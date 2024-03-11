@@ -2,7 +2,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_RECORDS_TO_DISPLAY = 3;
@@ -68,8 +68,8 @@ export const ObjectFilterDropdownRecordSelect = () => {
         : selectedRecordNames.join(', ');
 
     if (
-      isNonNullable(filterDefinitionUsedInDropdown) &&
-      isNonNullable(selectedOperandInDropdown)
+      isDefined(filterDefinitionUsedInDropdown) &&
+      isDefined(selectedOperandInDropdown)
     ) {
       const newFilterValue =
         newSelectedRecordIds.length > 0

@@ -18,7 +18,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -55,7 +55,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         expiresAt: expiresAt,
       },
     });
-    if (isNonNullable(tokenData.data?.generateApiKeyToken)) {
+    if (isDefined(tokenData.data?.generateApiKeyToken)) {
       setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyToken.token);
       navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }

@@ -26,7 +26,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -119,7 +119,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   };
 
   useEffect(() => {
-    if (isNonNullable(apiKeyData)) {
+    if (isDefined(apiKeyData)) {
       return () => {
         setGeneratedApi(apiKeyId, null);
       };

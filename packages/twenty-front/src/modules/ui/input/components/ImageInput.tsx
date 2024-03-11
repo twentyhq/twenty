@@ -9,7 +9,7 @@ import {
   IconX,
 } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -133,10 +133,7 @@ export const ImageInput = ({
             ref={hiddenFileInput}
             accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
-              if (
-                isNonNullable(onUpload) &&
-                isNonNullable(event.target.files)
-              ) {
+              if (isDefined(onUpload) && isDefined(event.target.files)) {
                 onUpload(event.target.files[0]);
               }
             }}

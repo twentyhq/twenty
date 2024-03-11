@@ -2,7 +2,7 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({
   inputRef,
@@ -30,7 +30,7 @@ export const useRegisterInputEvents = <T>({
 
       onClickOutside?.(event, inputValue);
     },
-    enabled: isNonNullable(onClickOutside),
+    enabled: isDefined(onClickOutside),
   });
 
   useScopedHotkeys(

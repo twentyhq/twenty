@@ -1,6 +1,6 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -32,7 +32,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     }
 
     if (field.type === FieldMetadataType.Relation) {
-      if (isNonNullable(field.fromRelationMetadata)) {
+      if (isDefined(field.fromRelationMetadata)) {
         return acc;
       }
     }

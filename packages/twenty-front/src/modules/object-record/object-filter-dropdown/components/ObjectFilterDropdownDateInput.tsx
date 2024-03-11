@@ -1,6 +1,6 @@
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const ObjectFilterDropdownDateInput = () => {
   const {
@@ -15,9 +15,9 @@ export const ObjectFilterDropdownDateInput = () => {
 
     selectFilter?.({
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-      value: isNonNullable(date) ? date.toISOString() : '',
+      value: isDefined(date) ? date.toISOString() : '',
       operand: selectedOperandInDropdown,
-      displayValue: isNonNullable(date) ? date.toLocaleString() : '',
+      displayValue: isDefined(date) ? date.toLocaleString() : '',
       definition: filterDefinitionUsedInDropdown,
     });
 

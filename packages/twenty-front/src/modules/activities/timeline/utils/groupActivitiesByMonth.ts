@@ -1,5 +1,5 @@
 import { Activity } from '@/activities/types/Activity';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type ActivityForActivityGroup = Pick<Activity, 'id' | 'createdAt'>;
 
@@ -22,7 +22,7 @@ export const groupActivitiesByMonth = (
     const matchingGroup = acitivityGroups.find(
       (x) => x.year === year && x.month === month,
     );
-    if (isNonNullable(matchingGroup)) {
+    if (isDefined(matchingGroup)) {
       matchingGroup.items.push(activity);
     } else {
       acitivityGroups.push({

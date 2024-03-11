@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { FloatingButtonPosition, FloatingButtonProps } from './FloatingButton';
 
@@ -42,7 +42,7 @@ export const FloatingButtonGroup = ({
         applyBlur: false,
       };
 
-      if (isNonNullable(size)) {
+      if (isDefined(size)) {
         additionalProps.size = size;
       }
 

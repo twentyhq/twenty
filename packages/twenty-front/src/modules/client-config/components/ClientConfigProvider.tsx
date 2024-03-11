@@ -10,7 +10,7 @@ import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -30,7 +30,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const { data, loading } = useGetClientConfigQuery();
 
   useEffect(() => {
-    if (isNonNullable(data?.clientConfig)) {
+    if (isDefined(data?.clientConfig)) {
       setAuthProviders({
         google: data?.clientConfig.authProviders.google,
         password: data?.clientConfig.authProviders.password,

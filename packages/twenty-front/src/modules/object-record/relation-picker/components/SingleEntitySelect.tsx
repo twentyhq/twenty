@@ -6,7 +6,7 @@ import {
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type SingleEntitySelectProps = {
   disableBackgroundBlur?: boolean;
@@ -38,7 +38,7 @@ export const SingleEntitySelect = ({
         event.target instanceof HTMLInputElement &&
         event.target.tagName === 'INPUT'
       );
-      if (weAreNotInAnHTMLInput && isNonNullable(onCancel)) {
+      if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }
     },

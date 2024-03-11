@@ -28,7 +28,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -96,7 +96,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     onCompleted: async (data: ObjectRecordConnection<View>) => {
       const views = data.edges;
 
-      if (isNullable(views)) return;
+      if (isUndefinedOrNull(views)) return;
 
       setObjectViews(data.edges.map(({ node }) => node));
     },
@@ -112,7 +112,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     onCompleted: async (data: ObjectRecordConnection<View>) => {
       const views = data.edges;
 
-      if (isNullable(views)) return;
+      if (isUndefinedOrNull(views)) return;
 
       setRelationObjectViews(data.edges.map(({ node }) => node));
     },

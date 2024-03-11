@@ -5,7 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGetRecordFromCache = ({
@@ -21,7 +21,7 @@ export const useGetRecordFromCache = ({
     recordId: string,
     cache = apolloClient.cache,
   ) => {
-    if (isNullable(objectMetadataItem)) {
+    if (isUndefinedOrNull(objectMetadataItem)) {
       return null;
     }
 

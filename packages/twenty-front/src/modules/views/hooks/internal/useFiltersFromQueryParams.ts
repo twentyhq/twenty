@@ -15,8 +15,8 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const filterQueryParamsSchema = z.object({
   filter: z.record(
@@ -71,7 +71,7 @@ export const useFiltersFromQueryParams = () => {
                     field: fieldMetadataItem,
                   });
 
-                if (isNullable(filterDefinition)) return null;
+                if (isUndefinedOrNull(filterDefinition)) return null;
 
                 const relationObjectMetadataNameSingular =
                   fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
@@ -97,7 +97,7 @@ export const useFiltersFromQueryParams = () => {
 
                 if (
                   isNonEmptyString(relationObjectMetadataNamePlural) &&
-                  isNonNullable(relationObjectMetadataItem) &&
+                  isDefined(relationObjectMetadataItem) &&
                   Array.isArray(filterValueFromURL)
                 ) {
                   const queryResult = await apolloClient.query<
@@ -144,7 +144,7 @@ export const useFiltersFromQueryParams = () => {
               },
             ),
           )
-        ).filter(isNonNullable);
+        ).filter(isDefined);
       },
     [
       apolloClient,
