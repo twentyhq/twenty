@@ -22,8 +22,8 @@ import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMat
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isDefined } from '~/utils/isDefined';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 const isAndFilter = (
   filter: ObjectRecordQueryFilter,

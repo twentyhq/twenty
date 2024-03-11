@@ -102,15 +102,11 @@ export const useFilteredSearchEntityQuery = ({
     });
 
   return {
-    selectedEntities: selectedRecords
-      .map(mappingFunction)
-      .filter(isDefined),
+    selectedEntities: selectedRecords.map(mappingFunction).filter(isDefined),
     filteredSelectedEntities: filteredSelectedRecords
       .map(mappingFunction)
       .filter(isDefined),
-    entitiesToSelect: recordsToSelect
-      .map(mappingFunction)
-      .filter(isDefined),
+    entitiesToSelect: recordsToSelect.map(mappingFunction).filter(isDefined),
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

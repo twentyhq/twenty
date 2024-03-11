@@ -6,10 +6,7 @@ export const getChildRelationArray = ({
 }: {
   childRelation: any;
 }) => {
-  if (
-    isDefined(childRelation.edges) &&
-    Array.isArray(childRelation.edges)
-  ) {
+  if (isDefined(childRelation.edges) && Array.isArray(childRelation.edges)) {
     return childRelation.edges.map((edge: ObjectRecordEdge) => edge.node);
   } else {
     return childRelation;

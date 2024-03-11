@@ -7,7 +7,7 @@ import {
   ClickOutsideMode,
   useListenClickOutsideV2,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const containerRef = React.createRef<HTMLDivElement>();
 const nullRef = React.createRef<HTMLDivElement>();
@@ -77,7 +77,7 @@ describe('useListenClickOutsideV2', () => {
     );
 
     act(() => {
-      if (isNonNullable(containerRef.current)) {
+      if (isDefined(containerRef.current)) {
         fireEvent.mouseDown(containerRef.current);
         fireEvent.click(containerRef.current);
       }
@@ -101,7 +101,7 @@ describe('useListenClickOutsideV2', () => {
     );
 
     act(() => {
-      if (isNonNullable(containerRef.current)) {
+      if (isDefined(containerRef.current)) {
         fireEvent.mouseDown(containerRef.current);
         fireEvent.click(containerRef.current);
       }

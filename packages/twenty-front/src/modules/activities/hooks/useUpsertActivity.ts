@@ -112,10 +112,7 @@ export const useUpsertActivity = () => {
       }
 
       // Call optimistic effects
-      if (
-        weAreOnObjectShowPage &&
-        isDefined(objectShowPageTargetableObject)
-      ) {
+      if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
           activityToInject: activityWithConnection,

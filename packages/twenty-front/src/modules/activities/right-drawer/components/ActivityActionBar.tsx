@@ -111,10 +111,7 @@ export const ActivityActionBar = () => {
         setIsRightDrawerOpen(false);
 
         if (isNonEmptyString(viewableActivityId)) {
-          if (
-            isActivityInCreateMode &&
-            isDefined(temporaryActivityForEditor)
-          ) {
+          if (isActivityInCreateMode && isDefined(temporaryActivityForEditor)) {
             deleteActivityFromCache(temporaryActivityForEditor);
             setTemporaryActivityForEditor(null);
           } else if (isNonEmptyString(activityIdInDrawer)) {
@@ -221,10 +218,7 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (
-      isDefined(record) &&
-      isDefined(objectShowPageTargetableObject)
-    ) {
+    if (isDefined(record) && isDefined(objectShowPageTargetableObject)) {
       openCreateActivity({
         type: record?.type,
         customAssignee: record?.assignee,

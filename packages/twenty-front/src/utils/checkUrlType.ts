@@ -11,9 +11,7 @@ export const checkUrlType = (url: string) => {
     return LinkType.LinkedIn;
   }
   if (
-    isDefined(
-      /^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url),
-    )
+    isDefined(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url))
   ) {
     return LinkType.Twitter;
   }
