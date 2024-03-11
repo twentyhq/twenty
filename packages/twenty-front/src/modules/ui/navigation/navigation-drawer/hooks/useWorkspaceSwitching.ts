@@ -4,6 +4,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useGenerateJwtMutation } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useWorkspaceSwitching = () => {
   const navigate = useNavigate();
@@ -19,13 +20,14 @@ export const useWorkspaceSwitching = () => {
       },
     });
 
-    if (jwt.errors) {
+    if (isDefined(jwt.errors)) {
       throw jwt.errors;
     }
 
-    if (!jwt.data?.generateJWT) {
+    if (!isDefined(jwt.data?.generateJWT)) {
       throw new Error('could not create token');
     }
+
     const { tokens } = jwt.data.generateJWT;
     setTokenPair(tokens);
     navigate(`/objects/companies`);

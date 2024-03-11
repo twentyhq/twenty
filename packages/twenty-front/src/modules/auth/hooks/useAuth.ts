@@ -103,7 +103,7 @@ export const useAuth = () => {
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
-      if (verifyResult.data?.verify.user.workspaces) {
+      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
         const validWorkspaces =
           verifyResult.data?.verify.user.workspaces.filter(
             ({ workspace }) => workspace !== null && workspace !== undefined,

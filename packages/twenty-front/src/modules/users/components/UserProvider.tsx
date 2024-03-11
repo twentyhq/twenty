@@ -38,7 +38,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }
-    if (queryData?.currentUser?.workspaces) {
+    if (isDefined(queryData?.currentUser?.workspaces)) {
       const validWorkspaces = queryData.currentUser.workspaces.filter(
         (obj: any) => obj.workspace !== null && obj.workspace !== undefined,
       );
