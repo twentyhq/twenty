@@ -7,9 +7,9 @@ import { useGenerateJwtMutation } from '~/generated/graphql';
 
 export const useWorkspaceSwitching = () => {
   const navigate = useNavigate();
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const setTokenPair = useSetRecoilState(tokenPairState());
   const [generateJWT] = useGenerateJwtMutation();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
 
   const switchWorkspace = async (workspaceId: string) => {
     if (currentWorkspace?.id === workspaceId) return;

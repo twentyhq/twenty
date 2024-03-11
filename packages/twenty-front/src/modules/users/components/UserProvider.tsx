@@ -13,9 +13,9 @@ import { isDefined } from '~/utils/isDefined';
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
 
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setWorkspaces = useSetRecoilState(workspacesState);
+  const setCurrentUser = useSetRecoilState(currentUserState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+  const setWorkspaces = useSetRecoilState(workspacesState());
 
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState(),

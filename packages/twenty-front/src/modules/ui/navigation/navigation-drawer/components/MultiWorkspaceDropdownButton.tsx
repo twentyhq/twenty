@@ -60,7 +60,7 @@ export const MultiWorkspaceDropdownButton = ({
   workspaces,
 }: MultiWorkspaceDropdownButtonProps) => {
   const theme = useTheme();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
 
   const [isMultiWorkspaceDropdownOpen, setToggleMultiWorkspaceDropdown] =
     useState(false);

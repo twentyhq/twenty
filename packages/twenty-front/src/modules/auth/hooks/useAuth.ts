@@ -39,9 +39,9 @@ export const useAuth = () => {
     currentWorkspaceMemberState(),
   );
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
-  const setWorkspaces = useSetRecoilState(workspacesState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState());
+  const setWorkspaces = useSetRecoilState(workspacesState());
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
