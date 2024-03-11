@@ -16,5 +16,30 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     insertButtonForPerson();
   }
 
+  if (message.action === 'TOGGLE') {
+    toggle();
+  }
+
   sendResponse('Executing!');
 });
+
+const iframe = document.createElement('iframe');
+iframe.style.background = 'green';
+iframe.style.height = '100%';
+iframe.style.width = '400px';
+iframe.style.position = 'fixed';
+iframe.style.top = '0px';
+iframe.style.right = '-400px';
+iframe.style.zIndex = '9000000000000000000';
+iframe.style.transition = 'ease-in-out 0.3s';
+iframe.src = chrome.runtime.getURL('index.html');
+
+document.body.appendChild(iframe);
+
+const toggle = () => {
+  if (iframe.style.right === '-400px') {
+    iframe.style.right = '0px';
+  } else {
+    iframe.style.right = '-400px';
+  }
+};
