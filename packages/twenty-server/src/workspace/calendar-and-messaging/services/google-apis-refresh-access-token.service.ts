@@ -6,7 +6,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 
 @Injectable()
-export class GmailRefreshAccessTokenService {
+export class GoogleAPIsRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly connectedAccountService: ConnectedAccountService,

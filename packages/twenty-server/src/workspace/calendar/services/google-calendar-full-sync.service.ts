@@ -3,10 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import {
@@ -22,10 +18,11 @@ import { MessageQueueService } from 'src/integrations/message-queue/services/mes
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { CalendarEventService } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.service';
 import { formatGoogleCalendarEvent } from 'src/workspace/calendar/utils/format-google-calendar-event.util';
+import { GoogleCalendarFullSyncJobData } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 
 @Injectable()
-export class GmailFullSyncService {
-  private readonly logger = new Logger(GmailFullSyncService.name);
+export class GoogleCalendarFullSyncService {
+  private readonly logger = new Logger(GoogleCalendarFullSyncService.name);
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
@@ -244,8 +241,8 @@ export class GmailFullSyncService {
     );
 
     if (nextPageToken) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
+      await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
+        GoogleCalendarFullSyncService.name,
         {
           workspaceId,
           connectedAccountId,

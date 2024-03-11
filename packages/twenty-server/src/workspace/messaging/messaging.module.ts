@@ -14,7 +14,7 @@ import { CreateCompanyService } from 'src/workspace/auto-companies-and-contacts-
 import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
-import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { GoogleAPIsRefreshAccessTokenService } from 'src/workspace/calendar-and-messaging/services/google-apis-refresh-access-token.service';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/workspace/messaging/listeners/messaging-workspace-member.listener';
@@ -50,7 +50,7 @@ import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by
     GmailFullSyncService,
     GmailPartialSyncService,
     FetchMessagesByBatchesService,
-    GmailRefreshAccessTokenService,
+    GoogleAPIsRefreshAccessTokenService,
     GmailClientProvider,
     CreateContactService,
     CreateCompanyService,
@@ -65,7 +65,7 @@ import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by
   exports: [
     GmailPartialSyncService,
     GmailFullSyncService,
-    GmailRefreshAccessTokenService,
+    GoogleAPIsRefreshAccessTokenService,
     FetchByBatchesService,
   ],
 })
