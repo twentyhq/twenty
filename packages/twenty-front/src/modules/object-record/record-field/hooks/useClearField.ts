@@ -38,8 +38,8 @@ export const useClearField = () => {
             (field) => field.name === fieldDefinition.metadata.fieldName,
           );
 
-          if (!foundFieldMetadataItem || !foundFieldMetadataItem) {
-            throw new Error('Field metadata not found');
+          if (!foundObjectMetadataItem || !foundFieldMetadataItem) {
+            throw new Error('Field metadata item cannot be found');
           }
 
           const fieldName = fieldDefinition.metadata.fieldName;
