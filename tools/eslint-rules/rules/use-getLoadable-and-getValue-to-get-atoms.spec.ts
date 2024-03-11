@@ -25,20 +25,19 @@ ruleTester.run(RULE_NAME, rule, {
       code: 'const atoms = await snapshot.getPromise(someState);',
       errors: [
         {
-          messageId: 'invalidWayToGetAtoms',
+          messageId: 'invalidAccessorOnSnapshot',
         },
       ],
-      output: 'const atoms = snapshot.getLoadable(someState).getValue();',
+      output: 'const atoms = await snapshot.getLoadable(someState);',
     },
     {
       code: 'const atoms = await snapshot.getPromise(someState(viewId));',
       errors: [
         {
-          messageId: 'invalidWayToGetAtoms',
+          messageId: 'invalidAccessorOnSnapshot',
         },
       ],
-      output:
-        'const atoms = snapshot.getLoadable(someState(viewId)).getValue();',
+      output: 'const atoms = await snapshot.getLoadable(someState(viewId));',
     },
     {
       code: 'const atoms = snapshot.getLoadable(someState).anotherMethod();',

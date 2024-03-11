@@ -28,7 +28,7 @@ export const useRecordIndexOptionsForBoard = ({
   viewBarId,
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
-    useRecoilState(recordIndexFieldDefinitionsState);
+    useRecoilState(recordIndexFieldDefinitionsState());
 
   const { persistViewFields } = useViewFields(viewBarId);
   const { updateView } = useViews(viewBarId);
@@ -153,7 +153,7 @@ export const useRecordIndexOptionsForBoard = ({
           ...recordIndexFieldDefinitions,
           {
             ...correspondingFieldDefinition,
-            position: lastVisibleBoardField.position + 1,
+            position: (lastVisibleBoardField?.position || 0) + 1,
             isVisible: true,
           },
         ];

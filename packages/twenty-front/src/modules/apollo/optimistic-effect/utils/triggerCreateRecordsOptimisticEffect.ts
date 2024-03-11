@@ -1,4 +1,5 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
@@ -76,7 +77,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
         const hasAddedRecords = recordsToCreate
           .map((recordToCreate) => {
-            if (recordToCreate.id) {
+            if (isNonEmptyString(recordToCreate.id)) {
               const recordToCreateReference = toReference(recordToCreate);
 
               if (!recordToCreateReference) {

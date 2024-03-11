@@ -107,7 +107,7 @@ export const Avatar = ({
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
   useEffect(() => {
-    if (avatarUrl) {
+    if (isNonEmptyString(avatarUrl)) {
       new Promise((resolve) => {
         const img = new Image();
         img.onload = () => resolve(false);

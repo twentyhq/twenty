@@ -1,7 +1,7 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { ViewFilter } from '@/views/types/ViewFilter';
 
-export const onViewFiltersChangeScopedState = createStateScopeMap<
+export const onViewFiltersChangeScopedState = createComponentState<
   ((filters: ViewFilter[]) => void | Promise<void>) | undefined
 >({
   key: 'onViewFiltersChangeScopedState',

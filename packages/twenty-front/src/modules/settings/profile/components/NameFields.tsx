@@ -29,9 +29,9 @@ export const NameFields = ({
   onFirstNameUpdate,
   onLastNameUpdate,
 }: NameFieldsProps) => {
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useRecoilValue(currentUserState());
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const [firstName, setFirstName] = useState(
@@ -47,12 +47,9 @@ export const NameFields = ({
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
-    if (onFirstNameUpdate) {
-      onFirstNameUpdate(firstName);
-    }
-    if (onLastNameUpdate) {
-      onLastNameUpdate(lastName);
-    }
+    onFirstNameUpdate?.(firstName);
+    onLastNameUpdate?.(lastName);
+
     try {
       if (!currentWorkspaceMember?.id) {
         throw new Error('User is not logged in');

@@ -1,12 +1,12 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 export type StepsState = {
   activeStep: number;
 };
 
-export const stepBarInternalState = atom<StepsState>({
+export const stepBarInternalState = createState<StepsState>({
   key: 'step-bar/internal-state',
-  default: {
+  defaultValue: {
     activeStep: -1,
   },
 });

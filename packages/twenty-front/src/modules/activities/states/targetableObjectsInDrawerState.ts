@@ -1,8 +1,9 @@
-import { atom } from 'recoil';
-
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const targetableObjectsInDrawerState = atom<ActivityTargetableObject[]>({
+export const targetableObjectsInDrawerState = createState<
+  ActivityTargetableObject[]
+>({
   key: 'targetableObjectsInDrawerState',
-  default: [],
+  defaultValue: [],
 });

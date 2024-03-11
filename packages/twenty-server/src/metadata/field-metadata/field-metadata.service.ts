@@ -26,6 +26,15 @@ import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/work
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
 import { generateNullable } from 'src/metadata/field-metadata/utils/generate-nullable';
+import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
+import {
+  RelationDefinitionDTO,
+  RelationDefinitionType,
+} from 'src/metadata/field-metadata/dtos/relation-definition.dto';
+import {
+  RelationMetadataEntity,
+  RelationMetadataType,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import {
   FieldMetadataEntity,
@@ -41,7 +50,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   constructor(
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -339,5 +349,72 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return fieldMetadataInputOverrided as UpdateFieldInput;
+  }
+
+  public async getRelationDefinition(
+    fieldMetadata: FieldMetadataDTO,
+  ): Promise<RelationDefinitionDTO | null> {
+    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
+      return null;
+    }
+
+    const foundRelationMetadata = await this.relationMetadataRepository.findOne(
+      {
+        where: [
+          { fromFieldMetadataId: fieldMetadata.id },
+          { toFieldMetadataId: fieldMetadata.id },
+        ],
+        relations: [
+          'fromObjectMetadata',
+          'toObjectMetadata',
+          'fromFieldMetadata',
+          'toFieldMetadata',
+        ],
+      },
+    );
+
+    if (!foundRelationMetadata) {
+      throw new Error('RelationMetadata not found');
+    }
+
+    const isRelationFromSource =
+      foundRelationMetadata.fromFieldMetadata.id === fieldMetadata.id;
+
+    // TODO: implement MANY_TO_MANY
+    if (
+      foundRelationMetadata.relationType === RelationMetadataType.MANY_TO_MANY
+    ) {
+      throw new Error(`
+        Relation type ${foundRelationMetadata.relationType} not supported
+      `);
+    }
+
+    if (isRelationFromSource) {
+      const direction =
+        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+          ? RelationDefinitionType.ONE_TO_ONE
+          : RelationDefinitionType.ONE_TO_MANY;
+
+      return {
+        sourceObjectMetadata: foundRelationMetadata.fromObjectMetadata,
+        sourceFieldMetadata: foundRelationMetadata.fromFieldMetadata,
+        targetObjectMetadata: foundRelationMetadata.toObjectMetadata,
+        targetFieldMetadata: foundRelationMetadata.toFieldMetadata,
+        direction,
+      };
+    } else {
+      const direction =
+        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+          ? RelationDefinitionType.ONE_TO_ONE
+          : RelationDefinitionType.MANY_TO_ONE;
+
+      return {
+        sourceObjectMetadata: foundRelationMetadata.toObjectMetadata,
+        sourceFieldMetadata: foundRelationMetadata.toFieldMetadata,
+        targetObjectMetadata: foundRelationMetadata.fromObjectMetadata,
+        targetFieldMetadata: foundRelationMetadata.fromFieldMetadata,
+        direction,
+      };
+    }
   }
 }

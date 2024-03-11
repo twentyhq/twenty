@@ -37,7 +37,7 @@ export const NavigationDrawerBackButton = ({
 }: NavigationDrawerBackButtonProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
+  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState());
 
   return (
     <StyledContainer>

@@ -128,7 +128,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     const setHotkeyScope = useSetHotkeyScope();
 
     const setIsSoftFocusUsingMouseState = useSetRecoilState(
-      isSoftFocusUsingMouseState,
+      isSoftFocusUsingMouseState(),
     );
 
     useScopedHotkeys(

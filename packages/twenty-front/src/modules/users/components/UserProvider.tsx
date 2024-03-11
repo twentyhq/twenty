@@ -8,6 +8,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { isDefined } from '~/utils/isDefined';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +18,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const setWorkspaces = useSetRecoilState(workspacesState);
 
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const { loading: queryLoading, data: queryData } = useQuery(GET_CURRENT_USER);
@@ -26,11 +27,11 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     if (!queryLoading) {
       setIsLoading(false);
     }
-    if (queryData?.currentUser) {
+    if (isDefined(queryData?.currentUser)) {
       setCurrentUser(queryData.currentUser);
       setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
     }
-    if (queryData?.currentUser?.workspaceMember) {
+    if (isDefined(queryData?.currentUser?.workspaceMember)) {
       const workspaceMember = queryData.currentUser.workspaceMember;
       setCurrentWorkspaceMember({
         ...workspaceMember,

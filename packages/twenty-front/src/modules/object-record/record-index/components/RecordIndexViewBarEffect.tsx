@@ -4,6 +4,7 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useViewBar } from '@/views/hooks/useViewBar';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type RecordIndexViewBarEffectProps = {
   objectNamePlural: string;
@@ -33,7 +34,7 @@ export const RecordIndexViewBarEffect = ({
   } = useViewBar({ viewBarId });
 
   useEffect(() => {
-    if (!objectMetadataItem) {
+    if (isUndefinedOrNull(objectMetadataItem)) {
       return;
     }
     setViewObjectMetadataId?.(objectMetadataItem.id);

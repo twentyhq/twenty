@@ -10,7 +10,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 export const useUploadAttachmentFile = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const [uploadFile] = useUploadFileMutation();
 
   const { createOneRecord: createOneAttachment } =

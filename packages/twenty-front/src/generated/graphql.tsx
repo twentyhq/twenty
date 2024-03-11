@@ -134,8 +134,6 @@ export type FieldConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type FieldDeleteResponse = {
@@ -351,8 +349,6 @@ export type ObjectConnection = {
   edges: Array<ObjectEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type ObjectFieldsConnection = {
@@ -361,8 +357,6 @@ export type ObjectFieldsConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type PageInfo = {
@@ -474,8 +468,6 @@ export type RelationConnection = {
   edges: Array<RelationEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type RelationDeleteResponse = {

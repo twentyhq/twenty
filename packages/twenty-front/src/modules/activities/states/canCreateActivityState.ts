@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const canCreateActivityState = atom<boolean>({
+export const canCreateActivityState = createState<boolean>({
   key: 'canCreateActivityState',
-  default: false,
+  defaultValue: false,
 });

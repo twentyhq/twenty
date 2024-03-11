@@ -9,14 +9,15 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { parseDate } from '~/utils/date-utils';
 
 export const CurrentUserDueTaskCountEffect = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
   const [currentUserDueTaskCount, setCurrentUserDueTaskCount] = useRecoilState(
-    currentUserDueTaskCountState,
+    currentUserDueTaskCountState(),
   );
 
   const { records: tasks } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Activity,
+    depth: 0,
     filter: {
       type: { eq: 'Task' },
       completedAt: { is: 'NULL' },

@@ -19,7 +19,7 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
-    if (disabled) {
+    if (disabled === true) {
       return theme.background.secondary;
     }
 
@@ -34,7 +34,7 @@ const StyledButton = styled.button<
   }};
   border: 1px solid;
   border-color: ${({ theme, disabled, variant }) => {
-    if (disabled) {
+    if (disabled === true) {
       return theme.background.transparent.lighter;
     }
 
@@ -49,14 +49,14 @@ const StyledButton = styled.button<
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
   ${({ theme, disabled }) => {
-    if (disabled) {
+    if (disabled === true) {
       return '';
     }
 
     return `box-shadow: ${theme.boxShadow.light};`;
   }}
   color: ${({ theme, variant, disabled }) => {
-    if (disabled) {
+    if (disabled === true) {
       return theme.font.color.light;
     }
 

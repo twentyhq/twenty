@@ -11,7 +11,7 @@ import { Comment } from '../Comment';
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
 const CommentSetterEffect = () => {
-  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+  const setViewableActivity = useSetRecoilState(viewableActivityIdState());
 
   useEffect(() => {
     setViewableActivity('test-id');

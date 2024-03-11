@@ -69,7 +69,7 @@ export const useActivities = ({
     useFindManyRecords<Activity>({
       skip: skipActivities,
       objectNameSingular: CoreObjectNameSingular.Activity,
-      depth: 3,
+      depth: 1,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(

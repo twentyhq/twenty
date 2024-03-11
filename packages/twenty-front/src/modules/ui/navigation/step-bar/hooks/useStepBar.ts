@@ -8,8 +8,9 @@ export type StepsOptions = {
 };
 
 export const useStepBar = ({ initialStep }: StepsOptions) => {
-  const [stepBarInternal, setStepBarInternal] =
-    useRecoilState(stepBarInternalState);
+  const [stepBarInternal, setStepBarInternal] = useRecoilState(
+    stepBarInternalState(),
+  );
 
   const nextStep = () => {
     setStepBarInternal((prevState) => ({

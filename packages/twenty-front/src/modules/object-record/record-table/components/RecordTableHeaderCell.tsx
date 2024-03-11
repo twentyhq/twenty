@@ -37,7 +37,7 @@ const StyledColumnHeaderCell = styled.th<{
     `;
   }};
   ${({ isResizing, theme }) => {
-    if (isResizing) {
+    if (isResizing === true) {
       return `&:after {
         background-color: ${theme.color.blue};
         bottom: 0;
@@ -165,7 +165,7 @@ export const RecordTableHeaderCell = ({
   });
 
   const isMobile = useIsMobile();
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const scrollLeft = useRecoilValue(scrollLeftState());
 
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && scrollLeft > 0;

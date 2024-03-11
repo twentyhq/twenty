@@ -7,16 +7,17 @@ import {
   useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [updateWorkspce] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
+    currentWorkspaceState(),
   );
 
   const onUpload = async (file: File) => {
-    if (!file) {
+    if (isUndefinedOrNull(file)) {
       return;
     }
     if (!currentWorkspace?.id) {

@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isScrollingState = atom({
+export const isScrollingState = createState({
   key: 'scroll/isScollingState',
-  default: false,
+  defaultValue: false,
 });

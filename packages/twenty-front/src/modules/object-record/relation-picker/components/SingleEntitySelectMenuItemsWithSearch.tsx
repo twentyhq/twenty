@@ -6,7 +6,7 @@ import {
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 
@@ -42,7 +42,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       relationPickerScopeId,
     });
 
-  const showCreateButton = isNonNullable(onCreate) && searchFilter !== '';
+  const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
   const entities = useFilteredSearchEntityQuery({
     filters: [

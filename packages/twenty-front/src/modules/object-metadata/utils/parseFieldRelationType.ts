@@ -4,7 +4,7 @@ import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const parseFieldRelationType = (
   field: FieldMetadataItem | undefined,
@@ -30,14 +30,14 @@ export const parseFieldRelationType = (
   };
 
   if (
-    isNonNullable(field.fromRelationMetadata) &&
+    isDefined(field.fromRelationMetadata) &&
     field.fromRelationMetadata.relationType in config
   ) {
     return config[field.fromRelationMetadata.relationType].from;
   }
 
   if (
-    isNonNullable(field.toRelationMetadata) &&
+    isDefined(field.toRelationMetadata) &&
     field.toRelationMetadata.relationType in config
   ) {
     return config[field.toRelationMetadata.relationType].to;
