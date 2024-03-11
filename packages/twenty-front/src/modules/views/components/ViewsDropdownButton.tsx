@@ -10,6 +10,7 @@ import {
   IconPlus,
   IconTrash,
 } from '@/ui/display/icon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -36,11 +37,8 @@ const StyledDropdownLabelAdornments = styled.span`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledViewIcon = styled(IconList)`
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledViewName = styled.span`
+  margin-left: ${({ theme }) => theme.spacing(1)};
   display: inline-block;
   max-width: 130px;
   @media (max-width: 375px) {
@@ -128,13 +126,20 @@ export const ViewsDropdownButton = ({
     closeViewsDropdown();
   };
 
+  const { getIcon } = useIcons();
+  const CurrentViewIcon = getIcon(currentView?.icon);
+
   return (
     <Dropdown
       dropdownId={VIEWS_DROPDOWN_ID}
       dropdownHotkeyScope={hotkeyScope}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
-          <StyledViewIcon size={theme.icon.size.md} />
+          {currentView && CurrentViewIcon ? (
+            <CurrentViewIcon size={theme.icon.size.md} />
+          ) : (
+            <IconList size={theme.icon.size.md} />
+          )}
           <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
           <StyledDropdownLabelAdornments>
             · {entityCountInCurrentView}{' '}
@@ -163,7 +168,7 @@ export const ViewsDropdownButton = ({
                     : null,
                 ].filter(isDefined)}
                 onClick={() => handleViewSelect(view.id)}
-                LeftIcon={IconList}
+                LeftIcon={getIcon(view.icon)}
                 text={view.name}
               />
             ))}
