@@ -2,7 +2,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { fireEvent, render, renderHook } from '@testing-library/react';
 
-import { isDefined, isDefined } from '~/utils/isDefined';
+import { isDefined } from '~/utils/isDefined';
 
 import {
   ClickOutsideMode,
