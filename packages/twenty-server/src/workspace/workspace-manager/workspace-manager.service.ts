@@ -38,12 +38,10 @@ export class WorkspaceManagerService {
 
     await this.setWorkspaceMaxRow(workspaceId, schemaName);
 
-    await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      {
-        workspaceId,
-        dataSourceId: dataSourceMetadata.id,
-      },
-    );
+    await this.workspaceSyncMetadataService.synchronize({
+      workspaceId,
+      dataSourceId: dataSourceMetadata.id,
+    });
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
@@ -70,12 +68,10 @@ export class WorkspaceManagerService {
 
     await this.setWorkspaceMaxRow(workspaceId, schemaName);
 
-    await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      {
-        workspaceId,
-        dataSourceId: dataSourceMetadata.id,
-      },
-    );
+    await this.workspaceSyncMetadataService.synchronize({
+      workspaceId,
+      dataSourceId: dataSourceMetadata.id,
+    });
 
     await this.prefillWorkspaceWithDemoObjects(dataSourceMetadata, workspaceId);
   }

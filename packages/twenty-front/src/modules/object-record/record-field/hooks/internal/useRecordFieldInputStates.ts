@@ -1,9 +1,9 @@
 import { RecordFieldInputScopeInternalContext } from '@/object-record/record-field/scopes/scope-internal-context/RecordFieldInputScopeInternalContext';
-import { recordFieldInputDraftValueSelectorScopeMap } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueSelectorScopeMap';
+import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
+import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
 
 export const useRecordFieldInputStates = <FieldValue>(
   recordFieldInputId?: string,
@@ -15,8 +15,8 @@ export const useRecordFieldInputStates = <FieldValue>(
 
   return {
     scopeId,
-    getDraftValueSelector: getSelector<
+    getDraftValueSelector: extractComponentSelector<
       FieldInputDraftValue<FieldValue> | undefined
-    >(recordFieldInputDraftValueSelectorScopeMap, scopeId),
+    >(recordFieldInputDraftValueComponentSelector, scopeId),
   };
 };

@@ -6,6 +6,7 @@ import {
   MatchColumnsStepProps,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Field, Fields } from '@/spreadsheet-import/types';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { findMatch } from './findMatch';
 import { setColumn } from './setColumn';
@@ -18,7 +19,7 @@ export const getMatchedColumns = <T extends string>(
 ) =>
   columns.reduce<Column<T>[]>((arr, column) => {
     const autoMatch = findMatch(column.header, fields, autoMapDistance);
-    if (autoMatch) {
+    if (isNonNullable(autoMatch)) {
       const field = fields.find((field) => field.key === autoMatch) as Field<T>;
       const duplicateIndex = arr.findIndex(
         (column) => 'value' in column && column.value === field.key,

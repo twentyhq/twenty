@@ -30,9 +30,9 @@ import {
 } from '../RelationFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const submitJestFn = fn();
 const cancelJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     submitJestFn.mockClear();
     cancelJestFn.mockClear();
   }

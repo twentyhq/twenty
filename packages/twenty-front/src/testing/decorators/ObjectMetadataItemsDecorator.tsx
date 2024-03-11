@@ -8,9 +8,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   useEffect(

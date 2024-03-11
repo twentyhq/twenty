@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type ViewBarSortEffectProps = {
   sortDropdownId: string;
@@ -25,10 +26,10 @@ export const ViewBarSortEffect = ({
   });
 
   useEffect(() => {
-    if (availableSortDefinitions) {
+    if (isNonNullable(availableSortDefinitions)) {
       setAvailableSortDefinitions(availableSortDefinitions);
     }
-    if (onSortSelect) {
+    if (isNonNullable(onSortSelect)) {
       setOnSortSelect(() => onSortSelect);
     }
   }, [

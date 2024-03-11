@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type ViewBarFilterEffectProps = {
   filterDropdownId: string;
@@ -26,15 +27,16 @@ export const ViewBarFilterEffect = ({
     setOnFilterSelect,
     filterDefinitionUsedInDropdown,
     setObjectFilterDropdownSelectedRecordIds,
+    setObjectFilterDropdownSelectedOptionValues,
     isObjectFilterDropdownUnfolded,
   } = useFilterDropdown({ filterDropdownId });
 
   useEffect(() => {
-    if (availableFilterDefinitions) {
+    if (isNonNullable(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
 
-    if (onFilterSelect) {
+    if (isNonNullable(onFilterSelect)) {
       setOnFilterSelect(() => onFilterSelect);
     }
   }, [
@@ -61,12 +63,29 @@ export const ViewBarFilterEffect = ({
         : [];
 
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
+    } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
+      const viewFilterUsedInDropdown = currentViewFilters.find(
+        (filter) =>
+          filter.fieldMetadataId ===
+          filterDefinitionUsedInDropdown.fieldMetadataId,
+      );
+
+      const viewFilterSelectedOptionValues = isNonEmptyString(
+        viewFilterUsedInDropdown?.value,
+      )
+        ? JSON.parse(viewFilterUsedInDropdown.value)
+        : [];
+
+      setObjectFilterDropdownSelectedOptionValues(
+        viewFilterSelectedOptionValues,
+      );
     }
   }, [
     filterDefinitionUsedInDropdown,
     currentViewFilters,
     setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownUnfolded,
+    setObjectFilterDropdownSelectedOptionValues,
   ]);
 
   return <></>;

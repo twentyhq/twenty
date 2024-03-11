@@ -38,7 +38,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     useRecordTable();
   const { getTableLastRowVisibleState } = useRecordTableStates();
   const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
   const params = useFindManyParams(objectNameSingular);
 
   const {

@@ -26,8 +26,8 @@ export const useSetHotkeyScope = () =>
     ({ snapshot, set }) =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getLoadable(currentHotkeyScopeState())
+          .getValue();
 
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isNonNullable(customScopes)) {
@@ -63,21 +63,21 @@ export const useSetHotkeyScope = () =>
 
         const scopesToSet: string[] = [];
 
-        if (newHotkeyScope.customScopes?.commandMenu) {
+        if (newHotkeyScope.customScopes?.commandMenu === true) {
           scopesToSet.push(AppHotkeyScope.CommandMenu);
         }
 
-        if (newHotkeyScope?.customScopes?.goto) {
+        if (newHotkeyScope?.customScopes?.goto === true) {
           scopesToSet.push(AppHotkeyScope.Goto);
         }
 
-        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu) {
+        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu === true) {
           scopesToSet.push(AppHotkeyScope.KeyboardShortcutMenu);
         }
 
         scopesToSet.push(newHotkeyScope.scope);
-        set(internalHotkeysEnabledScopesState, scopesToSet);
-        set(currentHotkeyScopeState, newHotkeyScope);
+        set(internalHotkeysEnabledScopesState(), scopesToSet);
+        set(currentHotkeyScopeState(), newHotkeyScope);
       },
     [],
   );

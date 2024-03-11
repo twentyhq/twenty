@@ -43,7 +43,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           CreateDTOClass: CreateFieldInput,
           UpdateDTOClass: UpdateFieldInput,
           ServiceClass: FieldMetadataService,
-          enableTotalCount: true,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],

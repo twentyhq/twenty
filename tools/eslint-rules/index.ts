@@ -7,6 +7,10 @@ import {
   RULE_NAME as effectComponentsName,
 } from './rules/effect-components';
 import {
+  rule as explicitBooleanPredicatesInIf,
+  RULE_NAME as explicitBooleanPredicatesInIfName,
+} from './rules/explicit-boolean-predicates-in-if';
+import {
   rule as matchingStateVariable,
   RULE_NAME as matchingStateVariableName,
 } from './rules/matching-state-variable';
@@ -30,6 +34,11 @@ import {
   rule as styledComponentsPrefixedWithStyled,
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
+import {
+  rule as useGetLoadableAndGetValueToGetAtoms,
+  RULE_NAME as useGetLoadableAndGetValueToGetAtomsName,
+} from './rules/use-getLoadable-and-getValue-to-get-atoms';
+
 /**
  * Import your custom workspace rules at the top of this file.
  *
@@ -64,6 +73,9 @@ module.exports = {
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [explicitBooleanPredicatesInIfName]: explicitBooleanPredicatesInIf,
+    [useGetLoadableAndGetValueToGetAtomsName]:
+      useGetLoadableAndGetValueToGetAtoms,
     [maxConstsPerFileName]: maxConstsPerFile,
   },
 };

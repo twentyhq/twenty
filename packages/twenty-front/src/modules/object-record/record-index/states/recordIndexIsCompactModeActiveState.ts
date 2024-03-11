@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const recordIndexIsCompactModeActiveState = atom<boolean>({
+export const recordIndexIsCompactModeActiveState = createState<boolean>({
   key: 'recordIndexIsCompactModeActiveState',
-  default: false,
+  defaultValue: false,
 });

@@ -23,21 +23,23 @@ export const useOpenCreateActivityDrawer = () => {
 
   const { createActivityInCache } = useCreateActivityInCache();
 
-  const [, setActivityTargetableEntityArray] = useRecoilState(
-    activityTargetableEntityArrayState,
+  const setActivityTargetableEntityArray = useSetRecoilState(
+    activityTargetableEntityArrayState(),
   );
-  const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
+  const setViewableActivityId = useSetRecoilState(viewableActivityIdState());
 
-  const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
+  const setIsCreatingActivity = useSetRecoilState(
+    isActivityInCreateModeState(),
+  );
 
   const setTemporaryActivityForEditor = useSetRecoilState(
-    temporaryActivityForEditorState,
+    temporaryActivityForEditorState(),
   );
 
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState());
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState,
+    isUpsertingActivityInDBState(),
   );
 
   const openCreateActivityDrawer = async ({

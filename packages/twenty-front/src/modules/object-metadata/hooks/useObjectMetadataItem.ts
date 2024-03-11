@@ -40,8 +40,9 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
+  eagerLoadedRelations?: Record<string, any>,
 ) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
 
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
@@ -52,7 +53,7 @@ export const useObjectMetadataItem = (
     }),
   );
 
-  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
@@ -90,6 +91,7 @@ export const useObjectMetadataItem = (
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
+    eagerLoadedRelations,
   });
 
   const generateFindDuplicateRecordsQuery =

@@ -16,12 +16,13 @@ const StyledContainer = styled.div`
   height: 32px;
 
   justify-content: center;
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const CheckboxCell = () => {
   const { recordId } = useContext(RecordTableRowContext);
   const { isRowSelectedFamilyState } = useRecordTableStates();
-  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState());
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 

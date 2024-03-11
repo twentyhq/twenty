@@ -1,5 +1,7 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { Request } from 'express';
 
 import { OptionalJwtAuthGuard } from 'src/guards/optional-jwt.auth.guard';
 import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
@@ -22,7 +24,13 @@ export class AnalyticsResolver {
     @Args() createEventInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
+    @Context('req') request: Request,
   ) {
-    return this.analyticsService.create(createEventInput, user, workspace);
+    return this.analyticsService.create(
+      createEventInput,
+      user,
+      workspace,
+      request,
+    );
   }
 }

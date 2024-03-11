@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -12,9 +12,9 @@ export const useOpenActivityRightDrawer = () => {
   const { openRightDrawer, isRightDrawerOpen, rightDrawerPage } =
     useRightDrawer();
   const [viewableActivityId, setViewableActivityId] = useRecoilState(
-    viewableActivityIdState,
+    viewableActivityIdState(),
   );
-  const [, setActivityIdInDrawer] = useRecoilState(activityIdInDrawerState);
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState());
   const setHotkeyScope = useSetHotkeyScope();
 
   return (activityId: string) => {

@@ -16,7 +16,8 @@ import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationObjectFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-object.factory';
-import { WorkspaceMigrationFieldFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-field.factory';
+import { computeStandardObject } from 'src/workspace/workspace-sync-metadata/utils/compute-standard-object.util';
+import { standardObjectMetadataDefinitions } from 'src/workspace/workspace-sync-metadata/standard-objects';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -28,7 +29,6 @@ export class WorkspaceSyncObjectMetadataService {
     private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
-    private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {}
 
   async synchronize(
@@ -45,14 +45,18 @@ export class WorkspaceSyncObjectMetadataService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          isCustom: false,
           fields: { isCustom: false },
         },
         relations: ['dataSource', 'fields'],
       });
+    const customObjectMetadataCollection =
+      originalObjectMetadataCollection.filter(
+        (objectMetadata) => objectMetadata.isCustom,
+      );
 
     // Create standard object metadata collection
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
+      standardObjectMetadataDefinitions,
       context,
       workspaceFeatureFlagsMap,
     );
@@ -68,7 +72,9 @@ export class WorkspaceSyncObjectMetadataService {
     this.logger.log('Comparing standard objects and fields metadata');
 
     // Store object that need to be deleted
-    for (const originalObjectMetadata of originalObjectMetadataCollection) {
+    for (const originalObjectMetadata of originalObjectMetadataCollection.filter(
+      (object) => !object.isCustom,
+    )) {
       if (!standardObjectMetadataMap[originalObjectMetadata.nameSingular]) {
         storage.addDeleteObjectMetadata(originalObjectMetadata);
       }
@@ -78,8 +84,11 @@ export class WorkspaceSyncObjectMetadataService {
     for (const standardObjectName in standardObjectMetadataMap) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectName];
-      const standardObjectMetadata =
-        standardObjectMetadataMap[standardObjectName];
+      const standardObjectMetadata = computeStandardObject(
+        standardObjectMetadataMap[standardObjectName],
+        originalObjectMetadata,
+        customObjectMetadataCollection,
+      );
 
       /**
        * COMPARE OBJECT METADATA
@@ -132,11 +141,6 @@ export class WorkspaceSyncObjectMetadataService {
         manager,
         storage,
       );
-    const metadataFieldUpdaterResult =
-      await this.workspaceMetadataUpdaterService.updateFieldMetadata(
-        manager,
-        storage,
-      );
 
     this.logger.log('Generating migrations');
 
@@ -153,35 +157,11 @@ export class WorkspaceSyncObjectMetadataService {
         WorkspaceMigrationBuilderAction.DELETE,
       );
 
-    const createFieldWorkspaceMigrations =
-      await this.workspaceMigrationFieldFactory.create(
-        originalObjectMetadataCollection,
-        metadataFieldUpdaterResult.createdFieldMetadataCollection,
-        WorkspaceMigrationBuilderAction.CREATE,
-      );
-
-    const updateFieldWorkspaceMigrations =
-      await this.workspaceMigrationFieldFactory.create(
-        originalObjectMetadataCollection,
-        metadataFieldUpdaterResult.updatedFieldMetadataCollection,
-        WorkspaceMigrationBuilderAction.UPDATE,
-      );
-
-    const deleteFieldWorkspaceMigrations =
-      await this.workspaceMigrationFieldFactory.create(
-        originalObjectMetadataCollection,
-        storage.fieldMetadataDeleteCollection,
-        WorkspaceMigrationBuilderAction.DELETE,
-      );
-
     this.logger.log('Saving migrations');
 
     return [
       ...createObjectWorkspaceMigrations,
       ...deleteObjectWorkspaceMigrations,
-      ...createFieldWorkspaceMigrations,
-      ...updateFieldWorkspaceMigrations,
-      ...deleteFieldWorkspaceMigrations,
     ];
   }
 }

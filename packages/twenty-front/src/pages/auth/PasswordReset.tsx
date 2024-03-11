@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
 
@@ -112,7 +113,7 @@ export const PasswordReset = () => {
       }
     },
     onCompleted: (data) => {
-      if (data?.validatePasswordResetToken?.email) {
+      if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
         setEmail(data.validatePasswordResetToken.email);
       }
     },

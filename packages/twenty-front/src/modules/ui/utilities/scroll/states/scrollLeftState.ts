@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const scrollLeftState = atom<number>({
+export const scrollLeftState = createState<number>({
   key: 'scroll/scrollLeftState',
-  default: 0,
+  defaultValue: 0,
 });

@@ -2,6 +2,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
@@ -24,7 +25,10 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setSelectedOperandInDropdown(newOperand);
     setIsObjectFilterDropdownOperandSelectUnfolded(false);
 
-    if (filterDefinitionUsedInDropdown && selectedFilter) {
+    if (
+      isNonNullable(filterDefinitionUsedInDropdown) &&
+      isNonNullable(selectedFilter)
+    ) {
       selectFilter?.({
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue: selectedFilter.displayValue,

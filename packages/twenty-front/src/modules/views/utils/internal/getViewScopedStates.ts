@@ -5,7 +5,8 @@ import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedStat
 import { isPersistingViewScopedState } from '@/views/states/isPersistingViewScopedState';
 import { onViewCompactModeChangeScopeState } from '@/views/states/onViewCompactModeChangeScopeState';
 import { onViewTypeChangeScopedState } from '@/views/states/onViewTypeChangeScopedState';
-import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
+import { currentViewComponentSelector } from '@/views/states/selectors/currentViewComponentSelector';
+import { savedViewFieldByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFieldByKeyScopedFamilySelector';
 
 import { availableFieldDefinitionsScopedState } from '../../states/availableFieldDefinitionsScopedState';
 import { availableFilterDefinitionsScopedState } from '../../states/availableFilterDefinitionsScopedState';
@@ -23,7 +24,6 @@ import { savedViewFiltersScopedFamilyState } from '../../states/savedViewFilters
 import { savedViewSortsScopedFamilyState } from '../../states/savedViewSortsScopedFamilyState';
 import { canPersistViewFiltersScopedFamilySelector } from '../../states/selectors/canPersistViewFiltersScopedFamilySelector';
 import { canPersistViewSortsScopedFamilySelector } from '../../states/selectors/canPersistViewSortsScopedFamilySelector';
-import { savedViewFieldByKeyScopedFamilySelector } from '../../states/selectors/savedViewFieldByKeyScopedFamilySelector';
 import { savedViewFiltersByKeyScopedFamilySelector } from '../../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { savedViewSortsByKeyScopedFamilySelector } from '../../states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { viewEditModeScopedState } from '../../states/viewEditModeScopedState';
@@ -182,7 +182,7 @@ export const getViewScopedStates = ({
   );
 
   const currentViewSelector = getScopedSelectorDeprecated(
-    currentViewScopedSelector,
+    currentViewComponentSelector,
     viewScopeId,
   );
 

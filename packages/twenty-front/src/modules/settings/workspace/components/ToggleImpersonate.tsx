@@ -9,7 +9,7 @@ export const ToggleImpersonate = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
+    currentWorkspaceState(),
   );
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();

@@ -23,12 +23,6 @@ import { entityCountInCurrentViewScopedState } from '@/views/states/entityCountI
 import { viewEditModeScopedState } from '@/views/states/viewEditModeScopedState';
 import { viewObjectMetadataIdScopeState } from '@/views/states/viewObjectMetadataIdScopeState';
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => {
-  return {
-    useMapFieldMetadataToGraphQLQuery: jest.fn().mockReturnValue(() => '\n'),
-  };
-});
-
 const mockedUuid = 'mocked-uuid';
 jest.mock('uuid');
 

@@ -47,5 +47,6 @@
   },
   "search.exclude": {
     "**/.yarn": true,
-  }
+  },
+  "eslint.debug": true
 }

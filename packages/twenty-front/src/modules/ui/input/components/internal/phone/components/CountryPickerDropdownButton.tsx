@@ -9,6 +9,7 @@ import { CountryCallingCode } from 'libphonenumber-js';
 import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
@@ -112,7 +113,7 @@ export const CountryPickerDropdownButton = ({
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);
-    if (country) {
+    if (isNonNullable(country)) {
       setSelectedCountry(country);
     }
   }, [countries, value]);

@@ -28,7 +28,7 @@ export class CreateCompaniesAndContactsService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    if (participants.length === 0) {
+    if (!participants || participants.length === 0) {
       return;
     }
 
@@ -50,6 +50,10 @@ export class CreateCompaniesAndContactsService {
 
     const { uniqueParticipants, uniqueHandles } =
       getUniqueParticipantsAndHandles(participantsFromOtherCompanies);
+
+    if (uniqueHandles.length === 0) {
+      return;
+    }
 
     const alreadyCreatedContacts = await this.personService.getByEmails(
       uniqueHandles,

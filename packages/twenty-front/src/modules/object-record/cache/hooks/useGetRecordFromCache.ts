@@ -1,8 +1,11 @@
 import { gql, useApolloClient } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isNullable } from '~/utils/isNullable';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGetRecordFromCache = ({
@@ -10,26 +13,27 @@ export const useGetRecordFromCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+
   const apolloClient = useApolloClient();
 
   return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
     recordId: string,
     cache = apolloClient.cache,
   ) => {
-    if (!objectMetadataItem) {
+    if (isNullable(objectMetadataItem)) {
       return null;
     }
 
     const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
     const cacheReadFragment = gql`
-      fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} {
-        id
-        ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery({ field }))
-          .join('\n')}
-      }
+      fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
+        {
+          objectMetadataItems,
+          objectMetadataItem,
+        },
+      )}
     `;
 
     const cachedRecordId = cache.identify({

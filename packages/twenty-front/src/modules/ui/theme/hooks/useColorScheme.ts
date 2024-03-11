@@ -8,7 +8,7 @@ import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({

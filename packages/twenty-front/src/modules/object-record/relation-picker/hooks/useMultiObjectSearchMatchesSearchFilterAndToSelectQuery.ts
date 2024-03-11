@@ -28,7 +28,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   searchFilterValue: string;
   limit?: number;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const nonSystemObjectMetadataItems = objectMetadataItems.filter(
     ({ nameSingular, isSystem }) =>
@@ -87,6 +87,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   const multiSelectQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
       objectMetadataItems: nonSystemObjectMetadataItems,
+      depth: 0,
     });
 
   const {

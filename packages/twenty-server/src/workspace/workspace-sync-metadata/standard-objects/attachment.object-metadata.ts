@@ -1,4 +1,6 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { CustomObjectMetadata } from 'src/workspace/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { DynamicRelationFieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -91,4 +93,13 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   opportunity: OpportunityObjectMetadata;
+
+  @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
+    name: oppositeObjectMetadata.nameSingular,
+    label: oppositeObjectMetadata.labelSingular,
+    description: `Attachment ${oppositeObjectMetadata.labelSingular}`,
+    joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
+    icon: 'IconBuildingSkyscraper',
+  }))
+  custom: CustomObjectMetadata;
 }

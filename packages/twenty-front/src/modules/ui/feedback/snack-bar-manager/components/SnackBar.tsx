@@ -8,6 +8,7 @@ import {
   ProgressBarControls,
 } from '@/ui/feedback/progress-bar/components/ProgressBar';
 import { RGBA } from '@/ui/theme/constants/Rgba';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 
@@ -131,7 +132,7 @@ export const SnackBar = ({
   );
 
   const icon = useMemo(() => {
-    if (iconComponent) {
+    if (isNonNullable(iconComponent)) {
       return iconComponent;
     }
 

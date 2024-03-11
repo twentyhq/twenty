@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
+import { isNonNullable } from '~/utils/isNonNullable';
+
 export type ToggleSize = 'small' | 'medium';
 
 type ContainerProps = {
@@ -56,7 +58,7 @@ export const Toggle = ({
   const handleChange = () => {
     setIsOn(!isOn);
 
-    if (onChange) {
+    if (isNonNullable(onChange)) {
       onChange(!isOn);
     }
   };

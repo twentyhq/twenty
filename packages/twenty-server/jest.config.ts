@@ -1,4 +1,6 @@
 module.exports = {
+  // to enable logs, comment out the following line
+  silent: true,
   clearMocks: true,
   preset: 'ts-jest',
   testEnvironment: 'node',

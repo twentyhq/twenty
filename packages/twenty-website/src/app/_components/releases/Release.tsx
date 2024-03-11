@@ -39,16 +39,19 @@ const StyledVersion = styled.div`
 `;
 
 const StyledRelease = styled.span`
-  color: #b3b3b3;
+  color: #141414;
 `;
 
 const StyledDate = styled.span`
   color: #474747;
   font-size: 16px;
+  font-weight: 400;
 `;
 
 const StlyedContent = styled.div`
   flex: 1;
+
+  gap: 64px;
 
   h3 {
     color: #141414;
@@ -60,12 +63,18 @@ const StlyedContent = styled.div`
     color: #474747;
     font-size: 16px;
     line-height: 28.8px;
-    color: #818181;
     font-weight: 400;
   }
 
   img {
     max-width: 100%;
+  }
+
+  @media (max-width: 810px) {
+    h3 {
+      font-size: 24px;
+      margin: 24px 0 40px;
+    }
   }
 `;
 

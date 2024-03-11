@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
@@ -36,13 +36,13 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const ActivityActionBar = () => {
-  const viewableActivityId = useRecoilValue(viewableActivityIdState);
-  const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
+  const viewableActivityId = useRecoilValue(viewableActivityIdState());
+  const activityIdInDrawer = useRecoilValue(activityIdInDrawerState());
 
   const activityTargetableEntityArray = useRecoilValue(
-    activityTargetableEntityArrayState,
+    activityTargetableEntityArrayState(),
   );
-  const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
+  const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState());
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
@@ -54,13 +54,15 @@ export const ActivityActionBar = () => {
   );
 
   const [temporaryActivityForEditor, setTemporaryActivityForEditor] =
-    useRecoilState(temporaryActivityForEditorState);
+    useRecoilState(temporaryActivityForEditorState());
 
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
-  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const [isActivityInCreateMode] = useRecoilState(
+    isActivityInCreateModeState(),
+  );
   const [isUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState,
+    isUpsertingActivityInDBState(),
   );
 
   const objectShowPageTargetableObject = useRecoilValue(
@@ -108,91 +110,87 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (viewableActivityId) {
+        if (isNonEmptyString(viewableActivityId)) {
           if (
             isActivityInCreateMode &&
             isNonNullable(temporaryActivityForEditor)
           ) {
             deleteActivityFromCache(temporaryActivityForEditor);
             setTemporaryActivityForEditor(null);
-          } else {
-            if (activityIdInDrawer) {
-              const activityTargetIdsToDelete: string[] =
-                activityTargets.map(mapToRecordId) ?? [];
+          } else if (isNonEmptyString(activityIdInDrawer)) {
+            const activityTargetIdsToDelete: string[] =
+              activityTargets.map(mapToRecordId) ?? [];
 
-              if (weAreOnTaskPage) {
+            if (weAreOnTaskPage) {
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [],
+                activitiesFilters: currentCompletedTaskQueryVariables?.filter,
+                activitiesOrderByVariables:
+                  currentCompletedTaskQueryVariables?.orderBy,
+              });
+
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [],
+                activitiesFilters: currentIncompleteTaskQueryVariables?.filter,
+                activitiesOrderByVariables:
+                  currentIncompleteTaskQueryVariables?.orderBy,
+              });
+            } else if (
+              weAreOnObjectShowPage &&
+              isNonNullable(objectShowPageTargetableObject)
+            ) {
+              removeFromActivitiesQueries({
+                activityIdToRemove: viewableActivityId,
+                targetableObjects: [objectShowPageTargetableObject],
+                activitiesFilters: {},
+                activitiesOrderByVariables:
+                  FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
+              });
+
+              if (isNonNullable(currentCompletedTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
-                  targetableObjects: [],
+                  targetableObjects: [objectShowPageTargetableObject],
                   activitiesFilters: currentCompletedTaskQueryVariables?.filter,
                   activitiesOrderByVariables:
                     currentCompletedTaskQueryVariables?.orderBy,
                 });
+              }
 
+              if (isNonNullable(currentIncompleteTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
-                  targetableObjects: [],
+                  targetableObjects: [objectShowPageTargetableObject],
                   activitiesFilters:
                     currentIncompleteTaskQueryVariables?.filter,
                   activitiesOrderByVariables:
                     currentIncompleteTaskQueryVariables?.orderBy,
                 });
-              } else if (
-                weAreOnObjectShowPage &&
-                isNonNullable(objectShowPageTargetableObject)
-              ) {
+              }
+
+              if (isNonNullable(currentNotesQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
                   targetableObjects: [objectShowPageTargetableObject],
-                  activitiesFilters: {},
+                  activitiesFilters: currentNotesQueryVariables?.filter,
                   activitiesOrderByVariables:
-                    FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-                });
-
-                if (isNonNullable(currentCompletedTaskQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters:
-                      currentCompletedTaskQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentCompletedTaskQueryVariables?.orderBy,
-                  });
-                }
-
-                if (isNonNullable(currentIncompleteTaskQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters:
-                      currentIncompleteTaskQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentIncompleteTaskQueryVariables?.orderBy,
-                  });
-                }
-
-                if (isNonNullable(currentNotesQueryVariables)) {
-                  removeFromActivitiesQueries({
-                    activityIdToRemove: viewableActivityId,
-                    targetableObjects: [objectShowPageTargetableObject],
-                    activitiesFilters: currentNotesQueryVariables?.filter,
-                    activitiesOrderByVariables:
-                      currentNotesQueryVariables?.orderBy,
-                  });
-                }
-
-                removeFromActivityTargetsQueries({
-                  activityTargetsToRemove: activity?.activityTargets ?? [],
-                  targetableObjects: [objectShowPageTargetableObject],
+                    currentNotesQueryVariables?.orderBy,
                 });
               }
 
-              if (isNonEmptyArray(activityTargetIdsToDelete)) {
-                await deleteManyActivityTargets(activityTargetIdsToDelete);
-              }
-
-              await deleteOneActivity?.(viewableActivityId);
+              removeFromActivityTargetsQueries({
+                activityTargetsToRemove: activity?.activityTargets ?? [],
+                targetableObjects: [objectShowPageTargetableObject],
+              });
             }
+
+            if (isNonEmptyArray(activityTargetIdsToDelete)) {
+              await deleteManyActivityTargets(activityTargetIdsToDelete);
+            }
+
+            await deleteOneActivity?.(viewableActivityId);
           }
         }
       },
@@ -223,10 +221,13 @@ export const ActivityActionBar = () => {
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
-    if (record && objectShowPageTargetableObject) {
+    if (
+      isNonNullable(record) &&
+      isNonNullable(objectShowPageTargetableObject)
+    ) {
       openCreateActivity({
-        type: record.type,
-        customAssignee: record.assignee,
+        type: record?.type,
+        customAssignee: record?.assignee,
         targetableObjects: activityTargetableEntityArray,
       });
     }
