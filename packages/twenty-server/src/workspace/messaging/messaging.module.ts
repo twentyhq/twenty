@@ -28,6 +28,7 @@ import { PersonModule } from 'src/workspace/repositories/person/person.module';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import { MessagingConnectedAccountListener } from 'src/workspace/messaging/listeners/messaging-connected-account.listener';
 import { BlocklistModule } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.module';
+import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by-batch.service';
 @Module({
   imports: [
     EnvironmentModule,
@@ -59,11 +60,13 @@ import { BlocklistModule } from 'src/workspace/calendar-and-messaging/repositori
     MessageService,
     SaveMessagesAndCreateContactsService,
     MessagingConnectedAccountListener,
+    FetchByBatchesService,
   ],
   exports: [
     GmailPartialSyncService,
     GmailFullSyncService,
     GmailRefreshAccessTokenService,
+    FetchByBatchesService,
   ],
 })
 export class MessagingModule {}
