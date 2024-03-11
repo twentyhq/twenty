@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ButtonPosition, ButtonProps } from './Button';
 
@@ -41,15 +41,15 @@ export const ButtonGroup = ({
 
       const additionalProps: any = { position, variant, accent, size };
 
-      if (isNonNullable(variant)) {
+      if (isDefined(variant)) {
         additionalProps.variant = variant;
       }
 
-      if (isNonNullable(accent)) {
+      if (isDefined(accent)) {
         additionalProps.variant = variant;
       }
 
-      if (isNonNullable(size)) {
+      if (isDefined(size)) {
         additionalProps.size = size;
       }
 

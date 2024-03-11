@@ -9,7 +9,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
@@ -104,13 +104,13 @@ export const useFilteredSearchEntityQuery = ({
   return {
     selectedEntities: selectedRecords
       .map(mappingFunction)
-      .filter(isNonNullable),
+      .filter(isDefined),
     filteredSelectedEntities: filteredSelectedRecords
       .map(mappingFunction)
-      .filter(isNonNullable),
+      .filter(isDefined),
     entitiesToSelect: recordsToSelect
       .map(mappingFunction)
-      .filter(isNonNullable),
+      .filter(isDefined),
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

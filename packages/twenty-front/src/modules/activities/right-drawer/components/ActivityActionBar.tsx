@@ -28,7 +28,7 @@ import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconPlus, IconTrash } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledButtonContainer = styled.div`
   display: inline-flex;
@@ -113,7 +113,7 @@ export const ActivityActionBar = () => {
         if (isNonEmptyString(viewableActivityId)) {
           if (
             isActivityInCreateMode &&
-            isNonNullable(temporaryActivityForEditor)
+            isDefined(temporaryActivityForEditor)
           ) {
             deleteActivityFromCache(temporaryActivityForEditor);
             setTemporaryActivityForEditor(null);
@@ -139,7 +139,7 @@ export const ActivityActionBar = () => {
               });
             } else if (
               weAreOnObjectShowPage &&
-              isNonNullable(objectShowPageTargetableObject)
+              isDefined(objectShowPageTargetableObject)
             ) {
               removeFromActivitiesQueries({
                 activityIdToRemove: viewableActivityId,
@@ -149,7 +149,7 @@ export const ActivityActionBar = () => {
                   FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
               });
 
-              if (isNonNullable(currentCompletedTaskQueryVariables)) {
+              if (isDefined(currentCompletedTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
                   targetableObjects: [objectShowPageTargetableObject],
@@ -159,7 +159,7 @@ export const ActivityActionBar = () => {
                 });
               }
 
-              if (isNonNullable(currentIncompleteTaskQueryVariables)) {
+              if (isDefined(currentIncompleteTaskQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
                   targetableObjects: [objectShowPageTargetableObject],
@@ -170,7 +170,7 @@ export const ActivityActionBar = () => {
                 });
               }
 
-              if (isNonNullable(currentNotesQueryVariables)) {
+              if (isDefined(currentNotesQueryVariables)) {
                 removeFromActivitiesQueries({
                   activityIdToRemove: viewableActivityId,
                   targetableObjects: [objectShowPageTargetableObject],
@@ -222,8 +222,8 @@ export const ActivityActionBar = () => {
   const addActivity = () => {
     setIsRightDrawerOpen(false);
     if (
-      isNonNullable(record) &&
-      isNonNullable(objectShowPageTargetableObject)
+      isDefined(record) &&
+      isDefined(objectShowPageTargetableObject)
     ) {
       openCreateActivity({
         type: record?.type,

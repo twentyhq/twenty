@@ -25,8 +25,8 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
@@ -80,7 +80,7 @@ export const ActivityBodyEditor = ({
   const { upsertActivity } = useUpsertActivity();
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
-    if (isNonNullable(activity)) {
+    if (isDefined(activity)) {
       upsertActivity({
         activity,
         input: {
@@ -92,7 +92,7 @@ export const ActivityBodyEditor = ({
 
   const persistTitleAndBodyDebounced = useDebouncedCallback(
     (newTitle: string, newBody: string) => {
-      if (isNonNullable(activity)) {
+      if (isDefined(activity)) {
         upsertActivity({
           activity,
           input: {
@@ -126,7 +126,7 @@ export const ActivityBodyEditor = ({
   const [uploadFile] = useUploadFileMutation();
 
   const handleUploadAttachment = async (file: File): Promise<string> => {
-    if (isNullable(file)) {
+    if (isUndefinedOrNull(file)) {
       return '';
     }
     const result = await uploadFile({
@@ -228,7 +228,7 @@ export const ActivityBodyEditor = ({
     if (isNonEmptyString(activityBody) && activityBody !== '{}') {
       return JSON.parse(activityBody);
     } else if (
-      isNonNullable(activity) &&
+      isDefined(activity) &&
       isNonEmptyString(activity.body) &&
       activity?.body !== '{}'
     ) {
@@ -253,7 +253,7 @@ export const ActivityBodyEditor = ({
   const handleImagePaste = async (event: ClipboardEvent) => {
     const clipboardItems = event.clipboardData?.items;
 
-    if (isNonNullable(clipboardItems)) {
+    if (isDefined(clipboardItems)) {
       for (let i = 0; i < clipboardItems.length; i++) {
         if (clipboardItems[i].kind === 'file') {
           const isImage = clipboardItems[i].type.match('^image/');
@@ -268,7 +268,7 @@ export const ActivityBodyEditor = ({
             return;
           }
 
-          if (isNonNullable(isImage)) {
+          if (isDefined(isImage)) {
             editor?.insertBlocks(
               [
                 {
@@ -334,7 +334,7 @@ export const ActivityBodyEditor = ({
       const currentBlockContent = blockIdentifier?.content;
 
       if (
-        isNonNullable(currentBlockContent) &&
+        isDefined(currentBlockContent) &&
         isArray(currentBlockContent) &&
         currentBlockContent.length === 0
       ) {
@@ -346,7 +346,7 @@ export const ActivityBodyEditor = ({
       }
 
       if (
-        isNonNullable(currentBlockContent) &&
+        isDefined(currentBlockContent) &&
         isArray(currentBlockContent) &&
         currentBlockContent[0] &&
         currentBlockContent[0].type === 'text'

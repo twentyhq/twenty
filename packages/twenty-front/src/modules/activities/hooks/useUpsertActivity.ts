@@ -16,7 +16,7 @@ import { objectShowPageTargetableObjectState } from '@/activities/timeline/state
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 // TODO: create a generic way to have records only in cache for create mode and delete them afterwards ?
 export const useUpsertActivity = () => {
@@ -85,7 +85,7 @@ export const useUpsertActivity = () => {
         makeActivityWithConnection(activityToCreate);
 
       if (weAreOnTaskPage) {
-        if (isNonNullable(activityWithConnection.completedAt)) {
+        if (isDefined(activityWithConnection.completedAt)) {
           injectActivitiesQueries({
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
@@ -114,7 +114,7 @@ export const useUpsertActivity = () => {
       // Call optimistic effects
       if (
         weAreOnObjectShowPage &&
-        isNonNullable(objectShowPageTargetableObject)
+        isDefined(objectShowPageTargetableObject)
       ) {
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
@@ -128,7 +128,7 @@ export const useUpsertActivity = () => {
         const injectOnlyInIdFilterForNotesQueries =
           activityWithConnection.type !== 'Note';
 
-        if (isNonNullable(currentCompletedTaskQueryVariables)) {
+        if (isDefined(currentCompletedTaskQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
@@ -140,7 +140,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        if (isNonNullable(currentIncompleteTaskQueryVariables)) {
+        if (isDefined(currentIncompleteTaskQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters:
               currentIncompleteTaskQueryVariables?.filter ?? {},
@@ -153,7 +153,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        if (isNonNullable(currentNotesQueryVariables)) {
+        if (isDefined(currentNotesQueryVariables)) {
           injectActivitiesQueries({
             activitiesFilters: currentNotesQueryVariables?.filter,
             activitiesOrderByVariables: currentNotesQueryVariables?.orderBy,

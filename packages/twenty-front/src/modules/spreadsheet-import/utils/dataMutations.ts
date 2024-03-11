@@ -12,8 +12,8 @@ import {
   RowHook,
   TableHook,
 } from '@/spreadsheet-import/types';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = <T extends string>(
   data: (Data<T> & Partial<Meta>)[],
@@ -30,11 +30,11 @@ export const addErrorsAndRunHooks = <T extends string>(
     };
   };
 
-  if (isNonNullable(tableHook)) {
+  if (isDefined(tableHook)) {
     data = tableHook(data, addHookError);
   }
 
-  if (isNonNullable(rowHook)) {
+  if (isDefined(rowHook)) {
     data = data.map((value, index) =>
       rowHook(value, (...props) => addHookError(index, ...props), data),
     );
@@ -52,7 +52,7 @@ export const addErrorsAndRunHooks = <T extends string>(
           values.forEach((value) => {
             if (
               validation.allowEmpty === true &&
-              (isNullable(value) || value === '' || !value)
+              (isUndefinedOrNull(value) || value === '' || !value)
             ) {
               // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
@@ -142,10 +142,10 @@ export const addErrorsAndRunHooks = <T extends string>(
     }
     const newValue = value as Data<T> & Meta;
 
-    if (isNonNullable(errors[index])) {
+    if (isDefined(errors[index])) {
       return { ...newValue, __errors: errors[index] };
     }
-    if (isNullable(errors[index]) && isNonNullable(value?.__errors)) {
+    if (isUndefinedOrNull(errors[index]) && isDefined(value?.__errors)) {
       return { ...newValue, __errors: null };
     }
     return newValue;

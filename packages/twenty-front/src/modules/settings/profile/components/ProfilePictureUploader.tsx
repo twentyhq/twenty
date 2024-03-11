@@ -7,8 +7,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
@@ -27,7 +27,7 @@ export const ProfilePictureUploader = () => {
   });
 
   const handleUpload = async (file: File) => {
-    if (isNullable(file)) {
+    if (isUndefinedOrNull(file)) {
       return;
     }
 
@@ -74,7 +74,7 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleAbort = async () => {
-    if (isNonNullable(uploadController)) {
+    if (isDefined(uploadController)) {
       uploadController.abort();
       setUploadController(null);
     }

@@ -10,7 +10,7 @@ import { IconHelpCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -28,7 +28,7 @@ const insertScript = ({
   const script = document.createElement('script');
   if (isNonEmptyString(src)) script.src = src;
   if (isNonEmptyString(innerHTML)) script.innerHTML = innerHTML;
-  if (isNonNullable(onLoad)) script.onload = onLoad;
+  if (isDefined(onLoad)) script.onload = onLoad;
   document.body.appendChild(script);
 };
 
@@ -74,7 +74,7 @@ export const SupportChat = () => {
       supportChat?.supportDriver === 'front' &&
       isNonEmptyString(supportChat.supportFrontChatId) &&
       isNonEmptyString(currentUser?.email) &&
-      isNonNullable(currentWorkspaceMember) &&
+      isDefined(currentWorkspaceMember) &&
       !isFrontChatLoaded
     ) {
       configureFront(

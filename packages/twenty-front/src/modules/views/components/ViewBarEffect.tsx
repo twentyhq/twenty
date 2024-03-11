@@ -7,8 +7,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
@@ -52,11 +52,11 @@ export const ViewBarEffect = () => {
       newViews[0] ??
       null;
 
-    if (isNullable(currentView)) return;
+    if (isUndefinedOrNull(currentView)) return;
 
     setCurrentViewId(currentView.id);
 
-    if (isNonNullable(currentView?.viewFields)) {
+    if (isDefined(currentView?.viewFields)) {
       loadViewFields(currentView.viewFields, currentView.id);
       loadViewFilters(currentView.viewFilters, currentView.id);
       loadViewSorts(currentView.viewSorts, currentView.id);

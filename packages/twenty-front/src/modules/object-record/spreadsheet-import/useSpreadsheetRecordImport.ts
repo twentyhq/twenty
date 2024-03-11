@@ -9,7 +9,7 @@ import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const firstName = 'Firstname';
 const lastName = 'Lastname';
@@ -132,7 +132,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 break;
               case FieldMetadataType.Relation:
                 if (
-                  isNonNullable(value) &&
+                  isDefined(value) &&
                   (isNonEmptyString(value) || value !== false)
                 ) {
                   fieldMapping[field.name + 'Id'] = value;
@@ -140,7 +140,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 break;
               case FieldMetadataType.FullName:
                 if (
-                  isNonNullable(
+                  isDefined(
                     record[`${firstName} (${field.name})`] ||
                       record[`${lastName} (${field.name})`],
                   )

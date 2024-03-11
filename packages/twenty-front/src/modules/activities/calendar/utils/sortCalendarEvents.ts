@@ -1,5 +1,5 @@
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { sortAsc } from '~/utils/sort';
 
 export const sortCalendarEventsAsc = (
@@ -13,8 +13,8 @@ export const sortCalendarEventsAsc = (
 
   if (
     startsAtSort === 0 &&
-    isNonNullable(calendarEventA.endsAt) &&
-    isNonNullable(calendarEventB.endsAt)
+    isDefined(calendarEventA.endsAt) &&
+    isDefined(calendarEventB.endsAt)
   ) {
     return sortAsc(
       calendarEventA.endsAt.getTime(),

@@ -13,7 +13,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
@@ -55,7 +55,7 @@ export const SingleEntitySelectMenuItems = ({
 
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
     (entity): entity is EntityForSelect =>
-      isNonNullable(entity) && isNonEmptyString(entity.name),
+      isDefined(entity) && isNonEmptyString(entity.name),
   );
 
   useScopedHotkeys(

@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useActivityConnectionUtils = () => {
   const mapConnectionToRecords = useMapConnectionToRecords();
@@ -19,7 +19,7 @@ export const useActivityConnectionUtils = () => {
       comments: ObjectRecordConnection<Comment>;
     },
   ) => {
-    if (!isNonNullable(activityWithConnections)) {
+    if (!isDefined(activityWithConnections)) {
       throw new Error('Activity with connections is not defined');
     }
 

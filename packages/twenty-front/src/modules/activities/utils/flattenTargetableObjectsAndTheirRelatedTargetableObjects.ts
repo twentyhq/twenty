@@ -1,4 +1,4 @@
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
@@ -11,7 +11,7 @@ export const flattenTargetableObjectsAndTheirRelatedTargetableObjects = (
     []) {
     flattenedTargetableObjects.push(targetableObject);
 
-    if (isNonNullable(targetableObject.relatedTargetableObjects)) {
+    if (isDefined(targetableObject.relatedTargetableObjects)) {
       for (const relatedEntity of targetableObject.relatedTargetableObjects ??
         []) {
         flattenedTargetableObjects.push(relatedEntity);

@@ -15,7 +15,7 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledContainer = styled.td<{ isSelected: boolean }>`
   background: ${({ isSelected, theme }) =>
@@ -46,7 +46,7 @@ export const RecordTableCellContainer = () => {
 
   const updateRecord = useContext(RecordUpdateContext);
 
-  if (isNullable(columnDefinition)) {
+  if (isUndefinedOrNull(columnDefinition)) {
     return null;
   }
 

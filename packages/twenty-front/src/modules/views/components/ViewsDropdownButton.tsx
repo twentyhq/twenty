@@ -20,7 +20,7 @@ import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEWS_DROPDOWN_ID } from '@/views/constants/ViewsDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
@@ -161,7 +161,7 @@ export const ViewsDropdownButton = ({
                           handleDeleteViewButtonClick(event, view.id),
                       }
                     : null,
-                ].filter(isNonNullable)}
+                ].filter(isDefined)}
                 onClick={() => handleViewSelect(view.id)}
                 LeftIcon={IconList}
                 text={view.name}

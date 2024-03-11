@@ -1,6 +1,6 @@
 import { ApolloLink, gql, Operation } from '@apollo/client';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
@@ -65,7 +65,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
         getGroup(!hasError)(...titleArgs);
 
-        if (isNonNullable(errors)) {
+        if (isDefined(errors)) {
           errors.forEach((err: any) => {
             logDebug(
               `%c${err.message}`,
@@ -83,10 +83,10 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
         logDebug('QUERY', query);
 
-        if (isNonNullable(result.data)) {
+        if (isDefined(result.data)) {
           logDebug('RESULT', result.data);
         }
-        if (isNonNullable(errors)) {
+        if (isDefined(errors)) {
           logDebug('ERRORS', errors);
         }
 
@@ -96,7 +96,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
         logDebug(
           `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
         );
-        if (isNonNullable(errors)) {
+        if (isDefined(errors)) {
           logError(errors);
         }
       }

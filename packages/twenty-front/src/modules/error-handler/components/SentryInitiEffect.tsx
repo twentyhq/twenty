@@ -8,7 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const SentryInitEffect = () => {
   const sentryConfig = useRecoilValue(sentryConfigState());
@@ -40,7 +40,7 @@ export const SentryInitEffect = () => {
       setIsSentryInitialized(true);
     }
 
-    if (isNonNullable(currentUser)) {
+    if (isDefined(currentUser)) {
       Sentry.setUser({
         email: currentUser?.email,
         id: currentUser?.id,

@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
@@ -101,7 +101,7 @@ export const Submit: Story = {
     const firstStar = input.firstElementChild;
 
     await waitFor(() => {
-      if (isNonNullable(firstStar)) {
+      if (isDefined(firstStar)) {
         userEvent.click(firstStar);
         expect(submitJestFn).toHaveBeenCalledTimes(1);
       }

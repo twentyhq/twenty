@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type ToggleSize = 'small' | 'medium';
 
@@ -58,7 +58,7 @@ export const Toggle = ({
   const handleChange = () => {
     setIsOn(!isOn);
 
-    if (isNonNullable(onChange)) {
+    if (isDefined(onChange)) {
       onChange(!isOn);
     }
   };

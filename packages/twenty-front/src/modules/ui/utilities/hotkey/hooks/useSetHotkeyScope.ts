@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
@@ -30,7 +30,7 @@ export const useSetHotkeyScope = () =>
           .getValue();
 
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
-          if (!isNonNullable(customScopes)) {
+          if (!isDefined(customScopes)) {
             if (
               isCustomScopesEqual(
                 currentHotkeyScope?.customScopes,

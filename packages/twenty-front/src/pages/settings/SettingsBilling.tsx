@@ -18,7 +18,7 @@ import { Button } from '@/ui/input/button/components/Button.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section.tsx';
 import { useBillingPortalSessionQuery } from '~/generated/graphql.tsx';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -46,7 +46,7 @@ export const SettingsBilling = () => {
     onboardingStatus === OnboardingStatus.Canceled;
 
   const openBillingPortal = () => {
-    if (isNonNullable(data)) {
+    if (isDefined(data)) {
       window.location.replace(data.billingPortalSession.url);
     }
   };

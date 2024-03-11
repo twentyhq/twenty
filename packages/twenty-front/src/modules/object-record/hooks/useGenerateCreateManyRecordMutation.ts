@@ -5,7 +5,7 @@ import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getCreateManyRecordsMutationResponseField = (
@@ -19,7 +19,7 @@ export const useGenerateCreateManyRecordMutation = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
-  if (isNullable(objectMetadataItem)) {
+  if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
   }
 

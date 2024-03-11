@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
@@ -27,7 +27,7 @@ export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
   }, [setAvailableFilterDefinitions]);
 
   useEffect(() => {
-    if (isNonNullable(currentWorkspaceMember)) {
+    if (isDefined(currentWorkspaceMember)) {
       setSelectedFilter({
         fieldMetadataId: 'assigneeId',
         value: JSON.stringify(currentWorkspaceMember.id),
