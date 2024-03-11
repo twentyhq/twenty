@@ -154,8 +154,8 @@ export class EnvironmentService {
     );
   }
 
-  getAuthGoogleApiCallbackUrl(): string | undefined {
-    return this.configService.get<string>('AUTH_GOOGLE_API_CALLBACK_URL');
+  getAuthGoogleAPIsCallbackUrl(): string | undefined {
+    return this.configService.get<string>('AUTH_GOOGLE_APIS_CALLBACK_URL');
   }
 
   isAuthGoogleEnabled(): boolean {

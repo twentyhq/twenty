@@ -76,8 +76,8 @@ export class GoogleAPIsService {
       );
 
       await manager.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."calendarChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3)`,
-        ['share_everything', handle, connectedAccountId],
+        `INSERT INTO ${dataSourceMetadata.schema}."calendarChannel" ("visibility", "handle", "connectedAccountId") VALUES ($1, $2, $3)`,
+        ['SHARE_EVERYTHING', handle, connectedAccountId],
       );
     });
 
