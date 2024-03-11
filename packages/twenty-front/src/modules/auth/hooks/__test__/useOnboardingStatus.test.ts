@@ -21,7 +21,7 @@ const currentWorkspace = {
   activationStatus: 'active',
   id: '1',
   allowImpersonation: true,
-  billingSubscription: {
+  currentBillingSubscription: {
     status: 'trialing',
   },
 };
@@ -259,7 +259,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'trialing',
-        billingSubscription: null,
+        currentBillingSubscription: null,
       });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
