@@ -34,7 +34,7 @@ export class RelationDefinitionDTO {
 
   @IsNotEmpty()
   @Field(() => FieldMetadataDTO)
-  targetFieldMetadataForOppositeSide: FieldMetadataDTO;
+  targetFieldMetadata: FieldMetadataDTO;
 
   @IsEnum(RelationDefinitionType)
   @IsNotEmpty()

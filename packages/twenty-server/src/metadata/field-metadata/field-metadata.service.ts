@@ -399,8 +399,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         sourceObjectMetadata: foundRelationMetadata.fromObjectMetadata,
         sourceFieldMetadata: foundRelationMetadata.fromFieldMetadata,
         targetObjectMetadata: foundRelationMetadata.toObjectMetadata,
-        targetFieldMetadataForOppositeSide:
-          foundRelationMetadata.toFieldMetadata,
+        targetFieldMetadata: foundRelationMetadata.toFieldMetadata,
         direction,
       };
     } else {
@@ -413,8 +412,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         sourceObjectMetadata: foundRelationMetadata.toObjectMetadata,
         sourceFieldMetadata: foundRelationMetadata.toFieldMetadata,
         targetObjectMetadata: foundRelationMetadata.fromObjectMetadata,
-        targetFieldMetadataForOppositeSide:
-          foundRelationMetadata.fromFieldMetadata,
+        targetFieldMetadata: foundRelationMetadata.fromFieldMetadata,
         direction,
       };
     }
