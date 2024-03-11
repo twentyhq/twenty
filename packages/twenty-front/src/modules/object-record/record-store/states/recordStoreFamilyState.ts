@@ -1,8 +1,10 @@
-import { atomFamily } from 'recoil';
-
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const recordStoreFamilyState = atomFamily<ObjectRecord | null, string>({
+export const recordStoreFamilyState = createFamilyState<
+  ObjectRecord | null,
+  string
+>({
   key: 'recordStoreFamilyState',
-  default: null,
+  defaultValue: null,
 });

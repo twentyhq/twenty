@@ -14,7 +14,7 @@ export const useActivityTargetObjectRecords = ({
 }: {
   activityId: string;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const { records: activityTargets, loading: loadingActivityTargets } =
     useFindManyRecords<ActivityTarget>({

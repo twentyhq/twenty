@@ -71,7 +71,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   const activity = activityInStore as Activity;
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
-    canCreateActivityState,
+    canCreateActivityState(),
   );
 
   const { upsertActivity } = useUpsertActivity();

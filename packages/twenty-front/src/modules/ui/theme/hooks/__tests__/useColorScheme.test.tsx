@@ -32,7 +32,7 @@ describe('useColorScheme', () => {
         const colorScheme = useColorScheme();
 
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
+          currentWorkspaceMemberState(),
         );
 
         setCurrentWorkspaceMember(workspaceMember);

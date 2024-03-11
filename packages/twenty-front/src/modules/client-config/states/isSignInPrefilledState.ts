@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isSignInPrefilledState = atom<boolean>({
+export const isSignInPrefilledState = createState<boolean>({
   key: 'isSignInPrefilledState',
-  default: false,
+  defaultValue: false,
 });

@@ -44,7 +44,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findActiveObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();
@@ -64,7 +64,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findObjectMetadataItemById', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();
@@ -86,7 +86,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();

@@ -13,7 +13,7 @@ export const usePreviousHotkeyScope = () => {
     ({ snapshot, set }) =>
       () => {
         const previousHotkeyScope = snapshot
-          .getLoadable(previousHotkeyScopeState)
+          .getLoadable(previousHotkeyScopeState())
           .getValue();
 
         if (!previousHotkeyScope) {
@@ -25,7 +25,7 @@ export const usePreviousHotkeyScope = () => {
           previousHotkeyScope.customScopes,
         );
 
-        set(previousHotkeyScopeState, null);
+        set(previousHotkeyScopeState(), null);
       },
     [setHotkeyScope],
   );
@@ -34,11 +34,11 @@ export const usePreviousHotkeyScope = () => {
     ({ snapshot, set }) =>
       (scope: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+          .getLoadable(currentHotkeyScopeState())
           .getValue();
 
         setHotkeyScope(scope, customScopes);
-        set(previousHotkeyScopeState, currentHotkeyScope);
+        set(previousHotkeyScopeState(), currentHotkeyScope);
       },
     [setHotkeyScope],
   );

@@ -14,6 +14,7 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
@@ -59,11 +60,11 @@ export const Dropdown = ({
     useDropdown(dropdownId);
   const offsetMiddlewares = [];
 
-  if (dropdownOffset.x) {
+  if (isNonNullable(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }
 
-  if (dropdownOffset.y) {
+  if (isNonNullable(dropdownOffset.y)) {
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 

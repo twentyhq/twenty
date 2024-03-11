@@ -1,5 +1,7 @@
 import { LinkType } from '@/ui/navigation/link/components/SocialLink';
 
+import { isNonNullable } from './isNonNullable';
+
 export const checkUrlType = (url: string) => {
   if (
     /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
@@ -8,7 +10,11 @@ export const checkUrlType = (url: string) => {
   ) {
     return LinkType.LinkedIn;
   }
-  if (url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i)) {
+  if (
+    isNonNullable(
+      /^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url),
+    )
+  ) {
     return LinkType.Twitter;
   }
 

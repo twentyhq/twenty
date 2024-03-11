@@ -35,14 +35,14 @@ export const useLoadRecordIndexBoard = ({
   const { setRecords: setRecordsInStore } = useSetRecordInStore();
 
   const recordIndexFieldDefinitions = useRecoilValue(
-    recordIndexFieldDefinitionsState,
+    recordIndexFieldDefinitionsState(),
   );
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
-  const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+  const recordIndexFilters = useRecoilValue(recordIndexFiltersState());
+  const recordIndexSorts = useRecoilValue(recordIndexSortsState());
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
@@ -53,7 +53,7 @@ export const useLoadRecordIndexBoard = ({
   );
 
   const recordIndexIsCompactModeActive = useRecoilValue(
-    recordIndexIsCompactModeActiveState,
+    recordIndexIsCompactModeActiveState(),
   );
 
   const {

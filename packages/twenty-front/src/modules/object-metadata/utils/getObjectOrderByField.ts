@@ -3,6 +3,7 @@ import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 export const getObjectOrderByField = (
   objectMetadataItem: ObjectMetadataItem,
@@ -11,7 +12,7 @@ export const getObjectOrderByField = (
   const labelIdentifierFieldMetadata =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  if (labelIdentifierFieldMetadata) {
+  if (isNonNullable(labelIdentifierFieldMetadata)) {
     switch (labelIdentifierFieldMetadata.type) {
       case FieldMetadataType.FullName:
         return {

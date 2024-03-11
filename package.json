@@ -241,6 +241,7 @@
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/experimental-utils": "^5.62.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@typescript-eslint/utils": "^6.9.1",
     "@vitejs/plugin-react-swc": "^3.5.0",

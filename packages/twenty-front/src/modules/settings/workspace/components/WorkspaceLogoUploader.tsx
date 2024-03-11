@@ -7,16 +7,17 @@ import {
   useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
+import { isNullable } from '~/utils/isNullable';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [updateWorkspce] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
+    currentWorkspaceState(),
   );
 
   const onUpload = async (file: File) => {
-    if (!file) {
+    if (isNullable(file)) {
       return;
     }
     if (!currentWorkspace?.id) {

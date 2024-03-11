@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 const booleanWhitelist: Record<string, boolean> = {
   yes: true,
   no: false,
@@ -6,7 +8,7 @@ const booleanWhitelist: Record<string, boolean> = {
 };
 
 export const normalizeCheckboxValue = (value: string | undefined): boolean => {
-  if (value && value.toLowerCase() in booleanWhitelist) {
+  if (isNonEmptyString(value) && value.toLowerCase() in booleanWhitelist) {
     return booleanWhitelist[value.toLowerCase()];
   }
   return false;

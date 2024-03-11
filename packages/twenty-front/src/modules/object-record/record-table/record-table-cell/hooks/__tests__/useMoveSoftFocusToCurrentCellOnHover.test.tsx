@@ -13,19 +13,19 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
 const mockSoftFocusPositionState = {
-  key: 'softFocusPositionStateScopeMap__{"scopeId":"scopeId"}',
+  key: 'softFocusPositionComponentState__{"scopeId":"scopeId"}',
 };
 const mockSoftFocusActiveState = {
-  key: 'isSoftFocusActiveStateScopeMap__{"scopeId":"scopeId"}',
+  key: 'isSoftFocusActiveComponentState__{"scopeId":"scopeId"}',
 };
 const mockIsSoftFocusOnTableCellFamilyState = {
-  key: 'isSoftFocusOnTableCellFamilyStateScopeMap__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
+  key: 'isSoftFocusOnTableCellFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
 };
 const mockCurrentTableCellInEditModePositionState = {
-  key: 'currentTableCellInEditModePositionStateScopeMap__{"scopeId":"scopeId"}',
+  key: 'currentTableCellInEditModePositionComponentState__{"scopeId":"scopeId"}',
 };
 const mockIsTableCellInEditModeFamilyState = {
-  key: 'isTableCellInEditModeFamilyStateScopeMap__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
+  key: 'isTableCellInEditModeFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
 };
 const mockCurrentHotKeyScopeState = {
   key: 'currentHotkeyScopeState',

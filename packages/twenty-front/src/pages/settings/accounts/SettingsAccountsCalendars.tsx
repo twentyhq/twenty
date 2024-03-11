@@ -17,7 +17,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsCalendars = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const { records: _accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {

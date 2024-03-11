@@ -1,4 +1,10 @@
-import { isObject, isString } from '@sniptt/guards';
+import {
+  isArray,
+  isNonEmptyString,
+  isNumber,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
 
 import { isNonNullable } from '../../utils/isNonNullable';
@@ -24,7 +30,7 @@ const filterData = <DataT>(
       if (!['OR', 'AND', 'NOT'].includes(key)) {
         const filterElement = where[key] as StringFilter & { is?: object };
 
-        if (filterElement.is) {
+        if (isNonNullable(filterElement.is)) {
           const nestedKey = Object.keys(filterElement.is)[0] as string;
           if (
             item[key as keyof typeof item] &&
@@ -41,22 +47,22 @@ const filterData = <DataT>(
             );
           }
         }
-        if (filterElement.equals) {
+        if (isNonEmptyString(filterElement.equals)) {
           return item[key as keyof typeof item] === filterElement.equals;
         }
-        if (filterElement.contains) {
+        if (isNonEmptyString(filterElement.contains)) {
           return (item[key as keyof typeof item] as string)
             .toLocaleLowerCase()
             .includes(
               filterElement.contains.replaceAll('%', '').toLocaleLowerCase(),
             );
         }
-        if (filterElement.in) {
+        if (isArray(filterElement.in)) {
           const itemValue = item[key as keyof typeof item] as string;
 
           return filterElement.in.includes(itemValue);
         }
-        if (filterElement.notIn) {
+        if (isArray(filterElement.notIn)) {
           const itemValue = item[key as keyof typeof item] as string;
 
           if (filterElement.notIn.length === 0) return true;
@@ -68,18 +74,18 @@ const filterData = <DataT>(
     });
 
     // { OR: [{ firstName: filter }, { lastName: filter }]
-    if (where.OR && Array.isArray(where.OR)) {
+    if (isArray(where.OR)) {
       isMatch =
         isMatch ||
-        where.OR.some((orFilter) =>
+        where.OR.some((orFilter: any) =>
           filterData<DataT>(data, orFilter).includes(item),
         );
     }
 
-    if (where.AND && Array.isArray(where.AND)) {
+    if (isArray(where.AND)) {
       isMatch =
         isMatch ||
-        where.AND.every((andFilter) =>
+        where.AND.every((andFilter: any) =>
           filterData<DataT>(data, andFilter).includes(item),
         );
     }
@@ -95,12 +101,12 @@ export const filterAndSortData = <DataT>(
 ): Array<DataT> => {
   let filteredData = data;
 
-  if (where) {
+  if (isNonNullable(where)) {
     filteredData = filterData<DataT>(data, where);
   }
 
-  if (Array.isArray(orderBy) && orderBy.length > 0 && orderBy[0]) {
-    const firstOrderBy = orderBy[0];
+  if (isArray(orderBy) && orderBy.length > 0 && isNonNullable(orderBy[0])) {
+    const firstOrderBy = orderBy?.[0];
 
     const key = Object.keys(firstOrderBy)[0];
 
@@ -122,7 +128,7 @@ export const filterAndSortData = <DataT>(
     });
   }
 
-  if (limit) {
+  if (isNumber(limit) && limit > 0) {
     filteredData = filteredData.slice(0, limit);
   }
 

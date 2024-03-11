@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { beautifyDateDiff } from '~/utils/date-utils';
@@ -7,7 +9,7 @@ export const formatExpiration = (
   withExpiresMention: boolean = false,
   short: boolean = true,
 ) => {
-  if (expiresAt) {
+  if (isNonEmptyString(expiresAt)) {
     const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
     if (dateDiff.includes('-')) {
       return 'Expired';

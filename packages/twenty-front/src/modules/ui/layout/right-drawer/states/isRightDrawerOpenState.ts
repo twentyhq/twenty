@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isRightDrawerOpenState = atom<boolean>({
+export const isRightDrawerOpenState = createState<boolean>({
   key: 'ui/layout/is-right-drawer-open',
-  default: false,
+  defaultValue: false,
 });

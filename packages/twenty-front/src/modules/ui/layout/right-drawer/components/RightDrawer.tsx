@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
@@ -41,12 +41,12 @@ const StyledRightDrawer = styled.div`
 
 export const RightDrawer = () => {
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
-    isRightDrawerOpenState,
+    isRightDrawerOpenState(),
   );
 
-  const [isRightDrawerExpanded] = useRecoilState(isRightDrawerExpandedState);
+  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState());
 
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
+  const rightDrawerPage = useRecoilValue(rightDrawerPageState());
 
   const { closeRightDrawer } = useRightDrawer();
 

@@ -1,9 +1,9 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const generatedApiKeyFamilyState = atomFamily<
+export const generatedApiKeyFamilyState = createFamilyState<
   string | null | undefined,
   string
 >({
   key: 'generatedApiKeyFamilyState',
-  default: null,
+  defaultValue: null,
 });

@@ -16,7 +16,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const PlanRequired = () => {
-  const billing = useRecoilValue(billingState);
+  const billing = useRecoilValue(billingState());
 
   const handleButtonClick = () => {
     billing?.billingUrl && window.location.replace(billing.billingUrl);

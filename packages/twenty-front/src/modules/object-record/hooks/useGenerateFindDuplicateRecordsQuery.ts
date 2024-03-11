@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getFindDuplicateRecordsQueryResponseField = (
@@ -9,13 +11,13 @@ export const getFindDuplicateRecordsQueryResponseField = (
 ) => `${objectNameSingular}Duplicates`;
 
 export const useGenerateFindDuplicateRecordsQuery = () => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   return ({
     objectMetadataItem,
     depth,
   }: {
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: Pick<ObjectMetadataItem, 'fields' | 'nameSingular'>;
     depth?: number;
   }) => gql`
     query FindDuplicate${capitalize(objectMetadataItem.nameSingular)}($id: ID) {
@@ -23,17 +25,11 @@ export const useGenerateFindDuplicateRecordsQuery = () => {
         objectMetadataItem.nameSingular,
       )}(id: $id) {
         edges {
-          node {
-            id
-            ${objectMetadataItem.fields
-              .map((field) =>
-                mapFieldMetadataToGraphQLQuery({
-                  field,
-                  depth,
-                }),
-              )
-              .join('\n')}
-          }
+          node ${mapObjectMetadataToGraphQLQuery({
+            objectMetadataItems,
+            objectMetadataItem,
+            depth,
+          })}
           cursor
         }
         pageInfo {

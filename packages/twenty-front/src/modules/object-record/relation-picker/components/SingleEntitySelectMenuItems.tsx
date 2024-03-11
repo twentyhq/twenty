@@ -76,7 +76,7 @@ export const SingleEntitySelectMenuItems = ({
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
         onEnter={(itemId) => {
-          if (showCreateButton) {
+          if (showCreateButton === true) {
             onCreate?.();
           } else {
             const entity = entitiesInDropdown.findIndex(
