@@ -1,0 +1,11 @@
+{
+  "name": "twenty-ui",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts",
+  "scripts": {
+    "start": "storybook dev -p 6006",
+    "build": "storybook build"
+  }
+}

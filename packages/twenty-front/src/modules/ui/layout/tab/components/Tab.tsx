@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Pill } from 'twenty-ui';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { Pill } from '@/ui/display/pill/components/Pill';
 
 type TabProps = {
   id: string;
