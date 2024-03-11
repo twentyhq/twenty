@@ -1,7 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-
-import { THEME_DARK } from '@/ui/theme/constants/ThemeDark';
-import { THEME_LIGHT } from '@/ui/theme/constants/ThemeLight';
+import { darkTheme, lightTheme } from 'twenty-ui';
 
 import { useColorScheme } from '../hooks/useColorScheme';
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
@@ -18,7 +16,7 @@ export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
   const computedColorScheme =
     colorScheme === 'System' ? systemColorScheme : colorScheme;
 
-  const theme = computedColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+  const theme = computedColorScheme === 'Dark' ? darkTheme : lightTheme;
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };

@@ -8,20 +8,20 @@ type PillProps = {
 
 const StyledPill = styled.span`
   align-items: center;
-  background: #0000000a;
-  border-radius: 999px;
-  color: #b3b3b3;
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.pill};
+  color: ${({ theme }) => theme.font.color.light};
   display: inline-block;
-  font-size: 0.85rem;
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-style: normal;
-  font-weight: 500;
-  gap: 8px;
-  height: 16px;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-end;
-  line-height: 1.5;
-  padding: 0 8px;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
-export const Pill = ({ className, label }: PillProps) => (
-  <StyledPill className={className}>{label}</StyledPill>
-);
+export const Pill = ({ className, label }: PillProps) => {
+  return <StyledPill className={className}>{label}</StyledPill>;
+};

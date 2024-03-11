@@ -1,9 +1,13 @@
+import { Meta, StoryObj } from '@storybook/react';
+
 import { Pill } from './Pill';
 
-export default {
-  title: 'Pill',
+const meta: Meta<typeof Pill> = {
+  title: 'UI/Display/Pill/Pill',
   component: Pill,
-  tags: ['autodocs'],
 };
 
-export const Default = {};
+export default meta;
+type Story = StoryObj<typeof Pill>;
+
+export const Default: Story = {};
