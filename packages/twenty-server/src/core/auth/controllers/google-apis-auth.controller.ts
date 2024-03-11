@@ -12,7 +12,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
   constructor(
-    private readonly googleGmailService: GoogleAPIsService,
+    private readonly googleAPIsService: GoogleAPIsService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -48,7 +48,7 @@ export class GoogleAPIsAuthController {
     }
 
     if (workspaceId)
-      await this.googleGmailService.saveConnectedAccount({
+      await this.googleAPIsService.saveConnectedAccount({
         handle: email,
         workspaceMemberId: workspaceMemberId,
         workspaceId: workspaceId,
