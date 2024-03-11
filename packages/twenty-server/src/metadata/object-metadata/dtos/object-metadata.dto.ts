@@ -69,8 +69,8 @@ export class ObjectMetadataDTO {
   updatedAt: Date;
 
   @Field({ nullable: true })
-  labelIdentifierFieldMetadataId: string;
+  labelIdentifierFieldMetadataId?: string;
 
   @Field({ nullable: true })
-  imageIdentifierFieldMetadataId: string;
+  imageIdentifierFieldMetadataId?: string;
 }
