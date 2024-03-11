@@ -102,13 +102,13 @@ export class FieldMetadataEntity<
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromFieldMetadata,
   )
-  fromRelationMetadata: RelationMetadataEntity;
+  fromRelationMetadata?: RelationMetadataEntity;
 
   @OneToOne(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toFieldMetadata,
   )
-  toRelationMetadata: RelationMetadataEntity;
+  toRelationMetadata?: RelationMetadataEntity;
 
   @CreateDateColumn()
   createdAt: Date;

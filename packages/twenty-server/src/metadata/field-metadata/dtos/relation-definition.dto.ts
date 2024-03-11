@@ -4,12 +4,13 @@ import { IsEnum, IsNotEmpty } from 'class-validator';
 
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import { ObjectMetadataDTO } from 'src/metadata/object-metadata/dtos/object-metadata.dto';
-import { RelationMetadataDTO } from 'src/metadata/relation-metadata/dtos/relation-metadata.dto';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export enum RelationDefinitionType {
-  'MANY_TO_ONE',
-  'ONE_TO_MANY',
-  'ONE_TO_ONE',
+  ONE_TO_ONE = RelationMetadataType.ONE_TO_ONE,
+  ONE_TO_MANY = RelationMetadataType.ONE_TO_MANY,
+  MANY_TO_MANY = RelationMetadataType.MANY_TO_MANY,
+  MANY_TO_ONE = 'MANY_TO_ONE',
 }
 
 registerEnumType(RelationDefinitionType, {
@@ -19,23 +20,24 @@ registerEnumType(RelationDefinitionType, {
 
 @ObjectType('RelationDefinition')
 export class RelationDefinitionDTO {
-  @Field(() => ObjectMetadataDTO, { nullable: true })
+  @IsNotEmpty()
+  @Field(() => ObjectMetadataDTO)
   sourceObjectMetadata: ObjectMetadataDTO;
 
-  @Field(() => ObjectMetadataDTO, { nullable: true })
+  @IsNotEmpty()
+  @Field(() => ObjectMetadataDTO)
   targetObjectMetadata: ObjectMetadataDTO;
 
-  @Field(() => FieldMetadataDTO, { nullable: true })
+  @IsNotEmpty()
+  @Field(() => FieldMetadataDTO)
   sourceFieldMetadata: FieldMetadataDTO;
 
-  @Field(() => FieldMetadataDTO, { nullable: true })
+  @IsNotEmpty()
+  @Field(() => FieldMetadataDTO)
   targetFieldMetadataForOppositeSide: FieldMetadataDTO;
 
   @IsEnum(RelationDefinitionType)
   @IsNotEmpty()
   @Field(() => RelationDefinitionType)
   direction: RelationDefinitionType;
-
-  @Field(() => RelationMetadataDTO, { nullable: true })
-  originalRelationMetadata: RelationMetadataDTO;
 }
