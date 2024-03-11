@@ -2,6 +2,8 @@ import { PropsWithChildren, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useClearField } from '@/object-record/record-field/hooks/useClearField';
+import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
@@ -21,10 +23,14 @@ export const RecordTableCellSoftFocusMode = ({
   const { openTableCell } = useOpenRecordTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
+
+  const isFieldClearable = useIsFieldClearable();
+
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const isSoftFocusUsingMouse = useRecoilValue(isSoftFocusUsingMouseState());
+  const clearField = useClearField();
 
   useEffect(() => {
     if (!isSoftFocusUsingMouse) {
@@ -35,12 +41,12 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
-      if (!isFieldInputOnly) {
-        openTableCell();
+      if (!isFieldInputOnly && isFieldClearable) {
+        clearField();
       }
     },
     TableHotkeyScope.TableSoftFocus,
-    [openTableCell],
+    [clearField, isFieldClearable, isFieldInputOnly],
     {
       enabled: !isFieldInputOnly,
     },

@@ -33,7 +33,7 @@ type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownMenuWidth?: `${string}px` | 'auto' | number;
+  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   onClickOutside?: () => void;
   onClose?: () => void;

@@ -11,6 +11,7 @@ import { UpdateOneQueryFactory } from './update-one-query.factory';
 import { UpdateManyQueryFactory } from './update-many-query.factory';
 import { DeleteManyQueryFactory } from './delete-many-query.factory';
 import { FindDuplicatesQueryFactory } from './find-duplicates-query.factory';
+import { RecordPositionQueryFactory } from './record-position-query.factory';
 
 export const workspaceQueryBuilderFactories = [
   ArgsAliasFactory,
@@ -23,6 +24,7 @@ export const workspaceQueryBuilderFactories = [
   FindManyQueryFactory,
   FindOneQueryFactory,
   FindDuplicatesQueryFactory,
+  RecordPositionQueryFactory,
   UpdateOneQueryFactory,
   UpdateManyQueryFactory,
   DeleteManyQueryFactory,
