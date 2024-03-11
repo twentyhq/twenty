@@ -2,19 +2,19 @@ import { Injectable, CanActivate, NotFoundException } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
-import { GoogleGmailStrategy } from 'src/core/auth/strategies/google-gmail.auth.strategy';
+import { GoogleAPIsStrategy } from 'src/core/auth/strategies/google-apis.auth.strategy';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
-export class GoogleGmailProviderEnabledGuard implements CanActivate {
+export class GoogleAPIsProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
     if (!this.environmentService.isMessagingProviderGmailEnabled()) {
-      throw new NotFoundException('Gmail auth is not enabled');
+      throw new NotFoundException('Google apis auth is not enabled');
     }
 
-    new GoogleGmailStrategy(this.environmentService);
+    new GoogleAPIsStrategy(this.environmentService);
 
     return true;
   }

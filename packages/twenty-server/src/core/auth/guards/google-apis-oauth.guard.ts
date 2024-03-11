@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class GoogleGmailOauthGuard extends AuthGuard('google-gmail') {
+export class GoogleAPIsOauthGuard extends AuthGuard('google-gmail') {
   constructor() {
     super({
       prompt: 'select_account',

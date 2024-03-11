@@ -6,7 +6,7 @@ import { Request } from 'express';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-export type GoogleGmailRequest = Request & {
+export type GoogleAPIsRequest = Request & {
   user: {
     firstName?: string | null;
     lastName?: string | null;
@@ -20,7 +20,7 @@ export type GoogleGmailRequest = Request & {
 };
 
 @Injectable()
-export class GoogleGmailStrategy extends PassportStrategy(
+export class GoogleAPIsStrategy extends PassportStrategy(
   Strategy,
   'google-gmail',
 ) {
@@ -53,7 +53,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
   }
 
   async validate(
-    request: GoogleGmailRequest,
+    request: GoogleAPIsRequest,
     accessToken: string,
     refreshToken: string,
     profile: any,
@@ -66,7 +66,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
         ? JSON.parse(request.query.state)
         : undefined;
 
-    const user: GoogleGmailRequest['user'] = {
+    const user: GoogleAPIsRequest['user'] = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,

@@ -14,7 +14,7 @@ import { UserModule } from 'src/core/user/user.module';
 import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { GoogleAuthController } from 'src/core/auth/controllers/google-auth.controller';
-import { GoogleGmailAuthController } from 'src/core/auth/controllers/google-gmail-auth.controller';
+import { GoogleAPIsAuthController } from 'src/core/auth/controllers/google-apis-auth.controller';
 import { VerifyAuthController } from 'src/core/auth/controllers/verify-auth.controller';
 import { TokenService } from 'src/core/auth/services/token.service';
 import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
@@ -51,7 +51,7 @@ const jwtModule = JwtModule.registerAsync({
   ],
   controllers: [
     GoogleAuthController,
-    GoogleGmailAuthController,
+    GoogleAPIsAuthController,
     VerifyAuthController,
   ],
   providers: [
