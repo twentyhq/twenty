@@ -16,7 +16,7 @@ export class MessageThreadService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getOrphanThreads(
+  public async getOrphanThreadIds(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageThreadObjectMetadata>[]> {
@@ -24,11 +24,10 @@ export class MessageThreadService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT mt.* FROM ${dataSourceSchema}."messageThread" mt
-      WHERE NOT EXISTS (
-          SELECT 1 FROM ${dataSourceSchema}."message" m
-          WHERE m."messageThreadId" = mt.id
-      )`,
+      `SELECT mt.id
+      FROM ${dataSourceSchema}."messageThread" mt
+      LEFT JOIN ${dataSourceSchema}."message" m ON mt.id = m."messageThreadId"
+      WHERE m."messageThreadId" IS NULL`,
       [],
       workspaceId,
       transactionManager,

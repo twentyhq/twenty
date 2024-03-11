@@ -9,23 +9,18 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
-import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
+
 @Injectable()
 export class MessageService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly messageThreadService: MessageThreadService,
-    private readonly messageParticipantService: MessageParticipantService,
-    private readonly messageChannelService: MessageChannelService,
-    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
-  public async getNonAssociatedMessages(
+  public async getNonAssociatedMessageIds(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
@@ -33,10 +28,10 @@ export class MessageService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT m.* FROM ${dataSourceSchema}."message" m
-        WHERE NOT EXISTS (
-            SELECT 1 FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-            WHERE mcma."messageId" = m.id
+      `SELECT m.id FROM ${dataSourceSchema}."message" m
+        LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+        ON m.id = mcma."messageId"
+        WHERE mcma.id IS NULL
         )`,
       [],
       workspaceId,

@@ -25,7 +25,7 @@ export class ThreadCleanerService {
 
     await workspaceDataSource?.transaction(async (transactionManager) => {
       const messagesToDelete =
-        await this.messageService.getNonAssociatedMessages(
+        await this.messageService.getNonAssociatedMessageIds(
           workspaceId,
           transactionManager,
         );
@@ -41,7 +41,7 @@ export class ThreadCleanerService {
       }
 
       const messageThreadsToDelete =
-        await this.messageThreadService.getOrphanThreads(
+        await this.messageThreadService.getOrphanThreadIds(
           workspaceId,
           transactionManager,
         );
