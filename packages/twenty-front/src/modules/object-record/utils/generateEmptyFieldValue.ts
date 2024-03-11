@@ -17,14 +17,12 @@ export const generateEmptyFieldValue = (
       return {
         label: '',
         url: '',
-        __typename: 'Link',
       };
     }
     case FieldMetadataType.FullName: {
       return {
         firstName: '',
         lastName: '',
-        __typename: 'FullName',
       };
     }
     case FieldMetadataType.DateTime: {
@@ -65,7 +63,6 @@ export const generateEmptyFieldValue = (
       return {
         amountMicros: null,
         currencyCode: null,
-        __typename: 'Currency',
       };
     }
     case FieldMetadataType.Select: {
