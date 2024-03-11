@@ -11,6 +11,10 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
+import {
+  GoogleCalendarFullSyncJob,
+  GoogleCalendarFullSyncJobData,
+} from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 
 @Injectable()
 export class GoogleGmailService {
@@ -79,6 +83,18 @@ export class GoogleGmailService {
 
     await this.messageQueueService.add<GmailFullSyncJobData>(
       GmailFullSyncJob.name,
+      {
+        workspaceId,
+        connectedAccountId,
+      },
+      {
+        id: connectedAccountId,
+        retryLimit: 2,
+      },
+    );
+
+    await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
+      GoogleCalendarFullSyncJob.name,
       {
         workspaceId,
         connectedAccountId,
