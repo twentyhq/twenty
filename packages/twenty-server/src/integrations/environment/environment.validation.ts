@@ -91,6 +91,7 @@ export class EnvironmentVariables {
 
   // Frontend URL
   @IsUrl({ require_tld: false })
+  @IsOptional()
   FRONT_BASE_URL: string;
 
   // Server URL
@@ -100,6 +101,7 @@ export class EnvironmentVariables {
 
   // Json Web Token
   @IsString()
+  @IsOptional()
   ACCESS_TOKEN_SECRET: string;
 
   @IsDuration()
@@ -107,6 +109,7 @@ export class EnvironmentVariables {
   ACCESS_TOKEN_EXPIRES_IN: string;
 
   @IsString()
+  @IsOptional()
   REFRESH_TOKEN_SECRET: string;
 
   @IsDuration()
@@ -118,6 +121,7 @@ export class EnvironmentVariables {
   REFRESH_TOKEN_COOL_DOWN: string;
 
   @IsString()
+  @IsOptional()
   LOGIN_TOKEN_SECRET: string;
 
   @IsDuration()

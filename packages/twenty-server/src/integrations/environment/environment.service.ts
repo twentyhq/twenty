@@ -69,8 +69,8 @@ export class EnvironmentService {
     return this.configService.get<number>('PORT') ?? 3000;
   }
 
-  getPGDatabaseUrl(): string {
-    return this.configService.get<string>('PG_DATABASE_URL')!;
+  getPGDatabaseUrl(): string | undefined {
+    return this.configService.get<string>('PG_DATABASE_URL');
   }
 
   getRedisHost(): string {
@@ -82,7 +82,10 @@ export class EnvironmentService {
   }
 
   getFrontBaseUrl(): string {
-    return this.configService.get<string>('FRONT_BASE_URL')!;
+    return (
+      this.configService.get<string>('FRONT_BASE_URL') ??
+      'http://localhost:3001'
+    );
   }
 
   getServerUrl(): string {
@@ -90,7 +93,9 @@ export class EnvironmentService {
   }
 
   getAccessTokenSecret(): string {
-    return this.configService.get<string>('ACCESS_TOKEN_SECRET')!;
+    return (
+      this.configService.get<string>('ACCESS_TOKEN_SECRET') ?? 'random_secret'
+    );
   }
 
   getAccessTokenExpiresIn(): string {
@@ -98,7 +103,10 @@ export class EnvironmentService {
   }
 
   getRefreshTokenSecret(): string {
-    return this.configService.get<string>('REFRESH_TOKEN_SECRET')!;
+    return (
+      this.configService.get<string>('REFRESH_TOKEN_SECRET') ??
+      this.getAccessTokenSecret()
+    );
   }
 
   getRefreshTokenExpiresIn(): string {
@@ -110,7 +118,10 @@ export class EnvironmentService {
   }
 
   getLoginTokenSecret(): string {
-    return this.configService.get<string>('LOGIN_TOKEN_SECRET')!;
+    return (
+      this.configService.get<string>('LOGIN_TOKEN_SECRET') ??
+      this.getAccessTokenSecret()
+    );
   }
 
   getLoginTokenExpiresIn(): string {

@@ -34,7 +34,7 @@
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
-    "@nestjs/serve-static": "^3.0.0",
+    "@nestjs/serve-static": "^4.0.1",
     "@nestjs/terminus": "^9.2.2",
     "@nestjs/typeorm": "^10.0.0",
     "@nivo/calendar": "^0.84.0",
