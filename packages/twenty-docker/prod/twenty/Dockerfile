@@ -1,8 +1,6 @@
 # Build the front-end
 FROM node:18.17.1-alpine as twenty-front-build
 
-ARG REACT_APP_SERVER_BASE_URL
-
 WORKDIR /app
 
 COPY ./package.json .
@@ -41,6 +39,9 @@ RUN npx nx run twenty-server:build
 FROM node:18.16.0-alpine
 
 WORKDIR /app
+
+ARG REACT_APP_SERVER_BASE_URL
+ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 
 COPY --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
 COPY --from=twenty-server-build /app/packages/twenty-emails /app/packages/twenty-emails

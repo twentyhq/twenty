@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+
+  twenty:
+    image: twentycrm/twenty:latest
+    ports:
+      - 3000:3000
+    environment:
+      - REACT_APP_SERVER_BASE_URL=${LOCAL_SERVER_URL}
+      - PG_DATABASE_URL=${PG_DATABASE_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
+      - PORT=3000
+      - STORAGE_TYPE=local
+      - STORAGE_LOCAL_PATH=.local-storage
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - LOGIN_TOKEN_SECRET=${LOGIN_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+    depends_on:
+      - db
+
+  db:
+    image: twentycrm/twenty-postgres:latest
+    volumes:
+      - twenty-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
+volumes:
+  twenty-db-data:
