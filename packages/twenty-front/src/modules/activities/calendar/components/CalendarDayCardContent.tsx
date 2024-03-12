@@ -1,6 +1,6 @@
-import { css } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { endOfDay, format, isPast } from 'date-fns';
+import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
@@ -11,19 +11,13 @@ type CalendarDayCardContentProps = {
   divider?: boolean;
 };
 
-const StyledCardContent = styled(CardContent)<{ active: boolean }>`
+const StyledCardContent = styled(CardContent)`
   align-items: flex-start;
   border-color: ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(2, 3)};
-
-  ${({ active }) =>
-    !active &&
-    css`
-      background-color: transparent;
-    `}
 `;
 
 const StyledDayContainer = styled.div`
@@ -37,7 +31,7 @@ const StyledWeekDay = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-const StyledDateDay = styled.div`
+const StyledMonthDay = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
@@ -57,14 +51,33 @@ export const CalendarDayCardContent = ({
   calendarEvents,
   divider,
 }: CalendarDayCardContentProps) => {
+  const theme = useTheme();
+
   const endOfDayDate = endOfDay(calendarEvents[0].startsAt);
-  const isPastDay = isPast(endOfDayDate);
+  const endsIn = differenceInSeconds(endOfDayDate, Date.now());
+
+  const weekDayLabel = format(endOfDayDate, 'EE');
+  const monthDayLabel = format(endOfDayDate, 'dd');
+
+  const upcomingDayCardContentVariants = {
+    upcoming: {},
+    ended: { backgroundColor: theme.background.primary },
+  };
 
   return (
-    <StyledCardContent active={!isPastDay} divider={divider}>
+    <StyledCardContent
+      divider={divider}
+      initial="upcoming"
+      animate="ended"
+      variants={upcomingDayCardContentVariants}
+      transition={{
+        delay: Math.max(0, endsIn),
+        duration: theme.animation.duration.fast,
+      }}
+    >
       <StyledDayContainer>
-        <StyledWeekDay>{format(endOfDayDate, 'EE')}</StyledWeekDay>
-        <StyledDateDay>{format(endOfDayDate, 'dd')}</StyledDateDay>
+        <StyledWeekDay>{weekDayLabel}</StyledWeekDay>
+        <StyledMonthDay>{monthDayLabel}</StyledMonthDay>
       </StyledDayContainer>
       <StyledEvents>
         {calendarEvents.map((calendarEvent) => (

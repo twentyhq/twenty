@@ -14,12 +14,16 @@ export const useSnackBar = () => {
     SnackBarManagerScopeInternalContext,
   );
 
-  const handleSnackBarClose = useRecoilCallback(({ set }) => (id: string) => {
-    set(snackBarInternalScopedState({ scopeId }), (prevState) => ({
-      ...prevState,
-      queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
-    }));
-  });
+  const handleSnackBarClose = useRecoilCallback(
+    ({ set }) =>
+      (id: string) => {
+        set(snackBarInternalScopedState({ scopeId }), (prevState) => ({
+          ...prevState,
+          queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
+        }));
+      },
+    [scopeId],
+  );
 
   const setSnackBarQueue = useRecoilCallback(
     ({ set }) =>

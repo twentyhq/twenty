@@ -154,6 +154,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @IsSystem()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -180,6 +181,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => MessageParticipantObjectMetadata,
     inverseSideFieldKey: 'person',
   })
+  @IsSystem()
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
@@ -195,5 +197,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
+  @IsSystem()
   calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
 }

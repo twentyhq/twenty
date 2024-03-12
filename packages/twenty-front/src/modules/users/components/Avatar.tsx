@@ -12,7 +12,7 @@ export type AvatarType = 'squared' | 'rounded';
 export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 export type AvatarProps = {
-  avatarUrl: string | null | undefined;
+  avatarUrl?: string | null;
   className?: string;
   size?: AvatarSize;
   placeholder: string | undefined;
@@ -21,6 +21,29 @@ export type AvatarProps = {
   color?: string;
   backgroundColor?: string;
   onClick?: () => void;
+};
+
+const propertiesBySize = {
+  xl: {
+    fontSize: '16px',
+    width: '40px',
+  },
+  lg: {
+    fontSize: '13px',
+    width: '24px',
+  },
+  md: {
+    fontSize: '12px',
+    width: '16px',
+  },
+  sm: {
+    fontSize: '10px',
+    width: '14px',
+  },
+  xs: {
+    fontSize: '8px',
+    width: '12px',
+  },
 };
 
 export const StyledAvatar = styled.div<
@@ -38,54 +61,12 @@ export const StyledAvatar = styled.div<
   display: flex;
 
   flex-shrink: 0;
-  font-size: ${({ size }) => {
-    switch (size) {
-      case 'xl':
-        return '16px';
-      case 'lg':
-        return '13px';
-      case 'md':
-      default:
-        return '12px';
-      case 'sm':
-        return '10px';
-      case 'xs':
-        return '8px';
-    }
-  }};
+  font-size: ${({ size = 'md' }) => propertiesBySize[size].fontSize};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
-  height: ${({ size }) => {
-    switch (size) {
-      case 'xl':
-        return '40px';
-      case 'lg':
-        return '24px';
-      case 'md':
-      default:
-        return '16px';
-      case 'sm':
-        return '14px';
-      case 'xs':
-        return '12px';
-    }
-  }};
+  height: ${({ size = 'md' }) => propertiesBySize[size].width};
   justify-content: center;
-  width: ${({ size }) => {
-    switch (size) {
-      case 'xl':
-        return '40px';
-      case 'lg':
-        return '24px';
-      case 'md':
-      default:
-        return '16px';
-      case 'sm':
-        return '14px';
-      case 'xs':
-        return '12px';
-    }
-  }};
+  width: ${({ size = 'md' }) => propertiesBySize[size].width};
 
   &:hover {
     box-shadow: ${({ theme, onClick }) =>

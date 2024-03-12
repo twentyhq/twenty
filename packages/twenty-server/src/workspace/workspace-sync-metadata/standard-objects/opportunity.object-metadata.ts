@@ -134,6 +134,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
+  @IsSystem()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
