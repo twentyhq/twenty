@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceQueryRunnerOptions } from 'src/workspace/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/workspace/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { RecordPositionFactory } from 'src/workspace/workspace-query-runner/factories/record-position.factory';
+
+import { RecordPositionFactory } from './record-position.factory';
 
 @Injectable()
 export class QueryRunnerArgsFactory {

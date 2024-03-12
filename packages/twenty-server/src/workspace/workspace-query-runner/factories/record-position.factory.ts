@@ -17,7 +17,7 @@ export class RecordPositionFactory {
     value: number | 'first' | 'last',
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
-  ) {
+  ): Promise<number> {
     if (typeof value === 'number') {
       return value;
     }
