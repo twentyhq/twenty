@@ -52,7 +52,7 @@ release:
 		--push \
 		--no-cache \
 		--platform linux/amd64,linux/arm64 \
-		-f ./packages/twenty-docker/prod/twenty/Dockerfile -t twentycrm/twenty:$(version) -t twentycrm/twenty:latest . \
+		-f ./packages/twenty-docker/prod/twenty/Dockerfile -t imfelix/twenty:$(version) -t imfelix/twenty:latest . \
 		&& cd -
 
 release-docs:

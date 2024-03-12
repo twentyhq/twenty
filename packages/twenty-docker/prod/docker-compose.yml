@@ -16,9 +16,9 @@ services:
       - LOGIN_TOKEN_SECRET=${LOGIN_TOKEN_SECRET}
       - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
     depends_on:
-      - db
+      - postgres
 
-  db:
+  postgres:
     image: twentycrm/twenty-postgres:latest
     volumes:
       - twenty-db-data:/var/lib/postgresql/data

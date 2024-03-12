@@ -15,6 +15,7 @@ RUN yarn
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 RUN yarn nx build twenty-front
+RUN sh ./packages/twenty-front/scripts/inject-runtime-env.sh
 
 # Build the back-end
 FROM node:18.16.0-alpine as twenty-server-build
