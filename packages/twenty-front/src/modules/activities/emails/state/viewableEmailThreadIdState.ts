@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const viewableEmailThreadIdState = atom<string | null>({
+export const viewableEmailThreadIdState = createState<string | null>({
   key: 'viewableEmailThreadIdState',
-  default: null,
+  defaultValue: null,
 });

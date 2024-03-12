@@ -55,7 +55,7 @@ export const SettingsAccountsListCard = <
   const theme = useTheme();
   const navigate = useNavigate();
 
-  if (isLoading) return <SettingsAccountsListSkeletonCard />;
+  if (isLoading === true) return <SettingsAccountsListSkeletonCard />;
 
   if (!accounts.length) return <SettingsAccountsListEmptyStateCard />;
 

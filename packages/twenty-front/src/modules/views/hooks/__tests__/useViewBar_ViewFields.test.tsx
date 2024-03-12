@@ -14,12 +14,6 @@ import { ViewScope } from '@/views/scopes/ViewScope';
 import { currentViewFieldsScopedFamilyState } from '@/views/states/currentViewFieldsScopedFamilyState';
 import { ViewField } from '@/views/types/ViewField';
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => {
-  return {
-    useMapFieldMetadataToGraphQLQuery: jest.fn().mockReturnValue(() => '\n'),
-  };
-});
-
 const fieldMetadataId = '12ecdf87-506f-44a7-98c6-393e5f05b225';
 
 const fieldDefinition: ColumnDefinition<FieldMetadata> = {
@@ -53,7 +47,15 @@ const mocks = [
       query: gql`
         mutation CreateOneViewField($input: ViewFieldCreateInput!) {
           createViewField(data: $input) {
+            __typename
+            position
+            isVisible
+            fieldMetadataId
+            viewId
             id
+            size
+            createdAt
+            updatedAt
           }
         }
       `,

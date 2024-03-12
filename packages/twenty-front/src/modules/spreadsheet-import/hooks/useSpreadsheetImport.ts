@@ -4,7 +4,7 @@ import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetI
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 
 export const useSpreadsheetImport = <T extends string>() => {
-  const setSpreadSheetImport = useSetRecoilState(spreadsheetImportState);
+  const setSpreadSheetImport = useSetRecoilState(spreadsheetImportState());
 
   const openSpreadsheetImport = (
     options: Omit<SpreadsheetOptions<T>, 'isOpen' | 'onClose'>,

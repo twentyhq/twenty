@@ -74,7 +74,7 @@ const tabJestFn = fn();
 const shiftTabJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     enterJestFn.mockClear();
     escapeJestfn.mockClear();
     clickOutsideJestFn.mockClear();

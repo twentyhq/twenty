@@ -18,6 +18,8 @@ import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -43,7 +45,7 @@ export const PageChangeEffect = () => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
+  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState());
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -81,13 +83,13 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.SignIn);
     } else if (
-      onboardingStatus &&
+      isDefined(onboardingStatus) &&
       onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
     } else if (
-      onboardingStatus &&
+      isDefined(onboardingStatus) &&
       [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
         onboardingStatus,
       ) &&
@@ -122,7 +124,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
+          if (isUndefinedOrNull(data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },

@@ -12,7 +12,7 @@ import {
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
-  avatar: ReactNode;
+  avatar?: ReactNode;
   selected: boolean;
   text: string;
   className?: string;

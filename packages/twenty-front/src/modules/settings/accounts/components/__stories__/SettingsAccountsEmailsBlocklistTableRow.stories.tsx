@@ -9,7 +9,7 @@ import { formatToHumanReadableDate } from '~/utils';
 const onRemoveJestFn = fn();
 
 const ClearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     onRemoveJestFn.mockClear();
   }
   return <Story />;

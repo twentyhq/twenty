@@ -397,6 +397,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 createdObjectMetadata,
               ),
               referencedTableColumnName: 'id',
+              onDelete: RelationOnDeleteAction.CASCADE,
             },
           ],
         },

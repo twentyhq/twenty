@@ -48,19 +48,14 @@ describe('useSelectedTableCellEditMode', () => {
 
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'isTableCellInEditModeFamilyStateScopeMap__{"familyKey":{"column":0,"row":0},"scopeId":"yourScopeId-scope"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":0,"row":0},"scopeId":"yourScopeId-scope"}',
       },
       false,
     );
+
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'currentTableCellInEditModePositionStateScopeMap__{"scopeId":"yourScopeId-scope"}',
-      },
-      { column: 5, row: 1 },
-    );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
-      {
-        key: 'isTableCellInEditModeFamilyStateScopeMap__{"familyKey":{"column":5,"row":1},"scopeId":"yourScopeId-scope"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"row":1},"scopeId":"yourScopeId-scope"}',
       },
       true,
     );

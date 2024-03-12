@@ -8,9 +8,12 @@ import {
 } from '@blocknote/core';
 import { createReactBlockSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { AttachmentIcon } from '../files/components/AttachmentIcon';
 import { AttachmentType } from '../files/types/Attachment';
@@ -77,7 +80,7 @@ const FileBlockRenderer = ({
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const handleUploadAttachment = async (file: File) => {
-    if (!file) {
+    if (isUndefinedOrNull(file)) {
       return '';
     }
     const fileUrl = await editor.uploadFile?.(file);
@@ -93,10 +96,10 @@ const FileBlockRenderer = ({
     inputFileRef?.current?.click?.();
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleUploadAttachment?.(e.target.files[0]);
+    if (isDefined(e.target.files)) handleUploadAttachment?.(e.target.files[0]);
   };
 
-  if (block.props.url) {
+  if (isNonEmptyString(block.props.url)) {
     return (
       <AppThemeProvider>
         <StyledFileLine>

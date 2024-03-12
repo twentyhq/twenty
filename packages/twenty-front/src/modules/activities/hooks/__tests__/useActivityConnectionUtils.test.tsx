@@ -58,7 +58,7 @@ describe('useActivityConnectionUtils', () => {
         <RecoilRoot
           initializeState={(snapshot) => {
             snapshot.set(
-              objectMetadataItemsState,
+              objectMetadataItemsState(),
               getObjectMetadataItemsMock(),
             );
           }}
@@ -86,7 +86,7 @@ describe('useActivityConnectionUtils', () => {
         <RecoilRoot
           initializeState={(snapshot) => {
             snapshot.set(
-              objectMetadataItemsState,
+              objectMetadataItemsState(),
               getObjectMetadataItemsMock(),
             );
           }}

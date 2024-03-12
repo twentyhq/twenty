@@ -24,11 +24,13 @@ export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
-  const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
+  const currentUserDueTaskCount = useRecoilValue(
+    currentUserDueTaskCountState(),
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
+    navigationMemorizedUrlState(),
   );
 
   return (

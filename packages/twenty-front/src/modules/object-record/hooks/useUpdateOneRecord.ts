@@ -20,7 +20,7 @@ export const useUpdateOneRecord = <
   const apolloClient = useApolloClient();
 
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({ objectNameSingular });
+    useObjectMetadataItem({ objectNameSingular }, 1);
 
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({

@@ -7,10 +7,12 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
@@ -26,8 +28,6 @@ import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { UserService } from './services/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

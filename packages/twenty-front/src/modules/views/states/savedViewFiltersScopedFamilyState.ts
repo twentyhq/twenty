@@ -1,8 +1,8 @@
-import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
+import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 import { ViewFilter } from '../types/ViewFilter';
 
-export const savedViewFiltersScopedFamilyState = createFamilyStateScopeMap<
+export const savedViewFiltersScopedFamilyState = createComponentFamilyState<
   ViewFilter[],
   string
 >({

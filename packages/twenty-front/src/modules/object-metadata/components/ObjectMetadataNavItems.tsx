@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useCachedRootQuery } from '@/apollo/hooks/useCachedRootQuery';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
+import { useCachedRootQuery } from '@/object-record/cache/hooks/useCachedRootQuery';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';

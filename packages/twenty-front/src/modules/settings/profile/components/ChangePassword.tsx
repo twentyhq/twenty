@@ -9,7 +9,7 @@ import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 export const ChangePassword = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useRecoilValue(currentUserState());
 
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
 
@@ -27,7 +27,7 @@ export const ChangePassword = () => {
           email: currentUser.email,
         },
       });
-      if (data?.emailPasswordResetLink?.success) {
+      if (data?.emailPasswordResetLink?.success === true) {
         enqueueSnackBar('Password reset link has been sent to the email', {
           variant: 'success',
         });

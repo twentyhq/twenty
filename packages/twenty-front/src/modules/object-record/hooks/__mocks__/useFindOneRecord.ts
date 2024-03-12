@@ -5,72 +5,28 @@ import { responseData as person } from './useUpdateOneRecord';
 export const query = gql`
   query FindOnePerson($objectRecordId: UUID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
-      id
-      opportunities {
-        edges {
-          node {
-            __typename
-            id
+      __typename
+          xLink {
+            label
+            url
           }
-        }
-      }
-      xLink {
-        label
-        url
-      }
-      id
-      pointOfContactForOpportunities {
-        edges {
-          node {
-            __typename
-            id
+          id
+          createdAt
+          city
+          email
+          jobTitle
+          name {
+            firstName
+            lastName
           }
-        }
-      }
-      createdAt
-      company {
-        __typename
-        id
-      }
-      city
-      email
-      activityTargets {
-        edges {
-          node {
-            __typename
-            id
+          phone
+          linkedinLink {
+            label
+            url
           }
-        }
-      }
-      jobTitle
-      favorites {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
-      attachments {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        label
-        url
-      }
-      updatedAt
-      avatarUrl
-      companyId
+          updatedAt
+          avatarUrl
+          companyId
     }
   }
 `;

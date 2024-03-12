@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isDefined } from '~/utils/isDefined';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
@@ -12,7 +13,7 @@ type TasksEffectProps = {
 };
 
 export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const {
     setSelectedFilter,
     setAvailableFilterDefinitions,
@@ -26,7 +27,7 @@ export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
   }, [setAvailableFilterDefinitions]);
 
   useEffect(() => {
-    if (currentWorkspaceMember) {
+    if (isDefined(currentWorkspaceMember)) {
       setSelectedFilter({
         fieldMetadataId: 'assigneeId',
         value: JSON.stringify(currentWorkspaceMember.id),

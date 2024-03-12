@@ -2,6 +2,8 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { fireEvent, render, renderHook } from '@testing-library/react';
 
+import { isDefined } from '~/utils/isDefined';
+
 import {
   ClickOutsideMode,
   useListenClickOutside,
@@ -46,7 +48,7 @@ describe('useListenClickOutside', () => {
     );
 
     act(() => {
-      if (containerRef.current) {
+      if (isDefined(containerRef.current)) {
         fireEvent.mouseDown(containerRef.current);
         fireEvent.click(containerRef.current);
       }
@@ -95,7 +97,7 @@ describe('useListenClickOutsideByClassName', () => {
 
     act(() => {
       const notClickableElement = container.querySelector('.will-trigger');
-      if (notClickableElement) {
+      if (isDefined(notClickableElement)) {
         fireEvent.mouseDown(notClickableElement);
         fireEvent.click(notClickableElement);
       }
@@ -122,7 +124,7 @@ describe('useListenClickOutsideByClassName', () => {
 
     act(() => {
       const notClickableElement = container.querySelector('.wont-trigger');
-      if (notClickableElement) {
+      if (isDefined(notClickableElement)) {
         fireEvent.mouseDown(notClickableElement);
         fireEvent.click(notClickableElement);
       }

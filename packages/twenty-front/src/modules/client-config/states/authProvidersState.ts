@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-
+import { createState } from '@/ui/utilities/state/utils/createState';
 import { AuthProviders } from '~/generated/graphql';
 
-export const authProvidersState = atom<AuthProviders>({
+export const authProvidersState = createState<AuthProviders>({
   key: 'authProvidersState',
-  default: { google: false, magicLink: false, password: true },
+  defaultValue: { google: false, magicLink: false, password: true },
 });

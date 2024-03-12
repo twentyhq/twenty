@@ -17,6 +17,7 @@ import { IsFieldMetadataDefaultValue } from 'src/metadata/field-metadata/validat
 import { FieldMetadataResolver } from 'src/metadata/field-metadata/field-metadata.resolver';
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import { IsFieldMetadataOptions } from 'src/metadata/field-metadata/validators/is-field-metadata-options.validator';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { FieldMetadataService } from './field-metadata.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -28,7 +29,10 @@ import { UpdateFieldInput } from './dtos/update-field.input';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature(
+          [FieldMetadataEntity, RelationMetadataEntity],
+          'metadata',
+        ),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         ObjectMetadataModule,

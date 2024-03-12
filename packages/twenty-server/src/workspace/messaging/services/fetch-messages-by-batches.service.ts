@@ -187,8 +187,6 @@ export class FetchMessagesByBatchesService {
     const formattedResponse = Promise.all(
       parsedResponses.map(async (message: GmailMessageParsedResponse) => {
         if (message.error) {
-          console.log('Error', message.error);
-
           errors.push(message.error);
 
           return;

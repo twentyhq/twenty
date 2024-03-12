@@ -20,7 +20,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
           background: ${theme.background.transparent.medium};
         }
       `;
-    } else if (disabled) {
+    } else if (disabled === true) {
       return css`
         background: inherit;
         &:hover {
@@ -31,7 +31,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
 
         cursor: default;
       `;
-    } else if (hovered) {
+    } else if (hovered === true) {
       return css`
         background: ${theme.background.transparent.light};
       `;
