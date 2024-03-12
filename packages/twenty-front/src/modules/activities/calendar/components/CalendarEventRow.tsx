@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
+import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
@@ -98,6 +100,7 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { displayCurrentEventCursor = false } = useContext(CalendarContext);
 
   const endsAt = getCalendarEventEndDate(calendarEvent);
   const hasEnded = hasCalendarEventEnded(calendarEvent);
@@ -155,7 +158,9 @@ export const CalendarEventRow = ({
           ))}
         />
       )}
-      <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
+      {displayCurrentEventCursor && (
+        <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
+      )}
     </StyledContainer>
   );
 };
