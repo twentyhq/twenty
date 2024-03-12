@@ -1,16 +1,19 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
+import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { AvatarGroup } from '@/users/components/AvatarGroup';
+import { isNonNullable } from '~/utils/isNonNullable';
 
 type CalendarEventRowProps = {
   calendarEvent: CalendarEvent;
@@ -94,6 +97,7 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const endsAt = getCalendarEventEndDate(calendarEvent);
   const hasEnded = hasCalendarEventEnded(calendarEvent);
@@ -103,9 +107,13 @@ export const CalendarEventRow = ({
     : format(calendarEvent.startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
+  const isCurrentWorkspaceMemberAttending = !!calendarEvent.attendees?.find(
+    ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
+  );
+
   return (
     <StyledContainer className={className}>
-      <StyledAttendanceIndicator />
+      <StyledAttendanceIndicator active={isCurrentWorkspaceMemberAttending} />
       <StyledLabels>
         <StyledTime>
           {startTimeLabel}
@@ -133,8 +141,15 @@ export const CalendarEventRow = ({
         <AvatarGroup
           avatars={calendarEvent.attendees.map((attendee) => (
             <Avatar
-              key={attendee.name}
-              placeholder={attendee.name}
+              key={[attendee.workspaceMemberId, attendee.displayName]
+                .filter(isNonNullable)
+                .join('-')}
+              avatarUrl={
+                attendee.workspaceMemberId === currentWorkspaceMember?.id
+                  ? currentWorkspaceMember?.avatarUrl
+                  : undefined
+              }
+              placeholder={attendee.displayName}
               type="rounded"
             />
           ))}

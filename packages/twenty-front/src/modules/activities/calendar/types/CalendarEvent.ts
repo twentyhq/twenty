@@ -7,5 +7,8 @@ export type CalendarEvent = {
   isCanceled?: boolean;
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
-  attendees?: { name: string }[];
+  attendees?: {
+    displayName: string;
+    workspaceMemberId?: string;
+  }[];
 };
