@@ -9,7 +9,7 @@ import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPa
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
-import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
