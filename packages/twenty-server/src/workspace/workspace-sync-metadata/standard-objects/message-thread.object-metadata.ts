@@ -3,6 +3,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { messageThreadStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -13,6 +15,7 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/wo
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.messageThread,
   namePlural: 'messageThreads',
   labelSingular: 'Message Thread',
   labelPlural: 'Message Threads',
@@ -22,6 +25,7 @@ import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 @IsSystem()
 export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: messageThreadStandardFieldIds.messages,
     type: FieldMetadataType.RELATION,
     label: 'Messages',
     description: 'Messages from the thread.',
@@ -36,6 +40,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   messages: MessageObjectMetadata[];
 
   @FieldMetadata({
+    standardId: messageThreadStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',

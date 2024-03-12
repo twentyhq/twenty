@@ -63,6 +63,10 @@ export class WorkspaceSyncFieldMetadataService {
 
     // Loop over all standard objects and compare them with the objects in DB
     for (const customObjectMetadata of customObjectMetadataCollection) {
+      if (!customObjectMetadata.standardId) {
+        continue;
+      }
+
       // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
       const standardObjectMetadata = computeStandardObject(
         {

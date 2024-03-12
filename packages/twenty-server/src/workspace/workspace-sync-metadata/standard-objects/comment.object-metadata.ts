@@ -1,4 +1,6 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { commentStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -7,6 +9,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.comment,
   namePlural: 'comments',
   labelSingular: 'Comment',
   labelPlural: 'Comments',
@@ -16,6 +19,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 @IsSystem()
 export class CommentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: commentStandardFieldIds.body,
     type: FieldMetadataType.TEXT,
     label: 'Body',
     description: 'Comment body',
@@ -24,6 +28,7 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
   body: string;
 
   @FieldMetadata({
+    standardId: commentStandardFieldIds.author,
     type: FieldMetadataType.RELATION,
     label: 'Author',
     description: 'Comment author',
@@ -33,6 +38,7 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
   author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
+    standardId: commentStandardFieldIds.activity,
     type: FieldMetadataType.RELATION,
     label: 'Activity',
     description: 'Comment activity',

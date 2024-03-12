@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { activityStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -12,6 +14,7 @@ import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.activity,
   namePlural: 'activities',
   labelSingular: 'Activity',
   labelPlural: 'Activities',
@@ -21,6 +24,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 @IsSystem()
 export class ActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: activityStandardFieldIds.title,
     type: FieldMetadataType.TEXT,
     label: 'Title',
     description: 'Activity title',
@@ -29,6 +33,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   title: string;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.body,
     type: FieldMetadataType.TEXT,
     label: 'Body',
     description: 'Activity body',
@@ -37,6 +42,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   body: string;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'Activity type',
@@ -46,6 +52,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.reminderAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Reminder Date',
     description: 'Activity reminder date',
@@ -55,6 +62,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   reminderAt: Date;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.dueAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Due Date',
     description: 'Activity due date',
@@ -64,6 +72,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   dueAt: Date;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.completedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Completion Date',
     description: 'Activity completion date',
@@ -73,6 +82,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   completedAt: Date;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Targets',
     description: 'Activity targets',
@@ -86,6 +96,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: 'Activity attachments',
@@ -99,6 +110,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.comments,
     type: FieldMetadataType.RELATION,
     label: 'Comments',
     description: 'Activity comments',
@@ -112,6 +124,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   comments: CommentObjectMetadata[];
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.author,
     type: FieldMetadataType.RELATION,
     label: 'Author',
     description: 'Activity author',
@@ -121,6 +134,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
+    standardId: activityStandardFieldIds.assignee,
     type: FieldMetadataType.RELATION,
     label: 'Assignee',
     description: 'Activity assignee',

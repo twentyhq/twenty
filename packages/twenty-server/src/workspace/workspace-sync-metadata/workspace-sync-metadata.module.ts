@@ -40,6 +40,6 @@ import { WorkspaceMigrationBuilderModule } from 'src/workspace/workspace-migrati
     WorkspaceSyncFieldMetadataService,
     WorkspaceSyncMetadataService,
   ],
-  exports: [WorkspaceSyncMetadataService],
+  exports: [...workspaceSyncMetadataFactories, WorkspaceSyncMetadataService],
 })
 export class WorkspaceSyncMetadataModule {}
