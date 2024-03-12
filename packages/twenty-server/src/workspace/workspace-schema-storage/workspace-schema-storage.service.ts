@@ -1,33 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { InjectMemoryStorage } from 'src/integrations/memory-storage/decorators/inject-memory-storage.decorator';
-import { MemoryStorageService } from 'src/integrations/memory-storage/memory-storage.service';
+import { CacheStorageService } from 'src/integrations/cache-storage/cache-storage.service';
+import { CacheStorageNamespace } from 'src/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 
 @Injectable()
 export class WorkspaceSchemaStorageService {
   constructor(
-    @InjectMemoryStorage('objectMetadataCollection')
-    private readonly objectMetadataMemoryStorageService: MemoryStorageService<
-      ObjectMetadataEntity[]
-    >,
-    @InjectMemoryStorage('typeDefs')
-    private readonly typeDefsMemoryStorageService: MemoryStorageService<string>,
-    @InjectMemoryStorage('usedScalarNames')
-    private readonly usedScalarNamesMemoryStorageService: MemoryStorageService<
-      string[]
-    >,
-    @InjectMemoryStorage('cacheVersion')
-    private readonly cacheVersionMemoryStorageService: MemoryStorageService<string>,
+    @Inject(CacheStorageNamespace.WorkspaceSchema)
+    private readonly workspaceSchemaCache: CacheStorageService,
+
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   async validateCacheVersion(workspaceId: string): Promise<void> {
     const currentVersion =
-      (await this.cacheVersionMemoryStorageService.read({
-        key: workspaceId,
-      })) ?? '0';
+      (await this.workspaceSchemaCache.get<string>(
+        `cacheVersion:${workspaceId}`,
+      )) ?? '0';
+
     let latestVersion =
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
@@ -40,63 +32,63 @@ export class WorkspaceSchemaStorageService {
         await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
       // Update the cache version after invalidation
-      await this.cacheVersionMemoryStorageService.write({
-        key: workspaceId,
-        data: latestVersion,
-      });
+      await this.workspaceSchemaCache.set<string>(
+        `cacheVersion:${workspaceId}`,
+        latestVersion,
+      );
     }
   }
 
-  setObjectMetadata(
+  setObjectMetadataCollection(
     workspaceId: string,
-    objectMetadata: ObjectMetadataEntity[],
+    objectMetadataCollection: ObjectMetadataEntity[],
   ) {
-    return this.objectMetadataMemoryStorageService.write({
-      key: workspaceId,
-      data: objectMetadata,
-    });
+    return this.workspaceSchemaCache.set<ObjectMetadataEntity[]>(
+      `objectMetadataCollection:${workspaceId}`,
+      objectMetadataCollection,
+    );
   }
 
-  getObjectMetadata(
+  getObjectMetadataCollection(
     workspaceId: string,
-  ): Promise<ObjectMetadataEntity[] | null> {
-    return this.objectMetadataMemoryStorageService.read({
-      key: workspaceId,
-    });
+  ): Promise<ObjectMetadataEntity[] | undefined> {
+    return this.workspaceSchemaCache.get<ObjectMetadataEntity[]>(
+      `objectMetadataCollection:${workspaceId}`,
+    );
   }
 
   setTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {
-    return this.typeDefsMemoryStorageService.write({
-      key: workspaceId,
-      data: typeDefs,
-    });
+    return this.workspaceSchemaCache.set<string>(
+      `typeDefs:${workspaceId}`,
+      typeDefs,
+    );
   }
 
-  getTypeDefs(workspaceId: string): Promise<string | null> {
-    return this.typeDefsMemoryStorageService.read({
-      key: workspaceId,
-    });
+  getTypeDefs(workspaceId: string): Promise<string | undefined> {
+    return this.workspaceSchemaCache.get<string>(`typeDefs:${workspaceId}`);
   }
 
   setUsedScalarNames(
     workspaceId: string,
     scalarsUsed: string[],
   ): Promise<void> {
-    return this.usedScalarNamesMemoryStorageService.write({
-      key: workspaceId,
-      data: scalarsUsed,
-    });
+    return this.workspaceSchemaCache.set<string[]>(
+      `usedScalarNames:${workspaceId}`,
+      scalarsUsed,
+    );
   }
 
-  getUsedScalarNames(workspaceId: string): Promise<string[] | null> {
-    return this.usedScalarNamesMemoryStorageService.read({
-      key: workspaceId,
-    });
+  getUsedScalarNames(workspaceId: string): Promise<string[] | undefined> {
+    return this.workspaceSchemaCache.get<string[]>(
+      `usedScalarNames:${workspaceId}`,
+    );
   }
 
   async invalidateCache(workspaceId: string): Promise<void> {
-    await this.objectMetadataMemoryStorageService.delete({ key: workspaceId });
-    await this.typeDefsMemoryStorageService.delete({ key: workspaceId });
-    await this.usedScalarNamesMemoryStorageService.delete({ key: workspaceId });
+    await this.workspaceSchemaCache.del(
+      `objectMetadataCollection:${workspaceId}`,
+    );
+    await this.workspaceSchemaCache.del(`typeDefs:${workspaceId}`);
+    await this.workspaceSchemaCache.del(`usedScalarNames:${workspaceId}`);
   }
 }
