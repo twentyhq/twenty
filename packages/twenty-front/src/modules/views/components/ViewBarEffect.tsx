@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -32,24 +32,26 @@ export const ViewBarEffect = () => {
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
-    skip: !viewObjectMetadataId,
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: {
-      objectMetadataId: { eq: viewObjectMetadataId },
-    },
+    ...ALL_VIEWS_QUERY_KEY,
     useRecordsWithoutConnection: true,
   });
 
-  useEffect(() => {
-    if (!newViews.length) return;
+  const newViewsOnCurrentObject = newViews.filter(
+    (view) => view.objectMetadataId === viewObjectMetadataId,
+  );
 
-    if (!isDeeplyEqual(views, newViews)) {
-      setViews(newViews);
+  useEffect(() => {
+    if (!newViewsOnCurrentObject.length) return;
+
+    if (!isDeeplyEqual(views, newViewsOnCurrentObject)) {
+      setViews(newViewsOnCurrentObject);
     }
 
     const currentView =
-      newViews.find((view) => view.id === currentViewIdFromUrl) ??
-      newViews[0] ??
+      newViewsOnCurrentObject.find(
+        (view) => view.id === currentViewIdFromUrl,
+      ) ??
+      newViewsOnCurrentObject[0] ??
       null;
 
     if (isUndefinedOrNull(currentView)) return;
@@ -69,17 +71,17 @@ export const ViewBarEffect = () => {
     loadViewFields,
     loadViewFilters,
     loadViewSorts,
-    newViews,
+    newViewsOnCurrentObject,
     setCurrentViewId,
     setViews,
     views,
   ]);
 
   useEffect(() => {
-    if (!currentViewIdFromUrl || !newViews.length) return;
+    if (!currentViewIdFromUrl || !newViewsOnCurrentObject.length) return;
 
     loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView, newViews]);
+  }, [currentViewIdFromUrl, loadView, newViewsOnCurrentObject]);
 
   return <></>;
 };
