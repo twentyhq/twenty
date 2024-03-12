@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 
 import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -9,42 +9,47 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
-import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageThreadService } from 'src/workspace/messaging/repositories/message-thread/message-thread.service';
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
+import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
+
 @Injectable()
 export class MessageService {
+  private readonly logger = new Logger(MessageService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    @Inject(forwardRef(() => MessageThreadService))
     private readonly messageThreadService: MessageThreadService,
-    private readonly messageParticipantService: MessageParticipantService,
     private readonly messageChannelService: MessageChannelService,
-    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
   ) {}
 
-  public async getNonAssociatedMessages(
+  public async getNonAssociatedMessageIdsPaginated(
+    limit: number,
+    offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+  ): Promise<string[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT m.* FROM ${dataSourceSchema}."message" m
-        WHERE NOT EXISTS (
-            SELECT 1 FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-            WHERE mcma."messageId" = m.id
-        )`,
-      [],
-      workspaceId,
-      transactionManager,
-    );
+    const nonAssociatedMessages =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT m.id FROM ${dataSourceSchema}."message" m
+        LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+        ON m.id = mcma."messageId"
+        WHERE mcma.id IS NULL
+        LIMIT $1 OFFSET $2`,
+        [limit, offset],
+        workspaceId,
+        transactionManager,
+      );
+
+    return nonAssociatedMessages.map(({ id }) => id);
   }
 
-  public async getFirstByHeaderMessageId(
+  public async getFirstOrNullByHeaderMessageId(
     headerMessageId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -125,9 +130,32 @@ export class MessageService {
     const messageExternalIdsAndIdsMap = new Map<string, string>();
 
     try {
+      let keepImporting = true;
+
       for (const message of messages) {
+        if (!keepImporting) {
+          break;
+        }
+
         await workspaceDataSource?.transaction(
           async (manager: EntityManager) => {
+            const gmailMessageChannel =
+              await this.messageChannelService.getByIds(
+                [gmailMessageChannelId],
+                workspaceId,
+                manager,
+              );
+
+            if (gmailMessageChannel.length === 0) {
+              this.logger.error(
+                `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessages`,
+              );
+
+              keepImporting = false;
+
+              return;
+            }
+
             const existingMessageChannelMessageAssociationsCount =
               await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
                 [message.externalId],
@@ -140,8 +168,10 @@ export class MessageService {
               return;
             }
 
+            // TODO: This does not handle all thread merging use cases and might create orphan threads.
             const savedOrExistingMessageThreadId =
               await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+                message.headerMessageId,
                 message.messageThreadExternalId,
                 dataSourceMetadata,
                 workspaceId,
@@ -193,7 +223,7 @@ export class MessageService {
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {
-    const existingMessage = await this.getFirstByHeaderMessageId(
+    const existingMessage = await this.getFirstOrNullByHeaderMessageId(
       message.headerMessageId,
       workspaceId,
     );

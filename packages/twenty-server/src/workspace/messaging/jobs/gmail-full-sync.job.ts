@@ -26,10 +26,20 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
         data.connectedAccountId
       } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
     );
-    await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
-      data.workspaceId,
-      data.connectedAccountId,
-    );
+
+    try {
+      await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
+        data.workspaceId,
+        data.connectedAccountId,
+      );
+    } catch (e) {
+      this.logger.error(
+        `Error refreshing access token for connected account ${data.connectedAccountId} in workspace ${data.workspaceId}`,
+        e,
+      );
+
+      return;
+    }
 
     await this.gmailFullSyncService.fetchConnectedAccountThreads(
       data.workspaceId,

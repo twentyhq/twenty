@@ -25,10 +25,20 @@ export class GmailPartialSyncJob
     this.logger.log(
       `gmail partial-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
-    await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
-      data.workspaceId,
-      data.connectedAccountId,
-    );
+
+    try {
+      await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
+        data.workspaceId,
+        data.connectedAccountId,
+      );
+    } catch (e) {
+      this.logger.error(
+        `Error refreshing access token for connected account ${data.connectedAccountId} in workspace ${data.workspaceId}`,
+        e,
+      );
+
+      return;
+    }
 
     await this.gmailPartialSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
