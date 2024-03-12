@@ -7,6 +7,7 @@ import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
 import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
 import { CalendarEvent } from 'src/workspace/calendar/types/calendar-event';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
 @Injectable()
 export class CalendarEventService {
@@ -19,6 +20,10 @@ export class CalendarEventService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarEventObjectMetadata>[]> {
+    if (calendarEventIds.length === 0) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -35,6 +40,10 @@ export class CalendarEventService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEventIds.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -46,11 +55,26 @@ export class CalendarEventService {
     );
   }
 
+  public async getNonAssociatedCalendarEvents() //workspaceId: string,
+  // transactionManager?: EntityManager,
+  : Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
+    // const dataSourceSchema =
+    //   this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    //TODO: implement this method
+
+    return [];
+  }
+
   public async saveCalendarEvents(
     calendarEvents: CalendarEvent[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEvents.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

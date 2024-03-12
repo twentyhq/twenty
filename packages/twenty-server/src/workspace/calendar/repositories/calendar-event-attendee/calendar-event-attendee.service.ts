@@ -19,6 +19,10 @@ export class CalendarEventAttendeesService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
+    if (calendarEventAttendeeIds.length === 0) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -35,6 +39,10 @@ export class CalendarEventAttendeesService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEventAttendeeIds.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

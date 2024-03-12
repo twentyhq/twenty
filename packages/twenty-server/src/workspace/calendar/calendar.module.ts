@@ -10,6 +10,7 @@ import { CalendarChannelEventAssociationModule } from 'src/workspace/calendar/re
 import { CalendarChannelModule } from 'src/workspace/calendar/repositories/calendar-channel/calendar-channel.module';
 import { CalendarEventAttendeesModule } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.module';
 import { CalendarEventModule } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.module';
+import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { GoogleCalendarFullSyncService } from 'src/workspace/calendar/services/google-calendar-full-sync.service';
 import { GoogleCalendarClientProvider } from 'src/workspace/calendar/services/providers/google-calendar/google-calendar.provider';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
@@ -32,6 +33,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
     CompanyModule,
     PersonModule,
     BlocklistModule,
+    CalendarEventCleanerModule,
   ],
   providers: [GoogleCalendarFullSyncService, GoogleCalendarClientProvider],
   exports: [GoogleCalendarFullSyncService],

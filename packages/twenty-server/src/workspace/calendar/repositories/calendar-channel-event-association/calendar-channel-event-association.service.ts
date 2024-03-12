@@ -19,6 +19,10 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+    if (eventExternalIds.length === 0) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -53,6 +57,10 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+    if (calendarChannelIds.length === 0) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -70,7 +78,7 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    this.deleteByCalendarChannelIds(
+    await this.deleteByCalendarChannelIds(
       [calendarChannelId],
       workspaceId,
       transactionManager,
@@ -102,6 +110,10 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
+    if (ids.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -118,6 +130,10 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+    if (calendarEventIds.length === 0) {
+      return [];
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -138,6 +154,10 @@ export class CalendarChannelEventAssociationService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
+    if (calendarChannelEventAssociations.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

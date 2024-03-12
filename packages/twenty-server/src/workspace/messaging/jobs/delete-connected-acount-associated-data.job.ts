@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
+import { CalendarEventCleanerService } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 import { ThreadCleanerService } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.service';
 
 export type DeleteConnectedAccountAssociatedDataJobData = {
@@ -17,7 +18,10 @@ export class DeleteConnectedAccountAssociatedDataJob
     DeleteConnectedAccountAssociatedDataJob.name,
   );
 
-  constructor(private readonly threadCleanerService: ThreadCleanerService) {}
+  constructor(
+    private readonly threadCleanerService: ThreadCleanerService,
+    private readonly calendarEventCleanerService: CalendarEventCleanerService,
+  ) {}
 
   async handle(
     data: DeleteConnectedAccountAssociatedDataJobData,
@@ -27,6 +31,10 @@ export class DeleteConnectedAccountAssociatedDataJob
     );
 
     await this.threadCleanerService.cleanWorkspaceThreads(data.workspaceId);
+
+    await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+      data.workspaceId,
+    );
 
     this.logger.log(
       `Deleted connected account ${data.connectedAccountId} associated data in workspace ${data.workspaceId}`,

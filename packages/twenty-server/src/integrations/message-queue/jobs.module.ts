@@ -36,6 +36,7 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { CalendarModule } from 'src/workspace/calendar/calendar.module';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
+import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-ca
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
+    CalendarEventCleanerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
