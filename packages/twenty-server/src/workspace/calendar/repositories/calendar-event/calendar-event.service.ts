@@ -54,9 +54,10 @@ export class CalendarEventService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 14);
 
     const values = calendarEvents.flatMap((calendarEvent) => [
+      calendarEvent.id,
       calendarEvent.title,
       calendarEvent.isCanceled,
       calendarEvent.isFullDay,
@@ -73,7 +74,7 @@ export class CalendarEventService {
     ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
       values,
       workspaceId,
       transactionManager,

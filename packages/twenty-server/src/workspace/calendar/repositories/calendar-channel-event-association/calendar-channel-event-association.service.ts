@@ -153,6 +153,11 @@ export class CalendarChannelEventAssociationService {
         association.eventExternalId,
       ]);
 
+    console.log(
+      'calendarChannelEventAssociationValues',
+      calendarChannelEventAssociationValues,
+    );
+
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("calendarChannelId", "calendarEventId", "eventExternalId")
       VALUES ${valuesString}`,
