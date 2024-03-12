@@ -52,7 +52,9 @@ describe('QueryRunnerArgsFactory', () => {
 
   describe('create', () => {
     it('should return the args when empty', async () => {
-      const args = {};
+      const args = {
+        data: [],
+      };
       const result = await factory.create(args, options);
 
       expect(result).toEqual(args);
@@ -60,7 +62,7 @@ describe('QueryRunnerArgsFactory', () => {
 
     it('should override position when of type string', async () => {
       const args = {
-        position: 'first',
+        data: { position: 'first' },
       };
 
       workspaceDataSourceService.executeRawQuery.mockResolvedValue([
@@ -70,12 +72,14 @@ describe('QueryRunnerArgsFactory', () => {
       const result = await factory.create(args, options);
 
       expect(result).toEqual({
-        position: 1, // Calculates 2 / 2
+        data: {
+          position: 1, // Calculates 2 / 2
+        },
       });
     });
 
     it('should override args when of type array', async () => {
-      const args = [{ id: 1 }, { position: 'last' }];
+      const args = { data: [{ id: 1 }, { position: 'last' }] };
 
       workspaceDataSourceService.executeRawQuery.mockResolvedValue([
         { position: 1 },
@@ -83,10 +87,12 @@ describe('QueryRunnerArgsFactory', () => {
 
       const result = await factory.create(args, options);
 
-      expect(result).toEqual([
-        { id: 1 },
-        { position: 2 }, // Calculates 1 + 1
-      ]);
+      expect(result).toEqual({
+        data: [
+          { id: 1 },
+          { position: 2 }, // Calculates 1 + 1
+        ],
+      });
     });
   });
 });
