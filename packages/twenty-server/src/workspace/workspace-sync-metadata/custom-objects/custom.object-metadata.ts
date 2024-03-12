@@ -62,6 +62,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
+  @IsSystem()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
