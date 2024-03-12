@@ -82,6 +82,7 @@
     "dotenv-cli": "^7.2.1",
     "drizzle-orm": "^0.29.3",
     "esbuild-plugin-svgr": "^2.1.0",
+    "eslint-plugin-project-structure": "^1.4.7",
     "facepaint": "^1.2.1",
     "file-type": "16.5.4",
     "framer-motion": "^10.12.17",

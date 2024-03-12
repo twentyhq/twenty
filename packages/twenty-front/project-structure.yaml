@@ -1,0 +1,41 @@
+structure:
+    children:
+        - extension: "*"
+        - name: src
+          children:
+              - name: pages
+                children: []
+              - name: modules
+                children: []
+              - name: types
+                children: []
+              - name: config
+                children:
+                    - name: index
+                      extension: ts
+              - name: generated
+                children:
+                    - name: graphql
+                      extension: tsx
+              - name: generated-metadata
+                children:
+                    - name: gql
+                      extension: ts
+                    - name: graphql
+                      extension: ts
+                    - name: index
+                      extension: ts
+              - name: __stories__
+                children:
+                    - name: App.stories
+                      extension: tsx
+              - name: App
+                extension: tsx
+              - name: vite-env.d
+                extension: ts
+              - name: index
+                extension: css
+              - name: index
+                extension: tsx
+              - name: setupTests
+                extension: ts

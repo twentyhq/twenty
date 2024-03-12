@@ -9,7 +9,7 @@ module.exports = {
     'plugin:storybook/recommended',
     '../../.eslintrc.js',
   ],
-  plugins: ['react-hooks', 'react-refresh'],
+  plugins: ['react-hooks', 'react-refresh', 'project-structure'],
   ignorePatterns: [
     '!**/*',
     'node_modules',
@@ -73,6 +73,10 @@ module.exports = {
         additionalHooks: 'useRecoilCallback',
       },
     ],
+    'project-structure/file-structure': 'error',
+  },
+  settings: {
+    'project-structure/config-path': 'project-structure.yaml',
   },
   overrides: [
     {
