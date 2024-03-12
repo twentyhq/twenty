@@ -10,4 +10,8 @@ const meta: Meta<typeof Pill> = {
 export default meta;
 type Story = StoryObj<typeof Pill>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    label: 'Pill',
+  },
+};
