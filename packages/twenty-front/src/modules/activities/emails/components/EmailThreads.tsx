@@ -33,7 +33,7 @@ import {
   TimelineThread,
   TimelineThreadsWithTotal,
 } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -141,7 +141,7 @@ export const EmailThreads = ({
     }
   };
 
-  if (isNonNullable(error)) {
+  if (isDefined(error)) {
     enqueueSnackBar(error.message || 'Error loading email threads', {
       variant: 'error',
     });

@@ -12,7 +12,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
@@ -36,7 +36,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     }
 
     const fieldDoesNotExist =
-      isNonNullable(updatedSourceRecord) &&
+      isDefined(updatedSourceRecord) &&
       !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
 
     if (fieldDoesNotExist) {
@@ -87,7 +87,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? currentFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [currentFieldValueOnSourceRecord].filter(isNonNullable);
+        : [currentFieldValueOnSourceRecord].filter(isDefined);
 
     const updatedFieldValueOnSourceRecordIsARecordConnection =
       isObjectRecordConnection(
@@ -100,11 +100,10 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         ? updatedFieldValueOnSourceRecord.edges.map(
             ({ node }) => node as CachedObjectRecord,
           )
-        : [updatedFieldValueOnSourceRecord].filter(isNonNullable);
+        : [updatedFieldValueOnSourceRecord].filter(isDefined);
 
     const shouldDetachSourceFromAllTargets =
-      isNonNullable(currentSourceRecord) &&
-      targetRecordsToDetachFrom.length > 0;
+      isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
 
     if (shouldDetachSourceFromAllTargets) {
       // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
@@ -136,7 +135,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     }
 
     const shouldAttachSourceToAllTargets =
-      isNonNullable(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
+      isDefined(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
 
     if (shouldAttachSourceToAllTargets) {
       targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>

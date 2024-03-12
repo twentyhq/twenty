@@ -3,7 +3,7 @@ import { Modifiers } from '@apollo/client/cache';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useModifyRecordFromCache = ({
@@ -17,7 +17,7 @@ export const useModifyRecordFromCache = ({
     recordId: string,
     fieldModifiers: Modifiers<CachedObjectRecord>,
   ) => {
-    if (isNullable(objectMetadataItem)) return;
+    if (isUndefinedOrNull(objectMetadataItem)) return;
 
     const cachedRecordId = cache.identify({
       __typename: capitalize(objectMetadataItem.nameSingular),

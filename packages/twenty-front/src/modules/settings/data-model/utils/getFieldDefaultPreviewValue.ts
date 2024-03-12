@@ -5,7 +5,7 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const getFieldDefaultPreviewValue = ({
   fieldMetadataItem,
@@ -24,7 +24,7 @@ export const getFieldDefaultPreviewValue = ({
   // Select field
   if (
     fieldMetadataItem.type === FieldMetadataType.Select &&
-    isNonNullable(selectOptions)
+    isDefined(selectOptions)
   ) {
     return selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
   }
@@ -32,7 +32,7 @@ export const getFieldDefaultPreviewValue = ({
   // Relation field
   if (
     fieldMetadataItem.type === FieldMetadataType.Relation &&
-    isNonNullable(relationObjectMetadataItem)
+    isDefined(relationObjectMetadataItem)
   ) {
     const relationLabelIdentifierFieldMetadataItem =
       getLabelIdentifierFieldMetadataItem(relationObjectMetadataItem);

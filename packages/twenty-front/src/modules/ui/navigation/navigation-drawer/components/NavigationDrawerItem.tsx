@@ -8,7 +8,7 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type NavigationDrawerItemProps = {
   className?: string;
@@ -148,7 +148,7 @@ export const NavigationDrawerItem = ({
       setIsNavigationDrawerOpen(false);
     }
 
-    if (isNonNullable(onClick)) {
+    if (isDefined(onClick)) {
       onClick();
       return;
     }

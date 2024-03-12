@@ -2,7 +2,7 @@ import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { Field } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { Sort } from '../types/Sort';
 
@@ -15,7 +15,7 @@ export const turnSortsIntoOrderBy = (
     sorts.map((sort) => {
       const correspondingField = fieldsById[sort.fieldMetadataId];
 
-      if (isNullable(correspondingField)) {
+      if (isUndefinedOrNull(correspondingField)) {
         throw new Error(
           `Could not find field ${sort.fieldMetadataId} in metadata object`,
         );

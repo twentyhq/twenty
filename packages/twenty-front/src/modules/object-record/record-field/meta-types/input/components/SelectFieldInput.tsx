@@ -9,7 +9,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;
@@ -53,7 +53,7 @@ export const SelectFieldInput = ({
         event.target instanceof HTMLInputElement &&
         event.target.tagName === 'INPUT'
       );
-      if (weAreNotInAnHTMLInput && isNonNullable(onCancel)) {
+      if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
         onCancel();
       }
     },

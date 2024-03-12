@@ -26,7 +26,7 @@ import {
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
@@ -60,7 +60,7 @@ export const useAuth = () => {
         },
       });
 
-      if (isNonNullable(challengeResult.errors)) {
+      if (isDefined(challengeResult.errors)) {
         throw challengeResult.errors;
       }
 
@@ -79,7 +79,7 @@ export const useAuth = () => {
         variables: { loginToken },
       });
 
-      if (isNonNullable(verifyResult.errors)) {
+      if (isDefined(verifyResult.errors)) {
         throw verifyResult.errors;
       }
 
@@ -92,7 +92,7 @@ export const useAuth = () => {
       const user = verifyResult.data?.verify.user;
       let workspaceMember = null;
       setCurrentUser(user);
-      if (isNonNullable(user.workspaceMember)) {
+      if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
@@ -184,7 +184,7 @@ export const useAuth = () => {
         },
       });
 
-      if (isNonNullable(signUpResult.errors)) {
+      if (isDefined(signUpResult.errors)) {
         throw signUpResult.errors;
       }
 

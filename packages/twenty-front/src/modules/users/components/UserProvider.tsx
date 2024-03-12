@@ -7,7 +7,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,11 +25,11 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     if (!queryLoading) {
       setIsLoading(false);
     }
-    if (isNonNullable(queryData?.currentUser)) {
+    if (isDefined(queryData?.currentUser)) {
       setCurrentUser(queryData.currentUser);
       setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
     }
-    if (isNonNullable(queryData?.currentUser?.workspaceMember)) {
+    if (isDefined(queryData?.currentUser?.workspaceMember)) {
       const workspaceMember = queryData.currentUser.workspaceMember;
       setCurrentWorkspaceMember({
         ...workspaceMember,

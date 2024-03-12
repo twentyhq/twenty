@@ -9,7 +9,7 @@ import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ApolloFactory } from '../services/apollo.factory';
 
@@ -58,7 +58,7 @@ export const useApolloFactory = () => {
   }, [setTokenPair, isDebugMode]);
 
   useUpdateEffect(() => {
-    if (isNonNullable(apolloRef.current)) {
+    if (isDefined(apolloRef.current)) {
       apolloRef.current.updateTokenPair(tokenPair);
     }
   }, [tokenPair]);

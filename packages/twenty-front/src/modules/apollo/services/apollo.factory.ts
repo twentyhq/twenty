@@ -14,7 +14,7 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { logDebug } from '~/utils/logDebug';
 
 import { ApolloManager } from '../types/apolloManager.interface';
@@ -78,7 +78,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
       const errorLink = onError(
         ({ graphQLErrors, networkError, forward, operation }) => {
-          if (isNonNullable(graphQLErrors)) {
+          if (isDefined(graphQLErrors)) {
             onErrorCb?.(graphQLErrors);
 
             for (const graphQLError of graphQLErrors) {
@@ -86,7 +86,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 return fromPromise(
                   renewToken(uri, this.tokenPair)
                     .then((tokens) => {
-                      if (isNonNullable(tokens)) {
+                      if (isDefined(tokens)) {
                         onTokenPairChange?.(tokens);
                       }
                     })
@@ -101,7 +101,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return fromPromise(
                     renewToken(uri, this.tokenPair)
                       .then((tokens) => {
-                        if (isNonNullable(tokens)) {
+                        if (isDefined(tokens)) {
                           onTokenPairChange?.(tokens);
                         }
                       })
@@ -126,7 +126,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             }
           }
 
-          if (isNonNullable(networkError)) {
+          if (isDefined(networkError)) {
             if (isDebugMode === true) {
               logDebug(`[Network error]: ${networkError}`);
             }
@@ -143,7 +143,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           isDebugMode ? logger : null,
           retryLink,
           httpLink,
-        ].filter(isNonNullable),
+        ].filter(isDefined),
       );
     };
 

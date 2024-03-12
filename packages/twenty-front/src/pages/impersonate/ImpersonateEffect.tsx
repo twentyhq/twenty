@@ -8,7 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useImpersonateMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const ImpersonateEffect = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const ImpersonateEffect = () => {
       variables: { userId },
     });
 
-    if (isNonNullable(impersonateResult.errors)) {
+    if (isDefined(impersonateResult.errors)) {
       throw impersonateResult.errors;
     }
 

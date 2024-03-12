@@ -6,7 +6,7 @@ import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effec
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectMetadataItemByNameSingular } from '@/object-metadata/utils/getObjectMetadataItemBySingularName';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useAttachRelationInBothDirections = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -46,7 +46,7 @@ export const useAttachRelationInBothDirections = () => {
         (field) => field.name === fieldNameOnSourceRecord,
       );
 
-    if (!isNonNullable(fieldMetadataItemOnSourceRecord)) {
+    if (!isDefined(fieldMetadataItemOnSourceRecord)) {
       throw new Error(
         `Field ${fieldNameOnSourceRecord} not found on object ${sourceObjectNameSingular}`,
       );
@@ -57,7 +57,7 @@ export const useAttachRelationInBothDirections = () => {
       objectMetadataItems,
     });
 
-    if (!isNonNullable(relationDefinition)) {
+    if (!isDefined(relationDefinition)) {
       throw new Error(
         `Relation metadata not found for field ${fieldNameOnSourceRecord} on object ${sourceObjectNameSingular}`,
       );

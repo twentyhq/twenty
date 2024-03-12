@@ -2,7 +2,7 @@ import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
@@ -58,7 +58,7 @@ export const useSequenceHotkeys = (
 
           setPendingHotkey(null);
 
-          if (isNonNullable(options.preventDefault)) {
+          if (isDefined(options.preventDefault)) {
             keyboardEvent.stopImmediatePropagation();
             keyboardEvent.stopPropagation();
             keyboardEvent.preventDefault();

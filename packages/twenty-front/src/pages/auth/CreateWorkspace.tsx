@@ -21,7 +21,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useActivateWorkspaceMutation } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -82,7 +82,7 @@ export const CreateWorkspace = () => {
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
         });
 
-        if (isNonNullable(result.errors)) {
+        if (isDefined(result.errors)) {
           throw result.errors ?? new Error('Unknown error');
         }
 

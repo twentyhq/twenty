@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const ActivityBodyEffect = ({ activityId }: { activityId: string }) => {
   const [activityFromStore] = useRecoilState(
@@ -17,7 +17,7 @@ export const ActivityBodyEffect = ({ activityId }: { activityId: string }) => {
   useEffect(() => {
     if (
       activityBody === '' &&
-      isNonNullable(activityFromStore) &&
+      isDefined(activityFromStore) &&
       activityBody !== activityFromStore.body
     ) {
       setActivityBody(activityFromStore.body);

@@ -18,7 +18,7 @@ import {
   useCheckoutSessionMutation,
   useGetProductPricesQuery,
 } from '~/generated/graphql.tsx';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledChoosePlanContainer = styled.div`
   display: flex;
@@ -76,7 +76,7 @@ export const ChooseYourPlan = () => {
       (price) => price.recurringInterval === 'month',
     )?.[0];
     if (
-      isNonNullable(monthPrice) &&
+      isDefined(monthPrice) &&
       isNumber(monthPrice.unitAmount) &&
       monthPrice.unitAmount > 0 &&
       isNumber(price.unitAmount) &&

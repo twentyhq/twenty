@@ -9,8 +9,8 @@ import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
@@ -114,11 +114,11 @@ export const useViewBar = (props?: UseViewProps) => {
             viewId: currentViewId,
           });
 
-        if (isNullable(availableFieldDefinitions)) {
+        if (isUndefinedOrNull(availableFieldDefinitions)) {
           return;
         }
 
-        const queriedViewFields = viewFields.filter(isNonNullable);
+        const queriedViewFields = viewFields.filter(isDefined);
 
         if (isPersistingView) {
           return;
@@ -154,7 +154,7 @@ export const useViewBar = (props?: UseViewProps) => {
             viewId: currentViewId,
           });
 
-        if (isNullable(availableFilterDefinitions)) {
+        if (isUndefinedOrNull(availableFilterDefinitions)) {
           return;
         }
 
@@ -173,7 +173,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableFilterDefinition,
             };
           })
-          .filter(isNonNullable);
+          .filter(isDefined);
 
         if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
           set(savedViewFiltersState, queriedViewFilters);
@@ -220,7 +220,7 @@ export const useViewBar = (props?: UseViewProps) => {
               definition: availableSortDefinition,
             };
           })
-          .filter(isNonNullable);
+          .filter(isDefined);
 
         if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
           set(savedViewSortsState, queriedViewSorts);
@@ -269,11 +269,11 @@ export const useViewBar = (props?: UseViewProps) => {
           viewScopeId: scopeId,
         });
 
-        if (isNonNullable(savedViewFilters)) {
+        if (isDefined(savedViewFilters)) {
           set(currentViewFiltersState, savedViewFilters);
           onViewFiltersChange?.(savedViewFilters);
         }
-        if (isNonNullable(savedViewSorts)) {
+        if (isDefined(savedViewSorts)) {
           set(currentViewSortsState, savedViewSorts);
           onViewSortsChange?.(savedViewSorts);
         }

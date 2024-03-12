@@ -7,7 +7,7 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { COMMAND_MENU_COMMANDS } from '../constants/CommandMenuCommands';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -77,7 +77,7 @@ export const useCommandMenu = () => {
     (onClick?: () => void, to?: string) => {
       toggleCommandMenu();
 
-      if (isNonNullable(onClick)) {
+      if (isDefined(onClick)) {
         onClick();
         return;
       }

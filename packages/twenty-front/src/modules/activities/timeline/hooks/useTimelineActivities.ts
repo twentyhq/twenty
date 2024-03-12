@@ -13,7 +13,7 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { sortByAscString } from '~/utils/array/sortByAscString';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useTimelineActivities = ({
   targetableObject,
@@ -27,7 +27,7 @@ export const useTimelineActivities = ({
   );
 
   useEffect(() => {
-    if (isNonNullable(targetableObject)) {
+    if (isDefined(targetableObject)) {
       setObjectShowPageTargetableObject(targetableObject);
     }
   }, [targetableObject, setObjectShowPageTargetableObject]);
@@ -100,7 +100,7 @@ export const useTimelineActivities = ({
   const activities = activitiesWithConnection
     ?.map(makeActivityWithoutConnection as any)
     .map(({ activity }: any) => activity as any)
-    .filter(isNonNullable);
+    .filter(isDefined);
 
   return {
     activities,

@@ -7,7 +7,7 @@ import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/S
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const StyledInput = styled.input`
   margin: 0;
@@ -118,7 +118,7 @@ export const CurrencyInput = ({
 
   useEffect(() => {
     const currency = currencies.find(({ value }) => value === currencyCode);
-    if (isNonNullable(currency)) {
+    if (isDefined(currency)) {
       setInternalCurrency(currency);
     }
   }, [currencies, currencyCode]);

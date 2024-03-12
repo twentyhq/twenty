@@ -1,6 +1,6 @@
 import { LinkType } from '@/ui/navigation/link/components/SocialLink';
 
-import { isNonNullable } from './isNonNullable';
+import { isDefined } from './isDefined';
 
 export const checkUrlType = (url: string) => {
   if (
@@ -11,9 +11,7 @@ export const checkUrlType = (url: string) => {
     return LinkType.LinkedIn;
   }
   if (
-    isNonNullable(
-      /^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url),
-    )
+    isDefined(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url))
   ) {
     return LinkType.Twitter;
   }

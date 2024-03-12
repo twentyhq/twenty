@@ -11,7 +11,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
@@ -56,7 +56,7 @@ export const useFavorites = () => {
     return favorites
       .map((favorite) => {
         for (const relationField of favoriteRelationFieldMetadataItems) {
-          if (isNonNullable(favorite[relationField.name])) {
+          if (isDefined(favorite[relationField.name])) {
             const relationObject = favorite[relationField.name];
 
             const relationObjectNameSingular =

@@ -23,7 +23,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -278,7 +278,7 @@ export const CommandMenu = () => {
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
 
-                    if (isNonNullable(command)) {
+                    if (isDefined(command)) {
                       const { to, onCommandClick } = command;
                       onItemClick(onCommandClick, to);
                     }

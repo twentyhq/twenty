@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
 import { isScrollingState } from '@/ui/utilities/scroll/states/isScrollingState';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const containerRef = React.createRef<HTMLDivElement>();
 
@@ -40,7 +40,7 @@ describe('useListenScroll', () => {
     const container = document.querySelector('#container');
 
     act(() => {
-      if (isNonNullable(container)) fireEvent.scroll(container);
+      if (isDefined(container)) fireEvent.scroll(container);
     });
 
     expect(result.current.isScrolling).toBe(true);
