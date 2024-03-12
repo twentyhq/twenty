@@ -42,9 +42,7 @@ export class SaveMessagesAndCreateContactsService {
 
     let startTime = Date.now();
 
-    let messageExternalIdsAndIdsMap = new Map<string, string>();
-
-    messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
+    const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
       messagesToSave,
       dataSourceMetadata,
       workspaceDataSource,
