@@ -23,7 +23,7 @@ export const ObjectMetadataNavItems = () => {
   });
 
   const { records } = useFindManyRecords({
-    skip: cachedRootQuery?.views,
+    skip: true,
     objectNameSingular: CoreObjectNameSingular.View,
     useRecordsWithoutConnection: true,
   });

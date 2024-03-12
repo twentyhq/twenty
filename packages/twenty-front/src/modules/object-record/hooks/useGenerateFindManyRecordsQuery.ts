@@ -23,22 +23,14 @@ export const useGenerateFindManyRecordsQuery = () => {
   }) => gql`
     query FindMany${capitalize(
       objectMetadataItem.namePlural,
-    )}($filter${capitalize(objectMetadataItem.nameSingular)}: ${capitalize(
+    )}($filter: ${capitalize(
       objectMetadataItem.nameSingular,
-    )}FilterInput, $orderBy${capitalize(
+    )}FilterInput, $orderBy: ${capitalize(
       objectMetadataItem.nameSingular,
-    )}: ${capitalize(
-      objectMetadataItem.nameSingular,
-    )}OrderByInput, $lastCursor${capitalize(
-      objectMetadataItem.nameSingular,
-    )}: String, $limit${capitalize(objectMetadataItem.nameSingular)}: Float) {
-      ${objectMetadataItem.namePlural}(filter: $filter${capitalize(
-        objectMetadataItem.nameSingular,
-      )}, orderBy: $orderBy${capitalize(
-        objectMetadataItem.nameSingular,
-      )}, first: $limit${capitalize(
-        objectMetadataItem.nameSingular,
-      )}, after: $lastCursor${capitalize(objectMetadataItem.nameSingular)}){
+    )}OrderByInput, $lastCursor: String, $limit: Float) {
+      ${
+        objectMetadataItem.namePlural
+      }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
         edges {
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,

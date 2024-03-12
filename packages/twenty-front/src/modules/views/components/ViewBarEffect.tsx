@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
+import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -30,9 +31,16 @@ export const ViewBarEffect = () => {
   const [views, setViews] = useRecoilState(viewsState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
+  const prefetchAreViewsLoaded = useRecoilValue(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
+  );
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
-    ...ALL_VIEWS_QUERY_KEY,
+    skip: !prefetchAreViewsLoaded,
+    objectNameSingular: 'view',
+    filter: {
+      objectMetadataId: { eq: viewObjectMetadataId },
+    },
     useRecordsWithoutConnection: true,
   });
 

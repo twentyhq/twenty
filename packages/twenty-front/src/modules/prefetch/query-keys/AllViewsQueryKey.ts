@@ -2,5 +2,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 
 export const ALL_VIEWS_QUERY_KEY = {
   objectNameSingular: CoreObjectNameSingular.View,
+  variables: {},
   depth: 1,
 };
