@@ -34,6 +34,26 @@ export class CalendarEventAttendeesService {
     );
   }
 
+  public async getByCalendarEventIds(
+    calendarEventIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
+    if (calendarEventIds.length === 0) {
+      return [];
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "calendarEventId" = ANY($1)`,
+      [calendarEventIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async deleteByIds(
     calendarEventAttendeeIds: string[],
     workspaceId: string,
@@ -89,6 +109,7 @@ export class CalendarEventAttendeesService {
 
   public async updateCalendarEventAttendees(
     calendarEventAttendees: CalendarEventAttendee[],
+    iCalUIDCalendarEventIdMap: Map<string, string>,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -102,24 +123,51 @@ export class CalendarEventAttendeesService {
     const valuesString = valuesStringForBatchRawQuery(
       calendarEventAttendees,
       5,
+      [
+        'text',
+        'text',
+        'text',
+        'boolean',
+        `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
+      ],
     );
 
     const values = calendarEventAttendees.flatMap((calendarEventAttendee) => [
-      calendarEventAttendee.calendarEventId,
+      iCalUIDCalendarEventIdMap[calendarEventAttendee.iCalUID],
       calendarEventAttendee.handle,
       calendarEventAttendee.displayName,
       calendarEventAttendee.isOrganizer,
       calendarEventAttendee.responseStatus,
     ]);
 
+    // const existingCalendarEventAttendeeIds = await this.getByCalendarEventIds(
+    //   calendarEventAttendees.map(
+    //     (calendarEventAttendee) => calendarEventAttendee.calendarEventId,
+    //   ),
+    //   workspaceId,
+    //   transactionManager,
+    // );
+
+    // const calendarEventAttendeesToDelete =
+    //   existingCalendarEventAttendeeIds.filter(
+    //     (existingCalendarEventAttendee) =>
+    //       !calendarEventAttendees.find(
+    //         (calendarEventAttendee) =>
+    //           calendarEventAttendee.calendarEventId ===
+    //             existingCalendarEventAttendee.calendarEventId &&
+    //           calendarEventAttendee.handle ===
+    //             existingCalendarEventAttendee.handle,
+    //       ),
+    //   );
+
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee"
-      SET "calendarEventId" = "newValues"."calendarEventId",
-      "displayName" = "newValues"."displayName",
+      SET "displayName" = "newValues"."displayName",
       "isOrganizer" = "newValues"."isOrganizer",
       "responseStatus" = "newValues"."responseStatus"
       FROM (VALUES ${valuesString}) AS "newValues"("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus")
-      WHERE "calendarEventAttendee"."handle" = "newValues"."handle"`,
+      WHERE "calendarEventAttendee"."handle" = "newValues"."handle"
+      AND "calendarEventAttendee"."calendarEventId" = "newValues"."calendarEventId"`,
       values,
       workspaceId,
       transactionManager,

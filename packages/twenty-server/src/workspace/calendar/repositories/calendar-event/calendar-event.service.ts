@@ -79,6 +79,37 @@ export class CalendarEventService {
     return nonAssociatedCalendarEvents.map(({ id }) => id);
   }
 
+  public async getICalUIDCalendarEventIdMap(
+    iCalUIDs: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<Map<string, string>> {
+    if (iCalUIDs.length === 0) {
+      return new Map();
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarEvents: {
+      id: string;
+      iCalUID: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, iCalUID FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
+      [iCalUIDs],
+      workspaceId,
+      transactionManager,
+    );
+
+    const iCalUIDsCalendarEvnetIdsMap = new Map<string, string>();
+
+    calendarEvents.forEach((calendarEvent) => {
+      iCalUIDsCalendarEvnetIdsMap.set(calendarEvent.iCalUID, calendarEvent.id);
+    });
+
+    return iCalUIDsCalendarEvnetIdsMap;
+  }
+
   public async saveCalendarEvents(
     calendarEvents: CalendarEvent[],
     workspaceId: string,
@@ -130,7 +161,21 @@ export class CalendarEventService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13);
+    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13, [
+      'text',
+      'boolean',
+      'boolean',
+      'timestamptz',
+      'timestamptz',
+      'timestamptz',
+      'timestamptz',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+      'text',
+    ]);
 
     const values = calendarEvents.flatMap((calendarEvent) => [
       calendarEvent.title,

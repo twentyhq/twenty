@@ -21,7 +21,9 @@ export type CalendarEventAttendee = Omit<
   | 'person'
   | 'workspaceMember'
   | 'calendarEvent'
->;
+> & {
+  iCalUID: string;
+};
 
 export type CalendarEventWithAttendees = CalendarEvent & {
   externalId: string;

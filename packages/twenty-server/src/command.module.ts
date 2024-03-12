@@ -4,6 +4,7 @@ import { DatabaseCommandModule } from 'src/database/commands/database-command.mo
 import { FetchWorkspaceMessagesCommandsModule } from 'src/workspace/messaging/commands/fetch-workspace-messages-commands.module';
 import { WorkspaceHealthCommandModule } from 'src/workspace/workspace-health/commands/workspace-health-command.module';
 import { WorkspaceCleanerModule } from 'src/workspace/workspace-cleaner/workspace-cleaner.module';
+import { WorkspaceCalendarSyncCommandsModule } from 'src/workspace/calendar/commands/workspace-calendar-sync-commands.module';
 
 import { AppModule } from './app.module';
 
@@ -16,6 +17,7 @@ import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-mi
     WorkspaceSyncMetadataCommandsModule,
     DatabaseCommandModule,
     FetchWorkspaceMessagesCommandsModule,
+    WorkspaceCalendarSyncCommandsModule,
     WorkspaceCleanerModule,
     WorkspaceHealthCommandModule,
     WorkspaceMigrationRunnerCommandsModule,
