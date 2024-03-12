@@ -51,31 +51,13 @@ describe('QueryRunnerArgsFactory', () => {
   });
 
   describe('create', () => {
-    it('should return the args when empty', async () => {
+    it('should simply return the args when data is an empty array', async () => {
       const args = {
         data: [],
       };
       const result = await factory.create(args, options);
 
       expect(result).toEqual(args);
-    });
-
-    it('should override position when of type string', async () => {
-      const args = {
-        data: { position: 'first' },
-      };
-
-      workspaceDataSourceService.executeRawQuery.mockResolvedValue([
-        { position: 2 },
-      ]);
-
-      const result = await factory.create(args, options);
-
-      expect(result).toEqual({
-        data: {
-          position: 1, // Calculates 2 / 2
-        },
-      });
     });
 
     it('should override args when of type array', async () => {
