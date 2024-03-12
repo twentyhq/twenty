@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/workspace/workspace-query-runner/interfaces/query-runner-option.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RecordPositionQueryFactory } from 'src/workspace/workspace-query-builder/factories/record-position-query.factory';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -28,37 +28,26 @@ export class QueryRunnerArgsFactory {
       ]),
     );
 
-    return this.createArgsRecursive(args, options, fieldMetadataMap);
+    return {
+      data: await Promise.all(
+        args.data.map((arg) =>
+          this.overrideArgByFieldMetadata(arg, options, fieldMetadataMap),
+        ),
+      ),
+    };
   }
 
-  private async createArgsRecursive(
-    args: Record<string, any>,
+  private async overrideArgByFieldMetadata(
+    arg: Record<string, any>,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
   ) {
-    // If it's not an object, we don't need to do anything
-    if (typeof args !== 'object' || args === null) {
-      return args;
-    }
-
-    // If it's an array, we need to map all items
-    if (Array.isArray(args)) {
-      return Promise.all(
-        args.map((arg) =>
-          this.createArgsRecursive(arg, options, fieldMetadataMap),
-        ),
-      );
-    }
-
-    const createArgPromisesByArgKey = Object.entries(args).map(
+    const createArgPromiseByArgKey = Object.entries(arg).map(
       async ([key, value]) => {
         const fieldMetadata = fieldMetadataMap.get(key);
 
         if (!fieldMetadata) {
-          return [
-            key,
-            await this.createArgsRecursive(value, options, fieldMetadataMap),
-          ];
+          return [key, await Promise.resolve(value)];
         }
 
         switch (fieldMetadata.type) {
@@ -72,15 +61,12 @@ export class QueryRunnerArgsFactory {
               ),
             ];
           default:
-            return [
-              key,
-              await this.createArgsRecursive(value, options, fieldMetadataMap),
-            ];
+            return [key, await Promise.resolve(value)];
         }
       },
     );
 
-    const newArgEntries = await Promise.all(createArgPromisesByArgKey);
+    const newArgEntries = await Promise.all(createArgPromiseByArgKey);
 
     return Object.fromEntries(newArgEntries);
   }
