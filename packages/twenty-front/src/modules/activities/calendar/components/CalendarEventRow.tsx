@@ -1,8 +1,11 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { endOfDay, format, isPast } from 'date-fns';
+import { format } from 'date-fns';
 
+import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -17,12 +20,14 @@ const StyledContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(3)};
   height: ${({ theme }) => theme.spacing(6)};
+  position: relative;
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
   background-color: ${({ theme }) => theme.tag.background.gray};
   height: 100%;
   width: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
 
   ${({ active, theme }) =>
     active &&
@@ -68,6 +73,7 @@ const StyledVisibilityCard = styled(Card)<{ active: boolean }>`
     active ? theme.font.color.primary : theme.font.color.light};
   border-color: ${({ theme }) => theme.border.color.light};
   flex: 1 0 auto;
+  transition: color ${({ theme }) => theme.animation.duration.normal} ease;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
@@ -87,45 +93,41 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const theme = useTheme();
 
-  const hasEventEnded = calendarEvent.endsAt
-    ? isPast(calendarEvent.endsAt)
-    : calendarEvent.isFullDay && isPast(endOfDay(calendarEvent.startsAt));
+  const endsAt = getCalendarEventEndDate(calendarEvent);
+  const hasEnded = hasCalendarEventEnded(calendarEvent);
+
+  const startTimeLabel = calendarEvent.isFullDay
+    ? 'All day'
+    : format(calendarEvent.startsAt, 'HH:mm');
+  const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
   return (
     <StyledContainer className={className}>
       <StyledAttendanceIndicator />
       <StyledLabels>
         <StyledTime>
-          {calendarEvent.isFullDay ? (
-            'All Day'
-          ) : (
+          {startTimeLabel}
+          {endTimeLabel && (
             <>
-              {format(calendarEvent.startsAt, 'HH:mm')}
-              {!!calendarEvent.endsAt && (
-                <>
-                  <IconArrowRight size={theme.icon.size.sm} />
-                  {format(calendarEvent.endsAt, 'HH:mm')}
-                </>
-              )}
+              <IconArrowRight size={theme.icon.size.sm} />
+              {endTimeLabel}
             </>
           )}
         </StyledTime>
         {calendarEvent.visibility === 'METADATA' ? (
-          <StyledVisibilityCard active={!hasEventEnded}>
+          <StyledVisibilityCard active={!hasEnded}>
             <StyledVisibilityCardContent>
               <IconLock size={theme.icon.size.sm} />
               Not shared
             </StyledVisibilityCardContent>
           </StyledVisibilityCard>
         ) : (
-          <StyledTitle
-            active={!hasEventEnded}
-            canceled={!!calendarEvent.isCanceled}
-          >
+          <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
             {calendarEvent.title}
           </StyledTitle>
         )}
       </StyledLabels>
+      <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
     </StyledContainer>
   );
 };
