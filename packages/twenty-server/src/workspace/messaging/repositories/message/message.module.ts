@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-assocation.module';
@@ -11,7 +11,7 @@ import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/servic
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    MessageThreadModule,
+    forwardRef(() => MessageThreadModule),
     MessageParticipantModule,
     MessageChannelMessageAssociationModule,
     MessageChannelModule,

@@ -48,10 +48,18 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getById(
       connectedAccountId,
       workspaceId,
     );
+
+    if (!connectedAccount) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during partial-sync`,
+      );
+
+      return;
+    }
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
@@ -135,10 +143,18 @@ export class GmailPartialSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+      await this.messageChannelService.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
+
+    if (!gmailMessageChannel) {
+      this.logger.error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
+
+      return;
+    }
 
     const gmailMessageChannelId = gmailMessageChannel.id;
 

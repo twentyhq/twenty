@@ -43,11 +43,11 @@ export class ConnectedAccountService {
     );
   }
 
-  public async getByIdOrFail(
+  public async getById(
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {
+  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata> | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -59,13 +59,27 @@ export class ConnectedAccountService {
         transactionManager,
       );
 
-    if (!connectedAccounts || connectedAccounts.length === 0) {
+    return connectedAccounts[0];
+  }
+
+  public async getByIdOrFail(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {
+    const connectedAccount = await this.getById(
+      connectedAccountId,
+      workspaceId,
+      transactionManager,
+    );
+
+    if (!connectedAccount) {
       throw new NotFoundException(
-        `No connected account found for id ${connectedAccountId} in workspace ${workspaceId}`,
+        `Connected account with id ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
     }
 
-    return connectedAccounts[0];
+    return connectedAccount;
   }
 
   public async updateLastSyncHistoryId(
