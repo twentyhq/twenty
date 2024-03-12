@@ -44,7 +44,7 @@ export class MessageService {
     return nonAssociatedMessages.map(({ id }) => id);
   }
 
-  public async getFirstByHeaderMessageId(
+  public async getFirstOrNullByHeaderMessageId(
     headerMessageId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -193,7 +193,7 @@ export class MessageService {
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {
-    const existingMessage = await this.getFirstByHeaderMessageId(
+    const existingMessage = await this.getFirstOrNullByHeaderMessageId(
       message.headerMessageId,
       workspaceId,
     );

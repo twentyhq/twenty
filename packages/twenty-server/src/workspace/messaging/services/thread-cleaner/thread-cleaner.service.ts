@@ -19,15 +19,19 @@ export class ThreadCleanerService {
     await deleteUsingPagination(
       workspaceId,
       500,
-      this.messageService.getNonAssociatedMessageIdsPaginated,
-      this.messageService.deleteByIds,
+      this.messageService.getNonAssociatedMessageIdsPaginated.bind(
+        this.messageService,
+      ),
+      this.messageService.deleteByIds.bind(this.messageService),
     );
 
     await deleteUsingPagination(
       workspaceId,
       500,
-      this.messageThreadService.getOrphanThreadIdsPaginated,
-      this.messageThreadService.deleteByIds,
+      this.messageThreadService.getOrphanThreadIdsPaginated.bind(
+        this.messageThreadService,
+      ),
+      this.messageThreadService.deleteByIds.bind(this.messageThreadService),
     );
   }
 }
