@@ -1,6 +1,10 @@
+import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
+import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
+import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -27,6 +31,32 @@ export const SettingsAccountsCalendars = () => {
     },
   });
 
+  const exampleStartDate = new Date();
+  const exampleEndDate = min([
+    addMinutes(exampleStartDate, 30),
+    endOfDay(exampleStartDate),
+  ]);
+  const exampleDayTime = startOfDay(exampleStartDate).getTime();
+  const exampleCalendarEvent: CalendarEvent = {
+    id: '',
+    attendees: [
+      {
+        displayName: currentWorkspaceMember
+          ? [
+              currentWorkspaceMember.name.firstName,
+              currentWorkspaceMember.name.lastName,
+            ].join(' ')
+          : '',
+        workspaceMemberId: currentWorkspaceMember?.id ?? '',
+      },
+    ],
+    endsAt: exampleEndDate,
+    isFullDay: false,
+    startsAt: exampleStartDate,
+    title: 'Onboarding call',
+    visibility: 'SHARE_EVERYTHING',
+  };
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -48,13 +78,33 @@ export const SettingsAccountsCalendars = () => {
         </Section>
         {/* TODO: retrieve connected accounts data from back-end when the Calendar feature is ready. */}
         {!!mockedConnectedAccounts.length && (
-          <Section>
-            <H2Title
-              title="Display"
-              description="Configure how we should display your events in your calendar"
-            />
-            <SettingsAccountsCalendarDisplaySettings />
-          </Section>
+          <>
+            <Section>
+              <H2Title
+                title="Display"
+                description="Configure how we should display your events in your calendar"
+              />
+              <SettingsAccountsCalendarDisplaySettings />
+            </Section>
+            <Section>
+              <H2Title
+                title="Color code"
+                description="Events you participated in are displayed in red."
+              />
+              <CalendarContext.Provider
+                value={{
+                  currentCalendarEvent: exampleCalendarEvent,
+                  calendarEventsByDayTime: {
+                    [exampleDayTime]: [exampleCalendarEvent],
+                  },
+                  getNextCalendarEvent: () => undefined,
+                  updateCurrentCalendarEvent: () => {},
+                }}
+              >
+                <CalendarMonthCard dayTimes={[exampleDayTime]} />
+              </CalendarContext.Provider>
+            </Section>
+          </>
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

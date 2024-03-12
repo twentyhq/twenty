@@ -5,6 +5,7 @@ import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 type CalendarContextValue = {
   calendarEventsByDayTime: Record<number, CalendarEvent[] | undefined>;
   currentCalendarEvent: CalendarEvent;
+  displayCurrentEventCursor?: boolean;
   getNextCalendarEvent: (
     calendarEvent: CalendarEvent,
   ) => CalendarEvent | undefined;

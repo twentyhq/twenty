@@ -42,6 +42,7 @@ export const Calendar = () => {
       value={{
         calendarEventsByDayTime,
         currentCalendarEvent,
+        displayCurrentEventCursor: true,
         getNextCalendarEvent,
         updateCurrentCalendarEvent,
       }}
