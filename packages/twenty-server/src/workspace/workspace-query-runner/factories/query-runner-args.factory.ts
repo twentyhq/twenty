@@ -28,7 +28,13 @@ export class QueryRunnerArgsFactory {
       ]),
     );
 
-    return this.createArgsRecursive(args, options, fieldMetadataMap);
+    return {
+      data: await this.createArgsRecursive(
+        args.data,
+        options,
+        fieldMetadataMap,
+      ),
+    };
   }
 
   private async createArgsRecursive(
@@ -55,10 +61,7 @@ export class QueryRunnerArgsFactory {
         const fieldMetadata = fieldMetadataMap.get(key);
 
         if (!fieldMetadata) {
-          return [
-            key,
-            await this.createArgsRecursive(value, options, fieldMetadataMap),
-          ];
+          return [key, await Promise.resolve(value)];
         }
 
         switch (fieldMetadata.type) {
@@ -72,10 +75,7 @@ export class QueryRunnerArgsFactory {
               ),
             ];
           default:
-            return [
-              key,
-              await this.createArgsRecursive(value, options, fieldMetadataMap),
-            ];
+            return [key, await Promise.resolve(value)];
         }
       },
     );
