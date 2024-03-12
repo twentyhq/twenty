@@ -55,15 +55,28 @@ export class CalendarEventService {
     );
   }
 
-  public async getNonAssociatedCalendarEvents() //workspaceId: string,
-  // transactionManager?: EntityManager,
-  : Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
-    // const dataSourceSchema =
-    //   this.workspaceDataSourceService.getSchemaName(workspaceId);
+  public async getNonAssociatedCalendarEventIdsPaginated(
+    limit: number,
+    offset: number,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    //TODO: implement this method
+    const nonAssociatedCalendarEvents =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT m.id FROM ${dataSourceSchema}."calendarEvent" m
+        LEFT JOIN ${dataSourceSchema}."calendarChannelEventAssociation" ccea
+        ON m.id = ccea."calendarEventId"
+        WHERE ccea.id IS NULL
+        LIMIT $1 OFFSET $2`,
+        [limit, offset],
+        workspaceId,
+        transactionManager,
+      );
 
-    return [];
+    return nonAssociatedCalendarEvents.map(({ id }) => id);
   }
 
   public async saveCalendarEvents(

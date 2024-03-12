@@ -73,18 +73,6 @@ export class CalendarChannelEventAssociationService {
     );
   }
 
-  public async deleteByCalendarChannelId(
-    calendarChannelId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ) {
-    await this.deleteByCalendarChannelIds(
-      [calendarChannelId],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
   public async deleteByCalendarChannelIds(
     calendarChannelIds: string[],
     workspaceId: string,
