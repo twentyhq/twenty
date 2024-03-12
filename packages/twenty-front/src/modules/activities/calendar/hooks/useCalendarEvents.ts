@@ -4,6 +4,7 @@ import { getYear, isThisMonth, startOfDay, startOfMonth } from 'date-fns';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { findUpcomingCalendarEvent } from '@/activities/calendar/utils/findUpcomingCalendarEvent';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
+import { isDefined } from '~/utils/isDefined';
 import { sortDesc } from '~/utils/sort';
 
 export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
@@ -57,7 +58,7 @@ export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
   const updateCurrentCalendarEvent = () => {
     const nextCurrentCalendarEvent = getNextCalendarEvent(currentCalendarEvent);
 
-    if (nextCurrentCalendarEvent) {
+    if (isDefined(nextCurrentCalendarEvent)) {
       setCurrentCalendarEvent(nextCurrentCalendarEvent);
     }
   };
