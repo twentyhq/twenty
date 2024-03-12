@@ -5,6 +5,7 @@
   "module": "./index.mjs",
   "typings": "./index.d.ts",
   "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-ui node ../../node_modules/nx/bin/nx.js",
     "start": "storybook dev -p 6006",
     "build": "storybook build"
   }
