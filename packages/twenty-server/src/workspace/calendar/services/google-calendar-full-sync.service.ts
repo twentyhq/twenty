@@ -206,7 +206,7 @@ export class GoogleCalendarFullSyncService {
           transactionManager,
         );
 
-        // this.calendarEventAttendeesService.saveEventAttendees();
+        this.calendarEventAttendeesService.saveEventAttendees();
       });
     } else {
       this.logger.log(

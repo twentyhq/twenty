@@ -11,17 +11,19 @@ export type CalendarEvent = Omit<
   | 'eventAttendees'
 >;
 
+export type CalendarEventAttendee = Omit<
+  ObjectRecord<CalendarEventAttendeeObjectMetadata>,
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'personId'
+  | 'workspaceMemberId'
+  | 'person'
+  | 'workspaceMember'
+  | 'calendarEvent'
+>;
+
 export type CalendarEventWithAttendees = CalendarEvent & {
   externalId: string;
-  attendees: Omit<
-    ObjectRecord<CalendarEventAttendeeObjectMetadata>,
-    | 'id'
-    | 'createdAt'
-    | 'updatedAt'
-    | 'personId'
-    | 'workspaceMemberId'
-    | 'person'
-    | 'workspaceMember'
-    | 'calendarEvent'
-  >[];
+  attendees: CalendarEventAttendee[];
 };
