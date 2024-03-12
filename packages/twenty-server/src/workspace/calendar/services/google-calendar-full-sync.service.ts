@@ -138,9 +138,11 @@ export class GoogleCalendarFullSyncService {
       }ms.`,
     );
 
-    const formattedEvents = events.map((event) =>
-      formatGoogleCalendarEvent(event),
-    );
+    // TODO: In V2, we will also import deleted events by doing batch GET queries on the canceled events
+    // The canceled events start and end are not accessible in the list query
+    const formattedEvents = events
+      .filter((event) => event.status !== 'cancelled')
+      .map((event) => formatGoogleCalendarEvent(event));
 
     // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
 
