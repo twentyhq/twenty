@@ -17,8 +17,15 @@ const StyledAvatar = styled(Avatar)`
   :hover {
     cursor: grab;
   }
+`;
+
+const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   :active {
     cursor: grabbing;
+
+    .fav-avatar:hover {
+      cursor: grabbing;
+    }
   }
 `;
 
@@ -50,7 +57,7 @@ export const Favorites = () => {
                   draggableId={id}
                   index={index}
                   itemComponent={
-                    <NavigationDrawerItem
+                    <StyledNavigationDrawerItem
                       key={id}
                       label={labelIdentifier}
                       Icon={() => (
@@ -59,6 +66,7 @@ export const Favorites = () => {
                           avatarUrl={avatarUrl}
                           type={avatarType}
                           placeholder={labelIdentifier}
+                          className="fav-avatar"
                         />
                       )}
                       to={link}
