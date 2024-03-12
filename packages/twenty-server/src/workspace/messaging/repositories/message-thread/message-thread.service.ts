@@ -6,8 +6,6 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
-import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class MessageThreadService {
@@ -16,22 +14,27 @@ export class MessageThreadService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getOrphanThreadIds(
+  public async getOrphanThreadIdsPaginated(
+    limit: number,
+    offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageThreadObjectMetadata>[]> {
+  ): Promise<string[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
+    const orphanThreads = await this.workspaceDataSourceService.executeRawQuery(
       `SELECT mt.id
       FROM ${dataSourceSchema}."messageThread" mt
       LEFT JOIN ${dataSourceSchema}."message" m ON mt.id = m."messageThreadId"
-      WHERE m."messageThreadId" IS NULL`,
-      [],
+      WHERE m."messageThreadId" IS NULL
+      LIMIT $1 OFFSET $2`,
+      [limit, offset],
       workspaceId,
       transactionManager,
     );
+
+    return orphanThreads.map(({ id }) => id);
   }
 
   public async deleteByIds(

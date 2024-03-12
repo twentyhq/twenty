@@ -20,23 +20,28 @@ export class MessageService {
     private readonly messageThreadService: MessageThreadService,
   ) {}
 
-  public async getNonAssociatedMessageIds(
+  public async getNonAssociatedMessageIdsPaginated(
+    limit: number,
+    offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageObjectMetadata>[]> {
+  ): Promise<string[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT m.id FROM ${dataSourceSchema}."message" m
+    const nonAssociatedMessages =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT m.id FROM ${dataSourceSchema}."message" m
         LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" mcma
         ON m.id = mcma."messageId"
         WHERE mcma.id IS NULL
-        )`,
-      [],
-      workspaceId,
-      transactionManager,
-    );
+        LIMIT $1 OFFSET $2`,
+        [limit, offset],
+        workspaceId,
+        transactionManager,
+      );
+
+    return nonAssociatedMessages.map(({ id }) => id);
   }
 
   public async getFirstByHeaderMessageId(
