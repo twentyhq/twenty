@@ -2,10 +2,10 @@
 import * as React from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
-import { lightTheme } from '..';
+import { ThemeType } from '..';
 
 type ThemeProviderProps = {
-  theme: typeof lightTheme;
+  theme: ThemeType;
   children: React.ReactNode;
 };
 

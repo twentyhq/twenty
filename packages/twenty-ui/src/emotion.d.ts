@@ -1,5 +1,5 @@
-import { TwentyUITheme } from './theme';
+import { ThemeType } from './theme';
 
 declare module '@emotion/react' {
-  export interface Theme extends TwentyUITheme {}
+  export interface Theme extends ThemeType {}
 }

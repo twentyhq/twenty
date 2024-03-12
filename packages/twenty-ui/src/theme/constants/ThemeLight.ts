@@ -18,5 +18,3 @@ export const THEME_LIGHT = {
     name: 'light',
   },
 };
-
-export type ThemeType = typeof THEME_LIGHT;
