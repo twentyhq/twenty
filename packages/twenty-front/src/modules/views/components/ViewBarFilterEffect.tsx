@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
   filterDropdownId: string;
@@ -32,11 +32,11 @@ export const ViewBarFilterEffect = ({
   } = useFilterDropdown({ filterDropdownId });
 
   useEffect(() => {
-    if (isNonNullable(availableFilterDefinitions)) {
+    if (isDefined(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
 
-    if (isNonNullable(onFilterSelect)) {
+    if (isDefined(onFilterSelect)) {
       setOnFilterSelect(() => onFilterSelect);
     }
   }, [

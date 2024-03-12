@@ -7,7 +7,7 @@ import {
 } from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
 
-import { isNonNullable } from '../../utils/isNonNullable';
+import { isDefined } from '../../utils/isDefined';
 
 type StringFilter = {
   equals?: string;
@@ -30,7 +30,7 @@ const filterData = <DataT>(
       if (!['OR', 'AND', 'NOT'].includes(key)) {
         const filterElement = where[key] as StringFilter & { is?: object };
 
-        if (isNonNullable(filterElement.is)) {
+        if (isDefined(filterElement.is)) {
           const nestedKey = Object.keys(filterElement.is)[0] as string;
           if (
             item[key as keyof typeof item] &&
@@ -101,11 +101,11 @@ export const filterAndSortData = <DataT>(
 ): Array<DataT> => {
   let filteredData = data;
 
-  if (isNonNullable(where)) {
+  if (isDefined(where)) {
     filteredData = filterData<DataT>(data, where);
   }
 
-  if (isArray(orderBy) && orderBy.length > 0 && isNonNullable(orderBy[0])) {
+  if (isArray(orderBy) && orderBy.length > 0 && isDefined(orderBy[0])) {
     const firstOrderBy = orderBy?.[0];
 
     const key = Object.keys(firstOrderBy)[0];
@@ -139,7 +139,7 @@ export const fetchOneFromData = <DataT extends { id: string }>(
   data: Array<DataT>,
   id: string,
 ): DataT | undefined => {
-  if (!isNonNullable(id)) {
+  if (!isDefined(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
     );
@@ -153,7 +153,7 @@ export const updateOneFromData = <DataT extends { id: string }>(
   id: string | undefined,
   payload: GraphQLVariables,
 ): DataT | undefined => {
-  if (!isNonNullable(id)) {
+  if (!isDefined(id)) {
     throw new Error(
       `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
     );

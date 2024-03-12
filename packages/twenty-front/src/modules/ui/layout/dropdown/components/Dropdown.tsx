@@ -14,7 +14,7 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
@@ -33,7 +33,7 @@ type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownMenuWidth?: `${string}px` | 'auto' | number;
+  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -60,11 +60,11 @@ export const Dropdown = ({
     useDropdown(dropdownId);
   const offsetMiddlewares = [];
 
-  if (isNonNullable(dropdownOffset.x)) {
+  if (isDefined(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }
 
-  if (isNonNullable(dropdownOffset.y)) {
+  if (isDefined(dropdownOffset.y)) {
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 

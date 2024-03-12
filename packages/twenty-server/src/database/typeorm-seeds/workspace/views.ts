@@ -10,29 +10,53 @@ export const seedViews = async (
   const createdViews = await workspaceDataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.view`, ['name', 'objectMetadataId', 'type'])
+    .into(`${schemaName}.view`, [
+      'name',
+      'objectMetadataId',
+      'type',
+      'key',
+      'position',
+      'icon',
+    ])
     .values([
       {
         name: 'All Companies',
         objectMetadataId: objectMetadataMap['company'].id,
         type: 'table',
+        key: 'INDEX',
+        position: 0,
+        icon: 'IconBuildingSkyscraper',
       },
       {
         name: 'All People',
         objectMetadataId: objectMetadataMap['person'].id,
         type: 'table',
+        key: 'INDEX',
+        position: 0,
+        icon: 'IconUser',
+      },
+      {
+        name: 'By Stage',
+        objectMetadataId: objectMetadataMap['opportunity'].id,
+        type: 'kanban',
+        key: null,
+        position: 0,
+        icon: 'IconLayoutKanban',
       },
       {
         name: 'All Opportunities',
         objectMetadataId: objectMetadataMap['opportunity'].id,
-        type: 'kanban',
+        type: 'table',
+        key: 'INDEX',
+        position: 1,
+        icon: 'IconTargetArrow',
       },
     ])
     .returning('*')
     .execute();
 
   const viewIdMap = createdViews.raw.reduce((acc, view) => {
-    acc[view.name] = view.id;
+    acc[`${view.name}`] = view.id;
 
     return acc;
   }, {});
@@ -162,23 +186,30 @@ export const seedViews = async (
       },
 
       {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['name'],
         viewId: viewIdMap['All Opportunities'],
         position: 0,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
         viewId: viewIdMap['All Opportunities'],
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
         viewId: viewIdMap['All Opportunities'],
         position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
+        viewId: viewIdMap['All Opportunities'],
+        position: 3,
         isVisible: true,
         size: 150,
       },
@@ -186,7 +217,44 @@ export const seedViews = async (
         fieldMetadataId:
           objectMetadataMap['opportunity'].fields['pointOfContact'],
         viewId: viewIdMap['All Opportunities'],
+        position: 4,
+        isVisible: true,
+        size: 150,
+      },
+
+      {
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['name'],
+        viewId: viewIdMap['By Stage'],
+        position: 0,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
+        viewId: viewIdMap['By Stage'],
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
+        viewId: viewIdMap['By Stage'],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
+        viewId: viewIdMap['By Stage'],
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap['opportunity'].fields['pointOfContact'],
+        viewId: viewIdMap['By Stage'],
+        position: 4,
         isVisible: true,
         size: 150,
       },

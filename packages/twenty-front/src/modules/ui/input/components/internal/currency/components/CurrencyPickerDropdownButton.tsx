@@ -6,7 +6,7 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { IconChevronDown } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
@@ -77,7 +77,7 @@ export const CurrencyPickerDropdownButton = ({
 
   useEffect(() => {
     const currency = currencies.find(({ value }) => value === valueCode);
-    if (isNonNullable(currency)) {
+    if (isDefined(currency)) {
       setSelectedCurrency(currency);
     }
   }, [valueCode, currencies]);

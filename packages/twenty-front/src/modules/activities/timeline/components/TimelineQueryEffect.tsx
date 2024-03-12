@@ -12,7 +12,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const TimelineQueryEffect = ({
   targetableObject,
@@ -31,7 +31,7 @@ export const TimelineQueryEffect = ({
     targetableObjects: [targetableObject],
     activitiesFilters: {},
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-    skip: !isNonNullable(targetableObject),
+    skip: !isDefined(targetableObject),
   });
 
   const [timelineActivitiesNetworking, setTimelineActivitiesNetworking] =
@@ -41,7 +41,7 @@ export const TimelineQueryEffect = ({
     useRecoilState(timelineActivitiesForGroupState());
 
   useEffect(() => {
-    if (!isNonNullable(targetableObject)) {
+    if (!isDefined(targetableObject)) {
       return;
     }
 

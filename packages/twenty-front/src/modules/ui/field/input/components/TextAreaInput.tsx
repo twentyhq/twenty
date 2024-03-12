@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type TextAreaInputProps = {
   disabled?: boolean;
@@ -56,7 +56,7 @@ export const TextAreaInput = ({
   const wrapperRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (isNonNullable(wrapperRef.current)) {
+    if (isDefined(wrapperRef.current)) {
       wrapperRef.current.setSelectionRange(
         wrapperRef.current.value.length,
         wrapperRef.current.value.length,

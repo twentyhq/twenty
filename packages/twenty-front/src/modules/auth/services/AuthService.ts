@@ -13,8 +13,8 @@ import {
   RenewTokenMutation,
   RenewTokenMutationVariables,
 } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
-import { isNullable } from '~/utils/isNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const logger = loggerLink(() => 'Twenty-Refresh');
 
@@ -47,7 +47,7 @@ const renewTokenMutation = async (
     fetchPolicy: 'network-only',
   });
 
-  if (isNonNullable(errors) || isNullable(data)) {
+  if (isDefined(errors) || isUndefinedOrNull(data)) {
     throw new Error('Something went wrong during token renewal');
   }
 

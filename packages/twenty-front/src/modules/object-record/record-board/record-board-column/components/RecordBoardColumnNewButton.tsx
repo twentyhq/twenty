@@ -32,6 +32,7 @@ export const RecordBoardColumnNewButton = () => {
   const onNewClick = () => {
     createOneRecord({
       [selectFieldMetadataItem.name]: columnDefinition.value,
+      position: 'last',
     });
   };
 

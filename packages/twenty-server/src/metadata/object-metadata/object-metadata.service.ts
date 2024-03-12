@@ -777,6 +777,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
+          isSystem: true,
           type: FieldMetadataType.RELATION,
           name: 'favorites',
           label: 'Favorites',

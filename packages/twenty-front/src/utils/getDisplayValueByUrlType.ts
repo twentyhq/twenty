@@ -1,6 +1,6 @@
 import { LinkType } from '@/ui/navigation/link/components/SocialLink';
 
-import { isNonNullable } from './isNonNullable';
+import { isDefined } from './isDefined';
 
 type getUrlDisplayValueByUrlTypeProps = {
   type: LinkType;
@@ -15,7 +15,7 @@ export const getDisplayValueByUrlType = ({
     const matches = href.match(
       /(?:https?:\/\/)?(?:www.)?linkedin.com\/(?:in|company|school)\/(.*)/,
     );
-    if (isNonNullable(matches?.[1])) {
+    if (isDefined(matches?.[1])) {
       return matches?.[1];
     } else {
       return 'LinkedIn';
@@ -26,7 +26,7 @@ export const getDisplayValueByUrlType = ({
     const matches = href.match(
       /(?:https?:\/\/)?(?:www.)?twitter.com\/([-a-zA-Z0-9@:%_+.~#?&//=]*)/,
     );
-    if (isNonNullable(matches?.[1])) {
+    if (isDefined(matches?.[1])) {
       return `@${matches?.[1]}`;
     } else {
       return '@twitter';

@@ -13,7 +13,7 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledPropertyBox = styled(PropertyBox)`
   padding: 0;
@@ -36,7 +36,7 @@ export const ActivityEditorFields = ({
     const upsertActivityMutation = async ({
       variables,
     }: RecordUpdateHookParams) => {
-      if (isNonNullable(activityFromStore)) {
+      if (isDefined(activityFromStore)) {
         await upsertActivity({
           activity: activityFromStore as Activity,
           input: variables.updateOneRecordInput,

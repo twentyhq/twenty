@@ -16,7 +16,7 @@ import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddB
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const RecordShowPage = () => {
   const { objectNameSingular, objectRecordId } = useParams<{
@@ -55,12 +55,12 @@ export const RecordShowPage = () => {
     (favorite) => favorite.recordId === objectRecordId,
   );
 
-  const isFavorite = isNonNullable(correspondingFavorite);
+  const isFavorite = isDefined(correspondingFavorite);
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
 
-    if (isFavorite && isNonNullable(record)) {
+    if (isFavorite && isDefined(record)) {
       deleteFavorite(correspondingFavorite.id);
     } else {
       createFavorite(record, objectNameSingular);

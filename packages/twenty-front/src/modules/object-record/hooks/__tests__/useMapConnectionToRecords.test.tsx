@@ -13,7 +13,7 @@ import {
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { Person } from '@/people/types/Person';
 import { getJestHookWrapper } from '~/testing/jest/getJestHookWrapper';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const Wrapper = getJestHookWrapper({
   apolloMocks: [],
@@ -184,7 +184,7 @@ describe('useMapConnectionToRecords', () => {
     expect(isNonEmptyArray(peopleResult)).toBe(true);
     expect(firstPersonResult.id).toBe(firstPersonMock.id);
 
-    expect(isNonNullable(firstPersonsCompanyresult)).toBe(true);
+    expect(isDefined(firstPersonsCompanyresult)).toBe(true);
     expect(firstPersonsCompanyresult.id).toEqual(firstPersonsCompanyMock.id);
   });
 });

@@ -11,7 +11,7 @@ import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -57,7 +57,7 @@ export const useOpenRecordTableCell = () => {
 
       initFieldInputDraftValue(options?.initialValue);
 
-      if (isNonNullable(customCellHotkeyScope)) {
+      if (isDefined(customCellHotkeyScope)) {
         setHotkeyScope(
           customCellHotkeyScope.scope,
           customCellHotkeyScope.customScopes,

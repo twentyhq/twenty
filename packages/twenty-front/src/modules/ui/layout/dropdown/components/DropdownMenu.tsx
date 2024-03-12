@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
-  width?: `${string}px` | 'auto' | number;
+  width?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
   backdrop-filter: ${({ disableBlur }) => (disableBlur ? 'none' : 'blur(8px)')};
   background: ${({ theme }) => theme.background.transparent.secondary};

@@ -7,7 +7,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Nullable } from '~/types/Nullable';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useActivityTargetObjectRecords = ({
   activityId,
@@ -31,7 +31,7 @@ export const useActivityTargetObjectRecords = ({
     .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
       const correspondingObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
-          isNonNullable(activityTarget[objectMetadataItem.nameSingular]) &&
+          isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
           !objectMetadataItem.isSystem,
       );
 
@@ -47,7 +47,7 @@ export const useActivityTargetObjectRecords = ({
         targetObjectNameSingular: correspondingObjectMetadataItem.nameSingular,
       };
     })
-    .filter(isNonNullable);
+    .filter(isDefined);
 
   return {
     activityTargetObjectRecords,

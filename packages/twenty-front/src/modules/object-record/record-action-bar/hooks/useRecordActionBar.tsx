@@ -19,7 +19,7 @@ import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionB
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -63,7 +63,7 @@ export const useRecordActionBar = ({
 
     if (isFavorite) {
       deleteFavorite(foundFavorite.id);
-    } else if (isNonNullable(selectedRecord)) {
+    } else if (isDefined(selectedRecord)) {
       createFavorite(selectedRecord, objectMetadataItem.nameSingular);
     }
     callback?.();

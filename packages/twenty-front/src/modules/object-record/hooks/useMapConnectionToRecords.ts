@@ -8,7 +8,7 @@ import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelati
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useMapConnectionToRecords = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
@@ -26,7 +26,7 @@ export const useMapConnectionToRecords = () => {
       depth: number;
     }): ObjectRecord[] => {
       if (
-        !isNonNullable(objectRecordConnection) ||
+        !isDefined(objectRecordConnection) ||
         !isNonEmptyArray(objectMetadataItems)
       ) {
         return [];
@@ -79,7 +79,7 @@ export const useMapConnectionToRecords = () => {
 
             if (
               !relationFieldMetadataItem ||
-              !isNonNullable(relatedObjectMetadataSingularName)
+              !isDefined(relatedObjectMetadataSingularName)
             ) {
               throw new Error(
                 `Could not find relation object metadata item for object name plural ${relationField.name} in mapConnectionToRecords`,
@@ -90,7 +90,7 @@ export const useMapConnectionToRecords = () => {
               relationField.name
             ] as ObjectRecordConnection | undefined | null;
 
-            if (!isNonNullable(relationConnection)) {
+            if (!isDefined(relationConnection)) {
               continue;
             }
 

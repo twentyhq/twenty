@@ -8,7 +8,7 @@ import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
-import { isNullable } from '~/utils/isNullable';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useViewScopedStates } from './useViewScopedStates';
 
@@ -43,7 +43,7 @@ export const useViewSorts = (viewScopeId: string) => {
           return;
         }
 
-        if (isNullable(currentViewSorts)) {
+        if (isUndefinedOrNull(currentViewSorts)) {
           return;
         }
         if (!savedViewSortsByKey) {

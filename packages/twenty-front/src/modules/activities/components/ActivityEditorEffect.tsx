@@ -11,7 +11,7 @@ import { Activity } from '@/activities/types/Activity';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const ActivityEditorEffect = ({
   activityId,
@@ -58,7 +58,7 @@ export const ActivityEditorEffect = ({
           return;
         }
 
-        if (isActivityInCreateMode && isNonNullable(activity)) {
+        if (isActivityInCreateMode && isDefined(activity)) {
           if (canCreateActivity) {
             upsertActivity({
               activity,
@@ -72,7 +72,7 @@ export const ActivityEditorEffect = ({
           }
 
           set(isActivityInCreateModeState(), false);
-        } else if (isNonNullable(activity)) {
+        } else if (isDefined(activity)) {
           if (
             activity.title !== activityTitle ||
             activity.body !== activityBody

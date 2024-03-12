@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { RawData } from '@/spreadsheet-import/types';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { Column } from '../MatchColumnsStep';
 
@@ -39,7 +39,7 @@ export const UserTableColumn = <T extends string>({
   entries,
 }: UserTableColumnProps<T>) => {
   const { header } = column;
-  const entry = entries.find(isNonNullable);
+  const entry = entries.find(isDefined);
 
   return (
     <StyledContainer>

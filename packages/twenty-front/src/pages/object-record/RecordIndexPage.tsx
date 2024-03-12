@@ -37,7 +37,7 @@ export const RecordIndexPage = () => {
 
   const handleAddButtonClick = async () => {
     await createOneObject?.({
-      position: 0,
+      position: 'first',
     });
 
     setSelectedTableCellEditMode(0, 0);

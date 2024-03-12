@@ -8,7 +8,7 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useClickOutsideListener = (componentId: string) => {
   // TODO: improve typing
@@ -67,7 +67,7 @@ export const useClickOutsideListener = (componentId: string) => {
           (callback) => callback.callbackId === callbackId,
         );
 
-        if (!isNonNullable(existingCallbackWithSameId)) {
+        if (!isDefined(existingCallbackWithSameId)) {
           const existingCallbacksWithNewCallback = existingCallbacks.concat({
             callbackId,
             callbackFunction,

@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const mockedPeopleMetadata = {
+  cursor: '',
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -61,7 +62,7 @@ export const mockedPeopleMetadata = {
             icon: 'IconHeart',
             isCustom: false,
             isActive: true,
-            isSystem: false,
+            isSystem: true,
             isNullable: true,
             createdAt: '2023-12-15T15:29:39.070Z',
             updatedAt: '2023-12-15T15:29:39.070Z',
@@ -581,6 +582,7 @@ export const mockedPeopleMetadata = {
 
 export const mockedCompaniesMetadata = {
   __typename: 'objectEdge',
+  cursor: '',
   node: {
     __typename: 'object',
     id: '2a603764-1a2f-4043-bbfa-dea375391fad',
@@ -685,7 +687,7 @@ export const mockedCompaniesMetadata = {
             icon: 'IconHeart',
             isCustom: false,
             isActive: true,
-            isSystem: false,
+            isSystem: true,
             isNullable: true,
             createdAt: '2023-12-15T15:29:39.070Z',
             updatedAt: '2023-12-15T15:29:39.070Z',
