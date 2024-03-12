@@ -1,14 +1,21 @@
+import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
+import { useRecoilValue } from 'recoil';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
+import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Avatar } from '@/users/components/Avatar';
+import { AvatarGroup } from '@/users/components/AvatarGroup';
+import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
   calendarEvent: CalendarEvent;
@@ -92,6 +99,8 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const { displayCurrentEventCursor = false } = useContext(CalendarContext);
 
   const endsAt = getCalendarEventEndDate(calendarEvent);
   const hasEnded = hasCalendarEventEnded(calendarEvent);
@@ -101,9 +110,13 @@ export const CalendarEventRow = ({
     : format(calendarEvent.startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
+  const isCurrentWorkspaceMemberAttending = !!calendarEvent.attendees?.find(
+    ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
+  );
+
   return (
     <StyledContainer className={className}>
-      <StyledAttendanceIndicator />
+      <StyledAttendanceIndicator active={isCurrentWorkspaceMemberAttending} />
       <StyledLabels>
         <StyledTime>
           {startTimeLabel}
@@ -127,7 +140,27 @@ export const CalendarEventRow = ({
           </StyledTitle>
         )}
       </StyledLabels>
-      <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
+      {!!calendarEvent.attendees?.length && (
+        <AvatarGroup
+          avatars={calendarEvent.attendees.map((attendee) => (
+            <Avatar
+              key={[attendee.workspaceMemberId, attendee.displayName]
+                .filter(isDefined)
+                .join('-')}
+              avatarUrl={
+                attendee.workspaceMemberId === currentWorkspaceMember?.id
+                  ? currentWorkspaceMember?.avatarUrl
+                  : undefined
+              }
+              placeholder={attendee.displayName}
+              type="rounded"
+            />
+          ))}
+        />
+      )}
+      {displayCurrentEventCursor && (
+        <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
+      )}
     </StyledContainer>
   );
 };
