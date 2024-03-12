@@ -48,6 +48,6 @@ export const baseSchema = (
       description: 'Find out more about **Twenty**',
       url: 'https://twenty.com',
     },
-    paths: { [`/open-api/${schemaName}`]: computeOpenApiPath() },
+    paths: { [`/open-api/${schemaName}`]: computeOpenApiPath(serverUrl) },
   };
 };

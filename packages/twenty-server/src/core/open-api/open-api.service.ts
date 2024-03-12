@@ -36,9 +36,7 @@ export class OpenApiService {
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl =
-      this.environmentService.getServerUrl() ||
-      `${request.protocol}://${request.get('host')}`;
+    const baseUrl = this.environmentService.getBaseUrl(request);
 
     const schema = baseSchema('core', baseUrl);
 
@@ -95,9 +93,7 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl =
-      this.environmentService.getServerUrl() ||
-      `${request.protocol}://${request.get('host')}`;
+    const baseUrl = this.environmentService.getBaseUrl(request);
 
     const schema = baseSchema('metadata', baseUrl);
 
