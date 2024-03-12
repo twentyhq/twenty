@@ -11,6 +11,7 @@ export const standardObjectIds = {
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
   attachment: '20202020-bd3d-4c60-8dca-571c71d4447a',
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
+  calendarChannelEventAssociation: '20202020-491b-4aaa-9825-afd1bae6ae00',
   calendarChannel: '20202020-e8f2-40e1-a39c-c0e0039c5034',
   calendarEventAttendee: '20202020-a1c3-47a6-9732-27e5b1e8436d',
   calendarEvent: '20202020-8f1d-4eef-9f85-0d1965e27221',

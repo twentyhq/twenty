@@ -146,7 +146,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   recurringEventExternalId: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.eventAttendees,
+    standardId: calendarEventStandardFieldIds.calendarChannelEventAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Channel Event Associations',
     description: 'Calendar Channel Event Associations',
@@ -164,6 +164,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 
   @FieldMetadata({
+    standardId: calendarEventStandardFieldIds.eventAttendees,
     type: FieldMetadataType.RELATION,
     label: 'Event Attendees',
     description: 'Event Attendees',

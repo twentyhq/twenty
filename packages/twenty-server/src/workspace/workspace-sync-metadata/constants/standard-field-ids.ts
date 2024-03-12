@@ -56,6 +56,12 @@ export const blocklistStandardFieldIds = {
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
 };
 
+export const calendarChannelEventAssociationStandardFieldIds = {
+  calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
+  calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',
+  eventExternalId: '20202020-9ec8-48bb-b279-21d0734a75a1',
+};
+
 export const calendarChannelStandardFieldIds = {
   connectedAccount: '20202020-95b1-4f44-82dc-61b042ae2414',
   handle: '20202020-1d08-420a-9aa7-22e0f298232d',
@@ -63,6 +69,7 @@ export const calendarChannelStandardFieldIds = {
   isContactAutoCreationEnabled: '20202020-50fb-404b-ba28-369911a3793a',
   isSyncEnabled: '20202020-fe19-4818-8854-21f7b1b43395',
   syncCursor: '20202020-bac2-4852-a5cb-7a7898992b70',
+  calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
 };
 
 export const calendarEventAttendeeStandardFieldIds = {
@@ -89,6 +96,7 @@ export const calendarEventStandardFieldIds = {
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
   conferenceUri: '20202020-0fc5-490a-871a-2df8a45ab46c',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
+  calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 

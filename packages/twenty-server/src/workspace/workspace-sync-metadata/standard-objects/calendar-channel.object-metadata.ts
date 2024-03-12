@@ -107,6 +107,8 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   syncCursor: string;
 
   @FieldMetadata({
+    standardId:
+      calendarChannelStandardFieldIds.calendarChannelEventAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Channel Event Associations',
     description: 'Calendar Channel Event Associations',

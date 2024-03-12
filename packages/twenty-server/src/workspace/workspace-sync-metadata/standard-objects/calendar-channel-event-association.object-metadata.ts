@@ -1,5 +1,7 @@
 import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { calendarChannelEventAssociationStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -8,6 +10,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.calendarChannelEventAssociation,
   namePlural: 'calendarChannelEventAssociations',
   labelSingular: 'Calendar Channel Event Association',
   labelPlural: 'Calendar Channel Event Associations',
@@ -20,6 +23,7 @@ import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metada
 })
 export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: calendarChannelEventAssociationStandardFieldIds.calendarChannel,
     type: FieldMetadataType.RELATION,
     label: 'Channel ID',
     description: 'Channel ID',
@@ -29,6 +33,7 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
   calendarChannel: CalendarEventObjectMetadata;
 
   @FieldMetadata({
+    standardId: calendarChannelEventAssociationStandardFieldIds.calendarEvent,
     type: FieldMetadataType.RELATION,
     label: 'Event ID',
     description: 'Event ID',
@@ -38,6 +43,7 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
   calendarEvent: CalendarEventObjectMetadata;
 
   @FieldMetadata({
+    standardId: calendarChannelEventAssociationStandardFieldIds.eventExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Event external ID',
     description: 'Event external ID',
