@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -6,12 +6,15 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
+import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 
 @Injectable()
 export class MessageThreadService {
   constructor(
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @Inject(forwardRef(() => MessageService))
+    private readonly messageService: MessageService,
   ) {}
 
   public async getOrphanThreadIdsPaginated(
@@ -54,11 +57,13 @@ export class MessageThreadService {
   }
 
   public async saveMessageThreadOrReturnExistingMessageThread(
+    headerMessageId: string,
     messageThreadExternalId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     manager: EntityManager,
   ) {
+    // Check if message thread already exists via threadExternalId
     const existingMessageChannelMessageAssociationByMessageThreadExternalId =
       await this.messageChannelMessageAssociationService.getFirstByMessageThreadExternalId(
         messageThreadExternalId,
@@ -73,6 +78,21 @@ export class MessageThreadService {
       return Promise.resolve(existingMessageThread);
     }
 
+    // Check if message thread already exists via existing message headerMessageId
+    const existingMessageWithSameHeaderMessageId =
+      await this.messageService.getFirstOrNullByHeaderMessageId(
+        headerMessageId,
+        workspaceId,
+        manager,
+      );
+
+    if (existingMessageWithSameHeaderMessageId) {
+      return Promise.resolve(
+        existingMessageWithSameHeaderMessageId.messageThreadId,
+      );
+    }
+
+    // If message thread does not exist, create new message thread
     const newMessageThreadId = v4();
 
     await manager.query(

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
 import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -17,6 +17,7 @@ export class MessageService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    @Inject(forwardRef(() => MessageThreadService))
     private readonly messageThreadService: MessageThreadService,
   ) {}
 
@@ -140,8 +141,10 @@ export class MessageService {
               return;
             }
 
+            // TODO: This does not handle all thread merging use cases and might create orphan threads.
             const savedOrExistingMessageThreadId =
               await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+                message.headerMessageId,
                 message.messageThreadExternalId,
                 dataSourceMetadata,
                 workspaceId,

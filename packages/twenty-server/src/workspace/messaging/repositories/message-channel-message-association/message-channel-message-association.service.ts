@@ -84,18 +84,6 @@ export class MessageChannelMessageAssociationService {
     );
   }
 
-  public async deleteByMessageChannelId(
-    messageChannelId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ) {
-    this.deleteByMessageChannelIds(
-      [messageChannelId],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
   public async deleteByMessageChannelIds(
     messageChannelIds: string[],
     workspaceId: string,
