@@ -51,6 +51,10 @@ export class CalendarEventAttendeesService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEventAttendees.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -68,7 +72,7 @@ export class CalendarEventAttendeesService {
     ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEventAttendees" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus") VALUES ${valuesString}`,
       values,
       workspaceId,
       transactionManager,
@@ -80,6 +84,10 @@ export class CalendarEventAttendeesService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    if (calendarEventAttendees.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -97,13 +105,13 @@ export class CalendarEventAttendeesService {
     ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."calendarEventAttendees" AS "calendarEventAttendees"
+      `UPDATE ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee"
       SET "calendarEventId" = "newValues"."calendarEventId",
       "displayName" = "newValues"."displayName",
       "isOrganizer" = "newValues"."isOrganizer",
       "responseStatus" = "newValues"."responseStatus"
       FROM (VALUES ${valuesString}) AS "newValues"("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus")
-      WHERE "calendarEventAttendees"."handle" = "newValues"."handle"`,
+      WHERE "calendarEventAttendee"."handle" = "newValues"."handle"`,
       values,
       workspaceId,
       transactionManager,
