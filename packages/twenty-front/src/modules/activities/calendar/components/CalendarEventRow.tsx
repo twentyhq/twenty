@@ -15,7 +15,7 @@ import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { AvatarGroup } from '@/users/components/AvatarGroup';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
   calendarEvent: CalendarEvent;
@@ -99,7 +99,7 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
 
   const endsAt = getCalendarEventEndDate(calendarEvent);
@@ -145,7 +145,7 @@ export const CalendarEventRow = ({
           avatars={calendarEvent.attendees.map((attendee) => (
             <Avatar
               key={[attendee.workspaceMemberId, attendee.displayName]
-                .filter(isNonNullable)
+                .filter(isDefined)
                 .join('-')}
               avatarUrl={
                 attendee.workspaceMemberId === currentWorkspaceMember?.id
