@@ -29,7 +29,7 @@ export const formatGoogleCalendarEvent = (
     attendees:
       event.attendees?.map((attendee) => ({
         calendarEventId: id,
-        iCalUID: attendee.id || '',
+        iCalUID: event.iCalUID || '',
         handle: attendee.email || '',
         displayName: attendee.displayName || '',
         isOrganizer: attendee.organizer?.toString() === 'true',

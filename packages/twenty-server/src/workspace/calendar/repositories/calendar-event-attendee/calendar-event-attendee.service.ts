@@ -124,7 +124,7 @@ export class CalendarEventAttendeesService {
       calendarEventAttendees,
       5,
       [
-        'text',
+        'uuid',
         'text',
         'text',
         'boolean',
@@ -133,12 +133,14 @@ export class CalendarEventAttendeesService {
     );
 
     const values = calendarEventAttendees.flatMap((calendarEventAttendee) => [
-      iCalUIDCalendarEventIdMap[calendarEventAttendee.iCalUID],
+      iCalUIDCalendarEventIdMap.get(calendarEventAttendee.iCalUID),
       calendarEventAttendee.handle,
       calendarEventAttendee.displayName,
       calendarEventAttendee.isOrganizer,
       calendarEventAttendee.responseStatus,
     ]);
+
+    console.log('iCalUIDCalendarEventIdMap', iCalUIDCalendarEventIdMap);
 
     // const existingCalendarEventAttendeeIds = await this.getByCalendarEventIds(
     //   calendarEventAttendees.map(

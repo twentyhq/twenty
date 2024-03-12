@@ -95,7 +95,7 @@ export class CalendarEventService {
       id: string;
       iCalUID: string;
     }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, iCalUID FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
+      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
       [iCalUIDs],
       workspaceId,
       transactionManager,

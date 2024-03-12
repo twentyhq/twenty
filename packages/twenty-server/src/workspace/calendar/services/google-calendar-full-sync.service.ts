@@ -175,11 +175,9 @@ export class GoogleCalendarFullSyncService {
       (event) => event.attendees,
     );
 
-    const iCalUIDsCalendarEventIdsMap =
+    const iCalUIDCalendarEventIdMap =
       await this.calendarEventService.getICalUIDCalendarEventIdMap(
-        attendeesToUpdate.map(
-          (calendarEventAttendee) => calendarEventAttendee.iCalUID,
-        ),
+        eventsToUpdate.map((event) => event.iCalUID),
         workspaceId,
       );
 
@@ -216,7 +214,7 @@ export class GoogleCalendarFullSyncService {
 
         this.calendarEventAttendeesService.updateCalendarEventAttendees(
           attendeesToUpdate,
-          iCalUIDsCalendarEventIdsMap,
+          iCalUIDCalendarEventIdMap,
           workspaceId,
           transactionManager,
         );
