@@ -9,7 +9,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
@@ -36,14 +35,9 @@ export const useFavorites = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const { prefetchQueryKey, isDataPrefetched } = usePrefetchedData(
+  const { records: favorites } = usePrefetchedData<Favorite>(
     PrefetchKey.AllFavorites,
   );
-
-  const { records: favorites } = useFindManyRecords<Favorite>({
-    ...prefetchQueryKey,
-    skip: !isDataPrefetched,
-  });
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>

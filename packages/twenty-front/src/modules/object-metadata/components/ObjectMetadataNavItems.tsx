@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { GraphQLView } from '@/views/types/GraphQLView';
 
 export const ObjectMetadataNavItems = () => {
   const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
@@ -13,15 +13,7 @@ export const ObjectMetadataNavItems = () => {
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
-  const { prefetchQueryKey, isDataPrefetched } = usePrefetchedData(
-    PrefetchKey.AllViews,
-  );
-
-  const { records } = useFindManyRecords({
-    skip: !isDataPrefetched,
-    ...prefetchQueryKey,
-    useRecordsWithoutConnection: true,
-  });
+  const { records } = usePrefetchedData<GraphQLView>(PrefetchKey.AllViews);
 
   return (
     <>

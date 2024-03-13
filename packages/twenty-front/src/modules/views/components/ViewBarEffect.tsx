@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -32,15 +31,9 @@ export const ViewBarEffect = () => {
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
 
-  const { prefetchQueryKey, isDataPrefetched } = usePrefetchedData(
+  const { records: newViews } = usePrefetchedData<GraphQLView>(
     PrefetchKey.AllViews,
   );
-
-  const { records: newViews } = useFindManyRecords<GraphQLView>({
-    skip: !isDataPrefetched,
-    ...prefetchQueryKey,
-    useRecordsWithoutConnection: true,
-  });
 
   const newViewsOnCurrentObject = newViews.filter(
     (view) => view.objectMetadataId === viewObjectMetadataId,
