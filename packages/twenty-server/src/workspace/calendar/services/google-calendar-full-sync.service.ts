@@ -45,10 +45,14 @@ export class GoogleCalendarFullSyncService {
     connectedAccountId: string,
     pageToken?: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getById(
       connectedAccountId,
       workspaceId,
     );
+
+    if (!connectedAccount) {
+      return;
+    }
 
     const refreshToken = connectedAccount.refreshToken;
     const workspaceMemberId = connectedAccount.accountOwnerId;
