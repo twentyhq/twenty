@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-import { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { IconArrowLeft } from '@tabler/icons-react';
@@ -67,13 +66,13 @@ const StyledTitle = styled.h3`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   font-size: ${({ theme }) => theme.font.size.md};
 `;
+
 export const Specialty = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
+  const { setCurrentStep, campaignData, setCampaignData, currentStep } =
+    useCampaign();
 
   let Specialty: any = [];
   const SpecialtyTypes: any = {};
-  const [specialty, setSpecialty] = useState('');
-  const [subSpecialty, setSubSpecialty] = useState('');
   const { loading: queryLoading, data: queryData } = useQuery(GET_SPECIALTY);
 
   if (!queryLoading) {
@@ -110,13 +109,6 @@ export const Specialty = () => {
     );
   }
 
-  const handleSpecialtySelectChange = (selectedValue: any) => {
-    setSpecialty(selectedValue);
-  };
-
-  const handleSubSpecialtySelectChange = (selectedValue: any) => {
-    setSubSpecialty(selectedValue);
-  };
   return (
     <>
       <StyledCard>
@@ -132,12 +124,17 @@ export const Specialty = () => {
             <Select
               fullWidth
               dropdownId="Specialty Type"
-              value={specialty}
+              value={campaignData?.specialtyType}
               options={Specialty}
-              onChange={handleSpecialtySelectChange}
+              onChange={(e) => {
+                setCampaignData({
+                  ...campaignData,
+                  specialtyType: e,
+                });
+              }}
             />
           </Section>
-          {specialty && (
+          {campaignData?.specialtyType && (
             <Section>
               <H2Title
                 title="Subspecialty Type"
@@ -147,9 +144,14 @@ export const Specialty = () => {
               <Select
                 fullWidth
                 dropdownId="Sub Specialty Type"
-                value={subSpecialty}
-                options={SpecialtyTypes[specialty]}
-                onChange={handleSubSpecialtySelectChange}
+                value={campaignData?.subSpecialtyType}
+                options={SpecialtyTypes[campaignData.specialtyType]}
+                onChange={(e) => {
+                  setCampaignData({
+                    ...campaignData,
+                    subSpecialtyType: e,
+                  });
+                }}
               />
             </Section>
           )}
