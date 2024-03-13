@@ -58,6 +58,8 @@ export class WorkspaceSyncRelationMetadataService {
     // Create map of object metadata & field metadata by unique identifier
     const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection,
+      // Relation are based on the singular name
+      (objectMetadata) => objectMetadata.nameSingular,
     );
 
     const relationMetadataRepository = manager.getRepository(

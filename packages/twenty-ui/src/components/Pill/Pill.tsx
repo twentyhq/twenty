@@ -1,3 +1,4 @@
+import * as React from 'react';
 import styled from '@emotion/styled';
 
 type PillProps = {
@@ -21,6 +22,6 @@ const StyledPill = styled.span`
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
-export const Pill = ({ className, label }: PillProps) => (
-  <StyledPill className={className}>{label}</StyledPill>
-);
+export const Pill = ({ className, label }: PillProps) => {
+  return <StyledPill className={className}>{label}</StyledPill>;
+};

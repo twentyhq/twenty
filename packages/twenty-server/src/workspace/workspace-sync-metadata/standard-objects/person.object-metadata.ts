@@ -5,6 +5,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { personStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -21,6 +23,7 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.person,
   namePlural: 'people',
   labelSingular: 'Person',
   labelPlural: 'People',
@@ -29,6 +32,7 @@ import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata
 })
 export class PersonObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: personStandardFieldIds.name,
     type: FieldMetadataType.FULL_NAME,
     label: 'Name',
     description: 'Contact’s name',
@@ -38,6 +42,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   name: FullNameMetadata;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.email,
     type: FieldMetadataType.EMAIL,
     label: 'Email',
     description: 'Contact’s Email',
@@ -46,6 +51,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   email: string;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.linkedinLink,
     type: FieldMetadataType.LINK,
     label: 'Linkedin',
     description: 'Contact’s Linkedin account',
@@ -55,6 +61,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   linkedinLink: LinkMetadata;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.xLink,
     type: FieldMetadataType.LINK,
     label: 'X',
     description: 'Contact’s X/Twitter account',
@@ -64,6 +71,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   xLink: LinkMetadata;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.jobTitle,
     type: FieldMetadataType.TEXT,
     label: 'Job Title',
     description: 'Contact’s job title',
@@ -72,6 +80,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   jobTitle: string;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.phone,
     type: FieldMetadataType.TEXT,
     label: 'Phone',
     description: 'Contact’s phone number',
@@ -80,6 +89,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   phone: string;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.city,
     type: FieldMetadataType.TEXT,
     label: 'City',
     description: 'Contact’s city',
@@ -88,6 +98,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   city: string;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: 'Avatar',
     description: 'Contact’s avatar',
@@ -97,6 +108,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   avatarUrl: string;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'Person record Position',
@@ -108,6 +120,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
+    standardId: personStandardFieldIds.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Contact’s company',
@@ -118,6 +131,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.pointOfContactForOpportunities,
     type: FieldMetadataType.RELATION,
     label: 'POC for Opportunities',
     description: 'Point of Contact for Opportunities',
@@ -131,6 +145,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: 'Activities tied to the contact',
@@ -144,6 +159,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the contact',
@@ -158,6 +174,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: 'Attachments linked to the contact.',
@@ -171,6 +188,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.messageParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Message Participants',
     description: 'Message Participants',
@@ -185,6 +203,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
+    standardId: personStandardFieldIds.calendarEventAttendees,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Event Attendees',
     description: 'Calendar Event Attendees',

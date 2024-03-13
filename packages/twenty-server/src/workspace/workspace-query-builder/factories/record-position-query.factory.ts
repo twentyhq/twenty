@@ -12,7 +12,6 @@ export class RecordPositionQueryFactory {
     positionValue: 'first' | 'last' | number,
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
-    recordId?: string,
   ): Promise<string> {
     const name =
       (objectMetadata.isCustom ? '_' : '') + objectMetadata.nameSingular;
@@ -27,24 +26,7 @@ export class RecordPositionQueryFactory {
 
         return this.createForGet(positionValue, name, dataSourceSchema);
       case RecordPositionQueryType.UPDATE:
-        if (typeof positionValue !== 'number') {
-          throw new Error(
-            'RecordPositionQueryType.UPDATE requires positionValue to be a number',
-          );
-        }
-
-        if (!recordId) {
-          throw new Error(
-            'RecordPositionQueryType.UPDATE requires recordId to be defined',
-          );
-        }
-
-        return this.createForUpdate(
-          positionValue,
-          name,
-          dataSourceSchema,
-          recordId,
-        );
+        return this.createForUpdate(name, dataSourceSchema);
       default:
         throw new Error('Invalid RecordPositionQueryType');
     }
@@ -62,13 +44,11 @@ export class RecordPositionQueryFactory {
   }
 
   private async createForUpdate(
-    positionValue: number,
     name: string,
     dataSourceSchema: string,
-    recordId: string,
   ): Promise<string> {
     return `UPDATE ${dataSourceSchema}."${name}"
-            SET "position" = ${positionValue}
-            WHERE "id" = '${recordId}'`;
+            SET "position" = $1
+            WHERE "id" = $2`;
   }
 }

@@ -22,6 +22,7 @@ describe('WorkspaceObjectComparator', () => {
 
   it('should generate CREATE action for new objects', () => {
     const standardObjectMetadata = createMockObjectMetadata({
+      standardId: 'no-object-1',
       description: 'A standard object',
     });
 
@@ -35,10 +36,12 @@ describe('WorkspaceObjectComparator', () => {
 
   it('should generate UPDATE action for objects with differences', () => {
     const originalObjectMetadata = createMockObjectMetadata({
+      standardId: '1',
       id: '1',
       description: 'Original description',
     });
     const standardObjectMetadata = createMockObjectMetadata({
+      standardId: '1',
       description: 'Updated description',
     });
 
@@ -58,10 +61,12 @@ describe('WorkspaceObjectComparator', () => {
 
   it('should generate SKIP action for identical objects', () => {
     const originalObjectMetadata = createMockObjectMetadata({
+      standardId: '1',
       id: '1',
       description: 'Same description',
     });
     const standardObjectMetadata = createMockObjectMetadata({
+      standardId: '1',
       description: 'Same description',
     });
 
