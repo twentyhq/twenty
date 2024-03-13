@@ -37,6 +37,8 @@ import { CalendarModule } from 'src/workspace/calendar/calendar.module';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
+import { RecordPositionBackfillJob } from 'src/workspace/workspace-query-runner/jobs/record-position-backfill.job';
+import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runner/services/record-position-backfill-module';
 
 @Module({
   imports: [
@@ -61,6 +63,7 @@ import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/cale
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,
+    RecordPositionBackfillModule,
   ],
   providers: [
     {
@@ -109,6 +112,10 @@ import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/cale
       useClass: DeleteConnectedAccountAssociatedDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
+    {
+      provide: RecordPositionBackfillJob.name,
+      useClass: RecordPositionBackfillJob,
+    },
   ],
 })
 export class JobsModule {

@@ -32,16 +32,28 @@ export class MessageChannelService {
     connectedAccountId: string,
     workspaceId: string,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata>> {
-    const messageChannels = await this.getByConnectedAccountId(
+    const messageChannel = await this.getFirstByConnectedAccountId(
       connectedAccountId,
       workspaceId,
     );
 
-    if (!messageChannels || messageChannels.length === 0) {
+    if (!messageChannel) {
       throw new Error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+        `Message channel for connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
     }
+
+    return messageChannel;
+  }
+
+  public async getFirstByConnectedAccountId(
+    connectedAccountId: string,
+    workspaceId: string,
+  ): Promise<ObjectRecord<MessageChannelObjectMetadata> | undefined> {
+    const messageChannels = await this.getByConnectedAccountId(
+      connectedAccountId,
+      workspaceId,
+    );
 
     return messageChannels[0];
   }

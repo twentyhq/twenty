@@ -9,6 +9,11 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: addDays(new Date().setHours(10, 0), 1),
     visibility: 'METADATA',
+    attendees: [
+      { displayName: 'John Doe', workspaceMemberId: 'john-doe' },
+      { displayName: 'Jane Doe', workspaceMemberId: 'jane-doe' },
+      { displayName: 'Tim Apple', workspaceMemberId: 'tim-apple' },
+    ],
   },
   {
     id: '19b32878-a950-4968-9e3b-ce5da514ea41',

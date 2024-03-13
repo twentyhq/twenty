@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,6 +19,9 @@ import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 @UnPagedRelation('featureFlags', () => FeatureFlagEntity, { nullable: true })
+@UnPagedRelation('billingSubscriptions', () => BillingSubscription, {
+  nullable: true,
+})
 export class Workspace {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -72,12 +74,15 @@ export class Workspace {
   @Column({ default: 'incomplete' })
   subscriptionStatus: Stripe.Subscription.Status;
 
+  @Field({ nullable: true })
+  currentBillingSubscription: BillingSubscription;
+
   @Field()
   activationStatus: 'active' | 'inactive';
 
-  @OneToOne(
+  @OneToMany(
     () => BillingSubscription,
     (billingSubscription) => billingSubscription.workspace,
   )
-  billingSubscription: BillingSubscription;
+  billingSubscriptions: BillingSubscription[];
 }

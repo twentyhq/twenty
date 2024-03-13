@@ -1,11 +1,21 @@
+import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { endOfDay, format, isPast } from 'date-fns';
+import { format } from 'date-fns';
+import { useRecoilValue } from 'recoil';
 
+import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
+import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
+import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Avatar } from '@/users/components/Avatar';
+import { AvatarGroup } from '@/users/components/AvatarGroup';
+import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
   calendarEvent: CalendarEvent;
@@ -17,12 +27,14 @@ const StyledContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(3)};
   height: ${({ theme }) => theme.spacing(6)};
+  position: relative;
 `;
 
 const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
   background-color: ${({ theme }) => theme.tag.background.gray};
   height: 100%;
   width: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
 
   ${({ active, theme }) =>
     active &&
@@ -68,6 +80,7 @@ const StyledVisibilityCard = styled(Card)<{ active: boolean }>`
     active ? theme.font.color.primary : theme.font.color.light};
   border-color: ${({ theme }) => theme.border.color.light};
   flex: 1 0 auto;
+  transition: color ${({ theme }) => theme.animation.duration.normal} ease;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
@@ -86,46 +99,68 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const { displayCurrentEventCursor = false } = useContext(CalendarContext);
 
-  const hasEventEnded = calendarEvent.endsAt
-    ? isPast(calendarEvent.endsAt)
-    : calendarEvent.isFullDay && isPast(endOfDay(calendarEvent.startsAt));
+  const endsAt = getCalendarEventEndDate(calendarEvent);
+  const hasEnded = hasCalendarEventEnded(calendarEvent);
+
+  const startTimeLabel = calendarEvent.isFullDay
+    ? 'All day'
+    : format(calendarEvent.startsAt, 'HH:mm');
+  const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
+
+  const isCurrentWorkspaceMemberAttending = !!calendarEvent.attendees?.find(
+    ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
+  );
 
   return (
     <StyledContainer className={className}>
-      <StyledAttendanceIndicator />
+      <StyledAttendanceIndicator active={isCurrentWorkspaceMemberAttending} />
       <StyledLabels>
         <StyledTime>
-          {calendarEvent.isFullDay ? (
-            'All Day'
-          ) : (
+          {startTimeLabel}
+          {endTimeLabel && (
             <>
-              {format(calendarEvent.startsAt, 'HH:mm')}
-              {!!calendarEvent.endsAt && (
-                <>
-                  <IconArrowRight size={theme.icon.size.sm} />
-                  {format(calendarEvent.endsAt, 'HH:mm')}
-                </>
-              )}
+              <IconArrowRight size={theme.icon.size.sm} />
+              {endTimeLabel}
             </>
           )}
         </StyledTime>
         {calendarEvent.visibility === 'METADATA' ? (
-          <StyledVisibilityCard active={!hasEventEnded}>
+          <StyledVisibilityCard active={!hasEnded}>
             <StyledVisibilityCardContent>
               <IconLock size={theme.icon.size.sm} />
               Not shared
             </StyledVisibilityCardContent>
           </StyledVisibilityCard>
         ) : (
-          <StyledTitle
-            active={!hasEventEnded}
-            canceled={!!calendarEvent.isCanceled}
-          >
+          <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
             {calendarEvent.title}
           </StyledTitle>
         )}
       </StyledLabels>
+      {!!calendarEvent.attendees?.length && (
+        <AvatarGroup
+          avatars={calendarEvent.attendees.map((attendee) => (
+            <Avatar
+              key={[attendee.workspaceMemberId, attendee.displayName]
+                .filter(isDefined)
+                .join('-')}
+              avatarUrl={
+                attendee.workspaceMemberId === currentWorkspaceMember?.id
+                  ? currentWorkspaceMember?.avatarUrl
+                  : undefined
+              }
+              placeholder={attendee.displayName}
+              type="rounded"
+            />
+          ))}
+        />
+      )}
+      {displayCurrentEventCursor && (
+        <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
+      )}
     </StyledContainer>
   );
 };

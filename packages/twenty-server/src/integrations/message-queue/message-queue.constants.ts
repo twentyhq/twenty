@@ -8,4 +8,5 @@ export enum MessageQueue {
   emailQueue = 'email-queue',
   calendarQueue = 'calendar-queue',
   billingQueue = 'billing-queue',
+  recordPositionBackfillQueue = 'record-position-backfill-queue',
 }

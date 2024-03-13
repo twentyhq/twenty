@@ -11,6 +11,7 @@ export type CurrentWorkspace = Pick<
   | 'featureFlags'
   | 'subscriptionStatus'
   | 'activationStatus'
+  | 'currentBillingSubscription'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
