@@ -30,6 +30,8 @@ export class GoogleAPIsService {
     private readonly typeORMService: TypeORMService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    @Inject(MessageQueue.calendarQueue)
+    private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -121,7 +123,7 @@ export class GoogleAPIsService {
       this.environmentService.isCalendarProviderGoogleEnabled() &&
       IsCalendarEnabled
     ) {
-      await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
+      await this.calendarQueueService.add<GoogleCalendarFullSyncJobData>(
         GoogleCalendarFullSyncJob.name,
         {
           workspaceId,

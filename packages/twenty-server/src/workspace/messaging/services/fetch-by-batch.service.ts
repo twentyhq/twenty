@@ -7,9 +7,7 @@ import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-
 
 @Injectable()
 export class FetchByBatchesService {
-  private readonly httpService: AxiosInstance;
-
-  constructor() {
+  constructor(private readonly httpService: AxiosInstance) {
     this.httpService = axios.create({
       baseURL: 'https://www.googleapis.com/batch/gmail/v1',
     });
