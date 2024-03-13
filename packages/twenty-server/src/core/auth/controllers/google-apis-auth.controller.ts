@@ -47,15 +47,14 @@ export class GoogleAPIsAuthController {
       throw new Error('Workspace not found');
     }
 
-    if (workspaceId)
-      await this.googleAPIsService.saveConnectedAccount({
-        handle: email,
-        workspaceMemberId: workspaceMemberId,
-        workspaceId: workspaceId,
-        provider: 'google',
-        accessToken,
-        refreshToken,
-      });
+    await this.googleAPIsService.saveConnectedAccount({
+      handle: email,
+      workspaceMemberId: workspaceMemberId,
+      workspaceId: workspaceId,
+      provider: 'google',
+      accessToken,
+      refreshToken,
+    });
 
     return res.redirect(
       `${this.environmentService.getFrontBaseUrl()}/settings/accounts`,

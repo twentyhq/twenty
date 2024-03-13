@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { deleteUsingPagination } from 'src/workspace/calendar-and-messaging/utils/delete-using-pagination.util';
 import { CalendarEventService } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.service';
+import { deleteUsingPagination } from 'src/workspace/messaging/services/thread-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class CalendarEventCleanerService {

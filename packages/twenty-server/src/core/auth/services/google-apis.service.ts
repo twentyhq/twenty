@@ -95,7 +95,6 @@ export class GoogleAPIsService {
           connectedAccountId,
         },
         {
-          id: connectedAccountId,
           retryLimit: 2,
         },
       );
@@ -109,7 +108,6 @@ export class GoogleAPIsService {
           connectedAccountId,
         },
         {
-          id: connectedAccountId,
           retryLimit: 2,
         },
       );

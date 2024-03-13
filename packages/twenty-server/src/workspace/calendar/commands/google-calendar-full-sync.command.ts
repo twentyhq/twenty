@@ -32,7 +32,7 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
     _passedParam: string[],
     options: GoogleCalendarFullSyncOptions,
   ): Promise<void> {
-    await this.fetchWorkspaceMessages(options.workspaceId);
+    await this.fetchWorkspaceCalendars(options.workspaceId);
 
     return;
   }
@@ -46,7 +46,7 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
     return value;
   }
 
-  private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
+  private async fetchWorkspaceCalendars(workspaceId: string): Promise<void> {
     const connectedAccounts =
       await this.connectedAccountService.getAll(workspaceId);
 
