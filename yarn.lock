@@ -13383,12 +13383,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-themes@npm:^7.6.7":
-  version: 7.6.17
-  resolution: "@storybook/addon-themes@npm:7.6.17"
+"@storybook/addon-themes@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "@storybook/addon-themes@npm:8.0.0"
   dependencies:
     ts-dedent: "npm:^2.0.0"
-  checksum: 228190aa11d599e9d38acf87978f9ee3d693357aa3e10cce281c770c6dc0c731d595f2f95b29d67addab984610eaf6dd147ae6fa0752488959a60a6c1a298733
+  checksum: 4a095d69c67a84c9f496573cb91c230b8ac82a5a94b79bed95b3c0986585e6d65ea6f1b85bc8c4e2bbac1a4270775e193708665ba1de656b4a3cd02a029ee6fb
   languageName: node
   linkType: hard
 
@@ -14066,6 +14066,16 @@ __metadata:
   version: 5.0.0
   resolution: "@storybook/global@npm:5.0.0"
   checksum: 8f1b61dcdd3a89584540896e659af2ecc700bc740c16909a7be24ac19127ea213324de144a141f7caf8affaed017d064fea0618d453afbe027cf60f54b4a6d0b
+  languageName: node
+  linkType: hard
+
+"@storybook/icons@npm:^1.2.9":
+  version: 1.2.9
+  resolution: "@storybook/icons@npm:1.2.9"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 37513dbf526bf827941ee274e0f8358c6db41c963ffd0c408a674d794fa9af8d835e0dc4e58fd589106c4f33da5552aa8315ae45745f0c107ade0f6299cbf710
   languageName: node
   linkType: hard
 
@@ -45885,9 +45895,10 @@ __metadata:
     "@storybook/addon-interactions": "npm:^7.6.7"
     "@storybook/addon-links": "npm:^7.6.7"
     "@storybook/addon-onboarding": "npm:^1.0.10"
-    "@storybook/addon-themes": "npm:^7.6.7"
+    "@storybook/addon-themes": "npm:^8.0.0"
     "@storybook/blocks": "npm:^7.6.3"
     "@storybook/core-server": "npm:7.6.3"
+    "@storybook/icons": "npm:^1.2.9"
     "@storybook/jest": "npm:^0.2.3"
     "@storybook/react": "npm:^7.6.3"
     "@storybook/react-vite": "npm:^7.6.3"

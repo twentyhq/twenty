@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { ComponentDecorator } from '../../testing/decorators/ComponentDecorator';
+
 import { Pill } from './Pill';
 
 const meta: Meta<typeof Pill> = {
@@ -12,6 +14,7 @@ type Story = StoryObj<typeof Pill>;
 
 export const Default: Story = {
   args: {
-    label: 'Pill',
+    label: 'Soon',
   },
+  decorators: [ComponentDecorator],
 };
