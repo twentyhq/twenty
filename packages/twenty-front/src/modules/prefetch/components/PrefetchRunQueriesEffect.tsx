@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { usePrefetchFindManyCombinedQuery } from '@/prefetch/hooks/usePrefetchCombinedQuery';
+import { usePrefetchFindManyCombinedQuery } from '@/prefetch/hooks/internal/usePrefetchCombinedQuery';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 

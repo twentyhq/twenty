@@ -1,24 +1,27 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
-import { useCachedRootQuery } from '@/object-record/cache/hooks/useCachedRootQuery';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetch';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 
 export const useDefaultHomePagePath = () => {
   const { objectMetadataItem: companyObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Company,
     });
-  const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
-  const { cachedRootQuery } = useCachedRootQuery({
-    objectMetadataItem: viewObjectMetadataItem,
-    queryMethodName: QueryMethodName.FindMany,
+
+  const { prefetchQueryKey, isDataPrefetched } = usePrefetchedData(
+    PrefetchKey.AllViews,
+  );
+
+  const { records } = useFindManyRecords({
+    skip: !isDataPrefetched,
+    ...prefetchQueryKey,
+    useRecordsWithoutConnection: true,
   });
 
-  const companyViewId = cachedRootQuery?.views?.edges?.find(
-    (view: any) =>
-      view?.node?.objectMetadataId === companyObjectMetadataItem.id,
+  const companyViewId = records.find(
+    (view: any) => view?.objectMetadataId === companyObjectMetadataItem.id,
   )?.node.id;
   const defaultHomePagePath =
     '/objects/companies' + (companyViewId ? `?view=${companyViewId}` : '');

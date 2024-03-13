@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetch';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -31,16 +31,14 @@ export const ViewBarEffect = () => {
   const [views, setViews] = useRecoilState(viewsState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
-  const prefetchAreViewsLoaded = useRecoilValue(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
+
+  const { prefetchQueryKey, isDataPrefetched } = usePrefetchedData(
+    PrefetchKey.AllViews,
   );
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
-    skip: !prefetchAreViewsLoaded,
-    objectNameSingular: 'view',
-    filter: {
-      objectMetadataId: { eq: viewObjectMetadataId },
-    },
+    skip: !isDataPrefetched,
+    ...prefetchQueryKey,
     useRecordsWithoutConnection: true,
   });
 

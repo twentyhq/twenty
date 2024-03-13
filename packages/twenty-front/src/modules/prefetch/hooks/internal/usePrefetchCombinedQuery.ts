@@ -1,33 +1,28 @@
 import { useQuery } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsV2Query } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsV2Query';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { ALL_FAVORITES_QUERY_KEY } from '@/prefetch/query-keys/AllFavoritesQueryKey';
+import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
 import { isDefined } from '~/utils/isDefined';
 
 export const usePrefetchFindManyCombinedQuery = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
-
   const { objectMetadataItem: objectMetadataItemView } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const { objectMetadataItem: objectMetadataItemFavorite } =
     useObjectMetadataItem({
-      objectNameSingular: 'favorite',
+      objectNameSingular: CoreObjectNameSingular.Favorite,
     });
-
-  const prefetchedObjects = objectMetadataItems.filter(({ nameSingular }) =>
-    ['favorite', 'view'].includes(nameSingular),
-  );
 
   const prefetchFindManyQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsV2Query({
-      objectMetadataItems: prefetchedObjects,
+      objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
       depth: 2,
     });
 
@@ -46,15 +41,33 @@ export const usePrefetchFindManyCombinedQuery = () => {
       objectMetadataItem: objectMetadataItemView,
     });
 
+  const { upsertFindManyRecordsQueryInCache: upsertFindManyFavoritesInCache } =
+    useUpsertFindManyRecordsQueryInCache({
+      objectMetadataItem: objectMetadataItemFavorite,
+    });
+
   if (isDefined(data?.views)) {
     upsertFindManyViewsInCache({
-      queryVariables: {},
-      depth: 2,
+      queryVariables: ALL_VIEWS_QUERY_KEY.variables,
+      depth: ALL_VIEWS_QUERY_KEY.depth,
       objectRecordsToOverwrite:
         mapConnectionToRecords({
           objectRecordConnection: data.views,
-          objectNameSingular: 'view',
-          depth: 3,
+          objectNameSingular: CoreObjectNameSingular.View,
+          depth: 2,
+        }) ?? [],
+    });
+  }
+
+  if (isDefined(data?.views)) {
+    upsertFindManyFavoritesInCache({
+      queryVariables: ALL_FAVORITES_QUERY_KEY.variables,
+      depth: ALL_FAVORITES_QUERY_KEY.depth,
+      objectRecordsToOverwrite:
+        mapConnectionToRecords({
+          objectRecordConnection: data.favorites,
+          objectNameSingular: CoreObjectNameSingular.Favorite,
+          depth: 2,
         }) ?? [],
     });
   }
