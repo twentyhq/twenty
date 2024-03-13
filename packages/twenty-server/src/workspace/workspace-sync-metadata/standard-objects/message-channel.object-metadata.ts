@@ -3,6 +3,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { messageChannelStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -13,6 +15,7 @@ import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-met
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message-association.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.messageChannel,
   namePlural: 'messageChannels',
   labelSingular: 'Message Channel',
   labelPlural: 'Message Channels',
@@ -22,6 +25,7 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/workspace/wo
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
@@ -41,6 +45,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   visibility: string;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -49,6 +54,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.connectedAccount,
     type: FieldMetadataType.RELATION,
     label: 'Connected Account',
     description: 'Connected Account',
@@ -58,6 +64,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   connectedAccount: ConnectedAccountObjectMetadata;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.type,
     type: FieldMetadataType.SELECT,
     label: 'Type',
     description: 'Channel Type',
@@ -71,6 +78,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
@@ -80,6 +88,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
+    standardId:
+      messageChannelStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',

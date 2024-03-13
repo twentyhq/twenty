@@ -22,9 +22,7 @@ export class ApiRestService {
     request: Request,
     data: ApiRestQuery,
   ): Promise<ApiRestResponse> {
-    const baseUrl =
-      this.environmentService.getServerUrl() ||
-      `${request.protocol}://${request.get('host')}`;
+    const baseUrl = this.environmentService.getBaseUrl(request);
 
     try {
       return await this.httpService.axiosRef.post(`${baseUrl}/graphql`, data, {

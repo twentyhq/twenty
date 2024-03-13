@@ -7,9 +7,12 @@ import { ComputedPartialFieldMetadata } from 'src/workspace/workspace-sync-metad
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { createDeterministicUuid } from 'src/workspace/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export const computeStandardObject = (
-  standardObjectMetadata: PartialObjectMetadata,
+  standardObjectMetadata: Omit<PartialObjectMetadata, 'standardId'> & {
+    standardId: string | null;
+  },
   originalObjectMetadata: ObjectMetadataEntity,
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
 ): ComputedPartialObjectMetadata => {
@@ -33,6 +36,7 @@ export const computeStandardObject = (
         // Foreign key
         fields.push({
           ...rest,
+          standardId: createDeterministicUuid(data.standardId),
           name: joinColumn,
           type: FieldMetadataType.UUID,
           label: `${data.label} ID (foreign key)`,

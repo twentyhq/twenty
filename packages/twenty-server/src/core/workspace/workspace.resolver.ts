@@ -22,6 +22,8 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { User } from 'src/core/user/user.entity';
 import { AuthUser } from 'src/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspace-input';
+import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
+import { BillingService } from 'src/core/billing/billing.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -34,6 +36,7 @@ export class WorkspaceResolver {
     private readonly workspaceService: WorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly environmentService: EnvironmentService,
+    private readonly billingService: BillingService,
   ) {}
 
   @Query(() => Workspace)
@@ -107,5 +110,14 @@ export class WorkspaceResolver {
     }
 
     return 'inactive';
+  }
+
+  @ResolveField(() => BillingSubscription)
+  async currentBillingSubscription(
+    @Parent() workspace: Workspace,
+  ): Promise<BillingSubscription | null> {
+    return this.billingService.getCurrentBillingSubscription({
+      workspaceId: workspace.id,
+    });
   }
 }

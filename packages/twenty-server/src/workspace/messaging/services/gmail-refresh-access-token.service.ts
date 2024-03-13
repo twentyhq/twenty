@@ -16,10 +16,16 @@ export class GmailRefreshAccessTokenService {
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getById(
       connectedAccountId,
       workspaceId,
     );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
+      );
+    }
 
     const refreshToken = connectedAccount.refreshToken;
 

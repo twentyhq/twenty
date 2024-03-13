@@ -9,6 +9,7 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 export interface FieldMetadataDecoratorParams<
   T extends FieldMetadataType | 'default',
 > {
+  standardId: string;
   type: T;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);
   description?: string | ((objectMetadata: ObjectMetadataEntity) => string);

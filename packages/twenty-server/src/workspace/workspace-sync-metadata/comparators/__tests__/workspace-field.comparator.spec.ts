@@ -29,7 +29,12 @@ describe('WorkspaceFieldComparator', () => {
   it('should generate CREATE action for new fields', () => {
     const original = { fields: [] } as any;
     const standard = {
-      fields: [createMockFieldMetadata({ name: 'New Field' })],
+      fields: [
+        createMockFieldMetadata({
+          standardId: 'no-field-1',
+          name: 'New Field',
+        }),
+      ],
     } as any;
 
     const result = comparator.compare(original, standard);
@@ -46,6 +51,7 @@ describe('WorkspaceFieldComparator', () => {
     const original = {
       fields: [
         createMockFieldMetadata({
+          standardId: '1',
           id: '1',
           isNullable: true,
         }),
@@ -54,6 +60,7 @@ describe('WorkspaceFieldComparator', () => {
     const standard = {
       fields: [
         createMockFieldMetadata({
+          standardId: '1',
           isNullable: false,
         }),
       ],
@@ -73,6 +80,7 @@ describe('WorkspaceFieldComparator', () => {
     const original = {
       fields: [
         createMockFieldMetadata({
+          standardId: '1',
           id: '1',
           name: 'Removed Field',
           isActive: true,
@@ -93,10 +101,12 @@ describe('WorkspaceFieldComparator', () => {
 
   it('should not generate any action for identical fields', () => {
     const original = {
-      fields: [createMockFieldMetadata({ id: '1', isActive: true })],
+      fields: [
+        createMockFieldMetadata({ standardId: '1', id: '1', isActive: true }),
+      ],
     } as any;
     const standard = {
-      fields: [createMockFieldMetadata({})],
+      fields: [createMockFieldMetadata({ standardId: '1' })],
     } as any;
 
     const result = comparator.compare(original, standard);

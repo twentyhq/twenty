@@ -6,6 +6,7 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 export type DynamicRelationFieldMetadataDecoratorParams = (
   oppositeObjectMetadata: ObjectMetadataEntity,
 ) => {
+  standardId: string;
   name: string;
   label: string;
   joinColumn: string;

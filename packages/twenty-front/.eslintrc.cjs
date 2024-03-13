@@ -51,6 +51,7 @@ module.exports = {
     '@nx/workspace-component-props-naming': 'error',
     '@nx/workspace-explicit-boolean-predicates-in-if': 'error',
     '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
+    '@nx/workspace-useRecoilCallback-has-dependency-array': 'error',
 
     'react/no-unescaped-entities': 'off',
     'react/prop-types': 'off',
