@@ -50,9 +50,10 @@ export const SettingsAccountsCalendars = () => {
         workspaceMemberId: currentWorkspaceMember?.id ?? '',
       },
     ],
-    endsAt: exampleEndDate,
+    endsAt: exampleEndDate.toISOString(),
+    externalCreatedAt: new Date().toISOString(),
     isFullDay: false,
-    startsAt: exampleStartDate,
+    startsAt: exampleStartDate.toISOString(),
     title: 'Onboarding call',
     visibility: 'SHARE_EVERYTHING',
   };

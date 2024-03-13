@@ -41,6 +41,7 @@ module.exports = {
         ],
       },
     ],
+    'no-extra-boolean-cast': 'off',
 
     '@nx/workspace-effect-components': 'error',
     '@nx/workspace-no-hardcoded-colors': 'error',
