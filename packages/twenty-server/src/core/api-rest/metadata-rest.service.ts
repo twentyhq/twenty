@@ -18,9 +18,7 @@ export class ApiRestMetadataService {
   ) {}
 
   async callMetadata(request, data: ApiRestQuery) {
-    const baseUrl =
-      this.environmentService.getServerUrl() ||
-      `${request.protocol}://${request.get('host')}`;
+    const baseUrl = this.environmentService.getBaseUrl(request);
 
     try {
       return await this.httpService.axiosRef.post(`${baseUrl}/metadata`, data, {

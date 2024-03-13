@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -6,33 +6,38 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
-import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
+import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 
 @Injectable()
 export class MessageThreadService {
   constructor(
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @Inject(forwardRef(() => MessageService))
+    private readonly messageService: MessageService,
   ) {}
 
-  public async getOrphanThreads(
+  public async getOrphanThreadIdsPaginated(
+    limit: number,
+    offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageThreadObjectMetadata>[]> {
+  ): Promise<string[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT mt.* FROM ${dataSourceSchema}."messageThread" mt
-      WHERE NOT EXISTS (
-          SELECT 1 FROM ${dataSourceSchema}."message" m
-          WHERE m."messageThreadId" = mt.id
-      )`,
-      [],
+    const orphanThreads = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT mt.id
+      FROM ${dataSourceSchema}."messageThread" mt
+      LEFT JOIN ${dataSourceSchema}."message" m ON mt.id = m."messageThreadId"
+      WHERE m."messageThreadId" IS NULL
+      LIMIT $1 OFFSET $2`,
+      [limit, offset],
       workspaceId,
       transactionManager,
     );
+
+    return orphanThreads.map(({ id }) => id);
   }
 
   public async deleteByIds(
@@ -52,11 +57,13 @@ export class MessageThreadService {
   }
 
   public async saveMessageThreadOrReturnExistingMessageThread(
+    headerMessageId: string,
     messageThreadExternalId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     manager: EntityManager,
   ) {
+    // Check if message thread already exists via threadExternalId
     const existingMessageChannelMessageAssociationByMessageThreadExternalId =
       await this.messageChannelMessageAssociationService.getFirstByMessageThreadExternalId(
         messageThreadExternalId,
@@ -71,6 +78,21 @@ export class MessageThreadService {
       return Promise.resolve(existingMessageThread);
     }
 
+    // Check if message thread already exists via existing message headerMessageId
+    const existingMessageWithSameHeaderMessageId =
+      await this.messageService.getFirstOrNullByHeaderMessageId(
+        headerMessageId,
+        workspaceId,
+        manager,
+      );
+
+    if (existingMessageWithSameHeaderMessageId) {
+      return Promise.resolve(
+        existingMessageWithSameHeaderMessageId.messageThreadId,
+      );
+    }
+
+    // If message thread does not exist, create new message thread
     const newMessageThreadId = v4();
 
     await manager.query(

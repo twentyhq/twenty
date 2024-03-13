@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FindOneOptions, In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
+import { v4 as uuidV4 } from 'uuid';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
@@ -62,16 +63,21 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       isCustom,
     );
 
-    const createdFields = await this.fieldMetadataService.createMany([
+    const fromId = uuidV4();
+    const toId = uuidV4();
+
+    await this.fieldMetadataService.createMany([
       this.createFieldMetadataForRelationMetadata(
         relationMetadataInput,
         'from',
         isCustom,
+        fromId,
       ),
       this.createFieldMetadataForRelationMetadata(
         relationMetadataInput,
         'to',
         isCustom,
+        toId,
       ),
       this.createForeignKeyFieldMetadata(
         relationMetadataInput,
@@ -80,18 +86,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       ),
     ]);
 
-    const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
-      if (fieldMetadata.type === FieldMetadataType.RELATION) {
-        acc[fieldMetadata.name] = fieldMetadata;
-      }
-
-      return acc;
-    }, {});
-
     const createdRelationMetadata = await super.createOne({
       ...relationMetadataInput,
-      fromFieldMetadataId: createdFieldMap[relationMetadataInput.fromName].id,
-      toFieldMetadataId: createdFieldMap[relationMetadataInput.toName].id,
+      fromFieldMetadataId: fromId,
+      toFieldMetadataId: toId,
     });
 
     await this.createWorkspaceCustomMigration(
@@ -222,8 +220,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     relationMetadataInput: CreateRelationInput,
     relationDirection: 'from' | 'to',
     isCustom: boolean,
+    id?: string,
   ) {
     return {
+      ...(id && { id: id }),
       name: relationMetadataInput[`${relationDirection}Name`],
       label: relationMetadataInput[`${relationDirection}Label`],
       description: relationMetadataInput[`${relationDirection}Description`],

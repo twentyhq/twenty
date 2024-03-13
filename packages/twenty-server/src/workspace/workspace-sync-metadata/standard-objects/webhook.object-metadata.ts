@@ -1,10 +1,13 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { webhookStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.webhook,
   namePlural: 'webhooks',
   labelSingular: 'Webhook',
   labelPlural: 'Webhooks',
@@ -14,6 +17,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 @IsSystem()
 export class WebhookObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: webhookStandardFieldIds.targetUrl,
     type: FieldMetadataType.TEXT,
     label: 'Target Url',
     description: 'Webhook target url',
@@ -22,6 +26,7 @@ export class WebhookObjectMetadata extends BaseObjectMetadata {
   targetUrl: string;
 
   @FieldMetadata({
+    standardId: webhookStandardFieldIds.operation,
     type: FieldMetadataType.TEXT,
     label: 'Operation',
     description: 'Webhook operation',

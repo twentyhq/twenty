@@ -362,7 +362,7 @@ export const mockObjectMetadataItem: ObjectMetadataItem = {
       icon: 'IconHeart',
       isCustom: false,
       isActive: true,
-      isSystem: false,
+      isSystem: true,
       isNullable: true,
       createdAt: '2023-12-19T12:15:28.459Z',
       updatedAt: '2023-12-19T12:15:28.459Z',

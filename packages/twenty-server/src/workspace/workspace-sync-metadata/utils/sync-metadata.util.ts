@@ -7,13 +7,20 @@
  * @returns A map of object metadata, with nameSingular as the key and the object as the value.
  */
 export const mapObjectMetadataByUniqueIdentifier = <
-  T extends { nameSingular: string },
+  T extends { standardId: string | null },
 >(
   arr: T[],
+  keyFactory: (obj: T) => string | null = (obj) => obj.standardId,
 ): Record<string, T> => {
   return arr.reduce(
     (acc, curr) => {
-      acc[curr.nameSingular] = {
+      const key = keyFactory(curr);
+
+      if (!key) {
+        return acc;
+      }
+
+      acc[key] = {
         ...curr,
       };
 

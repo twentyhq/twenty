@@ -8,5 +8,6 @@ export const useGeneratedApiKeys = () => {
       (apiKeyId: string, apiKey: string | null) => {
         set(generatedApiKeyFamilyState(apiKeyId), apiKey);
       },
+    [],
   );
 };

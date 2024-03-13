@@ -20,3 +20,5 @@ coverage
 .vercel
 
 **/**/logs/**
+
+storybook-static
