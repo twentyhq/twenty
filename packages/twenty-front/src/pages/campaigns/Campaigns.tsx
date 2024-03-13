@@ -6,15 +6,15 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 // import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { CampaignDate } from '~/pages/campaigns/CampaignDate';
 import { CampaignDetails } from '~/pages/campaigns/CampaignDetails';
+import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
 import { Lead } from '~/pages/campaigns/Lead';
 import { MessagingChannel } from '~/pages/campaigns/MessagingChannel';
 import { PreviewPage } from '~/pages/campaigns/PreviewPage';
 import { Specialty } from '~/pages/campaigns/Specialty';
-import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 const StyledBoardContainer = styled.div`
   display: flex;
@@ -46,6 +46,20 @@ const StyledCard = styled.div`
   justify-content: center;
   background: ${({ theme }) => theme.background.noisy};
   height: 100%;
+  overflow: scroll;
+  scrollbar-color: ${({ theme }) => theme.border.color.danger};
+  scrollbar-width: 4px;
+  *::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+  *::-webkit-scrollbar-corner {
+    background-color: #03030358;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: #03030358;
+    border-radius: ${({ theme }) => theme.border.radius.md};
+  }
 `;
 export const Campaigns = () => {
   const { currentStep } = useCampaign();
