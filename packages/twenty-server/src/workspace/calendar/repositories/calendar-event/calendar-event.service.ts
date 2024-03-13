@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { CalendarEventObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event.object-metadata';
-import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 import { CalendarEvent } from 'src/workspace/calendar/types/calendar-event';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
@@ -122,28 +122,27 @@ export class CalendarEventService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 14);
-
-    const values = calendarEvents.flatMap((calendarEvent) => [
-      calendarEvent.id,
-      calendarEvent.title,
-      calendarEvent.isCanceled,
-      calendarEvent.isFullDay,
-      calendarEvent.startsAt,
-      calendarEvent.endsAt,
-      calendarEvent.externalCreatedAt,
-      calendarEvent.externalUpdatedAt,
-      calendarEvent.description,
-      calendarEvent.location,
-      calendarEvent.iCalUID,
-      calendarEvent.conferenceSolution,
-      calendarEvent.conferenceUri,
-      calendarEvent.recurringEventExternalId,
-    ]);
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(calendarEvents, {
+        id: 'text',
+        title: 'text',
+        isCanceled: 'boolean',
+        isFullDay: 'boolean',
+        startsAt: 'timestamptz',
+        endsAt: 'timestamptz',
+        externalCreatedAt: 'timestamptz',
+        externalUpdatedAt: 'timestamptz',
+        description: 'text',
+        location: 'text',
+        iCalUID: 'text',
+        conferenceSolution: 'text',
+        conferenceUri: 'text',
+        recurringEventExternalId: 'text',
+      });
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
-      values,
+      flattenedValues,
       workspaceId,
       transactionManager,
     );
@@ -161,37 +160,22 @@ export class CalendarEventService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(calendarEvents, 13, [
-      'text',
-      'boolean',
-      'boolean',
-      'timestamptz',
-      'timestamptz',
-      'timestamptz',
-      'timestamptz',
-      'text',
-      'text',
-      'text',
-      'text',
-      'text',
-      'text',
-    ]);
-
-    const values = calendarEvents.flatMap((calendarEvent) => [
-      calendarEvent.title,
-      calendarEvent.isCanceled,
-      calendarEvent.isFullDay,
-      calendarEvent.startsAt,
-      calendarEvent.endsAt,
-      calendarEvent.externalCreatedAt,
-      calendarEvent.externalUpdatedAt,
-      calendarEvent.description,
-      calendarEvent.location,
-      calendarEvent.iCalUID,
-      calendarEvent.conferenceSolution,
-      calendarEvent.conferenceUri,
-      calendarEvent.recurringEventExternalId,
-    ]);
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(calendarEvents, {
+        title: 'text',
+        isCanceled: 'boolean',
+        isFullDay: 'boolean',
+        startsAt: 'timestamptz',
+        endsAt: 'timestamptz',
+        externalCreatedAt: 'timestamptz',
+        externalUpdatedAt: 'timestamptz',
+        description: 'text',
+        location: 'text',
+        iCalUID: 'text',
+        conferenceSolution: 'text',
+        conferenceUri: 'text',
+        recurringEventExternalId: 'text',
+      });
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEvent" AS "calendarEvent"
@@ -210,7 +194,7 @@ export class CalendarEventService {
       FROM (VALUES ${valuesString})
       AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId")
       WHERE "calendarEvent"."iCalUID" = "newData"."iCalUID"`,
-      values,
+      flattenedValues,
       workspaceId,
       transactionManager,
     );

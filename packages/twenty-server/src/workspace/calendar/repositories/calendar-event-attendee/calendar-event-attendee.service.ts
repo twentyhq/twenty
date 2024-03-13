@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
-import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 import { CalendarEventAttendee } from 'src/workspace/calendar/types/calendar-event';
 
 @Injectable()
@@ -86,22 +86,21 @@ export class CalendarEventAttendeeService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(
-      calendarEventAttendees,
-      5,
-    );
-
-    const values = calendarEventAttendees.flatMap((calendarEventAttendee) => [
-      calendarEventAttendee.calendarEventId,
-      calendarEventAttendee.handle,
-      calendarEventAttendee.displayName,
-      calendarEventAttendee.isOrganizer,
-      calendarEventAttendee.responseStatus,
-    ]);
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        calendarEventAttendees,
+        {
+          calendarEventId: 'text',
+          handle: 'text',
+          displayName: 'text',
+          isOrganizer: 'boolean',
+          responseStatus: `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
+        },
+      );
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus") VALUES ${valuesString}`,
-      values,
+      flattenedValues,
       workspaceId,
       transactionManager,
     );
@@ -120,47 +119,21 @@ export class CalendarEventAttendeeService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(
-      calendarEventAttendees,
-      5,
-      [
-        'uuid',
-        'text',
-        'text',
-        'boolean',
-        `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
-      ],
-    );
+    const values = calendarEventAttendees.map((calendarEventAttendee) => ({
+      ...calendarEventAttendee,
+      calendarEventId: iCalUIDCalendarEventIdMap.get(
+        calendarEventAttendee.iCalUID,
+      ),
+    }));
 
-    const values = calendarEventAttendees.flatMap((calendarEventAttendee) => [
-      iCalUIDCalendarEventIdMap.get(calendarEventAttendee.iCalUID),
-      calendarEventAttendee.handle,
-      calendarEventAttendee.displayName,
-      calendarEventAttendee.isOrganizer,
-      calendarEventAttendee.responseStatus,
-    ]);
-
-    console.log('iCalUIDCalendarEventIdMap', iCalUIDCalendarEventIdMap);
-
-    // const existingCalendarEventAttendeeIds = await this.getByCalendarEventIds(
-    //   calendarEventAttendees.map(
-    //     (calendarEventAttendee) => calendarEventAttendee.calendarEventId,
-    //   ),
-    //   workspaceId,
-    //   transactionManager,
-    // );
-
-    // const calendarEventAttendeesToDelete =
-    //   existingCalendarEventAttendeeIds.filter(
-    //     (existingCalendarEventAttendee) =>
-    //       !calendarEventAttendees.find(
-    //         (calendarEventAttendee) =>
-    //           calendarEventAttendee.calendarEventId ===
-    //             existingCalendarEventAttendee.calendarEventId &&
-    //           calendarEventAttendee.handle ===
-    //             existingCalendarEventAttendee.handle,
-    //       ),
-    //   );
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(values, {
+        calendarEventId: 'text',
+        handle: 'text',
+        displayName: 'text',
+        isOrganizer: 'boolean',
+        responseStatus: `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
+      });
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee"
@@ -170,7 +143,7 @@ export class CalendarEventAttendeeService {
       FROM (VALUES ${valuesString}) AS "newValues"("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus")
       WHERE "calendarEventAttendee"."handle" = "newValues"."handle"
       AND "calendarEventAttendee"."calendarEventId" = "newValues"."calendarEventId"`,
-      values,
+      flattenedValues,
       workspaceId,
       transactionManager,
     );

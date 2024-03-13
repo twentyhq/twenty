@@ -2,10 +2,11 @@ export const valuesStringForBatchRawQuery = (
   values: {
     [key: string]: any;
   }[],
-  numberOfColumns: number,
   typesArray: string[] = [],
 ) => {
   const castedValues = values.reduce((acc, _, rowIndex) => {
+    const numberOfColumns = Object.keys(values[0]).length;
+
     const rowValues = Array.from(
       { length: numberOfColumns },
       (_, columnIndex) => {
@@ -24,4 +25,32 @@ export const valuesStringForBatchRawQuery = (
   }, [] as string[]);
 
   return castedValues.join(', ');
+};
+
+export const getFlattenedValuesAndValuesStringForBatchRawQuery = (
+  values: {
+    [key: string]: any;
+  }[],
+  keyTypeMap: {
+    [key: string]: string;
+  },
+): {
+  flattenedValues: any[];
+  valuesString: string;
+} => {
+  const keysToInsert = Object.keys(keyTypeMap);
+
+  const flattenedValues = values.flatMap((value) =>
+    keysToInsert.map((key) => value[key]),
+  );
+
+  const valuesString = valuesStringForBatchRawQuery(
+    values,
+    Object.values(keyTypeMap),
+  );
+
+  return {
+    flattenedValues,
+    valuesString,
+  };
 };

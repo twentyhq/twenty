@@ -4,8 +4,8 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/workspace/workspace-sync-metadata/types/object-record';
-import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/valueStringForBatchRawQuery.util';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messaging/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 
 @Injectable()
 export class CalendarChannelEventAssociationService {
@@ -149,17 +149,17 @@ export class CalendarChannelEventAssociationService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = valuesStringForBatchRawQuery(
+    const {
+      flattenedValues: calendarChannelEventAssociationValues,
+      valuesString,
+    } = getFlattenedValuesAndValuesStringForBatchRawQuery(
       calendarChannelEventAssociations,
-      3,
+      {
+        calendarChannelId: 'text',
+        calendarEventId: 'text',
+        eventExternalId: 'text',
+      },
     );
-
-    const calendarChannelEventAssociationValues =
-      calendarChannelEventAssociations.flatMap((association) => [
-        association.calendarChannelId,
-        association.calendarEventId,
-        association.eventExternalId,
-      ]);
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("calendarChannelId", "calendarEventId", "eventExternalId")
