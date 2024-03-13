@@ -25,7 +25,7 @@ import { MessageChannelModule } from 'src/workspace/messaging/repositories/messa
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
-import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
+import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/workspace/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
 import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
 import { BillingModule } from 'src/core/billing/billing.module';
@@ -39,6 +39,7 @@ import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-ca
 import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/workspace/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runner/services/record-position-backfill-module';
+import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/workspace/messaging/jobs/delete-connected-account-associated-calendar-data.job';
 
 @Module({
   imports: [
@@ -108,8 +109,12 @@ import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runn
       useClass: DataSeedDemoWorkspaceJob,
     },
     {
-      provide: DeleteConnectedAccountAssociatedDataJob.name,
-      useClass: DeleteConnectedAccountAssociatedDataJob,
+      provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedMessagingDataJob,
+    },
+    {
+      provide: DeleteConnectedAccountAssociatedCalendarDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
     {
