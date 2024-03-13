@@ -1,12 +1,13 @@
-import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
-
-import { RecordPositionQueryFactory } from 'src/workspace/workspace-query-builder/factories/record-position-query.factory';
+import {
+  RecordPositionQueryFactory,
+  RecordPositionQueryType,
+} from 'src/workspace/workspace-query-builder/factories/record-position-query.factory';
 
 describe('RecordPositionQueryFactory', () => {
   const objectMetadataItem = {
     isCustom: false,
     nameSingular: 'company',
-  } as ObjectMetadataInterface;
+  };
   const dataSourceSchema = 'workspace_test';
   const factory: RecordPositionQueryFactory = new RecordPositionQueryFactory();
 
@@ -19,6 +20,7 @@ describe('RecordPositionQueryFactory', () => {
       const positionValue = 'first';
 
       const result = await factory.create(
+        RecordPositionQueryType.GET,
         positionValue,
         objectMetadataItem,
         dataSourceSchema,
@@ -34,6 +36,7 @@ describe('RecordPositionQueryFactory', () => {
       const positionValue = 'last';
 
       const result = await factory.create(
+        RecordPositionQueryType.GET,
         positionValue,
         objectMetadataItem,
         dataSourceSchema,
