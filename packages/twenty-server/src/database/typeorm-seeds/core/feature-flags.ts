@@ -15,11 +15,11 @@ export const seedFeatureFlags = async (
     .into(`${schemaName}.${tableName}`, ['key', 'workspaceId', 'value'])
     .orIgnore()
     .values([
-      // {
-      //   key: FeatureFlagKeys.IsCalendarEnabled,
-      //   workspaceId: workspaceId,
-      //   value: true,
-      // },
+      {
+        key: FeatureFlagKeys.IsCalendarEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
       {
         key: FeatureFlagKeys.IsBlocklistEnabled,
         workspaceId: workspaceId,
