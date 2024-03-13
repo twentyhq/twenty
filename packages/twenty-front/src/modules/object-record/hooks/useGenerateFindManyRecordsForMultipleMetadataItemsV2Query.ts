@@ -7,6 +7,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
+// Todo refactor this to be more abstract. We should not assume that we have only one query by metadata item.
 export const useGenerateFindManyRecordsForMultipleMetadataItemsV2Query = ({
   objectMetadataItems,
   depth,
