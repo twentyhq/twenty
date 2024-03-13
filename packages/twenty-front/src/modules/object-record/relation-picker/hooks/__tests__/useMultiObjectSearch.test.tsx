@@ -33,6 +33,7 @@ const query = gql`
         startCursor
         endCursor
       }
+      totalCount
     }
   }
 `;
