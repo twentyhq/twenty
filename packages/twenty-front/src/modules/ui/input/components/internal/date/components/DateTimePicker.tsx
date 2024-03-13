@@ -2,12 +2,9 @@
 import React, { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
-
 import { IconCalendar } from '@/ui/display/icon';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
-// import { overlayBackground } from '@/ui/theme/constants/effects';
-
 import 'react-datepicker/dist/react-datepicker.css';
 
 const StyledContainer = styled.div`
@@ -244,7 +241,8 @@ export type DateTimePickerProps = {
   showTimeInput?: boolean;
   maxDate?: Date | null;
   minDate?: Date | null;
-  selected?: Date | null | undefined;
+  selected?: Date;
+  value: string | undefined;
 };
 
 export default function DateTimePicker({
@@ -254,8 +252,9 @@ export default function DateTimePicker({
   showTimeInput = false,
   selected = new Date(),
   onChange,
+  value,
 }: DateTimePickerProps) {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(selected);
   const [openCalendar, setOpenCalendar] = useState(false);
 
   const handleChange = (newDate: Date) => {
@@ -273,6 +272,7 @@ export default function DateTimePicker({
         <ReactDatePicker
           open={openCalendar}
           selected={selected}
+          value={value}
           onChange={handleChange}
           minDate={minDate}
           maxDate={maxDate}

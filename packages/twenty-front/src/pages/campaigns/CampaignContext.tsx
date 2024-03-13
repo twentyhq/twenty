@@ -1,13 +1,25 @@
 import { createContext, useState } from 'react';
 
 import { App } from '~/App';
+
+type CampaignData = {
+  campaignName: string;
+  campaignDescription: string;
+  specialtyType: string;
+  subSpecialtyType: string;
+  leads: string;
+};
 export type CampaignContextProps = {
   currentStep: number;
-  setCurrentStep: {};
+  setCurrentStep: (step: number) => void;
 
-  campaignData: {};
+  campaignData: any;
 
-  setCampaignData: {};
+  setCampaignData: (data: any) => void;
+
+  leadData: any;
+
+  setLeadData: any;
 };
 
 export const CampaignMultiStepContext =
@@ -15,7 +27,14 @@ export const CampaignMultiStepContext =
 
 const CampaignContext = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [campaignData, setCampaignData] = useState({});
+  const [leadData, setLeadData] = useState();
+  const [campaignData, setCampaignData] = useState({
+    campaignName: '',
+    campaignDescription: '',
+    specialtyType: '',
+    subSpecialtyType: '',
+    leads: '',
+  });
 
   return (
     <div>
@@ -25,6 +44,8 @@ const CampaignContext = () => {
           setCurrentStep,
           campaignData,
           setCampaignData,
+          leadData,
+          setLeadData
         }}
       >
         <App />

@@ -21,7 +21,85 @@ import {
   IconUsersGroup,
 } from '@tabler/icons-react';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { FILTER_LEADS } from '@/users/graphql/queries/filterLeads';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { RGBA } from '@/ui/theme/constants/Rgba';
+import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
+import { Table } from '@/spreadsheet-import/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { PreviewLeadsData } from '~/pages/campaigns/PreviewLeadsData';
 
+const data: any = {
+  leads: {
+    __typename: 'LeadConnection',
+    totalCount: 6,
+    pageInfo: {
+      __typename: 'PageInfo',
+      hasNextPage: false,
+      startCursor:
+        'W251bGwsICIwNDVhOGIzMC1mNGNjLTQ2ZmQtOTkyMC1hZTBiN2RkZTg3ZDciXQ==',
+      endCursor:
+        'W251bGwsICI5MjNjODEyYy0yM2FlLTRlNTUtYjhkZS04MDI2NDgyODUyM2UiXQ==',
+    },
+    edges: [
+      {
+        node: {
+          id: '06e4e001-f41e-44c6-baac-1311d4da4c3b',
+          email: 'neha.reddy@example.com',
+          age: '28',
+          name: 'Neha Reddy',
+          phoneNumber: '6666666666',
+          updatedAt: '2024-03-11T07:58:03.983Z',
+          advertisementName: 'Mental Health Webinar',
+          campaignName: 'Mental Health 2024',
+          position: null,
+          comments: 'Break the stigma',
+          advertisementSource: 'Website Banner',
+          createdAt: '2024-03-11T07:58:03.983Z',
+          location: 'Bengaluru',
+        },
+      },
+      {
+        node: {
+          id: '141ec6ad-326c-48fa-811a-c929df26792b',
+          email: 'dr.anjali.singh@example.com',
+          age: '47',
+          name: 'Dr. Anjali Singh',
+          phoneNumber: '6666666666',
+          updatedAt: '2024-03-11T07:58:03.983Z',
+          advertisementName: 'Arthritis Awareness Drive',
+          campaignName: 'Arthritis 2024',
+          position: null,
+          comments: 'Managing joint health',
+          advertisementSource: 'Twitter',
+          createdAt: '2024-03-11T07:58:03.983Z',
+          location: 'Bengaluru',
+        },
+      },
+
+      {
+        node: {
+          id: '6abbae59-20dc-4e2d-8446-78adc85ab6c2',
+          email: 'neha.reddy@example.com',
+          age: '28',
+          name: 'Neha Reddy',
+          phoneNumber: '6666666666',
+          updatedAt: '2024-03-11T07:56:27.414Z',
+          advertisementName: 'Mental Health Webinar',
+          campaignName: 'Mental Health 2024',
+          position: null,
+          comments: 'Break the stigma',
+          advertisementSource: 'Website Banner',
+          createdAt: '2024-03-11T07:56:27.414Z',
+          location: 'Bengaluru',
+        },
+      },
+    ],
+  },
+};
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -35,6 +113,7 @@ const StyledCard = styled.div`
   width: 70%;
   margin: auto;
   align-items: center;
+  overflow: scroll;
 `;
 
 const StyledInputCard = styled.div`
@@ -129,24 +208,93 @@ const Section2 = styled.div`
 `;
 
 export const Lead = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
+  const { setCurrentStep, currentStep, setLeadData, leadData } = useCampaign();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [selectedFilterOptions, setSelectedFilterOptions] = useState<
     Record<string, boolean>
   >({});
+  const [leadSourceValue, setLeadSourceValue] = useState('');
+  const [campaignNameValue, setCampaignNameValue] = useState('');
+  const [locationValue, setLocationValue] = useState('');
+  const [ageValue, setAgeValue] = useState('');
+
+  const handleLeadSourceChange = (event: any) => {
+    setLeadSourceValue(event.target.value);
+  };
+
+  const handleCampaignNameChange = (event: any) => {
+    setCampaignNameValue(event.target.value);
+  };
+
+  const handleLocationChange = (event: any) => {
+    setLocationValue(event.target.value);
+  };
+
+  const handleAgeChange = (event: any) => {
+    setAgeValue(event.target.value);
+  };
+
+  const [filterleads, { loading, error, data }] = useLazyQuery(FILTER_LEADS, {
+    fetchPolicy: 'network-only',
+  });
 
   const filterOptions = [
     { id: '1', name: 'Lead Source' },
     { id: '2', name: 'Campaign Name' },
     { id: '3', name: 'Select Date' },
+    { id: '4', name: 'Location' },
+    { id: '5', name: 'Age' },
   ];
+
+  const handleSubmit = () => {
+    const filter: Record<string, any> = {};
+    if (selectedFilterOptions['1']) {
+      filter['advertisementSource'] = { ilike: `%${leadSourceValue}%` };
+    }
+    if (selectedFilterOptions['2']) {
+      filter['campaignName'] = { ilike: `%${campaignNameValue}%` };
+    }
+    if (selectedFilterOptions['4']) {
+      filter['location'] = { ilike: `%${locationValue}%` };
+    }
+    if (selectedFilterOptions['5']) {
+      filter['age'] = { ilike: `%${ageValue}%` };
+    }
+    try {
+      console.log(filter, '----------');
+      filterleads({ variables: { filter: filter } });
+
+      if (data) {
+        console.log(data);
+        setLeadData({ ...leadData, data: data });
+      }
+    } catch (error) {
+      console.error('Error sending data to API:', error);
+    }
+  };
 
   const removeFilterOption = (id: string) => {
     setSelectedFilterOptions((previous) => ({
       ...previous,
       [id]: false,
     }));
+    switch (id) {
+      case '1':
+        setLeadSourceValue('');
+        break;
+      case '2':
+        setCampaignNameValue('');
+        break;
+      case '4':
+        setLocationValue('');
+        break;
+      case '5':
+        setAgeValue('');
+        break;
+      default:
+        break;
+    }
   };
 
   const displayFilterSection = () => {
@@ -166,10 +314,11 @@ export const Lead = () => {
                       <IconEqual /> <StyledFilter>is equal to</StyledFilter>
                     </TextContainer>
                     <TextInput
-                      // value={'campaignName'}
+                      value={leadSourceValue}
                       placeholder={'Enter name of lead  source'}
                       name="leadSrcInput"
                       required
+                      onChange={() => handleLeadSourceChange(event)}
                     />
                   </StyledComboInputContainer>
                 </StyledAreaLabel>
@@ -197,9 +346,11 @@ export const Lead = () => {
                       <IconEqual /> <StyledFilter>is equal to</StyledFilter>
                     </TextContainer>
                     <TextInput
+                      value={campaignNameValue}
                       placeholder={'Enter name of campaign'}
                       name="leadCampaignInput"
                       required
+                      onChange={() => handleCampaignNameChange(event)}
                     />
                   </StyledComboInputContainer>
                 </StyledAreaLabel>
@@ -248,6 +399,70 @@ export const Lead = () => {
                 </Section2>
               </StyledFilterCard>
             );
+          case '4':
+            return (
+              <StyledFilterCard>
+                <StyledAreaLabel>
+                  <StyledComboInputContainer>
+                    <TextContainer>
+                      <IconUsersGroup /> <StyledFilter>Location</StyledFilter>
+                    </TextContainer>
+                    <TextContainer>
+                      <IconEqual /> <StyledFilter>is equal to</StyledFilter>
+                    </TextContainer>
+                    <TextInput
+                      value={locationValue}
+                      placeholder={'Enter lead location'}
+                      name="leadLocationInput"
+                      required
+                      onChange={() => handleLocationChange(event)}
+                    />
+                  </StyledComboInputContainer>
+                </StyledAreaLabel>
+                <Section2>
+                  <Button
+                    Icon={IconTrash}
+                    title="Remove"
+                    variant="secondary"
+                    accent="danger"
+                    onClick={() => removeFilterOption(item.id)}
+                  />
+                </Section2>
+              </StyledFilterCard>
+            );
+
+          case '5':
+            return (
+              <StyledFilterCard>
+                <StyledAreaLabel>
+                  <StyledComboInputContainer>
+                    <TextContainer>
+                      <IconUsersGroup /> <StyledFilter>Age</StyledFilter>
+                    </TextContainer>
+                    <TextContainer>
+                      <IconEqual /> <StyledFilter>is equal to</StyledFilter>
+                    </TextContainer>
+                    <TextInput
+                      value={ageValue}
+                      placeholder={'Enter lead age'}
+                      name="leadAgeInput"
+                      required
+                      onChange={() => handleAgeChange(event)}
+                    />
+                  </StyledComboInputContainer>
+                </StyledAreaLabel>
+                <Section2>
+                  <Button
+                    Icon={IconTrash}
+                    title="Remove"
+                    variant="secondary"
+                    accent="danger"
+                    onClick={() => removeFilterOption(item.id)}
+                  />
+                </Section2>
+              </StyledFilterCard>
+            );
+
           default:
             return null;
         }
@@ -299,6 +514,7 @@ export const Lead = () => {
                 }}
               />
             </StyledComboInputContainer1>
+            <Button title="Submit" variant="tertiary" onClick={handleSubmit} />
           </Section>
 
           {displayFilterSection()}
@@ -320,6 +536,7 @@ export const Lead = () => {
           </StyledButton>
         </StyledInputCard>
       </StyledCard>
+      {!loading && data && <PreviewLeadsData data={data} />}
     </>
   );
 };
