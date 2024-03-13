@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OAuth2Client } from 'google-auth-library';
-import { calendar_v3, google } from 'googleapis';
+import { calendar_v3 as calendarV3, google } from 'googleapis';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
@@ -11,7 +11,7 @@ export class GoogleCalendarClientProvider {
 
   public async getGoogleCalendarClient(
     refreshToken: string,
-  ): Promise<calendar_v3.Calendar> {
+  ): Promise<calendarV3.Calendar> {
     const oAuth2Client = await this.getOAuth2Client(refreshToken);
 
     const googleCalendarClient = google.calendar({

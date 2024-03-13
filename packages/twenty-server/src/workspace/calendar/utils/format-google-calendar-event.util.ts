@@ -1,11 +1,11 @@
-import { calendar_v3 } from 'googleapis';
+import { calendar_v3 as calendarV3 } from 'googleapis';
 import { v4 } from 'uuid';
 
 import { CalendarEventWithAttendees } from 'src/workspace/calendar/types/calendar-event';
 import { CalendarEventAttendeeResponseStatus } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 
 export const formatGoogleCalendarEvent = (
-  event: calendar_v3.Schema$Event,
+  event: calendarV3.Schema$Event,
 ): CalendarEventWithAttendees => {
   const id = v4();
 
