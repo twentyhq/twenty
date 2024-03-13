@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetch';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';

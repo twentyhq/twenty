@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetch';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
