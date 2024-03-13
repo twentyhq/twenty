@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { Pill } from 'twenty-ui';
 
 import { IconArrowUpRight, IconBolt } from '@/ui/display/icon';
-import { Pill } from '@/ui/display/pill/components/Pill';
 import { Button } from '@/ui/input/button/components/Button';
 import { SettingsIntegration } from '~/pages/settings/integrations/types/SettingsIntegration';
 

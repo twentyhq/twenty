@@ -16,10 +16,12 @@ describe('sortCalendarEventsAsc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusOneHour,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusTwoHours,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -36,10 +38,12 @@ describe('sortCalendarEventsAsc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusTwoHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -56,10 +60,12 @@ describe('sortCalendarEventsAsc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusTwoHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDate,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -76,10 +82,12 @@ describe('sortCalendarEventsAsc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -95,9 +103,11 @@ describe('sortCalendarEventsAsc', () => {
     // Given
     const eventA = {
       startsAt: someDate,
+      isFullDay: true,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
+      isFullDay: true,
     };
 
     // When
@@ -109,13 +119,15 @@ describe('sortCalendarEventsAsc', () => {
     expect(invertedArgsResult).toBe(1);
   });
 
-  it('returns 0 for events with same start date and no end date', () => {
+  it('returns 0 for full day events with the same start date', () => {
     // Given
     const eventA = {
       startsAt: someDate,
+      isFullDay: true,
     };
     const eventB = {
       startsAt: someDate,
+      isFullDay: true,
     };
 
     // When
@@ -127,14 +139,16 @@ describe('sortCalendarEventsAsc', () => {
     expect(invertedArgsResult).toBe(0);
   });
 
-  it('returns 0 for events with same start date if one of them has no end date', () => {
+  it('sorts the full day event last for two events with the same start date if one is full day', () => {
     // Given
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusOneHour,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDate,
+      isFullDay: true,
     };
 
     // When
@@ -142,8 +156,8 @@ describe('sortCalendarEventsAsc', () => {
     const invertedArgsResult = sortCalendarEventsAsc(eventB, eventA);
 
     // Then
-    expect(result).toBe(0);
-    expect(invertedArgsResult).toBe(0);
+    expect(result).toBe(-1);
+    expect(invertedArgsResult).toBe(1);
   });
 });
 
@@ -153,10 +167,12 @@ describe('sortCalendarEventsDesc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusOneHour,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusTwoHours,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -173,10 +189,12 @@ describe('sortCalendarEventsDesc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusTwoHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -193,10 +211,12 @@ describe('sortCalendarEventsDesc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusTwoHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDate,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -213,10 +233,12 @@ describe('sortCalendarEventsDesc', () => {
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
       endsAt: someDatePlusThreeHours,
+      isFullDay: false,
     };
 
     // When
@@ -232,9 +254,11 @@ describe('sortCalendarEventsDesc', () => {
     // Given
     const eventA = {
       startsAt: someDate,
+      isFullDay: true,
     };
     const eventB = {
       startsAt: someDatePlusOneHour,
+      isFullDay: true,
     };
 
     // When
@@ -246,13 +270,15 @@ describe('sortCalendarEventsDesc', () => {
     expect(invertedArgsResult).toBe(-1);
   });
 
-  it('returns 0 for events with same start date and no end date', () => {
+  it('returns 0 for full day events with the same start date', () => {
     // Given
     const eventA = {
       startsAt: someDate,
+      isFullDay: true,
     };
     const eventB = {
       startsAt: someDate,
+      isFullDay: true,
     };
 
     // When
@@ -264,14 +290,16 @@ describe('sortCalendarEventsDesc', () => {
     expect(invertedArgsResult === 0).toBe(true);
   });
 
-  it('returns 0 for events with same start date if one of them has no end date', () => {
+  it('sorts the full day event first for two events with the same start date if one is full day', () => {
     // Given
     const eventA = {
       startsAt: someDate,
       endsAt: someDatePlusOneHour,
+      isFullDay: false,
     };
     const eventB = {
       startsAt: someDate,
+      isFullDay: true,
     };
 
     // When
@@ -279,7 +307,7 @@ describe('sortCalendarEventsDesc', () => {
     const invertedArgsResult = sortCalendarEventsDesc(eventB, eventA);
 
     // Then
-    expect(result === 0).toBe(true);
-    expect(invertedArgsResult === 0).toBe(true);
+    expect(result).toBe(1);
+    expect(invertedArgsResult).toBe(-1);
   });
 });

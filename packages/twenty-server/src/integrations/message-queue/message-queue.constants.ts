@@ -7,4 +7,5 @@ export enum MessageQueue {
   cronQueue = 'cron-queue',
   emailQueue = 'email-queue',
   billingQueue = 'billing-queue',
+  recordPositionBackfillQueue = 'record-position-backfill-queue',
 }

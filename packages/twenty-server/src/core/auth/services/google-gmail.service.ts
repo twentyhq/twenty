@@ -79,7 +79,6 @@ export class GoogleGmailService {
         connectedAccountId,
       },
       {
-        id: connectedAccountId,
         retryLimit: 2,
       },
     );

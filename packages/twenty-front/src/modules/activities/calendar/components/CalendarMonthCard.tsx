@@ -1,41 +1,34 @@
-import { startOfDay } from 'date-fns';
+import { useContext } from 'react';
+import styled from '@emotion/styled';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { Card } from '@/ui/layout/card/components/Card';
-import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
-import { sortDesc } from '~/utils/sort';
 
 type CalendarMonthCardProps = {
-  calendarEvents: CalendarEvent[];
+  dayTimes: number[];
 };
 
-export const CalendarMonthCard = ({
-  calendarEvents,
-}: CalendarMonthCardProps) => {
-  const calendarEventsByDayTime = groupArrayItemsBy(
-    calendarEvents,
-    ({ startsAt }) => startOfDay(startsAt).getTime(),
-  );
-  const sortedDayTimes = Object.keys(calendarEventsByDayTime)
-    .map(Number)
-    .sort(sortDesc);
+const StyledCard = styled(Card)`
+  overflow: visible;
+`;
+
+export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
+  const { calendarEventsByDayTime } = useContext(CalendarContext);
 
   return (
-    <Card fullWidth>
-      {sortedDayTimes.map((dayTime, index) => {
-        const dayCalendarEvents = calendarEventsByDayTime[dayTime];
+    <StyledCard fullWidth>
+      {dayTimes.map((dayTime, index) => {
+        const dayCalendarEvents = calendarEventsByDayTime[dayTime] || [];
 
         return (
-          !!dayCalendarEvents?.length && (
-            <CalendarDayCardContent
-              key={dayTime}
-              calendarEvents={dayCalendarEvents}
-              divider={index < sortedDayTimes.length - 1}
-            />
-          )
+          <CalendarDayCardContent
+            key={dayTime}
+            calendarEvents={dayCalendarEvents}
+            divider={index < dayTimes.length - 1}
+          />
         );
       })}
-    </Card>
+    </StyledCard>
   );
 };

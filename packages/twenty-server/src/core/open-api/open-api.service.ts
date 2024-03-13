@@ -25,16 +25,20 @@ import {
   getSingleResultSuccessResponse,
 } from 'src/core/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/core/open-api/utils/request-body.utils';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class OpenApiService {
   constructor(
     private readonly tokenService: TokenService,
+    private readonly environmentService: EnvironmentService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const schema = baseSchema('core');
+    const baseUrl = this.environmentService.getBaseUrl(request);
+
+    const schema = baseSchema('core', baseUrl);
 
     let objectMetadataItems;
 
@@ -86,9 +90,12 @@ export class OpenApiService {
     return schema;
   }
 
-  async generateMetaDataSchema(): Promise<OpenAPIV3_1.Document> {
-    //TODO Add once Rest MetaData api is ready
-    const schema = baseSchema('metadata');
+  async generateMetaDataSchema(
+    request: Request,
+  ): Promise<OpenAPIV3_1.Document> {
+    const baseUrl = this.environmentService.getBaseUrl(request);
+
+    const schema = baseSchema('metadata', baseUrl);
 
     schema.tags = [{ name: 'placeholder' }];
 
