@@ -14,7 +14,8 @@ export type PartialObjectMetadata = ReflectObjectMetadata & {
 
 export type ComputedPartialObjectMetadata = Omit<
   PartialObjectMetadata,
-  'fields'
+  'standardId' | 'fields'
 > & {
+  standardId: string | null;
   fields: ComputedPartialFieldMetadata[];
 };

@@ -242,7 +242,11 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
-        createdRecord: [this.removeNestedProperties(record)],
+        createdRecord: this.removeNestedProperties(record),
+        createdObjectMetadata: {
+          nameSingular: objectMetadataItem.nameSingular,
+          isCustom: objectMetadataItem.isCustom,
+        },
       } satisfies ObjectRecordCreateEvent<any>);
     });
 

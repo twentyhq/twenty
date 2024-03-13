@@ -55,14 +55,16 @@ export class StripeService {
   async createCheckoutSession(
     user: User,
     priceId: string,
+    quantity: number,
     successUrl?: string,
     cancelUrl?: string,
+    stripeCustomerId?: string,
   ): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
       line_items: [
         {
           price: priceId,
-          quantity: 1,
+          quantity,
         },
       ],
       mode: 'subscription',
@@ -75,7 +77,9 @@ export class StripeService {
       },
       automatic_tax: { enabled: true },
       tax_id_collection: { enabled: true },
-      customer_email: user.email,
+      customer: stripeCustomerId,
+      customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
+      customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
     });

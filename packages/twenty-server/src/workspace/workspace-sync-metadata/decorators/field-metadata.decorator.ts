@@ -9,6 +9,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { generateDefaultValue } from 'src/metadata/field-metadata/utils/generate-default-value';
 import { TypedReflect } from 'src/utils/typed-reflect';
+import { createDeterministicUuid } from 'src/workspace/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export function FieldMetadata<T extends FieldMetadataType>(
   params: FieldMetadataDecoratorParams<T>,
@@ -21,14 +22,17 @@ export function FieldMetadata<T extends FieldMetadataType>(
     const isSystem =
       TypedReflect.getMetadata('isSystem', target, fieldKey) ?? false;
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
-    const { joinColumn, ...restParams } = params;
+    const { joinColumn, standardId, ...restParams } = params;
 
     TypedReflect.defineMetadata(
       'fieldMetadataMap',
       {
         ...existingFieldMetadata,
         [fieldKey]: generateFieldMetadata<T>(
-          restParams,
+          {
+            ...restParams,
+            standardId,
+          },
           fieldKey,
           isNullable,
           isSystem,
@@ -39,6 +43,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
               [joinColumn]: generateFieldMetadata<FieldMetadataType.UUID>(
                 {
                   ...restParams,
+                  standardId: createDeterministicUuid(standardId),
                   type: FieldMetadataType.UUID,
                   label: `${restParams.label} id (foreign key)`,
                   description: `${restParams.description} id foreign key`,

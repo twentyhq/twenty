@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/modules/*"],
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "twenty-ui": ["../twenty-ui/src/index.ts"]
     },
 
     /* Bundler mode */
@@ -27,7 +28,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
   },
   "files": [],
   "include": [],

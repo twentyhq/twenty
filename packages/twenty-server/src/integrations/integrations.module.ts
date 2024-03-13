@@ -40,7 +40,9 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       useFactory: emailModuleFactory,
       inject: [EnvironmentService],
     }),
-    EventEmitterModule.forRoot(),
+    EventEmitterModule.forRoot({
+      wildcard: true,
+    }),
     CacheStorageModule,
   ],
   exports: [],
