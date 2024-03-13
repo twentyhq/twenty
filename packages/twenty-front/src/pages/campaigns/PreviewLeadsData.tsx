@@ -1,43 +1,53 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 const StyledTable = styled.table`
-  width: 50%;
+  width: 100%;
   border-collapse: collapse;
   height: 10px;
 `;
 
 const StyledTableRow = styled.tr`
-  background-color: ${({ theme }) => theme.background.danger};
+  &:nth-of-type(odd) {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+  &:nth-of-type(even) {
+    background-color: ${({ theme }) => theme.background.transparent.blue};
+  }
 `;
 
 const StyledTableCell = styled.td`
   padding: 5px;
   // border: 1px solid ${({ theme }) => theme.border.color.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
+  height: 25px;
 `;
 
+const StyledTableHeaderCell = styled.td`
+  padding: 5px;
+  // border: 1px solid ${({ theme }) => theme.border.color.medium};
+  font-size: ${({ theme }) => theme.font.size.md};
+  height: 25px;
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
 export const PreviewLeadsData = ({ data }) => {
-  const navigate = useNavigate();
-
   return (
     <StyledTable>
       <tbody>
         <StyledTableRow>
-          <StyledTableCell>Name</StyledTableCell>
-          <StyledTableCell>Email</StyledTableCell>
-          <StyledTableCell>Age</StyledTableCell>
-          <StyledTableCell>Location</StyledTableCell>
-          <StyledTableCell>Campaign Name</StyledTableCell>
-          <StyledTableCell>Advertisement Source</StyledTableCell>
-          <StyledTableCell>Phone Number</StyledTableCell>
-          <StyledTableCell>Comments</StyledTableCell>
-          <StyledTableCell>Advertisement Name</StyledTableCell>
+          <StyledTableHeaderCell>Name</StyledTableHeaderCell>
+          {/* <StyledTableHeaderCell>Email</StyledTableHeaderCell> */}
+          <StyledTableHeaderCell>Age</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Location</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Campaign Name</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Advertisement Source</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Phone Number</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Comments</StyledTableHeaderCell>
+          <StyledTableHeaderCell>Advertisement Name</StyledTableHeaderCell>
         </StyledTableRow>
         {data?.leads?.edges.map((leads: any) => (
           <StyledTableRow key={leads.node.id}>
             <StyledTableCell>{leads.node?.name}</StyledTableCell>
-            <StyledTableCell>{leads.node?.email}</StyledTableCell>
+            {/* <StyledTableCell>{leads.node?.email}</StyledTableCell> */}
             <StyledTableCell>{leads.node.age}</StyledTableCell>
 
             <StyledTableCell>{leads.node.location}</StyledTableCell>

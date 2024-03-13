@@ -42,36 +42,6 @@ const StyledCard = styled.div`
   overflow: scroll;
 `;
 
-const StyledTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  height: 10px;
-  &:nth-of-type(odd) {
-    background-color: ${({ theme }) => theme.background.primary};
-  }
-`;
-
-const StyledTableRow = styled.tr`
-  &:nth-of-type(odd) {
-    background-color: ${({ theme }) => theme.background.primary};
-  }
-  
-`;
-
-const StyledTableCell = styled.td`
-  padding: 5px;
-  // border: 1px solid ${({ theme }) => theme.border.color.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledBoardContainer = styled.div`
-  display: flex;
-  height: 100%;
-  width: 100%;
-  flex-direction: column;
-  justify-self: center;
-`;
-
 const StyledInputCard = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
@@ -127,7 +97,7 @@ const TextContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(5)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
-const StyledFilter = styled(Section)`
+const StyledFilter = styled(Section)`secondary
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledComboInputContainer = styled.div`
@@ -500,9 +470,7 @@ export const Lead = () => {
       </StyledCard>
 
       <ModalWrapper isOpen={modalOpen} onClose={handleCloseModal}>
-        <StyledBoardContainer>
-          {!loading && data && <PreviewLeadsData data={data} />}
-        </StyledBoardContainer>
+        {!loading && data && <PreviewLeadsData data={data} />}
       </ModalWrapper>
     </>
   );
