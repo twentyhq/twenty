@@ -2,6 +2,8 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { Request } from 'express';
+
 import { EmailDriver } from 'src/integrations/email/interfaces/email.interface';
 
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
@@ -86,7 +88,19 @@ export class EnvironmentService {
   }
 
   getServerUrl(): string {
-    return this.configService.get<string>('SERVER_URL')!;
+    const url = this.configService.get<string>('SERVER_URL')!;
+
+    if (url?.endsWith('/')) {
+      return url.substring(0, url.length - 1);
+    }
+
+    return url;
+  }
+
+  getBaseUrl(request: Request): string {
+    return (
+      this.getServerUrl() || `${request.protocol}://${request.get('host')}`
+    );
   }
 
   getAccessTokenSecret(): string {

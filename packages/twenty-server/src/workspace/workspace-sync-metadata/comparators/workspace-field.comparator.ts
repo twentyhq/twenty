@@ -11,7 +11,10 @@ import { ComputedPartialObjectMetadata } from 'src/workspace/workspace-sync-meta
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/workspace/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 
 const commonFieldPropertiesToIgnore = [
   'id',
@@ -61,7 +64,8 @@ export class WorkspaceFieldComparator {
         },
         propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
-          return datum.name;
+          // Happen when the field is custom
+          return datum.standardId || datum.name;
         },
       },
     );
@@ -85,7 +89,8 @@ export class WorkspaceFieldComparator {
         },
         propertiesToStringify: fieldPropertiesToStringify,
         keyFactory(datum) {
-          return datum.name;
+          // Happen when the field is custom
+          return datum.standardId || datum.name;
         },
       },
     );
@@ -98,13 +103,20 @@ export class WorkspaceFieldComparator {
 
     for (const difference of fieldMetadataDifference) {
       const fieldName = difference.path[0];
+      const findField = (
+        field: ComputedPartialFieldMetadata | FieldMetadataEntity,
+      ) => {
+        if (field.isCustom) {
+          return field.name === fieldName;
+        }
+
+        return field.standardId === fieldName;
+      };
       // Object shouldn't have thousands of fields, so we can use find here
-      const standardFieldMetadata = standardObjectMetadata.fields.find(
-        (field) => field.name === fieldName,
-      );
-      const originalFieldMetadata = originalObjectMetadata.fields.find(
-        (field) => field.name === fieldName,
-      );
+      const standardFieldMetadata =
+        standardObjectMetadata.fields.find(findField);
+      const originalFieldMetadata =
+        originalObjectMetadata.fields.find(findField);
 
       switch (difference.type) {
         case 'CREATE': {

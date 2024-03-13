@@ -34,6 +34,8 @@ import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { RecordPositionBackfillJob } from 'src/workspace/workspace-query-runner/jobs/record-position-backfill.job';
+import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runner/services/record-position-backfill-module';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,
+    RecordPositionBackfillModule,
   ],
   providers: [
     {
@@ -100,6 +103,10 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
       useClass: DeleteConnectedAccountAssociatedDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
+    {
+      provide: RecordPositionBackfillJob.name,
+      useClass: RecordPositionBackfillJob,
+    },
   ],
 })
 export class JobsModule {

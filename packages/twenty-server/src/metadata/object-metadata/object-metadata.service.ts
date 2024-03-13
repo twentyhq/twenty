@@ -35,6 +35,14 @@ import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-tar
 import { DeleteOneObjectInput } from 'src/metadata/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/metadata/relation-metadata/types/relation-to-delete';
 import { generateMigrationName } from 'src/metadata/workspace-migration/utils/generate-migration-name.util';
+import {
+  activityTargetStandardFieldIds,
+  attachmentStandardFieldIds,
+  baseObjectStandardFieldIds,
+  customObjectStandardFieldIds,
+  favoriteStandardFieldIds,
+} from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { createDeterministicUuid } from 'src/workspace/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -229,6 +237,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         // created with default values which is not supported yet by workspace migrations.
         [
           {
+            standardId: baseObjectStandardFieldIds.id,
             type: FieldMetadataType.UUID,
             name: 'id',
             label: 'Id',
@@ -245,6 +254,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'uuid' },
           },
           {
+            standardId: customObjectStandardFieldIds.name,
             type: FieldMetadataType.TEXT,
             name: 'name',
             label: 'Name',
@@ -260,6 +270,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { value: 'Untitled' },
           },
           {
+            standardId: baseObjectStandardFieldIds.createdAt,
             type: FieldMetadataType.DATE_TIME,
             name: 'createdAt',
             label: 'Creation date',
@@ -275,6 +286,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'now' },
           },
           {
+            standardId: baseObjectStandardFieldIds.updatedAt,
             type: FieldMetadataType.DATE_TIME,
             name: 'updatedAt',
             label: 'Update date',
@@ -291,6 +303,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'now' },
           },
           {
+            standardId: customObjectStandardFieldIds.position,
             type: FieldMetadataType.POSITION,
             name: 'position',
             label: 'Position',
@@ -587,6 +600,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.fieldMetadataRepository.save([
         // FROM
         {
+          standardId: customObjectStandardFieldIds.activityTargets,
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -601,6 +615,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // TO
         {
+          standardId: activityTargetStandardFieldIds.custom,
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -615,6 +630,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // Foreign key
         {
+          standardId: createDeterministicUuid(
+            activityTargetStandardFieldIds.custom,
+          ),
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -681,6 +699,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.fieldMetadataRepository.save([
         // FROM
         {
+          standardId: customObjectStandardFieldIds.attachments,
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -695,6 +714,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // TO
         {
+          standardId: attachmentStandardFieldIds.custom,
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -709,6 +729,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // Foreign key
         {
+          standardId: createDeterministicUuid(
+            attachmentStandardFieldIds.custom,
+          ),
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -773,6 +796,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.fieldMetadataRepository.save([
         // FROM
         {
+          standardId: customObjectStandardFieldIds.favorites,
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -788,6 +812,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // TO
         {
+          standardId: favoriteStandardFieldIds.custom,
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -802,6 +827,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
         // Foreign key
         {
+          standardId: createDeterministicUuid(favoriteStandardFieldIds.custom),
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,

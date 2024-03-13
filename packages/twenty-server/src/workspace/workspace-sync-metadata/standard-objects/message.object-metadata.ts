@@ -3,6 +3,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { messageStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -14,6 +16,7 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.message,
   namePlural: 'messages',
   labelSingular: 'Message',
   labelPlural: 'Messages',
@@ -23,6 +26,7 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 @IsSystem()
 export class MessageObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: messageStandardFieldIds.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: 'Header message Id',
     description: 'Message id from the message header',
@@ -31,6 +35,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   headerMessageId: string;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.messageThread,
     type: FieldMetadataType.RELATION,
     label: 'Message Thread Id',
     description: 'Message Thread Id',
@@ -41,6 +46,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   messageThread: MessageThreadObjectMetadata;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.direction,
     type: FieldMetadataType.SELECT,
     label: 'Direction',
     description: 'Message Direction',
@@ -54,6 +60,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   direction: string;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.subject,
     type: FieldMetadataType.TEXT,
     label: 'Subject',
     description: 'Subject',
@@ -62,6 +69,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   subject: string;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.text,
     type: FieldMetadataType.TEXT,
     label: 'Text',
     description: 'Text',
@@ -70,6 +78,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   text: string;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Received At',
     description: 'The date the message was received',
@@ -79,6 +88,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   receivedAt: string;
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.messageParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Message Participants',
     description: 'Message Participants',
@@ -94,6 +104,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
+    standardId: messageStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',

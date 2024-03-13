@@ -59,11 +59,22 @@ export class SaveMessagesAndCreateContactsService {
       } in ${endTime - startTime}ms`,
     );
 
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+    const gmailMessageChannel =
+      await this.messageChannelService.getFirstByConnectedAccountId(
         connectedAccount.id,
         workspaceId,
       );
+
+    if (!gmailMessageChannel) {
+      this.logger.error(
+        `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessagesAndCreateContacts`,
+      );
+
+      return;
+    }
+
+    const isContactAutoCreationEnabled =
+      gmailMessageChannel.isContactAutoCreationEnabled;
 
     const participantsWithMessageId: ParticipantWithMessageId[] =
       messagesToSave.flatMap((message) => {

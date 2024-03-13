@@ -4,6 +4,7 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
 import { WorkspaceHealthModule } from 'src/workspace/workspace-health/workspace-health.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
+import { AddStandardIdCommand } from 'src/workspace/workspace-sync-metadata/commands/add-standard-id.command';
 
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
@@ -16,6 +17,10 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
     WorkspaceModule,
     DataSourceModule,
   ],
-  providers: [SyncWorkspaceMetadataCommand, SyncWorkspaceLoggerService],
+  providers: [
+    SyncWorkspaceMetadataCommand,
+    AddStandardIdCommand,
+    SyncWorkspaceLoggerService,
+  ],
 })
 export class WorkspaceSyncMetadataCommandsModule {}
