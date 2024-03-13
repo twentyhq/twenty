@@ -9,7 +9,7 @@ import { valuesStringForBatchRawQuery } from 'src/workspace/calendar-and-messagi
 import { CalendarEventAttendee } from 'src/workspace/calendar/types/calendar-event';
 
 @Injectable()
-export class CalendarEventAttendeesService {
+export class CalendarEventAttendeeService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

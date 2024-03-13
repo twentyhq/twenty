@@ -19,7 +19,7 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { CalendarEventService } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.service';
 import { formatGoogleCalendarEvent } from 'src/workspace/calendar/utils/format-google-calendar-event.util';
 import { GoogleCalendarFullSyncJobData } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
-import { CalendarEventAttendeesService } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventAttendeeService } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
 
 @Injectable()
 export class GoogleCalendarFullSyncService {
@@ -33,7 +33,7 @@ export class GoogleCalendarFullSyncService {
     private readonly calendarEventService: CalendarEventService,
     private readonly calendarChannelService: CalendarChannelService,
     private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
-    private readonly calendarEventAttendeesService: CalendarEventAttendeesService,
+    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
     private readonly blocklistService: BlocklistService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,

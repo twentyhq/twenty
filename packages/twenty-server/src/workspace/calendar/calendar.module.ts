@@ -8,7 +8,7 @@ import { BlocklistModule } from 'src/workspace/calendar-and-messaging/repositori
 import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { CalendarChannelEventAssociationModule } from 'src/workspace/calendar/repositories/calendar-channel-event-association/calendar-channel-event-assocation.module';
 import { CalendarChannelModule } from 'src/workspace/calendar/repositories/calendar-channel/calendar-channel.module';
-import { CalendarEventAttendeesModule } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.module';
+import { CalendarEventAttendeeModule } from 'src/workspace/calendar/repositories/calendar-event-attendee/calendar-event-attendee.module';
 import { CalendarEventModule } from 'src/workspace/calendar/repositories/calendar-event/calendar-event.module';
 import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { GoogleCalendarFullSyncService } from 'src/workspace/calendar/services/google-calendar-full-sync.service';
@@ -26,7 +26,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
     CalendarChannelModule,
     CalendarChannelEventAssociationModule,
     CalendarEventModule,
-    CalendarEventAttendeesModule,
+    CalendarEventAttendeeModule,
     CreateCompaniesAndContactsModule,
     WorkspaceMemberModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
