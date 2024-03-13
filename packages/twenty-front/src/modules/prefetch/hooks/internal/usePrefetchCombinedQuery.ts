@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsV2Query } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsV2Query';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { ALL_FAVORITES_QUERY_KEY } from '@/prefetch/query-keys/AllFavoritesQueryKey';
@@ -21,7 +21,7 @@ export const usePrefetchFindManyCombinedQuery = () => {
     });
 
   const prefetchFindManyQuery =
-    useGenerateFindManyRecordsForMultipleMetadataItemsV2Query({
+    useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
       objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
       depth: 2,
     });
