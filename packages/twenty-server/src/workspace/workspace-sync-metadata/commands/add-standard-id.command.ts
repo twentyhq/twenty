@@ -105,12 +105,10 @@ export class AddStandardIdCommand extends CommandRunner {
         }
 
         const computedStandardObjectMetadata = computeStandardObject(
-          !standardObjectMetadata
-            ? {
-                ...originalObjectMetadata,
-                fields: standardFieldMetadataCollection,
-              }
-            : standardObjectMetadata,
+          standardObjectMetadata ?? {
+            ...originalObjectMetadata,
+            fields: standardFieldMetadataCollection,
+          },
           originalObjectMetadata,
           customObjectMetadataCollection,
         );
@@ -128,10 +126,10 @@ export class AddStandardIdCommand extends CommandRunner {
         for (const fieldMetadata of originalObjectMetadata.fields) {
           const standardFieldMetadata =
             computedStandardObjectMetadata.fields.find(
-              (field) => field.name === fieldMetadata.name,
+              (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 
-          if (!standardFieldMetadata || standardFieldMetadata.isCustom) {
+          if (!standardFieldMetadata || fieldMetadata.standardId) {
             continue;
           }
 
