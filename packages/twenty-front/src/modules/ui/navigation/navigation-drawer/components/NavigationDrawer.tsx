@@ -105,8 +105,8 @@ export const NavigationDrawer = ({
           !isMobile && <NavigationDrawerBackButton title={title} />
         ) : (
           <NavigationDrawerHeader
-            placeholderName={title}
-            placeholderLogo={logo}
+            name={title}
+            logo={logo}
             showCollapseButton={isHovered}
           />
         )}
