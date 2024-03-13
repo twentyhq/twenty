@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { MessageChannelMessageAssociationModule } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-assocation.module';
@@ -45,6 +46,9 @@ import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by
     CompanyModule,
     PersonModule,
     BlocklistModule,
+    HttpModule.register({
+      baseURL: 'https://www.googleapis.com/batch/gmail/v1',
+    }),
   ],
   providers: [
     GmailFullSyncService,

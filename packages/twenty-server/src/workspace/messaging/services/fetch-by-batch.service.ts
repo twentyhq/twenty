@@ -1,17 +1,14 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 import { BatchQueries } from 'src/workspace/calendar-and-messaging/types/batch-queries';
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
 
 @Injectable()
 export class FetchByBatchesService {
-  constructor(private readonly httpService: AxiosInstance) {
-    this.httpService = axios.create({
-      baseURL: 'https://www.googleapis.com/batch/gmail/v1',
-    });
-  }
+  constructor(private readonly httpService: HttpService) {}
 
   async fetchAllByBatches(
     queries: BatchQueries,
@@ -50,7 +47,7 @@ export class FetchByBatchesService {
   ): Promise<AxiosResponse<any, any>> {
     const limitedQueries = queries.slice(batchOffset, batchOffset + batchLimit);
 
-    const response = await this.httpService.post(
+    const response = await this.httpService.axiosRef.post(
       '/',
       this.createBatchBody(limitedQueries, boundary),
       {
