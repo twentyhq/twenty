@@ -1,6 +1,8 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
+import { Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -16,6 +18,10 @@ import {
   GoogleCalendarFullSyncJobData,
 } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -25,6 +31,8 @@ export class GoogleAPIsService {
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   providerName = 'google';
@@ -59,6 +67,12 @@ export class GoogleAPIsService {
 
     const connectedAccountId = v4();
 
+    const IsCalendarEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKeys.IsCalendarEnabled,
+      value: true,
+    });
+
     await workspaceDataSource?.transaction(async (manager) => {
       await manager.query(
         `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -79,7 +93,10 @@ export class GoogleAPIsService {
         );
       }
 
-      if (this.environmentService.isCalendarProviderGoogleEnabled()) {
+      if (
+        this.environmentService.isCalendarProviderGoogleEnabled() &&
+        IsCalendarEnabled
+      ) {
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."calendarChannel" ("visibility", "handle", "connectedAccountId") VALUES ($1, $2, $3)`,
           ['SHARE_EVERYTHING', handle, connectedAccountId],
@@ -100,7 +117,10 @@ export class GoogleAPIsService {
       );
     }
 
-    if (this.environmentService.isCalendarProviderGoogleEnabled()) {
+    if (
+      this.environmentService.isCalendarProviderGoogleEnabled() &&
+      IsCalendarEnabled
+    ) {
       await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
         GoogleCalendarFullSyncJob.name,
         {
