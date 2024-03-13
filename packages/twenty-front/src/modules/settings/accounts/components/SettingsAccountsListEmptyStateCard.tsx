@@ -37,7 +37,7 @@ export const SettingsAccountsListEmptyStateCard = ({
     const token =
       transientToken.data?.generateTransientToken.transientToken.token;
 
-    window.location.href = `${authServerUrl}/google-apis?transientToken=${token}`;
+    window.location.href = `${authServerUrl}/google-gmail?transientToken=${token}`;
   }, [generateTransientToken]);
 
   return (
