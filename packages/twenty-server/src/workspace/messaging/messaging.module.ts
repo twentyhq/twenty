@@ -22,7 +22,7 @@ import { MessagingMessageChannelListener } from 'src/workspace/messaging/listene
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/workspace/repositories/workspace-member/workspace-member.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
 import { CompanyModule } from 'src/workspace/messaging/repositories/company/company.module';
 import { PersonModule } from 'src/workspace/repositories/person/person.module';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
 import { BlocklistModule } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.module';
 import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { CalendarChannelEventAssociationModule } from 'src/workspace/calendar/repositories/calendar-channel-event-association/calendar-channel-event-assocation.module';

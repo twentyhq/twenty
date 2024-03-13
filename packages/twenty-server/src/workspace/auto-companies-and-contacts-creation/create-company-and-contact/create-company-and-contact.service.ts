@@ -14,7 +14,7 @@ import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/workspace/messa
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
-export class CreateCompaniesAndContactsService {
+export class CreateCompanyAndContactService {
   constructor(
     private readonly personService: PersonService,
     private readonly createContactService: CreateContactService,

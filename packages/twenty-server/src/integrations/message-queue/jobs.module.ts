@@ -20,7 +20,7 @@ import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/
 import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
