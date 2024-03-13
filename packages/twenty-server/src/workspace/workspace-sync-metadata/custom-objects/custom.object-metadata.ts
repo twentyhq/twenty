@@ -12,10 +12,12 @@ import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metad
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
+import { customObjectStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: customObjectStandardFieldIds.name,
     label: 'Name',
     description: 'Name',
     type: FieldMetadataType.TEXT,
@@ -25,6 +27,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
+    standardId: customObjectStandardFieldIds.position,
     label: 'Position',
     description: 'Position',
     type: FieldMetadataType.POSITION,
@@ -35,6 +38,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   position: number;
 
   @FieldMetadata({
+    standardId: customObjectStandardFieldIds.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: (objectMetadata) =>
@@ -50,6 +54,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
+    standardId: customObjectStandardFieldIds.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: (objectMetadata) =>
@@ -66,6 +71,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
+    standardId: customObjectStandardFieldIds.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: (objectMetadata) =>

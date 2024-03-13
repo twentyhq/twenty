@@ -7,6 +7,7 @@ describe('mapObjectMetadataByUniqueIdentifier', () => {
   it('should convert an array of ObjectMetadataEntity objects into a map', () => {
     const arr: DeepPartial<ObjectMetadataEntity>[] = [
       {
+        standardId: 'user',
         nameSingular: 'user',
         fields: [
           { name: 'id', type: FieldMetadataType.UUID },
@@ -14,6 +15,7 @@ describe('mapObjectMetadataByUniqueIdentifier', () => {
         ],
       },
       {
+        standardId: 'product',
         nameSingular: 'product',
         fields: [
           { name: 'id', type: FieldMetadataType.UUID },
@@ -29,6 +31,7 @@ describe('mapObjectMetadataByUniqueIdentifier', () => {
 
     expect(mappedObject).toEqual({
       user: {
+        standardId: 'user',
         nameSingular: 'user',
         fields: [
           { name: 'id', type: FieldMetadataType.UUID },
@@ -36,6 +39,7 @@ describe('mapObjectMetadataByUniqueIdentifier', () => {
         ],
       },
       product: {
+        standardId: 'product',
         nameSingular: 'product',
         fields: [
           { name: 'id', type: FieldMetadataType.UUID },
