@@ -13,7 +13,6 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
 }) => {
   const nestedRecord = Object.fromEntries(
     Object.entries(record).map(([key, value]) => {
-      // If value is an array
       if (Array.isArray(value)) {
         return [
           key,
@@ -25,7 +24,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
       }
       return [key, value];
     }),
-  ) as T; // Todo fix typing
+  ) as T; // Todo fix typing once we have investigated apollo edges / nodes removal
 
   return {
     __typename: getEdgeTypename({ objectNameSingular }),
