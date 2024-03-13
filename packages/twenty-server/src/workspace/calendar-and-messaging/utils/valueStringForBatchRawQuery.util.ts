@@ -3,19 +3,25 @@ export const valuesStringForBatchRawQuery = (
     [key: string]: any;
   }[],
   numberOfColumns: number,
-  typesArray?: string[],
-): string => {
-  return values
-    .map((_, row) => {
-      let value = '';
+  typesArray: string[] = [],
+) => {
+  const castedValues = values.reduce((acc, _, rowIndex) => {
+    const rowValues = Array.from(
+      { length: numberOfColumns },
+      (_, columnIndex) => {
+        const placeholder = `$${rowIndex * numberOfColumns + columnIndex + 1}`;
+        const typeCast = typesArray[columnIndex]
+          ? `::${typesArray[columnIndex]}`
+          : '';
 
-      for (let index = 0; index < numberOfColumns; index++) {
-        value += `$${row * numberOfColumns + index + 1}${
-          typesArray ? `::${typesArray[index]}` : ''
-        }, `;
-      }
+        return `${placeholder}${typeCast}`;
+      },
+    ).join(', ');
 
-      return `(${value.slice(0, -2)})`;
-    })
-    .join(', ');
+    acc.push(`(${rowValues})`);
+
+    return acc;
+  }, [] as string[]);
+
+  return castedValues.join(', ');
 };
