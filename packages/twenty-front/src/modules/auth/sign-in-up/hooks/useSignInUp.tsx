@@ -15,7 +15,6 @@ import { useAuth } from '../../hooks/useAuth';
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
-  Invite = 'invite',
 }
 
 export enum SignInUpStep {
@@ -33,17 +32,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
 
-  const [userExists, setUserExists] = useState(false);
+  const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
 
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
 
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    if (isMatchingLocation(AppPath.Invite)) {
-      return SignInUpMode.Invite;
-    }
-
     return isMatchingLocation(AppPath.SignIn)
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
@@ -74,27 +69,14 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
-          isMatchingLocation(AppPath.Invite)
-            ? setSignInUpMode(SignInUpMode.Invite)
-            : setSignInUpMode(SignInUpMode.SignIn);
-          setUserExists(true);
+          setSignInUpMode(SignInUpMode.SignIn);
         } else {
-          isMatchingLocation(AppPath.Invite)
-            ? setSignInUpMode(SignInUpMode.Invite)
-            : setSignInUpMode(SignInUpMode.SignUp);
-          setUserExists(false);
+          setSignInUpMode(SignInUpMode.SignUp);
         }
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [
-    isMatchingLocation,
-    setSignInUpStep,
-    checkUserExistsQuery,
-    form,
-    setUserExists,
-    setSignInUpMode,
-  ]);
+  }, [setSignInUpStep, checkUserExistsQuery, form, setSignInUpMode]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -161,7 +143,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   );
 
   return {
-    userExists,
+    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,

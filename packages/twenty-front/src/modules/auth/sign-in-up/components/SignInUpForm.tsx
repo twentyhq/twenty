@@ -54,7 +54,7 @@ export const SignInUpForm = () => {
   const { form } = useSignInUpForm();
 
   const {
-    userExists,
+    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
@@ -86,26 +86,18 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    if (userExists && signInUpMode === SignInUpMode.Invite) {
-      return 'Sign in';
-    }
-
-    if (!userExists && signInUpMode === SignInUpMode.Invite) {
-      return 'Sign up';
-    }
-
     return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
-  }, [signInUpMode, signInUpStep, userExists]);
+  }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
-    if (signInUpMode === SignInUpMode.Invite) {
+    if (isInviteMode) {
       return `Join ${workspace?.displayName ?? ''} team`;
     }
 
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in to Twenty'
       : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName]);
+  }, [signInUpMode, workspace?.displayName, isInviteMode]);
 
   const theme = useTheme();
 
