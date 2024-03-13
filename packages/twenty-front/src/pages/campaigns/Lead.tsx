@@ -2,15 +2,9 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable no-restricted-imports */
 import { useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { IconArrowRight, IconPlus } from '@tabler/icons-react';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Button } from '@/ui/input/button/components/Button';
-import DateTimePicker from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { Section } from '@/ui/layout/section/components/Section';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { MenuItemMultiSelectAvatar, TextInput } from 'tsup.ui.index';
 import {
   IconArrowBadgeRight,
   IconArrowLeft,
@@ -20,11 +14,18 @@ import {
   IconTrash,
   IconUsersGroup,
 } from '@tabler/icons-react';
-import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
-import { FILTER_LEADS } from '@/users/graphql/queries/filterLeads';
-import { useLazyQuery } from '@apollo/client';
-import { PreviewLeadsData } from '~/pages/campaigns/PreviewLeadsData';
+import { MenuItemMultiSelectAvatar, TextInput } from 'tsup.ui.index';
+
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Button } from '@/ui/input/button/components/Button';
+import DateTimePicker from '@/ui/input/components/internal/date/components/DateTimePicker';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { Section } from '@/ui/layout/section/components/Section';
+import { FILTER_LEADS } from '@/users/graphql/queries/filterLeads';
+import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { PreviewLeadsData } from '~/pages/campaigns/PreviewLeadsData';
 
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -97,7 +98,7 @@ const TextContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(5)};
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
-const StyledFilter = styled(Section)`secondary
+const StyledFilter = styled(Section)`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledComboInputContainer = styled.div`
@@ -134,7 +135,14 @@ const Section2 = styled.div`
 `;
 
 export const Lead = () => {
-  const { setCurrentStep, currentStep, setLeadData, leadData } = useCampaign();
+  const {
+    setCurrentStep,
+    currentStep,
+    setLeadData,
+    leadData,
+    campaignData,
+    setCampaignData,
+  } = useCampaign();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [selectedFilterOptions, setSelectedFilterOptions] = useState<
@@ -174,7 +182,7 @@ export const Lead = () => {
     { id: '5', name: 'Age' },
   ];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const filter: Record<string, any> = {};
     if (selectedFilterOptions['1']) {
       filter['advertisementSource'] = { ilike: `%${leadSourceValue}%` };
@@ -190,8 +198,13 @@ export const Lead = () => {
     }
     try {
       console.log(filter, '----------');
-      filterleads({ variables: { filter: filter } });
+      const data = await filterleads({ variables: { filter: filter } });
       setModalOpen(true);
+      console.log('---------=====', data?.data?.leads?.totalCount);
+      setCampaignData({
+        ...campaignData,
+        leads: data?.data?.leads?.totalCount,
+      });
 
       if (data) {
         console.log(data);

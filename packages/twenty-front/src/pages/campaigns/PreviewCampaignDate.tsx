@@ -18,26 +18,18 @@ const StyledPreviewCampaignDate = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   width: 100%;
 `;
-export const PreviewCampaignDate = () => {
+export const PreviewCampaignDate = ({ startDate, endDate }) => {
   return (
     <>
       <StyledPreviewCampaignDate>
         <StyledComboInputContainer>
           <Section>
             <H2Title title="Start Date " description="Selected Start Date" />
-            <TextInput
-              name="campaignName"
-              value={'Selected Start Date'}
-              disabled
-            />
+            <TextInput name="campaignName" value={startDate} disabled />
           </Section>
           <Section>
             <H2Title title="End Date " description="Selected End Date" />
-            <TextInput
-              name="campaignName"
-              value={'Selected End Date'}
-              disabled
-            />
+            <TextInput name="campaignName" value={endDate} disabled />
           </Section>
         </StyledComboInputContainer>
       </StyledPreviewCampaignDate>

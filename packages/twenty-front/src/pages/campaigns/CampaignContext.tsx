@@ -34,6 +34,8 @@ const CampaignContext = () => {
     specialtyType: '',
     subSpecialtyType: '',
     leads: '',
+    startDate: '',
+    endDate: '',
   });
 
   return (
@@ -45,7 +47,7 @@ const CampaignContext = () => {
           campaignData,
           setCampaignData,
           leadData,
-          setLeadData
+          setLeadData,
         }}
       >
         <App />

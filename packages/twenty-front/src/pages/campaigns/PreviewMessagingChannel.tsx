@@ -19,7 +19,7 @@ const StyledPreviewMessagingChannel = styled.span`
   width: 100%;
 `;
 
-export const PreviewMessagingChannel = () => {
+export const PreviewMessagingChannel = ({ selectedChannels }) => {
   return (
     <>
       <StyledPreviewMessagingChannel>
@@ -29,11 +29,15 @@ export const PreviewMessagingChannel = () => {
               title="Messaging channel"
               description="Selected messaging channel"
             />
-            <TextInput
-              name="Messaging channel"
-              value={'Selected Messaging channel'}
-              disabled
-            />
+            {selectedChannels.length > 0 ? (
+              <TextInput
+                name="Messaging channel"
+                value={selectedChannels}
+                disabled
+              />
+            ) : (
+              <p>No channels selected</p>
+            )}
           </Section>
           {/* <Section>
             <H2Title title="End Date " description="Selected End Date" />
@@ -48,4 +52,3 @@ export const PreviewMessagingChannel = () => {
     </>
   );
 };
-

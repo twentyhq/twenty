@@ -1,14 +1,14 @@
 /* eslint-disable no-restricted-imports */
-import { useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { IconArrowRight } from '@tabler/icons-react';
 import { Button } from 'tsup.ui.index';
 
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import DateTimePicker from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -30,18 +30,19 @@ const StyledInputCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 70%;
-  justify-content: space-around;
+  height: 65%;
+  justify-content: space-between;
   width: 70%;
   align-items: center;
 `;
 
 const StyledTitleCard = styled.div`
+  /* align-items: center; */
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
   height: 10%;
-  width: 70%;
+  width: 100%;
   justify-content: flex-start;
 `;
 
@@ -59,25 +60,29 @@ const StyledLabel = styled.span`
 `;
 
 export const CampaignDate = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
-
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const { setCurrentStep, currentStep, campaignData, setCampaignData } =
+    useCampaign();
 
   return (
     <>
       <StyledCard>
-        <StyledTitleCard>
-        <H2Title
-              title="Campaign Date"
-              description="Choose your when to run your campaigns"
-        />
-        </StyledTitleCard>
+        <StyledTitleCard></StyledTitleCard>
         <StyledInputCard>
           <Section>
+            <H2Title
+              title="Campaign Date"
+              description="Choose when you to run your campaign"
+            />
             <StyledLabel>Start Date</StyledLabel>
             <DateTimePicker
-              onChange={(startDate) => setStartDate(startDate)}
+              value={campaignData?.startDate}
+              selected={campaignData?.startDate}
+              onChange={(date) => {
+                setCampaignData({
+                  ...campaignData,
+                  startDate: date,
+                });
+              }}
               minDate={new Date()}
               showTimeInput
             />
@@ -85,8 +90,15 @@ export const CampaignDate = () => {
           <Section>
             <StyledLabel>End Date</StyledLabel>
             <DateTimePicker
-              onChange={(endDate) => setEndDate(endDate)}
-              minDate={startDate}
+              value={campaignData?.endDate}
+              selected={campaignData?.endDate}
+              onChange={(date) => {
+                setCampaignData({
+                  ...campaignData,
+                  endDate: date,
+                });
+              }}
+              minDate={campaignData.startDate}
               showTimeInput
             />
           </Section>

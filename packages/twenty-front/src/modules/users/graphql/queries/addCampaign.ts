@@ -10,6 +10,7 @@ export const ADD_CAMPAIGN = gql`
       endDate
       campaignName
       specialtyType
+      leads
       activityTargets {
         edges {
           node {

@@ -11,10 +11,10 @@ import {
   CheckboxVariant,
 } from 'tsup.ui.index';
 
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -31,22 +31,23 @@ const StyledCard = styled.div`
 `;
 
 const StyledInputCard = styled.div`
-  align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
-  height: 50%;
-  justify-content: space-evenly;
+  justify-content: center;
+  height: 65%;
+  justify-content: space-between;
   width: 70%;
+  align-items: center;
 `;
 
 const StyledTitleCard = styled.div`
-  align-items: center;
+  /* align-items: center; */
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
   height: 10%;
-  width: 70%;
+  width: 100%;
   justify-content: flex-start;
 `;
 
@@ -83,31 +84,44 @@ const StyledSection = styled(Section)`
   margin-left: 0;
 `;
 export const MessagingChannel = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
+  const { setCurrentStep, currentStep, campaignData, setCampaignData } =
+    useCampaign();
 
   const onSelectCheckBoxChange = (
-    _event: ChangeEvent<HTMLInputElement>,
-    arg1: string,
+    event: ChangeEvent<HTMLInputElement>,
+    channel: string,
   ): void => {
-    throw new Error('Function not implemented.');
+    // throw new Error('Function not implemented.');
+    setCampaignData((prevData: any) => ({
+      ...prevData,
+      [channel]: event.target.checked,
+    }));
   };
 
   return (
     <>
       <StyledCard>
-        <StyledTitleCard>
-          <H2Title
+        <StyledTitleCard></StyledTitleCard>
+        <StyledInputCard>
+          <Section>
+            <H2Title
               title="Messaging Channel"
               description="Choose the message channels that align with your audience's behaviors and preferences."
-          />
-         </StyledTitleCard>
-        <StyledInputCard>
+            />
+          </Section>
+
           <StyledSection>
             <StyledLabel>
               <Checkbox
-                checked={false}
+                checked={campaignData.SMS || false}
                 indeterminate={false}
-                onChange={(event) => onSelectCheckBoxChange(event, 'SMS')}
+                onChange={(event) => {
+                  onSelectCheckBoxChange(event, 'SMS');
+                  setCampaignData({
+                    ...campaignData,
+                    SMS: event.target.checked,
+                  });
+                }}
                 variant={CheckboxVariant.Primary}
                 size={CheckboxSize.Small}
                 shape={CheckboxShape.Squared}
@@ -117,9 +131,15 @@ export const MessagingChannel = () => {
 
             <StyledLabel>
               <Checkbox
-                checked={false}
+                checked={campaignData.Whatsapp || false}
                 indeterminate={false}
-                onChange={(event) => onSelectCheckBoxChange(event, 'Whatsapp')}
+                onChange={(event) => {
+                  onSelectCheckBoxChange(event, 'Whatsapp');
+                  setCampaignData({
+                    ...campaignData,
+                    Whatsapp: event.target.checked,
+                  });
+                }}
                 variant={CheckboxVariant.Primary}
                 size={CheckboxSize.Small}
                 shape={CheckboxShape.Squared}
@@ -129,9 +149,33 @@ export const MessagingChannel = () => {
 
             <StyledLabel>
               <Checkbox
-                checked={false}
+                checked={campaignData.Email || false}
                 indeterminate={false}
-                onChange={(event) => onSelectCheckBoxChange(event, 'GBM')}
+                onChange={(event) => {
+                  onSelectCheckBoxChange(event, 'Email');
+                  setCampaignData({
+                    ...campaignData,
+                    Email: event.target.checked,
+                  });
+                }}
+                variant={CheckboxVariant.Primary}
+                size={CheckboxSize.Small}
+                shape={CheckboxShape.Squared}
+              />
+              <StyledCheckboxLabel>Email</StyledCheckboxLabel>
+            </StyledLabel>
+
+            <StyledLabel>
+              <Checkbox
+                checked={campaignData.GBM || false}
+                indeterminate={false}
+                onChange={(event) => {
+                  onSelectCheckBoxChange(event, 'GBM');
+                  setCampaignData({
+                    ...campaignData,
+                    GBM: event.target.checked,
+                  });
+                }}
                 variant={CheckboxVariant.Primary}
                 size={CheckboxSize.Small}
                 shape={CheckboxShape.Squared}
@@ -142,9 +186,15 @@ export const MessagingChannel = () => {
             <StyledLabel>
               <Checkbox
                 // id="call-checkbox"
-                checked={false}
+                checked={campaignData.CALL || false}
                 indeterminate={false}
-                onChange={(event) => onSelectCheckBoxChange(event, 'Call')}
+                onChange={(event) => {
+                  onSelectCheckBoxChange(event, 'CALL');
+                  setCampaignData({
+                    ...campaignData,
+                    CALL: event.target.checked,
+                  });
+                }}
                 variant={CheckboxVariant.Primary}
                 size={CheckboxSize.Small}
                 shape={CheckboxShape.Squared}

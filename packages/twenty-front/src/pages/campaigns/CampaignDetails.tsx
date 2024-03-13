@@ -71,7 +71,8 @@ const StyledTitle = styled.h3`
 `;
 
 export const CampaignDetails = () => {
-  const { setCurrentStep, currentStep } = useCampaign();
+  const { setCurrentStep, campaignData, setCampaignData, currentStep } =
+    useCampaign();
   const handleCampaignChange = (_event: Event | undefined): void => {
     throw new Error('Function not implemented.');
   };
@@ -89,10 +90,14 @@ export const CampaignDetails = () => {
               description="Your Campaign name will be displayed in Campaign List"
             />
             <TextInput
-              // value={'campaignName'}
               placeholder={'Enter campaign name'}
-              // eslint-disable-next-line no-restricted-globals
-              onChange={() => handleCampaignChange(event)}
+              value={campaignData?.campaignName}
+              onChange={(e) =>
+                setCampaignData({
+                  ...campaignData,
+                  campaignName: e,
+                })
+              }
               name="campaignName"
               required
               fullWidth
@@ -107,11 +112,13 @@ export const CampaignDetails = () => {
               />
             </Section>
             <TextArea
-              value={''}
+              value={campaignData?.campaignDescription}
               placeholder={'Enter campaign description'}
               minRows={5}
               // eslint-disable-next-line no-restricted-globals
-              onChange={() => handleCampaignChange(event)}
+              onChange={(e) =>
+                setCampaignData({ ...campaignData, campaignDescription: e })
+              }
             />
           </StyledAreaLabel>
           <StyledButton>

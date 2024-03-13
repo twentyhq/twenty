@@ -20,7 +20,7 @@ const StyledPreviewSpecialty = styled.span`
   width: 100%;
 `;
 
-export const PreviewSpecialty = () => {
+export const PreviewSpecialty = ({ specialtyType, subSpecialityType }) => {
   return (
     <>
       <StyledPreviewSpecialty>
@@ -33,7 +33,7 @@ export const PreviewSpecialty = () => {
             <TextInput
               placeholder={'Enter campaign name'}
               name="campaignName"
-              value={'Healthy Joints Healthy Lives'}
+              value={specialtyType}
               disabled
             />
           </Section>
@@ -45,7 +45,7 @@ export const PreviewSpecialty = () => {
             <TextInput
               placeholder={'Enter campaign name'}
               name="campaignName"
-              value={'Healthy Joints Healthy Lives'}
+              value={subSpecialityType}
               disabled
             />
           </Section>

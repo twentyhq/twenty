@@ -1,18 +1,20 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable no-restricted-imports */
-import { ChangeEvent } from 'react';
+import { useMutation } from '@apollo/client';
 import styled from '@emotion/styled';
-import { IconArrowLeft, IconCheckbox } from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { IconArrowRight } from '@tabler/icons-react';
+import { v4 as uuidv4 } from 'uuid';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
+import { ADD_CAMPAIGN } from '@/users/graphql/queries/addCampaign';
+import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
+import { PreviewCampaignDate } from '~/pages/campaigns/PreviewCampaignDate';
 import { PreviewCampaignDetailsTab } from '~/pages/campaigns/PreviewCampaignDetailsTab';
 import { PreviewMessagingChannel } from '~/pages/campaigns/PreviewMessagingChannel';
 import { PreviewSpecialty } from '~/pages/campaigns/PreviewSpecialty';
-import { PreviewCampaignDate } from '~/pages/campaigns/StyledPreviewCampaignDate';
-// import { PreviewSpecialty } from '~/pages/campaigns/PreviewSpecialty';
-// import { PreviewCampaignDate } from '~/pages/campaigns/PriviewCampaignDate';
+
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -45,26 +47,11 @@ const StyledTitleCard = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: column;
-  height: 10%;
+  height: 5%;
   width: 100%;
   justify-content: flex-start;
 `;
 
-const StyledAreaLabel = styled.span`
-  align-content: flex-start;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 2%;
-  width: 100%;
-`;
-const StyledSpecialtySection = styled.span`
-  align-content: center;
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  flex: wrap;
-`;
 const StyledButton = styled.span`
   display: flex;
   justify-content: space-between;
@@ -79,57 +66,57 @@ const StyledTitle = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
 `;
 export const PreviewPage = () => {
-  // const { setCurrentStep, currentStep } = useCampaign();
+  const { setCurrentStep, currentStep, campaignData, setCampaignData } =
+    useCampaign();
+  const [addCampaigns, { error }] = useMutation(ADD_CAMPAIGN);
+  const { enqueueSnackBar } = useSnackBar();
 
-  const onSelectCheckBoxChange = (
-    _event: ChangeEvent<HTMLInputElement>,
-    arg1: string,
-  ): void => {
-    throw new Error('Function not implemented.');
+  const selectedChannels = ['SMS', 'Whatsapp', 'Email', 'GBM', 'CALL']
+    .filter((channel) => campaignData[channel])
+    .join(', ');
+
+  const resetFormData = () => {
+    setCampaignData({
+      ...campaignData,
+      campaignName: '',
+      campaignDescription: '',
+      specialtyType: '',
+      subSpecialtyType: '',
+      leads: '',
+      startDate: '',
+      endDate: '',
+    });
+    setCurrentStep(0);
   };
-  type SingleTabProps = {
-    title: string;
-    Icon?: IconComponent;
-    id: string;
-    hide?: boolean;
-    disabled?: boolean;
+  const handleSave = async () => {
+    try {
+      const variables = {
+        input: {
+          id: uuidv4(),
+          campaignName: campaignData?.campaignName,
+          specialtyType: campaignData?.specialtyType,
+          description: campaignData?.campaignDescription,
+          subSpecialtyType: campaignData?.subSpecialtyType,
+          startDate: campaignData?.startDate,
+          endDate: campaignData?.endDate,
+          messagingMedia: selectedChannels,
+          leads: `${campaignData?.leads}`,
+        },
+      };
+      const { data } = await addCampaigns({
+        variables: variables,
+      });
+      enqueueSnackBar('Campaign Created successfully', {
+        variant: 'success',
+      });
+      resetFormData();
+    } catch (errors: any) {
+      console.error('Error while creating Campaign :', error);
+      enqueueSnackBar(errors.message + 'Error while creating Campaign', {
+        variant: 'error',
+      });
+    }
   };
-
-  const tabs = [
-    {
-      id: 'Campaign Details',
-      title: 'Campaign Details',
-      Icon: IconCheckbox,
-      hide: false,
-    },
-    {
-      id: 'Specialty & Subspecialty',
-      title: 'Specialty & Subspecialty',
-      Icon: IconCheckbox,
-      hide: false,
-    },
-    {
-      id: 'Lead Extraction',
-      title: 'Lead Extraction',
-      Icon: IconCheckbox,
-      hide: false,
-    },
-    {
-      id: 'Campaign Date',
-      title: 'Campaign Date',
-      Icon: IconCheckbox,
-      hide: false,
-      disabled: false,
-    },
-    {
-      id: 'Messaging Channel',
-      title: 'Messaging Channel',
-      Icon: IconCheckbox,
-      hide: false,
-      disabled: false,
-    },
-  ];
-
   return (
     <>
       <StyledCard>
@@ -137,10 +124,19 @@ export const PreviewPage = () => {
           <StyledTitle></StyledTitle>
         </StyledTitleCard>
         <StyledInputCard>
-          <PreviewCampaignDetailsTab />
-          <PreviewSpecialty />
-          <PreviewCampaignDate />
-          <PreviewMessagingChannel />
+          <PreviewCampaignDetailsTab
+            campaignName={campaignData?.campaignName}
+            campaignDescription={campaignData?.campaignDescription}
+          />
+          <PreviewSpecialty
+            specialtyType={campaignData?.specialtyType}
+            subSpecialityType={campaignData?.subSpecialtyType}
+          />
+          <PreviewCampaignDate
+            startDate={campaignData?.startDate}
+            endDate={campaignData?.endDate}
+          />
+          <PreviewMessagingChannel selectedChannels={selectedChannels} />
           <StyledButton>
             <Button
               Icon={IconArrowLeft}
@@ -154,6 +150,7 @@ export const PreviewPage = () => {
               title="Submit"
               variant="primary"
               accent="blue"
+              onClick={handleSave}
             />
           </StyledButton>
         </StyledInputCard>

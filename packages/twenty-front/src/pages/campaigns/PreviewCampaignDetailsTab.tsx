@@ -19,7 +19,10 @@ const StyledPreviewCampaignDetails = styled.span`
   width: 100%;
 `;
 
-export const PreviewCampaignDetailsTab = () => {
+export const PreviewCampaignDetailsTab = ({
+  campaignName,
+  campaignDescription,
+}) => {
   return (
     <>
       <StyledPreviewCampaignDetails>
@@ -31,7 +34,7 @@ export const PreviewCampaignDetailsTab = () => {
           <TextInput
             // value={'campaignName'}StyledAreaLabel
             name="campaignName"
-            value={'Healthy Joints Healthy Lives'}
+            value={campaignName}
             fullWidth
             disabled
           />
@@ -45,9 +48,7 @@ export const PreviewCampaignDetailsTab = () => {
             />
           </Section>
           <TextArea
-            value={
-              'Describe the main objectives and goals of the campaignDescribe the main objectives and goals of the campaignDescribe the main objectives and goals of the campaignDescribe the main objectives and goals of the campaignDescribe the main objectives and goals of the campaign.....sdsd'
-            }
+            value={campaignDescription}
             placeholder={'Enter campaign description'}
             minRows={1}
             disabled
@@ -56,4 +57,4 @@ export const PreviewCampaignDetailsTab = () => {
       </StyledPreviewCampaignDetails>
     </>
   );
-}
+};
