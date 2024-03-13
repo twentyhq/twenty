@@ -3,6 +3,7 @@ import { Tag } from 'tsup.ui.index';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Checkbox } from '@/ui/input/components/Checkbox';
+import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
@@ -15,7 +16,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
 `;
 
 type MenuItemMultiSelectProps = {
-  color: ThemeColor;
+  color?: ThemeColor;
   LeftIcon?: IconComponent;
   selected: boolean;
   text: string;
@@ -39,7 +40,11 @@ export const MenuItemMultiSelect = ({
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
       <StyledLeftContentWithCheckboxContainer>
         <Checkbox checked={selected} />
-        <Tag color={color} text={text} Icon={LeftIcon} />
+        {color ? (
+          <Tag color={color} text={text} Icon={LeftIcon} />
+        ) : (
+          <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+        )}
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>
   );
