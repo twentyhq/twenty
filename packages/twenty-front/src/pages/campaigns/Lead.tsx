@@ -22,84 +22,10 @@ import {
 } from '@tabler/icons-react';
 import { useCampaign } from '~/pages/campaigns/CampaignUseContext';
 import { FILTER_LEADS } from '@/users/graphql/queries/filterLeads';
-import { useLazyQuery, useQuery } from '@apollo/client';
-import { RGBA } from '@/ui/theme/constants/Rgba';
-import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
-import { Table } from '@/spreadsheet-import/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useLazyQuery } from '@apollo/client';
 import { PreviewLeadsData } from '~/pages/campaigns/PreviewLeadsData';
+import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 
-const data: any = {
-  leads: {
-    __typename: 'LeadConnection',
-    totalCount: 6,
-    pageInfo: {
-      __typename: 'PageInfo',
-      hasNextPage: false,
-      startCursor:
-        'W251bGwsICIwNDVhOGIzMC1mNGNjLTQ2ZmQtOTkyMC1hZTBiN2RkZTg3ZDciXQ==',
-      endCursor:
-        'W251bGwsICI5MjNjODEyYy0yM2FlLTRlNTUtYjhkZS04MDI2NDgyODUyM2UiXQ==',
-    },
-    edges: [
-      {
-        node: {
-          id: '06e4e001-f41e-44c6-baac-1311d4da4c3b',
-          email: 'neha.reddy@example.com',
-          age: '28',
-          name: 'Neha Reddy',
-          phoneNumber: '6666666666',
-          updatedAt: '2024-03-11T07:58:03.983Z',
-          advertisementName: 'Mental Health Webinar',
-          campaignName: 'Mental Health 2024',
-          position: null,
-          comments: 'Break the stigma',
-          advertisementSource: 'Website Banner',
-          createdAt: '2024-03-11T07:58:03.983Z',
-          location: 'Bengaluru',
-        },
-      },
-      {
-        node: {
-          id: '141ec6ad-326c-48fa-811a-c929df26792b',
-          email: 'dr.anjali.singh@example.com',
-          age: '47',
-          name: 'Dr. Anjali Singh',
-          phoneNumber: '6666666666',
-          updatedAt: '2024-03-11T07:58:03.983Z',
-          advertisementName: 'Arthritis Awareness Drive',
-          campaignName: 'Arthritis 2024',
-          position: null,
-          comments: 'Managing joint health',
-          advertisementSource: 'Twitter',
-          createdAt: '2024-03-11T07:58:03.983Z',
-          location: 'Bengaluru',
-        },
-      },
-
-      {
-        node: {
-          id: '6abbae59-20dc-4e2d-8446-78adc85ab6c2',
-          email: 'neha.reddy@example.com',
-          age: '28',
-          name: 'Neha Reddy',
-          phoneNumber: '6666666666',
-          updatedAt: '2024-03-11T07:56:27.414Z',
-          advertisementName: 'Mental Health Webinar',
-          campaignName: 'Mental Health 2024',
-          position: null,
-          comments: 'Break the stigma',
-          advertisementSource: 'Website Banner',
-          createdAt: '2024-03-11T07:56:27.414Z',
-          location: 'Bengaluru',
-        },
-      },
-    ],
-  },
-};
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -114,6 +40,36 @@ const StyledCard = styled.div`
   margin: auto;
   align-items: center;
   overflow: scroll;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  height: 10px;
+  &:nth-of-type(odd) {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+`;
+
+const StyledTableRow = styled.tr`
+  &:nth-of-type(odd) {
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+  
+`;
+
+const StyledTableCell = styled.td`
+  padding: 5px;
+  // border: 1px solid ${({ theme }) => theme.border.color.medium};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledBoardContainer = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-self: center;
 `;
 
 const StyledInputCard = styled.div`
@@ -218,6 +174,7 @@ export const Lead = () => {
   const [campaignNameValue, setCampaignNameValue] = useState('');
   const [locationValue, setLocationValue] = useState('');
   const [ageValue, setAgeValue] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleLeadSourceChange = (event: any) => {
     setLeadSourceValue(event.target.value);
@@ -264,6 +221,7 @@ export const Lead = () => {
     try {
       console.log(filter, '----------');
       filterleads({ variables: { filter: filter } });
+      setModalOpen(true);
 
       if (data) {
         console.log(data);
@@ -272,6 +230,10 @@ export const Lead = () => {
     } catch (error) {
       console.error('Error sending data to API:', error);
     }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   const removeFilterOption = (id: string) => {
@@ -536,7 +498,12 @@ export const Lead = () => {
           </StyledButton>
         </StyledInputCard>
       </StyledCard>
-      {!loading && data && <PreviewLeadsData data={data} />}
+
+      <ModalWrapper isOpen={modalOpen} onClose={handleCloseModal}>
+        <StyledBoardContainer>
+          {!loading && data && <PreviewLeadsData data={data} />}
+        </StyledBoardContainer>
+      </ModalWrapper>
     </>
   );
 };
