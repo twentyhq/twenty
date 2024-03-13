@@ -108,7 +108,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isMenuOpen: boolean;
 }>`
   & .hoverable-buttons {
-    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
+    opacity: 0;
     pointer-events: none;
     position: fixed;
     right: ${({ theme }) => theme.spacing(2)};
@@ -117,7 +117,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
 
   &:hover {
     & .hoverable-buttons {
-      opacity: 1;
+      opacity: 0;
       pointer-events: auto;
       position: static;
     }
