@@ -35,7 +35,7 @@ Complete step three and four with :
 
 ## Production docker containers
 
-Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
+Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/). Note that the Postgres container will not persist data to a local volume by default. You will probably want to configure it for this.
 
 ## Environment Variables
 
@@ -85,10 +85,6 @@ services:
 
   db:
     image: twentycrm/twenty-postgres:${TAG}
-    volumes:
-      - twenty-db-data:/bitnami/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD}
-volumes:
-  twenty-db-data:
 ```
