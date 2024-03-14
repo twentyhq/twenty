@@ -1,5 +1,7 @@
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
+
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -28,10 +30,28 @@ export const useRightDrawer = () => {
       },
     [],
   );
+
+  const isSameEventThanRightDrawerClose = useRecoilCallback(
+    ({ snapshot }) =>
+      (event: MouseEvent | TouchEvent) => {
+        const rightDrawerCloseEvent = snapshot
+          .getLoadable(rightDrawerCloseEventState())
+          .getValue();
+
+        const isSameEvent =
+          rightDrawerCloseEvent?.target === event.target &&
+          rightDrawerCloseEvent?.timeStamp === event.timeStamp;
+
+        return isSameEvent;
+      },
+    [],
+  );
+
   return {
     rightDrawerPage,
     isRightDrawerOpen,
     openRightDrawer,
     closeRightDrawer,
+    isSameEventThanRightDrawerClose,
   };
 };

@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
 import { viewableEmailThreadIdState } from '@/activities/emails/state/viewableEmailThreadIdState';
@@ -7,31 +6,31 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
 export const useEmailThread = () => {
-  const [viewableEmailThreadId, setViewableEmailThreadId] = useRecoilState(
-    viewableEmailThreadIdState(),
-  );
   const { closeRightDrawer } = useRightDrawer();
   const openEmailThredRightDrawer = useOpenEmailThreadRightDrawer();
-  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState());
-  const [isDrawerActive, setIsDrawerActive] = useState(false);
 
-  useEffect(() => {
-    if (isRightDrawerOpen) {
-      setIsDrawerActive(true);
-      return;
-    }
-    setIsDrawerActive(false);
-  }, [isRightDrawerOpen]);
+  const openEmailThread = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (threadId: string) => {
+        const isRightDrawerOpen = snapshot
+          .getLoadable(isRightDrawerOpenState())
+          .getValue();
 
-  const openEmailThread = (threadId: string) => {
-    if (viewableEmailThreadId === threadId && isDrawerActive) {
-      setViewableEmailThreadId(null);
-      closeRightDrawer();
-      return;
-    }
-    openEmailThredRightDrawer();
-    setViewableEmailThreadId(threadId);
-  };
+        const viewableEmailThreadId = snapshot
+          .getLoadable(viewableEmailThreadIdState())
+          .getValue();
+
+        if (isRightDrawerOpen && viewableEmailThreadId === threadId) {
+          set(viewableEmailThreadIdState(), null);
+          closeRightDrawer();
+          return;
+        }
+
+        openEmailThredRightDrawer();
+        set(viewableEmailThreadIdState(), threadId);
+      },
+    [closeRightDrawer, openEmailThredRightDrawer],
+  );
 
   return { openEmailThread };
 };
