@@ -6,7 +6,7 @@ import {
   Plugin,
 } from '@envelop/core';
 
-import { GraphQLContext } from 'src/graphql-config/interfaces/graphql-context.interface';
+import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import {

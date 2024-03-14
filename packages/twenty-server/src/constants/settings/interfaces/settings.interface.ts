@@ -1,4 +1,4 @@
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+import { FileFolder } from 'src/engine/features/file/interfaces/file-folder.interface';
 
 import { ShortCropSize } from 'src/utils/image';
 

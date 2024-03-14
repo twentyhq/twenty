@@ -3,14 +3,14 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { User } from 'src/core/user/user.entity';
-import { Workspace } from 'src/core/workspace/workspace.entity';
-import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import { DataSourceEntity } from 'src/engine/api/metadata/data-source/data-source.entity';
+import { User } from 'src/engine/features/user/user.entity';
+import { Workspace } from 'src/engine/features/workspace/workspace.entity';
+import { RefreshToken } from 'src/engine/features/refresh-token/refresh-token.entity';
+import { FeatureFlagEntity } from 'src/engine/features/feature-flag/feature-flag.entity';
+import { BillingSubscription } from 'src/engine/features/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItem } from 'src/engine/features/billing/entities/billing-subscription-item.entity';
+import { UserWorkspace } from 'src/engine/features/user-workspace/user-workspace.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {

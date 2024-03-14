@@ -1,6 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, PartialGraphHost } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+
+import fs from 'fs';
 
 import * as Sentry from '@sentry/node';
 import { graphqlUploadExpress } from 'graphql-upload';
@@ -19,6 +21,8 @@ const bootstrap = async () => {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
+    snapshot: true,
+    abortOnError: false, // <--- THIS
   });
   const logger = app.get(LoggerService);
 
@@ -56,4 +60,8 @@ const bootstrap = async () => {
   await app.listen(app.get(EnvironmentService).get('PORT'));
 };
 
-bootstrap();
+bootstrap().catch((err) => {
+  console.log(err);
+  fs.writeFileSync('graph.json', PartialGraphHost.toString() ?? '');
+  process.exit(1);
+});

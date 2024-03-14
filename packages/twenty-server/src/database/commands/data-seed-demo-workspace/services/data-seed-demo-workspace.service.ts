@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+import { WorkspaceManagerService } from 'src/engine/workspace/manager/workspace-manager.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
