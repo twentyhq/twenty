@@ -22,7 +22,8 @@ export const useScopedHotkeys = (
     preventDefault: true,
   },
 ) => {
-  const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
+  const [pendingHotkey, setPendingHotkey] =
+    useRecoilState(pendingHotkeyState());
 
   const callScopedHotkeyCallback = useScopedHotkeyCallback();
 

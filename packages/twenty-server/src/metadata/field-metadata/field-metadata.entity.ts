@@ -35,6 +35,7 @@ export enum FieldMetadataType {
   SELECT = 'SELECT',
   MULTI_SELECT = 'MULTI_SELECT',
   RELATION = 'RELATION',
+  POSITION = 'POSITION',
 }
 
 @Entity('fieldMetadata')
@@ -49,6 +50,9 @@ export class FieldMetadataEntity<
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  standardId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;

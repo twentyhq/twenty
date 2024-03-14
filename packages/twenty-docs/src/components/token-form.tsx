@@ -48,10 +48,13 @@ const TokenForm = ({
     await submitToken(event.target.value);
   };
 
-  const updateBaseUrl = (baseUrl) => {
-    setBaseUrl(baseUrl);
-    submitBaseUrl?.(baseUrl);
-    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: baseUrl }));
+  const updateBaseUrl = (baseUrl: string) => {
+    const url = baseUrl?.endsWith('/')
+      ? baseUrl.substring(0, baseUrl.length - 1)
+      : baseUrl;
+    setBaseUrl(url);
+    submitBaseUrl?.(url);
+    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: url }));
   };
 
   const validateToken = (openApiJson) => {

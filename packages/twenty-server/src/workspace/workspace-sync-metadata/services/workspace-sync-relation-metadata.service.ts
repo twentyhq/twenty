@@ -16,6 +16,8 @@ import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-me
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationRelationFactory } from 'src/workspace/workspace-migration-builder/factories/workspace-migration-relation.factory';
+import { standardObjectMetadataDefinitions } from 'src/workspace/workspace-sync-metadata/standard-objects';
+import { CustomObjectMetadata } from 'src/workspace/workspace-sync-metadata/custom-objects/custom.object-metadata';
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
@@ -44,15 +46,20 @@ export class WorkspaceSyncRelationMetadataService {
       await objectMetadataRepository.find({
         where: {
           workspaceId: context.workspaceId,
-          isCustom: false,
           fields: { isCustom: false },
         },
         relations: ['dataSource', 'fields'],
       });
+    const customObjectMetadataCollection =
+      originalObjectMetadataCollection.filter(
+        (objectMetadata) => objectMetadata.isCustom,
+      );
 
     // Create map of object metadata & field metadata by unique identifier
     const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection,
+      // Relation are based on the singular name
+      (objectMetadata) => objectMetadata.nameSingular,
     );
 
     const relationMetadataRepository = manager.getRepository(
@@ -71,6 +78,18 @@ export class WorkspaceSyncRelationMetadataService {
     // Create standard relation metadata collection
     const standardRelationMetadataCollection =
       this.standardRelationFactory.create(
+        standardObjectMetadataDefinitions,
+        context,
+        originalObjectMetadataMap,
+        workspaceFeatureFlagsMap,
+      );
+
+    const customRelationMetadataCollection =
+      this.standardRelationFactory.create(
+        customObjectMetadataCollection.map((objectMetadata) => ({
+          object: objectMetadata,
+          metadata: CustomObjectMetadata,
+        })),
         context,
         originalObjectMetadataMap,
         workspaceFeatureFlagsMap,
@@ -78,7 +97,10 @@ export class WorkspaceSyncRelationMetadataService {
 
     const relationComparatorResults = this.workspaceRelationComparator.compare(
       originalRelationMetadataCollection,
-      standardRelationMetadataCollection,
+      [
+        ...standardRelationMetadataCollection,
+        ...customRelationMetadataCollection,
+      ],
     );
 
     for (const relationComparatorResult of relationComparatorResults) {

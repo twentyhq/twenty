@@ -4,9 +4,11 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -92,11 +94,16 @@ export const RecordTableWithWrappers = ({
                 <RecordTable
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
-                  onColumnsChange={useRecoilCallback(() => (columns) => {
-                    persistViewFields(
-                      mapColumnDefinitionsToViewFields(columns),
-                    );
-                  })}
+                  onColumnsChange={useRecoilCallback(
+                    () => (columns) => {
+                      persistViewFields(
+                        mapColumnDefinitionsToViewFields(
+                          columns as ColumnDefinition<FieldMetadata>[],
+                        ),
+                      );
+                    },
+                    [persistViewFields],
+                  )}
                   createRecord={createRecord}
                 />
                 <DragSelect

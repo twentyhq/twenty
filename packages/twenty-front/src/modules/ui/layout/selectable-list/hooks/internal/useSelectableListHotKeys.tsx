@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -104,12 +105,12 @@ export const useSelectableListHotKeys = (
         const nextId = computeNextId(direction);
 
         if (selectedItemId !== nextId) {
-          if (nextId) {
+          if (isNonEmptyString(nextId)) {
             set(isSelectedItemIdSelector(nextId), true);
             set(selectedItemIdState(), nextId);
           }
 
-          if (selectedItemId) {
+          if (isNonEmptyString(selectedItemId)) {
             set(isSelectedItemIdSelector(selectedItemId), false);
           }
         }
@@ -144,7 +145,7 @@ export const useSelectableListHotKeys = (
             selectableListOnEnterState(),
           );
 
-          if (selectedItemId) {
+          if (isNonEmptyString(selectedItemId)) {
             onEnter?.(selectedItemId);
           }
         },

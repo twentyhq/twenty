@@ -1,7 +1,7 @@
-import { useCachedRootQuery } from '@/apollo/hooks/useCachedRootQuery';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
+import { useCachedRootQuery } from '@/object-record/cache/hooks/useCachedRootQuery';
 
 export const useDefaultHomePagePath = () => {
   const { objectMetadataItem: companyObjectMetadataItem } =

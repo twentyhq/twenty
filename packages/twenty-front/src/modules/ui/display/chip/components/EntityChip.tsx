@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
@@ -41,7 +42,7 @@ export const EntityChip = ({
   const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (linkToEntity) {
+    if (isNonEmptyString(linkToEntity)) {
       event.preventDefault();
       event.stopPropagation();
       navigate(linkToEntity);

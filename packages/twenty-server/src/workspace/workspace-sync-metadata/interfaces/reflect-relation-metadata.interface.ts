@@ -1,3 +1,5 @@
+import { ObjectType } from 'typeorm';
+
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
 import {
@@ -5,19 +7,17 @@ import {
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
-export interface RelationMetadataDecoratorParams {
+export interface RelationMetadataDecoratorParams<T> {
   type: RelationMetadataType;
-  objectName: string;
-  inverseSideFieldName?: string;
+  inverseSideTarget: () => ObjectType<T>;
+  inverseSideFieldKey?: keyof T;
   onDelete?: RelationOnDeleteAction;
 }
 
-export interface ReflectRelationMetadata {
-  type: RelationMetadataType;
-  fromObjectNameSingular: string;
-  toObjectNameSingular: string;
-  fromFieldMetadataName: string;
-  toFieldMetadataName: string;
+export interface ReflectRelationMetadata
+  extends RelationMetadataDecoratorParams<any> {
+  target: object;
+  fieldKey: string;
   gate?: GateDecoratorParams;
   onDelete: RelationOnDeleteAction;
 }

@@ -61,7 +61,7 @@ export const ActivityComments = ({
     objectNameSingular: CoreObjectNameSingular.Comment,
   });
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
   const { records: comments } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Comment,

@@ -7,10 +7,12 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
@@ -26,8 +28,6 @@ import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 
 import { UserService } from './services/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -76,10 +76,10 @@ export class UserResolver {
     nullable: true,
   })
   supportUserHash(@Parent() parent: User): string | null {
-    if (this.environmentService.getSupportDriver() !== SupportDriver.Front) {
+    if (this.environmentService.get('SUPPORT_DRIVER') !== SupportDriver.Front) {
       return null;
     }
-    const key = this.environmentService.getSupportFrontHMACKey();
+    const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
   }
@@ -111,7 +111,7 @@ export class UserResolver {
   @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId, defaultWorkspace }: User) {
     // Get the list of demo workspace IDs
-    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
     const currentUserWorkspaceId = defaultWorkspace.id;
 

@@ -190,7 +190,7 @@ export class SignUpService {
     }
 
     assert(
-      !this.environmentService.isSignUpDisabled(),
+      !this.environmentService.get('IS_SIGN_UP_DISABLED'),
       'Sign up is disabled',
       ForbiddenException,
     );

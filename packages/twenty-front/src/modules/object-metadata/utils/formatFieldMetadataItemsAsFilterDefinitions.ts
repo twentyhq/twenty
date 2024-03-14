@@ -1,5 +1,6 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -31,7 +32,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     }
 
     if (field.type === FieldMetadataType.Relation) {
-      if (field.fromRelationMetadata) {
+      if (isDefined(field.fromRelationMetadata)) {
         return acc;
       }
     }

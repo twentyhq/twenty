@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const contextMenuIsOpenState = atom<boolean>({
+export const contextMenuIsOpenState = createState<boolean>({
   key: 'contextMenuIsOpenState',
-  default: false,
+  defaultValue: false,
 });

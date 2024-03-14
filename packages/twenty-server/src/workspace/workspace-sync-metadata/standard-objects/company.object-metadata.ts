@@ -5,6 +5,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { companyStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -19,6 +21,7 @@ import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/stan
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.company,
   namePlural: 'companies',
   labelSingular: 'Company',
   labelPlural: 'Companies',
@@ -27,6 +30,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 })
 export class CompanyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: companyStandardFieldIds.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'The company name',
@@ -35,6 +39,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.domainName,
     type: FieldMetadataType.TEXT,
     label: 'Domain Name',
     description:
@@ -44,6 +49,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   domainName?: string;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.address,
     type: FieldMetadataType.TEXT,
     label: 'Address',
     description: 'The company address',
@@ -52,6 +58,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   address: string;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.employees,
     type: FieldMetadataType.NUMBER,
     label: 'Employees',
     description: 'Number of employees in the company',
@@ -61,6 +68,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   employees: number;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.linkedinLink,
     type: FieldMetadataType.LINK,
     label: 'Linkedin',
     description: 'The company Linkedin account',
@@ -70,6 +78,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   linkedinLink: LinkMetadata;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.xLink,
     type: FieldMetadataType.LINK,
     label: 'X',
     description: 'The company Twitter/X account',
@@ -79,6 +88,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   xLink: LinkMetadata;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
     label: 'ARR',
     description:
@@ -89,6 +99,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   annualRecurringRevenue: CurrencyMetadata;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.idealCustomerProfile,
     type: FieldMetadataType.BOOLEAN,
     label: 'ICP',
     description:
@@ -99,9 +110,10 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   idealCustomerProfile: boolean;
 
   @FieldMetadata({
-    type: FieldMetadataType.NUMBER,
+    standardId: companyStandardFieldIds.position,
+    type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Position',
+    description: 'Company record position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()
@@ -110,6 +122,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
+    standardId: companyStandardFieldIds.people,
     type: FieldMetadataType.RELATION,
     label: 'People',
     description: 'People linked to the company.',
@@ -117,12 +130,13 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'person',
+    inverseSideTarget: () => PersonObjectMetadata,
   })
   @IsNullable()
   people: PersonObjectMetadata[];
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.accountOwner,
     type: FieldMetadataType.RELATION,
     label: 'Account Owner',
     description:
@@ -134,6 +148,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   accountOwner: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: 'Activities tied to the company',
@@ -141,13 +156,14 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityTarget',
+    inverseSideTarget: () => ActivityTargetObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.opportunities,
     type: FieldMetadataType.RELATION,
     label: 'Opportunities',
     description: 'Opportunities linked to the company.',
@@ -155,12 +171,13 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
+    inverseSideTarget: () => OpportunityObjectMetadata,
   })
   @IsNullable()
   opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the company',
@@ -168,13 +185,15 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
+  @IsSystem()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
+    standardId: companyStandardFieldIds.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: 'Attachments linked to the company.',
@@ -182,7 +201,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
+    inverseSideTarget: () => AttachmentObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()

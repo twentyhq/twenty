@@ -6,16 +6,16 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
 
 export const useRightDrawer = () => {
-  const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
+  const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState());
 
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
+  const [rightDrawerPage] = useRecoilState(rightDrawerPageState());
 
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
       (rightDrawerPage: RightDrawerPages) => {
-        set(rightDrawerPageState, rightDrawerPage);
-        set(isRightDrawerExpandedState, false);
-        set(isRightDrawerOpenState, true);
+        set(rightDrawerPageState(), rightDrawerPage);
+        set(isRightDrawerExpandedState(), false);
+        set(isRightDrawerOpenState(), true);
       },
     [],
   );
@@ -23,8 +23,8 @@ export const useRightDrawer = () => {
   const closeRightDrawer = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(isRightDrawerExpandedState, false);
-        set(isRightDrawerOpenState, false);
+        set(isRightDrawerExpandedState(), false);
+        set(isRightDrawerOpenState(), false);
       },
     [],
   );

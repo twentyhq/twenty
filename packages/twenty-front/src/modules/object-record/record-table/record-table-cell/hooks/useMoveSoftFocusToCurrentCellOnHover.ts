@@ -33,7 +33,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
           .getValue();
 
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
+          .getLoadable(currentHotkeyScopeState())
           .getValue();
 
         if (

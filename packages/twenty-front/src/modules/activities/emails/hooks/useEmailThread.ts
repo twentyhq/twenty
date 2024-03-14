@@ -8,11 +8,11 @@ import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightD
 
 export const useEmailThread = () => {
   const [viewableEmailThreadId, setViewableEmailThreadId] = useRecoilState(
-    viewableEmailThreadIdState,
+    viewableEmailThreadIdState(),
   );
   const { closeRightDrawer } = useRightDrawer();
   const openEmailThredRightDrawer = useOpenEmailThreadRightDrawer();
-  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
+  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState());
   const [isDrawerActive, setIsDrawerActive] = useState(false);
 
   useEffect(() => {

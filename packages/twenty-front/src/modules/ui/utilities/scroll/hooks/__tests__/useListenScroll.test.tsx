@@ -1,9 +1,11 @@
 import React from 'react';
+import { expect } from '@storybook/test';
 import { act, fireEvent, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useListenScroll } from '@/ui/utilities/scroll/hooks/useListenScroll';
 import { isScrollingState } from '@/ui/utilities/scroll/states/isScrollingState';
+import { isDefined } from '~/utils/isDefined';
 
 const containerRef = React.createRef<HTMLDivElement>();
 
@@ -22,7 +24,7 @@ describe('useListenScroll', () => {
     const { result } = renderHook(
       () => {
         useListenScroll({ scrollableRef: containerRef });
-        const isScrolling = useRecoilValue(isScrollingState);
+        const isScrolling = useRecoilValue(isScrollingState());
 
         return { isScrolling };
       },
@@ -38,7 +40,7 @@ describe('useListenScroll', () => {
     const container = document.querySelector('#container');
 
     act(() => {
-      if (container) fireEvent.scroll(container);
+      if (isDefined(container)) fireEvent.scroll(container);
     });
 
     expect(result.current.isScrolling).toBe(true);

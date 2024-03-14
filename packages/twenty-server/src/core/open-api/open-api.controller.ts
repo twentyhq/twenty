@@ -23,7 +23,7 @@ export class OpenApiController {
     @Req() request: Request,
     @Res() res: Response,
   ) {
-    const data = await this.openApiService.generateMetaDataSchema();
+    const data = await this.openApiService.generateMetaDataSchema(request);
 
     res.send(data);
   }

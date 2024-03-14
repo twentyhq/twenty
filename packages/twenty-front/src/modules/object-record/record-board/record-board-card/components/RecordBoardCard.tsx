@@ -152,8 +152,8 @@ export const RecordBoardCard = () => {
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();

@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-
+import { createState } from '@/ui/utilities/state/utils/createState';
 import { ViewType } from '@/views/types/ViewType';
 
-export const recordIndexViewTypeState = atom<ViewType | undefined>({
+export const recordIndexViewTypeState = createState<ViewType | undefined>({
   key: 'recordIndexViewTypeState',
-  default: undefined,
+  defaultValue: undefined,
 });

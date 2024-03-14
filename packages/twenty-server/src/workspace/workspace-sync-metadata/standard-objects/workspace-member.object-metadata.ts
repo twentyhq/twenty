@@ -4,8 +4,10 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { workspaceMemberStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -13,6 +15,7 @@ import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { BlocklistObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/blocklist.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
@@ -20,6 +23,7 @@ import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.workspaceMember,
   namePlural: 'workspaceMembers',
   labelSingular: 'Workspace Member',
   labelPlural: 'Workspace Members',
@@ -29,6 +33,7 @@ import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-m
 @IsSystem()
 export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.name,
     type: FieldMetadataType.FULL_NAME,
     label: 'Name',
     description: 'Workspace member name',
@@ -37,6 +42,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   name: FullNameMetadata;
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.colorScheme,
     type: FieldMetadataType.TEXT,
     label: 'Color Scheme',
     description: 'Preferred color scheme',
@@ -46,6 +52,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   colorScheme: string;
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.locale,
     type: FieldMetadataType.TEXT,
     label: 'Language',
     description: 'Preferred language',
@@ -55,6 +62,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   locale: string;
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: 'Avatar Url',
     description: 'Workspace member avatar',
@@ -63,6 +71,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   avatarUrl: string;
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.userEmail,
     type: FieldMetadataType.TEXT,
     label: 'User Email',
     description: 'Related user email address',
@@ -71,6 +80,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   userEmail: string;
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.userId,
     type: FieldMetadataType.UUID,
     label: 'User Id',
     description: 'Associated User Id',
@@ -80,6 +90,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.authoredActivities,
     type: FieldMetadataType.RELATION,
     label: 'Authored activities',
     description: 'Activities created by the workspace member',
@@ -87,13 +98,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activity',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
-  @IsNullable()
   authoredActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.assignedActivities,
     type: FieldMetadataType.RELATION,
     label: 'Assigned activities',
     description: 'Activities assigned to the workspace member',
@@ -101,13 +112,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activity',
-    inverseSideFieldName: 'assignee',
+    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideFieldKey: 'assignee',
   })
-  @IsNullable()
   assignedActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the workspace member',
@@ -115,13 +126,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'favorite',
+    inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.accountOwnerForCompanies,
     type: FieldMetadataType.RELATION,
     label: 'Account Owner For Companies',
     description: 'Account owner for companies',
@@ -129,13 +140,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'company',
-    inverseSideFieldName: 'accountOwner',
+    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'accountOwner',
   })
-  @IsNullable()
   accountOwnerForCompanies: CompanyObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.authoredAttachments,
     type: FieldMetadataType.RELATION,
     label: 'Authored attachments',
     description: 'Attachments created by the workspace member',
@@ -143,13 +154,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'attachment',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
-  @IsNullable()
   authoredAttachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.authoredComments,
     type: FieldMetadataType.RELATION,
     label: 'Authored comments',
     description: 'Authored comments',
@@ -157,13 +168,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'comment',
-    inverseSideFieldName: 'author',
+    inverseSideTarget: () => CommentObjectMetadata,
+    inverseSideFieldKey: 'author',
   })
-  @IsNullable()
   authoredComments: CommentObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.connectedAccounts,
     type: FieldMetadataType.RELATION,
     label: 'Connected accounts',
     description: 'Connected accounts',
@@ -171,13 +182,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'connectedAccount',
-    inverseSideFieldName: 'accountOwner',
+    inverseSideTarget: () => ConnectedAccountObjectMetadata,
+    inverseSideFieldKey: 'accountOwner',
   })
-  @IsNullable()
   connectedAccounts: ConnectedAccountObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.messageParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Message Participants',
     description: 'Message Participants',
@@ -185,13 +196,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageParticipant',
-    inverseSideFieldName: 'workspaceMember',
+    inverseSideTarget: () => MessageParticipantObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
   })
-  @IsNullable()
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.blocklist,
     type: FieldMetadataType.RELATION,
     label: 'Blocklist',
     description: 'Blocklisted handles',
@@ -199,9 +210,25 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'blocklist',
-    inverseSideFieldName: 'workspaceMember',
+    inverseSideTarget: () => BlocklistObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
   })
-  @IsNullable()
   blocklist: BlocklistObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.calendarEventAttendees,
+    type: FieldMetadataType.RELATION,
+    label: 'Calendar Event Attendees',
+    description: 'Calendar Event Attendees',
+    icon: 'IconCalendar',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideFieldKey: 'workspaceMember',
+  })
+  @Gate({
+    featureFlag: 'IS_CALENDAR_ENABLED',
+  })
+  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
 }

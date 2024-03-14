@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
+import { CreateCompanyAndContactService } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 
@@ -19,7 +19,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
     CreateCompaniesAndContactsAfterSyncJob.name,
   );
   constructor(
-    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
+    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
     private readonly messageChannelService: MessageChannelService,
     private readonly messageParticipantService: MessageParticipantService,
   ) {}

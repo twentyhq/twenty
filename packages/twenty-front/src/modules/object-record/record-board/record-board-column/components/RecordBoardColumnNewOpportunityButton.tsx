@@ -52,6 +52,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
     createOneRecord({
       name: company.name,
       companyId: company.id,
+      position: 'last',
       [selectFieldMetadataItem.name]: columnDefinition.value,
     });
   };

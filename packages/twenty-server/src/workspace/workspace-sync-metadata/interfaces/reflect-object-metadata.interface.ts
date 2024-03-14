@@ -1,6 +1,7 @@
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
 export interface ObjectMetadataDecoratorParams {
+  standardId: string;
   namePlural: string;
   labelSingular: string;
   labelPlural: string;

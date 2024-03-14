@@ -38,7 +38,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   async run(): Promise<void> {
     try {
       const dataSource = new DataSource({
-        url: this.environmentService.getPGDatabaseUrl(),
+        url: this.environmentService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: true,
         schema: 'core',
@@ -61,12 +61,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           schemaName,
         );
 
-      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        {
-          workspaceId: this.workspaceId,
-          dataSourceId: dataSourceMetadata.id,
-        },
-      );
+      await this.workspaceSyncMetadataService.synchronize({
+        workspaceId: this.workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      });
     } catch (error) {
       console.error(error);
 

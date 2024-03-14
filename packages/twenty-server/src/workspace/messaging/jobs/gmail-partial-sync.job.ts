@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { GoogleAPIsRefreshAccessTokenService } from 'src/workspace/calendar-and-messaging/services/google-apis-refresh-access-token.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
 
 export type GmailPartialSyncJobData = {
@@ -17,7 +17,7 @@ export class GmailPartialSyncJob
   private readonly logger = new Logger(GmailPartialSyncJob.name);
 
   constructor(
-    private readonly gmailRefreshAccessTokenService: GmailRefreshAccessTokenService,
+    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIsRefreshAccessTokenService,
     private readonly gmailPartialSyncService: GmailPartialSyncService,
   ) {}
 
@@ -25,10 +25,20 @@ export class GmailPartialSyncJob
     this.logger.log(
       `gmail partial-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
-    await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
-      data.workspaceId,
-      data.connectedAccountId,
-    );
+
+    try {
+      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        data.workspaceId,
+        data.connectedAccountId,
+      );
+    } catch (e) {
+      this.logger.error(
+        `Error refreshing access token for connected account ${data.connectedAccountId} in workspace ${data.workspaceId}`,
+        e,
+      );
+
+      return;
+    }
 
     await this.gmailPartialSyncService.fetchConnectedAccountThreads(
       data.workspaceId,

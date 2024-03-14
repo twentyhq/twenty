@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { viewStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -11,6 +13,7 @@ import { ViewFilterObjectMetadata } from 'src/workspace/workspace-sync-metadata/
 import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-sort.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.view,
   namePlural: 'views',
   labelSingular: 'View',
   labelPlural: 'Views',
@@ -20,6 +23,7 @@ import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/st
 @IsSystem()
 export class ViewObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: viewStandardFieldIds.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'View name',
@@ -27,6 +31,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.objectMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Object Metadata Id',
     description: 'View target object',
@@ -34,6 +39,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   objectMetadataId: string;
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'View type',
@@ -42,6 +48,35 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.key,
+    type: FieldMetadataType.SELECT,
+    label: 'Key',
+    description: 'View key',
+    options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
+    defaultValue: { value: 'INDEX' },
+  })
+  @IsNullable()
+  key: string;
+
+  @FieldMetadata({
+    standardId: viewStandardFieldIds.icon,
+    type: FieldMetadataType.TEXT,
+    label: 'Icon',
+    description: 'View icon',
+  })
+  icon: string;
+
+  @FieldMetadata({
+    standardId: viewStandardFieldIds.position,
+    type: FieldMetadataType.POSITION,
+    label: 'Position',
+    description: 'View position',
+  })
+  @IsNullable()
+  position: number;
+
+  @FieldMetadata({
+    standardId: viewStandardFieldIds.isCompact,
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
     description: 'Describes if the view is in compact mode',
@@ -50,6 +85,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   isCompact: boolean;
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.viewFields,
     type: FieldMetadataType.RELATION,
     label: 'View Fields',
     description: 'View Fields',
@@ -57,12 +93,13 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewField',
+    inverseSideTarget: () => ViewFieldObjectMetadata,
   })
   @IsNullable()
   viewFields: ViewFieldObjectMetadata[];
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.viewFilters,
     type: FieldMetadataType.RELATION,
     label: 'View Filters',
     description: 'View Filters',
@@ -70,12 +107,13 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewFilter',
+    inverseSideTarget: () => ViewFilterObjectMetadata,
   })
   @IsNullable()
   viewFilters: ViewFilterObjectMetadata[];
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.viewSorts,
     type: FieldMetadataType.RELATION,
     label: 'View Sorts',
     description: 'View Sorts',
@@ -83,7 +121,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'viewSort',
+    inverseSideTarget: () => ViewSortObjectMetadata,
   })
   @IsNullable()
   viewSorts: ViewSortObjectMetadata[];

@@ -20,9 +20,9 @@ export type GoogleRequest = Request & {
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(environmentService: EnvironmentService) {
     super({
-      clientID: environmentService.getAuthGoogleClientId(),
-      clientSecret: environmentService.getAuthGoogleClientSecret(),
-      callbackURL: environmentService.getAuthGoogleCallbackUrl(),
+      clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
+      clientSecret: environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
+      callbackURL: environmentService.get('AUTH_GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
       passReqToCallback: true,
     });

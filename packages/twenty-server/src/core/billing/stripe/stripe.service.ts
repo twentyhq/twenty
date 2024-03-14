@@ -12,14 +12,14 @@ export class StripeService {
 
   constructor(private readonly environmentService: EnvironmentService) {
     this.stripe = new Stripe(
-      this.environmentService.getBillingStripeApiKey(),
+      this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},
     );
   }
 
   constructEventFromPayload(signature: string, payload: Buffer) {
     const webhookSecret =
-      this.environmentService.getBillingStripeWebhookSecret();
+      this.environmentService.get('BILLING_STRIPE_WEBHOOK_SECRET');
 
     return this.stripe.webhooks.constructEvent(
       payload,
@@ -48,21 +48,23 @@ export class StripeService {
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrl ?? this.environmentService.getFrontBaseUrl(),
+      return_url: returnUrl ?? this.environmentService.get('FRONT_BASE_URL'),
     });
   }
 
   async createCheckoutSession(
     user: User,
     priceId: string,
+    quantity: number,
     successUrl?: string,
     cancelUrl?: string,
+    stripeCustomerId?: string,
   ): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
       line_items: [
         {
           price: priceId,
-          quantity: 1,
+          quantity,
         },
       ],
       mode: 'subscription',
@@ -71,13 +73,34 @@ export class StripeService {
           workspaceId: user.defaultWorkspace.id,
         },
         trial_period_days:
-          this.environmentService.getBillingFreeTrialDurationInDays(),
+          this.environmentService.get('BILLING_FREE_TRIAL_DURATION_IN_DAYS'),
       },
       automatic_tax: { enabled: true },
       tax_id_collection: { enabled: true },
-      customer_email: user.email,
+      customer: stripeCustomerId,
+      customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
+      customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
+  }
+
+  async collectLastInvoice(stripeSubscriptionId: string) {
+    const subscription = await this.stripe.subscriptions.retrieve(
+      stripeSubscriptionId,
+      { expand: ['latest_invoice'] },
+    );
+    const latestInvoice = subscription.latest_invoice;
+
+    if (
+      !(
+        latestInvoice &&
+        typeof latestInvoice !== 'string' &&
+        latestInvoice.status === 'draft'
+      )
+    ) {
+      return;
+    }
+    await this.stripe.invoices.pay(latestInvoice.id);
   }
 }

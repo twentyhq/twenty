@@ -25,8 +25,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
         );
 
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getLoadable(currentHotkeyScopeState())
+          .getValue();
 
         if (!isSoftFocusActive) {
           return;

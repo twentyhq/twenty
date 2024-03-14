@@ -9,7 +9,7 @@ const handleActivateMockFunction = fn();
 const handleEraseMockFunction = fn();
 
 const ClearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     handleActivateMockFunction.mockClear();
     handleEraseMockFunction.mockClear();
   }
