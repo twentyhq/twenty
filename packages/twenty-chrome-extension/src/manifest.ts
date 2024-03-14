@@ -34,4 +34,13 @@ export default defineManifest({
   permissions: ['activeTab', 'storage'],
 
   host_permissions: ['https://www.linkedin.com/*'],
+
+  // cannot use envoirnment variables in manifest -
+  // https://github.com/facebook/create-react-app/issues/7953
+  // "matches" field only accepts a https connection
+  // DO NOT PUSH <all_urls> to production!
+  externally_connectable: {
+    matches: [`<all_urls>`],
+    // matches: [`https://app.twenty.com`]
+  },
 });

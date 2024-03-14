@@ -23,23 +23,48 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   sendResponse('Executing!');
 });
 
-const iframe = document.createElement('iframe');
-iframe.style.background = 'green';
-iframe.style.height = '100%';
-iframe.style.width = '400px';
-iframe.style.position = 'fixed';
-iframe.style.top = '0px';
-iframe.style.right = '-400px';
-iframe.style.zIndex = '9000000000000000000';
-iframe.style.transition = 'ease-in-out 0.3s';
-iframe.src = chrome.runtime.getURL('index.html');
+const createIframe = () => {
+  const iframe = document.createElement('iframe');
+  iframe.style.background = 'lightgrey';
+  iframe.style.height = '100vh';
+  iframe.style.width = '400px';
+  iframe.style.position = 'fixed';
+  iframe.style.top = '0px';
+  iframe.style.right = '-400px';
+  iframe.style.zIndex = '9000000000000000000';
+  iframe.style.transition = 'ease-in-out 0.3s';
+  return iframe;
+};
 
-document.body.appendChild(iframe);
+const onContentIframeLoadComplete = () => {
+  //If the pop-out window is already open then we replace loading iframe with our content iframe
+  if (loadingIframe.style.right === '0px') contentIframe.style.right = '0px';
+  loadingIframe.style.display = 'none';
+  contentIframe.style.display = 'block';
+};
 
-const toggle = () => {
-  if (iframe.style.right === '-400px') {
+//Creating one iframe where we are loading our front end in the background
+const contentIframe = createIframe();
+contentIframe.style.display = 'none';
+contentIframe.src = `${import.meta.env.VITE_FRONT_BASE_URL}`;
+contentIframe.onload = onContentIframeLoadComplete;
+
+//Creating this iframe to show as a loading state until the above iframe loads completely
+const loadingIframe = createIframe();
+loadingIframe.src = chrome.runtime.getURL('loading.html');
+
+document.body.appendChild(loadingIframe);
+document.body.appendChild(contentIframe);
+
+const toggleIframe = (iframe: HTMLIFrameElement) => {
+  if (iframe.style.right === '-400px' && iframe.style.display !== 'none') {
     iframe.style.right = '0px';
-  } else {
+  } else if (iframe.style.right === '0px' && iframe.style.display !== 'none') {
     iframe.style.right = '-400px';
   }
+};
+
+const toggle = () => {
+  toggleIframe(loadingIframe);
+  toggleIframe(contentIframe);
 };
