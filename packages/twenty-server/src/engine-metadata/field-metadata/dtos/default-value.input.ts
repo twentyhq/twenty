@@ -84,3 +84,36 @@ export class FieldMetadataDynamicDefaultValueNow {
   @IsString()
   type: 'now';
 }
+export class FieldMetadataDefaultValueAddress {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressStreet1: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressStreet2: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressCity: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressPostcode: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressState: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  addressCountry: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsNumber()
+  addressLat: number | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsNumber()
+  addressLng: number | null;
+}

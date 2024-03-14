@@ -104,5 +104,19 @@ export const mapFieldMetadataToGraphqlQuery = (
         lastName
       }
     `;
+  } else if (fieldType === FieldMetadataType.ADDRESS) {
+    return `
+      ${field.name}
+      {
+        addressStreet1
+        addressStreet2
+        addressCity
+        addressPostcode
+        addressState
+        addressCountry
+        addressLat
+        addressLng
+      }
+    `;
   }
 };

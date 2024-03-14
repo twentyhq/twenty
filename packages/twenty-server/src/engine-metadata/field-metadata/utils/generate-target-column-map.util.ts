@@ -53,6 +53,17 @@ export function generateTargetColumnMap(
         firstName: `${columnName}FirstName`,
         lastName: `${columnName}LastName`,
       };
+    case FieldMetadataType.ADDRESS:
+      return {
+        addressStreet1: `${columnName}AddressStreet1`,
+        addressStreet2: `${columnName}AddressStreet2`,
+        addressCity: `${columnName}AddressCity`,
+        addressPostcode: `${columnName}AddressPostcode`,
+        addressState: `${columnName}AddressState`,
+        addressCountry: `${columnName}AddressCountry`,
+        addressLat: `${columnName}AddressLat`,
+        addressLong: `${columnName}AddressLong`,
+      };
     case FieldMetadataType.RELATION:
       return {};
     default:

@@ -19,6 +19,17 @@ export interface FieldMetadataTargetColumnMapFullName {
   lastName: string;
 }
 
+export type FieldMetadataTargetColumnMapAddress = {
+  addressStreet1: string;
+  addressStreet2: string;
+  addressCity: string;
+  addressState: string;
+  addressZipCode: string;
+  addressCountry: string;
+  addressLat: number;
+  addressLng: number;
+};
+
 type AllFieldMetadataTypes = {
   [key: string]: string;
 };
@@ -27,6 +38,7 @@ type FieldMetadataTypeMapping = {
   [FieldMetadataType.LINK]: FieldMetadataTargetColumnMapLink;
   [FieldMetadataType.CURRENCY]: FieldMetadataTargetColumnMapCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataTargetColumnMapFullName;
+  [FieldMetadataType.ADDRESS]: FieldMetadataTargetColumnMapAddress;
 };
 
 type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> = [

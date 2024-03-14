@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
@@ -27,7 +28,8 @@ type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataDynamicDefaultValue
   | FieldMetadataDefaultValueLink
   | FieldMetadataDefaultValueCurrency
-  | FieldMetadataDefaultValueFullName;
+  | FieldMetadataDefaultValueFullName
+  | FieldMetadataDefaultValueAddress;
 
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]:
@@ -47,6 +49,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
+  [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
