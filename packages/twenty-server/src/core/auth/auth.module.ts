@@ -21,6 +21,7 @@ import { GoogleAPIsService } from 'src/core/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/core/auth/services/sign-up.service';
 import { GoogleGmailAuthController } from 'src/core/auth/controllers/google-gmail-auth.controller';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -46,7 +47,10 @@ const jwtModule = JwtModule.registerAsync({
     UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([Workspace, User, RefreshToken], 'core'),
+    TypeOrmModule.forFeature(
+      [Workspace, User, RefreshToken, FeatureFlagEntity],
+      'core',
+    ),
     HttpModule,
     UserWorkspaceModule,
   ],
