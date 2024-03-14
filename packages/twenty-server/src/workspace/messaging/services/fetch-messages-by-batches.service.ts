@@ -162,13 +162,17 @@ export class FetchMessagesByBatchesService {
 
         return {
           role,
-          handle: address?.toLowerCase() || '',
+          handle: address ? this.removeSpacesAndLowerCase(address) : '',
           displayName: name || '',
         };
       });
     });
 
     return participants.flat();
+  }
+
+  private removeSpacesAndLowerCase(email: string): string {
+    return email.replace(/\s/g, '').toLowerCase();
   }
 
   async formatBatchResponsesAsGmailMessages(
