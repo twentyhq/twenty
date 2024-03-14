@@ -7,7 +7,7 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import {
   GmailPartialSyncJobData,

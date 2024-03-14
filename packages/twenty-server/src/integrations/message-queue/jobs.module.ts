@@ -17,15 +17,15 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FetchAllWorkspacesMessagesJob } from 'src/workspace/messaging/commands/crons/fetch-all-workspaces-messages.job';
-import { ConnectedAccountModule } from 'src/workspace/messaging/repositories/connected-account/connected-account.module';
+import { ConnectedAccountModule } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/workspace/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/workspace/messaging/jobs/create-companies-and-contacts-after-sync.job';
-import { CreateCompaniesAndContactsModule } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.module';
+import { CreateCompaniesAndContactsModule } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
 import { MessageChannelModule } from 'src/workspace/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/workspace/messaging/repositories/message-participant/message-participant.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
-import { DeleteConnectedAccountAssociatedDataJob } from 'src/workspace/messaging/jobs/delete-connected-acount-associated-data.job';
+import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/workspace/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { ThreadCleanerModule } from 'src/workspace/messaging/services/thread-cleaner/thread-cleaner.module';
 import { UpdateSubscriptionJob } from 'src/core/billing/jobs/update-subscription.job';
 import { BillingModule } from 'src/core/billing/billing.module';
@@ -33,9 +33,13 @@ import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.modu
 import { StripeModule } from 'src/core/billing/stripe/stripe.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { CalendarModule } from 'src/workspace/calendar/calendar.module';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { GoogleCalendarFullSyncJob } from 'src/workspace/calendar/jobs/google-calendar-full-sync.job';
+import { CalendarEventCleanerModule } from 'src/workspace/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/workspace/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runner/services/record-position-backfill-module';
+import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/workspace/messaging/jobs/delete-connected-account-associated-calendar-data.job';
 
 @Module({
   imports: [
@@ -49,9 +53,11 @@ import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runn
     MessagingModule,
     MessageParticipantModule,
     MessageChannelModule,
+    CalendarModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
+    CalendarEventCleanerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
@@ -68,6 +74,10 @@ import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runn
     {
       provide: GmailPartialSyncJob.name,
       useClass: GmailPartialSyncJob,
+    },
+    {
+      provide: GoogleCalendarFullSyncJob.name,
+      useClass: GoogleCalendarFullSyncJob,
     },
     {
       provide: CallWebhookJobsJob.name,
@@ -99,8 +109,12 @@ import { RecordPositionBackfillModule } from 'src/workspace/workspace-query-runn
       useClass: DataSeedDemoWorkspaceJob,
     },
     {
-      provide: DeleteConnectedAccountAssociatedDataJob.name,
-      useClass: DeleteConnectedAccountAssociatedDataJob,
+      provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedMessagingDataJob,
+    },
+    {
+      provide: DeleteConnectedAccountAssociatedCalendarDataJob.name,
+      useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
     {
