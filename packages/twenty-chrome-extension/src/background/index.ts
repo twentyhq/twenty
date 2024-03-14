@@ -57,11 +57,4 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       injectedTabs.delete(tabId); // Clear entry if navigated away from LinkedIn company page.
     }
   }
-  //send message on url change
-  if (changeInfo.url) {
-    chrome.tabs.sendMessage(tabId, {
-      action: 'URL_CHANGE',
-      url: changeInfo.url,
-    });
-  }
 });
