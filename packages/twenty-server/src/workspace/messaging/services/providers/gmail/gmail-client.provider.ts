@@ -21,9 +21,9 @@ export class GmailClientProvider {
   }
 
   private async getOAuth2Client(refreshToken: string): Promise<OAuth2Client> {
-    const gmailClientId = this.environmentService.getAuthGoogleClientId();
+    const gmailClientId = this.environmentService.get('AUTH_GOOGLE_CLIENT_ID');
     const gmailClientSecret =
-      this.environmentService.getAuthGoogleClientSecret();
+      this.environmentService.get('AUTH_GOOGLE_CLIENT_SECRET');
 
     const oAuth2Client = new google.auth.OAuth2(
       gmailClientId,

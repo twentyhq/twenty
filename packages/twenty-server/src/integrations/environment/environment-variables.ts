@@ -10,7 +10,10 @@ import {
   validateSync,
   IsBoolean,
   IsNumber,
+  IsDefined,
 } from 'class-validator';
+
+import { EmailDriver } from 'src/integrations/email/interfaces/email.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -32,49 +35,49 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  DEBUG_MODE?: boolean;
+  DEBUG_MODE: boolean;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  SIGN_IN_PREFILLED?: boolean;
+  SIGN_IN_PREFILLED: boolean;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_BILLING_ENABLED?: boolean;
+  IS_BILLING_ENABLED: boolean;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_PLAN_REQUIRED_LINK?: string;
+  BILLING_PLAN_REQUIRED_LINK: string;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID?: string;
+  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: string;
 
   @IsNumber()
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS?: number;
+  BILLING_FREE_TRIAL_DURATION_IN_DAYS: number;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_STRIPE_API_KEY?: string;
+  BILLING_STRIPE_API_KEY: string;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_STRIPE_WEBHOOK_SECRET?: string;
+  BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ENABLED?: boolean;
+  TELEMETRY_ENABLED: boolean;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED?: boolean;
+  TELEMETRY_ANONYMIZATION_ENABLED: boolean;
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -82,6 +85,7 @@ export class EnvironmentVariables {
   PORT: number;
 
   // Database
+  @IsDefined()
   @IsUrl({
     protocols: ['postgres'],
     require_tld: false,
@@ -132,75 +136,79 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  AUTH_GOOGLE_ENABLED?: boolean;
+  AUTH_GOOGLE_ENABLED: boolean;
 
   @IsString()
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
-  AUTH_GOOGLE_CLIENT_ID?: string;
+  AUTH_GOOGLE_CLIENT_ID: string;
 
   @IsString()
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
-  AUTH_GOOGLE_CLIENT_SECRET?: string;
+  AUTH_GOOGLE_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
-  AUTH_GOOGLE_CALLBACK_URL?: string;
+  AUTH_GOOGLE_CALLBACK_URL: string;
 
   // Storage
   @IsEnum(StorageDriverType)
   @IsOptional()
-  STORAGE_TYPE?: StorageDriverType;
+  STORAGE_TYPE: StorageDriverType;
 
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsAWSRegion()
-  STORAGE_S3_REGION?: AwsRegion;
+  STORAGE_S3_REGION: AwsRegion;
 
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsString()
-  STORAGE_S3_NAME?: string;
+  STORAGE_S3_NAME: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  STORAGE_S3_ENDPOINT: string;
 
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
-  STORAGE_LOCAL_PATH?: string;
+  STORAGE_LOCAL_PATH: string;
 
   // Support
   @IsEnum(SupportDriver)
   @IsOptional()
-  SUPPORT_DRIVER?: SupportDriver;
+  SUPPORT_DRIVER: SupportDriver;
 
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
-  SUPPORT_FRONT_CHAT_ID?: string;
+  SUPPORT_FRONT_CHAT_ID: string;
 
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
-  SUPPORT_FRONT_HMAC_KEY?: string;
+  SUPPORT_FRONT_HMAC_KEY: string;
 
   @IsEnum(LoggerDriverType)
   @IsOptional()
-  LOGGER_DRIVER?: LoggerDriverType;
+  LOGGER_DRIVER: LoggerDriverType;
 
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
-  EXCEPTION_HANDLER_DRIVER?: ExceptionHandlerDriver;
+  EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver;
 
   @CastToLogLevelArray()
   @IsOptional()
-  LOG_LEVELS?: LogLevel[];
+  LOG_LEVELS: LogLevel[];
 
   @CastToStringArray()
   @IsOptional()
-  DEMO_WORKSPACE_IDS?: string[];
+  DEMO_WORKSPACE_IDS: string[];
 
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
-  SENTRY_DSN?: string;
+  SENTRY_DSN: string;
 
   @IsDuration()
   @IsOptional()
-  PASSWORD_RESET_TOKEN_EXPIRES_IN?: number;
+  PASSWORD_RESET_TOKEN_EXPIRES_IN: string;
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -220,13 +228,56 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_SIGN_UP_DISABLED?: boolean;
+  IS_SIGN_UP_DISABLED: boolean;
 
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
   MUTATION_MAXIMUM_RECORD_AFFECTED: number;
+
+  REDIS_HOST: string;
+
+  REDIS_PORT: number;
+
+  API_TOKEN_EXPIRES_IN: string;
+
+  SHORT_TERM_TOKEN_EXPIRES_IN: string;
+
+  MESSAGING_PROVIDER_GMAIL_ENABLED: boolean;
+
+  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
+
+  MESSAGE_QUEUE_TYPE: string;
+
+  EMAIL_FROM_ADDRESS: string;
+
+  EMAIL_SYSTEM_ADDRESS: string;
+
+  EMAIL_FROM_NAME: string;
+
+  EMAIL_DRIVER: EmailDriver;
+
+  EMAIL_SMTP_HOST: string;
+
+  EMAIL_SMTP_PORT: number;
+
+  EMAIL_SMTP_USER: string;
+
+  EMAIL_SMTP_PASSWORD: string;
+
+  OPENROUTER_API_KEY: string;
+
+  API_RATE_LIMITING_TTL: number;
+
+  API_RATE_LIMITING_LIMIT: number;
+
+  CACHE_STORAGE_TYPE: string;
+
+  CACHE_STORAGE_TTL: number;
+  CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean;
+  AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 }
+
 export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 

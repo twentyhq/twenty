@@ -88,7 +88,7 @@ export class GoogleAPIsService {
         ],
       );
 
-      if (this.environmentService.isMessagingProviderGmailEnabled()) {
+      if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3, $4)`,
           ['share_everything', handle, connectedAccountId, 'email'],
@@ -96,7 +96,7 @@ export class GoogleAPIsService {
       }
 
       if (
-        this.environmentService.isCalendarProviderGoogleEnabled() &&
+        this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
         IsCalendarEnabled
       ) {
         await manager.query(
@@ -106,7 +106,7 @@ export class GoogleAPIsService {
       }
     });
 
-    if (this.environmentService.isMessagingProviderGmailEnabled()) {
+    if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       await this.messageQueueService.add<GmailFullSyncJobData>(
         GmailFullSyncJob.name,
         {
@@ -120,7 +120,7 @@ export class GoogleAPIsService {
     }
 
     if (
-      this.environmentService.isCalendarProviderGoogleEnabled() &&
+      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
       IsCalendarEnabled
     ) {
       await this.calendarQueueService.add<GoogleCalendarFullSyncJobData>(

@@ -48,8 +48,8 @@ export class GoogleAPIsRefreshAccessTokenService {
     const response = await axios.post(
       'https://oauth2.googleapis.com/token',
       {
-        client_id: this.environmentService.getAuthGoogleClientId(),
-        client_secret: this.environmentService.getAuthGoogleClientSecret(),
+        client_id: this.environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
+        client_secret: this.environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
         refresh_token: refreshToken,
         grant_type: 'refresh_token',
       },

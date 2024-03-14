@@ -10,7 +10,7 @@ export class GoogleProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
-    if (!this.environmentService.isAuthGoogleEnabled()) {
+    if (!this.environmentService.get('AUTH_GOOGLE_ENABLED')) {
       throw new NotFoundException('Google auth is not enabled');
     }
 

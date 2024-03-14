@@ -20,7 +20,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   constructor(private readonly environmentService: EnvironmentService) {
     this.mainDataSource = new DataSource({
-      url: environmentService.getPGDatabaseUrl(),
+      url: environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
       logging: false,
       schema: 'core',
@@ -83,9 +83,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const schema = dataSource.schema;
 
     const workspaceDataSource = new DataSource({
-      url: dataSource.url ?? this.environmentService.getPGDatabaseUrl(),
+      url: dataSource.url ?? this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: this.environmentService.isDebugMode()
+      logging: this.environmentService.get('DEBUG_MODE')
         ? ['query', 'error']
         : ['error'],
       schema,

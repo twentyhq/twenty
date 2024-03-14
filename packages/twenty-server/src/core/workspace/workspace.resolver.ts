@@ -91,7 +91,7 @@ export class WorkspaceResolver {
 
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
-    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
     // Check if the id is in the list of demo workspaceIds
     if (demoWorkspaceIds.includes(id)) {

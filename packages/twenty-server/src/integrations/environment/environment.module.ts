@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { EnvironmentService } from './environment.service';
 import { ConfigurableModuleClass } from './environment.module-definition';
-import { validate } from './environment.validation';
+import { validate } from './environment-variables';
 
 @Global()
 @Module({

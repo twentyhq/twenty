@@ -46,11 +46,11 @@ export class GraphQLConfigService
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
-    const isDebugMode = this.environmentService.isDebugMode();
+    const isDebugMode = this.environmentService.get('DEBUG_MODE');
     const plugins = [
       useThrottler({
-        ttl: this.environmentService.getApiRateLimitingTtl(),
-        limit: this.environmentService.getApiRateLimitingLimit(),
+        ttl: this.environmentService.get('API_RATE_LIMITING_TTL'),
+        limit: this.environmentService.get('API_RATE_LIMITING_LIMIT'),
         identifyFn: (context) => {
           return context.user?.id ?? context.req.ip ?? 'anonymous';
         },

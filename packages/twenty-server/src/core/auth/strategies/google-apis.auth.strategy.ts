@@ -27,20 +27,20 @@ export class GoogleAPIsStrategy extends PassportStrategy(
   constructor(environmentService: EnvironmentService) {
     const scope = ['email', 'profile'];
 
-    if (environmentService.isMessagingProviderGmailEnabled()) {
+    if (environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       scope.push('https://www.googleapis.com/auth/gmail.readonly');
     }
 
-    if (environmentService.isCalendarProviderGoogleEnabled()) {
+    if (environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
       scope.push('https://www.googleapis.com/auth/calendar');
     }
 
     super({
-      clientID: environmentService.getAuthGoogleClientId(),
-      clientSecret: environmentService.getAuthGoogleClientSecret(),
-      callbackURL: environmentService.isCalendarProviderGoogleEnabled()
-        ? environmentService.getAuthGoogleAPIsCallbackUrl()
-        : environmentService.getMessagingProviderGmailCallbackUrl(),
+      clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
+      clientSecret: environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
+      callbackURL: environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
+        ? environmentService.get('AUTH_GOOGLE_APIS_CALLBACK_URL')
+        : environmentService.get('MESSAGING_PROVIDER_GMAIL_CALLBACK_URL'),
       scope,
       passReqToCallback: true,
     });

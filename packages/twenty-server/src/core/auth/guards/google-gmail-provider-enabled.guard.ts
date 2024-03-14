@@ -6,15 +6,12 @@ import { GoogleAPIsStrategy } from 'src/core/auth/strategies/google-apis.auth.st
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
-export class GoogleAPIsProviderEnabledGuard implements CanActivate {
+export class GoogleGmailProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
-    if (
-      !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
-      !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
-    ) {
-      throw new NotFoundException('Google apis auth is not enabled');
+    if (!this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
+      throw new NotFoundException('Gmail auth is not enabled');
     }
 
     new GoogleAPIsStrategy(this.environmentService);

@@ -37,7 +37,7 @@ export class GoogleAPIsAuthController {
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
 
-    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
     if (demoWorkspaceIds.includes(workspaceId)) {
       throw new Error('Cannot connect Google account to demo workspace');
@@ -57,7 +57,7 @@ export class GoogleAPIsAuthController {
     });
 
     return res.redirect(
-      `${this.environmentService.getFrontBaseUrl()}/settings/accounts`,
+      `${this.environmentService.get('FRONT_BASE_URL')}/settings/accounts`,
     );
   }
 }
