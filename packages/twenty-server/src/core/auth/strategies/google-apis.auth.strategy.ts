@@ -27,7 +27,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
   constructor(environmentService: EnvironmentService) {
     const scope = ['email', 'profile'];
 
-    if (environmentService.isMessagingProviderGmailEnabled()) {
+    if (environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       scope.push('https://www.googleapis.com/auth/gmail.readonly');
     }
 

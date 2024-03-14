@@ -1,75 +1,77 @@
 import { EmailDriver } from 'src/integrations/email/interfaces/email.interface';
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 
-import { EnvironmentType } from 'src/integrations/environment/envionment.type';
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { MessageQueueDriverType } from 'src/integrations/message-queue/interfaces';
+import { EnvironmentVariables } from 'src/integrations/environment/environment-variables';
 
-export const EnvironmentDefault: EnvironmentType = {
-  DEBUG_MODE: false,
-  SIGN_IN_PREFILLED: false,
-  IS_BILLING_ENABLED: false,
-  BILLING_PLAN_REQUIRED_LINK: '',
-  BILLING_STRIPE_BASE_PLAN_PRODUCT_ID: '',
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS: 7,
-  BILLING_STRIPE_API_KEY: '',
-  BILLING_STRIPE_WEBHOOK_SECRET: '',
-  TELEMETRY_ENABLED: true,
-  TELEMETRY_ANONYMIZATION_ENABLED: true,
-  PORT: 3000,
-  REDIS_HOST: '127.0.0.1',
-  REDIS_PORT: 6379,
-  PG_DATABASE_URL: '',
-  FRONT_BASE_URL: '',
-  SERVER_URL: '',
-  ACCESS_TOKEN_SECRET: 'random_string',
-  ACCESS_TOKEN_EXPIRES_IN: '30m',
-  REFRESH_TOKEN_SECRET: 'random_string',
-  REFRESH_TOKEN_EXPIRES_IN: '30m',
-  REFRESH_TOKEN_COOL_DOWN: '1m',
-  LOGIN_TOKEN_SECRET: 'random_string',
-  LOGIN_TOKEN_EXPIRES_IN: '30m',
-  API_TOKEN_EXPIRES_IN: '100y',
-  SHORT_TERM_TOKEN_EXPIRES_IN: '5m',
-  FRONT_AUTH_CALLBACK_URL: '',
-  MESSAGING_PROVIDER_GMAIL_ENABLED: false,
-  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: '',
-  AUTH_GOOGLE_ENABLED: false,
-  AUTH_GOOGLE_CLIENT_ID: '',
-  AUTH_GOOGLE_CLIENT_SECRET: '',
-  AUTH_GOOGLE_CALLBACK_URL: '',
-  STORAGE_TYPE: StorageDriverType.Local,
-  STORAGE_S3_REGION: 'aws-east-1',
-  STORAGE_S3_NAME: '',
-  STORAGE_S3_ENDPOINT: '',
-  STORAGE_LOCAL_PATH: '.local-storage',
-  MESSAGE_QUEUE_TYPE: MessageQueueDriverType.Sync,
-  EMAIL_FROM_ADDRESS: 'noreply@yourdomain.com',
-  EMAIL_SYSTEM_ADDRESS: 'system@yourdomain.com',
-  EMAIL_FROM_NAME: 'John from Twenty',
-  EMAIL_DRIVER: EmailDriver.Logger,
-  EMAIL_SMTP_HOST: '',
-  EMAIL_SMTP_PORT: 587,
-  EMAIL_SMTP_USER: '',
-  EMAIL_SMTP_PASSWORD: '',
-  SUPPORT_DRIVER: SupportDriver.None,
-  SUPPORT_FRONT_CHAT_ID: '',
-  SUPPORT_FRONT_HMAC_KEY: '',
-  LOGGER_DRIVER: LoggerDriverType.Console,
-  EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver.Console,
-  LOG_LEVELS: ['log', 'error', 'warn'],
-  SENTRY_DSN: '',
-  DEMO_WORKSPACE_IDS: [],
-  OPENROUTER_API_KEY: '',
-  PASSWORD_RESET_TOKEN_EXPIRES_IN: '5m',
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: 30,
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: 60,
-  IS_SIGN_UP_DISABLED: false,
-  API_RATE_LIMITING_TTL: 100,
-  API_RATE_LIMITING_LIMIT: 500,
-  MUTATION_MAXIMUM_RECORD_AFFECTED: 100,
-  CACHE_STORAGE_TYPE: 'memory',
-  CACHE_STORAGE_TTL: 3600 * 24 * 7,
-};
+const EnvironmentDefault = new EnvironmentVariables();
+
+EnvironmentDefault.DEBUG_MODE = false;
+EnvironmentDefault.SIGN_IN_PREFILLED = false;
+EnvironmentDefault.IS_BILLING_ENABLED = false;
+EnvironmentDefault.BILLING_PLAN_REQUIRED_LINK = '';
+EnvironmentDefault.BILLING_STRIPE_BASE_PLAN_PRODUCT_ID = '';
+EnvironmentDefault.BILLING_FREE_TRIAL_DURATION_IN_DAYS = 7;
+EnvironmentDefault.BILLING_STRIPE_API_KEY = '';
+EnvironmentDefault.BILLING_STRIPE_WEBHOOK_SECRET = '';
+EnvironmentDefault.TELEMETRY_ENABLED = true;
+EnvironmentDefault.TELEMETRY_ANONYMIZATION_ENABLED = true;
+EnvironmentDefault.PORT = 3000;
+EnvironmentDefault.REDIS_HOST = '127.0.0.1';
+EnvironmentDefault.REDIS_PORT = 6379;
+EnvironmentDefault.PG_DATABASE_URL = '';
+EnvironmentDefault.FRONT_BASE_URL = '';
+EnvironmentDefault.SERVER_URL = '';
+EnvironmentDefault.ACCESS_TOKEN_SECRET = 'random_string';
+EnvironmentDefault.ACCESS_TOKEN_EXPIRES_IN = '30m';
+EnvironmentDefault.REFRESH_TOKEN_SECRET = 'random_string';
+EnvironmentDefault.REFRESH_TOKEN_EXPIRES_IN = '30m';
+EnvironmentDefault.REFRESH_TOKEN_COOL_DOWN = '1m';
+EnvironmentDefault.LOGIN_TOKEN_SECRET = 'random_string';
+EnvironmentDefault.LOGIN_TOKEN_EXPIRES_IN = '30m';
+EnvironmentDefault.API_TOKEN_EXPIRES_IN = '100y';
+EnvironmentDefault.SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
+EnvironmentDefault.FRONT_AUTH_CALLBACK_URL = '';
+EnvironmentDefault.MESSAGING_PROVIDER_GMAIL_ENABLED = false;
+EnvironmentDefault.MESSAGING_PROVIDER_GMAIL_CALLBACK_URL = '';
+EnvironmentDefault.AUTH_GOOGLE_ENABLED = false;
+EnvironmentDefault.AUTH_GOOGLE_CLIENT_ID = '';
+EnvironmentDefault.AUTH_GOOGLE_CLIENT_SECRET = '';
+EnvironmentDefault.AUTH_GOOGLE_CALLBACK_URL = '';
+EnvironmentDefault.STORAGE_TYPE = StorageDriverType.Local;
+EnvironmentDefault.STORAGE_S3_REGION = 'aws-east-1';
+EnvironmentDefault.STORAGE_S3_NAME = '';
+EnvironmentDefault.STORAGE_S3_ENDPOINT = '';
+EnvironmentDefault.STORAGE_LOCAL_PATH = '.local-storage';
+EnvironmentDefault.MESSAGE_QUEUE_TYPE = MessageQueueDriverType.Sync;
+EnvironmentDefault.EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
+EnvironmentDefault.EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
+EnvironmentDefault.EMAIL_FROM_NAME = 'John from Twenty';
+EnvironmentDefault.EMAIL_DRIVER = EmailDriver.Logger;
+EnvironmentDefault.EMAIL_SMTP_HOST = '';
+EnvironmentDefault.EMAIL_SMTP_PORT = 587;
+EnvironmentDefault.EMAIL_SMTP_USER = '';
+EnvironmentDefault.EMAIL_SMTP_PASSWORD = '';
+EnvironmentDefault.SUPPORT_DRIVER = SupportDriver.None;
+EnvironmentDefault.SUPPORT_FRONT_CHAT_ID = '';
+EnvironmentDefault.SUPPORT_FRONT_HMAC_KEY = '';
+EnvironmentDefault.LOGGER_DRIVER = LoggerDriverType.Console;
+EnvironmentDefault.EXCEPTION_HANDLER_DRIVER = ExceptionHandlerDriver.Console;
+EnvironmentDefault.LOG_LEVELS = ['log', 'error', 'warn'];
+EnvironmentDefault.SENTRY_DSN = '';
+EnvironmentDefault.DEMO_WORKSPACE_IDS = [];
+EnvironmentDefault.OPENROUTER_API_KEY = '';
+EnvironmentDefault.PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
+EnvironmentDefault.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 30;
+EnvironmentDefault.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
+EnvironmentDefault.IS_SIGN_UP_DISABLED = false;
+EnvironmentDefault.API_RATE_LIMITING_TTL = 100;
+EnvironmentDefault.API_RATE_LIMITING_LIMIT = 500;
+EnvironmentDefault.MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+EnvironmentDefault.CACHE_STORAGE_TYPE = 'memory';
+EnvironmentDefault.CACHE_STORAGE_TTL = 3600 * 24 * 7;
+
+export { EnvironmentDefault };

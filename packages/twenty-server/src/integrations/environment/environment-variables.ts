@@ -10,6 +10,7 @@ import {
   validateSync,
   IsBoolean,
   IsNumber,
+  IsDefined,
 } from 'class-validator';
 
 import { EmailDriver } from 'src/integrations/email/interfaces/email.interface';
@@ -20,7 +21,6 @@ import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/inter
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/integrations/environment/decorators/is-strictly-lower-than.decorator';
-import { EnvironmentType } from 'src/integrations/environment/envionment.type';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -30,7 +30,7 @@ import { SupportDriver } from './interfaces/support.interface';
 import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
 import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
 
-export class EnvironmentVariables implements EnvironmentType {
+export class EnvironmentVariables {
   // Misc
   @CastToBoolean()
   @IsOptional()
@@ -85,6 +85,7 @@ export class EnvironmentVariables implements EnvironmentType {
   PORT: number;
 
   // Database
+  @IsDefined()
   @IsUrl({
     protocols: ['postgres'],
     require_tld: false,
@@ -235,24 +236,43 @@ export class EnvironmentVariables implements EnvironmentType {
   MUTATION_MAXIMUM_RECORD_AFFECTED: number;
 
   REDIS_HOST: string;
+
   REDIS_PORT: number;
+
   API_TOKEN_EXPIRES_IN: string;
+
   SHORT_TERM_TOKEN_EXPIRES_IN: string;
+
   MESSAGING_PROVIDER_GMAIL_ENABLED: boolean;
+
   MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
+
   MESSAGE_QUEUE_TYPE: string;
+
   EMAIL_FROM_ADDRESS: string;
+
   EMAIL_SYSTEM_ADDRESS: string;
+
   EMAIL_FROM_NAME: string;
+
   EMAIL_DRIVER: EmailDriver;
+
   EMAIL_SMTP_HOST: string;
+
   EMAIL_SMTP_PORT: number;
+
   EMAIL_SMTP_USER: string;
+
   EMAIL_SMTP_PASSWORD: string;
+
   OPENROUTER_API_KEY: string;
+
   API_RATE_LIMITING_TTL: number;
+
   API_RATE_LIMITING_LIMIT: number;
+
   CACHE_STORAGE_TYPE: string;
+
   CACHE_STORAGE_TTL: number;
   CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean;
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;

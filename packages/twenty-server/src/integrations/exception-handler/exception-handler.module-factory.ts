@@ -13,7 +13,7 @@ export const exceptionHandlerModuleFactory = async (
   environmentService: EnvironmentService,
   adapterHost: HttpAdapterHost,
 ): Promise<typeof OPTIONS_TYPE> => {
-  const driverType = environmentService.getExceptionHandlerDriverType();
+  const driverType = environmentService.get('EXCEPTION_HANDLER_DRIVER');
 
   switch (driverType) {
     case ExceptionHandlerDriver.Console: {

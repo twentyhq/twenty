@@ -23,10 +23,12 @@ export class GoogleCalendarClientProvider {
   }
 
   private async getOAuth2Client(refreshToken: string): Promise<OAuth2Client> {
-    const googleCalendarClientId =
-      this.environmentService.getAuthGoogleClientId();
-    const googleCalendarClientSecret =
-      this.environmentService.getAuthGoogleClientSecret();
+    const googleCalendarClientId = this.environmentService.get(
+      'AUTH_GOOGLE_CLIENT_ID',
+    );
+    const googleCalendarClientSecret = this.environmentService.get(
+      'AUTH_GOOGLE_CLIENT_SECRET',
+    );
 
     const oAuth2Client = new google.auth.OAuth2(
       googleCalendarClientId,
