@@ -1,5 +1,7 @@
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
+import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
@@ -65,6 +67,22 @@ export const isFieldValueEmpty = ({
 
   if (isFieldLink(fieldDefinition)) {
     return !isFieldLinkValue(fieldValue) || isValueEmpty(fieldValue?.url);
+  }
+
+  if (isFieldAddress(fieldDefinition)) {
+    return (
+      !isFieldAddressValue(fieldValue) ||
+      isValueEmpty(
+        fieldValue?.addressStreet1 +
+          fieldValue?.addressStreet2 +
+          fieldValue?.addressCity +
+          fieldValue?.addressState +
+          fieldValue?.addressPostcode +
+          fieldValue?.addressCountry +
+          fieldValue?.addressLat +
+          fieldValue?.addressLng,
+      )
+    );
   }
 
   throw new Error(
