@@ -63,7 +63,7 @@ export class TokenService {
     userId: string,
     workspaceId?: string,
   ): Promise<AuthToken> {
-    const expiresIn = this.environmentService.getAccessTokenExpiresIn();
+    const expiresIn = this.environmentService.get('ACCESS_TOKEN_EXPIRES_IN');
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -93,8 +93,8 @@ export class TokenService {
   }
 
   async generateRefreshToken(userId: string): Promise<AuthToken> {
-    const secret = this.environmentService.getRefreshTokenSecret();
-    const expiresIn = this.environmentService.getRefreshTokenExpiresIn();
+    const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
+    const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -124,8 +124,8 @@ export class TokenService {
   }
 
   async generateLoginToken(email: string): Promise<AuthToken> {
-    const secret = this.environmentService.getLoginTokenSecret();
-    const expiresIn = this.environmentService.getLoginTokenExpiresIn();
+    const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -146,8 +146,8 @@ export class TokenService {
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<AuthToken> {
-    const secret = this.environmentService.getLoginTokenSecret();
-    const expiresIn = this.environmentService.getTransientTokenExpiresIn();
+    const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const expiresIn = this.environmentService.get('SHORT_TERM_TOKEN_EXPIRES_IN');
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -176,7 +176,7 @@ export class TokenService {
     const jwtPayload = {
       sub: workspaceId,
     };
-    const secret = this.environmentService.getAccessTokenSecret();
+    const secret = this.environmentService.get('ACCESS_TOKEN_SECRET');
     let expiresIn: string | number;
 
     if (expiresAt) {
@@ -184,7 +184,7 @@ export class TokenService {
         (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
       );
     } else {
-      expiresIn = this.environmentService.getApiTokenExpiresIn();
+      expiresIn = this.environmentService.get('API_TOKEN_EXPIRES_IN');
     }
     const token = this.jwtService.sign(jwtPayload, {
       secret,
@@ -209,7 +209,7 @@ export class TokenService {
     }
     const decoded = await this.verifyJwt(
       token,
-      this.environmentService.getAccessTokenSecret(),
+      this.environmentService.get('ACCESS_TOKEN_SECRET'),
     );
 
     const { user, workspace } = await this.jwtStrategy.validate(
@@ -220,7 +220,7 @@ export class TokenService {
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
-    const loginTokenSecret = this.environmentService.getLoginTokenSecret();
+    const loginTokenSecret = this.environmentService.get('LOGIN_TOKEN_SECRET');
 
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
@@ -231,7 +231,7 @@ export class TokenService {
     workspaceMemberId: string;
     workspaceId: string;
   }> {
-    const transientTokenSecret = this.environmentService.getLoginTokenSecret();
+    const transientTokenSecret = this.environmentService.get('LOGIN_TOKEN_SECRET');
 
     const payload = await this.verifyJwt(transientToken, transientTokenSecret);
 
@@ -281,8 +281,8 @@ export class TokenService {
   }
 
   async verifyRefreshToken(refreshToken: string) {
-    const secret = this.environmentService.getRefreshTokenSecret();
-    const coolDown = this.environmentService.getRefreshTokenCoolDown();
+    const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
+    const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
     const jwtPayload = await this.verifyJwt(refreshToken, secret);
 
     assert(
@@ -382,7 +382,7 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
+    const expiresIn = this.environmentService.get('PASSWORD_RESET_TOKEN_EXPIRES_IN');
 
     assert(
       expiresIn,
@@ -439,7 +439,7 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    const frontBaseURL = this.environmentService.getFrontBaseUrl();
+    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
 
     const emailData = {
@@ -465,7 +465,7 @@ export class TokenService {
     });
 
     this.emailService.send({
-      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      from: `${this.environmentService.get('EMAIL_FROM_NAME')} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
       subject: 'Action Needed to Reset Password',
       text,

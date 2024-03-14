@@ -38,7 +38,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   async run(): Promise<void> {
     try {
       const dataSource = new DataSource({
-        url: this.environmentService.getPGDatabaseUrl(),
+        url: this.environmentService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: true,
         schema: 'core',

@@ -30,9 +30,9 @@ import { AuthService } from './services/auth.service';
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
     return {
-      secret: environmentService.getAccessTokenSecret(),
+      secret: environmentService.get('ACCESS_TOKEN_SECRET'),
       signOptions: {
-        expiresIn: environmentService.getAccessTokenExpiresIn(),
+        expiresIn: environmentService.get('ACCESS_TOKEN_EXPIRES_IN'),
       },
     };
   },

@@ -8,8 +8,8 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 export const cacheStorageModuleFactory = (
   environmentService: EnvironmentService,
 ): CacheModuleOptions => {
-  const cacheStorageType = environmentService.getCacheStorageType();
-  const cacheStorageTtl = environmentService.getCacheStorageTtl();
+  const cacheStorageType = environmentService.get('CACHE_STORAGE_TYPE');
+  const cacheStorageTtl = environmentService.get('CACHE_STORAGE_TTL');
   const cacheModuleOptions: CacheModuleOptions = {
     isGlobal: true,
     ttl: cacheStorageTtl * 1000,
@@ -20,8 +20,8 @@ export const cacheStorageModuleFactory = (
       return cacheModuleOptions;
     }
     case CacheStorageType.Redis: {
-      const host = environmentService.getRedisHost();
-      const port = environmentService.getRedisPort();
+      const host = environmentService.get('REDIS_HOST');
+      const port = environmentService.get('REDIS_PORT');
 
       if (!(host && port)) {
         throw new Error(

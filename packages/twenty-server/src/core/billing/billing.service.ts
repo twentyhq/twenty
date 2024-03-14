@@ -42,7 +42,7 @@ export class BillingService {
 
   getProductStripeId(product: AvailableProduct) {
     if (product === AvailableProduct.BasePlan) {
-      return this.environmentService.getBillingStripeBasePlanProductId();
+      return this.environmentService.get('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID');
     }
   }
 
@@ -98,7 +98,7 @@ export class BillingService {
 
   async getBillingSubscriptionItem(
     workspaceId: string,
-    stripeProductId = this.environmentService.getBillingStripeBasePlanProductId(),
+    stripeProductId = this.environmentService.get('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID'),
   ) {
     const billingSubscription = await this.getCurrentBillingSubscription({
       workspaceId,
@@ -134,7 +134,7 @@ export class BillingService {
         where: { workspaceId },
       });
 
-    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
     const returnUrl = returnUrlPath
       ? frontBaseUrl + returnUrlPath
       : frontBaseUrl;
@@ -154,7 +154,7 @@ export class BillingService {
     priceId: string,
     successUrlPath?: string,
   ): Promise<string> {
-    const frontBaseUrl = this.environmentService.getFrontBaseUrl();
+    const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
     const successUrl = successUrlPath
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;

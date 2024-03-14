@@ -25,9 +25,9 @@ export const exceptionHandlerModuleFactory = async (
       return {
         type: ExceptionHandlerDriver.Sentry,
         options: {
-          dsn: environmentService.getSentryDSN() ?? '',
+          dsn: environmentService.get('SENTRY_DSN') ?? '',
           serverInstance: adapterHost.httpAdapter?.getInstance(),
-          debug: environmentService.isDebugMode(),
+          debug: environmentService.get('DEBUG_MODE'),
         },
       };
     }

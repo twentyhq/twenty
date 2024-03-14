@@ -23,12 +23,13 @@ export class AnalyticsService {
     workspace: Workspace | undefined,
     request: Request,
   ) {
-    if (!this.environmentService.isTelemetryEnabled()) {
+    if (!this.environmentService.get('TELEMETRY_ENABLED')) {
       return { success: true };
     }
 
-    const anonymizationEnabled =
-      this.environmentService.isTelemetryAnonymizationEnabled();
+    const anonymizationEnabled = this.environmentService.get(
+      'TELEMETRY_ANONYMIZATION_ENABLED',
+    );
 
     const data = {
       type: createEventInput.type,
