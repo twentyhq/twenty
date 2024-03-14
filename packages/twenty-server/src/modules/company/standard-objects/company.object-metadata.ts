@@ -50,7 +50,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.address,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.ADDRESS,
     label: 'Address',
     description: 'The company address',
     icon: 'IconMap',

@@ -62,7 +62,7 @@ export function generateTargetColumnMap(
         addressState: `${columnName}AddressState`,
         addressCountry: `${columnName}AddressCountry`,
         addressLat: `${columnName}AddressLat`,
-        addressLong: `${columnName}AddressLong`,
+        addressLng: `${columnName}AddressLong`,
       };
     case FieldMetadataType.RELATION:
       return {};
