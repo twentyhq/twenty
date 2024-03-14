@@ -36,12 +36,11 @@ export class RecordPositionBackfillService {
       position,
       objectMetadata as ObjectMetadataInterface,
       dataSourceSchema,
-      recordId,
     );
 
     this.workspaceDataSourceService.executeRawQuery(
       query,
-      [],
+      [position, recordId],
       workspaceId,
       undefined,
     );

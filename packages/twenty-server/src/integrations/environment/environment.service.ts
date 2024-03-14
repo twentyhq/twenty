@@ -155,10 +155,21 @@ export class EnvironmentService {
     );
   }
 
+  isCalendarProviderGoogleEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('CALENDAR_PROVIDER_GOOGLE_ENABLED') ??
+      false
+    );
+  }
+
   getMessagingProviderGmailCallbackUrl(): string | undefined {
     return this.configService.get<string>(
       'MESSAGING_PROVIDER_GMAIL_CALLBACK_URL',
     );
+  }
+
+  getAuthGoogleAPIsCallbackUrl(): string | undefined {
+    return this.configService.get<string>('AUTH_GOOGLE_APIS_CALLBACK_URL');
   }
 
   isAuthGoogleEnabled(): boolean {

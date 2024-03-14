@@ -12,6 +12,7 @@ import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarEventAttendeeObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/calendar-event-attendee.object-metadata';
+import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { calendarEventStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -62,7 +63,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Start DateTime',
     icon: 'IconCalendarClock',
   })
-  startsAt: string;
+  @IsNullable()
+  startsAt: string | null;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.endsAt,
@@ -71,7 +73,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'End DateTime',
     icon: 'IconCalendarClock',
   })
-  endsAt: string;
+  @IsNullable()
+  endsAt: string | null;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.externalCreatedAt,
@@ -80,7 +83,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Creation DateTime',
     icon: 'IconCalendarPlus',
   })
-  externalCreatedAt: string;
+  @IsNullable()
+  externalCreatedAt: string | null;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.externalUpdatedAt,
@@ -89,7 +93,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     description: 'Update DateTime',
     icon: 'IconCalendarCog',
   })
-  externalUpdatedAt: string;
+  @IsNullable()
+  externalUpdatedAt: string | null;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.description,
