@@ -12,14 +12,14 @@ export class StripeService {
 
   constructor(private readonly environmentService: EnvironmentService) {
     this.stripe = new Stripe(
-      this.environmentService.getBillingStripeApiKey(),
+      this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},
     );
   }
 
   constructEventFromPayload(signature: string, payload: Buffer) {
     const webhookSecret =
-      this.environmentService.getBillingStripeWebhookSecret();
+      this.environmentService.get('BILLING_STRIPE_WEBHOOK_SECRET');
 
     return this.stripe.webhooks.constructEvent(
       payload,
@@ -48,7 +48,7 @@ export class StripeService {
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrl ?? this.environmentService.getFrontBaseUrl(),
+      return_url: returnUrl ?? this.environmentService.get('FRONT_BASE_URL'),
     });
   }
 
@@ -73,7 +73,7 @@ export class StripeService {
           workspaceId: user.defaultWorkspace.id,
         },
         trial_period_days:
-          this.environmentService.getBillingFreeTrialDurationInDays(),
+          this.environmentService.get('BILLING_FREE_TRIAL_DURATION_IN_DAYS'),
       },
       automatic_tax: { enabled: true },
       tax_id_collection: { enabled: true },

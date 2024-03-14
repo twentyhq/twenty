@@ -53,7 +53,7 @@ const bootstrap = async () => {
     }),
   );
 
-  await app.listen(app.get(EnvironmentService).getPort());
+  await app.listen(app.get(EnvironmentService).get('PORT'));
 };
 
 bootstrap();

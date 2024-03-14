@@ -19,14 +19,14 @@ export class DataSeedDemoWorkspaceService {
   async seedDemo(): Promise<void> {
     try {
       const dataSource = new DataSource({
-        url: this.environmentService.getPGDatabaseUrl(),
+        url: this.environmentService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: true,
         schema: 'public',
       });
 
       await dataSource.initialize();
-      const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+      const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
       if (demoWorkspaceIds.length === 0) {
         throw new Error(

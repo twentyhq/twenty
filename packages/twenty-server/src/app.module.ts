@@ -1,6 +1,10 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
@@ -26,6 +30,22 @@ import { GraphQLConfigModule } from './graphql-config/graphql-config.module';
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,
+    ...AppModule.getConditionalModules(),
   ],
 })
-export class AppModule {}
+export class AppModule {
+  private static getConditionalModules(): DynamicModule[] {
+    const modules: DynamicModule[] = [];
+    const frontPath = join(__dirname, '..', 'front');
+
+    if (existsSync(frontPath)) {
+      modules.push(
+        ServeStaticModule.forRoot({
+          rootPath: frontPath,
+        }),
+      );
+    }
+
+    return modules;
+  }
+}

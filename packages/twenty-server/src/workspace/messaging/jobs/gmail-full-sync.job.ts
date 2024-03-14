@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { GoogleAPIsRefreshAccessTokenService } from 'src/workspace/calendar-and-messaging/services/google-apis-refresh-access-token.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 
 export type GmailFullSyncJobData = {
@@ -16,7 +16,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
   private readonly logger = new Logger(GmailFullSyncJob.name);
 
   constructor(
-    private readonly gmailRefreshAccessTokenService: GmailRefreshAccessTokenService,
+    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIsRefreshAccessTokenService,
     private readonly gmailFullSyncService: GmailFullSyncService,
   ) {}
 
@@ -28,7 +28,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
     );
 
     try {
-      await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
+      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
         data.workspaceId,
         data.connectedAccountId,
       );

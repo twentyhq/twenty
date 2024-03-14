@@ -13,7 +13,9 @@ export function IsValidName(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return /^(?!(?:not|or|and)$)[^'\"\\;.=*/]+$/.test(value);
+          return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'\"\\;.=*/]+$/.test(
+            value,
+          );
         },
         defaultMessage(args: ValidationArguments) {
           return `${args.property} has failed the name validation check`;

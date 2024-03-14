@@ -12,13 +12,13 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
