@@ -19,6 +19,7 @@ import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
+import { useSetAllRowSelectedState } from './internal/useSetAllRowSelectedState';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
@@ -113,6 +114,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const setRowSelectedState = useSetRowSelectedState(recordTableId);
+
+  const setAllRowSelectedState = useSetAllRowSelectedState(recordTableId);
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
@@ -213,5 +216,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setSoftFocusPosition,
     isSomeCellInEditModeState,
     getSelectedRowIdsSelector,
+    setAllRowSelectedState,
   };
 };
