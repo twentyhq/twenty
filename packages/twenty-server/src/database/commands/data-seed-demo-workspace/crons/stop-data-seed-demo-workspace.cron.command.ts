@@ -8,10 +8,10 @@ import { MessageQueue } from 'src/integrations/message-queue/message-queue.const
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 
 @Command({
-  name: 'workspace:cron:seed:demo',
-  description: 'Seed workspace with demo data.',
+  name: 'workspace-seed-demo:cron:stop',
+  description: 'Stop cron to seed workspace with demo data.',
 })
-export class DataSeedDemoWorkspaceCronCommand extends CommandRunner {
+export class StopDataSeedDemoWorkspaceCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -20,9 +20,8 @@ export class DataSeedDemoWorkspaceCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.addCron<undefined>(
+    await this.messageQueueService.removeCron(
       DataSeedDemoWorkspaceJob.name,
-      undefined,
       dataSeedDemoWorkspaceCronPattern,
     );
   }
