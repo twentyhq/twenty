@@ -9,6 +9,7 @@ WORKDIR /app
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
+COPY ./tsconfig.base.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-emails /app/packages/twenty-emails
