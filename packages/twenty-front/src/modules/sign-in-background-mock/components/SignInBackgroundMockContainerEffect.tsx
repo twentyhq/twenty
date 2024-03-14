@@ -22,9 +22,6 @@ export const SignInBackgroundMockContainerEffect = ({
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
-  console.log({
-    objectNamePlural,
-  });
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
