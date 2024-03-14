@@ -16,7 +16,8 @@ export default defineManifest({
 
   action: {},
 
-  options_page: 'options.html',
+  //TODO: change this to a documenation page
+  options_page: 'loading.html',
 
   background: {
     service_worker: 'src/background/index.ts',
