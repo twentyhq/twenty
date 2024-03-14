@@ -92,15 +92,15 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
     case FieldMetadataType.ADDRESS: {
       const address1: NodeField = {
         type: 'TEXT',
-        name: 'address1',
-        label: 'Address 1',
-        description: 'Address 1',
+        name: 'addressStreet1',
+        label: 'Address',
+        description: 'Address',
         isNullable: true,
         defaultValue: null,
       };
       const address2: NodeField = {
         type: 'TEXT',
-        name: 'address2',
+        name: 'addressStreet2',
         label: 'Address 2',
         description: 'Address 2',
         isNullable: true,
@@ -108,7 +108,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       const city: NodeField = {
         type: 'TEXT',
-        name: 'city',
+        name: 'addressCity',
         label: 'City',
         description: 'City',
         isNullable: true,
@@ -116,7 +116,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       const state: NodeField = {
         type: 'TEXT',
-        name: 'state',
+        name: 'addressState',
         label: 'State',
         description: 'State',
         isNullable: true,
@@ -124,7 +124,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       const postalCode: NodeField = {
         type: 'TEXT',
-        name: 'postalCode',
+        name: 'addressPostalCode',
         label: 'Postal Code',
         description: 'Postal Code',
         isNullable: true,
@@ -132,7 +132,7 @@ const get_subfieldsFromField = (nodeField: NodeField): NodeField[] => {
       };
       const country: NodeField = {
         type: 'TEXT',
-        name: 'country',
+        name: 'addressCountry',
         label: 'Country',
         description: 'Country',
         isNullable: true,
