@@ -5,7 +5,7 @@ export const valuesStringForBatchRawQuery = (
   typesArray: string[] = [],
 ) => {
   const castedValues = values.reduce((acc, _, rowIndex) => {
-    const numberOfColumns = Object.keys(values[0]).length;
+    const numberOfColumns = typesArray.length;
 
     const rowValues = Array.from(
       { length: numberOfColumns },

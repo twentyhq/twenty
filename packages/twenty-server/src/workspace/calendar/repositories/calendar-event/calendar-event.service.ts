@@ -124,7 +124,7 @@ export class CalendarEventService {
 
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(calendarEvents, {
-        id: 'text',
+        id: 'uuid',
         title: 'text',
         isCanceled: 'boolean',
         isFullDay: 'boolean',

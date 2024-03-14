@@ -155,8 +155,8 @@ export class CalendarChannelEventAssociationService {
     } = getFlattenedValuesAndValuesStringForBatchRawQuery(
       calendarChannelEventAssociations,
       {
-        calendarChannelId: 'text',
-        calendarEventId: 'text',
+        calendarChannelId: 'uuid',
+        calendarEventId: 'uuid',
         eventExternalId: 'text',
       },
     );
