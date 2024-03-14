@@ -111,7 +111,7 @@ export const useExportTableData = ({
   const { getVisibleTableColumnsSelector } =
     useRecordTableStates(recordIndexId);
   const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const params = useFindManyParams(objectNameSingular);
+  const params = useFindManyParams(objectNameSingular, recordIndexId);
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...params,
     limit: pageSize,

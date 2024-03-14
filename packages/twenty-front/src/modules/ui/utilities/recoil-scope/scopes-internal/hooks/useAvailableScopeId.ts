@@ -16,5 +16,7 @@ export const useAvailableScopeIdOrThrow = <T extends { scopeId: string }>(
     return scopeIdFromProps;
   } else if (isNonEmptyString(scopeIdFromContext)) {
     return scopeIdFromContext;
+  } else {
+    throw new Error('Scope id is not provided and cannot be found in context.');
   }
 };
