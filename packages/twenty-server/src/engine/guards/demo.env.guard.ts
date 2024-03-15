@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { getRequest } from 'src/utils/extract-request';
 
 @Injectable()
@@ -18,6 +18,7 @@ export class DemoEnvGuard extends AuthGuard(['jwt']) {
     return getRequest(context);
   }
 
+  // TODO: input should be typed
   handleRequest(err: any, user: any) {
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
     const currentUserWorkspaceId = user?.workspace?.id;
