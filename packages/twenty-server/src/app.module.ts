@@ -2,7 +2,6 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -20,9 +19,9 @@ import { GraphQLConfigModule } from './engine-graphql-config/graphql-config.modu
 
 @Module({
   imports: [
-    DevtoolsModule.register({
-      http: process.env.NODE_ENV !== 'production',
-    }),
+    // DevtoolsModule.register({
+    //   http: process.env.NODE_ENV !== 'production',
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
