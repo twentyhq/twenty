@@ -49,8 +49,8 @@ type NavigationDrawerHeaderProps = {
 };
 
 export const NavigationDrawerHeader = ({
-  name: placeholderName = DEFAULT_WORKSPACE_NAME,
-  logo: placeholderLogo = DEFAULT_WORKSPACE_LOGO,
+  name = DEFAULT_WORKSPACE_NAME,
+  logo = DEFAULT_WORKSPACE_LOGO,
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
@@ -62,8 +62,8 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <>
-          <StyledLogo logo={placeholderLogo} />
-          <StyledName>{placeholderName}</StyledName>
+          <StyledLogo logo={logo} />
+          <StyledName>{name}</StyledName>
         </>
       )}
 
