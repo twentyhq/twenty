@@ -36,7 +36,7 @@ const createIframe = () => {
   return iframe;
 };
 
-const onContentIframeLoadComplete = () => {
+const handleContentIframeLoadComplete = () => {
   //If the pop-out window is already open then we replace loading iframe with our content iframe
   if (loadingIframe.style.right === '0px') contentIframe.style.right = '0px';
   loadingIframe.style.display = 'none';
@@ -47,7 +47,7 @@ const onContentIframeLoadComplete = () => {
 const contentIframe = createIframe();
 contentIframe.style.display = 'none';
 contentIframe.src = `${import.meta.env.VITE_FRONT_BASE_URL}`;
-contentIframe.onload = onContentIframeLoadComplete;
+contentIframe.onload = handleContentIframeLoadComplete;
 
 //Creating this iframe to show as a loading state until the above iframe loads completely
 const loadingIframe = createIframe();

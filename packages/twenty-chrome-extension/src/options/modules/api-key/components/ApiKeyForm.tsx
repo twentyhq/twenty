@@ -74,10 +74,6 @@ export const ApiKeyForm = () => {
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.set({ apiKey });
-  }, [apiKey]);
-
-  useEffect(() => {
     if (import.meta.env.VITE_SERVER_BASE_URL !== route) {
       chrome.storage.local.set({ serverBaseUrl: route });
     } else {
@@ -85,10 +81,12 @@ export const ApiKeyForm = () => {
     }
   }, [route]);
 
+  const handleValidateKey = () => {
+    chrome.storage.local.set({ apiKey });
+  };
+
   const handleGenerateClick = () => {
-    window.open(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers/api-keys`,
-    );
+    window.open(`${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers`);
   };
 
   const handleToggle = () => {
@@ -122,6 +120,17 @@ export const ApiKeyForm = () => {
           soon={false}
           disabled={false}
           onClick={handleGenerateClick}
+        />
+        <Button
+          title="Use this key"
+          fullWidth={false}
+          variant="primary"
+          accent="default"
+          size="small"
+          position="standalone"
+          soon={false}
+          disabled={false}
+          onClick={handleValidateKey}
         />
       </StyledMain>
 

@@ -15,6 +15,7 @@ const insertButtonForCompany = (): void => {
     const newButtonCompany: HTMLButtonElement = createNewButton(
       'Add to Twenty',
       async () => {
+        console.log('1');
         // Extract company-specific data from the DOM
         const companyNameElement = document.querySelector(
           '.org-top-card-summary__title',
@@ -28,6 +29,7 @@ const insertButtonForCompany = (): void => {
         const employeesNumberElement = document.querySelectorAll(
           '.org-top-card-summary-info-list__info-item',
         )[3];
+        console.log('2');
 
         // Get the text content or other necessary data from the DOM elements
         const companyName = companyNameElement
@@ -57,10 +59,14 @@ const insertButtonForCompany = (): void => {
           linkedinLink: { url: '', label: '' },
         };
 
+        console.log('3');
+
         // Extract active tab url using chrome API - an event is triggered here and is caught by background script.
         const { url: activeTabUrl } = await chrome.runtime.sendMessage({
           action: 'getActiveTabUrl',
         });
+
+        console.log('4');
 
         // Convert URLs like https://www.linkedin.com/company/twenty/about/ to https://www.linkedin.com/company/twenty
         const companyURL = extractCompanyLinkedinLink(activeTabUrl);

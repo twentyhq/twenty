@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Loader } from '@/ui/display/loader/components/Loader';
+import Options from '~/options/Options';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -15,8 +15,7 @@ const StyledContainer = styled.div`
 const Loading = () => {
   return (
     <StyledContainer>
-      <img src="/logo/32-32.svg" alt="twenty-logo" height={64} width={64} />
-      <Loader />
+      <Options />
     </StyledContainer>
   );
 };
