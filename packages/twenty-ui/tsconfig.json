@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2023", "ES2023.Array"],
     "module": "commonjs",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -10,8 +11,9 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
     "composite": true,
-    "declaration": true
-    },
+    "declaration": true,
+    "esModuleInterop": true
+  },
   "files": [],
   "include": [],
   "references": [
