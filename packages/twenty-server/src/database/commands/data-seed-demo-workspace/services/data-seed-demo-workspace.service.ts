@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
@@ -19,14 +19,15 @@ export class DataSeedDemoWorkspaceService {
   async seedDemo(): Promise<void> {
     try {
       const dataSource = new DataSource({
-        url: this.environmentService.getPGDatabaseUrl(),
+        url: this.environmentService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: true,
         schema: 'public',
       });
 
       await dataSource.initialize();
-      const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+      const demoWorkspaceIds =
+        this.environmentService.get('DEMO_WORKSPACE_IDS');
 
       if (demoWorkspaceIds.length === 0) {
         throw new Error(

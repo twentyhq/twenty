@@ -8,17 +8,17 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 export const emailModuleFactory = (
   environmentService: EnvironmentService,
 ): EmailModuleOptions => {
-  const driver = environmentService.getEmailDriver();
+  const driver = environmentService.get('EMAIL_DRIVER');
 
   switch (driver) {
     case EmailDriver.Logger: {
       return;
     }
     case EmailDriver.Smtp: {
-      const host = environmentService.getEmailHost();
-      const port = environmentService.getEmailPort();
-      const user = environmentService.getEmailUser();
-      const pass = environmentService.getEmailPassword();
+      const host = environmentService.get('EMAIL_SMTP_HOST');
+      const port = environmentService.get('EMAIL_SMTP_PORT');
+      const user = environmentService.get('EMAIL_SMTP_USER');
+      const pass = environmentService.get('EMAIL_SMTP_PASSWORD');
 
       if (!(host && port)) {
         throw new Error(

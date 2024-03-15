@@ -10,6 +10,7 @@ export enum OnboardingStatus {
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
   Completed = 'completed',
+  CompletedWithoutSubscription = 'completed_without_subscription',
 }
 
 export const getOnboardingStatus = ({
@@ -73,6 +74,13 @@ export const getOnboardingStatus = ({
     currentWorkspace.subscriptionStatus === 'unpaid'
   ) {
     return OnboardingStatus.Unpaid;
+  }
+
+  if (
+    isBillingEnabled === true &&
+    !currentWorkspace.currentBillingSubscription
+  ) {
+    return OnboardingStatus.CompletedWithoutSubscription;
   }
 
   return OnboardingStatus.Completed;

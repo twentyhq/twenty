@@ -14,11 +14,11 @@ import {
 export const fileStorageModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<FileStorageModuleOptions> => {
-  const driverType = environmentService.getStorageDriverType();
+  const driverType = environmentService.get('STORAGE_TYPE');
 
   switch (driverType) {
     case StorageDriverType.Local: {
-      const storagePath = environmentService.getStorageLocalPath();
+      const storagePath = environmentService.get('STORAGE_LOCAL_PATH');
 
       return {
         type: StorageDriverType.Local,
@@ -28,9 +28,9 @@ export const fileStorageModuleFactory = async (
       };
     }
     case StorageDriverType.S3: {
-      const bucketName = environmentService.getStorageS3Name();
-      const endpoint = environmentService.getStorageS3Endpoint();
-      const region = environmentService.getStorageS3Region();
+      const bucketName = environmentService.get('STORAGE_S3_NAME');
+      const endpoint = environmentService.get('STORAGE_S3_ENDPOINT');
+      const region = environmentService.get('STORAGE_S3_REGION');
 
       return {
         type: StorageDriverType.S3,
