@@ -165,6 +165,7 @@ export class EnvironmentVariables {
 
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsString()
+  @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
   @IsString()

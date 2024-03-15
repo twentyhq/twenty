@@ -13,10 +13,15 @@ COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn
 
 RUN npx nx reset
+RUN npx nx run twenty-server:build
+RUN mv /app/packages/twenty-server/dist /app/packages/twenty-server/build
 RUN npx nx run twenty-server:build:packageJson
 RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json
-RUN npx nx run twenty-server:build
-RUN yarn workspaces focus twenty-emails twenty-server
+RUN rm -rf /app/packages/twenty-server/dist
+RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
+
+WORKDIR /app
+RUN yarn workspaces focus --production twenty-emails twenty-server
 
 FROM node:18.17.1-alpine as twenty-server
 
