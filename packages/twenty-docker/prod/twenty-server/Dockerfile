@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as twenty-server
+FROM node:18.16.0-alpine as twenty-server-build
 
 WORKDIR /app
 
@@ -6,15 +6,24 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./tsconfig.base.json .
+COPY ./nx.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
-RUN yarn workspaces focus twenty-emails twenty-server
+RUN yarn
+
 RUN npx nx reset
 RUN npx nx run twenty-server:build:packageJson
 RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json
-RUN yarn workspaces focus twenty-emails twenty-server
 RUN npx nx run twenty-server:build
+RUN rm -rf /app/node_modules
+
+FROM node:18.17.1-alpine as twenty-server
+
+COPY --from=twenty-server-build /app /app
+WORKDIR /app
+
+RUN yarn workspaces focus twenty-emails twenty-server
 
 WORKDIR /app/packages/twenty-server
 
