@@ -120,4 +120,17 @@ export class WorkspaceResolver {
       workspaceId: workspace.id,
     });
   }
+
+  @Mutation(() => String)
+  async removeWorkspaceMember(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Args('memberId') memberId: string,
+  ) {
+    const workspaceMemberId = await this.workspaceService.removeWorkspaceMember(
+      workspaceId,
+      memberId,
+    );
+
+    return workspaceMemberId;
+  }
 }

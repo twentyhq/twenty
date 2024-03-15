@@ -12,6 +12,7 @@ import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { UserWorkspaceModule } from 'src/core/user-workspace/user-workspace.module';
 import { BillingModule } from 'src/core/billing/billing.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 
 import { Workspace } from './workspace.entity';
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -31,6 +32,8 @@ import { WorkspaceService } from './services/workspace.service';
         ),
         UserWorkspaceModule,
         WorkspaceManagerModule,
+        DataSourceModule,
+        TypeORMModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

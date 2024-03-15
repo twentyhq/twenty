@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 import assert from 'assert';
 
@@ -13,6 +13,8 @@ import { ActivateWorkspaceInput } from 'src/core/workspace/dtos/activate-workspa
 import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/core/user-workspace/user-workspace.service';
 import { BillingService } from 'src/core/billing/billing.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -25,6 +27,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
   ) {
     super(workspaceRepository);
   }
@@ -69,5 +73,76 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return this.workspaceRepository
       .find()
       .then((workspaces) => workspaces.map((workspace) => workspace.id));
+  }
+
+  async removeWorkspaceMember(workspaceId: string, memberId: string) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    const [workspaceMember] = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
+    );
+
+    if (!workspaceMember) {
+      throw new NotFoundException('Member not found.');
+    }
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
+    );
+
+    if (workspaceMember.userId) {
+      const workspaceMemberUser = await this.userRepository.findOne({
+        where: {
+          id: workspaceMember.userId,
+        },
+        relations: ['defaultWorkspace'],
+      });
+
+      assert(workspaceMemberUser, 'User not found');
+
+      const userWorkspaces = await this.userWorkspaceRepository.find({
+        where: { userId: workspaceMemberUser.id },
+        relations: ['workspace'],
+      });
+
+      if (userWorkspaces.length > 1) {
+        if (workspaceMemberUser.defaultWorkspace.id === workspaceId) {
+          const filteredUserWorkspaces = userWorkspaces.filter(
+            (workspace) => workspace.workspaceId !== workspaceId,
+          );
+
+          const nextWorkspace = await this.workspaceRepository.findOneBy({
+            id: filteredUserWorkspaces[0].workspaceId,
+          });
+
+          assert(nextWorkspace, 'Cannot assign new workspace to user.');
+
+          if (nextWorkspace) {
+            await this.userRepository.save({
+              id: workspaceMemberUser.id,
+              defaultWorkspace: nextWorkspace,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+        await this.userWorkspaceRepository.delete({
+          userId: workspaceMemberUser.id,
+          workspaceId,
+        });
+      } else {
+        await this.userWorkspaceRepository.delete({
+          userId: workspaceMemberUser.id,
+        });
+        await this.userRepository.delete({ id: workspaceMemberUser.id });
+      }
+    }
+
+    return memberId;
   }
 }

@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
@@ -18,6 +17,8 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useRemoveWorkspaceMemberMutation } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -35,18 +36,32 @@ export const SettingsWorkspaceMembers = () => {
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
   >();
+  const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMember[]>();
 
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+  const { records } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+
+  useEffect(() => {
+    setWorkspaceMembers(records);
+  }, [records]);
+
+  const [removeWorkspaceMember] = useRemoveWorkspaceMemberMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState());
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
-    await deleteOneWorkspaceMember?.(workspaceMemberId);
+    const removed = await removeWorkspaceMember({
+      variables: {
+        memberId: workspaceMemberId,
+      },
+    });
+    if (isDefined(removed.data?.removeWorkspaceMember)) {
+      const updatedWorkspaceMembers = workspaceMembers?.filter(
+        (member) => member.id !== removed.data?.removeWorkspaceMember,
+      );
+      setWorkspaceMembers(updatedWorkspaceMembers);
+    }
     setIsConfirmationModalOpen(false);
   };
 
