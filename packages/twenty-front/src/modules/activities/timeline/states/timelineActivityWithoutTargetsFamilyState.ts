@@ -5,6 +5,6 @@ export const timelineActivityWithoutTargetsFamilyState = createFamilyState<
   Pick<Activity, 'id' | 'title' | 'createdAt' | 'author' | 'type'> | null,
   string
 >({
-  key: 'timelineActivityFirstLevelFamilySelector',
+  key: 'timelineActivityWithoutTargetsFamilyState',
   defaultValue: null,
 });
