@@ -51,6 +51,12 @@ const StyledSection = styled.div<{ showSection: boolean }>`
   max-height: ${({ showSection }) => (showSection ? '200px' : '0')};
 `;
 
+const StyledButtonVerticalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+`;
+
 export const ApiKeyForm = () => {
   const [apiKey, setApiKey] = useState('');
   const [route, setRoute] = useState('');
@@ -83,6 +89,8 @@ export const ApiKeyForm = () => {
 
   const handleValidateKey = () => {
     chrome.storage.local.set({ apiKey });
+
+    window.close();
   };
 
   const handleGenerateClick = () => {
@@ -110,28 +118,30 @@ export const ApiKeyForm = () => {
           onChange={setApiKey}
           placeholder="My API key"
         />
-        <Button
-          title="Generate a key"
-          fullWidth={false}
-          variant="primary"
-          accent="default"
-          size="small"
-          position="standalone"
-          soon={false}
-          disabled={false}
-          onClick={handleGenerateClick}
-        />
-        <Button
-          title="Use this key"
-          fullWidth={false}
-          variant="primary"
-          accent="default"
-          size="small"
-          position="standalone"
-          soon={false}
-          disabled={false}
-          onClick={handleValidateKey}
-        />
+        <StyledButtonVerticalContainer>
+          <Button
+            title="Generate a key"
+            fullWidth={false}
+            variant="primary"
+            accent="default"
+            size="small"
+            position="standalone"
+            soon={false}
+            disabled={false}
+            onClick={handleGenerateClick}
+          />
+          <Button
+            title="Validate key"
+            fullWidth={false}
+            variant="primary"
+            accent="default"
+            size="small"
+            position="standalone"
+            soon={false}
+            disabled={apiKey === ''}
+            onClick={handleValidateKey}
+          />
+        </StyledButtonVerticalContainer>
       </StyledMain>
 
       <StyledFooter>
