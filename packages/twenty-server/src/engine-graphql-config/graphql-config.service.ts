@@ -22,9 +22,9 @@ import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playgroun
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { useExceptionHandler } from 'src/engine/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { User } from 'src/engine/modules/user/user.entity';
-import { useThrottler } from 'src/engine/hooks/use-throttler';
+import { useThrottler } from 'src/engine-graphql-config/hooks/use-throttler';
 import { JwtData } from 'src/engine/modules/auth/types/jwt-data.type';
-import { useSentryTracing } from 'src/engine/integrations/tracing/use-sentry-tracing';
+import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 

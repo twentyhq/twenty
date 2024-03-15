@@ -5,7 +5,7 @@ import { CreateContextFactory } from 'src/engine-graphql-config/factories/create
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { useExceptionHandler } from 'src/engine/integrations/exception-handler/hooks/use-exception-handler.hook';
-import { useThrottler } from 'src/engine/hooks/use-throttler';
+import { useThrottler } from 'src/engine-graphql-config/hooks/use-throttler';
 import { MetadataModule } from 'src/engine-metadata/metadata.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
