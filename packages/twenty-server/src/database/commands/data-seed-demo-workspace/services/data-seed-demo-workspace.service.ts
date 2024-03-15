@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
@@ -26,7 +26,8 @@ export class DataSeedDemoWorkspaceService {
       });
 
       await dataSource.initialize();
-      const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
+      const demoWorkspaceIds =
+        this.environmentService.get('DEMO_WORKSPACE_IDS');
 
       if (demoWorkspaceIds.length === 0) {
         throw new Error(

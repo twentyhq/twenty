@@ -1,4 +1,4 @@
-import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 export type CreatedObjectMetadata = {
   nameSingular: string;

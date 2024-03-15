@@ -6,13 +6,13 @@ import {
   Plugin,
 } from '@envelop/core';
 
-import { GraphQLContext } from 'src/graphql-config/interfaces/graphql-context.interface';
+import { GraphQLContext } from 'src/engine-graphql-config/interfaces/graphql-context.interface';
 
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import {
   convertExceptionToGraphQLError,
   filterException,
-} from 'src/filters/utils/global-exception-handler.util';
+} from 'src/engine/filters/utils/global-exception-handler.util';
 
 export type ExceptionHandlerPluginOptions = {
   /**

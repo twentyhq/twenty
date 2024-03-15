@@ -6,7 +6,7 @@ import {
 } from '@envelop/core';
 import { OperationDefinitionNode, Kind, print } from 'graphql';
 
-import { GraphQLContext } from 'src/graphql-config/graphql-config.service';
+import { GraphQLContext } from 'src/engine-graphql-config/graphql-config.service';
 
 export const useSentryTracing = <
   PluginContext extends GraphQLContext,

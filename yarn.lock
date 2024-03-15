@@ -7957,6 +7957,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/devtools-integration@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "@nestjs/devtools-integration@npm:0.1.6"
+  dependencies:
+    chalk: "npm:^4.1.2"
+    node-fetch: "npm:^2.6.9"
+  peerDependencies:
+    "@nestjs/common": ^9.3.7 || ^10.0.0
+    "@nestjs/core": ^9.3.7 || ^10.0.0
+  checksum: 7a8e5297469a6105fedd2283c5de21ff07bfa8b4d173faf540cc935ae67cbce7cf3fc14485e9ef4c3c6c85be9aa9e28bd5838dc236f8800dfdabc61899e1eba8
+  languageName: node
+  linkType: hard
+
 "@nestjs/event-emitter@npm:^2.0.3":
   version: 2.0.3
   resolution: "@nestjs/event-emitter@npm:2.0.3"
@@ -45749,6 +45762,7 @@ __metadata:
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@nestjs/cache-manager": "npm:^2.2.1"
     "@nestjs/cli": "npm:10.3.0"
+    "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@nx/js": "npm:17.2.8"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
