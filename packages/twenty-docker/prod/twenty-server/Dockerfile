@@ -16,14 +16,11 @@ RUN npx nx reset
 RUN npx nx run twenty-server:build:packageJson
 RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json
 RUN npx nx run twenty-server:build
-RUN rm -rf /app/node_modules
+RUN yarn workspaces focus twenty-emails twenty-server
 
 FROM node:18.17.1-alpine as twenty-server
 
 COPY --from=twenty-server-build /app /app
-WORKDIR /app
-
-RUN yarn workspaces focus twenty-emails twenty-server
 
 WORKDIR /app/packages/twenty-server
 
