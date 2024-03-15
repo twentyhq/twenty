@@ -2,10 +2,9 @@ import { useRecoilValue } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ALL_FAVORITES_QUERY_KEY } from '@/prefetch/query-keys/AllFavoritesQueryKey';
-import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
+import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
 export const usePrefetchedData = <T extends ObjectRecord>(
   prefetchKey: PrefetchKey,
@@ -13,7 +12,7 @@ export const usePrefetchedData = <T extends ObjectRecord>(
   const isDataPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(prefetchKey),
   );
-  const prefetchQueryKey = computeQueryKey(prefetchKey);
+  const prefetchQueryKey = PREFETCH_CONFIG[prefetchKey];
 
   const { records } = useFindManyRecords<T>({
     skip: !isDataPrefetched,
@@ -25,19 +24,4 @@ export const usePrefetchedData = <T extends ObjectRecord>(
     isDataPrefetched,
     records,
   };
-};
-
-const computeQueryKey = (prefetchKey: PrefetchKey) => {
-  const computedQueryKey =
-    prefetchKey === PrefetchKey.AllViews
-      ? ALL_VIEWS_QUERY_KEY
-      : prefetchKey === PrefetchKey.AllFavorites
-        ? ALL_FAVORITES_QUERY_KEY
-        : null;
-
-  if (!computedQueryKey) {
-    throw new Error(`Unknown prefetch key: ${prefetchKey}`);
-  }
-
-  return computedQueryKey;
 };

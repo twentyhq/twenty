@@ -1,35 +1,29 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
-import { useSetRecoilState } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
-import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
-import { ALL_FAVORITES_QUERY_KEY } from '@/prefetch/query-keys/AllFavoritesQueryKey';
-import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
-import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
+import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
-  const setPrefetchAreViewsLoaded = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
-  );
-  const setPrefetchAreFavoritesLoaded = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
-  );
-
-  const { objectMetadataItem: objectMetadataItemView } = useObjectMetadataItem({
+  const {
+    objectMetadataItem: objectMetadataItemView,
+    upsertRecordsInCache: upsertViewsInCache,
+  } = usePrefetchRunQuery({
+    prefetchKey: PrefetchKey.AllViews,
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
-  const { objectMetadataItem: objectMetadataItemFavorite } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Favorite,
-    });
+  const {
+    objectMetadataItem: objectMetadataItemFavorite,
+    upsertRecordsInCache: upsertFavoritesInCache,
+  } = usePrefetchRunQuery({
+    prefetchKey: PrefetchKey.AllViews,
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const prefetchFindManyQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
@@ -41,58 +35,19 @@ export const PrefetchRunQueriesEffect = () => {
     throw new Error('Could not prefetch recrds');
   }
 
-  const mapConnectionToRecords = useMapConnectionToRecords();
-
   const { data } = useQuery<MultiObjectRecordQueryResult>(
     prefetchFindManyQuery,
   );
 
-  const { upsertFindManyRecordsQueryInCache: upsertFindManyViewsInCache } =
-    useUpsertFindManyRecordsQueryInCache({
-      objectMetadataItem: objectMetadataItemView,
-    });
-
-  const { upsertFindManyRecordsQueryInCache: upsertFindManyFavoritesInCache } =
-    useUpsertFindManyRecordsQueryInCache({
-      objectMetadataItem: objectMetadataItemFavorite,
-    });
-
   useEffect(() => {
     if (isDefined(data?.views)) {
-      upsertFindManyViewsInCache({
-        queryVariables: ALL_VIEWS_QUERY_KEY.variables,
-        depth: ALL_VIEWS_QUERY_KEY.depth,
-        objectRecordsToOverwrite:
-          mapConnectionToRecords({
-            objectRecordConnection: data.views,
-            objectNameSingular: CoreObjectNameSingular.View,
-            depth: 2,
-          }) ?? [],
-      });
-      setPrefetchAreViewsLoaded(true);
+      upsertViewsInCache(data.views);
     }
 
-    if (isDefined(data?.views)) {
-      upsertFindManyFavoritesInCache({
-        queryVariables: ALL_FAVORITES_QUERY_KEY.variables,
-        depth: ALL_FAVORITES_QUERY_KEY.depth,
-        objectRecordsToOverwrite:
-          mapConnectionToRecords({
-            objectRecordConnection: data.favorites,
-            objectNameSingular: CoreObjectNameSingular.Favorite,
-            depth: 2,
-          }) ?? [],
-      });
-      setPrefetchAreFavoritesLoaded(true);
+    if (isDefined(data?.favorites)) {
+      upsertFavoritesInCache(data.favorites);
     }
-  }, [
-    data,
-    setPrefetchAreViewsLoaded,
-    setPrefetchAreFavoritesLoaded,
-    upsertFindManyViewsInCache,
-    mapConnectionToRecords,
-    upsertFindManyFavoritesInCache,
-  ]);
+  }, [data, upsertViewsInCache, upsertFavoritesInCache]);
 
   return <></>;
 };

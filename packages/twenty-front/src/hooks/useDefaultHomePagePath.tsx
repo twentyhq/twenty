@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKeys';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
 export const useDefaultHomePagePath = () => {
   const { objectMetadataItem: companyObjectMetadataItem } =
