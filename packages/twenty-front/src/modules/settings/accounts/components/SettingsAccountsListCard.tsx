@@ -34,7 +34,6 @@ const StyledButton = styled.button`
   cursor: pointer;
   display: flex;
   flex: 1 0 0;
-  gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
   width: 100%;
 
