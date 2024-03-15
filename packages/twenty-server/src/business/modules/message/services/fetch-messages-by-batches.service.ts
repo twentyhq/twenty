@@ -4,21 +4,11 @@ import { AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
 import planer from 'planer';
 
-<<<<<<< HEAD:packages/twenty-server/src/business/modules/message/services/fetch-messages-by-batches.service.ts
-import {
-  GmailMessage,
-  Participant,
-} from 'src/business/modules/message/types/gmail-message';
+import { GmailMessage } from 'src/business/modules/message/types/gmail-message';
 import { MessageQuery } from 'src/business/modules/message/types/message-or-thread-query';
 import { GmailMessageParsedResponse } from 'src/business/modules/message/types/gmail-message-parsed-response';
 import { FetchByBatchesService } from 'src/business/modules/message/services/fetch-by-batch.service';
-=======
-import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
-import { MessageQuery } from 'src/workspace/messaging/types/message-or-thread-query';
-import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmail-message-parsed-response';
-import { FetchByBatchesService } from 'src/workspace/messaging/services/fetch-by-batch.service';
-import { formatAddressObjectAsParticipants } from 'src/workspace/messaging/services/utils/format-address-object-as-participants.util';
->>>>>>> 5a052ea7f ([messaging] Fix messaging formatAddress tests):packages/twenty-server/src/workspace/messaging/services/fetch-messages-by-batches.service.ts
+import { formatAddressObjectAsParticipants } from 'src/business/modules/message/services/utils/format-address-object-as-participants.util';
 
 @Injectable()
 export class FetchMessagesByBatchesService {

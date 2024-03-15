@@ -1,6 +1,6 @@
 import { AddressObject } from 'mailparser';
 
-import { Participant } from 'src/workspace/messaging/types/gmail-message';
+import { Participant } from 'src/business/modules/message/types/gmail-message';
 
 const formatAddressObjectAsArray = (
   addressObject: AddressObject | AddressObject[],
