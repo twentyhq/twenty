@@ -11,9 +11,10 @@ import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/worksp
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 // TODO: implement dry-run
 @Command({
@@ -105,6 +106,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
       await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
       await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
+      await seedCalendarEvents(workspaceDataSource, dataSourceMetadata.schema);
 
       await seedViews(
         workspaceDataSource,

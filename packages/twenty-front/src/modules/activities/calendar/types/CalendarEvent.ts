@@ -1,10 +1,14 @@
 // TODO: use backend CalendarEvent type when ready
 export type CalendarEvent = {
-  endsAt?: Date;
+  conferenceUri?: string;
+  description?: string;
+  endsAt?: string;
+  externalCreatedAt: string;
   id: string;
-  isFullDay: boolean;
-  startsAt: Date;
   isCanceled?: boolean;
+  isFullDay: boolean;
+  location?: string;
+  startsAt: string;
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
   attendees?: {
