@@ -16,6 +16,7 @@ export default defineManifest({
 
   action: {},
 
+  //TODO: change this to a documenation page
   options_page: 'options.html',
 
   background: {
@@ -34,4 +35,8 @@ export default defineManifest({
   permissions: ['activeTab', 'storage'],
 
   host_permissions: ['https://www.linkedin.com/*'],
+
+  externally_connectable: {
+    matches: [`https://app.twenty.com/*`, `http://localhost:3001/*`],
+  },
 });
