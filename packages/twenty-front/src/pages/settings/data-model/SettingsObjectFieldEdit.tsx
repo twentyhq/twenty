@@ -17,6 +17,7 @@ import { SettingsObjectFieldFormSection } from '@/settings/data-model/components
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -112,11 +113,16 @@ export const SettingsObjectFieldEdit = () => {
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
+    const fieldType = activeMetadataField.type;
+    const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
+
+    if (!isFieldTypeSupported) return;
+
     initForm({
       icon: activeMetadataField.icon ?? undefined,
       label: activeMetadataField.label,
       description: activeMetadataField.description ?? undefined,
-      type: activeMetadataField.type,
+      type: fieldType,
       ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
       relation: {
         field: {
