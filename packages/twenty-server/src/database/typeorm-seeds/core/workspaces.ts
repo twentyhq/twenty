@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { Workspace } from 'src/core/workspace/workspace.entity';
+import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 
 const tableName = 'workspace';
 

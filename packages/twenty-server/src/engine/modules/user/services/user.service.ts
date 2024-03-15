@@ -8,8 +8,8 @@ import { User } from 'src/engine/modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/modules/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.entity';
+import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(

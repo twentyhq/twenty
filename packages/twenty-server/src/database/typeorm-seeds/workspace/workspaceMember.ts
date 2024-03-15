@@ -1,11 +1,11 @@
 import { DataSource } from 'typeorm';
 
 import { SeedUserIds } from 'src/database/typeorm-seeds/core/users';
-import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
 } from 'src/database/typeorm-seeds/core/workspaces';
+import { WorkspaceMember } from 'src/engine/modules/user/dtos/workspace-member.dto';
 
 const tableName = 'workspaceMember';
 
