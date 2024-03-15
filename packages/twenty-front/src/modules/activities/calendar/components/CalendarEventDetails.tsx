@@ -5,17 +5,11 @@ import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import {
-  FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import {
   Chip,
   ChipAccent,
@@ -82,20 +76,6 @@ export const CalendarEventDetails = ({
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
-  const { updateOneRecord: updateOneCalendarEvent } =
-    useUpdateOneRecord<CalendarEvent>({
-      objectNameSingular: CoreObjectNameSingular.CalendarEvent,
-    });
-
-  const useUpdateOneCalendarEventMutation: RecordUpdateHook = () => {
-    const updateEntity = ({ variables }: RecordUpdateHookParams) =>
-      updateOneCalendarEvent({
-        idToUpdate: variables.where.id as string,
-        updateOneRecordInput: variables.updateOneRecordInput,
-      });
-
-    return [updateEntity, { loading: false }];
-  };
 
   const fieldsToDisplay: Partial<
     Record<
@@ -141,6 +121,7 @@ export const CalendarEventDetails = ({
             <FieldContext.Provider
               value={{
                 entityId: calendarEvent.id,
+                hotkeyScope: 'calendar-event-details',
                 recoilScopeId: `${calendarEvent.id}-${fieldName}`,
                 isLabelIdentifier: false,
                 fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
@@ -152,11 +133,10 @@ export const CalendarEventDetails = ({
                   showLabel: true,
                   labelWidth: 72,
                 }),
-                useUpdateRecord: useUpdateOneCalendarEventMutation,
-                hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                useUpdateRecord: () => [() => undefined, { loading: false }],
               }}
             >
-              <RecordInlineCell />
+              <RecordInlineCell readonly />
             </FieldContext.Provider>
           </StyledPropertyBox>
         ))}

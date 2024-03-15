@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -52,11 +52,16 @@ const StyledEditButtonContainer = styled(motion.div)`
   display: flex;
 `;
 
-const StyledClickableContainer = styled.div`
-  cursor: pointer;
+const StyledClickableContainer = styled.div<{ readonly?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+
+  ${({ readonly }) =>
+    !readonly &&
+    css`
+      cursor: pointer;
+    `};
 `;
 
 const StyledInlineCellBaseContainer = styled.div`
@@ -83,6 +88,7 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 type RecordInlineCellContainerProps = {
+  readonly?: boolean;
   IconLabel?: IconComponent;
   label?: string;
   labelWidth?: number;
@@ -98,6 +104,7 @@ type RecordInlineCellContainerProps = {
 };
 
 export const RecordInlineCellContainer = ({
+  readonly,
   IconLabel,
   label,
   labelWidth,
@@ -115,17 +122,21 @@ export const RecordInlineCellContainer = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
-    setIsHovered(true);
+    if (!readonly) {
+      setIsHovered(true);
+    }
   };
 
   const handleContainerMouseLeave = () => {
-    setIsHovered(false);
+    if (!readonly) {
+      setIsHovered(false);
+    }
   };
 
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
   const handleDisplayModeClick = () => {
-    if (!editModeContentOnly) {
+    if (!readonly && !editModeContentOnly) {
       openInlineCell(customEditHotkeyScope);
     }
   };
@@ -167,10 +178,10 @@ export const RecordInlineCellContainer = ({
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
-        {isInlineCellInEditMode ? (
+        {!readonly && isInlineCellInEditMode ? (
           <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
         ) : editModeContentOnly ? (
-          <StyledClickableContainer>
+          <StyledClickableContainer readonly={readonly}>
             <RecordInlineCellDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
@@ -182,7 +193,10 @@ export const RecordInlineCellContainer = ({
             </RecordInlineCellDisplayMode>
           </StyledClickableContainer>
         ) : (
-          <StyledClickableContainer onClick={handleDisplayModeClick}>
+          <StyledClickableContainer
+            readonly={readonly}
+            onClick={handleDisplayModeClick}
+          >
             <RecordInlineCellDisplayMode
               disableHoverEffect={disableHoverEffect}
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
