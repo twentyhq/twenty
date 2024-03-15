@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 import { FileService } from './services/file.service';
 import { FileUploadService } from './services/file-upload.service';
