@@ -8,8 +8,10 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react-jsx"
-  },
+    "jsx": "react-jsx",
+    "composite": true,
+    "declaration": true
+    },
   "files": [],
   "include": [],
   "references": [
