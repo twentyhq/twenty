@@ -55,7 +55,7 @@
   },
   "plugins": [
     {
-      "plugin": "@nx/storybook",
+      "plugin": "@nx/storybook/plugin",
       "options": {
         "buildStorybookTargetName": "build-storybook",
         "serveStorybookTargetName": "storybook",
