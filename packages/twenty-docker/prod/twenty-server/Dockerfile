@@ -6,7 +6,6 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./tsconfig.base.json .
-COPY ./nx.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
