@@ -47,6 +47,7 @@
   "devDependencies": {
     "@nestjs/cli": "10.3.0",
     "@nx/js": "17.2.8",
+    "@nx/storybook": "17.2.8",
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.isobject": "^3.0.7",
