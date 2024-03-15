@@ -26,8 +26,8 @@ export const metadataModuleFactory = async (
     resolvers: { JSON: GraphQLJSON },
     plugins: [
       useThrottler({
-        ttl: environmentService.getApiRateLimitingTtl(),
-        limit: environmentService.getApiRateLimitingLimit(),
+        ttl: environmentService.get('API_RATE_LIMITING_TTL'),
+        limit: environmentService.get('API_RATE_LIMITING_LIMIT'),
         identifyFn: (context) => {
           return context.user?.id ?? context.req.ip ?? 'anonymous';
         },
@@ -39,7 +39,7 @@ export const metadataModuleFactory = async (
     path: '/metadata',
   };
 
-  if (environmentService.isDebugMode()) {
+  if (environmentService.get('DEBUG_MODE')) {
     config.renderGraphiQL = () => {
       return renderApolloPlayground({ path: 'metadata' });
     };

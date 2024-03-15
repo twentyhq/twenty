@@ -16,7 +16,6 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
   IsCalendarEnabled = 'IS_CALENDAR_ENABLED',
-  IsSelfBillingEnabled = 'IS_SELF_BILLING_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })

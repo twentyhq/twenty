@@ -18,4 +18,8 @@ export class CacheStorageService {
   async set<T>(key: string, value: T, ttl?: number) {
     return this.cacheManager.set(`${this.namespace}:${key}`, value, ttl);
   }
+
+  async del(key: string) {
+    return this.cacheManager.del(`${this.namespace}:${key}`);
+  }
 }

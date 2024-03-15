@@ -12,28 +12,40 @@ export const useListenScroll = <T extends Element>({
 }: {
   scrollableRef: React.RefObject<T>;
 }) => {
-  const hideScrollBarsCallback = useRecoilCallback(({ snapshot }) => () => {
-    const isScrolling = snapshot.getLoadable(isScrollingState()).getValue();
+  const hideScrollBarsCallback = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isScrolling = snapshot.getLoadable(isScrollingState()).getValue();
 
-    if (!isScrolling) {
-      scrollableRef.current?.classList.remove('scrolling');
-    }
-  });
+        if (!isScrolling) {
+          scrollableRef.current?.classList.remove('scrolling');
+        }
+      },
+    [scrollableRef],
+  );
 
-  const handleScrollStart = useRecoilCallback(({ set }) => (event: Event) => {
-    set(isScrollingState(), true);
-    scrollableRef.current?.classList.add('scrolling');
+  const handleScrollStart = useRecoilCallback(
+    ({ set }) =>
+      (event: Event) => {
+        set(isScrollingState(), true);
+        scrollableRef.current?.classList.add('scrolling');
 
-    const target = event.target as HTMLElement;
+        const target = event.target as HTMLElement;
 
-    set(scrollTopState(), target.scrollTop);
-    set(scrollLeftState(), target.scrollLeft);
-  });
+        set(scrollTopState(), target.scrollTop);
+        set(scrollLeftState(), target.scrollLeft);
+      },
+    [scrollableRef],
+  );
 
-  const handleScrollEnd = useRecoilCallback(({ set }) => () => {
-    set(isScrollingState(), false);
-    debounce(hideScrollBarsCallback, 1000)();
-  });
+  const handleScrollEnd = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(isScrollingState(), false);
+        debounce(hideScrollBarsCallback, 1000)();
+      },
+    [hideScrollBarsCallback],
+  );
 
   useEffect(() => {
     const refTarget = scrollableRef.current;

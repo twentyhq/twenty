@@ -61,7 +61,7 @@ export class WorkspaceSyncObjectMetadataService {
       workspaceFeatureFlagsMap,
     );
 
-    // Create map of original and standard object metadata by unique identifier
+    // Create map of original and standard object metadata by standard ids
     const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
       originalObjectMetadataCollection,
     );
@@ -75,17 +75,20 @@ export class WorkspaceSyncObjectMetadataService {
     for (const originalObjectMetadata of originalObjectMetadataCollection.filter(
       (object) => !object.isCustom,
     )) {
-      if (!standardObjectMetadataMap[originalObjectMetadata.nameSingular]) {
+      if (
+        originalObjectMetadata.standardId &&
+        !standardObjectMetadataMap[originalObjectMetadata.standardId]
+      ) {
         storage.addDeleteObjectMetadata(originalObjectMetadata);
       }
     }
 
     // Loop over all standard objects and compare them with the objects in DB
-    for (const standardObjectName in standardObjectMetadataMap) {
+    for (const standardObjectId in standardObjectMetadataMap) {
       const originalObjectMetadata =
-        originalObjectMetadataMap[standardObjectName];
+        originalObjectMetadataMap[standardObjectId];
       const standardObjectMetadata = computeStandardObject(
-        standardObjectMetadataMap[standardObjectName],
+        standardObjectMetadataMap[standardObjectId],
         originalObjectMetadata,
         customObjectMetadataCollection,
       );

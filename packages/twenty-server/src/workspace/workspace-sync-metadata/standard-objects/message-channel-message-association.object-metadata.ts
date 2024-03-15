@@ -1,4 +1,6 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { messageChannelMessageAssociationStandardFieldIds } from 'src/workspace/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/workspace/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
@@ -9,6 +11,7 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
+  standardId: standardObjectIds.messageChannelMessageAssociation,
   namePlural: 'messageChannelMessageAssociations',
   labelSingular: 'Message Channel Message Association',
   labelPlural: 'Message Channel Message Associations',
@@ -18,6 +21,7 @@ import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 @IsSystem()
 export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
+    standardId: messageChannelMessageAssociationStandardFieldIds.messageChannel,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Id',
     description: 'Message Channel Id',
@@ -28,6 +32,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
   messageChannel: MessageChannelObjectMetadata;
 
   @FieldMetadata({
+    standardId: messageChannelMessageAssociationStandardFieldIds.message,
     type: FieldMetadataType.RELATION,
     label: 'Message Id',
     description: 'Message Id',
@@ -38,6 +43,8 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
   message: MessageObjectMetadata;
 
   @FieldMetadata({
+    standardId:
+      messageChannelMessageAssociationStandardFieldIds.messageExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Message External Id',
     description: 'Message id from the messaging provider',
@@ -47,6 +54,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
   messageExternalId: string;
 
   @FieldMetadata({
+    standardId: messageChannelMessageAssociationStandardFieldIds.messageThread,
     type: FieldMetadataType.RELATION,
     label: 'Message Thread Id',
     description: 'Message Thread Id',
@@ -57,6 +65,8 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
   messageThread: MessageThreadObjectMetadata;
 
   @FieldMetadata({
+    standardId:
+      messageChannelMessageAssociationStandardFieldIds.messageThreadExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Thread External Id',
     description: 'Thread id from the messaging provider',

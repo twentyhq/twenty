@@ -12,13 +12,13 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/workspace/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/workspace/messaging/utils/is-person-email.util';
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
@@ -48,10 +48,18 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getById(
       connectedAccountId,
       workspaceId,
     );
+
+    if (!connectedAccount) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during partial-sync`,
+      );
+
+      return;
+    }
 
     const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
 
@@ -135,10 +143,18 @@ export class GmailPartialSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+      await this.messageChannelService.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
+
+    if (!gmailMessageChannel) {
+      this.logger.error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+      );
+
+      return;
+    }
 
     const gmailMessageChannelId = gmailMessageChannel.id;
 

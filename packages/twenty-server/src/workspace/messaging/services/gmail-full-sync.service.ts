@@ -11,12 +11,12 @@ import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/workspace/messaging/repositories/connected-account/connected-account.service';
+import { ConnectedAccountService } from 'src/workspace/calendar-and-messaging/repositories/connected-account/connected-account.service';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageChannelMessageAssociationService } from 'src/workspace/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { createQueriesFromMessageIds } from 'src/workspace/messaging/utils/create-queries-from-message-ids.util';
-import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter';
-import { BlocklistService } from 'src/workspace/messaging/repositories/blocklist/blocklist.service';
+import { gmailSearchFilterExcludeEmails } from 'src/workspace/messaging/utils/gmail-search-filter.util';
+import { BlocklistService } from 'src/workspace/calendar-and-messaging/repositories/blocklist/blocklist.service';
 import { SaveMessagesAndCreateContactsService } from 'src/workspace/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
@@ -46,10 +46,18 @@ export class GmailFullSyncService {
     connectedAccountId: string,
     nextPageToken?: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getByIdOrFail(
+    const connectedAccount = await this.connectedAccountService.getById(
       connectedAccountId,
       workspaceId,
     );
+
+    if (!connectedAccount) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during full-sync`,
+      );
+
+      return;
+    }
 
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
@@ -62,10 +70,18 @@ export class GmailFullSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountIdOrFail(
+      await this.messageChannelService.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
+
+    if (!gmailMessageChannel) {
+      this.logger.error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-syn`,
+      );
+
+      return;
+    }
 
     const gmailMessageChannelId = gmailMessageChannel.id;
 
@@ -173,7 +189,7 @@ export class GmailFullSyncService {
     );
 
     if (messagesToSave.length > 0) {
-      this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+      await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
         messagesToSave,
         connectedAccount,
         workspaceId,

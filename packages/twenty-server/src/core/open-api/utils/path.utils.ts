@@ -95,7 +95,9 @@ export const computeSingleResultPath = (
   } as OpenAPIV3_1.PathItemObject;
 };
 
-export const computeOpenApiPath = (): OpenAPIV3_1.PathItemObject => {
+export const computeOpenApiPath = (
+  serverUrl: string,
+): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
       tags: ['General'],
@@ -103,7 +105,7 @@ export const computeOpenApiPath = (): OpenAPIV3_1.PathItemObject => {
       operationId: 'GetOpenApiSchema',
       servers: [
         {
-          url: 'https://api.twenty.com/',
+          url: serverUrl,
         },
       ],
       responses: {

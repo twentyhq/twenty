@@ -93,7 +93,10 @@ export const PageChangeEffect = () => {
       [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
         onboardingStatus,
       ) &&
-      !isMatchingLocation(SettingsPath.Billing)
+      !(
+        isMatchingLocation(AppPath.SettingsCatchAll) ||
+        isMatchingLocation(AppPath.PlanRequired)
+      )
     ) {
       navigate(
         `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
@@ -110,7 +113,8 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.CreateProfile);
     } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
+      (onboardingStatus === OnboardingStatus.Completed ||
+        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription) &&
       isMatchingOnboardingRoute
     ) {
       navigate(AppPath.Index);

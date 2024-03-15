@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { MessageChannelService } from 'src/workspace/messaging/repositories/message-channel/message-channel.service';
 import { MessageParticipantService } from 'src/workspace/messaging/repositories/message-participant/message-participant.service';
 import { MessageService } from 'src/workspace/messaging/repositories/message/message.service';
-import { CreateCompaniesAndContactsService } from 'src/workspace/messaging/services/create-companies-and-contacts/create-companies-and-contacts.service';
+import { CreateCompanyAndContactService } from 'src/workspace/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import {
   GmailMessage,
   ParticipantWithMessageId,
@@ -23,7 +23,7 @@ export class SaveMessagesAndCreateContactsService {
   constructor(
     private readonly messageService: MessageService,
     private readonly messageChannelService: MessageChannelService,
-    private readonly createCompaniesAndContactsService: CreateCompaniesAndContactsService,
+    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
     private readonly messageParticipantService: MessageParticipantService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
@@ -59,11 +59,22 @@ export class SaveMessagesAndCreateContactsService {
       } in ${endTime - startTime}ms`,
     );
 
-    const isContactAutoCreationEnabled =
-      await this.messageChannelService.getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
+    const gmailMessageChannel =
+      await this.messageChannelService.getFirstByConnectedAccountId(
         connectedAccount.id,
         workspaceId,
       );
+
+    if (!gmailMessageChannel) {
+      this.logger.error(
+        `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessagesAndCreateContacts`,
+      );
+
+      return;
+    }
+
+    const isContactAutoCreationEnabled =
+      gmailMessageChannel.isContactAutoCreationEnabled;
 
     const participantsWithMessageId: ParticipantWithMessageId[] =
       messagesToSave.flatMap((message) => {
