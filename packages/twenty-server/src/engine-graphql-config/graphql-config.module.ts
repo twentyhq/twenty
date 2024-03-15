@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { FoundationModule } from 'src/engine/modules/foundation.module';
+import { EngineModulesModule } from 'src/engine/modules/engine-modules.module';
 import { graphQLFactories } from 'src/engine-graphql-config/factories';
 
 @Module({
-  imports: [FoundationModule],
+  imports: [EngineModulesModule],
   providers: [...graphQLFactories],
   exports: [...graphQLFactories],
 })

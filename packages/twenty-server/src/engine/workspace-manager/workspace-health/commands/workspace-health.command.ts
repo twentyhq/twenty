@@ -7,7 +7,7 @@ import { WorkspaceHealthMode } from 'src/engine/workspace-manager/workspace-heal
 import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
-import { CommandLogger } from 'src/commands/command-logger';
+import { CommandLogger } from 'src/command/command-logger';
 
 interface WorkspaceHealthCommandOptions {
   workspaceId: string;

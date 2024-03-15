@@ -32,11 +32,11 @@ import {
   AuthTokens,
   PasswordResetToken,
 } from 'src/engine/modules/auth/dto/token.entity';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/modules/user/user.entity';
 import { RefreshToken } from 'src/engine/modules/refresh-token/refresh-token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/modules/auth/dto/validate-password-reset-token.entity';
-import { EmailService } from 'src/integrations/email/email.service';
+import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/engine/modules/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/engine/modules/auth/types/jwt-data.type';

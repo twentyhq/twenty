@@ -7,17 +7,17 @@ import { Repository } from 'typeorm';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { SaveConnectedAccountInput } from 'src/engine/modules/auth/dto/save-connected-account';
-import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
-} from 'src/business/modules/message/jobs/gmail-full-sync.job';
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import {
   GoogleCalendarFullSyncJob,
   GoogleCalendarFullSyncJobData,
-} from 'src/business/modules/calendar/jobs/google-calendar-full-sync.job';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+} from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,

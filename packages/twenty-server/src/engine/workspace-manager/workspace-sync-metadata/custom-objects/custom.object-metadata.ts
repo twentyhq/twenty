@@ -8,10 +8,10 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
-import { ActivityTargetObjectMetadata } from 'src/business/modules/activity/activity-target.object-metadata';
+import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { FavoriteObjectMetadata } from 'src/business/modules/favorite/favorite.object-metadata';
-import { AttachmentObjectMetadata } from 'src/business/modules/attachment/attachment.object-metadata';
+import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
+import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 @BaseCustomObjectMetadata()

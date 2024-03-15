@@ -7,7 +7,7 @@ import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.inter
 
 import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/engine/constants/settings';
-import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FileUploadService {

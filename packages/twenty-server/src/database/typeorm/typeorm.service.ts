@@ -2,7 +2,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';

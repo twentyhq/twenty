@@ -22,7 +22,7 @@
             ],
             "options": {
                 "cwd": "packages/twenty-server",
-                "command": "node dist/src/command.js"
+                "command": "node dist/src/command/command.js"
             }
         },
         "test:debug": {

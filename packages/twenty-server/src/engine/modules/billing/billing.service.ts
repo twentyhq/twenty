@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Not, Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { StripeService } from 'src/engine/modules/billing/stripe/stripe.service';
 import { BillingSubscription } from 'src/engine/modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/engine/modules/billing/entities/billing-subscription-item.entity';

@@ -30,8 +30,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
-import { computeCustomName } from 'src/engine-workspace/utils/compute-custom-name.util';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/engine-metadata/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/engine-metadata/relation-metadata/types/relation-to-delete';
 import { generateMigrationName } from 'src/engine-metadata/workspace-migration/utils/generate-migration-name.util';

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 import { FileUploadService } from './file-upload.service';
 

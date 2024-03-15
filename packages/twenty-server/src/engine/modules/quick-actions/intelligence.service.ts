@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CompanyInteface } from 'src/engine/modules/quick-actions/interfaces/company.interface';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class IntelligenceService {

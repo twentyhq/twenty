@@ -12,7 +12,7 @@ import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
 } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationFactory } from 'src/engine-metadata/workspace-migration/workspace-migration.factory';
 import { generateMigrationName } from 'src/engine-metadata/workspace-migration/utils/generate-migration-name.util';
 

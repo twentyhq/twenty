@@ -4,7 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { Request } from 'express';
 
 import { anonymize } from 'src/utils/anonymize';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/modules/user/user.entity';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 

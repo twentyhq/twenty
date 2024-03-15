@@ -23,8 +23,8 @@ import { WorkspaceInviteHashValid } from 'src/engine/modules/auth/dto/workspace-
 import { User } from 'src/engine/modules/user/user.entity';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { UserService } from 'src/engine/modules/user/services/user.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { EmailService } from 'src/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/integrations/email/email.service';
 import { UpdatePassword } from 'src/engine/modules/auth/dto/update-password.entity';
 import { SignUpService } from 'src/engine/modules/auth/services/sign-up.service';
 

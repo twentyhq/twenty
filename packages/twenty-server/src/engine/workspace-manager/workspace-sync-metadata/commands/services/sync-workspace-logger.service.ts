@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { CommandLogger } from 'src/commands/command-logger';
+import { CommandLogger } from 'src/command/command-logger';
 
 @Injectable()
 export class SyncWorkspaceLoggerService {

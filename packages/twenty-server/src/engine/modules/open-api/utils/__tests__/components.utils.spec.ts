@@ -1,11 +1,13 @@
 import { computeSchemaComponents } from 'src/engine/modules/open-api/utils/components.utils';
-import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
+import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
     expect(
-      computeSchemaComponents([objectMetadataItem] as ObjectMetadataEntity[]),
+      computeSchemaComponents([
+        objectMetadataItemMock,
+      ] as ObjectMetadataEntity[]),
     ).toEqual({
       ObjectName: {
         type: 'object',

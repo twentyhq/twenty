@@ -23,7 +23,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { UpdateFieldInput } from 'src/engine-metadata/field-metadata/dtos/update-field.input';
 import { WorkspaceMigrationFactory } from 'src/engine-metadata/workspace-migration/workspace-migration.factory';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine-metadata/workspace-migration/utils/generate-migration-name.util';
 import { generateNullable } from 'src/engine-metadata/field-metadata/utils/generate-nullable';
 import { FieldMetadataDTO } from 'src/engine-metadata/field-metadata/dtos/field-metadata.dto';

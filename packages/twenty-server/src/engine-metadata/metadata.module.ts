@@ -6,8 +6,8 @@ import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine-metadata/workspace-migration/workspace-migration.module';
 import { metadataModuleFactory } from 'src/engine-metadata/metadata.module-factory';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { GraphQLConfigModule } from 'src/engine-graphql-config/graphql-config.module';
 import { CreateContextFactory } from 'src/engine-graphql-config/factories/create-context.factory';
 

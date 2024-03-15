@@ -7,17 +7,17 @@ import {
   DeleteInactiveWorkspaceEmail,
 } from 'twenty-emails';
 
-import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { UserService } from 'src/engine/modules/user/services/user.service';
-import { EmailService } from 'src/integrations/email/email.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 

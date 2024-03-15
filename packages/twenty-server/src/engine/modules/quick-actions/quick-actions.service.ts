@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { Record as IRecord } from 'src/engine/graphql/workspace-query-builder/interfaces/record.interface';
+import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { stringifyWithoutKeyQuote } from 'src/engine/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
-import { WorkspaceQueryRunnerService } from 'src/engine/graphql/workspace-query-runner/workspace-query-runner.service';
+import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
+import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { IntelligenceService } from 'src/engine/modules/quick-actions/intelligence.service';
 import { capitalize } from 'src/utils/capitalize';
 

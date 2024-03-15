@@ -13,7 +13,7 @@ import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object
 import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
 import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';

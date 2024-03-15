@@ -1,4 +1,4 @@
-import { OrderByDirection } from 'src/engine/graphql/workspace-query-builder/interfaces/record.interface';
+import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import {
   computeDepthParameters,
@@ -8,10 +8,10 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
 } from 'src/engine/modules/open-api/utils/parameters.utils';
-import { DEFAULT_ORDER_DIRECTION } from 'src/api/rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
-import { FilterComparators } from 'src/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
-import { Conjunctions } from 'src/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
-import { DEFAULT_CONJUNCTION } from 'src/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
+import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
+import { FilterComparators } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
+import { Conjunctions } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
+import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
 
 describe('computeParameters', () => {
   describe('computeLimit', () => {

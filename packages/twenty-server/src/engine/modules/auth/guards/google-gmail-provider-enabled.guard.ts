@@ -3,7 +3,7 @@ import { Injectable, CanActivate, NotFoundException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 import { GoogleAPIsStrategy } from 'src/engine/modules/auth/strategies/google-apis.auth.strategy';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class GoogleGmailProviderEnabledGuard implements CanActivate {

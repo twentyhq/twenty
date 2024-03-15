@@ -2,7 +2,7 @@ import { Injectable, CanActivate, NotFoundException } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { GoogleStrategy } from 'src/engine/modules/auth/strategies/google.auth.strategy';
 
 @Injectable()

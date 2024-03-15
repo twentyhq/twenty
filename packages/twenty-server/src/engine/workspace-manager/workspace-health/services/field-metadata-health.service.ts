@@ -27,8 +27,8 @@ import { validateOptionsForType } from 'src/engine-metadata/field-metadata/utils
 import { serializeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-default-value';
 import { computeCompositeFieldMetadata } from 'src/engine/workspace-manager/workspace-health/utils/compute-composite-field-metadata.util';
 import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
-import { customNamePrefix } from 'src/engine-workspace/utils/compute-custom-name.util';
-import { isRelationFieldMetadataType } from 'src/engine-workspace/utils/is-relation-field-metadata-type.util';
+import { customNamePrefix } from 'src/engine/utils/compute-custom-name.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class FieldMetadataHealthService {

@@ -7,7 +7,7 @@ import { GoogleAPIsProviderEnabledGuard } from 'src/engine/modules/auth/guards/g
 import { GoogleAPIsService } from 'src/engine/modules/auth/services/google-apis.service';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
 import { GoogleAPIsRequest } from 'src/engine/modules/auth/strategies/google-apis.auth.strategy';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Controller('auth/google-gmail')
 export class GoogleGmailAuthController {

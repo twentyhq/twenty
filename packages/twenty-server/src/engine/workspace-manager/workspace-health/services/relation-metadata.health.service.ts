@@ -18,11 +18,11 @@ import {
 import {
   RelationDirection,
   deduceRelationDirection,
-} from 'src/engine-workspace/utils/deduce-relation-direction.util';
+} from 'src/engine/utils/deduce-relation-direction.util';
 import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
 import { createRelationForeignKeyColumnName } from 'src/engine-metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { createRelationForeignKeyFieldMetadataName } from 'src/engine-metadata/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
-import { isRelationFieldMetadataType } from 'src/engine-workspace/utils/is-relation-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 
 @Injectable()
