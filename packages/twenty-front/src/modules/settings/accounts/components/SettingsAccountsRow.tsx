@@ -14,7 +14,7 @@ const StyledRow = styled(CardContent)`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledAccountHandle = styled.span`
