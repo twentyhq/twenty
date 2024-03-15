@@ -12,7 +12,7 @@ import { User } from 'src/engine/modules/user/user.entity';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { AuthService } from 'src/engine/modules/auth/services/auth.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Controller('auth/google')
 export class GoogleAuthController {

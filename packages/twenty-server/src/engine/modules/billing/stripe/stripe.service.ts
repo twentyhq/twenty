@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/modules/user/user.entity';
 
 @Injectable()

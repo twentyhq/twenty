@@ -8,7 +8,7 @@ import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
 } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,

@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { RefreshToken } from 'src/engine/modules/refresh-token/refresh-token.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { JwtAuthStrategy } from 'src/engine/modules/auth/strategies/jwt.auth.strategy';
-import { EmailService } from 'src/integrations/email/email.service';
+import { EmailService } from 'src/engine/integrations/email/email.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 

@@ -9,12 +9,12 @@ import { join } from 'path';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/engine-graphql-config/graphql-config.service';
-import { ApiRestModule } from 'src/api/rest/api-rest.module';
-import { BusinessModule } from 'src/business/modules/business.module';
+import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
+import { ModulesModule } from 'src/modules/modules.module';
 
-import { FoundationModule } from './engine/modules/foundation.module';
-import { IntegrationsModule } from './integrations/integrations.module';
-import { WorkspaceModule } from './engine/graphql/workspace.module';
+import { EngineModulesModule } from './engine/modules/engine-modules.module';
+import { IntegrationsModule } from './engine/integrations/integrations.module';
+import { CoreGraphqlApiModule } from './engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from './engine-graphql-config/graphql-config.module';
 
 @Module({
@@ -27,14 +27,14 @@ import { GraphQLConfigModule } from './engine-graphql-config/graphql-config.modu
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [FoundationModule, GraphQLConfigModule],
+      imports: [EngineModulesModule, GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
     IntegrationsModule,
-    FoundationModule,
-    BusinessModule,
+    EngineModulesModule,
+    ModulesModule,
     ApiRestModule,
-    WorkspaceModule,
+    CoreGraphqlApiModule,
     ...AppModule.getConditionalModules(),
   ],
 })

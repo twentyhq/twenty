@@ -13,18 +13,18 @@ import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 import * as Sentry from '@sentry/node';
 
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
-import { FoundationModule } from 'src/engine/modules/foundation.module';
+import { EngineModulesModule } from 'src/engine/modules/engine-modules.module';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
-import { WorkspaceFactory } from 'src/engine/graphql/workspace.factory';
-import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
+import { WorkspaceFactory } from 'src/engine/api/graphql/workspace.factory';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/filters/utils/global-exception-handler.util';
-import { renderApolloPlayground } from 'src/engine-workspace/utils/render-apollo-playground.util';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
+import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { useExceptionHandler } from 'src/engine/integrations/exception-handler/hooks/use-exception-handler.hook';
 import { User } from 'src/engine/modules/user/user.entity';
-import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
+import { useThrottler } from 'src/engine-graphql-config/hooks/use-throttler';
 import { JwtData } from 'src/engine/modules/auth/types/jwt-data.type';
-import { useSentryTracing } from 'src/integrations/tracing/useSentryTracing';
+import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -67,7 +67,7 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       context: (context) => this.createContextFactory.create(context),
       autoSchemaFile: true,
-      include: [FoundationModule],
+      include: [EngineModulesModule],
       conditionalSchema: async (context) => {
         let user: User | undefined;
         let workspace: Workspace | undefined;

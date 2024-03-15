@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { BillingService } from 'src/engine/modules/billing/billing.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';

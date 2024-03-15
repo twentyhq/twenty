@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileModule } from 'src/engine/modules/file/file.module';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';

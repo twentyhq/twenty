@@ -18,7 +18,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/engine/modules/workspace/dtos/update-workspace-input';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';

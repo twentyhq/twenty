@@ -9,8 +9,8 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { User } from 'src/engine/modules/user/user.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecordCreateEvent } from 'src/integrations/event-emitter/types/object-record-create.event';
-import { WorkspaceMemberObjectMetadata } from 'src/business/modules/workspace/workspace-member.object-metadata';
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { assert } from 'src/utils/assert';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {

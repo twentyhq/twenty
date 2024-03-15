@@ -14,11 +14,11 @@ import crypto from 'crypto';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
+import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.interface';
 
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
 import { assert } from 'src/utils/assert';

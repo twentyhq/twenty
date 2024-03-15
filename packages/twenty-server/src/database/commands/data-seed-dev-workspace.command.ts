@@ -10,11 +10,11 @@ import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 // TODO: implement dry-run
 @Command({

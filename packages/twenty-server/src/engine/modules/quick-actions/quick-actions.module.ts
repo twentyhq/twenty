@@ -3,7 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 
 import { IntelligenceService } from 'src/engine/modules/quick-actions/intelligence.service';
 import { QuickActionsService } from 'src/engine/modules/quick-actions/quick-actions.service';
-import { WorkspaceQueryRunnerModule } from 'src/engine/graphql/workspace-query-runner/workspace-query-runner.module';
+import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 
 @Module({
   imports: [WorkspaceQueryRunnerModule, HttpModule],

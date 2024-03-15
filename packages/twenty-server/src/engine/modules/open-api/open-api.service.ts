@@ -25,7 +25,7 @@ import {
   getSingleResultSuccessResponse,
 } from 'src/engine/modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/modules/open-api/utils/request-body.utils';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class OpenApiService {

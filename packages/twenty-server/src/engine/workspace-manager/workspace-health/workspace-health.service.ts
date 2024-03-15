@@ -18,7 +18,7 @@ import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/worksp
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';

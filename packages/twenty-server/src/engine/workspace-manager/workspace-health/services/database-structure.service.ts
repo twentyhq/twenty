@@ -17,7 +17,7 @@ import {
 import { fieldMetadataTypeToColumnType } from 'src/engine-metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { serializeTypeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-type-default-value.util';
 import { isCompositeFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isRelationFieldMetadataType } from 'src/engine-workspace/utils/is-relation-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @Injectable()
 export class DatabaseStructureService {

@@ -2,12 +2,12 @@ import { YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 
 import { CreateContextFactory } from 'src/engine-graphql-config/factories/create-context.factory';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { useExceptionHandler } from 'src/integrations/exception-handler/hooks/use-exception-handler.hook';
-import { useThrottler } from 'src/integrations/throttler/hooks/use-throttler';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { useExceptionHandler } from 'src/engine/integrations/exception-handler/hooks/use-exception-handler.hook';
+import { useThrottler } from 'src/engine-graphql-config/hooks/use-throttler';
 import { MetadataModule } from 'src/engine-metadata/metadata.module';
-import { renderApolloPlayground } from 'src/engine-workspace/utils/render-apollo-playground.util';
+import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,

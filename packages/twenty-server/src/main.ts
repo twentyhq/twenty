@@ -11,8 +11,8 @@ import '@sentry/tracing';
 import { AppModule } from './app.module';
 
 import { settings } from './engine/constants/settings';
-import { LoggerService } from './integrations/logger/logger.service';
-import { EnvironmentService } from './integrations/environment/environment.service';
+import { LoggerService } from './engine/integrations/logger/logger.service';
+import { EnvironmentService } from './engine/integrations/environment/environment.service';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

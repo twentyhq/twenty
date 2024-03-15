@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OpenApiService } from 'src/engine/modules/open-api/open-api.service';
 import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 describe('OpenApiService', () => {
   let service: OpenApiService;

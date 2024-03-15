@@ -9,7 +9,7 @@ import { WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-h
 import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 @Injectable()
 export class ObjectMetadataHealthService {

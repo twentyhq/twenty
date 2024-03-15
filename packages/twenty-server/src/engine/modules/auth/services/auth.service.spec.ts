@@ -5,8 +5,8 @@ import { UserService } from 'src/engine/modules/user/services/user.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { EmailService } from 'src/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { EmailService } from 'src/engine/integrations/email/email.service';
 import { SignUpService } from 'src/engine/modules/auth/services/sign-up.service';
 
 import { AuthService } from './auth.service';

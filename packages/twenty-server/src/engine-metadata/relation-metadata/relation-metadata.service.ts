@@ -20,7 +20,7 @@ import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-meta
 import { WorkspaceMigrationColumnActionType } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
 import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
 import { createCustomColumnName } from 'src/engine-metadata/utils/create-custom-column-name.util';
-import { computeObjectTargetTable } from 'src/engine-workspace/utils/compute-object-target-table.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { createRelationForeignKeyColumnName } from 'src/engine-metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { generateMigrationName } from 'src/engine-metadata/workspace-migration/utils/generate-migration-name.util';
 

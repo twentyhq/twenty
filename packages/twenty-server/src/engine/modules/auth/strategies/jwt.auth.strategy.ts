@@ -10,7 +10,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
 import { assert } from 'src/utils/assert';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
