@@ -6,7 +6,7 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
@@ -18,12 +18,12 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/engine/modules/workspace/dtos/update-workspace-input';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
 import { BillingSubscription } from 'src/engine/modules/billing/entities/billing-subscription.entity';
 import { BillingService } from 'src/engine/modules/billing/billing.service';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 
 import { Workspace } from './workspace.entity';
 
@@ -35,7 +35,6 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly fileUploadService: FileUploadService,
-    private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
   ) {}
 
@@ -89,15 +88,9 @@ export class WorkspaceResolver {
     return paths[0];
   }
 
+  @UseGuards(DemoEnvGuard)
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
-    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-    // Check if the id is in the list of demo workspaceIds
-    if (demoWorkspaceIds.includes(id)) {
-      throw new ForbiddenException('Demo workspaces cannot be deleted.');
-    }
-
     return this.workspaceService.deleteWorkspace(id);
   }
 

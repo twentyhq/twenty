@@ -8,8 +8,9 @@ import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.inter
 import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, DemoEnvGuard)
 @Resolver()
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}

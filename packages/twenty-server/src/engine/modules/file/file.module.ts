@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common';
 
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
 import { FileService } from './services/file.service';
 import { FileUploadService } from './services/file-upload.service';
 import { FileUploadResolver } from './resolvers/file-upload.resolver';
 import { FileController } from './controllers/file.controller';
 
 @Module({
-  providers: [FileService, FileUploadService, FileUploadResolver],
+  providers: [
+    FileService,
+    FileUploadService,
+    FileUploadResolver,
+    EnvironmentService,
+  ],
   exports: [FileService, FileUploadService],
   controllers: [FileController],
 })

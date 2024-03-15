@@ -6,7 +6,7 @@ import {
   ResolveField,
   Mutation,
 } from '@nestjs/graphql';
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -22,6 +22,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
 import { assert } from 'src/utils/assert';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/modules/user/dtos/workspace-member.dto';
@@ -108,20 +109,9 @@ export class UserResolver {
     return paths[0];
   }
 
+  @UseGuards(DemoEnvGuard)
   @Mutation(() => User)
-  async deleteUser(@AuthUser() { id: userId, defaultWorkspace }: User) {
-    // Get the list of demo workspace IDs
-    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-    const currentUserWorkspaceId = defaultWorkspace.id;
-
-    // Check if the user's default workspace ID is in the list of demo workspace IDs
-    if (demoWorkspaceIds.includes(currentUserWorkspaceId)) {
-      throw new ForbiddenException(
-        'Deletion of users with a default demo workspace is not allowed.',
-      );
-    }
-
+  async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);
   }
