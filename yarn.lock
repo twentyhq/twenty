@@ -8720,15 +8720,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/cypress@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/cypress@npm:17.2.8"
-  dependencies:
-    "@nx/cypress": "npm:17.2.8"
-  checksum: 943e18e91d06d7914427b27e9a70c0e6f2e8c6fb20a6b2c19a77c184205e66cc3609537e3dcced539f1a679437ae584569931ba084573772253420ca403c4413
-  languageName: node
-  linkType: hard
-
 "@nrwl/cypress@npm:17.3.2":
   version: 17.3.2
   resolution: "@nrwl/cypress@npm:17.3.2"
@@ -8798,15 +8789,6 @@ __metadata:
   dependencies:
     "@nx/react": "npm:17.2.8"
   checksum: 58a0551b469870868f67e3e0df5a9e3dd5fe0a6475192b0cc37739485ffe1ba97b57080e8540995aae4d3efdfe527eefad7a6098d82f18fe55a2293fd67ab1e3
-  languageName: node
-  linkType: hard
-
-"@nrwl/storybook@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/storybook@npm:17.2.8"
-  dependencies:
-    "@nx/storybook": "npm:17.2.8"
-  checksum: eb61bd861a93b6cf2332658ea4f57f8387a8eeb4aafbd4229c2cf062af4cdf27f5fa9154b656f793e6c466b4ecbcfd74afcf30da22cabad2031ec6c0fb64eaa3
   languageName: node
   linkType: hard
 
@@ -8889,27 +8871,6 @@ __metadata:
   bin:
     opencollective: bin/opencollective.js
   checksum: 540268687af3289ff107585484d42201b404cdbb98b3a512487c12a6b180a8f0e1df0d701df47d3d9e0d5c0f6eb3252d80535562aedca9edf52cf7fd17ae4601
-  languageName: node
-  linkType: hard
-
-"@nx/cypress@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nx/cypress@npm:17.2.8"
-  dependencies:
-    "@nrwl/cypress": "npm:17.2.8"
-    "@nx/devkit": "npm:17.2.8"
-    "@nx/eslint": "npm:17.2.8"
-    "@nx/js": "npm:17.2.8"
-    "@phenomnomnominal/tsquery": "npm:~5.0.1"
-    detect-port: "npm:^1.5.1"
-    semver: "npm:7.5.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    cypress: ">= 3 < 14"
-  peerDependenciesMeta:
-    cypress:
-      optional: true
-  checksum: 7de90cd0829caec21b25298bb01a079ca0b66ac1f445a91f2b7b2b784364f748480172f283ef674fa2b247297888c8fcb7f8681b61b06b6b5e9f3f6a17dfabde
   languageName: node
   linkType: hard
 
@@ -9314,22 +9275,6 @@ __metadata:
     minimatch: "npm:3.0.5"
     tslib: "npm:^2.3.0"
   checksum: 1fef56528de07ae76b02c0db8bd7e5e73496a44791fa2cac8345dec60ac2e441bf44cf81e4d45fa9cb88a5eba8fd4fcd38c5efbc1efc117b89adbafee4741919
-  languageName: node
-  linkType: hard
-
-"@nx/storybook@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nx/storybook@npm:17.2.8"
-  dependencies:
-    "@nrwl/storybook": "npm:17.2.8"
-    "@nx/cypress": "npm:17.2.8"
-    "@nx/devkit": "npm:17.2.8"
-    "@nx/eslint": "npm:17.2.8"
-    "@nx/js": "npm:17.2.8"
-    "@phenomnomnominal/tsquery": "npm:~5.0.1"
-    semver: "npm:7.5.3"
-    tslib: "npm:^2.3.0"
-  checksum: cfbe358f9c61e0101d959b791214c21271b4e5426d0fd8e0bb38fc9bcb7d8956b93600517f67c2451d841c9a95879e77b05d40b128842cf4a4fd3363d33a3960
   languageName: node
   linkType: hard
 
@@ -45820,7 +45765,6 @@ __metadata:
     "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@nx/js": "npm:17.2.8"
-    "@nx/storybook": "npm:17.2.8"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"
