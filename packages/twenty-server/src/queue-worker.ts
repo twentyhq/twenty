@@ -13,7 +13,7 @@ import { QueueWorkerModule } from 'src/queue-worker.module';
 
 import { LoggerService } from './integrations/logger/logger.service';
 import { ExceptionHandlerService } from './integrations/exception-handler/exception-handler.service';
-import { filterException } from './filters/utils/global-exception-handler.util';
+import { filterException } from './engine/filters/utils/global-exception-handler.util';
 
 async function bootstrap() {
   let exceptionHandlerService: ExceptionHandlerService | undefined;
