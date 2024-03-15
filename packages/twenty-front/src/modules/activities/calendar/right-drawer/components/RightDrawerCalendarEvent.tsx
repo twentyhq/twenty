@@ -5,12 +5,15 @@ import { viewableCalendarEventIdState } from '@/activities/calendar/states/viewa
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 
 export const RightDrawerCalendarEvent = () => {
+  const { setRecords } = useSetRecordInStore();
   const calendarEventId = useRecoilValue(viewableCalendarEventIdState());
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     objectRecordId: calendarEventId ?? '',
+    onCompleted: (record) => setRecords([record]),
   });
 
   if (!calendarEvent) return null;
