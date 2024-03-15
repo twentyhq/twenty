@@ -89,7 +89,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           workspace: currentWorkspace,
           workspaceMember: currentWorkspaceMember,
         } =
-          signInUpMode === SignInUpMode.SignIn
+          signInUpMode === SignInUpMode.SignIn && !isInviteMode
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
@@ -109,6 +109,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     },
     [
       signInUpMode,
+      isInviteMode,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
