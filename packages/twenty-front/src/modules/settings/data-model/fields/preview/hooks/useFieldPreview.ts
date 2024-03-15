@@ -2,7 +2,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
@@ -59,7 +58,7 @@ export const useFieldPreview = ({
   const isValueFromFirstRecord =
     firstRecord &&
     !isFieldValueEmpty({
-      fieldDefinition: { type: parseFieldType(fieldMetadataItem.type) },
+      fieldDefinition: { type: fieldMetadataItem.type },
       fieldValue: fieldPreviewValueFromFirstRecord,
     });
 
