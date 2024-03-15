@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
+import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
 
 const tableName = 'featureFlag';
 

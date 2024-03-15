@@ -3,7 +3,7 @@ import { getGraphQLRateLimiter } from 'graphql-rate-limit';
 import { Plugin } from '@envelop/core';
 import { useOnResolve } from '@envelop/on-resolve';
 
-import { GraphQLContext } from 'src/graphql-config/graphql-config.service';
+import { GraphQLContext } from 'src/engine-graphql-config/graphql-config.service';
 
 export class UnauthenticatedError extends Error {}
 

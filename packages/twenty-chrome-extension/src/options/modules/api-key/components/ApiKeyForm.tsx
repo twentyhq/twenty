@@ -23,7 +23,11 @@ const StyledHeader = styled.header`
   text-align: center;
 `;
 
-const StyledImg = styled.img``;
+const StyledImgLogo = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const StyledMain = styled.main`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -51,6 +55,13 @@ const StyledSection = styled.div<{ showSection: boolean }>`
   max-height: ${({ showSection }) => (showSection ? '200px' : '0')};
 `;
 
+const StyledButtonHorizontalContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(4)};
+  width: 100%;
+`;
+
 export const ApiKeyForm = () => {
   const [apiKey, setApiKey] = useState('');
   const [route, setRoute] = useState('');
@@ -74,10 +85,6 @@ export const ApiKeyForm = () => {
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.set({ apiKey });
-  }, [apiKey]);
-
-  useEffect(() => {
     if (import.meta.env.VITE_SERVER_BASE_URL !== route) {
       chrome.storage.local.set({ serverBaseUrl: route });
     } else {
@@ -85,10 +92,18 @@ export const ApiKeyForm = () => {
     }
   }, [route]);
 
+  const handleValidateKey = () => {
+    chrome.storage.local.set({ apiKey });
+
+    window.close();
+  };
+
   const handleGenerateClick = () => {
-    window.open(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers/api-keys`,
-    );
+    window.open(`${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers`);
+  };
+
+  const handleGoToTwenty = () => {
+    window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`);
   };
 
   const handleToggle = () => {
@@ -98,9 +113,12 @@ export const ApiKeyForm = () => {
   return (
     <StyledContainer isToggleOn={showSection}>
       <StyledHeader>
-        <StyledImg src="/logo/32-32.svg" alt="Twenty Logo" />
+        <StyledImgLogo
+          src="/logo/32-32.svg"
+          alt="Twenty Logo"
+          onClick={handleGoToTwenty}
+        />
       </StyledHeader>
-
       <StyledMain>
         <H2Title
           title="Connect your account"
@@ -112,17 +130,30 @@ export const ApiKeyForm = () => {
           onChange={setApiKey}
           placeholder="My API key"
         />
-        <Button
-          title="Generate a key"
-          fullWidth={false}
-          variant="primary"
-          accent="default"
-          size="small"
-          position="standalone"
-          soon={false}
-          disabled={false}
-          onClick={handleGenerateClick}
-        />
+        <StyledButtonHorizontalContainer>
+          <Button
+            title="Generate a key"
+            fullWidth={true}
+            variant="primary"
+            accent="default"
+            size="small"
+            position="standalone"
+            soon={false}
+            disabled={false}
+            onClick={handleGenerateClick}
+          />
+          <Button
+            title="Validate key"
+            fullWidth={true}
+            variant="primary"
+            accent="default"
+            size="small"
+            position="standalone"
+            soon={false}
+            disabled={apiKey === ''}
+            onClick={handleValidateKey}
+          />
+        </StyledButtonHorizontalContainer>
       </StyledMain>
 
       <StyledFooter>

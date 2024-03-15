@@ -12,7 +12,7 @@ import {
 export const messageQueueModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<MessageQueueModuleOptions> => {
-  const driverType = environmentService.getMessageQueueDriverType();
+  const driverType = environmentService.get('MESSAGE_QUEUE_TYPE');
 
   switch (driverType) {
     case MessageQueueDriverType.Sync: {
@@ -22,7 +22,7 @@ export const messageQueueModuleFactory = async (
       };
     }
     case MessageQueueDriverType.PgBoss: {
-      const connectionString = environmentService.getPGDatabaseUrl();
+      const connectionString = environmentService.get('PG_DATABASE_URL');
 
       return {
         type: MessageQueueDriverType.PgBoss,
@@ -32,8 +32,8 @@ export const messageQueueModuleFactory = async (
       };
     }
     case MessageQueueDriverType.BullMQ: {
-      const host = environmentService.getRedisHost();
-      const port = environmentService.getRedisPort();
+      const host = environmentService.get('REDIS_HOST');
+      const port = environmentService.get('REDIS_PORT');
 
       return {
         type: MessageQueueDriverType.BullMQ,

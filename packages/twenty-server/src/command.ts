@@ -4,7 +4,7 @@ import { CommandModule } from './command.module';
 
 import { LoggerService } from './integrations/logger/logger.service';
 import { ExceptionHandlerService } from './integrations/exception-handler/exception-handler.service';
-import { filterException } from './filters/utils/global-exception-handler.util';
+import { filterException } from './engine/filters/utils/global-exception-handler.util';
 
 async function bootstrap() {
   const errorHandler = (err: Error) => {

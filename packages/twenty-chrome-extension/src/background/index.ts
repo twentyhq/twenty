@@ -8,8 +8,8 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // Open options page when extension icon is clicked.
-chrome.action.onClicked.addListener(() => {
-  openOptionsPage();
+chrome.action.onClicked.addListener((tab) => {
+  chrome.tabs.sendMessage(tab.id ?? 0, { action: 'TOGGLE' });
 });
 
 // This listens for an event from other parts of the extension, such as the content script, and performs the required tasks.

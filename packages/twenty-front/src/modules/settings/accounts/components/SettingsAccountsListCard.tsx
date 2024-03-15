@@ -8,10 +8,9 @@ import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/componen
 import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconAt, IconPlus } from '@/ui/display/icon';
+import { IconPlus } from '@/ui/display/icon';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 
@@ -19,16 +18,28 @@ import { SettingsAccountRow } from './SettingsAccountsRow';
 
 const StyledFooter = styled(CardFooter)`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconButton = styled(LightIconButton)`
-  margin-left: auto;
+const StyledButton = styled.button`
+  align-items: center;
+  background: ${({ theme }) => theme.background.primary};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  cursor: pointer;
+  display: flex;
+  flex: 1 0 0;
+  height: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
 `;
 
 type SettingsAccountsListCardProps<
@@ -73,15 +84,14 @@ export const SettingsAccountsListCard = <
       ))}
       {hasFooter && (
         <StyledFooter>
-          <IconAt size={theme.icon.size.sm} />
-          Add account
-          <StyledIconButton
-            Icon={IconPlus}
-            accent="tertiary"
+          <StyledButton
             onClick={() =>
               navigate(getSettingsPagePath(SettingsPath.NewAccount))
             }
-          />
+          >
+            <IconPlus size={theme.icon.size.md} />
+            Add account
+          </StyledButton>
         </StyledFooter>
       )}
     </Card>

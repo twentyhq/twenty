@@ -7,7 +7,7 @@ import { objectShowPageTargetableObjectState } from '@/activities/timeline/state
 import { timelineActivitiesFammilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
 import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
-import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityFirstLevelFamilySelector';
+import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { sortObjectRecordByDateField } from '@/object-record/utils/sortObjectRecordByDateField';
