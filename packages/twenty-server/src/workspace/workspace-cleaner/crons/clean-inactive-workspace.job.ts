@@ -44,10 +44,12 @@ export class CleanInactiveWorkspaceJob
     private readonly emailService: EmailService,
     private readonly environmentService: EnvironmentService,
   ) {
-    this.inactiveDaysBeforeDelete =
-      this.environmentService.get('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION');
-    this.inactiveDaysBeforeEmail =
-      this.environmentService.get('WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION');
+    this.inactiveDaysBeforeDelete = this.environmentService.get(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
+    );
+    this.inactiveDaysBeforeEmail = this.environmentService.get(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
+    );
   }
 
   async getMostRecentUpdatedAt(
@@ -134,7 +136,9 @@ export class CleanInactiveWorkspaceJob
       this.emailService.send({
         to: workspaceMember.email,
         bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
-        from: `${this.environmentService.get('EMAIL_FROM_NAME')} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+        from: `${this.environmentService.get(
+          'EMAIL_FROM_NAME',
+        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
         subject: 'Action Needed to Prevent Workspace Deletion',
         html,
         text,
@@ -180,7 +184,9 @@ export class CleanInactiveWorkspaceJob
 
     await this.emailService.send({
       to: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
-      from: `${this.environmentService.get('EMAIL_FROM_NAME')} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       subject: 'Action Needed to Delete Workspaces',
       html,
       text,

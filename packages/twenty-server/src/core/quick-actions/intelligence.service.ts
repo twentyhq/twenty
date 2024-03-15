@@ -37,7 +37,9 @@ export class IntelligenceService {
       'https://openrouter.ai/api/v1/chat/completions',
       {
         headers: {
-          Authorization: `Bearer ${this.environmentService.get('OPENROUTER_API_KEY')}`,
+          Authorization: `Bearer ${this.environmentService.get(
+            'OPENROUTER_API_KEY',
+          )}`,
           'HTTP-Referer': `https://twenty.com`,
           'X-Title': `Twenty CRM`,
           'Content-Type': 'application/json',

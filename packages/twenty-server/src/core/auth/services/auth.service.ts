@@ -205,7 +205,9 @@ export class AuthService {
     });
 
     this.emailService.send({
-      from: `${this.environmentService.get('EMAIL_FROM_NAME')} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
       subject: 'Your Password Has Been Successfully Changed',
       text,

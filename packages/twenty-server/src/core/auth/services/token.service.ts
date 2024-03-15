@@ -147,7 +147,9 @@ export class TokenService {
     workspaceId: string,
   ): Promise<AuthToken> {
     const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
-    const expiresIn = this.environmentService.get('SHORT_TERM_TOKEN_EXPIRES_IN');
+    const expiresIn = this.environmentService.get(
+      'SHORT_TERM_TOKEN_EXPIRES_IN',
+    );
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -231,7 +233,8 @@ export class TokenService {
     workspaceMemberId: string;
     workspaceId: string;
   }> {
-    const transientTokenSecret = this.environmentService.get('LOGIN_TOKEN_SECRET');
+    const transientTokenSecret =
+      this.environmentService.get('LOGIN_TOKEN_SECRET');
 
     const payload = await this.verifyJwt(transientToken, transientTokenSecret);
 
@@ -382,7 +385,9 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    const expiresIn = this.environmentService.get('PASSWORD_RESET_TOKEN_EXPIRES_IN');
+    const expiresIn = this.environmentService.get(
+      'PASSWORD_RESET_TOKEN_EXPIRES_IN',
+    );
 
     assert(
       expiresIn,
@@ -465,7 +470,9 @@ export class TokenService {
     });
 
     this.emailService.send({
-      from: `${this.environmentService.get('EMAIL_FROM_NAME')} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${this.environmentService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
       subject: 'Action Needed to Reset Password',
       text,

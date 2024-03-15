@@ -26,7 +26,8 @@ export class DataSeedDemoWorkspaceService {
       });
 
       await dataSource.initialize();
-      const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
+      const demoWorkspaceIds =
+        this.environmentService.get('DEMO_WORKSPACE_IDS');
 
       if (demoWorkspaceIds.length === 0) {
         throw new Error(

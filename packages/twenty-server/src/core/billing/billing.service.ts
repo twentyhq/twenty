@@ -98,7 +98,9 @@ export class BillingService {
 
   async getBillingSubscriptionItem(
     workspaceId: string,
-    stripeProductId = this.environmentService.get('BILLING_STRIPE_BASE_PLAN_PRODUCT_ID'),
+    stripeProductId = this.environmentService.get(
+      'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
+    ),
   ) {
     const billingSubscription = await this.getCurrentBillingSubscription({
       workspaceId,

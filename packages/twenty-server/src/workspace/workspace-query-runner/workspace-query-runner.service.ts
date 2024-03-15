@@ -306,8 +306,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
-    const maximumRecordAffected =
-      this.environmentService.get('MUTATION_MAXIMUM_RECORD_AFFECTED');
+    const maximumRecordAffected = this.environmentService.get(
+      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+    );
     const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
       ...options,
       atMost: maximumRecordAffected,
@@ -338,8 +339,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
-    const maximumRecordAffected =
-      this.environmentService.get('MUTATION_MAXIMUM_RECORD_AFFECTED');
+    const maximumRecordAffected = this.environmentService.get(
+      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+    );
     const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
       ...options,
       atMost: maximumRecordAffected,

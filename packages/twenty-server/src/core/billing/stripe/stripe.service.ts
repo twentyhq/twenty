@@ -18,8 +18,9 @@ export class StripeService {
   }
 
   constructEventFromPayload(signature: string, payload: Buffer) {
-    const webhookSecret =
-      this.environmentService.get('BILLING_STRIPE_WEBHOOK_SECRET');
+    const webhookSecret = this.environmentService.get(
+      'BILLING_STRIPE_WEBHOOK_SECRET',
+    );
 
     return this.stripe.webhooks.constructEvent(
       payload,
@@ -72,8 +73,9 @@ export class StripeService {
         metadata: {
           workspaceId: user.defaultWorkspace.id,
         },
-        trial_period_days:
-          this.environmentService.get('BILLING_FREE_TRIAL_DURATION_IN_DAYS'),
+        trial_period_days: this.environmentService.get(
+          'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
+        ),
       },
       automatic_tax: { enabled: true },
       tax_id_collection: { enabled: true },
