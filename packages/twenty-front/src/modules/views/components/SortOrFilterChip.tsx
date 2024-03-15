@@ -19,7 +19,7 @@ const StyledChip = styled.div<StyledChipProps>`
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
   user-select: none;
 `;
