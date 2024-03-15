@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
 import { seedViews } from 'src/database/typeorm-seeds/workspace/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -10,14 +10,12 @@ import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
-import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import {
-  SeedAppleWorkspaceId,
-  SeedTwentyWorkspaceId,
-} from 'src/database/typeorm-seeds/core/workspaces';
+import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { SeedAppleWorkspaceId, SeedTwentyWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 // TODO: implement dry-run
 @Command({
@@ -110,6 +108,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
         await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
         await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
+        await seedCalendarEvents(workspaceDataSource, dataSourceMetadata.schema);
 
         await seedViews(
           workspaceDataSource,

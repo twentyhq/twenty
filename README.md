@@ -31,7 +31,7 @@ We felt the need for a CRM platform that empowers rather than constrains. We bel
 <br>
 
 # Demo 
-Go to <a href="https://app.twenty.com/">app.twenty.com</a> and login with the following credentials:
+Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
 ```
 email: noah@demo.dev
 password: Applecar2025

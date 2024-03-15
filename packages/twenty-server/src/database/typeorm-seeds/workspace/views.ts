@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
 
 export const seedViews = async (
   workspaceDataSource: DataSource,

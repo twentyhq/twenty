@@ -27,7 +27,6 @@ export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
       testId={viewSort.fieldMetadataId}
       labelValue={viewSort.definition.label}
       Icon={viewSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
-      isSort
       onRemove={handleRemoveClick}
       onClick={handleClick}
     />

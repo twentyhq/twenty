@@ -104,14 +104,6 @@ describe('useActivityConnectionUtils', () => {
 
     expect(activityWithConnection).toBeDefined();
 
-    console.log(
-      JSON.stringify({
-        mockActivityWithConnectionRelation,
-        activityWithConnection,
-        mockActivityWithArrayRelation,
-      }),
-    );
-
     expect(activityWithConnection.activityTargets.edges[0].node.id).toEqual(
       mockActivityWithConnectionRelation.activityTargets.edges[0].node.id,
     );
