@@ -26,7 +26,9 @@ export const getFieldDefaultPreviewValue = ({
     fieldMetadataItem.type === FieldMetadataType.Select &&
     isDefined(selectOptions)
   ) {
-    return selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
+    const defaultSelectOption =
+      selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
+    return defaultSelectOption.value;
   }
 
   // Relation field

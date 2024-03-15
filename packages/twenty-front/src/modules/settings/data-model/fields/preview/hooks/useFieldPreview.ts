@@ -55,11 +55,13 @@ export const useFieldPreview = ({
         })
       : null;
 
+  const selectOptionValues = selectOptions?.map((option) => option.value);
   const isValueFromFirstRecord =
     firstRecord &&
     !isFieldValueEmpty({
       fieldDefinition: { type: fieldMetadataItem.type },
       fieldValue: fieldPreviewValueFromFirstRecord,
+      selectOptionValues,
     });
 
   const { records: relationRecords } = useFindManyRecords({
