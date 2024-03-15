@@ -21,8 +21,8 @@ export const PrefetchRunQueriesEffect = () => {
     objectMetadataItem: objectMetadataItemFavorite,
     upsertRecordsInCache: upsertFavoritesInCache,
   } = usePrefetchRunQuery({
-    prefetchKey: PrefetchKey.AllViews,
-    objectNameSingular: CoreObjectNameSingular.View,
+    prefetchKey: PrefetchKey.AllFavorites,
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
   const prefetchFindManyQuery =
