@@ -8,6 +8,7 @@ import { GoogleAPIsRequest } from 'src/engine/modules/auth/strategies/google-api
 import { GoogleAPIsService } from 'src/engine/modules/auth/services/google-apis.service';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -25,7 +26,7 @@ export class GoogleAPIsAuthController {
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
+  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard, DemoEnvGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
@@ -36,12 +37,6 @@ export class GoogleAPIsAuthController {
 
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
-
-    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-    if (demoWorkspaceIds.includes(workspaceId)) {
-      throw new Error('Cannot connect Google account to demo workspace');
-    }
 
     if (!workspaceId) {
       throw new Error('Workspace not found');

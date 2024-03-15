@@ -10,8 +10,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 
-@UseGuards(JwtAuthGuard)
-@UseGuards(DemoEnvGuard)
+@UseGuards(JwtAuthGuard, DemoEnvGuard)
 @Resolver()
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
