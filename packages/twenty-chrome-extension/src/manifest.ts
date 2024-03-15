@@ -17,7 +17,7 @@ export default defineManifest({
   action: {},
 
   //TODO: change this to a documenation page
-  options_page: 'loading.html',
+  options_page: 'options.html',
 
   background: {
     service_worker: 'src/background/index.ts',
@@ -36,12 +36,7 @@ export default defineManifest({
 
   host_permissions: ['https://www.linkedin.com/*'],
 
-  // cannot use envoirnment variables in manifest -
-  // https://github.com/facebook/create-react-app/issues/7953
-  // "matches" field only accepts a https connection
-  // DO NOT PUSH <all_urls> to production!
   externally_connectable: {
-    matches: [`<all_urls>`],
-    // matches: [`https://app.twenty.com`]
+    matches: [`https://app.twenty.com/*`, `http://localhost:3001/*`],
   },
 });

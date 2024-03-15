@@ -39,13 +39,8 @@ const createNewButton = (
   newButton.addEventListener('click', async () => {
     const { apiKey } = await chrome.storage.local.get('apiKey');
 
-    console.log({
-      apiKey,
-    });
-
     // If an api key is not set, the options page opens up to allow the user to configure an api key.
     if (!apiKey) {
-      console.log('opening options page');
       chrome.runtime.sendMessage({ action: 'openOptionsPage' });
       return;
     }

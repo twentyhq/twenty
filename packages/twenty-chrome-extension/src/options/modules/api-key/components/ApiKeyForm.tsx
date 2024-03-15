@@ -23,7 +23,11 @@ const StyledHeader = styled.header`
   text-align: center;
 `;
 
-const StyledImg = styled.img``;
+const StyledImgLogo = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const StyledMain = styled.main`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -51,10 +55,11 @@ const StyledSection = styled.div<{ showSection: boolean }>`
   max-height: ${({ showSection }) => (showSection ? '200px' : '0')};
 `;
 
-const StyledButtonVerticalContainer = styled.div`
+const StyledButtonHorizontalContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(4)};
+  width: 100%;
 `;
 
 export const ApiKeyForm = () => {
@@ -97,6 +102,10 @@ export const ApiKeyForm = () => {
     window.open(`${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers`);
   };
 
+  const handleGoToTwenty = () => {
+    window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`);
+  };
+
   const handleToggle = () => {
     setShowSection(!showSection);
   };
@@ -104,9 +113,12 @@ export const ApiKeyForm = () => {
   return (
     <StyledContainer isToggleOn={showSection}>
       <StyledHeader>
-        <StyledImg src="/logo/32-32.svg" alt="Twenty Logo" />
+        <StyledImgLogo
+          src="/logo/32-32.svg"
+          alt="Twenty Logo"
+          onClick={handleGoToTwenty}
+        />
       </StyledHeader>
-
       <StyledMain>
         <H2Title
           title="Connect your account"
@@ -118,10 +130,10 @@ export const ApiKeyForm = () => {
           onChange={setApiKey}
           placeholder="My API key"
         />
-        <StyledButtonVerticalContainer>
+        <StyledButtonHorizontalContainer>
           <Button
             title="Generate a key"
-            fullWidth={false}
+            fullWidth={true}
             variant="primary"
             accent="default"
             size="small"
@@ -132,7 +144,7 @@ export const ApiKeyForm = () => {
           />
           <Button
             title="Validate key"
-            fullWidth={false}
+            fullWidth={true}
             variant="primary"
             accent="default"
             size="small"
@@ -141,7 +153,7 @@ export const ApiKeyForm = () => {
             disabled={apiKey === ''}
             onClick={handleValidateKey}
           />
-        </StyledButtonVerticalContainer>
+        </StyledButtonHorizontalContainer>
       </StyledMain>
 
       <StyledFooter>
