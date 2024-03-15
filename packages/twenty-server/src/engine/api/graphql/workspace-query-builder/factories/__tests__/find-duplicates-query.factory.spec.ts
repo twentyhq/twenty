@@ -6,7 +6,7 @@ import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-res
 import { ArgsAliasFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/args-alias.factory';
 import { FieldsStringFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/fields-string.factory';
 import { FindDuplicatesQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/find-duplicates-query.factory';
-import { workspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/utils-test/workspace-query-builder-options';
+import { workspaceQueryBuilderOptionsMock } from 'src/engine/api/graphql/workspace-query-builder/__mocks__/workspace-query-builder-options.mock';
 
 describe('FindDuplicatesQueryFactory', () => {
   let service: FindDuplicatesQueryFactory;
@@ -48,7 +48,10 @@ describe('FindDuplicatesQueryFactory', () => {
     it('should return (first: 0) as a filter when args are missing', async () => {
       const args: FindDuplicatesResolverArgs<RecordFilter> = {};
 
-      const query = await service.create(args, workspaceQueryBuilderOptions);
+      const query = await service.create(
+        args,
+        workspaceQueryBuilderOptionsMock,
+      );
 
       expect(query.trim()).toEqual(`query {
         objectNameCollection(first: 0) {
@@ -73,9 +76,9 @@ describe('FindDuplicatesQueryFactory', () => {
       };
 
       const query = await service.create(args, {
-        ...workspaceQueryBuilderOptions,
+        ...workspaceQueryBuilderOptionsMock,
         objectMetadataItem: {
-          ...workspaceQueryBuilderOptions.objectMetadataItem,
+          ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
           nameSingular: 'person',
         },
       });
@@ -101,9 +104,9 @@ describe('FindDuplicatesQueryFactory', () => {
       };
 
       const query = await service.create(args, {
-        ...workspaceQueryBuilderOptions,
+        ...workspaceQueryBuilderOptionsMock,
         objectMetadataItem: {
-          ...workspaceQueryBuilderOptions.objectMetadataItem,
+          ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
           nameSingular: 'person',
         },
       });
@@ -129,9 +132,9 @@ describe('FindDuplicatesQueryFactory', () => {
       };
 
       const query = await service.create(args, {
-        ...workspaceQueryBuilderOptions,
+        ...workspaceQueryBuilderOptionsMock,
         objectMetadataItem: {
-          ...workspaceQueryBuilderOptions.objectMetadataItem,
+          ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
           nameSingular: 'person',
         },
       });
@@ -155,9 +158,9 @@ describe('FindDuplicatesQueryFactory', () => {
       const query = await service.create(
         args,
         {
-          ...workspaceQueryBuilderOptions,
+          ...workspaceQueryBuilderOptionsMock,
           objectMetadataItem: {
-            ...workspaceQueryBuilderOptions.objectMetadataItem,
+            ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
             nameSingular: 'person',
           },
         },
@@ -178,9 +181,9 @@ describe('FindDuplicatesQueryFactory', () => {
   describe('buildQueryForExistingRecord', () => {
     it(`should include all the fields that exist for person inside "duplicateCriteriaCollection" constant`, async () => {
       const query = service.buildQueryForExistingRecord('uuid', {
-        ...workspaceQueryBuilderOptions,
+        ...workspaceQueryBuilderOptionsMock,
         objectMetadataItem: {
-          ...workspaceQueryBuilderOptions.objectMetadataItem,
+          ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
           nameSingular: 'person',
         },
       });
