@@ -10,7 +10,10 @@ import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQu
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'namePlural' | 'nameSingular'
+  >;
 }) => {
   const apolloClient = useApolloClient();
 

@@ -6,38 +6,38 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Favorite } from '@/favorites/types/Favorite';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useFavorites = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
 
-  const favoriteObjectNameSingular = 'favorite';
-
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNameSingular: favoriteObjectNameSingular,
+      objectNameSingular: CoreObjectNameSingular.Favorite,
     });
 
   const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: favoriteObjectNameSingular,
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
-    objectNameSingular: favoriteObjectNameSingular,
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
   const { createOneRecord: createOneFavorite } = useCreateOneRecord({
-    objectNameSingular: favoriteObjectNameSingular,
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const { records: favorites } = useFindManyRecords<Favorite>({
-    objectNameSingular: favoriteObjectNameSingular,
-  });
+  const { records: favorites } = usePrefetchedData<Favorite>(
+    PrefetchKey.AllFavorites,
+  );
 
   const favoriteRelationFieldMetadataItems = useMemo(
     () =>
