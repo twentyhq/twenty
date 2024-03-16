@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { Avatar, AvatarType } from '@/users/components/Avatar';
-
 import { IconComponent } from '../../display/icon/types/IconComponent';
 import { Nullable } from '../../types/Nullable';
+import { Avatar, AvatarType } from '../Avatar/Avatar';
 import { Chip, ChipVariant } from '../Chip/Chip';
 
 export type EntityChipProps = {

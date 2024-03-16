@@ -1,6 +1,6 @@
 import { RecoilState, SerializableParam } from 'recoil';
 
-import { ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
+import { ComponentFamilyStateKey } from '../../state/component-state/types/ComponentFamilyStateKey';
 
 export const getScopedFamilyStateDeprecated = <
   StateType,
