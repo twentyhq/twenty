@@ -10,6 +10,7 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
+import { AppPath } from '@/types/AppPath';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -233,6 +234,8 @@ export const SignInUpForm = () => {
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
         </ActionLink>
+      ) : signInUpMode === SignInUpMode.SignIn ? (
+        <ActionLink href={AppPath.SignUp}>Create an account</ActionLink>
       ) : (
         <FooterNote>
           By using Twenty, you agree to the Terms of Service and Data Processing
