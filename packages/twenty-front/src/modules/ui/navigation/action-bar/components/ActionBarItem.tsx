@@ -104,13 +104,8 @@ export const ActionBarItem = ({ item }: ActionBarItemProps) => {
             <ConfirmationModal
               isOpen={isDeleteRecordsModalOpen}
               setIsOpen={setIsDeleteRecordsModalOpen}
-              title={`Delete ${selectedRecords} records`}
-              subtitle={
-                <>
-                  This action cannot be undone. This will permanently delete
-                  these records
-                </>
-              }
+              title={`Delete ${selectedRecords} ${selectedRecords === 1 ? `record` : 'records'}`}
+              subtitle={`This action cannot be undone. This will permanently delete ${selectedRecords=== 1 ? 'this record' : 'these records'}`}
               onConfirmClick={() => item.onClick?.()}
               deleteButtonText="Delete Records"
             />
