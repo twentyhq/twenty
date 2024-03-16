@@ -3,6 +3,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
   root: __dirname,
@@ -10,6 +11,7 @@ export default defineConfig({
 
   plugins: [
     nxViteTsPaths(),
+    svgr(),
     dts({
       entryRoot: 'src',
       tsConfigFilePath: path.join(__dirname, 'tsconfig.lib.json'),
@@ -41,7 +43,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: ['react', 'react-dom'],
     },
   },
 });
