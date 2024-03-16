@@ -9,7 +9,7 @@ export type {
 } from './ColorSample/ColorSample';
 export { ColorSample } from './ColorSample/ColorSample';
 export { EntityChip, EntityChipVariant } from './EntityChip/EntityChip';
-export { H1Title } from './H1Title/H1Title';
+export { H1Title, H1TitleFontColor } from './H1Title/H1Title';
 export { H2Title } from './H2Title/H2Title';
 export { H3Title } from './H3Title/H3Title';
 export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/OverflowingTextWithTooltip';

@@ -1,5 +1,6 @@
+import { H2Title } from 'twenty-ui';
+
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsNewAccountSection = () => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { H1Title, H2Title } from 'twenty-ui';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
@@ -13,9 +14,7 @@ import { AppPath } from '@/types/AppPath.ts';
 import { IconCalendarEvent, IconCircleX } from '@/ui/display/icon';
 import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info.tsx';
-import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
-import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button.tsx';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';

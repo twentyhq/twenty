@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { H2Title } from 'twenty-ui';
 
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
