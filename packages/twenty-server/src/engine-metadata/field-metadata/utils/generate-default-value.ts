@@ -25,8 +25,8 @@ export function generateDefaultValue(
         addressState: '',
         addressCountry: '',
         addressPostcode: '',
-        addressLat: 0,
-        addressLng: 0,
+        addressLat: null,
+        addressLng: null,
       };
     case FieldMetadataType.LINK:
       return {

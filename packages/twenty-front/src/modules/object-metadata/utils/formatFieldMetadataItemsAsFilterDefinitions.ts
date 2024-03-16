@@ -18,6 +18,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Number,
         FieldMetadataType.Link,
         FieldMetadataType.FullName,
+        FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.Currency,
@@ -71,5 +72,7 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
                     ? 'RELATION'
                     : field.type === FieldMetadataType.Select
                       ? 'SELECT'
-                      : 'TEXT',
+                      : field.type === FieldMetadataType.Address
+                        ? 'ADDRESS'
+                        : 'TEXT',
 });

@@ -1,6 +1,6 @@
 import { FieldDefinition } from '../FieldDefinition';
-import { FieldLinkMetadata, FieldMetadata } from '../FieldMetadata';
+import { FieldAddressMetadata, FieldMetadata } from '../FieldMetadata';
 
 export const isFieldAddress = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
-): field is FieldDefinition<FieldLinkMetadata> => field.type === 'ADDRESS';
+): field is FieldDefinition<FieldAddressMetadata> => field.type === 'ADDRESS';

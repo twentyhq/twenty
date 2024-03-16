@@ -1,5 +1,6 @@
 import { FieldDefinition } from '../FieldDefinition';
 import {
+  FieldAddressMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
   FieldDateTimeMetadata,
@@ -47,7 +48,9 @@ type AssertFieldMetadataFunction = <
                             ? FieldTextMetadata
                             : E extends 'UUID'
                               ? FieldUuidMetadata
-                              : never,
+                              : E extends 'ADDRESS'
+                                ? FieldAddressMetadata
+                                : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

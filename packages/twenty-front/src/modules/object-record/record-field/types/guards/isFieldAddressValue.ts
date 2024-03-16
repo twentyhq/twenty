@@ -4,13 +4,13 @@ import { FieldAddressValue } from '../FieldMetadata';
 
 const addressSchema = z.object({
   addressStreet1: z.string(),
-  addressStreet2: z.string(),
-  addressCity: z.string(),
-  addressState: z.string(),
-  addressPostalcode: z.string(),
-  addressCountry: z.string(),
-  addressLat: z.number(),
-  addressLng: z.number(),
+  addressStreet2: z.string().nullable(),
+  addressCity: z.string().nullable(),
+  addressState: z.string().nullable(),
+  addressPostcode: z.string().nullable(),
+  addressCountry: z.string().nullable(),
+  addressLat: z.number().nullable(),
+  addressLng: z.number().nullable(),
 });
 
 export const isFieldAddressValue = (
