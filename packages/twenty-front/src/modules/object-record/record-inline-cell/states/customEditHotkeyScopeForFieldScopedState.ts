@@ -1,11 +1,10 @@
-import { atomFamily } from 'recoil';
-
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const customEditHotkeyScopeForFieldScopedState = atomFamily<
+export const customEditHotkeyScopeForFieldScopedState = createFamilyState<
   HotkeyScope | null,
   string
 >({
   key: 'customEditHotkeyScopeForFieldScopedState',
-  default: null,
+  defaultValue: null,
 });

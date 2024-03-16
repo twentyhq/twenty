@@ -44,7 +44,7 @@ describe('useSpreadsheetImport', () => {
     const { result } = renderHook(
       () => ({
         useSpreadsheetImport: useSpreadsheetImport<SpreadsheetKey>(),
-        spreadsheetImportState: useRecoilState(spreadsheetImportState)[0],
+        spreadsheetImportState: useRecoilState(spreadsheetImportState())[0],
       }),
       {
         wrapper: Wrapper,

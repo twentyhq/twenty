@@ -76,13 +76,13 @@ describe('useAuth', () => {
     const { result } = renderHook(
       () => {
         const client = useApolloClient();
-        const icons = useRecoilValue(iconsState);
-        const authProviders = useRecoilValue(authProvidersState);
-        const billing = useRecoilValue(billingState);
-        const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
-        const supportChat = useRecoilValue(supportChatState);
-        const telemetry = useRecoilValue(telemetryState);
-        const isDebugMode = useRecoilValue(isDebugModeState);
+        const icons = useRecoilValue(iconsState());
+        const authProviders = useRecoilValue(authProvidersState());
+        const billing = useRecoilValue(billingState());
+        const isSignInPrefilled = useRecoilValue(isSignInPrefilledState());
+        const supportChat = useRecoilValue(supportChatState());
+        const telemetry = useRecoilValue(telemetryState());
+        const isDebugMode = useRecoilValue(isDebugModeState());
         return {
           ...useAuth(),
           client,

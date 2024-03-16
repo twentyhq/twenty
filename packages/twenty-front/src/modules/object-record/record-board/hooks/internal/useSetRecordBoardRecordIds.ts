@@ -28,6 +28,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
 
           const columnRecordIds = records
             .filter((record) => record.stage === column?.value)
+            .sort(sortRecordsByPosition)
             .map((record) => record.id);
 
           if (!isDeeplyEqual(existingColumnRecordIds, columnRecordIds)) {
@@ -42,4 +43,22 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     scopeId,
     setRecordIds,
   };
+};
+
+const sortRecordsByPosition = (
+  record1: ObjectRecord,
+  record2: ObjectRecord,
+) => {
+  if (
+    typeof record1.position == 'number' &&
+    typeof record2.position == 'number'
+  ) {
+    return record1.position - record2.position;
+  } else if (record1.position === 'first' || record2.position === 'last') {
+    return -1;
+  } else if (record2.position === 'first' || record1.position === 'last') {
+    return 1;
+  } else {
+    return 0;
+  }
 };

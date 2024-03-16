@@ -10,7 +10,7 @@ export const useSetRecordInStore = () => {
         records.forEach((record) => {
           const currentRecord = snapshot
             .getLoadable(recordStoreFamilyState(record.id))
-            .valueOrThrow();
+            .getValue();
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
             set(recordStoreFamilyState(record.id), record);

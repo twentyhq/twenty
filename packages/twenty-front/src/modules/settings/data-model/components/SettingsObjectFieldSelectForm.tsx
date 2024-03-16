@@ -37,7 +37,6 @@ const StyledLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: 6px;
   margin-top: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledFooter = styled(CardFooter)`

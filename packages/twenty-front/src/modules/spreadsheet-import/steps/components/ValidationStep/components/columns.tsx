@@ -9,6 +9,7 @@ import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Toggle } from '@/ui/input/components/Toggle';
+import { isDefined } from '~/utils/isDefined';
 
 import { Meta } from '../types';
 
@@ -207,7 +208,7 @@ export const generateColumns = <T extends string>(
             );
         }
 
-        if (row.__errors?.[columnKey]) {
+        if (isDefined(row.__errors?.[columnKey])) {
           return (
             <>
               {component}

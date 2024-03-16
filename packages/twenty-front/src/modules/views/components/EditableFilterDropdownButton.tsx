@@ -8,6 +8,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { isDefined } from '~/utils/isDefined';
 
 type EditableFilterDropdownButtonProps = {
   viewFilterDropdownId: string;
@@ -39,7 +40,7 @@ export const EditableFilterDropdownButton = ({
         filterDefinition.fieldMetadataId === viewFilter.fieldMetadataId,
     );
 
-    if (filterDefinition) {
+    if (isDefined(filterDefinition)) {
       setFilterDefinitionUsedInDropdown(filterDefinition);
       setSelectedOperandInDropdown(viewFilter.operand);
       setSelectedFilter(viewFilter);

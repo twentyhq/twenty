@@ -13,7 +13,7 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
@@ -25,7 +25,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   searchFilterValue: string;
   limit?: number;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({
@@ -71,7 +71,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
             },
           ];
         })
-        .filter(isNonNullable),
+        .filter(isDefined),
     );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
@@ -86,6 +86,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   const multiSelectQueryForSelectedIds =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
       objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
+      depth: 0,
     });
 
   const {
@@ -99,7 +100,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
         ...orderByFieldPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isNonNullable(multiSelectQueryForSelectedIds),
+      skip: !isDefined(multiSelectQueryForSelectedIds),
     },
   );
 

@@ -9,6 +9,7 @@ import {
   IconX,
 } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
   }
 
   ${({ theme, withPicture, disabled }) => {
-    if (withPicture || disabled) {
+    if ((withPicture || disabled) === true) {
       return '';
     }
 
@@ -132,10 +133,8 @@ export const ImageInput = ({
             ref={hiddenFileInput}
             accept="image/jpeg, image/png, image/gif" // to desired specification
             onChange={(event) => {
-              if (onUpload) {
-                if (event.target.files) {
-                  onUpload(event.target.files[0]);
-                }
+              if (isDefined(onUpload) && isDefined(event.target.files)) {
+                onUpload(event.target.files[0]);
               }
             }}
           />

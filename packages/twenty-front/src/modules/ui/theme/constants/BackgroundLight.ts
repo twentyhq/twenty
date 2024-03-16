@@ -20,6 +20,7 @@ export const BACKGROUND_LIGHT = {
     light: RGBA(GRAY_SCALE.gray100, 0.04),
     lighter: RGBA(GRAY_SCALE.gray100, 0.02),
     danger: RGBA(COLOR.red, 0.08),
+    forBackdropFilter: RGBA(GRAY_SCALE.gray10, 0.5),
   },
   overlay: RGBA(GRAY_SCALE.gray80, 0.8),
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,

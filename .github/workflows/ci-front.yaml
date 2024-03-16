@@ -172,4 +172,4 @@ jobs:
           key: root-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: root-node_modules-
       - name: Front / Run jest
-        run: yarn nx test twenty-front
+        run: yarn nx coverage twenty-front

@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
+import { Tag } from 'tsup.ui.index';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Checkbox } from '@/ui/input/components/Checkbox';
+import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`
@@ -14,6 +16,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
 `;
 
 type MenuItemMultiSelectProps = {
+  color?: ThemeColor;
   LeftIcon?: IconComponent;
   selected: boolean;
   text: string;
@@ -22,6 +25,7 @@ type MenuItemMultiSelectProps = {
 };
 
 export const MenuItemMultiSelect = ({
+  color,
   LeftIcon,
   text,
   selected,
@@ -36,7 +40,11 @@ export const MenuItemMultiSelect = ({
     <StyledMenuItemBase className={className} onClick={handleOnClick}>
       <StyledLeftContentWithCheckboxContainer>
         <Checkbox checked={selected} />
-        <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+        {color ? (
+          <Tag color={color} text={text} Icon={LeftIcon} />
+        ) : (
+          <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
+        )}
       </StyledLeftContentWithCheckboxContainer>
     </StyledMenuItemBase>
   );

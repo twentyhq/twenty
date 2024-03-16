@@ -24,7 +24,7 @@ export const useSetRecordTableData = ({
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
             .getLoadable(recordStoreFamilyState(entity.id))
-            .valueOrThrow();
+            .getValue();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
             set(recordStoreFamilyState(entity.id), entity);

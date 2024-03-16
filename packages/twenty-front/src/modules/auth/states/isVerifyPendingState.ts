@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isVerifyPendingState = atom<boolean>({
+export const isVerifyPendingState = createState<boolean>({
   key: 'isVerifyPendingState',
-  default: false,
+  defaultValue: false,
 });

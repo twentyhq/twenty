@@ -9,7 +9,7 @@ import { actionBarOpenState } from '../../states/actionBarIsOpenState';
 import { ActionBar } from '../ActionBar';
 
 const FilledActionBar = () => {
-  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState());
   setActionBarOpenState(true);
   return <ActionBar />;
 };

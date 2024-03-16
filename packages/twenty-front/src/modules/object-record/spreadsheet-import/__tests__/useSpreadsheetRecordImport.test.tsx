@@ -16,17 +16,34 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => companyId),
 }));
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
-  useMapFieldMetadataToGraphQLQuery: () => () => '\n',
-}));
-
 const companyMocks = [
   {
     request: {
       query: gql`
         mutation CreateCompanies($data: [CompanyCreateInput!]!) {
           createCompanies(data: $data) {
+            __typename
+            xLink {
+              label
+              url
+            }
+            linkedinLink {
+              label
+              url
+            }
+            domainName
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            createdAt
+            address
+            updatedAt
+            name
+            accountOwnerId
+            employees
             id
+            idealCustomerProfile
           }
         }
       `,
@@ -75,7 +92,7 @@ describe('useSpreadsheetCompanyImport', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImport = useRecoilValue(spreadsheetImportState);
+        const spreadsheetImport = useRecoilValue(spreadsheetImportState());
         const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
           CoreObjectNameSingular.Company,
         );

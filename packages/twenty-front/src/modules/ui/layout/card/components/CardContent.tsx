@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-const StyledCardContent = styled.div<{ divider?: boolean }>`
+const StyledCardContent = styled(motion.div)<{ divider?: boolean }>`
   background-color: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(4)};
 
