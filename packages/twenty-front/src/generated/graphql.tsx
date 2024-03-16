@@ -178,6 +178,7 @@ export type FieldDeleteResponse = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
@@ -492,6 +493,23 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
+
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -716,6 +734,7 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
