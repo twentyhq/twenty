@@ -1,7 +1,7 @@
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
-import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
+import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
-import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
+import { AddressInput } from '@/ui/field/input/components/AddressInput';
 import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -34,11 +34,11 @@ export const AddressFieldInput = ({
   const persistField = usePersistField();
 
   const convertToAddress = (
-    newDoubleText: FieldDoubleText,
+    newAddress: FieldAddressDraftValue,
   ): FieldAddressValue => {
     return {
-      addressStreet1: newDoubleText.firstValue,
-      addressStreet2: newDoubleText.secondValue,
+      addressStreet1: newAddress.addressStreet1,
+      addressStreet2: newAddress.addressStreet2,
       addressCity: null,
       addressState: null,
       addressCountry: null,
@@ -48,44 +48,37 @@ export const AddressFieldInput = ({
     };
   };
 
-  const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.(() => persistField(convertToAddress(newDoubleText)));
+  const handleEnter = (newAddress: FieldAddressDraftValue) => {
+    onEnter?.(() => persistField(convertToAddress(newAddress)));
   };
 
-  const handleEscape = (newDoubleText: FieldDoubleText) => {
-    onEscape?.(() => persistField(convertToAddress(newDoubleText)));
+  const handleEscape = (newAddress: FieldAddressDraftValue) => {
+    onEscape?.(() => persistField(convertToAddress(newAddress)));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
-    newDoubleText: FieldDoubleText,
+    newAddress: FieldAddressDraftValue,
   ) => {
-    onClickOutside?.(() => persistField(convertToAddress(newDoubleText)));
+    onClickOutside?.(() => persistField(convertToAddress(newAddress)));
   };
 
-  const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(() => persistField(convertToAddress(newDoubleText)));
+  const handleTab = (newAddress: FieldAddressDraftValue) => {
+    onTab?.(() => persistField(convertToAddress(newAddress)));
   };
 
-  const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(() => persistField(convertToAddress(newDoubleText)));
+  const handleShiftTab = (newAddress: FieldAddressDraftValue) => {
+    onShiftTab?.(() => persistField(convertToAddress(newAddress)));
   };
 
-  const handleChange = (newDoubleText: FieldDoubleText) => {
-    setDraftValue(convertToAddress(newDoubleText));
+  const handleChange = (newAddress: FieldAddressDraftValue) => {
+    setDraftValue(convertToAddress(newAddress));
   };
 
   return (
     <FieldInputOverlay>
-      <DoubleTextInput
-        firstValue={draftValue?.addressStreet1 ?? ''}
-        secondValue={draftValue?.addressStreet2 ?? ''}
-        firstValuePlaceholder={
-          FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-        }
-        secondValuePlaceholder={
-          LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-        }
+      <AddressInput
+        value={draftValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
