@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { avatarUrl } from '~/testing/mock-data/users';
+import { ComponentDecorator } from '../../testing/decorators/ComponentDecorator';
+import { avatarUrl } from '../../testing/mock-data/users';
 
-import { Avatar } from '../Avatar';
+import { Avatar } from './Avatar';
 
 const meta: Meta<typeof Avatar> = {
   title: 'Modules/Users/Avatar',

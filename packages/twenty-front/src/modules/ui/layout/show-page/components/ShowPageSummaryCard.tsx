@@ -1,9 +1,9 @@
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { Avatar, AvatarType } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
-import { Avatar, AvatarType } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,

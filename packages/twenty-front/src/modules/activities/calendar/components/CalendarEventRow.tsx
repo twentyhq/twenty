@@ -3,6 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
+import { Avatar } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -14,7 +15,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Avatar } from '@/users/components/Avatar';
 import { AvatarGroup } from '@/users/components/AvatarGroup';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';

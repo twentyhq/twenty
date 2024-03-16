@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
-import { Avatar } from '@/users/components/Avatar';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContainer = styled.div`

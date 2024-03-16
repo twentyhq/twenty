@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Avatar } from 'twenty-ui';
 
-import { Avatar } from '@/users/components/Avatar';
 import {
   CatalogDecorator,
   CatalogDimension,

@@ -1,4 +1,5 @@
 export { AnimatedCheckmark } from './AnimatedCheckmark/AnimatedCheckmark';
+export type { AvatarProps, AvatarSize, AvatarType } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { Checkmark } from './Checkmark/Checkmark';
 export { Chip } from './Chip/Chip';

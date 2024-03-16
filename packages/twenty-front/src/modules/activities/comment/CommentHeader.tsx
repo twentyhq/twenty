@@ -1,8 +1,8 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { Comment } from '@/activities/types/Comment';
-import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,

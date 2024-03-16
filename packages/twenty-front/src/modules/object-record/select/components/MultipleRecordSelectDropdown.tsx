@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Avatar } from 'twenty-ui';
 
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { Avatar } from '@/users/components/Avatar';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,

@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from '@/users/components/Avatar';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledEmailThreadMessageSender = styled.div`

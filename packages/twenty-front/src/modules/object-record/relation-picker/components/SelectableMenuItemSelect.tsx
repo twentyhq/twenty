@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { Avatar } from 'twenty-ui';
 
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-import { Avatar } from '@/users/components/Avatar';
 
 type SelectableMenuItemSelectProps = {
   entity: EntityForSelect;
