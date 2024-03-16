@@ -72,16 +72,12 @@ export const isFieldValueEmpty = ({
   if (isFieldAddress(fieldDefinition)) {
     return (
       !isFieldAddressValue(fieldValue) ||
-      isValueEmpty(
-        fieldValue?.addressStreet1 +
-          fieldValue?.addressStreet2 +
-          fieldValue?.addressCity +
-          fieldValue?.addressState +
-          fieldValue?.addressPostcode +
-          fieldValue?.addressCountry +
-          fieldValue?.addressLat +
-          fieldValue?.addressLng,
-      )
+      (isValueEmpty(fieldValue?.addressStreet1) &&
+        isValueEmpty(fieldValue?.addressStreet2) &&
+        isValueEmpty(fieldValue?.addressCity) &&
+        isValueEmpty(fieldValue?.addressState) &&
+        isValueEmpty(fieldValue?.addressPostcode) &&
+        isValueEmpty(fieldValue?.addressCountry))
     );
   }
 
