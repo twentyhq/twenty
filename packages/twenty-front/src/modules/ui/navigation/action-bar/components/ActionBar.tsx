@@ -17,17 +17,19 @@ const StyledContainerActionBar = styled.div`
   display: flex;
   height: 48px;
 
-  left: 50%;
+  left: 40%;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   position: absolute;
   top: auto;
-
-  transform: translateX(-50%);
-  z-index: 1;
+  z-index: 20;
 `;
 
-export const ActionBar = () => {
+type ActionBarProps = {
+  selectedIds?: string[];
+};
+
+export const ActionBar = ({ selectedIds }: ActionBarProps) => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState());
   const actionBarEntries = useRecoilValue(actionBarEntriesState());
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -43,7 +45,7 @@ export const ActionBar = () => {
       ref={wrapperRef}
     >
       {actionBarEntries.map((item, index) => (
-        <ActionBarItem key={index} item={item} />
+        <ActionBarItem key={index} item={item} selectedIds={selectedIds} />
       ))}
     </StyledContainerActionBar>
   );

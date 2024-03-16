@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { MenuItem } from 'tsup.ui.index';
@@ -6,11 +7,13 @@ import { IconChevronDown } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { ActionBarEntry } from '@/ui/navigation/action-bar/types/ActionBarEntry';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
   item: ActionBarEntry;
+  selectedIds?: string[];
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`
@@ -40,10 +43,12 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({ item }: ActionBarItemProps) => {
+export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
+  const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    useState(false);
   return (
     <>
       {Array.isArray(item.subActions) ? (
@@ -80,13 +85,34 @@ export const ActionBarItem = ({ item }: ActionBarItemProps) => {
           }
         />
       ) : (
-        <StyledButton
-          accent={item.accent ?? 'default'}
-          onClick={() => item.onClick?.()}
-        >
-          {item.Icon && <item.Icon size={theme.icon.size.md} />}
-          <StyledButtonLabel>{item.label}</StyledButtonLabel>
-        </StyledButton>
+        <>
+          <StyledButton
+            accent={item.accent ?? 'default'}
+            onClick={() =>
+              item.label === 'Delete'
+                ? setIsDeleteRecordsModalOpen(true)
+                : item.onClick?.()
+            }
+          >
+            {item.Icon && <item.Icon size={theme.icon.size.md} />}
+            <StyledButtonLabel>{item.label}</StyledButtonLabel>
+          </StyledButton>
+          {item.label === 'Delete' && (
+            <ConfirmationModal
+              isOpen={isDeleteRecordsModalOpen}
+              setIsOpen={setIsDeleteRecordsModalOpen}
+              title={`Delete ${selectedIds?.length ?? 'selected'} records`}
+              subtitle={
+                <>
+                  This action cannot be undone. This will permanently delete
+                  these records
+                </>
+              }
+              onConfirmClick={() => item.onClick?.()}
+              deleteButtonText="Delete Records"
+            />
+          )}
+        </>
       )}
     </>
   );
