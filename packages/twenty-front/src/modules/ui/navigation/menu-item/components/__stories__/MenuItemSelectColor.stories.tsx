@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ColorSampleVariant } from 'twenty-ui';
 
-import { ColorSampleVariant } from '@/ui/display/color/components/ColorSample';
 import {
   MAIN_COLOR_NAMES,
   ThemeColor,

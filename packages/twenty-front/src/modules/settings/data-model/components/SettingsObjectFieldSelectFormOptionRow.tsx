@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ColorSample } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import {
   IconCheck,
   IconDotsVertical,

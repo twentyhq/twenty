@@ -3,6 +3,10 @@ export type { AvatarProps, AvatarSize, AvatarType } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { Checkmark } from './Checkmark/Checkmark';
 export { Chip, ChipAccent, ChipSize, ChipVariant } from './Chip/Chip';
+export type {
+  ColorSampleProps,
+  ColorSampleVariant,
+} from './ColorSample/ColorSample';
 export { ColorSample } from './ColorSample/ColorSample';
 export { EntityChip } from './EntityChip/EntityChip';
 export { H1Title } from './H1Title/H1Title';
