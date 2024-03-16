@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const viewableActivityIdState = atom<string | null>({
+export const viewableActivityIdState = createState<string | null>({
   key: 'activities/viewable-activity-id',
-  default: null,
+  defaultValue: null,
 });

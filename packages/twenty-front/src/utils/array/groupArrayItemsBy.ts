@@ -17,10 +17,7 @@
  *   vegetable: [{ id: '2', type: 'vegetable' }],
  * }
  */
-export const groupArrayItemsBy = <
-  ArrayItem extends Record<string, unknown>,
-  Key extends string,
->(
+export const groupArrayItemsBy = <ArrayItem, Key extends string | number>(
   array: ArrayItem[],
   computeGroupKey: (item: ArrayItem) => Key,
 ) =>

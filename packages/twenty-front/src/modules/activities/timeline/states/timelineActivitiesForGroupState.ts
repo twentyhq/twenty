@@ -1,10 +1,9 @@
-import { atom } from 'recoil';
-
 import { ActivityForActivityGroup } from '@/activities/timeline/utils/groupActivitiesByMonth';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const timelineActivitiesForGroupState = atom<ActivityForActivityGroup[]>(
-  {
-    key: 'timelineActivitiesForGroupState',
-    default: [],
-  },
-);
+export const timelineActivitiesForGroupState = createState<
+  ActivityForActivityGroup[]
+>({
+  key: 'timelineActivitiesForGroupState',
+  defaultValue: [],
+});

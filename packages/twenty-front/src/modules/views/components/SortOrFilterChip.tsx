@@ -4,11 +4,7 @@ import styled from '@emotion/styled';
 import { IconX } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-type StyledChipProps = {
-  isSort?: boolean;
-};
-
-const StyledChip = styled.div<StyledChipProps>`
+const StyledChip = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.accent.quaternary};
   border: 1px solid ${({ theme }) => theme.accent.tertiary};
@@ -19,7 +15,7 @@ const StyledChip = styled.div<StyledChipProps>`
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
   user-select: none;
 `;
@@ -54,7 +50,6 @@ type SortOrFilterChipProps = {
   Icon?: IconComponent;
   onRemove: () => void;
   onClick?: () => void;
-  isSort?: boolean;
   testId?: string;
 };
 
@@ -63,7 +58,6 @@ export const SortOrFilterChip = ({
   labelValue,
   Icon,
   onRemove,
-  isSort,
   testId,
   onClick,
 }: SortOrFilterChipProps) => {
@@ -75,7 +69,7 @@ export const SortOrFilterChip = ({
   };
 
   return (
-    <StyledChip isSort={isSort} onClick={onClick}>
+    <StyledChip onClick={onClick}>
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.sm} />

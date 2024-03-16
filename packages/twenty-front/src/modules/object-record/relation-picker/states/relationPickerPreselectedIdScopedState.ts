@@ -1,6 +1,6 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const relationPickerPreselectedIdScopedState = createStateScopeMap<
+export const relationPickerPreselectedIdScopedState = createComponentState<
   string | undefined
 >({
   key: 'relationPickerPreselectedIdScopedState',

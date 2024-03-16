@@ -10,12 +10,16 @@ import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/con
 
 import { useFindManyRecords } from '../../hooks/useFindManyRecords';
 
-export const useFindManyParams = (objectNameSingular: string) => {
+export const useFindManyParams = (
+  objectNameSingular: string,
+  recordTableId?: string,
+) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const { getTableFiltersState, getTableSortsState } = useRecordTableStates();
+  const { getTableFiltersState, getTableSortsState } =
+    useRecordTableStates(recordTableId);
 
   const tableFilters = useRecoilValue(getTableFiltersState());
   const tableSorts = useRecoilValue(getTableSortsState());
@@ -38,7 +42,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     useRecordTable();
   const { getTableLastRowVisibleState } = useRecordTableStates();
   const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
   const params = useFindManyParams(objectNameSingular);
 
   const {

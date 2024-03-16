@@ -2,11 +2,13 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
@@ -29,32 +31,33 @@ export const ViewBarEffect = () => {
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
 
-  const { records: newViews } = useFindManyRecords<GraphQLView>({
-    skip: !viewObjectMetadataId,
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: {
-      objectMetadataId: { eq: viewObjectMetadataId },
-    },
-    useRecordsWithoutConnection: true,
-  });
+  const { records: newViews } = usePrefetchedData<GraphQLView>(
+    PrefetchKey.AllViews,
+  );
+
+  const newViewsOnCurrentObject = newViews.filter(
+    (view) => view.objectMetadataId === viewObjectMetadataId,
+  );
 
   useEffect(() => {
-    if (!newViews.length) return;
+    if (!newViewsOnCurrentObject.length) return;
 
-    if (!isDeeplyEqual(views, newViews)) {
-      setViews(newViews);
+    if (!isDeeplyEqual(views, newViewsOnCurrentObject)) {
+      setViews(newViewsOnCurrentObject);
     }
 
     const currentView =
-      newViews.find((view) => view.id === currentViewIdFromUrl) ??
-      newViews[0] ??
+      newViewsOnCurrentObject.find(
+        (view) => view.id === currentViewIdFromUrl,
+      ) ??
+      newViewsOnCurrentObject[0] ??
       null;
 
-    if (!currentView) return;
+    if (isUndefinedOrNull(currentView)) return;
 
     setCurrentViewId(currentView.id);
 
-    if (currentView?.viewFields) {
+    if (isDefined(currentView?.viewFields)) {
       loadViewFields(currentView.viewFields, currentView.id);
       loadViewFilters(currentView.viewFilters, currentView.id);
       loadViewSorts(currentView.viewSorts, currentView.id);
@@ -67,17 +70,17 @@ export const ViewBarEffect = () => {
     loadViewFields,
     loadViewFilters,
     loadViewSorts,
-    newViews,
+    newViewsOnCurrentObject,
     setCurrentViewId,
     setViews,
     views,
   ]);
 
   useEffect(() => {
-    if (!currentViewIdFromUrl || !newViews.length) return;
+    if (!currentViewIdFromUrl || !newViewsOnCurrentObject.length) return;
 
     loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView, newViews]);
+  }, [currentViewIdFromUrl, loadView, newViewsOnCurrentObject]);
 
   return <></>;
 };

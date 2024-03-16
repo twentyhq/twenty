@@ -1,7 +1,7 @@
-import { emailThreadsPageStateScopeMap } from '@/activities/emails/state/emailThreadsPageStateScopeMap';
+import { emailThreadsPageComponentState } from '@/activities/emails/state/emailThreadsPageComponentState';
 import { TabListScopeInternalContext } from '@/ui/layout/tab/scopes/scope-internal-context/TabListScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type useEmailThreadStatesProps = {
   emailThreadScopeId?: string;
@@ -17,6 +17,9 @@ export const useEmailThreadStates = ({
 
   return {
     scopeId,
-    getEmailThreadsPageState: getState(emailThreadsPageStateScopeMap, scopeId),
+    getEmailThreadsPageState: extractComponentState(
+      emailThreadsPageComponentState,
+      scopeId,
+    ),
   };
 };

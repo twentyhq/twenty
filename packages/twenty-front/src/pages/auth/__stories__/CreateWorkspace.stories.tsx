@@ -21,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: CreateWorkspace,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
       setCurrentWorkspace(mockedOnboardingUsersData[1].defaultWorkspace);
       return <Story />;
     },

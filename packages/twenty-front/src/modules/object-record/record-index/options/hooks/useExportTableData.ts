@@ -6,6 +6,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { isDefined } from '~/utils/isDefined';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
@@ -52,7 +53,7 @@ export const generateCsv: GenerateExport = ({
       return hasSubFields;
     });
 
-    if (fieldsWithSubFields) {
+    if (isDefined(fieldsWithSubFields)) {
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
       )
@@ -107,12 +108,36 @@ export const useExportTableData = ({
   const [pageCount, setPageCount] = useState(0);
   const [progress, setProgress] = useState<number | undefined>(undefined);
   const [hasNextPage, setHasNextPage] = useState(true);
-  const { getVisibleTableColumnsSelector } =
+
+  const { getVisibleTableColumnsSelector, getSelectedRowIdsSelector } =
     useRecordTableStates(recordIndexId);
+
   const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const params = useFindManyParams(objectNameSingular);
+  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+
+  const hasSelectedRows = selectedRowIds.length > 0;
+
+  const findManyRecordsParams = useFindManyParams(
+    objectNameSingular,
+    recordIndexId,
+  );
+
+  const selectedFindManyParams = {
+    ...findManyRecordsParams,
+    filter: {
+      ...findManyRecordsParams.filter,
+      id: {
+        in: selectedRowIds,
+      },
+    },
+  };
+
+  const usedFindManyParams = hasSelectedRows
+    ? selectedFindManyParams
+    : findManyRecordsParams;
+
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
-    ...params,
+    ...usedFindManyParams,
     limit: pageSize,
     onCompleted: (_data, { hasNextPage }) => {
       setHasNextPage(hasNextPage ?? false);

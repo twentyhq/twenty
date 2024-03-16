@@ -1,9 +1,9 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const isFetchingMoreRecordsFamilyState = atomFamily<
+export const isFetchingMoreRecordsFamilyState = createFamilyState<
   boolean,
   string | undefined
 >({
   key: 'isFetchingMoreRecordsFamilyState',
-  default: false,
+  defaultValue: false,
 });

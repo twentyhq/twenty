@@ -1,10 +1,9 @@
-import { atom } from 'recoil';
-
 import { PositionType } from '@/ui/navigation/context-menu/types/PositionType';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const contextMenuPositionState = atom<PositionType>({
+export const contextMenuPositionState = createState<PositionType>({
   key: 'contextMenuPositionState',
-  default: {
+  defaultValue: {
     x: null,
     y: null,
   },

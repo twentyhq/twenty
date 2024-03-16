@@ -1,8 +1,8 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const availableFieldDefinitionsScopedState = createStateScopeMap<
+export const availableFieldDefinitionsScopedState = createComponentState<
   ColumnDefinition<FieldMetadata>[]
 >({
   key: 'availableFieldDefinitionsScopedState',

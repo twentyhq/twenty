@@ -2,6 +2,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_RECORDS_TO_DISPLAY = 3;
@@ -66,7 +67,10 @@ export const ObjectFilterDropdownRecordSelect = () => {
         ? `${selectedRecordNames.length} companies`
         : selectedRecordNames.join(', ');
 
-    if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
+    if (
+      isDefined(filterDefinitionUsedInDropdown) &&
+      isDefined(selectedOperandInDropdown)
+    ) {
       const newFilterValue =
         newSelectedRecordIds.length > 0
           ? JSON.stringify(newSelectedRecordIds)

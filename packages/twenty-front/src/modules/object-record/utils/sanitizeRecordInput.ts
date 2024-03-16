@@ -5,7 +5,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
 import { sanitizeLink } from '@/object-record/utils/sanitizeLinkRecordInput';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -39,7 +39,7 @@ export const sanitizeRecordInput = ({
 
         return [fieldName, fieldValue];
       })
-      .filter(isNonNullable),
+      .filter(isDefined),
   );
   if (
     objectMetadataItem.nameSingular !== CoreObjectNameSingular.Company ||

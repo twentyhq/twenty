@@ -8,6 +8,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -85,7 +86,7 @@ export const ShowPageSummaryCard = ({
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) onUploadPicture?.(e.target.files[0]);
+    if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);
   };
 
   const handleAvatarClick = () => {

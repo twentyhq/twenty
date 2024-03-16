@@ -5,14 +5,14 @@ import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/Object
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 export const useObjectMetadataItemOnly = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
 
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
@@ -23,7 +23,7 @@ export const useObjectMetadataItemOnly = ({
     }),
   );
 
-  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState());
 
   if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
@@ -34,7 +34,7 @@ export const useObjectMetadataItemOnly = ({
     objectMetadataItems = mockObjectMetadataItems;
   }
 
-  if (!isNonNullable(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
       objectNameSingular,
       objectMetadataItems,

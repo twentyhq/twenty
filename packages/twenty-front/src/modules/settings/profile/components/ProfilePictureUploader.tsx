@@ -7,13 +7,15 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
 
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   const [uploadController, setUploadController] =
@@ -25,7 +27,7 @@ export const ProfilePictureUploader = () => {
   });
 
   const handleUpload = async (file: File) => {
-    if (!file) {
+    if (isUndefinedOrNull(file)) {
       return;
     }
 
@@ -72,25 +74,29 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleAbort = async () => {
-    if (uploadController) {
+    if (isDefined(uploadController)) {
       uploadController.abort();
       setUploadController(null);
     }
   };
 
   const handleRemove = async () => {
-    if (!currentWorkspaceMember?.id) {
-      throw new Error('User is not logged in');
+    try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
+      await updateOneRecord({
+        idToUpdate: currentWorkspaceMember?.id,
+        updateOneRecordInput: {
+          avatarUrl: null,
+        },
+      });
+
+      setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
+    } catch (error) {
+      setErrorMessage('An error occured while removing the picture.');
     }
-
-    await updateOneRecord({
-      idToUpdate: currentWorkspaceMember?.id,
-      updateOneRecordInput: {
-        avatarUrl: null,
-      },
-    });
-
-    setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
   };
 
   return (

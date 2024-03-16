@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import * as Sentry from '@sentry/node';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
@@ -9,9 +10,9 @@ import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
-import { settings } from './constants/settings';
-import { LoggerService } from './integrations/logger/logger.service';
-import { EnvironmentService } from './integrations/environment/environment.service';
+import { settings } from './engine/constants/settings';
+import { LoggerService } from './engine/integrations/logger/logger.service';
+import { EnvironmentService } from './engine/integrations/environment/environment.service';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -26,6 +27,11 @@ const bootstrap = async () => {
 
   // Use our logger
   app.useLogger(logger);
+
+  if (Sentry.isInitialized()) {
+    app.use(Sentry.Handlers.requestHandler());
+    app.use(Sentry.Handlers.tracingHandler());
+  }
 
   // Apply validation pipes globally
   app.useGlobalPipes(
@@ -47,7 +53,7 @@ const bootstrap = async () => {
     }),
   );
 
-  await app.listen(app.get(EnvironmentService).getPort());
+  await app.listen(app.get(EnvironmentService).get('PORT'));
 };
 
 bootstrap();

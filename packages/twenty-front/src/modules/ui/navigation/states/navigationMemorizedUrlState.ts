@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const navigationMemorizedUrlState = atom<string>({
+export const navigationMemorizedUrlState = createState<string>({
   key: 'navigationMemorizedUrlState',
-  default: '/',
+  defaultValue: '/',
 });

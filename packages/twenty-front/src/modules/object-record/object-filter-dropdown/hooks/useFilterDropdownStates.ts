@@ -8,6 +8,7 @@ import { isObjectFilterDropdownOperandSelectUnfoldedScopedState } from '../state
 import { isObjectFilterDropdownUnfoldedScopedState } from '../states/isObjectFilterDropdownUnfoldedScopedState';
 import { objectFilterDropdownSearchInputScopedState } from '../states/objectFilterDropdownSearchInputScopedState';
 import { objectFilterDropdownSelectedEntityIdScopedState } from '../states/objectFilterDropdownSelectedEntityIdScopedState';
+import { objectFilterDropdownSelectedOptionValuesScopedState } from '../states/objectFilterDropdownSelectedOptionValuesScopedState';
 import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
@@ -34,6 +35,14 @@ export const useFilterDropdownStates = (scopeId: string) => {
     setObjectFilterDropdownSelectedRecordIds,
   ] = useRecoilScopedStateV2(
     objectFilterDropdownSelectedRecordIdsScopedState,
+    scopeId,
+  );
+
+  const [
+    objectFilterDropdownSelectedOptionValues,
+    setObjectFilterDropdownSelectedOptionValues,
+  ] = useRecoilScopedStateV2(
+    objectFilterDropdownSelectedOptionValuesScopedState,
     scopeId,
   );
 
@@ -71,6 +80,8 @@ export const useFilterDropdownStates = (scopeId: string) => {
     objectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedEntityId,
     objectFilterDropdownSelectedRecordIds,
+    objectFilterDropdownSelectedOptionValues,
+    setObjectFilterDropdownSelectedOptionValues,
     setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownOperandSelectUnfolded,

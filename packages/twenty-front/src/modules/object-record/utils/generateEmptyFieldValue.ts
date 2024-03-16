@@ -17,14 +17,12 @@ export const generateEmptyFieldValue = (
       return {
         label: '',
         url: '',
-        __typename: 'Link',
       };
     }
     case FieldMetadataType.FullName: {
       return {
         firstName: '',
         lastName: '',
-        __typename: 'FullName',
       };
     }
     case FieldMetadataType.DateTime: {
@@ -32,6 +30,7 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.Number:
     case FieldMetadataType.Rating:
+    case FieldMetadataType.Position:
     case FieldMetadataType.Numeric: {
       return null;
     }
@@ -42,6 +41,8 @@ export const generateEmptyFieldValue = (
       return true;
     }
     case FieldMetadataType.Relation: {
+      // TODO: refactor with relationDefiniton once the PR is merged : https://github.com/twentyhq/twenty/pull/4378
+      // so we can directly check the relation type from this field point of view.
       if (
         !isNonEmptyString(
           fieldMetadataItem.fromRelationMetadata?.toObjectMetadata
@@ -62,7 +63,6 @@ export const generateEmptyFieldValue = (
       return {
         amountMicros: null,
         currencyCode: null,
-        __typename: 'Currency',
       };
     }
     case FieldMetadataType.Select: {

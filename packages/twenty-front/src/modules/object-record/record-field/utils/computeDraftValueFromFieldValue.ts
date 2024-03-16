@@ -1,4 +1,3 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -31,7 +30,7 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
 
     return {
       amount: fieldValue?.amountMicros ? fieldValue.amountMicros / 1000000 : '',
-      currenyCode: CurrencyCode.USD,
+      currencyCode: fieldValue?.currencyCode ?? '',
     } as unknown as FieldInputDraftValue<FieldValue>;
   }
   if (isFieldRelation(fieldDefinition)) {

@@ -65,14 +65,31 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean'];
 };
 
+export type BillingSubscription = {
+  __typename?: 'BillingSubscription';
+  id: Scalars['ID'];
+  status: Scalars['String'];
+};
+
+export type BillingSubscriptionFilter = {
+  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
+};
+
+export type BillingSubscriptionSort = {
+  direction: SortDirection;
+  field: BillingSubscriptionSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingSubscriptionSortFields {
+  Id = 'id'
+}
+
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CheckoutEntity = {
-  __typename?: 'CheckoutEntity';
-  url: Scalars['String'];
 };
 
 export type ClientConfig = {
@@ -139,8 +156,6 @@ export type FieldConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type FieldDeleteResponse = {
@@ -173,6 +188,7 @@ export enum FieldMetadataType {
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
+  Position = 'POSITION',
   Probability = 'PROBABILITY',
   Rating = 'RATING',
   Relation = 'RELATION',
@@ -226,7 +242,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
   challenge: LoginToken;
-  checkout: CheckoutEntity;
+  checkoutSession: SessionEntity;
   createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
@@ -235,6 +251,7 @@ export type Mutation = {
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
+  generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
@@ -261,7 +278,7 @@ export type MutationChallengeArgs = {
 };
 
 
-export type MutationCheckoutArgs = {
+export type MutationCheckoutSessionArgs = {
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
@@ -286,6 +303,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
+};
+
+
+export type MutationGenerateJwtArgs = {
+  workspaceId: Scalars['String'];
 };
 
 
@@ -349,8 +371,6 @@ export type ObjectConnection = {
   edges: Array<ObjectEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type ObjectFieldsConnection = {
@@ -359,8 +379,6 @@ export type ObjectFieldsConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type PageInfo = {
@@ -391,6 +409,7 @@ export type ProductPricesEntity = {
 
 export type Query = {
   __typename?: 'Query';
+  billingPortalSession: SessionEntity;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -403,6 +422,11 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
+};
+
+
+export type QueryBillingPortalSessionArgs = {
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -466,8 +490,6 @@ export type RelationConnection = {
   edges: Array<RelationEdge>;
   /** Paging information */
   pageInfo: PageInfo;
-  /** Fetch total count of records */
-  totalCount: Scalars['Int'];
 };
 
 export type RelationDeleteResponse = {
@@ -492,6 +514,11 @@ export enum RelationMetadataType {
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']>;
+};
+
+export type SessionEntity = {
+  __typename?: 'SessionEntity';
+  url: Scalars['String'];
 };
 
 /** Sort Directions */
@@ -568,6 +595,7 @@ export type User = {
   createdAt: Scalars['DateTime'];
   defaultAvatarUrl?: Maybe<Scalars['String']>;
   defaultWorkspace: Workspace;
+  defaultWorkspaceId: Scalars['String'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   disabled?: Maybe<Scalars['Boolean']>;
   email: Scalars['String'];
@@ -581,6 +609,7 @@ export type User = {
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
+  workspaces: Array<UserWorkspace>;
 };
 
 export type UserEdge = {
@@ -594,6 +623,18 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   exists: Scalars['Boolean'];
+};
+
+export type UserWorkspace = {
+  __typename?: 'UserWorkspace';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+  workspace?: Maybe<Workspace>;
+  workspaceId: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
@@ -612,7 +653,9 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: Scalars['String'];
   allowImpersonation: Scalars['Boolean'];
+  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
+  currentBillingSubscription?: Maybe<BillingSubscription>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -622,6 +665,12 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']>;
   subscriptionStatus: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+
+export type WorkspaceBillingSubscriptionsArgs = {
+  filter?: BillingSubscriptionFilter;
+  sorting?: Array<BillingSubscriptionSort>;
 };
 
 
@@ -863,13 +912,20 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
-export type CheckoutMutationVariables = Exact<{
+export type BillingPortalSessionQueryVariables = Exact<{
+  returnUrlPath?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url: string } };
+
+export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type CheckoutMutation = { __typename?: 'Mutation', checkout: { __typename?: 'CheckoutEntity', url: string } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url: string } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
@@ -916,7 +972,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1562,40 +1618,78 @@ export function useValidatePasswordResetTokenLazyQuery(baseOptions?: Apollo.Lazy
 export type ValidatePasswordResetTokenQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenQuery>;
 export type ValidatePasswordResetTokenLazyQueryHookResult = ReturnType<typeof useValidatePasswordResetTokenLazyQuery>;
 export type ValidatePasswordResetTokenQueryResult = Apollo.QueryResult<ValidatePasswordResetTokenQuery, ValidatePasswordResetTokenQueryVariables>;
-export const CheckoutDocument = gql`
-    mutation Checkout($recurringInterval: String!, $successUrlPath: String) {
-  checkout(recurringInterval: $recurringInterval, successUrlPath: $successUrlPath) {
+export const BillingPortalSessionDocument = gql`
+    query BillingPortalSession($returnUrlPath: String) {
+  billingPortalSession(returnUrlPath: $returnUrlPath) {
     url
   }
 }
     `;
-export type CheckoutMutationFn = Apollo.MutationFunction<CheckoutMutation, CheckoutMutationVariables>;
 
 /**
- * __useCheckoutMutation__
+ * __useBillingPortalSessionQuery__
  *
- * To run a mutation, you first call `useCheckoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCheckoutMutation` returns a tuple that includes:
+ * To run a query within a React component, call `useBillingPortalSessionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBillingPortalSessionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBillingPortalSessionQuery({
+ *   variables: {
+ *      returnUrlPath: // value for 'returnUrlPath'
+ *   },
+ * });
+ */
+export function useBillingPortalSessionQuery(baseOptions?: Apollo.QueryHookOptions<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>(BillingPortalSessionDocument, options);
+      }
+export function useBillingPortalSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>(BillingPortalSessionDocument, options);
+        }
+export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPortalSessionQuery>;
+export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
+export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
+export const CheckoutSessionDocument = gql`
+    mutation CheckoutSession($recurringInterval: String!, $successUrlPath: String) {
+  checkoutSession(
+    recurringInterval: $recurringInterval
+    successUrlPath: $successUrlPath
+  ) {
+    url
+  }
+}
+    `;
+export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
+
+/**
+ * __useCheckoutSessionMutation__
+ *
+ * To run a mutation, you first call `useCheckoutSessionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCheckoutSessionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [checkoutMutation, { data, loading, error }] = useCheckoutMutation({
+ * const [checkoutSessionMutation, { data, loading, error }] = useCheckoutSessionMutation({
  *   variables: {
  *      recurringInterval: // value for 'recurringInterval'
  *      successUrlPath: // value for 'successUrlPath'
  *   },
  * });
  */
-export function useCheckoutMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutMutation, CheckoutMutationVariables>) {
+export function useCheckoutSessionMutation(baseOptions?: Apollo.MutationHookOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CheckoutMutation, CheckoutMutationVariables>(CheckoutDocument, options);
+        return Apollo.useMutation<CheckoutSessionMutation, CheckoutSessionMutationVariables>(CheckoutSessionDocument, options);
       }
-export type CheckoutMutationHookResult = ReturnType<typeof useCheckoutMutation>;
-export type CheckoutMutationResult = Apollo.MutationResult<CheckoutMutation>;
-export type CheckoutMutationOptions = Apollo.BaseMutationOptions<CheckoutMutation, CheckoutMutationVariables>;
+export type CheckoutSessionMutationHookResult = ReturnType<typeof useCheckoutSessionMutation>;
+export type CheckoutSessionMutationResult = Apollo.MutationResult<CheckoutSessionMutation>;
+export type CheckoutSessionMutationOptions = Apollo.BaseMutationOptions<CheckoutSessionMutation, CheckoutSessionMutationVariables>;
 export const GetProductPricesDocument = gql`
     query GetProductPrices($product: String!) {
   getProductPrices(product: $product) {
@@ -1852,6 +1946,17 @@ export const GetCurrentUserDocument = gql`
         key
         value
         workspaceId
+      }
+      currentBillingSubscription {
+        status
+      }
+    }
+    workspaces {
+      workspace {
+        id
+        displayName
+        logo
+        domainName
       }
     }
   }

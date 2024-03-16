@@ -17,7 +17,7 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState(recordId));
 
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsState());
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

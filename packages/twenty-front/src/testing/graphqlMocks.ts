@@ -12,7 +12,6 @@ import {
   mockedDuplicateCompanyData,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 import { mockedUsersData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -239,29 +238,6 @@ export const graphqlMocks = {
         data: {
           favorites: {
             edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-        },
-      });
-    }),
-    graphql.query('FindManyPipelineSteps', () => {
-      return HttpResponse.json({
-        data: {
-          pipelineSteps: {
-            edges: mockedPipelineSteps.map((step) => ({
-              node: {
-                ...step,
-                opportunities: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,

@@ -1,9 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
+import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
@@ -12,7 +13,6 @@ import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
-import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
@@ -40,13 +40,14 @@ import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/we
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
-  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
+  const billing = useRecoilValue(billingState());
 
   return (
     <>
@@ -62,12 +63,7 @@ export const App = () => {
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route
-            path={AppPath.PlanRequired}
-            element={
-              isSelfBillingEnabled ? <ChooseYourPlan /> : <PlanRequired />
-            }
-          />
+          <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={<PaymentSuccess />}
@@ -114,6 +110,12 @@ export const App = () => {
                   path={SettingsPath.AccountsEmailsInboxSettings}
                   element={<SettingsAccountsEmailsInboxSettings />}
                 />
+                {billing?.isBillingEnabled && (
+                  <Route
+                    path={SettingsPath.Billing}
+                    element={<SettingsBilling />}
+                  />
+                )}
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
                   element={<SettingsWorkspaceMembers />}
