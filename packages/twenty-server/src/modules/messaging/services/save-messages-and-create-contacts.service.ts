@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { MessageChannelService } from 'src/modules/messaging/repositories/message-channel/message-channel.service';
-import { MessageParticipantService } from 'src/modules/messaging/repositories/message-participant/message-participant.service';
-import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant/message-participant.repository';
+import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import {
   GmailMessage,
@@ -21,10 +21,10 @@ export class SaveMessagesAndCreateContactsService {
   );
 
   constructor(
-    private readonly messageService: MessageService,
-    private readonly messageChannelService: MessageChannelService,
+    private readonly messageService: MessageRepository,
+    private readonly messageChannelService: MessageChannelRepository,
     private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageParticipantService: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 

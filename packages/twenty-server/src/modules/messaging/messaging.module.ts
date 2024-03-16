@@ -20,16 +20,17 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { MessageParticipantModule } from 'src/modules/messaging/repositories/message-participant/message-participant.module';
 import { MessagingWorkspaceMemberListener } from 'src/modules/messaging/listeners/messaging-workspace-member.listener';
 import { MessagingMessageChannelListener } from 'src/modules/messaging/listeners/messaging-message-channel.listener';
-import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
-import { WorkspaceMemberModule } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.module';
+import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
-import { CompanyModule } from 'src/modules/messaging/repositories/company/company.module';
-import { PersonModule } from 'src/modules/person/repositories/person/person.module';
+import { CompanyModule } from 'src/modules/company/repositories/company/company.module';
 import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-messages-and-create-contacts.service';
 import { MessagingConnectedAccountListener } from 'src/modules/messaging/listeners/messaging-connected-account.listener';
 import { BlocklistModule } from 'src/modules/connected-account/repositories/blocklist/blocklist.module';
 import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch.service';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository.module';
+import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 @Module({
   imports: [
     EnvironmentModule,
@@ -41,10 +42,12 @@ import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-b
     MessageThreadModule,
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,
-    WorkspaceMemberModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     CompanyModule,
-    PersonModule,
+    ObjectMetadataRepositoryModule.forFeature([
+      PersonObjectMetadata,
+      WorkspaceMemberObjectMetadata,
+    ]),
     BlocklistModule,
     HttpModule.register({
       baseURL: 'https://www.googleapis.com/batch/gmail/v1',
@@ -61,7 +64,7 @@ import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-b
     MessagingPersonListener,
     MessagingWorkspaceMemberListener,
     MessagingMessageChannelListener,
-    MessageService,
+    MessageRepository,
     SaveMessagesAndCreateContactsService,
     MessagingConnectedAccountListener,
     FetchByBatchesService,

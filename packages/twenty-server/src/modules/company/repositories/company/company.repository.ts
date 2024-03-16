@@ -11,9 +11,8 @@ export type CompanyToCreate = {
   city?: string;
 };
 
-// TODO: Move outside of the messaging module
 @Injectable()
-export class CompanyService {
+export class CompanyRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

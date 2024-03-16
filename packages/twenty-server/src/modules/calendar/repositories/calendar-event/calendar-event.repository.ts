@@ -10,7 +10,7 @@ import { CalendarEvent } from 'src/modules/calendar/types/calendar-event';
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 
 @Injectable()
-export class CalendarEventService {
+export class CalendarEventRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

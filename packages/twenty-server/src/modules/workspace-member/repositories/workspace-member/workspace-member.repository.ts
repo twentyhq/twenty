@@ -6,9 +6,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
-// TODO: Move outside of the messaging module
 @Injectable()
-export class WorkspaceMemberService {
+export class WorkspaceMemberRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

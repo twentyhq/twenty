@@ -7,7 +7,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
-export class MessageChannelService {
+export class MessageChannelRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

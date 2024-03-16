@@ -4,13 +4,13 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 import axios, { AxiosInstance } from 'axios';
 
-import { CompanyService } from 'src/modules/messaging/repositories/company/company.service';
+import { CompanyRepository } from 'src/modules/company/repositories/company/company.repository';
 import { getCompanyNameFromDomainName } from 'src/modules/messaging/utils/get-company-name-from-domain-name.util';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
-  constructor(private readonly companyService: CompanyService) {
+  constructor(private readonly companyService: CompanyRepository) {
     this.httpService = axios.create({
       baseURL: 'https://companies.twenty.com',
     });

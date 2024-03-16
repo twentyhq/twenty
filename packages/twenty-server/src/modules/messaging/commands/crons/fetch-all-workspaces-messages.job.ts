@@ -7,7 +7,7 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import {
   GmailPartialSyncJobData,
@@ -28,7 +28,7 @@ export class FetchAllWorkspacesMessagesJob
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
   ) {}
 
   async handle(): Promise<void> {

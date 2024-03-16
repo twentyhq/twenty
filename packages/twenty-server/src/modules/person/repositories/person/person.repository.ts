@@ -6,9 +6,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
-// TODO: Move outside of the messaging module
 @Injectable()
-export class PersonService {
+export class PersonRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

@@ -8,7 +8,7 @@ import {
   GmailPartialSyncJob,
   GmailPartialSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 
 interface GmailPartialSyncOptions {
   workspaceId: string;
@@ -22,7 +22,7 @@ export class GmailPartialSyncCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
   ) {
     super();
   }

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { CalendarEventService } from 'src/modules/calendar/repositories/calendar-event/calendar-event.service';
+import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event/calendar-event.repository';
 import { deleteUsingPagination } from 'src/modules/messaging/services/thread-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class CalendarEventCleanerService {
-  constructor(private readonly calendarEventService: CalendarEventService) {}
+  constructor(private readonly calendarEventService: CalendarEventRepository) {}
 
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     await deleteUsingPagination(

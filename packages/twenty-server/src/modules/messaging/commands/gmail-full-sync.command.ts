@@ -8,7 +8,7 @@ import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 
 interface GmailFullSyncOptions {
   workspaceId: string;
@@ -22,7 +22,7 @@ export class GmailFullSyncCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
   ) {
     super();
   }

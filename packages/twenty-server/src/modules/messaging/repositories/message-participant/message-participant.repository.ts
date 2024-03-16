@@ -9,13 +9,16 @@ import {
   ParticipantWithId,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/types/gmail-message';
-import { PersonService } from 'src/modules/person/repositories/person/person.service';
+import { PersonRepository } from 'src/modules/person/repositories/person/person.repository';
+import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
 
 @Injectable()
-export class MessageParticipantService {
+export class MessageParticipantRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly personService: PersonService,
+    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    private readonly personRepository: PersonRepository,
   ) {}
 
   public async getByHandles(
@@ -208,7 +211,7 @@ export class MessageParticipantService {
 
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds = await this.personService.getByEmails(
+    const participantPersonIds = await this.personRepository.getByEmails(
       handles,
       workspaceId,
       transactionManager,

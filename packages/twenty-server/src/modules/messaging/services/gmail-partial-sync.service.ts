@@ -12,13 +12,13 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
-import { MessageChannelService } from 'src/modules/messaging/repositories/message-channel/message-channel.service';
-import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
+import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/modules/messaging/utils/is-person-email.util';
-import { BlocklistService } from 'src/modules/connected-account/repositories/blocklist/blocklist.service';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist/blocklist.repository';
 import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
@@ -34,10 +34,10 @@ export class GmailPartialSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
-    private readonly messageChannelService: MessageChannelService,
-    private readonly messageService: MessageService,
-    private readonly blocklistService: BlocklistService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
+    private readonly messageChannelService: MessageChannelRepository,
+    private readonly messageService: MessageRepository,
+    private readonly blocklistService: BlocklistRepository,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,

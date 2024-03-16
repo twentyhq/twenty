@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { CompanyService } from 'src/modules/messaging/repositories/company/company.service';
+import { CompanyRepository } from 'src/modules/company/repositories/company/company.repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
-// TODO: Move outside of the messaging module
 @Module({
   imports: [WorkspaceDataSourceModule],
-  providers: [CompanyService],
-  exports: [CompanyService],
+  providers: [CompanyRepository],
+  exports: [CompanyRepository],
 })
 export class CompanyModule {}

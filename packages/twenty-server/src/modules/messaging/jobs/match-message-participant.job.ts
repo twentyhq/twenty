@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { MessageParticipantService } from 'src/modules/messaging/repositories/message-participant/message-participant.service';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant/message-participant.repository';
 
 export type MatchMessageParticipantsJobData = {
   workspaceId: string;
@@ -16,7 +16,7 @@ export class MatchMessageParticipantJob
   implements MessageQueueJob<MatchMessageParticipantsJobData>
 {
   constructor(
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageParticipantService: MessageParticipantRepository,
   ) {}
 
   async handle(data: MatchMessageParticipantsJobData): Promise<void> {

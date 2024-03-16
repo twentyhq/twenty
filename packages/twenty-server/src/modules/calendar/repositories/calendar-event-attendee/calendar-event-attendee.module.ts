@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { CalendarEventAttendeeService } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [WorkspaceDataSourceModule],
-  providers: [CalendarEventAttendeeService],
-  exports: [CalendarEventAttendeeService],
+  providers: [CalendarEventAttendeeRepository],
+  exports: [CalendarEventAttendeeRepository],
 })
 export class CalendarEventAttendeeModule {}

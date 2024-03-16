@@ -9,7 +9,7 @@ import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/c
 import { CalendarEventAttendee } from 'src/modules/calendar/types/calendar-event';
 
 @Injectable()
-export class CalendarEventAttendeeService {
+export class CalendarEventAttendeeRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

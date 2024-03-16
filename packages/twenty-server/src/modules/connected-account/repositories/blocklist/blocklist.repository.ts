@@ -7,7 +7,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
 @Injectable()
-export class BlocklistService {
+export class BlocklistRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

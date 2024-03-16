@@ -13,10 +13,11 @@ import { CalendarEventModule } from 'src/modules/calendar/repositories/calendar-
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { GoogleCalendarFullSyncService } from 'src/modules/calendar/services/google-calendar-full-sync.service';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
-import { CompanyModule } from 'src/modules/messaging/repositories/company/company.module';
-import { PersonModule } from 'src/modules/person/repositories/person/person.module';
-import { WorkspaceMemberModule } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.module';
+import { CompanyModule } from 'src/modules/company/repositories/company/company.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository.module';
+import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Module({
   imports: [
@@ -28,10 +29,12 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     CalendarEventModule,
     CalendarEventAttendeeModule,
     CreateCompaniesAndContactsModule,
-    WorkspaceMemberModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     CompanyModule,
-    PersonModule,
+    ObjectMetadataRepositoryModule.forFeature([
+      PersonObjectMetadata,
+      WorkspaceMemberObjectMetadata,
+    ]),
     BlocklistModule,
     CalendarEventCleanerModule,
   ],

@@ -5,16 +5,16 @@ import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
-import { MessageChannelMessageAssociationService } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
+import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 
 @Injectable()
-export class MessageThreadService {
+export class MessageThreadRepository {
   constructor(
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
+    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @Inject(forwardRef(() => MessageService))
-    private readonly messageService: MessageService,
+    @Inject(forwardRef(() => MessageRepository))
+    private readonly messageService: MessageRepository,
   ) {}
 
   public async getOrphanThreadIdsPaginated(

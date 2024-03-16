@@ -3,23 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
-import { BlocklistService } from 'src/modules/connected-account/repositories/blocklist/blocklist.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist/blocklist.repository';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
 import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
-import { CalendarChannelEventAssociationService } from 'src/modules/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.service';
-import { CalendarChannelService } from 'src/modules/calendar/repositories/calendar-channel/calendar-channel.service';
+import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.repository';
+import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel/calendar-channel.repository';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CalendarEventService } from 'src/modules/calendar/repositories/calendar-event/calendar-event.service';
+import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
 import { GoogleCalendarFullSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
-import { CalendarEventAttendeeService } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.repository';
 
 @Injectable()
 export class GoogleCalendarFullSyncService {
@@ -29,12 +29,12 @@ export class GoogleCalendarFullSyncService {
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
     @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
-    private readonly calendarEventService: CalendarEventService,
-    private readonly calendarChannelService: CalendarChannelService,
-    private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
-    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
-    private readonly blocklistService: BlocklistService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
+    private readonly calendarEventService: CalendarEventRepository,
+    private readonly calendarChannelService: CalendarChannelRepository,
+    private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationRepository,
+    private readonly calendarEventAttendeesService: CalendarEventAttendeeRepository,
+    private readonly blocklistService: BlocklistRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,

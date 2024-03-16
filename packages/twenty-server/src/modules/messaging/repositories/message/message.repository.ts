@@ -9,20 +9,20 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageChannelMessageAssociationService } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageThreadService } from 'src/modules/messaging/repositories/message-thread/message-thread.service';
-import { MessageChannelService } from 'src/modules/messaging/repositories/message-channel/message-channel.service';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
+import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread/message-thread.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
 
 @Injectable()
-export class MessageService {
-  private readonly logger = new Logger(MessageService.name);
+export class MessageRepository {
+  private readonly logger = new Logger(MessageRepository.name);
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    @Inject(forwardRef(() => MessageThreadService))
-    private readonly messageThreadService: MessageThreadService,
-    private readonly messageChannelService: MessageChannelService,
+    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
+    @Inject(forwardRef(() => MessageThreadRepository))
+    private readonly messageThreadService: MessageThreadRepository,
+    private readonly messageChannelService: MessageChannelRepository,
   ) {}
 
   public async getNonAssociatedMessageIdsPaginated(

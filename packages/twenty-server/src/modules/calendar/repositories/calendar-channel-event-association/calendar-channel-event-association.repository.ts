@@ -8,7 +8,7 @@ import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calen
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 
 @Injectable()
-export class CalendarChannelEventAssociationService {
+export class CalendarChannelEventAssociationRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

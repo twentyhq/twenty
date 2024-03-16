@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 
 @Injectable()
 export class GoogleAPIsRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    private readonly connectedAccountService: ConnectedAccountRepository,
   ) {}
 
   async refreshAndSaveAccessToken(

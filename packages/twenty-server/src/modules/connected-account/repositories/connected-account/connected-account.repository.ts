@@ -7,7 +7,7 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
-export class ConnectedAccountService {
+export class ConnectedAccountRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

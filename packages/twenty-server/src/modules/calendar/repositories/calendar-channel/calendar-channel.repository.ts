@@ -7,7 +7,7 @@ import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-obj
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
-export class CalendarChannelService {
+export class CalendarChannelRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
