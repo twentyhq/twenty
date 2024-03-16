@@ -9,10 +9,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react-jsx",
-    "composite": true,
-    "declaration": true,
-    "esModuleInterop": true
+    "jsx": "react-jsx"
   },
   "files": [],
   "include": [],

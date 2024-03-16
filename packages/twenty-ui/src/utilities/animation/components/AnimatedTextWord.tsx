@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 

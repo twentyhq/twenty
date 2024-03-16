@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
+    "composite": true,
     "declaration": true,
     "types": ["node", "vite/client"]
   },
