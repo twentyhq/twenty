@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Avatar, AvatarType } from 'twenty-ui';
+import { Chip, ChipVariant } from 'twenty-ui';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Nullable } from '~/types/Nullable';
-
-import { Chip, ChipVariant } from './Chip';
 
 export type EntityChipProps = {
   linkToEntity?: string;

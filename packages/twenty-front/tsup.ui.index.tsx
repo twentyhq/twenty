@@ -10,7 +10,6 @@ declare module '@emotion/react' {
   export interface Theme extends ThemeType {}
 }
 
-export * from './src/modules/ui/display/chip/components/Chip'
 export * from './src/modules/ui/display/chip/components/EntityChip'
 export * from './src/modules/ui/display/icon/components/IconAddressBook'
 export * from './src/modules/ui/display/tag/components/Tag'

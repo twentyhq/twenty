@@ -2,7 +2,7 @@ export { AnimatedCheckmark } from './AnimatedCheckmark/AnimatedCheckmark';
 export type { AvatarProps, AvatarSize, AvatarType } from './Avatar/Avatar';
 export { Avatar } from './Avatar/Avatar';
 export { Checkmark } from './Checkmark/Checkmark';
-export { Chip } from './Chip/Chip';
+export { Chip, ChipAccent, ChipSize, ChipVariant } from './Chip/Chip';
 export { ColorSample } from './ColorSample/ColorSample';
 export { EntityChip } from './EntityChip/EntityChip';
 export { H1Title } from './H1Title/H1Title';
