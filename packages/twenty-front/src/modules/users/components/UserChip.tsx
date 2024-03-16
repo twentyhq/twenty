@@ -1,4 +1,4 @@
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { EntityChip } from 'twenty-ui';
 
 export type UserChipProps = {
   id: string;

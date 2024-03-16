@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { EntityChip } from 'twenty-ui';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
 export type RecordChipProps = {
   objectNameSingular: string;
