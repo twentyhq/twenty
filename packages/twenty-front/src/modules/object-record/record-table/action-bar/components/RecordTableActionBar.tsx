@@ -1,6 +1,7 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { selectedRecordsComponentState } from '@/object-record/record-table/states/selectedRecordsComponentState';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 
 export const RecordTableActionBar = ({
@@ -12,9 +13,15 @@ export const RecordTableActionBar = ({
 
   const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
 
-  if (!selectedRowIds.length) {
+  const [selectedRecords, setSelectedRecords] = useRecoilState(
+    selectedRecordsComponentState(),
+  );
+
+  setSelectedRecords(selectedRowIds.length);
+
+  if (!selectedRecords) {
     return null;
   }
 
-  return <ActionBar selectedIds={selectedRowIds} />;
+  return <ActionBar />;
 };

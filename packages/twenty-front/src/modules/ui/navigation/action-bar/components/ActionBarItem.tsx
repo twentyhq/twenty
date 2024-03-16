@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { MenuItem } from 'tsup.ui.index';
 
+import { selectedRecordsComponentState } from '@/object-record/record-table/states/selectedRecordsComponentState';
 import { IconChevronDown } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +15,6 @@ import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
   item: ActionBarEntry;
-  selectedIds?: string[];
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`
@@ -43,12 +44,14 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
+export const ActionBarItem = ({ item }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
+  const [selectedRecords] = useRecoilState(selectedRecordsComponentState());
+
   return (
     <>
       {Array.isArray(item.subActions) ? (
@@ -101,7 +104,7 @@ export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
             <ConfirmationModal
               isOpen={isDeleteRecordsModalOpen}
               setIsOpen={setIsDeleteRecordsModalOpen}
-              title={`Delete ${selectedIds?.length ?? 'selected'} records`}
+              title={`Delete ${selectedRecords} records`}
               subtitle={
                 <>
                   This action cannot be undone. This will permanently delete

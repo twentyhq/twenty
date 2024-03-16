@@ -25,11 +25,7 @@ const StyledContainerActionBar = styled.div`
   z-index: 20;
 `;
 
-type ActionBarProps = {
-  selectedIds?: string[];
-};
-
-export const ActionBar = ({ selectedIds }: ActionBarProps) => {
+export const ActionBar = () => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState());
   const actionBarEntries = useRecoilValue(actionBarEntriesState());
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -45,7 +41,7 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
       ref={wrapperRef}
     >
       {actionBarEntries.map((item, index) => (
-        <ActionBarItem key={index} item={item} selectedIds={selectedIds} />
+        <ActionBarItem key={index} item={item} />
       ))}
     </StyledContainerActionBar>
   );
