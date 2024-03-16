@@ -15,6 +15,12 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { seedMessage } from 'src/database/typeorm-seeds/workspace/message';
+import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/messageChannel';
+import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/messageChannelMessageAssociation';
+import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/messageThread';
+import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/messageParticipant';
+import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connectedAccount';
 
 // TODO: implement dry-run
 @Command({
@@ -114,6 +120,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         objectMetadataMap,
       );
       await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);
+      await seedMessageThread(workspaceDataSource, dataSourceMetadata.schema);
+      await seedConnectedAccount(workspaceDataSource, dataSourceMetadata.schema);
+      await seedMessage(workspaceDataSource, dataSourceMetadata.schema);
+      await seedMessageChannel(workspaceDataSource, dataSourceMetadata.schema);
+      await seedMessageChannelMessageAssociation(workspaceDataSource, dataSourceMetadata.schema);
+      await seedMessageParticipant(workspaceDataSource, dataSourceMetadata.schema);
     } catch (error) {
       console.error(error);
     }
