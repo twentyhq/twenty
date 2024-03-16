@@ -10,10 +10,10 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import debounce from 'lodash.debounce';
+import { AppTooltip } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';

@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { Tag } from 'tsup.ui.index';
+import { Tag } from 'twenty-ui';
 
 import { IconCheck } from '@/ui/display/icon';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';

@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

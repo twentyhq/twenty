@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import { Tag } from 'twenty-ui';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { IconDotsVertical } from '@/ui/display/icon';
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 

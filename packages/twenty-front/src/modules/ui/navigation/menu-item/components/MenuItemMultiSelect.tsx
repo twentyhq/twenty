@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Tag } from 'tsup.ui.index';
+import { Tag } from 'twenty-ui';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Checkbox } from '@/ui/input/components/Checkbox';

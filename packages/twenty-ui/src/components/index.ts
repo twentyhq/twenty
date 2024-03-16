@@ -16,4 +16,4 @@ export { OverflowingTextWithTooltip } from './OverflowingTextWithTooltip/Overflo
 export { Pill } from './Pill/Pill';
 export { Status } from './Status/Status';
 export { Tag } from './Tag/Tag';
-export { Tooltip } from './Tooltip/Tooltip';
+export { Tooltip as AppTooltip } from './Tooltip/Tooltip';
