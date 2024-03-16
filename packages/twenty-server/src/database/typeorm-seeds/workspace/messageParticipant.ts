@@ -41,7 +41,7 @@ export const seedMessageParticipant = async (
         updatedAt: new Date(),
         deletedAt: null,
         workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
-        personId: '0aa00beb-ac73-4797-824e-87a1f5aea9e0', //Sylvie
+        personId: '0aa00beb-ac73-4797-824e-87a1f5aea9e0',
         displayName: 'Sylvie',
         handle: 'incoming',
         role: 'to',
@@ -53,7 +53,7 @@ export const seedMessageParticipant = async (
         updatedAt: new Date(),
         deletedAt: null,
         workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
-        personId: '93c72d2e-f517-42fd-80ae-14173b3b70ae', //Christopher
+        personId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
         displayName: 'Christopher',
         handle: 'incoming',
         role: 'to',
@@ -77,7 +77,7 @@ export const seedMessageParticipant = async (
         updatedAt: new Date(),
         deletedAt: null,
         workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
-        personId: '0aa00beb-ac73-4797-824e-87a1f5aea9e0', //Sylvie
+        personId: '0aa00beb-ac73-4797-824e-87a1f5aea9e0',
         displayName: 'Sylvie',
         handle: 'incoming',
         role: 'to',
@@ -89,7 +89,7 @@ export const seedMessageParticipant = async (
         updatedAt: new Date(),
         deletedAt: null,
         workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
-        personId: '93c72d2e-f517-42fd-80ae-14173b3b70ae', //Christopher
+        personId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
         displayName: 'Christopher',
         handle: 'incoming',
         role: 'to',
