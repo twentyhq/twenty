@@ -3,9 +3,9 @@ import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
 import { RecoilRoot } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useActivityById } from '@/activities/hooks/useActivityById';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
 const mocks: MockedResponse[] = [

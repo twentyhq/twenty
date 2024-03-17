@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
+import { useSnackBar } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 

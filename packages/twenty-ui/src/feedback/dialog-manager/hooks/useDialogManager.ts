@@ -1,9 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-
+import { usePreviousHotkeyScope } from '../../../utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useAvailableScopeIdOrThrow } from '../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { DialogManagerScopeInternalContext } from '../scopes/scope-internal-context/DialogManagerScopeInternalContext';
 import { dialogInternalScopedState } from '../states/dialogInternalScopedState';
 import { DialogOptions } from '../types/DialogOptions';

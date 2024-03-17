@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import {
   query,
@@ -9,7 +10,6 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useFindOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 const mocks = [
   {

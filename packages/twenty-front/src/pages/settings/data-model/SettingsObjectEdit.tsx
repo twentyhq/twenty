@@ -9,6 +9,7 @@ import {
   H2Title,
   IconArchive,
   IconSettings,
+  useSnackBar,
 } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -28,7 +29,6 @@ import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validatio
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 

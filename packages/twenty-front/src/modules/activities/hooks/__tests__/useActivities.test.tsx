@@ -3,10 +3,10 @@ import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 const mockActivityTarget = {

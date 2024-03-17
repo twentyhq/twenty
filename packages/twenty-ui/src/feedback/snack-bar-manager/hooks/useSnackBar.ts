@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { useAvailableScopeIdOrThrow } from '../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { SnackBarManagerScopeInternalContext } from '../scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import {
   snackBarInternalScopedState,
   SnackBarOptions,
-} from '@/ui/feedback/snack-bar-manager/states/snackBarInternalScopedState';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+} from '../states/snackBarInternalScopedState';
 
 export const useSnackBar = () => {
   const scopeId = useAvailableScopeIdOrThrow(

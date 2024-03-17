@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useAttachRelationInBothDirections } from '@/activities/hooks/useAttachRelationInBothDirections';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 const mocks: MockedResponse[] = [];

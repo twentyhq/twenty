@@ -1,7 +1,7 @@
-import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
-import { snackBarInternalScopedState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalScopedState';
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useRecoilScopedStateV2 } from '../../../../utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useAvailableScopeIdOrThrow } from '../../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { SnackBarManagerScopeInternalContext } from '../../scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { snackBarInternalScopedState } from '../../states/snackBarInternalScopedState';
 
 type useSnackBarManagerScopedStatesProps = {
   snackBarManagerScopeId?: string;

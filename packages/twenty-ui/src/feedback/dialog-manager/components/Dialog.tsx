@@ -2,11 +2,10 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from '~/utils/isDefined';
-
+import { Button } from '../../../input';
+import { useScopedHotkeys } from '../../../utilities/hotkey/hooks/useScopedHotkeys';
+import { isDefined } from '../../../utils/isDefined';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`

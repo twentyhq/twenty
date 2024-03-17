@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Reference } from '@apollo/client';
 import styled from '@emotion/styled';
-import { Breadcrumb, H2Title, IconSettings } from 'twenty-ui';
+import { Breadcrumb, H2Title, IconSettings, useSnackBar } from 'twenty-ui';
 
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
@@ -21,7 +21,6 @@ import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/f
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { View } from '@/views/types/View';

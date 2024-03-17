@@ -1,10 +1,10 @@
 import { Meta } from '@storybook/react';
+import { DialogManagerScope } from 'twenty-ui';
 
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof MatchColumnsStep> = {

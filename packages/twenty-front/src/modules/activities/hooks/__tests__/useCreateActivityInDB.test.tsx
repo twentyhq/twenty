@@ -4,9 +4,9 @@ import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
 import pick from 'lodash/pick';
 import { RecoilRoot } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';

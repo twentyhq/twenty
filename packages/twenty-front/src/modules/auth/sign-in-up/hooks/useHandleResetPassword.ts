@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
+import { useSnackBar } from 'twenty-ui';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql.tsx';
 
 export const useHandleResetPassword = () => {

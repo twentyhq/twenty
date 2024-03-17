@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useSnackBar } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -7,7 +8,6 @@ import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/hooks
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
 import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';

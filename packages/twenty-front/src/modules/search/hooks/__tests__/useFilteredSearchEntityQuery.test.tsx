@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 import {
   query,
@@ -72,6 +72,7 @@ describe('useFilteredSearchEntityQuery', () => {
         setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
           name: { firstName: 'John', lastName: 'Connor' },
+          locale: 'en',
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();

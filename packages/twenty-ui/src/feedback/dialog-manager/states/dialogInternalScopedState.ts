@@ -1,5 +1,4 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-
+import { createComponentState } from '../../../utilities/state/component-state/utils/createComponentState';
 import { DialogOptions } from '../types/DialogOptions';
 
 type DialogState = {

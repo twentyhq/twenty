@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { motion, useReducedMotion } from 'framer-motion';
 
-import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSnackBarManagerScopedStates } from '../hooks/internal/useSnackBarManagerScopedStates';
+import { useSnackBar } from '../hooks/useSnackBar';
 
 import { SnackBar } from './SnackBar';
 const StyledSnackBarContainer = styled.div`

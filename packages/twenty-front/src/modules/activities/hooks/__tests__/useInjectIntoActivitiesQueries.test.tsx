@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
 const upsertFindManyRecordsQueryInCacheMock = jest.fn();

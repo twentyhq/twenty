@@ -1,16 +1,14 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
+import { IconAlertTriangle, IconX } from '../../../display/icon';
+import { RGBA } from '../../../theme/constants/Rgba';
+import { isDefined } from '../../../utils/isDefined';
 import {
-  IconAlertTriangle,
-  IconX,
   ProgressBar,
   ProgressBarControls,
-} from 'twenty-ui';
-
-import { RGBA } from '@/ui/theme/constants/Rgba';
-import { isDefined } from '~/utils/isDefined';
-
+} from '../../progress-bar/components/ProgressBar';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 
 const StyledMotionContainer = styled.div<Pick<SnackBarProps, 'variant'>>`

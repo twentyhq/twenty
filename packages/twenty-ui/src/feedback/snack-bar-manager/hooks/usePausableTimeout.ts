@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from '../../../utils/isDefined';
 
 export const usePausableTimeout = (callback: () => void, delay: number) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
