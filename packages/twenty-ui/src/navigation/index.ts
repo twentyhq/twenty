@@ -1,2 +1,2 @@
-export { Breadcrumb } from './breadcrumb/components/Breadcrumb';
-export { NavigationBar } from './navigation-bar/components/NavigationBar';
+export * from './breadcrumb/components/Breadcrumb';
+export * from './navigation-bar/components/NavigationBar';
