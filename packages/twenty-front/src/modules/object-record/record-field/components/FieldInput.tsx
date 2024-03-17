@@ -134,8 +134,6 @@ export const FieldInput = ({
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
         />
       ) : (
         <></>

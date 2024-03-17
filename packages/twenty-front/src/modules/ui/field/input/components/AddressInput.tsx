@@ -91,52 +91,50 @@ export const AddressInput = ({
   });
 
   return (
-    <div ref={wrapperRef}>
-      <div ref={refs.setFloating} style={floatingStyles}>
-        <StyledAddressContainer>
+    <div ref={refs.setFloating} style={floatingStyles}>
+      <StyledAddressContainer ref={wrapperRef}>
+        <TextInput
+          value={value.addressStreet1}
+          label="ADDRESS"
+          fullWidth
+          onChange={getChangeHandler('addressStreet1')}
+          ref={firstInputRef}
+        />
+        <TextInput
+          value={value.addressStreet2 ?? ''}
+          label="ADDRESS 2"
+          fullWidth
+          onChange={getChangeHandler('addressStreet2')}
+        />
+        <StyledHalfRowContainer>
           <TextInput
-            value={value.addressStreet1}
-            label="ADDRESS"
+            value={value.addressCity ?? ''}
+            label="CITY"
             fullWidth
-            onChange={getChangeHandler('addressStreet1')}
-            ref={firstInputRef}
+            onChange={getChangeHandler('addressCity')}
           />
           <TextInput
-            value={value.addressStreet2 ?? ''}
-            label="ADDRESS 2"
+            value={value.addressState ?? ''}
+            label="STATE"
             fullWidth
-            onChange={getChangeHandler('addressStreet2')}
+            onChange={getChangeHandler('addressState')}
           />
-          <StyledHalfRowContainer>
-            <TextInput
-              value={value.addressCity ?? ''}
-              label="CITY"
-              fullWidth
-              onChange={getChangeHandler('addressCity')}
-            />
-            <TextInput
-              value={value.addressState ?? ''}
-              label="STATE"
-              fullWidth
-              onChange={getChangeHandler('addressState')}
-            />
-          </StyledHalfRowContainer>
-          <StyledHalfRowContainer>
-            <TextInput
-              value={value.addressPostcode ?? ''}
-              label="POSTCODE"
-              onChange={getChangeHandler('addressPostcode')}
-              fullWidth
-            />
-            <TextInput
-              value={value.addressCountry ?? ''}
-              label="COUNTRY"
-              onChange={getChangeHandler('addressCountry')}
-              fullWidth
-            />
-          </StyledHalfRowContainer>
-        </StyledAddressContainer>
-      </div>
+        </StyledHalfRowContainer>
+        <StyledHalfRowContainer>
+          <TextInput
+            value={value.addressPostcode ?? ''}
+            label="POSTCODE"
+            onChange={getChangeHandler('addressPostcode')}
+            fullWidth
+          />
+          <TextInput
+            value={value.addressCountry ?? ''}
+            label="COUNTRY"
+            onChange={getChangeHandler('addressCountry')}
+            fullWidth
+          />
+        </StyledHalfRowContainer>
+      </StyledAddressContainer>
     </div>
   );
 };
