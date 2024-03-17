@@ -8,6 +8,7 @@ import {
   IconPaperclip,
   IconTimelineEvent,
   TabList,
+  useIsMobile,
   useTabList,
 } from 'twenty-ui';
 
@@ -21,7 +22,6 @@ import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div`

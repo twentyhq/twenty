@@ -9,6 +9,7 @@ import {
   NavigationDrawerSection,
   NavigationDrawerSectionTitle,
   navigationMemorizedUrlState,
+  useIsMobile,
 } from 'twenty-ui';
 
 import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
@@ -16,7 +17,6 @@ import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentU
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
 

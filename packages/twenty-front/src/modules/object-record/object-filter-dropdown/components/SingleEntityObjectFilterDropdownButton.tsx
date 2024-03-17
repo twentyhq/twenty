@@ -4,13 +4,13 @@ import { useRecoilValue } from 'recoil';
 import {
   Dropdown,
   DropdownMenuSeparator,
+  HotkeyScope,
   IconChevronDown,
   StyledHeaderDropdownButton,
 } from 'twenty-ui';
 
 import { ObjectFilterDropdownRecordRemoveFilterMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordRemoveFilterMenuItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';

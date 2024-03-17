@@ -1,4 +1,4 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createComponentFamilyState } from 'twenty-ui';
 
 export const isRowSelectedComponentFamilyState = createComponentFamilyState<
   boolean,

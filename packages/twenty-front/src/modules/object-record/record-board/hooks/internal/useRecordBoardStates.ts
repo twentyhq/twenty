@@ -1,3 +1,11 @@
+import {
+  extractComponentFamilyState,
+  extractComponentReadOnlySelector,
+  extractComponentState,
+  getScopeIdOrUndefinedFromComponentId,
+  useAvailableScopeIdOrThrow,
+} from 'twenty-ui';
+
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isFirstRecordBoardColumnComponentFamilyState';
 import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
@@ -15,11 +23,6 @@ import { recordBoardSortsComponentState } from '@/object-record/record-board/sta
 import { recordBoardColumnsComponentFamilySelector } from '@/object-record/record-board/states/selectors/recordBoardColumnsComponentFamilySelector';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
-import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useRecordBoardStates = (recordBoardId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(

@@ -1,11 +1,15 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { IconDotsVertical, LightIconButton, Tag } from 'twenty-ui';
+import {
+  IconDotsVertical,
+  LightIconButton,
+  Tag,
+  usePreviousHotkeyScope,
+} from 'twenty-ui';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const StyledHeader = styled.div`
   align-items: center;

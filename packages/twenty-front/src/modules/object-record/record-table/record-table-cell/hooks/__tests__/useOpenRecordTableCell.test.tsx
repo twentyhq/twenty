@@ -1,6 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { useDragSelect } from 'twenty-ui';
 
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -13,7 +14,6 @@ import {
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 
 const setHotkeyScope = jest.fn();
 

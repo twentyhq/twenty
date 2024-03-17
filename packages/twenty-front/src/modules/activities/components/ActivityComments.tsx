@@ -1,7 +1,11 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { AutosizeTextInput, AutosizeTextInputVariant } from 'twenty-ui';
+import {
+  AutosizeTextInput,
+  AutosizeTextInputVariant,
+  useIsMobile,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { Comment } from '@/activities/comment/Comment';
@@ -10,7 +14,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;

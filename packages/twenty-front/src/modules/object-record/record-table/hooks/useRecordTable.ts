@@ -1,14 +1,16 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
+import {
+  getSnapshotValue,
+  useScopedHotkeys,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';

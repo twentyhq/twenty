@@ -1,11 +1,11 @@
 import { useContext } from 'react';
+import { getScopeIdFromComponentId } from 'twenty-ui';
 
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';

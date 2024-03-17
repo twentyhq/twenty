@@ -2,7 +2,14 @@ import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { Checkbox, CheckboxVariant, IconEye, LightIconButton } from 'twenty-ui';
+import {
+  AnimatedEaseInOut,
+  Checkbox,
+  CheckboxVariant,
+  IconEye,
+  LightIconButton,
+  ScrollWrapperContext,
+} from 'twenty-ui';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -18,8 +25,6 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
-import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>

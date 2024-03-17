@@ -9,11 +9,11 @@ import {
   within,
 } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
+import { useSetHotkeyScope } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -31,9 +31,9 @@ import {
 } from '../RelationFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
+    currentWorkspaceMemberState(),
   );
 
   useEffect(() => {

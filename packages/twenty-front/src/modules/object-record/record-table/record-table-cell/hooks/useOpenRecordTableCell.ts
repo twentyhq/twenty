@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
+import { HotkeyScope, useDragSelect, useSetHotkeyScope } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -8,9 +9,6 @@ import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecor
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';

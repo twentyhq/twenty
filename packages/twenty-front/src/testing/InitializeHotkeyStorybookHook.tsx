@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { AppHotkeyScope, useSetHotkeyScope } from 'twenty-ui';
 
 export const InitializeHotkeyStorybookHookEffect = () => {
   const setHotkeyScope = useSetHotkeyScope();

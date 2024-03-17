@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useClickOustideListenerStates } from './useClickOustideListenerStates';
 
-export enum ClickOutsideMode {
+enum ClickOutsideMode {
   comparePixels = 'comparePixels',
   compareHTMLRef = 'compareHTMLRef',
 }

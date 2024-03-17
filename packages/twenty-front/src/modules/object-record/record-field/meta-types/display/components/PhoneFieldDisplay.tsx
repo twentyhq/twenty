@@ -1,4 +1,4 @@
-import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay';
+import { PhoneDisplay } from 'twenty-ui';
 
 import { usePhoneField } from '../../hooks/usePhoneField';
 

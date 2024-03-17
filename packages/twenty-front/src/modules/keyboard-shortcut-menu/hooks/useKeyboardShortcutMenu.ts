@@ -1,7 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { AppHotkeyScope, usePreviousHotkeyScope } from 'twenty-ui';
 
 import { isKeyboardShortcutMenuOpenedState } from '../states/isKeyboardShortcutMenuOpenedState';
 

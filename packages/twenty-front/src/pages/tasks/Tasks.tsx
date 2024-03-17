@@ -3,6 +3,7 @@ import {
   IconArchive,
   IconCheck,
   IconCheckbox,
+  RecoilScope,
   TabList,
   TopBar,
 } from 'twenty-ui';
@@ -16,7 +17,6 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';
 

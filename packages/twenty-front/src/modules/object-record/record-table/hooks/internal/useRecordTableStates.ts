@@ -1,3 +1,11 @@
+import {
+  extractComponentFamilyState,
+  extractComponentReadOnlySelector,
+  extractComponentState,
+  getScopeIdOrUndefinedFromComponentId,
+  useAvailableScopeIdOrThrow,
+} from 'twenty-ui';
+
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
@@ -21,11 +29,6 @@ import { tableFiltersComponentState } from '@/object-record/record-table/states/
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
-import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(

@@ -1,5 +1,6 @@
+import { createComponentSelector } from 'twenty-ui';
+
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/states/recordFieldInputDraftValueComponentState';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const recordFieldInputDraftValueComponentSelector =
   createComponentSelector<any>({

@@ -11,10 +11,10 @@ import {
   isNavigationDrawerOpenState,
   NavigationDrawerCollapseButton,
   OverflowingTextWithTooltip,
+  useIsMobile,
 } from 'twenty-ui';
 
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 

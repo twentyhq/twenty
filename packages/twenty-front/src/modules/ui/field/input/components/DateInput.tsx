@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
-import { InternalDatePicker } from 'twenty-ui';
+import { DateDisplay, InternalDatePicker } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { Nullable } from '~/types/Nullable';
 
 const StyledCalendarContainer = styled.div`

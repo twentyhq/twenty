@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
+import { getSnapshotValue } from 'twenty-ui';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {

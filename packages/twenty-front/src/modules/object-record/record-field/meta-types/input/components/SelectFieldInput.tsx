@@ -6,11 +6,11 @@ import {
   DropdownMenuSearchInput,
   DropdownMenuSeparator,
   MenuItemSelectTag,
+  useListenClickOutside,
 } from 'twenty-ui';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledRelationPickerContainer = styled.div`

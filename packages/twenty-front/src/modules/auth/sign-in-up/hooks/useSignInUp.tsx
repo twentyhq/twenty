@@ -1,13 +1,12 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { useSnackBar } from 'twenty-ui';
+import { useScopedHotkeys, useSnackBar } from 'twenty-ui';
 
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';

@@ -1,5 +1,5 @@
 import { Key } from 'ts-key-enum';
-import { IconArrowUpRight, IconPencil } from 'twenty-ui';
+import { IconArrowUpRight, IconPencil, useScopedHotkeys } from 'twenty-ui';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -9,7 +9,6 @@ import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotk
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
   activity: Activity;

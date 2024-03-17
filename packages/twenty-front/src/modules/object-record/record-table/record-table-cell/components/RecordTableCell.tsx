@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { HotkeyScope } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -7,7 +8,6 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
   customHotkeyScope,

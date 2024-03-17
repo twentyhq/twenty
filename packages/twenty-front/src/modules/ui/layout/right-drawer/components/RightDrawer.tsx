@@ -4,13 +4,15 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import {
+  ClickOutsideMode,
+  useClickOutsideListener,
+  useIsMobile,
+  useScopedHotkeys,
+} from 'twenty-ui';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';

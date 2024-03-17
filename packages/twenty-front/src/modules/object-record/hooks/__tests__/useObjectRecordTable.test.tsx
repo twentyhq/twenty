@@ -3,11 +3,10 @@ import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
-import { SnackBarProviderScope } from 'twenty-ui';
+import { getScopeIdFromComponentId, SnackBarProviderScope } from 'twenty-ui';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';

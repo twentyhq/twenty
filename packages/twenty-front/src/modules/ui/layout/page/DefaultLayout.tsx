@@ -3,7 +3,11 @@ import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
-import { DESKTOP_NAV_DRAWER_WIDTHS } from 'twenty-ui';
+import {
+  DESKTOP_NAV_DRAWER_WIDTHS,
+  useIsMobile,
+  useScreenSize,
+} from 'twenty-ui';
 
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
@@ -17,8 +21,6 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`

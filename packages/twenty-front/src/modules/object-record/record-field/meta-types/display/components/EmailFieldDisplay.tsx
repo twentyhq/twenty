@@ -1,4 +1,4 @@
-import { EmailDisplay } from '@/ui/field/display/components/EmailDisplay';
+import { EmailDisplay } from 'twenty-ui';
 
 import { useEmailField } from '../../hooks/useEmailField';
 

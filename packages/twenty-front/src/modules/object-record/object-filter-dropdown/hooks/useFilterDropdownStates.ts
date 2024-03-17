@@ -1,3 +1,5 @@
+import { extractComponentState } from 'twenty-ui';
+
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
 import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
@@ -8,7 +10,6 @@ import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-re
 import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
 import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 
 export const useFilterDropdownStates = (scopeId: string) => {

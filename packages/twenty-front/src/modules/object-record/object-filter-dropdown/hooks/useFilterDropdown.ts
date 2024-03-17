@@ -1,8 +1,7 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { getSnapshotValue, useAvailableScopeIdOrThrow } from 'twenty-ui';
 
 import { useFilterDropdownStates } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownStates';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 import { Filter } from '../types/Filter';

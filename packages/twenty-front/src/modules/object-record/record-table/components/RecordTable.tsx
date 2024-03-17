@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { scrollLeftState, scrollTopState } from 'twenty-ui';
 
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
@@ -11,8 +12,6 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;

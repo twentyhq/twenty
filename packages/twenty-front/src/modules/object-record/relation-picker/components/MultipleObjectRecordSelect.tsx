@@ -8,8 +8,9 @@ import {
   DropdownMenuSearchInput,
   DropdownMenuSeparator,
   MenuItem,
+  SelectableItem,
+  SelectableList,
 } from 'twenty-ui';
-import { SelectableItem, SelectableList } from 'twenty-ui';
 
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';

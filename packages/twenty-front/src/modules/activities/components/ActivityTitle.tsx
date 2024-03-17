@@ -3,7 +3,13 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Checkbox, CheckboxShape, CheckboxSize } from 'twenty-ui';
+import {
+  Checkbox,
+  CheckboxShape,
+  CheckboxSize,
+  usePreviousHotkeyScope,
+  useScopedHotkeys,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -16,8 +22,6 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{

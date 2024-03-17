@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { useSetHotkeyScope } from 'twenty-ui';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 

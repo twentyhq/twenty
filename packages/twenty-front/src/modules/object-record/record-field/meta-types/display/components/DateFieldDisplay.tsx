@@ -1,4 +1,4 @@
-import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
+import { DateDisplay } from 'twenty-ui';
 
 import { useDateTimeField } from '../../hooks/useDateTimeField';
 

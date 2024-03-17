@@ -4,7 +4,13 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, MainButton, TextInput, useSnackBar } from 'twenty-ui';
+import {
+  H2Title,
+  MainButton,
+  TextInput,
+  useScopedHotkeys,
+  useSnackBar,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -16,7 +22,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContentContainer = styled.div`

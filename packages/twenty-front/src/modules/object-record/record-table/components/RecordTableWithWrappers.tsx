@@ -8,7 +8,9 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   Button,
+  DragSelect,
   IconPlus,
+  ScrollWrapper,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -18,9 +20,6 @@ import { RecordTable } from '@/object-record/record-table/components/RecordTable
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';

@@ -1,9 +1,13 @@
 import { useCallback, useContext, useRef } from 'react';
 import styled from '@emotion/styled';
-import { DropdownMenu, DropdownMenuItemsContainer, MenuItem } from 'twenty-ui';
+import {
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  MenuItem,
+  useListenClickOutside,
+} from 'twenty-ui';
 
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledMenuContainer = styled.div`
   position: absolute;

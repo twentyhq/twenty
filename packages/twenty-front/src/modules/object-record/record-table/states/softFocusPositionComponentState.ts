@@ -1,4 +1,4 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'twenty-ui';
 
 import { TableCellPosition } from '../types/TableCellPosition';
 

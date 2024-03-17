@@ -1,8 +1,7 @@
 import { useRecoilCallback } from 'recoil';
+import { currentHotkeyScopeState, getSnapshotValue } from 'twenty-ui';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 

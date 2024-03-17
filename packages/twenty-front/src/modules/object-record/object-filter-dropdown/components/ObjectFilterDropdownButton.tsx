@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
+import { HotkeyScope } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityObjectFilterDropdownButton } from './SingleEntityObjectFilterDropdownButton';

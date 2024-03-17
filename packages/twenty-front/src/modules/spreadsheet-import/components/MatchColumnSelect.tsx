@@ -18,11 +18,11 @@ import {
   DropdownMenuSeparator,
   MenuItem,
   MenuItemSelect,
+  useListenClickOutside,
 } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 const StyledFloatingDropdown = styled.div`

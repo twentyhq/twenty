@@ -6,13 +6,13 @@ import {
   ButtonGroup,
   Dropdown,
   DropdownMenuItemsContainer,
+  HotkeyScope,
   IconChevronDown,
   IconPlus,
   MenuItem,
   useDropdown,
 } from 'twenty-ui';
 
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';

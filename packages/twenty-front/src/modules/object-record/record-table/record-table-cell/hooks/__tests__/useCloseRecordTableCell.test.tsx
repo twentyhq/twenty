@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { useDragSelect } from 'twenty-ui';
 
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -13,7 +14,6 @@ import {
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 
 const setHotkeyScope = jest.fn();
 

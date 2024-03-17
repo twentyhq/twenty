@@ -1,8 +1,6 @@
 import { JSX } from 'react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
-
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { IconComponent, useIsMobile } from 'twenty-ui';
 
 import { PageHeader } from './PageHeader';
 import { RightDrawerContainer } from './RightDrawerContainer';

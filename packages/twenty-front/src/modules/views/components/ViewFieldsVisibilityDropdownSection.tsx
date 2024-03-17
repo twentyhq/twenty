@@ -17,11 +17,11 @@ import {
   MenuItemDraggable,
   StyledDropdownMenuSubheader,
   useIcons,
+  useListenClickOutside,
 } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 

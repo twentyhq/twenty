@@ -1,4 +1,5 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetHotkeyScope } from 'twenty-ui';
 
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
@@ -11,7 +12,6 @@ import { ActivityType } from '@/activities/types/Activity';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';

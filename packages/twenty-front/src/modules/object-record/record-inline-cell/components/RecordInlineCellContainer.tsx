@@ -3,11 +3,9 @@ import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { IconComponent } from 'twenty-ui';
+import { EllipsisDisplay, HotkeyScope, IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 

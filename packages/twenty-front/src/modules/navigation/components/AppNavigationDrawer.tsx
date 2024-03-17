@@ -4,13 +4,13 @@ import {
   isNavigationDrawerOpenState,
   NavigationDrawer,
   NavigationDrawerProps,
+  useIsMobile,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportChat } from '@/support/components/SupportChat';
 import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';

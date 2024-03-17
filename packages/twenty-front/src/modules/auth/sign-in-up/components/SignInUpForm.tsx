@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import {
   ActionLink,
+  AnimatedEaseIn,
   IconGoogle,
   Loader,
   MainButton,
@@ -17,7 +18,6 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';

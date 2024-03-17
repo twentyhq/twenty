@@ -6,12 +6,12 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  useIsMobile,
 } from 'twenty-ui';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 

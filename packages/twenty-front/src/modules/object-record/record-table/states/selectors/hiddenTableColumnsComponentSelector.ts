@@ -1,6 +1,7 @@
+import { createComponentReadOnlySelector } from 'twenty-ui';
+
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 export const hiddenTableColumnsComponentSelector =

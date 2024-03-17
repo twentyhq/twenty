@@ -7,10 +7,9 @@ import {
 } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
+import { useListenClickOutside, useScopedHotkeys } from 'twenty-ui';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 import { StyledInput } from './TextInput';

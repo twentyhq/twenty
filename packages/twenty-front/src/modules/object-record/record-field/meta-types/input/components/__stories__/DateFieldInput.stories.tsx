@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { useSetHotkeyScope } from 'twenty-ui';
 
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';

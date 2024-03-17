@@ -1,4 +1,5 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'twenty-ui';
+
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const selectedOperandInDropdownComponentState =

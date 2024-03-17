@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
+import { getSnapshotValue } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityType } from '@/activities/types/Activity';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';

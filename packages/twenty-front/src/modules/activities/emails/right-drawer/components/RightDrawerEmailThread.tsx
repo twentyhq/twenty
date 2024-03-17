@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
+import { useClickOutsideListener } from 'twenty-ui';
 
 import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
@@ -8,7 +9,6 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

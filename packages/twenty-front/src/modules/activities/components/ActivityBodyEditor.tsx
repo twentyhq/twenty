@@ -4,7 +4,12 @@ import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { BlockEditor } from 'twenty-ui';
+import {
+  BlockEditor,
+  isNonTextWritingKey,
+  usePreviousHotkeyScope,
+  useScopedHotkeys,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
@@ -20,9 +25,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';

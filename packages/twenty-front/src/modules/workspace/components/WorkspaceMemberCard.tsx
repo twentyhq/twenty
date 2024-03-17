@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { Avatar } from 'twenty-ui';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
+import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 

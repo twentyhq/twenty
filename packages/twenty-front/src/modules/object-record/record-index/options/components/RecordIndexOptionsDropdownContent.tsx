@@ -11,6 +11,7 @@ import {
   MenuItem,
   MenuItemToggle,
   useDropdown,
+  useScopedHotkeys,
 } from 'twenty-ui';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
@@ -18,7 +19,6 @@ import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/opti
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';

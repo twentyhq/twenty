@@ -5,6 +5,7 @@ import {
   DropdownMenuHeader,
   DropdownMenuItemsContainer,
   DropdownMenuSeparator,
+  HotkeyScope,
   IconChevronDown,
   LightButton,
   MenuItem,
@@ -15,7 +16,6 @@ import {
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';

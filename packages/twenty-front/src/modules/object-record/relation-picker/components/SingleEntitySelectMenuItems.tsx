@@ -11,10 +11,10 @@ import {
   MenuItem,
   MenuItemSelect,
   SelectableList,
+  useScopedHotkeys,
 } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 import { EntityForSelect } from '../types/EntityForSelect';

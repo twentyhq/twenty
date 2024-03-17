@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card, IconX, LightIconButton } from 'twenty-ui';
+import { AnimatedFadeOut, Card, IconX, LightIconButton } from 'twenty-ui';
 
-import { AnimatedFadeOut } from '@/ui/utilities/animation/components/AnimatedFadeOut';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 import DarkCoverImage from '../assets/cover-dark.png';

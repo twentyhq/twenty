@@ -1,5 +1,4 @@
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createFamilyState, HotkeyScope } from 'twenty-ui';
 
 export const customEditHotkeyScopeForFieldScopedState = createFamilyState<
   HotkeyScope | null,

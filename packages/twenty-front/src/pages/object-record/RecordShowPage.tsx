@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconBuildingSkyscraper } from 'twenty-ui';
+import { IconBuildingSkyscraper, PageTitle } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -14,7 +14,6 @@ import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
