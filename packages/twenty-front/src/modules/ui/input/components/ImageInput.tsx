@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button } from 'twenty-ui';
-
 import {
+  Button,
   IconFileUpload,
   IconTrash,
   IconUpload,
   IconX,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`

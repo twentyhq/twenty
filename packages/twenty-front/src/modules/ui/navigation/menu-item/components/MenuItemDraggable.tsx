@@ -1,6 +1,5 @@
 import { LightIconButtonGroup } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';

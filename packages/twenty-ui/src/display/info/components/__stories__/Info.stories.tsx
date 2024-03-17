@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Info, InfoAccent } from '@/ui/display/info/components/Info.tsx';
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator.tsx';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator.tsx';
-import { CatalogStory } from '~/testing/types.ts';
+import { CatalogDecorator } from '../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { CatalogStory } from '../../../../testing/types';
+import { Info, InfoAccent } from '../Info';
 
 const meta: Meta<typeof Info> = {
   title: 'UI/Display/Info/Info',

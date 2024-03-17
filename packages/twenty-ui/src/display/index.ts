@@ -4,6 +4,8 @@ export * from './checkmark/components/Checkmark';
 export * from './chip/components/Chip';
 export * from './chip/components/EntityChip';
 export * from './color/components/ColorSample';
+export * from './icon';
+export * from './info/components/Info';
 export * from './pill/components/Pill';
 export * from './status/components/Status';
 export * from './tag/components/Tag';

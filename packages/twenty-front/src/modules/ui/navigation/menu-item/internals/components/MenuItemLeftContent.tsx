@@ -1,8 +1,9 @@
 import { useTheme } from '@emotion/react';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
-
-import { IconGripVertical } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import {
+  IconComponent,
+  IconGripVertical,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import {
   StyledMenuItemLabel,

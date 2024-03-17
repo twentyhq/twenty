@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { LightIconButton } from 'twenty-ui';
+import { IconChevronRight, IconGmail, LightIconButton } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
@@ -10,8 +10,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListCard } from '@/settings/accounts/components/SettingsAccountsListCard';
 import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
-import { IconChevronRight } from '@/ui/display/icon';
-import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

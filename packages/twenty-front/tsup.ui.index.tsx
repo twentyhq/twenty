@@ -10,7 +10,6 @@ declare module '@emotion/react' {
   export interface Theme extends ThemeType {}
 }
 
-export * from './src/modules/ui/display/icon/components/IconAddressBook'
 export * from './src/modules/ui/navigation/link/components/ActionLink.tsx'
 export * from './src/modules/ui/input/color-scheme/components/ColorSchemeCard'
 export * from './src/modules/ui/input/color-scheme/components/ColorSchemePicker'

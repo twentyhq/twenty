@@ -2,14 +2,12 @@ import { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent, IconGoogle, IconPlus } from 'twenty-ui';
 
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconPlus } from '@/ui/display/icon';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 

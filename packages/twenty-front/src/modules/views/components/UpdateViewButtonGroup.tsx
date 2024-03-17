@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Button, ButtonGroup } from 'twenty-ui';
+import { Button, ButtonGroup, IconChevronDown, IconPlus } from 'twenty-ui';
 
-import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';

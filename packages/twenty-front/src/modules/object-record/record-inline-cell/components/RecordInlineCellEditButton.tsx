@@ -1,6 +1,4 @@
-import { FloatingIconButton } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FloatingIconButton, IconComponent } from 'twenty-ui';
 
 export const RecordInlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
   return (

@@ -1,10 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, isDefined, Pill, Status } from 'twenty-ui';
+import {
+  Button,
+  IconArrowUpRight,
+  IconBolt,
+  IconPlus,
+  isDefined,
+  Pill,
+  Status,
+} from 'twenty-ui';
 
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { IconArrowUpRight, IconBolt, IconPlus } from '@/ui/display/icon';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;

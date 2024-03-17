@@ -2,12 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { Button } from 'twenty-ui';
+import { Button, IconHelpCircle } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { IconHelpCircle } from '@/ui/display/icon';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';

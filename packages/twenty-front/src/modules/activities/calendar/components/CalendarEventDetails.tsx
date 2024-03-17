@@ -1,6 +1,12 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui';
+import {
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+  IconCalendarEvent,
+} from 'twenty-ui';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
@@ -9,7 +15,6 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { IconCalendarEvent } from '@/ui/display/icon';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 

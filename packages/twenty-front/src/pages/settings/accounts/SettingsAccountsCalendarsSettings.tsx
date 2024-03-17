@@ -2,7 +2,13 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Breadcrumb, H2Title } from 'twenty-ui';
+import {
+  Breadcrumb,
+  H2Title,
+  IconRefresh,
+  IconSettings,
+  IconUser,
+} from 'twenty-ui';
 
 import {
   CalendarChannel,
@@ -18,7 +24,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconRefresh, IconSettings, IconUser } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 

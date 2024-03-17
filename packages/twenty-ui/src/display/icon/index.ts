@@ -1,4 +1,14 @@
 /* eslint-disable no-restricted-imports */
+export * from './components/IconAddressBook';
+export * from './components/IconGmail';
+export * from './components/IconGoogle';
+export * from './components/IconGoogleCalendar';
+export * from './components/IconsProvider';
+export * from './components/IconTwentyStar';
+export * from './components/IconTwentyStarFilled';
+export * from './hooks/useIcons';
+export * from './states/iconsState';
+export * from './types/IconComponent';
 export type { TablerIconsProps } from '@tabler/icons-react';
 export {
   Icon123,
@@ -37,6 +47,7 @@ export {
   IconChevronUp,
   IconCircleDot,
   IconCircleOff,
+  IconCircleX,
   IconClick,
   IconCode,
   IconCoins,
@@ -67,6 +78,9 @@ export {
   IconFilterOff,
   IconForbid,
   IconGripVertical,
+  IconH1,
+  IconH2,
+  IconH3,
   IconHeadphones,
   IconHeart,
   IconHeartOff,
@@ -97,6 +111,7 @@ export {
   IconPencil,
   IconPhone,
   IconPhoto,
+  IconPilcrow,
   IconPlug,
   IconPlus,
   IconPresentation,

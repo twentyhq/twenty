@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button } from 'twenty-ui';
+import { Button, IconCopy, IconLink } from 'twenty-ui';
 
-import { IconCopy, IconLink } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 

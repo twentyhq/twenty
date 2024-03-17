@@ -1,6 +1,4 @@
-import { IconButton } from 'twenty-ui';
-
-import { IconHeart } from '@/ui/display/icon';
+import { IconButton, IconHeart } from 'twenty-ui';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;

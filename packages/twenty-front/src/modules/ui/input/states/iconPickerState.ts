@@ -1,5 +1,5 @@
-import { IconApps } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconApps, IconComponent } from 'twenty-ui';
+
 import { createState } from '@/ui/utilities/state/utils/createState';
 
 type IconPickerState = {

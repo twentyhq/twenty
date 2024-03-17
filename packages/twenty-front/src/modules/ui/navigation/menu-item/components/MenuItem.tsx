@@ -1,7 +1,5 @@
 import { MouseEvent } from 'react';
-import { LightIconButtonGroup } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent, LightIconButtonGroup } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

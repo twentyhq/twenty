@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import { LightIconButton } from 'twenty-ui';
+import {
+  IconDotsVertical,
+  IconMail,
+  IconTrash,
+  LightIconButton,
+} from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { IconDotsVertical, IconMail, IconTrash } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

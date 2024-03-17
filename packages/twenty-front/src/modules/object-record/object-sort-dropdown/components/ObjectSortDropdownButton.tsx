@@ -1,12 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { LightButton } from 'twenty-ui';
+import { IconChevronDown, LightButton, useIcons } from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { IconChevronDown } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

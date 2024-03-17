@@ -1,9 +1,8 @@
 import { isNonEmptyArray } from '@sniptt/guards';
-import { Button } from 'twenty-ui';
+import { Button, IconPlus } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { IconPlus } from '@/ui/display/icon';
 
 export const AddTaskButton = ({
   activityTargetableObjects,

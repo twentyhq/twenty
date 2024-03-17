@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ColorSample, LightIconButton } from 'twenty-ui';
-import { v4 } from 'uuid';
-
 import {
+  ColorSample,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from '@/ui/display/icon';
+  LightIconButton,
+} from 'twenty-ui';
+import { v4 } from 'uuid';
+
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
