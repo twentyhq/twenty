@@ -52,6 +52,7 @@ export const AddressInput = ({
   const theme = useTheme();
 
   const [internalValue, setInternalValue] = useState(value);
+  const firstInputRef = useRef<HTMLInputElement>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -76,6 +77,10 @@ export const AddressInput = ({
     setInternalValue(value);
   }, [value]);
 
+  useEffect(() => {
+    firstInputRef.current?.focus();
+  }, []);
+
   useRegisterInputEvents({
     inputRef: wrapperRef,
     inputValue: internalValue,
@@ -94,6 +99,7 @@ export const AddressInput = ({
             label="ADDRESS"
             fullWidth
             onChange={getChangeHandler('addressStreet1')}
+            ref={firstInputRef}
           />
           <TextInput
             value={value.addressStreet2 ?? ''}
