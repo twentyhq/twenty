@@ -1,6 +1,5 @@
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
 import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
@@ -8,43 +7,33 @@ import { usePersistField } from '../../../hooks/usePersistField';
 
 import { FieldInputEvent } from './DateFieldInput';
 
-const FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
-  'F‌‌irst name';
-
-const LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
-  'L‌‌ast name';
-
 export type AddressFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
 };
 
 export const AddressFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
-  onTab,
-  onShiftTab,
 }: AddressFieldInputProps) => {
   const { hotkeyScope, draftValue, setDraftValue } = useAddressField();
 
   const persistField = usePersistField();
 
   const convertToAddress = (
-    newAddress: FieldAddressDraftValue,
-  ): FieldAddressValue => {
+    newAddress: FieldAddressDraftValue | undefined,
+  ): FieldAddressDraftValue => {
     return {
-      addressStreet1: newAddress.addressStreet1,
-      addressStreet2: newAddress.addressStreet2,
-      addressCity: newAddress.addressCity,
-      addressState: newAddress.addressState,
-      addressCountry: newAddress.addressCountry,
-      addressPostcode: newAddress.addressPostcode,
-      addressLat: newAddress.addressLat,
-      addressLng: newAddress.addressLng,
+      addressStreet1: newAddress?.addressStreet1 ?? '',
+      addressStreet2: newAddress?.addressStreet2 ?? null,
+      addressCity: newAddress?.addressCity ?? null,
+      addressState: newAddress?.addressState ?? null,
+      addressCountry: newAddress?.addressCountry ?? null,
+      addressPostcode: newAddress?.addressPostcode ?? null,
+      addressLat: newAddress?.addressLat ?? null,
+      addressLng: newAddress?.addressLng ?? null,
     };
   };
 
@@ -63,14 +52,6 @@ export const AddressFieldInput = ({
     onClickOutside?.(() => persistField(convertToAddress(newAddress)));
   };
 
-  const handleTab = (newAddress: FieldAddressDraftValue) => {
-    onTab?.(() => persistField(convertToAddress(newAddress)));
-  };
-
-  const handleShiftTab = (newAddress: FieldAddressDraftValue) => {
-    onShiftTab?.(() => persistField(convertToAddress(newAddress)));
-  };
-
   const handleChange = (newAddress: FieldAddressDraftValue) => {
     setDraftValue(convertToAddress(newAddress));
   };
@@ -78,12 +59,10 @@ export const AddressFieldInput = ({
   return (
     <FieldInputOverlay>
       <AddressInput
-        value={draftValue}
+        value={convertToAddress(draftValue)}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />

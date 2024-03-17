@@ -5,6 +5,7 @@ import { flip, offset, useFloating } from '@floating-ui/react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledAddressContainer = styled.div`
@@ -28,7 +29,7 @@ const StyledHalfRowContainer = styled.div`
 `;
 
 export type AddressInputProps = {
-  value: FieldAddressDraftValue;
+  value: FieldAddressValue;
   onEnter: (newAddress: FieldAddressDraftValue) => void;
   onEscape: (newAddress: FieldAddressDraftValue) => void;
   onClickOutside: (
