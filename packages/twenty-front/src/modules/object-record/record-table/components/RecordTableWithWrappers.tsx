@@ -20,7 +20,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -59,13 +59,13 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
+  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
-    getIsRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
@@ -78,7 +78,7 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  const { persistViewFields } = useViewFields(viewBarId);
+  const { persistViewFields } = useViewBar(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 

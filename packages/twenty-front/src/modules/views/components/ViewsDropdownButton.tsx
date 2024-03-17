@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import {
   IconChevronDown,
@@ -20,10 +20,11 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEWS_DROPDOWN_ID } from '@/views/constants/ViewsDropdownId';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { isDefined } from '~/utils/isDefined';
 
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import { useViewStates } from '../hooks/internal/useViewStates';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -65,18 +66,17 @@ export const ViewsDropdownButton = ({
   optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
-  const { removeView, changeViewInUrl } = useViewBar();
 
-  const { viewsState, currentViewSelector, entityCountInCurrentViewState } =
-    useViewScopedStates();
+  const { removeView, setCurrentViewId, selectView } = useViewBar();
+  const { entityCountInCurrentViewState, viewEditModeState } = useViewStates();
+  const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
+    useGetCurrentView();
 
-  const views = useRecoilValue(viewsState);
-  const currentView = useRecoilValue(currentViewSelector);
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );
 
-  const { setViewEditMode, setCurrentViewId, loadView } = useViewBar();
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
 
   const {
     isDropdownOpen: isViewsDropdownOpen,
@@ -87,14 +87,10 @@ export const ViewsDropdownButton = ({
     optionsDropdownScopeId,
   );
 
-  const handleViewSelect = useRecoilCallback(
-    () => async (viewId: string) => {
-      changeViewInUrl(viewId);
-      loadView(viewId);
-      closeViewsDropdown();
-    },
-    [changeViewInUrl, closeViewsDropdown, loadView],
-  );
+  const handleViewSelect = (viewId: string) => {
+    selectView(viewId);
+    closeViewsDropdown();
+  };
 
   const handleAddViewButtonClick = () => {
     setViewEditMode('create');
@@ -108,7 +104,6 @@ export const ViewsDropdownButton = ({
     viewId: string,
   ) => {
     event.stopPropagation();
-    changeViewInUrl(viewId);
     setCurrentViewId(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
@@ -118,16 +113,16 @@ export const ViewsDropdownButton = ({
 
   const handleDeleteViewButtonClick = async (
     event: MouseEvent<HTMLButtonElement>,
-    viewId: string,
+    _viewId: string,
   ) => {
     event.stopPropagation();
 
-    await removeView(viewId);
+    await removeView();
     closeViewsDropdown();
   };
 
   const { getIcon } = useIcons();
-  const CurrentViewIcon = getIcon(currentView?.icon);
+  const CurrentViewIcon = getIcon(currentViewWithCombinedFiltersAndSorts?.icon);
 
   return (
     <Dropdown
@@ -135,12 +130,14 @@ export const ViewsDropdownButton = ({
       dropdownHotkeyScope={hotkeyScope}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
-          {currentView && CurrentViewIcon ? (
+          {currentViewWithCombinedFiltersAndSorts && CurrentViewIcon ? (
             <CurrentViewIcon size={theme.icon.size.md} />
           ) : (
             <IconList size={theme.icon.size.md} />
           )}
-          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledViewName>
+            {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             · {entityCountInCurrentView}{' '}
             <IconChevronDown size={theme.icon.size.sm} />
@@ -150,7 +147,7 @@ export const ViewsDropdownButton = ({
       dropdownComponents={
         <>
           <DropdownMenuItemsContainer>
-            {views.map((view) => (
+            {viewsOnCurrentObject.map((view) => (
               <MenuItem
                 key={view.id}
                 iconButtons={[
@@ -159,7 +156,7 @@ export const ViewsDropdownButton = ({
                     onClick: (event: MouseEvent<HTMLButtonElement>) =>
                       handleEditViewButtonClick(event, view.id),
                   },
-                  views.length > 1
+                  viewsOnCurrentObject.length > 1
                     ? {
                         Icon: IconTrash,
                         onClick: (event: MouseEvent<HTMLButtonElement>) =>

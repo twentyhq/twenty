@@ -47,7 +47,7 @@ export const RecordIndexContainer = ({
   objectNamePlural,
 }: RecordIndexContainerProps) => {
   const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
-    recordIndexViewTypeState(),
+    recordIndexViewTypeState,
   );
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -57,13 +57,13 @@ export const RecordIndexContainer = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } =
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState());
-  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState());
+  const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
+  const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
-    recordIndexIsCompactModeActiveState(),
+    recordIndexIsCompactModeActiveState,
   );
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
@@ -85,7 +85,7 @@ export const RecordIndexContainer = ({
         );
 
         const existingRecordIndexFieldDefinitions = snapshot
-          .getLoadable(recordIndexFieldDefinitionsState())
+          .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
 
         if (
@@ -94,10 +94,7 @@ export const RecordIndexContainer = ({
             newRecordIndexFieldDefinitions,
           )
         ) {
-          set(
-            recordIndexFieldDefinitionsState(),
-            newRecordIndexFieldDefinitions,
-          );
+          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
         }
       },
     [columnDefinitions, setTableColumns],
@@ -115,22 +112,26 @@ export const RecordIndexContainer = ({
               viewType={recordIndexViewType ?? ViewType.Table}
             />
           }
+          onCurrentViewChange={(view) => {
+            if (!view) {
+              return;
+            }
+
+            onViewFieldsChange(view.viewFields);
+            setTableFilters(
+              mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+            );
+            setRecordIndexFilters(
+              mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+            );
+            setTableSorts(mapViewSortsToSorts(view.viewSorts, sortDefinitions));
+            setRecordIndexSorts(
+              mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+            );
+            setRecordIndexViewType(view.type);
+            setRecordIndexIsCompactModeActive(view.isCompact);
+          }}
           optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
-          onViewFieldsChange={onViewFieldsChange}
-          onViewFiltersChange={(viewFilters) => {
-            setTableFilters(mapViewFiltersToFilters(viewFilters));
-            setRecordIndexFilters(mapViewFiltersToFilters(viewFilters));
-          }}
-          onViewSortsChange={(viewSorts) => {
-            setTableSorts(mapViewSortsToSorts(viewSorts));
-            setRecordIndexSorts(mapViewSortsToSorts(viewSorts));
-          }}
-          onViewTypeChange={(viewType: ViewType) => {
-            setRecordIndexViewType(viewType);
-          }}
-          onViewCompactModeChange={(isCompactModeActive: boolean) => {
-            setRecordIndexIsCompactModeActive(isCompactModeActive);
-          }}
         />
         <RecordIndexViewBarEffect
           objectNamePlural={objectNamePlural}

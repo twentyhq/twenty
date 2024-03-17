@@ -201,7 +201,7 @@ describe('useActivities', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
 
         const activities = useActivities({

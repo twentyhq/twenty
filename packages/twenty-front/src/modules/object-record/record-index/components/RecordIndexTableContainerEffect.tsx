@@ -22,7 +22,7 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns,
     setOnEntityCountChange,
     resetTableRowSelection,
-    getSelectedRowIdsSelector,
+    selectedRowIdsSelector,
   } = useRecordTable({
     recordTableId,
   });
@@ -34,15 +34,13 @@ export const RecordIndexTableContainerEffect = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const { setEntityCountInCurrentView } = useViewBar({
-    viewBarId,
-  });
+  const { setEntityCountInCurrentView } = useViewBar(viewBarId);
 
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
 
-  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,

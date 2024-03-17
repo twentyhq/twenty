@@ -46,7 +46,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
-  const [authProviders] = useRecoilState(authProvidersState());
+  const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();

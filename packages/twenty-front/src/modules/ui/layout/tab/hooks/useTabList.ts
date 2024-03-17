@@ -3,14 +3,14 @@ import { useSetRecoilState } from 'recoil';
 import { useTabListStates } from '@/ui/layout/tab/hooks/internal/useTabListStates';
 
 export const useTabList = (tabListId?: string) => {
-  const { getActiveTabIdState } = useTabListStates({
+  const { activeTabIdState } = useTabListStates({
     tabListScopeId: `${tabListId}-scope`,
   });
 
-  const setActiveTabId = useSetRecoilState(getActiveTabIdState());
+  const setActiveTabId = useSetRecoilState(activeTabIdState);
 
   return {
-    getActiveTabIdState,
+    activeTabIdState,
     setActiveTabId,
   };
 };

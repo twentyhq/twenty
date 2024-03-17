@@ -17,7 +17,7 @@ export const DeleteWorkspace = () => {
     useState(false);
 
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
-  const currentUser = useRecoilValue(currentUserState());
+  const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
   const navigate = useNavigate();

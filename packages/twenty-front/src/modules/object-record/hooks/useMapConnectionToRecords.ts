@@ -11,7 +11,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useMapConnectionToRecords = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const mapConnectionToRecords = useCallback(
     <T extends ObjectRecord>({

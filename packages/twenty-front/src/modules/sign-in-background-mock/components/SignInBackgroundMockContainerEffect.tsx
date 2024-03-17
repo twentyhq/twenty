@@ -45,7 +45,7 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useViewBar({ viewBarId: viewId });
+  } = useViewBar(viewId);
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);

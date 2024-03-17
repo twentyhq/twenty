@@ -30,19 +30,19 @@ export const useLoadRecordIndexBoard = ({
   const {
     setRecordIds: setRecordIdsInBoard,
     setFieldDefinitions,
-    getIsCompactModeActiveState,
+    isCompactModeActiveState,
   } = useRecordBoard(recordBoardId);
   const { setRecords: setRecordsInStore } = useSetRecordInStore();
 
   const recordIndexFieldDefinitions = useRecoilValue(
-    recordIndexFieldDefinitionsState(),
+    recordIndexFieldDefinitionsState,
   );
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const recordIndexFilters = useRecoilValue(recordIndexFiltersState());
-  const recordIndexSorts = useRecoilValue(recordIndexSortsState());
+  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+  const recordIndexSorts = useRecoilValue(recordIndexSortsState);
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
@@ -53,7 +53,7 @@ export const useLoadRecordIndexBoard = ({
   );
 
   const recordIndexIsCompactModeActive = useRecoilValue(
-    recordIndexIsCompactModeActiveState(),
+    recordIndexIsCompactModeActiveState,
   );
 
   const {
@@ -68,13 +68,9 @@ export const useLoadRecordIndexBoard = ({
     orderBy,
   });
 
-  const { setEntityCountInCurrentView } = useViewBar({
-    viewBarId,
-  });
+  const { setEntityCountInCurrentView } = useViewBar(viewBarId);
 
-  const setIsCompactModeActive = useSetRecoilState(
-    getIsCompactModeActiveState(),
-  );
+  const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
 
   useEffect(() => {
     setRecordIdsInBoard(records);

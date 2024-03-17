@@ -8,8 +8,7 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useViews } from '@/views/hooks/internal/useViews';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFieldDefinitionsToViewFields';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -28,14 +27,13 @@ export const useRecordIndexOptionsForBoard = ({
   viewBarId,
 }: useRecordIndexOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
-    useRecoilState(recordIndexFieldDefinitionsState());
+    useRecoilState(recordIndexFieldDefinitionsState);
 
-  const { persistViewFields } = useViewFields(viewBarId);
-  const { updateView } = useViews(viewBarId);
-  const { getIsCompactModeActiveState } = useRecordBoard(recordBoardId);
+  const { persistViewFields, updateCurrentView } = useViewBar(viewBarId);
+  const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
   const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(
-    getIsCompactModeActiveState(),
+    isCompactModeActiveState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemOnly({
@@ -105,20 +103,14 @@ export const useRecordIndexOptionsForBoard = ({
       if (isDeeplyEqual(visibleBoardFields, reorderedVisibleBoardFields))
         return;
 
-      const updatedFields = [
-        ...reorderedVisibleBoardFields,
-        ...hiddenBoardFields,
-      ].map((field, index) => ({ ...field, position: index }));
+      const updatedFields = [...reorderedVisibleBoardFields].map(
+        (field, index) => ({ ...field, position: index }),
+      );
 
       setRecordIndexFieldDefinitions(updatedFields);
       persistViewFields(mapBoardFieldDefinitionsToViewFields(updatedFields));
     },
-    [
-      hiddenBoardFields,
-      persistViewFields,
-      setRecordIndexFieldDefinitions,
-      visibleBoardFields,
-    ],
+    [persistViewFields, setRecordIndexFieldDefinitions, visibleBoardFields],
   );
 
   // Todo : this seems over complex and should at least be extracted to an util with unit test.
@@ -190,12 +182,12 @@ export const useRecordIndexOptionsForBoard = ({
     (isCompactModeActive: boolean, view: GraphQLView | undefined) => {
       if (!view) return;
       setIsCompactModeActive(isCompactModeActive);
-      updateView({
+      updateCurrentView({
         ...view,
         isCompact: isCompactModeActive,
       });
     },
-    [setIsCompactModeActive, updateView],
+    [setIsCompactModeActive, updateCurrentView],
   );
 
   return {

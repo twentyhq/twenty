@@ -17,7 +17,7 @@ export const useEmailThreadStates = ({
 
   return {
     scopeId,
-    getEmailThreadsPageState: extractComponentState(
+    emailThreadsPageState: extractComponentState(
       emailThreadsPageComponentState,
       scopeId,
     ),

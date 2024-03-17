@@ -53,7 +53,7 @@ export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(column.iconName);
 
-  const scrollLeft = useRecoilValue(scrollLeftState());
+  const scrollLeft = useRecoilValue(scrollLeftState);
 
   return (
     <StyledTitle hideTitle={!!column.isLabelIdentifier && scrollLeft > 0}>

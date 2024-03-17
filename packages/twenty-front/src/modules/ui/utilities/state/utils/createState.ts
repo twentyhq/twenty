@@ -14,5 +14,5 @@ export const createState = <ValueType>({
     default: defaultValue,
     effects,
   });
-  return () => recoilState;
+  return recoilState;
 };

@@ -31,7 +31,7 @@ export const RecordIndexViewBarEffect = ({
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-  } = useViewBar({ viewBarId });
+  } = useViewBar(viewBarId);
 
   useEffect(() => {
     if (isUndefinedOrNull(objectMetadataItem)) {

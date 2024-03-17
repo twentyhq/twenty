@@ -8,12 +8,12 @@ describe('useTabList', () => {
   it('Should update the activeTabId state', async () => {
     const { result } = renderHook(
       () => {
-        const { getActiveTabIdState, setActiveTabId } =
+        const { activeTabIdState, setActiveTabId } =
           useTabList('TEST_TAB_LIST_ID');
-        const activeTabId = useRecoilValue(getActiveTabIdState());
+        const activeTabId = useRecoilValue(activeTabIdState);
 
         return {
-          getActiveTabIdState: getActiveTabIdState,
+          getActiveTabIdState: activeTabIdState,
           activeTabId,
           setActiveTabId: setActiveTabId,
         };

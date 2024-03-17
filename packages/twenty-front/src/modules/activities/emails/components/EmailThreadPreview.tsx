@@ -122,7 +122,7 @@ export const EmailThreadPreview = ({
           isSameEventThanRightDrawerClose(event.nativeEvent);
 
         const emailThreadIdWhenEmailThreadWasClosed = snapshot
-          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState())
+          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState)
           .getValue();
 
         const canOpen =

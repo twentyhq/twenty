@@ -36,13 +36,13 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const ActivityActionBar = () => {
-  const viewableActivityId = useRecoilValue(viewableActivityIdState());
-  const activityIdInDrawer = useRecoilValue(activityIdInDrawerState());
+  const viewableActivityId = useRecoilValue(viewableActivityIdState);
+  const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
 
   const activityTargetableEntityArray = useRecoilValue(
-    activityTargetableEntityArrayState(),
+    activityTargetableEntityArrayState,
   );
-  const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState());
+  const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
@@ -54,15 +54,13 @@ export const ActivityActionBar = () => {
   );
 
   const [temporaryActivityForEditor, setTemporaryActivityForEditor] =
-    useRecoilState(temporaryActivityForEditorState());
+    useRecoilState(temporaryActivityForEditorState);
 
   const { deleteActivityFromCache } = useDeleteActivityFromCache();
 
-  const [isActivityInCreateMode] = useRecoilState(
-    isActivityInCreateModeState(),
-  );
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
   const [isUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState(),
+    isUpsertingActivityInDBState,
   );
 
   const objectShowPageTargetableObject = useRecoilValue(
