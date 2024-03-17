@@ -6,9 +6,9 @@ import {
   motion,
   useAnimation,
 } from 'framer-motion';
-import { Checkmark } from 'twenty-ui';
 
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { Checkmark } from '../../../display';
+import { ColorScheme } from '../../../types/ColorScheme';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>

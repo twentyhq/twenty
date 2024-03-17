@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
+import { TextInput } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

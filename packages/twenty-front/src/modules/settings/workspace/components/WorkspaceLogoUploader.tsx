@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
+import { ImageInput } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
   useUpdateWorkspaceMutation,

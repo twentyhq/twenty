@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import {
   Avatar,
   DropdownMenuItemsContainer,
+  DropdownMenuSkeletonItem,
   MenuItem,
   MenuItemMultiSelectAvatar,
 } from 'twenty-ui';
 
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,

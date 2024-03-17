@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { Loader, MainButton, useSnackBar } from 'twenty-ui';
+import { CardPicker, Loader, MainButton, useSnackBar } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
@@ -10,7 +10,6 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit.ts
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
-import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import {
   ProductPriceEntity,
   useCheckoutSessionMutation,

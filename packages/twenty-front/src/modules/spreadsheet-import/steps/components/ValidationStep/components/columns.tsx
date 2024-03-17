@@ -2,13 +2,16 @@
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
-import { AppTooltip } from 'twenty-ui';
+import {
+  AppTooltip,
+  Checkbox,
+  CheckboxVariant,
+  TextInput,
+  Toggle,
+} from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { Data, Fields } from '@/spreadsheet-import/types';
-import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
 import { Meta } from '../types';

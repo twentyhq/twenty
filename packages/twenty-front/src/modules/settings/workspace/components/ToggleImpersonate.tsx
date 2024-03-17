@@ -1,8 +1,7 @@
 import { useRecoilState } from 'recoil';
-import { useSnackBar } from 'twenty-ui';
+import { Toggle, useSnackBar } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Toggle } from '@/ui/input/components/Toggle';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 export const ToggleImpersonate = () => {

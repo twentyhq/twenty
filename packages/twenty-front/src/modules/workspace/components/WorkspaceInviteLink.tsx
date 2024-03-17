@@ -1,8 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, IconCopy, IconLink, useSnackBar } from 'twenty-ui';
-
-import { TextInput } from '@/ui/input/components/TextInput';
+import { Button, IconCopy, IconLink, TextInput, useSnackBar } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -20,7 +20,7 @@ type StyledDropdownButtonProps = {
   isUnfolded: boolean;
 };
 
-export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
+const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.xs};

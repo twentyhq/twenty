@@ -1,6 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+  Checkbox,
+  CheckboxShape,
   IconCalendar,
   IconComment,
   OverflowingTextWithTooltip,
@@ -11,7 +13,6 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
-import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';

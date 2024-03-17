@@ -8,6 +8,7 @@ import {
   IconSettings,
   IconTrash,
   Section,
+  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,7 +16,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 
 export const SettingsDevelopersWebhooksDetail = () => {

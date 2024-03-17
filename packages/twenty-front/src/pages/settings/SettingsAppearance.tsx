@@ -1,8 +1,13 @@
 import styled from '@emotion/styled';
-import { H1Title, H2Title, IconSettings, Section } from 'twenty-ui';
+import {
+  ColorSchemePicker,
+  H1Title,
+  H2Title,
+  IconSettings,
+  Section,
+} from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ColorSchemePicker } from '@/ui/input/color-scheme/components/ColorSchemePicker';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 

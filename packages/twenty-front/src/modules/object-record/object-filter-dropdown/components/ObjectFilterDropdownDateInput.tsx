@@ -1,7 +1,7 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilValue } from 'recoil';
+import { InternalDatePicker } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { isDefined } from '~/utils/isDefined';
 
 export const ObjectFilterDropdownDateInput = () => {

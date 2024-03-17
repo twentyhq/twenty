@@ -1,9 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { TableCell, TableRow, useIcons } from 'twenty-ui';
+import { Checkbox, TableCell, TableRow, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { Checkbox } from '@/ui/input/components/Checkbox';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;

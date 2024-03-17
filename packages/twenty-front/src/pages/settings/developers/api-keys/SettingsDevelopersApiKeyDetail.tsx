@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconTrash,
   Section,
+  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -27,7 +28,6 @@ import { generatedApiKeyFamilyState } from '@/settings/developers/states/generat
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';

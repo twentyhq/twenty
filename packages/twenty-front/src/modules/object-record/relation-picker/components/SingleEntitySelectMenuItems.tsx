@@ -2,8 +2,10 @@ import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 import {
+  CreateNewButton,
   DropdownMenuItemsContainer,
   DropdownMenuSeparator,
+  DropdownMenuSkeletonItem,
   IconComponent,
   IconPlus,
   MenuItem,
@@ -12,8 +14,6 @@ import {
 } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
-import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 

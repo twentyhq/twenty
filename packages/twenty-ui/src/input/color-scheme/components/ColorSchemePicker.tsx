@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { ColorScheme } from '../../../types/ColorScheme';
 
 import { ColorSchemeCard } from './ColorSchemeCard';
 

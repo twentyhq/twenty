@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { BlockEditor } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
@@ -18,7 +19,6 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';

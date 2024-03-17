@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui';
-
-import { TextInput } from '@/ui/input/components/TextInput';
+import { Button, TextInput } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;

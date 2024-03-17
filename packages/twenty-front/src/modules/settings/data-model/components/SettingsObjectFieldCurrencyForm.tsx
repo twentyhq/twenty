@@ -1,7 +1,6 @@
-import { CardContent } from 'twenty-ui';
+import { CardContent, Select } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { Select } from '@/ui/input/components/Select';
 
 import { SETTINGS_FIELD_CURRENCY_CODES } from '../constants/SettingsFieldCurrencyCodes';
 

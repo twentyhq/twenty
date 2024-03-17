@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { TextInput } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`

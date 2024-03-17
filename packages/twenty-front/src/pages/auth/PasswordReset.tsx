@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { MainButton, useSnackBar } from 'twenty-ui';
+import { MainButton, TextInput, useSnackBar } from 'twenty-ui';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
@@ -17,7 +17,6 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import {
   useUpdatePasswordViaResetTokenMutation,

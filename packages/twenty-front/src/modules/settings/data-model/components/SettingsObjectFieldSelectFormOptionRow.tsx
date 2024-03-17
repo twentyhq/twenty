@@ -14,11 +14,11 @@ import {
   LightIconButton,
   MenuItem,
   MenuItemSelectColor,
+  TextInput,
   useDropdown,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { TextInput } from '@/ui/input/components/TextInput';
 import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
