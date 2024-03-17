@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { MainButton } from 'twenty-ui';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {

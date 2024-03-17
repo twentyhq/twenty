@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { Button } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -10,7 +11,6 @@ import { EntityDeleteContext } from '@/object-record/record-table/contexts/Entit
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconPlus } from '@/ui/display/icon';
-import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
   AnimatedPlaceholderEmptyContainer,

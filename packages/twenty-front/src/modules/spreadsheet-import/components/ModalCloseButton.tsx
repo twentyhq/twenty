@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
+import { IconButton } from 'twenty-ui';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconX } from '@/ui/display/icon/index';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 const StyledCloseButtonContainer = styled.div`

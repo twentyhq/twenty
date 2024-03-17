@@ -1,11 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ColorSample, ColorSampleProps } from 'twenty-ui';
 
 import {
-  LightIconButton,
-  LightIconButtonProps,
-} from '@/ui/input/button/components/LightIconButton';
+  ColorSample,
+  ColorSampleProps,
+} from '../../../display/color/components/ColorSample';
+
+import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 
 type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
   Pick<LightIconButtonProps, 'onClick'> & {

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
+import { Button } from 'twenty-ui';
 
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
-import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardHeader } from '@/ui/layout/card/components/CardHeader';

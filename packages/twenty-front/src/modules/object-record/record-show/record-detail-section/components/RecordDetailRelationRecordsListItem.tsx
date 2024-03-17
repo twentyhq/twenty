@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { LightIconButton, MenuItem } from 'tsup.ui.index';
+import { MenuItem } from 'tsup.ui.index';
+import { LightIconButton } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

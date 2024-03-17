@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from '@emotion/styled';
+import { MainButton } from 'twenty-ui';
 import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 
 const StyledContainer = styled.div`
   align-items: center;

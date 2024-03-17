@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { Button } from 'twenty-ui';
 
 import { IconArrowBackUp, IconUserCircle } from '@/ui/display/icon';
-import { Button } from '@/ui/input/button/components/Button';
 
 const StyledThreadBottomBar = styled.div`
   align-items: center;

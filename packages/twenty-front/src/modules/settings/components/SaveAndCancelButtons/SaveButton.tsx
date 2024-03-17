@@ -1,5 +1,6 @@
+import { Button } from 'twenty-ui';
+
 import { IconDeviceFloppy } from '@/ui/display/icon';
-import { Button } from '@/ui/input/button/components/Button';
 
 type SaveButtonProps = {
   onSave?: () => void;

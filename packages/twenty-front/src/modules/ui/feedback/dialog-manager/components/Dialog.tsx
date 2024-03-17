@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
+import { Button } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 

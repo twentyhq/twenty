@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { IconButton } from 'twenty-ui';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -26,7 +27,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { getChildRelationArray } from '@/object-record/utils/getChildRelationArray';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconPlus, IconTrash } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { isDefined } from '~/utils/isDefined';
 

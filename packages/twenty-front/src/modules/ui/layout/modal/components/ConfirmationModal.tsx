@@ -2,9 +2,8 @@ import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
-import { H1Title, H1TitleFontColor } from 'twenty-ui';
+import { Button, ButtonAccent, H1Title, H1TitleFontColor } from 'twenty-ui';
 
-import { Button, ButtonAccent } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import {

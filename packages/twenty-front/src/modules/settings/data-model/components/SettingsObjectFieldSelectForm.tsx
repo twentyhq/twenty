@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { LightButton } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { IconPlus } from '@/ui/display/icon';
-import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';

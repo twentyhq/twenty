@@ -1,5 +1,5 @@
 import { useSetRecoilState } from 'recoil';
-import { Button, ButtonGroup } from 'tsup.ui.index';
+import { Button, ButtonGroup } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';

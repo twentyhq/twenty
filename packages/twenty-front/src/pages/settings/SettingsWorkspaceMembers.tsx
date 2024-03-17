@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { H1Title } from 'twenty-ui';
-import { H2Title } from 'twenty-ui';
+import { H1Title, H2Title, IconButton } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -11,7 +10,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconButton, IconButtonVariant, LightIconButton } from 'twenty-ui';
 
 import { IconApps } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -16,8 +17,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
-import { IconButton, IconButtonVariant } from '../button/components/IconButton';
-import { LightIconButton } from '../button/components/LightIconButton';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {

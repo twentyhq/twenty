@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from '../../../display/icon/types/IconComponent';
 
 import { IconButton, IconButtonPosition, IconButtonProps } from './IconButton';
 

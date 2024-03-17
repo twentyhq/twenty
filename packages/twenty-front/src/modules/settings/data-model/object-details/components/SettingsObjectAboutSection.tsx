@@ -1,11 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { H2Title, LightIconButton } from 'twenty-ui';
 
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
