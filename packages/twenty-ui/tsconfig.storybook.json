@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
     "emitDecoratorMetadata": true,
     "outDir": ""
   },
@@ -20,6 +22,8 @@
     "src/**/*.test.js"
   ],
   "include": [
+    "src/**/*.tsx",
+    "**/*.stories.ts",
     "src/**/*.stories.ts",
     "src/**/*.stories.js",
     "src/**/*.stories.jsx",
