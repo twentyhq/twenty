@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-
+import { ComponentWithRouterDecorator } from '../../../../testing/decorators/ComponentWithRouterDecorator';
 import { GithubVersionLink } from '../GithubVersionLink';
 
 const meta: Meta<typeof GithubVersionLink> = {

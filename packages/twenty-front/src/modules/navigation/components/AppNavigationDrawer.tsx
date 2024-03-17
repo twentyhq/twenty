@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  GithubVersionLink,
   isNavigationDrawerOpenState,
   NavigationDrawer,
   NavigationDrawerProps,
@@ -10,9 +11,9 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportChat } from '@/support/components/SupportChat';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
+import packageJson from '../../../../package.json';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
@@ -44,7 +45,7 @@ export const AppNavigationDrawer = ({
         isSubMenu: true,
         title: 'Settings',
         children: <SettingsNavigationDrawerItems />,
-        footer: <GithubVersionLink />,
+        footer: <GithubVersionLink version={packageJson.version} />,
       }
     : {
         logo:

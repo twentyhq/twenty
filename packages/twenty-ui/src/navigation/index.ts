@@ -1,6 +1,7 @@
 export * from './breadcrumb/components/Breadcrumb';
 export * from './link/components/ActionLink';
 export * from './link/components/ContactLink';
+export * from './link/components/GithubVersionLink';
 export * from './link/components/RawLink';
 export * from './link/components/RoundedLink';
 export * from './link/components/SocialLink';
