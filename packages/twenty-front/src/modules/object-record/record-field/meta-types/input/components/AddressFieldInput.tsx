@@ -39,12 +39,12 @@ export const AddressFieldInput = ({
     return {
       addressStreet1: newAddress.addressStreet1,
       addressStreet2: newAddress.addressStreet2,
-      addressCity: null,
-      addressState: null,
-      addressCountry: null,
-      addressPostcode: null,
-      addressLat: null,
-      addressLng: null,
+      addressCity: newAddress.addressCity,
+      addressState: newAddress.addressState,
+      addressCountry: newAddress.addressCountry,
+      addressPostcode: newAddress.addressPostcode,
+      addressLat: newAddress.addressLat,
+      addressLng: newAddress.addressLng,
     };
   };
 
