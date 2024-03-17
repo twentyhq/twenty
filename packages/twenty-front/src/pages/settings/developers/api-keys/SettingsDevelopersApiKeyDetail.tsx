@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -24,7 +24,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

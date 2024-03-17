@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
@@ -27,7 +27,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const objectEditFormSchema = z
   .object({})

@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui';
+import { Loader } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -15,7 +16,6 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
-import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';

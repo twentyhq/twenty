@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -25,7 +25,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import {
   FieldMetadataType,
   RelationMetadataType,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -12,7 +12,6 @@ import { IconSettings } from '@/ui/display/icon';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { isURL } from '~/utils/is-url';
 
 export const SettingsDevelopersWebhooksNew = () => {

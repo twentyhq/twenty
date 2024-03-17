@@ -5,11 +5,11 @@ import {
   IconList,
   IconSearch,
   IconSettings,
-} from '@/ui/display/icon';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+} from '../../display/icon';
+import { ComponentDecorator } from '../../testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from '../../testing/decorators/ComponentWithRouterDecorator';
 
-import { NavigationBar } from '../NavigationBar';
+import { NavigationBar } from './NavigationBar';
 
 const meta: Meta<typeof NavigationBar> = {
   title: 'UI/Navigation/NavigationBar/NavigationBar',

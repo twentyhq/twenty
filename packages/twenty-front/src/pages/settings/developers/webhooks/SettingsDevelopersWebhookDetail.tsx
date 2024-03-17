@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -13,7 +13,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =

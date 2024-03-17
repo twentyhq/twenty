@@ -11,8 +11,6 @@ declare module '@emotion/react' {
 }
 
 export * from './src/modules/ui/display/icon/components/IconAddressBook'
-export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar'
-export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar'
 export * from './src/modules/ui/input/button/components/Button'
 export * from './src/modules/ui/input/button/components/ButtonGroup'
 export * from './src/modules/ui/input/button/components/FloatingButton'
@@ -53,6 +51,4 @@ export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelect';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectColor';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemToggle';
-export * from './src/modules/ui/navigation/bread-crumb/components/Breadcrumb'
-export * from './src/modules/ui/navigation/navigation-bar/components/NavigationBar'
 export * from './src/modules/ui/navigation/step-bar/components/StepBar'

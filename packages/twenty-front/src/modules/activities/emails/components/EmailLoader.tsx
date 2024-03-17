@@ -1,4 +1,5 @@
-import { Loader } from '@/ui/feedback/loader/components/Loader';
+import { Loader } from 'twenty-ui';
+
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
   AnimatedPlaceholderEmptyContainer,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
@@ -22,7 +22,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledSection = styled(Section)`
   display: flex;

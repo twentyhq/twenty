@@ -1,12 +1,9 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ProgressBar, ProgressBarControls } from 'twenty-ui';
 
 import { IconAlertTriangle, IconX } from '@/ui/display/icon';
-import {
-  ProgressBar,
-  ProgressBarControls,
-} from '@/ui/feedback/progress-bar/components/ProgressBar';
 import { RGBA } from '@/ui/theme/constants/Rgba';
 import { isDefined } from '~/utils/isDefined';
 

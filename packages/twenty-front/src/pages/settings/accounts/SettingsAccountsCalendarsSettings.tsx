@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import {
   CalendarChannel,
@@ -21,7 +21,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { IconRefresh, IconSettings, IconUser } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};

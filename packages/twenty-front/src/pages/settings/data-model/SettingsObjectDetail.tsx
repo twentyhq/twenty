@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { Breadcrumb, H2Title } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -31,7 +31,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 const StyledDiv = styled.div`
   display: flex;

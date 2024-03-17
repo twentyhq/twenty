@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { NavigationBar } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
@@ -11,7 +12,6 @@ import {
   IconSettings,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';

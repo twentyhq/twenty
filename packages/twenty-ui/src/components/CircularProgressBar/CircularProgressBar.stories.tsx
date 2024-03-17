@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '~/testing/types';
+import { CatalogDecorator } from '../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../testing/decorators/ComponentDecorator';
+import { CatalogStory } from '../../testing/types';
 
-import { CircularProgressBar } from '../CircularProgressBar';
+import { CircularProgressBar } from './CircularProgressBar';
 
 const meta: Meta<typeof CircularProgressBar> = {
   title: 'UI/Feedback/CircularProgressBar/CircularProgressBar',
