@@ -9,6 +9,7 @@ import {
   IconsProvider,
   SnackBarProvider,
   SnackBarProviderScope,
+  ThemeType,
 } from 'twenty-ui';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
@@ -22,7 +23,6 @@ import { ApolloMetadataClientProvider } from '@/object-metadata/components/Apoll
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import { UserProvider } from '@/users/components/UserProvider';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 

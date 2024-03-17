@@ -9,12 +9,11 @@ import {
   IconChevronLeft,
   IconComponent,
   isNavigationDrawerOpenState,
+  MOBILE_VIEWPORT,
   NavigationDrawerCollapseButton,
   OverflowingTextWithTooltip,
   useIsMobile,
 } from 'twenty-ui';
-
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 

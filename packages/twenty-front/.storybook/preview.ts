@@ -2,9 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { Preview, ReactRenderer } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
-
-import { THEME_DARK } from '@/ui/theme/constants/ThemeDark';
-import { THEME_LIGHT } from '@/ui/theme/constants/ThemeLight';
+import { THEME_DARK, THEME_LIGHT } from 'twenty-ui';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';

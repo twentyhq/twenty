@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
+import { themeColorSchema } from 'twenty-ui';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationMetadataType,

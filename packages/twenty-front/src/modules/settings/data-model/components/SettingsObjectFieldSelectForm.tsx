@@ -7,13 +7,11 @@ import {
   DraggableList,
   IconPlus,
   LightButton,
+  MAIN_COLOR_NAMES,
+  ThemeColor,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import {
-  MAIN_COLOR_NAMES,
-  ThemeColor,
-} from '@/ui/theme/constants/MainColorNames';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';

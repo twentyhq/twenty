@@ -1,4 +1,4 @@
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
+import { ThemeColor } from 'twenty-ui';
 
 export type SettingsObjectFieldSelectFormOption = {
   color: ThemeColor;

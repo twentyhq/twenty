@@ -1,9 +1,9 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { GRAY_SCALE } from 'twenty-ui';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 const StyledText = styled.div`
   align-items: center;

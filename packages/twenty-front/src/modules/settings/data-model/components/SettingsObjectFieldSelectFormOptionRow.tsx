@@ -12,14 +12,13 @@ import {
   IconTrash,
   IconX,
   LightIconButton,
+  MAIN_COLOR_NAMES,
   MenuItem,
   MenuItemSelectColor,
   TextInput,
   useDropdown,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
-
-import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 

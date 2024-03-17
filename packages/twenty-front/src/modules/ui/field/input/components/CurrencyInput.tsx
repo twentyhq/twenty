@@ -1,11 +1,14 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { CurrencyPickerDropdownButton, IconComponent } from 'twenty-ui';
+import {
+  CurrencyPickerDropdownButton,
+  IconComponent,
+  TEXT_INPUT_STYLE,
+} from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 import { isDefined } from '~/utils/isDefined';
 
 export const StyledInput = styled.input`
