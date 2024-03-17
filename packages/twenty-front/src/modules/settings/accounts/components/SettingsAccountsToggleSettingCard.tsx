@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { Card, CardContent } from 'twenty-ui';
 
 import { Toggle } from '@/ui/input/components/Toggle';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 type SettingsAccountsToggleSettingCardProps = {
   cardMedia: ReactNode;

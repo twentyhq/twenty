@@ -1,11 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
+import { Dropdown, IconPlus } from 'twenty-ui';
 
 import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';

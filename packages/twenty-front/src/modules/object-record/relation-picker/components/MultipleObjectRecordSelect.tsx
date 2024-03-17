@@ -2,6 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
+import {
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  DropdownMenuSearchInput,
+  DropdownMenuSeparator,
+  MenuItem,
+} from 'twenty-ui';
+import { SelectableItem, SelectableList } from 'twenty-ui';
 
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
@@ -12,13 +20,6 @@ import {
   useMultiObjectSearch,
 } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { isDefined } from '~/utils/isDefined';
 
 export const StyledSelectableItem = styled(SelectableItem)`

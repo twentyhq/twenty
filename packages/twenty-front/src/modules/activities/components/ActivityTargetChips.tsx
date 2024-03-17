@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
 import styled from '@emotion/styled';
-import { Chip, ChipVariant } from 'twenty-ui';
+import { Chip, ChipVariant, Dropdown } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { RGBA } from '@/ui/theme/constants/Rgba';
 
 const MAX_RECORD_CHIPS_DISPLAY = 2;

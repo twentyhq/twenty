@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { differenceInSeconds, endOfDay, format } from 'date-fns';
+import { CardContent } from 'twenty-ui';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 type CalendarDayCardContentProps = {

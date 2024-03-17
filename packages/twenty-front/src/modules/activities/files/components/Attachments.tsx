@@ -1,20 +1,21 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { Button, IconPlus } from 'twenty-ui';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Button,
+  IconPlus,
+} from 'twenty-ui';
 
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`

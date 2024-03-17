@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { IconButton, IconX, useDialogManager } from 'twenty-ui';
+import { IconButton, IconX, useDialogManager, useStepBar } from 'twenty-ui';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 const StyledCloseButtonContainer = styled.div`
   align-items: center;

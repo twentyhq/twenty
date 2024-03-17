@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
+import { Modal, StepBar, useStepBar } from 'twenty-ui';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
-import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 import { UploadFlow } from './UploadFlow';

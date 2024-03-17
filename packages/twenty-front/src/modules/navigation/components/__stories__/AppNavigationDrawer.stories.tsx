@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
+import { isNavigationDrawerOpenState } from 'twenty-ui';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { AppPath } from '@/types/AppPath';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 

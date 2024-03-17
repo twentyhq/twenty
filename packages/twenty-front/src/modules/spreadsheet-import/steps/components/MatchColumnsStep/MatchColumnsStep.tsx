@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { useDialogManager, useSnackBar } from 'twenty-ui';
+import { Modal, useDialogManager, useSnackBar } from 'twenty-ui';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -12,7 +12,6 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';

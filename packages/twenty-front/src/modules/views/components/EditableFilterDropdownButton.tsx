@@ -1,11 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Dropdown, useDropdown } from 'twenty-ui';
 
 import { MultipleFiltersDropdownContent } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';

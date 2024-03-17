@@ -1,9 +1,8 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { DropdownMenu, DropdownMenuItemsContainer } from 'twenty-ui';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 

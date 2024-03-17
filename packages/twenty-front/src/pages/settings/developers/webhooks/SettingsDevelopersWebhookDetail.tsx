@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   Breadcrumb,
   Button,
+  ConfirmationModal,
   H2Title,
   IconSettings,
   IconTrash,
+  Section,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -14,9 +16,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =

@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { DropdownScope } from 'twenty-ui';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';

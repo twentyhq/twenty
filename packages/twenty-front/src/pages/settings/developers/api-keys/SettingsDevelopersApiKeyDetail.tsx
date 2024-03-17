@@ -7,10 +7,12 @@ import { useRecoilState } from 'recoil';
 import {
   Breadcrumb,
   Button,
+  ConfirmationModal,
   H2Title,
   IconRepeat,
   IconSettings,
   IconTrash,
+  Section,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -26,9 +28,7 @@ import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

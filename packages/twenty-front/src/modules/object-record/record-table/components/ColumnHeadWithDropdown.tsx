@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
+import { Dropdown } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { ColumnHead } from './ColumnHead';
 import { RecordTableColumnDropdownMenu } from './RecordTableColumnDropdownMenu';

@@ -1,9 +1,8 @@
-import { Breadcrumb, H2Title, IconSettings } from 'twenty-ui';
+import { Breadcrumb, H2Title, IconSettings, Section } from 'twenty-ui';
 
 import { SettingsAccountsMessageChannelsListCard } from '@/settings/accounts/components/SettingsAccountsMessageChannelsListCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsAccountsEmails = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

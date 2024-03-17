@@ -6,13 +6,13 @@ import {
   IconList,
   IconSearch,
   IconSettings,
+  isNavigationDrawerOpenState,
   NavigationBar,
 } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { AppPath } from '@/types/AppPath';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { useIsTasksPage } from '../hooks/useIsTasksPage';

@@ -1,11 +1,7 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
-import { Button, IconGoogle } from 'twenty-ui';
+import { Button, Card, CardContent, CardHeader, IconGoogle } from 'twenty-ui';
 
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardHeader } from '@/ui/layout/card/components/CardHeader';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useGenerateTransientTokenMutation } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`

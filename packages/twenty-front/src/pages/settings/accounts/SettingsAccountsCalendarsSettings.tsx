@@ -8,6 +8,7 @@ import {
   IconRefresh,
   IconSettings,
   IconUser,
+  Section,
 } from 'twenty-ui';
 
 import {
@@ -25,7 +26,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};

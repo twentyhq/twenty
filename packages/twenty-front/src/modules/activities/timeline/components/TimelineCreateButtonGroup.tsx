@@ -5,12 +5,12 @@ import {
   IconCheckbox,
   IconNotes,
   IconPaperclip,
+  useTabList,
 } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageRightContainer';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 export const TimelineCreateButtonGroup = ({
   targetableObject,

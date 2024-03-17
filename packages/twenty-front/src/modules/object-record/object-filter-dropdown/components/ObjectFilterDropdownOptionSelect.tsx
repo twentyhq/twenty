@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { MenuItem, MenuItemMultiSelect } from 'tsup.ui.index';
+import {
+  DropdownMenuItemsContainer,
+  MenuItem,
+  MenuItemMultiSelect,
+} from 'twenty-ui';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';

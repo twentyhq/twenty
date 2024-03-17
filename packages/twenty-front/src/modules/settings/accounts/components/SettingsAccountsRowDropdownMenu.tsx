@@ -1,19 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
   IconDotsVertical,
   IconMail,
   IconTrash,
   LightIconButton,
+  MenuItem,
+  useDropdown,
 } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
   item: Pick<ConnectedAccount, 'id' | 'messageChannels'>;

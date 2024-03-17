@@ -1,12 +1,15 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
-import { IconPlus, LightButton } from 'twenty-ui';
+import {
+  CardContent,
+  CardFooter,
+  DraggableItem,
+  DraggableList,
+  IconPlus,
+  LightButton,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardFooter } from '@/ui/layout/card/components/CardFooter';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import {
   MAIN_COLOR_NAMES,
   ThemeColor,

@@ -9,6 +9,10 @@ import {
   IconPlus,
   IconSettings,
   LightIconButton,
+  Section,
+  Table,
+  TableHeader,
+  TableSection,
 } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -23,10 +27,6 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 
 const StyledSection = styled(Section)`
   display: flex;

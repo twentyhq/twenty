@@ -8,6 +8,7 @@ import {
   H2Title,
   IconArchive,
   IconSettings,
+  Section,
   useSnackBar,
 } from 'twenty-ui';
 
@@ -28,7 +29,6 @@ import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/u
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import {
   FieldMetadataType,
   RelationMetadataType,

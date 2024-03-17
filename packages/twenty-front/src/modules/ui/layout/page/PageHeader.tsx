@@ -8,11 +8,11 @@ import {
   IconButton,
   IconChevronLeft,
   IconComponent,
+  isNavigationDrawerOpenState,
+  NavigationDrawerCollapseButton,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
-import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

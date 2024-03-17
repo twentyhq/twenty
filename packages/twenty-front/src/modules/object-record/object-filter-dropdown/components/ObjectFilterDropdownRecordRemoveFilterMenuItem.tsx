@@ -1,9 +1,11 @@
-import { MenuItem } from 'tsup.ui.index';
-import { IconFilterOff } from 'twenty-ui';
+import {
+  DropdownMenuItemsContainer,
+  IconFilterOff,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const ObjectFilterDropdownRecordRemoveFilterMenuItem = () => {
   const { emptyFilterButKeepDefinition } = useFilterDropdown();

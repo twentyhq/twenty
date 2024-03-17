@@ -11,6 +11,8 @@ import {
   IconCreditCard,
   IconCurrencyDollar,
   Info,
+  Section,
+  useSnackBar,
 } from 'twenty-ui';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
@@ -20,10 +22,8 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat.tsx';
 import { AppPath } from '@/types/AppPath.ts';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section.tsx';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,

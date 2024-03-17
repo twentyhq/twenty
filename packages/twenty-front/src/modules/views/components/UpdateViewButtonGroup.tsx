@@ -1,12 +1,17 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Button, ButtonGroup, IconChevronDown, IconPlus } from 'twenty-ui';
+import {
+  Button,
+  ButtonGroup,
+  Dropdown,
+  DropdownMenuItemsContainer,
+  IconChevronDown,
+  IconPlus,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';

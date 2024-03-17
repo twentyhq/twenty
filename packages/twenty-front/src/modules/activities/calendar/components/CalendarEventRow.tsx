@@ -3,7 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { Avatar, IconArrowRight, IconLock } from 'twenty-ui';
+import { Avatar, Card, CardContent, IconArrowRight, IconLock } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -12,8 +12,6 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { AvatarGroup } from '@/users/components/AvatarGroup';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';

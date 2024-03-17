@@ -1,4 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { ShowPageRecoilScopeContext } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -22,7 +23,6 @@ import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   FieldMetadataType,

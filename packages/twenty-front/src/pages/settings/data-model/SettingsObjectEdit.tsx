@@ -9,6 +9,7 @@ import {
   H2Title,
   IconArchive,
   IconSettings,
+  Section,
   useSnackBar,
 } from 'twenty-ui';
 import { z } from 'zod';
@@ -30,7 +31,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 const objectEditFormSchema = z
   .object({})

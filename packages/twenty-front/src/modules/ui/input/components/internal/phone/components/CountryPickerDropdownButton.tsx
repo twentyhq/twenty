@@ -5,10 +5,8 @@ import styled from '@emotion/styled';
 import { hasFlag } from 'country-flag-icons';
 import * as Flags from 'country-flag-icons/react/3x2';
 import { CountryCallingCode } from 'libphonenumber-js';
-import { IconChevronDown, IconWorld } from 'twenty-ui';
+import { Dropdown, IconChevronDown, IconWorld, useDropdown } from 'twenty-ui';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';

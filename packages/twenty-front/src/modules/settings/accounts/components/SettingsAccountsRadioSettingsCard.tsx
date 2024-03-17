@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { Card, CardContent } from 'twenty-ui';
 
 import { Radio } from '@/ui/input/components/Radio';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
   {

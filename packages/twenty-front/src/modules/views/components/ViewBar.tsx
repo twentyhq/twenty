@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
+import { TopBar } from 'twenty-ui';
 
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
-import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';

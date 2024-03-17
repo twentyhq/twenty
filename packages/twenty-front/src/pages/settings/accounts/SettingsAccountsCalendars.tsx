@@ -1,6 +1,6 @@
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { Breadcrumb, H2Title, IconSettings } from 'twenty-ui';
+import { Breadcrumb, H2Title, IconSettings, Section } from 'twenty-ui';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -15,7 +15,10 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import {
+  TimelineCalendarEvent,
+  TimelineCalendarEventVisibility,
+} from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

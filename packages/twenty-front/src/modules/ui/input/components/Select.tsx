@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown, IconComponent } from 'twenty-ui';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import {
+  Dropdown,
+  DropdownMenuItemsContainer,
+  DropdownMenuSearchInput,
+  DropdownMenuSeparator,
+  IconChevronDown,
+  IconComponent,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 

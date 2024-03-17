@@ -1,13 +1,13 @@
 import { FallbackProps } from 'react-error-boundary';
-import { Button, IconRefresh } from 'twenty-ui';
-
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
+  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+  Button,
+  IconRefresh,
+} from 'twenty-ui';
 
 type GenericErrorFallbackProps = FallbackProps;
 

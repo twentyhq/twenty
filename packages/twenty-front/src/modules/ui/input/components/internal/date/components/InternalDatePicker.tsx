@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
-import { IconCalendarX } from 'twenty-ui';
+import {
+  IconCalendarX,
+  MenuItemLeftContent,
+  StyledHoverableMenuItemBase,
+} from 'twenty-ui';
 
-import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
 
 import 'react-datepicker/dist/react-datepicker.css';

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes, SelectableItem, SelectableList } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -14,8 +14,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';

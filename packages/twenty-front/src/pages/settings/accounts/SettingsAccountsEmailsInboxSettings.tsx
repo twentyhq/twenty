@@ -1,7 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { Breadcrumb, H2Title, IconSettings, IconUser } from 'twenty-ui';
+import {
+  Breadcrumb,
+  H2Title,
+  IconSettings,
+  IconUser,
+  Section,
+} from 'twenty-ui';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,7 +22,6 @@ import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/component
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
   const theme = useTheme();

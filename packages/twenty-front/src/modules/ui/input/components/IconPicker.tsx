@@ -2,22 +2,22 @@ import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  DropdownMenuSearchInput,
+  DropdownMenuSeparator,
   IconApps,
   IconButton,
   IconButtonVariant,
   IconComponent,
   LightIconButton,
+  SelectableList,
+  useDropdown,
   useIcons,
+  useSelectableList,
 } from 'twenty-ui';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 

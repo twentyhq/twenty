@@ -1,7 +1,13 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Breadcrumb, H2Title, IconSettings, useSnackBar } from 'twenty-ui';
+import {
+  Breadcrumb,
+  H2Title,
+  IconSettings,
+  Section,
+  useSnackBar,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
@@ -17,7 +23,6 @@ import { settingsCreateObjectInputSchema } from '@/settings/data-model/validatio
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
 

@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import {
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  DropdownMenuSearchInput,
+  DropdownMenuSeparator,
+  MenuItemSelectTag,
+} from 'twenty-ui';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 

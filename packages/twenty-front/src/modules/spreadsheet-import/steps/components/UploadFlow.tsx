@@ -1,14 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { CircularProgressBar, useSnackBar } from 'twenty-ui';
+import { CircularProgressBar, Modal, useSnackBar } from 'twenty-ui';
 import { WorkBook } from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { RawData } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';

@@ -1,11 +1,8 @@
 import styled from '@emotion/styled';
+import { Table, TableBody, TableHeader, TableRow } from 'twenty-ui';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { SettingsAccountsEmailsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTableRow';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsAccountsEmailsBlocklistTableProps = {
   blocklist: BlocklistItem[];

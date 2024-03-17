@@ -1,10 +1,8 @@
 import { useCallback, useContext, useRef } from 'react';
 import styled from '@emotion/styled';
-import { MenuItem } from 'tsup.ui.index';
+import { DropdownMenu, DropdownMenuItemsContainer, MenuItem } from 'twenty-ui';
 
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledMenuContainer = styled.div`

@@ -1,16 +1,16 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-
-import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
+  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+} from 'twenty-ui';
+
+import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
+import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';

@@ -1,16 +1,20 @@
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, LightButton, useIcons } from 'twenty-ui';
+import {
+  Dropdown,
+  DropdownMenuHeader,
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  IconChevronDown,
+  LightButton,
+  MenuItem,
+  useDropdown,
+  useIcons,
+} from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { SortDefinition } from '../types/SortDefinition';

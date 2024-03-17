@@ -8,6 +8,10 @@ import {
   IconChevronRight,
   IconPlus,
   IconSettings,
+  Section,
+  Table,
+  TableHeader,
+  TableSection,
 } from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
@@ -25,10 +29,6 @@ import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/object
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};

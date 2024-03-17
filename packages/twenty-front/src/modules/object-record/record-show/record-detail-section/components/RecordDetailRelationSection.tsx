@@ -2,7 +2,15 @@ import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
-import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
+import {
+  Dropdown,
+  DropdownScope,
+  IconForbid,
+  IconPencil,
+  IconPlus,
+  LightIconButton,
+  useDropdown,
+} from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -20,9 +28,6 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 

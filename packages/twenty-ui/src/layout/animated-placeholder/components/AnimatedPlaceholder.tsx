@@ -104,4 +104,4 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   );
 };
 
-export default AnimatedPlaceholder;
+export { AnimatedPlaceholder };

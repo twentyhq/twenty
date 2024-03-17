@@ -1,23 +1,23 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+  Card,
+  CardContent,
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
   H2Title,
   IconArchive,
   IconDotsVertical,
   IconPencil,
   LightIconButton,
+  MenuItem,
+  Section,
+  useDropdown,
   useIcons,
 } from 'twenty-ui';
 
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { Section } from '@/ui/layout/section/components/Section';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAboutSectionProps = {
   iconKey?: string;

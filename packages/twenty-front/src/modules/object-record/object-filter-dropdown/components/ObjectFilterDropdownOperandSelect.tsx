@@ -1,8 +1,7 @@
 import { useRecoilValue } from 'recoil';
+import { DropdownMenuItemsContainer, MenuItem } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
 

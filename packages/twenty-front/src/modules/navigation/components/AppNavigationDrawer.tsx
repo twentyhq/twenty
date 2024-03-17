@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  isNavigationDrawerOpenState,
+  NavigationDrawer,
+  NavigationDrawerProps,
+} from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportChat } from '@/support/components/SupportChat';
 import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
-import {
-  NavigationDrawer,
-  NavigationDrawerProps,
-} from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 

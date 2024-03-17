@@ -1,13 +1,11 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { TableCell, TableRow, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsObjectItemTableRowProps = {
   action: ReactNode;

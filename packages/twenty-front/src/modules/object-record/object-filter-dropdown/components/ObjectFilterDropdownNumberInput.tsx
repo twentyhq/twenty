@@ -1,8 +1,8 @@
 import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import { DropdownMenuInput } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 
 export const ObjectFilterDropdownNumberInput = () => {
   const {

@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { MainButton } from 'twenty-ui';
-
-import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-} from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
+  MainButton,
+} from 'twenty-ui';
+
+import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { AppPath } from '@/types/AppPath';
 
 const StyledBackDrop = styled.div`
   align-items: center;

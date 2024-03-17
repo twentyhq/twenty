@@ -2,11 +2,13 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import {
+  ConfirmationModal,
   H1Title,
   H2Title,
   IconButton,
   IconSettings,
   IconTrash,
+  Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -15,9 +17,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';

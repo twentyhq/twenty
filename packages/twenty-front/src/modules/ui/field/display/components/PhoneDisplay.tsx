@@ -1,7 +1,6 @@
 import { MouseEvent } from 'react';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
-
-import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
+import { ContactLink } from 'twenty-ui';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

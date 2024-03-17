@@ -1,6 +1,5 @@
 import { MouseEvent } from 'react';
-
-import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
+import { ContactLink } from 'twenty-ui';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

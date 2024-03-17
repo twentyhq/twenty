@@ -1,17 +1,21 @@
 import styled from '@emotion/styled';
-import { IconButton, IconCheckbox, IconNotes, IconPlus } from 'twenty-ui';
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  IconButton,
+  IconCheckbox,
+  IconNotes,
+  IconPlus,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityType } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constants/ShowPageAddButtonDropdownId';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-
-import { Dropdown } from '../../dropdown/components/Dropdown';
-import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
 const StyledContainer = styled.div`
   z-index: 1;

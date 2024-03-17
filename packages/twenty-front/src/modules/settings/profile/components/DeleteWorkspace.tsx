@@ -1,15 +1,15 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { H2Title } from 'twenty-ui';
+import {
+  ConfirmationModal,
+  H2Title,
+  StyledConfirmationButton,
+} from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
-import {
-  ConfirmationModal,
-  StyledConfirmationButton,
-} from '@/ui/layout/modal/components/ConfirmationModal';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
 export const DeleteWorkspace = () => {

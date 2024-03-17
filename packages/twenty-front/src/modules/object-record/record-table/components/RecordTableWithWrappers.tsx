@@ -1,7 +1,15 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { Button, IconPlus } from 'twenty-ui';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  Button,
+  IconPlus,
+} from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -10,13 +18,6 @@ import { RecordTable } from '@/object-record/record-table/components/RecordTable
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';

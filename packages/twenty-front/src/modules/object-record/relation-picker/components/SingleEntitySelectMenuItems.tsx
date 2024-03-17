@@ -1,16 +1,19 @@
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
-import { IconComponent, IconPlus } from 'twenty-ui';
+import {
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  IconComponent,
+  IconPlus,
+  MenuItem,
+  MenuItemSelect,
+  SelectableList,
+} from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 

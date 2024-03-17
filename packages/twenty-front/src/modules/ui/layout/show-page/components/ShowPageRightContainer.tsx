@@ -7,6 +7,8 @@ import {
   IconNotes,
   IconPaperclip,
   IconTimelineEvent,
+  TabList,
+  useTabList,
 } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
@@ -19,8 +21,6 @@ import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 

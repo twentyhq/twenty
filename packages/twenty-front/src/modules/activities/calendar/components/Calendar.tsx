@@ -1,6 +1,14 @@
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
-import { H3Title } from 'twenty-ui';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  H3Title,
+  Section,
+} from 'twenty-ui';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
@@ -12,15 +20,7 @@ import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMore
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
-import { Section } from '@/ui/layout/section/components/Section';
-import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { TimelineCalendarEventsWithTotal } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

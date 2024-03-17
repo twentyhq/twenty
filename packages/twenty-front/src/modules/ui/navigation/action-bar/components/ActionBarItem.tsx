@@ -1,13 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { MenuItem } from 'tsup.ui.index';
-import { IconChevronDown } from 'twenty-ui';
+import {
+  Dropdown,
+  DropdownMenuItemsContainer,
+  IconChevronDown,
+  MenuItem,
+  MenuItemAccent,
+  useDropdown,
+} from 'twenty-ui';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ActionBarEntry } from '@/ui/navigation/action-bar/types/ActionBarEntry';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
   item: ActionBarEntry;

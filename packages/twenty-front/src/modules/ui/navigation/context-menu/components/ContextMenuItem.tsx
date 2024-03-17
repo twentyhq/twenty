@@ -1,5 +1,6 @@
+import { MenuItem } from 'twenty-ui';
+
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type ContextMenuItemProps = {
   item: ContextMenuEntry;
