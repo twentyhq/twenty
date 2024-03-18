@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
-import { viewableEmailThreadIdState } from '@/activities/emails/state/viewableEmailThreadIdState';
+import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
