@@ -49,7 +49,7 @@ const StyledOptionInput = styled(TextInput)`
   margin-right: ${({ theme }) => theme.spacing(2)};
 
   & input {
-    height: ${({ theme }) => theme.spacing(2)};
+    height: ${({ theme }) => theme.spacing(6)};
   }
 `;
 

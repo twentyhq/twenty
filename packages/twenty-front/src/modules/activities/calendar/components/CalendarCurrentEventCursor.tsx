@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
+import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { hasCalendarEventStarted } from '@/activities/calendar/utils/hasCalendarEventStarted';
 
@@ -52,12 +53,16 @@ export const CalendarCurrentEventCursor = ({
   } = useContext(CalendarContext);
 
   const nextCalendarEvent = getNextCalendarEvent(calendarEvent);
+  const nextCalendarEventStartsAt = nextCalendarEvent
+    ? getCalendarEventStartDate(nextCalendarEvent)
+    : undefined;
   const isNextEventThisMonth =
-    !!nextCalendarEvent && isThisMonth(nextCalendarEvent.startsAt);
+    !!nextCalendarEventStartsAt && isThisMonth(nextCalendarEventStartsAt);
 
+  const calendarEventStartsAt = getCalendarEventStartDate(calendarEvent);
   const calendarEventEndsAt = getCalendarEventEndDate(calendarEvent);
 
-  const isCurrent = currentCalendarEvent.id === calendarEvent.id;
+  const isCurrent = currentCalendarEvent?.id === calendarEvent.id;
   const [hasStarted, setHasStarted] = useState(
     hasCalendarEventStarted(calendarEvent),
   );
@@ -66,7 +71,7 @@ export const CalendarCurrentEventCursor = ({
   );
   const [isWaiting, setIsWaiting] = useState(hasEnded && !isNextEventThisMonth);
 
-  const dayTime = startOfDay(calendarEvent.startsAt).getTime();
+  const dayTime = startOfDay(calendarEventStartsAt).getTime();
   const dayEvents = calendarEventsByDayTime[dayTime];
   const isFirstEventOfDay = dayEvents?.slice(-1)[0] === calendarEvent;
   const isLastEventOfDay = dayEvents?.[0] === calendarEvent;
@@ -81,7 +86,7 @@ export const CalendarCurrentEventCursor = ({
       transition: {
         delay: Math.max(
           0,
-          differenceInSeconds(calendarEvent.startsAt, new Date()),
+          differenceInSeconds(calendarEventStartsAt, new Date()),
         ),
       },
     },
@@ -99,9 +104,9 @@ export const CalendarCurrentEventCursor = ({
       top: `-${topOffset}px`,
       transition: {
         delay:
-          isWaiting && nextCalendarEvent
+          isWaiting && nextCalendarEventStartsAt
             ? differenceInSeconds(
-                startOfMonth(nextCalendarEvent.startsAt),
+                startOfMonth(nextCalendarEventStartsAt),
                 new Date(),
               )
             : 0,

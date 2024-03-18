@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Pill } from 'twenty-ui';
 
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { Pill } from '@/ui/display/pill/components/Pill';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 

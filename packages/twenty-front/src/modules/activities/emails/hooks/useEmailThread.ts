@@ -1,22 +1,36 @@
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
 import { viewableEmailThreadIdState } from '@/activities/emails/state/viewableEmailThreadIdState';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
 export const useEmailThread = () => {
-  const setViewableEmailThreadId = useSetRecoilState(
-    viewableEmailThreadIdState(),
-  );
-
+  const { closeRightDrawer } = useRightDrawer();
   const openEmailThredRightDrawer = useOpenEmailThreadRightDrawer();
 
-  const openEmailThread = (threadId: string) => {
-    openEmailThredRightDrawer();
+  const openEmailThread = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (threadId: string) => {
+        const isRightDrawerOpen = snapshot
+          .getLoadable(isRightDrawerOpenState())
+          .getValue();
 
-    setViewableEmailThreadId(threadId);
-  };
+        const viewableEmailThreadId = snapshot
+          .getLoadable(viewableEmailThreadIdState())
+          .getValue();
 
-  return {
-    openEmailThread,
-  };
+        if (isRightDrawerOpen && viewableEmailThreadId === threadId) {
+          set(viewableEmailThreadIdState(), null);
+          closeRightDrawer();
+          return;
+        }
+
+        openEmailThredRightDrawer();
+        set(viewableEmailThreadIdState(), threadId);
+      },
+    [closeRightDrawer, openEmailThredRightDrawer],
+  );
+
+  return { openEmailThread };
 };
