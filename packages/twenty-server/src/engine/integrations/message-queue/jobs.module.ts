@@ -38,6 +38,9 @@ import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-quer
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
 import { GoogleCalendarFullSyncModule } from 'src/modules/calendar/services/google-calendar-full-sync.module';
+import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
+import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
+import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 
 @Module({
   imports: [
@@ -61,6 +64,9 @@ import { GoogleCalendarFullSyncModule } from 'src/modules/calendar/services/goog
     UserWorkspaceModule,
     WorkspaceDataSourceModule,
     RecordPositionBackfillModule,
+    GoogleAPIRefreshAccessTokenModule,
+    GmailFullSyncModule,
+    GmailPartialSyncModule,
   ],
   providers: [
     {

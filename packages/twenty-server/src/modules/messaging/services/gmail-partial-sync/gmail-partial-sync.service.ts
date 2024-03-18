@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { gmail_v1 } from 'googleapis';
 import { Repository } from 'typeorm';
 
-import { FetchMessagesByBatchesService } from 'src/modules/messaging/services/fetch-messages-by-batches.service';
+import { FetchMessagesByBatchesService } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -19,7 +19,7 @@ import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/modules/messaging/utils/is-person-email.util';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist/blocklist.repository';
-import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-messages-and-create-contacts.service';
+import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-message-and-create-contact/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,

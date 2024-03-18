@@ -8,7 +8,7 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 
 @Injectable()
-export class GoogleAPIsRefreshAccessTokenService {
+export class GoogleAPIRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { deleteUsingPagination } from 'src/modules/messaging/services/thread-cleaner/utils/delete-using-pagination.util';
@@ -9,8 +7,6 @@ import { deleteUsingPagination } from 'src/modules/messaging/services/thread-cle
 @Injectable()
 export class ThreadCleanerService {
   constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly messageService: MessageRepository,
     private readonly messageThreadService: MessageThreadRepository,
   ) {}

@@ -7,7 +7,7 @@ import planer from 'planer';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { MessageQuery } from 'src/modules/messaging/types/message-or-thread-query';
 import { GmailMessageParsedResponse } from 'src/modules/messaging/types/gmail-message-parsed-response';
-import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch.service';
+import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch/fetch-by-batch.service';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/services/utils/format-address-object-as-participants.util';
 
 @Injectable()
