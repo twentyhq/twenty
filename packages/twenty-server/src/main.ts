@@ -16,11 +16,11 @@ import { LoggerService } from './engine/integrations/logger/logger.service';
 import { EnvironmentService } from './engine/integrations/environment/environment.service';
 
 const bootstrap = async () => {
-  const configService = new ConfigService();
+  const environmentService = new EnvironmentService(new ConfigService());
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
-    bufferLogs: configService.get('LOGGER_IS_BUFFER_ENABLED') === 'true',
+    bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
     rawBody: true,
   });
   const logger = app.get(LoggerService);

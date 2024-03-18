@@ -6,7 +6,7 @@ import { EnvironmentVariables } from 'src/engine/integrations/environment/enviro
 
 @Injectable()
 export class EnvironmentService {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   get<T extends keyof EnvironmentVariables>(key: T): EnvironmentVariables[T] {
     return this.configService.get<EnvironmentVariables[T]>(

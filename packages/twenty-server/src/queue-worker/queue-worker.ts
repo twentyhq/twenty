@@ -14,16 +14,17 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { getJobClassName } from 'src/engine/integrations/message-queue/utils/get-job-class-name.util';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 async function bootstrap() {
   let exceptionHandlerService: ExceptionHandlerService | undefined;
   let loggerService: LoggerService | undefined;
 
   try {
-    const configService = new ConfigService();
+    const environmentService = new EnvironmentService(new ConfigService());
 
     const app = await NestFactory.createApplicationContext(QueueWorkerModule, {
-      bufferLogs: configService.get('LOGGER_IS_BUFFER_ENABLED') === 'true',
+      bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
     });
 
     loggerService = app.get(LoggerService);

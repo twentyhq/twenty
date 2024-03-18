@@ -281,6 +281,8 @@ export class EnvironmentVariables {
   CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
+
+  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 }
 
 export const validate = (config: Record<string, unknown>) => {
