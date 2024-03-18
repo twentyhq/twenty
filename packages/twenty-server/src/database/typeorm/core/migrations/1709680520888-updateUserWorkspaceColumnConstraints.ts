@@ -26,28 +26,6 @@ export class updateUserWorkspaceColumnConstraints1709680520888
     );
 
     await queryRunner.query(`
-            DO $$
-            DECLARE
-                record RECORD;
-            BEGIN
-                FOR record IN SELECT * FROM "core"."userWorkspace"
-                              WHERE "userId" NOT IN (SELECT "id" FROM "core"."user")
-                              OR "workspaceId" NOT IN (SELECT "id" FROM "core"."workspace")
-                LOOP
-                    IF NOT EXISTS (SELECT 1 FROM "core"."user" WHERE "id" = record."userId") THEN
-                        
-                    END IF;
-
-                    IF NOT EXISTS (SELECT 1 FROM "core"."workspace" WHERE "id" = record."workspace") THEN
-                        
-                    END IF;
-
-                END LOOP;
-            END;
-            $$ LANGUAGE plpgsql;
-        `);
-
-    await queryRunner.query(`
             ALTER TABLE "core"."userWorkspace" 
             ADD CONSTRAINT "FK_37fdc7357af701e595c5c3a9bd6" 
             FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") 
