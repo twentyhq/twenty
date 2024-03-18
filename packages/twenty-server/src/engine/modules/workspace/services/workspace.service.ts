@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 
 import assert from 'assert';
 
@@ -15,6 +15,7 @@ import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-wor
 import { BillingService } from 'src/engine/modules/billing/billing.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
+import { v4 } from 'uuid';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -84,6 +85,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
+    // using "SELECT *" here because we will need the corresponding members userId later
     const [workspaceMember] = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
     );
@@ -96,51 +98,78 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
     );
 
-    if (workspaceMember.userId) {
-      const workspaceMemberUser = await this.userRepository.findOne({
-        where: {
-          id: workspaceMember.userId,
-        },
-        relations: ['defaultWorkspace'],
-      });
+    const workspaceMemberUser = await this.userRepository.findOne({
+      where: {
+        id: workspaceMember.userId,
+      },
+      relations: ['defaultWorkspace'],
+    });
 
-      assert(workspaceMemberUser, 'User not found');
+    if (!workspaceMemberUser) {
+      throw new NotFoundException('User not found');
+    }
 
-      const userWorkspaces = await this.userWorkspaceRepository.find({
-        where: { userId: workspaceMemberUser.id },
-        relations: ['workspace'],
-      });
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: workspaceMemberUser.id },
+      relations: ['workspace'],
+    });
 
-      if (userWorkspaces.length > 1) {
-        if (workspaceMemberUser.defaultWorkspace.id === workspaceId) {
-          const filteredUserWorkspaces = userWorkspaces.filter(
-            (workspace) => workspace.workspaceId !== workspaceId,
-          );
+    // We want to check if we the user has signed up to more than one workspace 
+    if (userWorkspaces.length > 1) {
+      // We neeed to check if the workspace that its getting removed from is its default workspace, if it is then
+      // change the default workspace to point to the next workspace available.
+      if (workspaceMemberUser.defaultWorkspace.id === workspaceId) {
+        // We'll filter all user workspaces without the one which its getting removed from
+        const filteredUserWorkspaces = userWorkspaces.filter(
+          (workspace) => workspace.workspaceId !== workspaceId,
+        );
+        
+        // Take the first element in the filteredUserWorkspaces array and check if it currently exists in
+        // the database to be safe
+        const nextWorkspace = await this.workspaceRepository.findOneBy({
+          id: filteredUserWorkspaces[0].workspaceId,
+        });
 
-          const nextWorkspace = await this.workspaceRepository.findOneBy({
-            id: filteredUserWorkspaces[0].workspaceId,
-          });
-
-          assert(nextWorkspace, 'Cannot assign new workspace to user.');
-
-          if (nextWorkspace) {
-            await this.userRepository.save({
-              id: workspaceMemberUser.id,
-              defaultWorkspace: nextWorkspace,
-              updatedAt: new Date().toISOString(),
-            });
-          }
+        // throw if even the next workspace doesnt exist. 
+        if (!nextWorkspace) {
+          throw new ForbiddenException('Cannot assign new workspace to user');
         }
-        await this.userWorkspaceRepository.delete({
-          userId: workspaceMemberUser.id,
-          workspaceId,
-        });
-      } else {
-        await this.userWorkspaceRepository.delete({
-          userId: workspaceMemberUser.id,
-        });
-        await this.userRepository.delete({ id: workspaceMemberUser.id });
+
+        // update the user to point the default workspace to the next workspace
+        if (nextWorkspace) {
+          await this.userRepository.save({
+            id: workspaceMemberUser.id,
+            defaultWorkspace: nextWorkspace,
+            updatedAt: new Date().toISOString(),
+          });
+        }
       }
+      // if its not the default workspace then simply delete the user-workspace mapping
+      await this.userWorkspaceRepository.delete({
+        userId: workspaceMemberUser.id,
+        workspaceId,
+      });
+    } else {
+      await this.userWorkspaceRepository.delete({
+        userId: workspaceMemberUser.id,
+      });
+
+      // After deleting the user-workspace mapping, we have a condition where we have the users default workspace points to a
+      // workspace which it doesnt have access to. So we create a new workspace and make it as a default for the user.
+      const workspaceToCreate = this.workspaceRepository.create({
+        displayName: '',
+        domainName: '',
+        inviteHash: v4(),
+        subscriptionStatus: 'incomplete',
+      });
+  
+      const workspace = await this.workspaceRepository.save(workspaceToCreate);
+
+      await this.userRepository.save({
+        id: workspaceMemberUser.id,
+        defaultWorkspace: workspace,
+        updatedAt: new Date().toISOString(),
+      });
     }
 
     return memberId;
