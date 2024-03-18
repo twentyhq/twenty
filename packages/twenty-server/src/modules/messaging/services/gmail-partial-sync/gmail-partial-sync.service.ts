@@ -14,7 +14,6 @@ import {
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
-import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/modules/messaging/utils/is-person-email.util';
@@ -28,6 +27,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { MessageService } from 'src/modules/messaging/services/message/message.service';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -42,7 +42,7 @@ export class GmailPartialSyncService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly messageRepository: MessageRepository,
+    private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
@@ -220,7 +220,7 @@ export class GmailPartialSyncService {
     if (messagesDeleted.length !== 0) {
       startTime = Date.now();
 
-      await this.messageRepository.deleteMessages(
+      await this.messageService.deleteMessages(
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,

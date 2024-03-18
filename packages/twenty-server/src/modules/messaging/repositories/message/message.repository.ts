@@ -1,35 +1,15 @@
-import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { DataSource, EntityManager } from 'typeorm';
-import { v4 } from 'uuid';
+import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
-import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
-import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread/message-thread.repository';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
 @Injectable()
 export class MessageRepository {
-  private readonly logger = new Logger(MessageRepository.name);
-
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
-    )
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
-    @Inject(forwardRef(() => MessageThreadRepository))
-    private readonly messageThreadService: MessageThreadRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
-    private readonly messageChannelService: MessageChannelRepository,
   ) {}
 
   public async getNonAssociatedMessageIdsPaginated(
@@ -126,228 +106,33 @@ export class MessageRepository {
     );
   }
 
-  public async saveMessages(
-    messages: GmailMessage[],
-    dataSourceMetadata: DataSourceEntity,
-    workspaceDataSource: DataSource,
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    gmailMessageChannelId: string,
-    workspaceId: string,
-  ): Promise<Map<string, string>> {
-    const messageExternalIdsAndIdsMap = new Map<string, string>();
-
-    try {
-      let keepImporting = true;
-
-      for (const message of messages) {
-        if (!keepImporting) {
-          break;
-        }
-
-        await workspaceDataSource?.transaction(
-          async (manager: EntityManager) => {
-            const gmailMessageChannel =
-              await this.messageChannelService.getByIds(
-                [gmailMessageChannelId],
-                workspaceId,
-                manager,
-              );
-
-            if (gmailMessageChannel.length === 0) {
-              this.logger.error(
-                `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessages`,
-              );
-
-              keepImporting = false;
-
-              return;
-            }
-
-            const existingMessageChannelMessageAssociationsCount =
-              await this.messageChannelMessageAssociationService.countByMessageExternalIdsAndMessageChannelId(
-                [message.externalId],
-                gmailMessageChannelId,
-                workspaceId,
-                manager,
-              );
-
-            if (existingMessageChannelMessageAssociationsCount > 0) {
-              return;
-            }
-
-            // TODO: This does not handle all thread merging use cases and might create orphan threads.
-            const savedOrExistingMessageThreadId =
-              await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
-                message.headerMessageId,
-                message.messageThreadExternalId,
-                dataSourceMetadata,
-                workspaceId,
-                manager,
-              );
-
-            const savedOrExistingMessageId =
-              await this.saveMessageOrReturnExistingMessage(
-                message,
-                savedOrExistingMessageThreadId,
-                connectedAccount,
-                dataSourceMetadata,
-                workspaceId,
-                manager,
-              );
-
-            messageExternalIdsAndIdsMap.set(
-              message.externalId,
-              savedOrExistingMessageId,
-            );
-
-            await manager.query(
-              `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
-              [
-                gmailMessageChannelId,
-                savedOrExistingMessageId,
-                message.externalId,
-                savedOrExistingMessageThreadId,
-                message.messageThreadExternalId,
-              ],
-            );
-          },
-        );
-      }
-    } catch (error) {
-      throw new Error(
-        `Error saving connected account ${connectedAccount.id} messages to workspace ${workspaceId}: ${error.message}`,
-      );
-    }
-
-    return messageExternalIdsAndIdsMap;
-  }
-
-  private async saveMessageOrReturnExistingMessage(
-    message: GmailMessage,
+  public async insert(
+    id: string,
+    headerMessageId: string,
+    subject: string,
+    receivedAt: Date,
+    messageDirection: string,
     messageThreadId: string,
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    dataSourceMetadata: DataSourceEntity,
+    text: string,
     workspaceId: string,
-    manager: EntityManager,
-  ): Promise<string> {
-    const existingMessage = await this.getFirstOrNullByHeaderMessageId(
-      message.headerMessageId,
-      workspaceId,
-    );
-    const existingMessageId = existingMessage?.id;
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    if (existingMessageId) {
-      return Promise.resolve(existingMessageId);
-    }
-
-    const newMessageId = v4();
-
-    const messageDirection =
-      connectedAccount.handle === message.fromHandle ? 'outgoing' : 'incoming';
-
-    const receivedAt = new Date(parseInt(message.internalDate));
-
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
-        newMessageId,
-        message.headerMessageId,
-        message.subject,
+        id,
+        headerMessageId,
+        subject,
         receivedAt,
         messageDirection,
         messageThreadId,
-        message.text,
+        text,
       ],
+      workspaceId,
+      transactionManager,
     );
-
-    return Promise.resolve(newMessageId);
-  }
-
-  public async deleteMessages(
-    messagesDeletedMessageExternalIds: string[],
-    gmailMessageChannelId: string,
-    workspaceId: string,
-  ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-      const messageChannelMessageAssociationsToDelete =
-        await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
-          messagesDeletedMessageExternalIds,
-          gmailMessageChannelId,
-          workspaceId,
-          manager,
-        );
-
-      const messageChannelMessageAssociationIdsToDeleteIds =
-        messageChannelMessageAssociationsToDelete.map(
-          (messageChannelMessageAssociationToDelete) =>
-            messageChannelMessageAssociationToDelete.id,
-        );
-
-      await this.messageChannelMessageAssociationService.deleteByIds(
-        messageChannelMessageAssociationIdsToDeleteIds,
-        workspaceId,
-        manager,
-      );
-
-      const messageIdsFromMessageChannelMessageAssociationsToDelete =
-        messageChannelMessageAssociationsToDelete.map(
-          (messageChannelMessageAssociationToDelete) =>
-            messageChannelMessageAssociationToDelete.messageId,
-        );
-
-      const messageChannelMessageAssociationByMessageIds =
-        await this.messageChannelMessageAssociationService.getByMessageIds(
-          messageIdsFromMessageChannelMessageAssociationsToDelete,
-          workspaceId,
-          manager,
-        );
-
-      const messageIdsFromMessageChannelMessageAssociationByMessageIds =
-        messageChannelMessageAssociationByMessageIds.map(
-          (messageChannelMessageAssociation) =>
-            messageChannelMessageAssociation.messageId,
-        );
-
-      const messageIdsToDelete =
-        messageIdsFromMessageChannelMessageAssociationsToDelete.filter(
-          (messageId) =>
-            !messageIdsFromMessageChannelMessageAssociationByMessageIds.includes(
-              messageId,
-            ),
-        );
-
-      await this.deleteByIds(messageIdsToDelete, workspaceId, manager);
-
-      const messageThreadIdsFromMessageChannelMessageAssociationsToDelete =
-        messageChannelMessageAssociationsToDelete.map(
-          (messageChannelMessageAssociationToDelete) =>
-            messageChannelMessageAssociationToDelete.messageThreadId,
-        );
-
-      const messagesByThreadIds = await this.getByMessageThreadIds(
-        messageThreadIdsFromMessageChannelMessageAssociationsToDelete,
-        workspaceId,
-        manager,
-      );
-
-      const threadIdsToDelete =
-        messageThreadIdsFromMessageChannelMessageAssociationsToDelete.filter(
-          (threadId) =>
-            !messagesByThreadIds.find(
-              (message) => message.messageThreadId === threadId,
-            ),
-        );
-
-      await this.messageThreadService.deleteByIds(
-        threadIdsToDelete,
-        workspaceId,
-        manager,
-      );
-    });
   }
 }

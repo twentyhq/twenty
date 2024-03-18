@@ -11,7 +11,6 @@ import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object
 import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { UserModule } from 'src/engine/modules/user/user.module';
@@ -20,7 +19,6 @@ import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/cr
 import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
-import { MessageParticipantModule } from 'src/modules/messaging/repositories/message-participant/message-participant.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
@@ -41,6 +39,7 @@ import { GoogleCalendarFullSyncModule } from 'src/modules/calendar/services/goog
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
+import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 
 @Module({
   imports: [
@@ -50,8 +49,6 @@ import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-par
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
-    MessagingModule,
-    MessageParticipantModule,
     GoogleCalendarFullSyncModule,
     ObjectMetadataModule,
     StripeModule,
@@ -67,6 +64,7 @@ import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-par
     GoogleAPIRefreshAccessTokenModule,
     GmailFullSyncModule,
     GmailPartialSyncModule,
+    MessageParticipantModule,
   ],
   providers: [
     {

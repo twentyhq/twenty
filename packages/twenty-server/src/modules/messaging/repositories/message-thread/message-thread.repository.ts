@@ -1,25 +1,13 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
-import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
 @Injectable()
 export class MessageThreadRepository {
   constructor(
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
-    )
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @Inject(forwardRef(() => MessageRepository))
-    private readonly messageService: MessageRepository,
   ) {}
 
   public async getOrphanThreadIdsPaginated(
@@ -61,50 +49,19 @@ export class MessageThreadRepository {
     );
   }
 
-  public async saveMessageThreadOrReturnExistingMessageThread(
-    headerMessageId: string,
-    messageThreadExternalId: string,
-    dataSourceMetadata: DataSourceEntity,
+  public async insert(
+    messageThreadId: string,
     workspaceId: string,
-    manager: EntityManager,
-  ) {
-    // Check if message thread already exists via threadExternalId
-    const existingMessageChannelMessageAssociationByMessageThreadExternalId =
-      await this.messageChannelMessageAssociationService.getFirstByMessageThreadExternalId(
-        messageThreadExternalId,
-        workspaceId,
-        manager,
-      );
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const existingMessageThread =
-      existingMessageChannelMessageAssociationByMessageThreadExternalId?.messageThreadId;
-
-    if (existingMessageThread) {
-      return Promise.resolve(existingMessageThread);
-    }
-
-    // Check if message thread already exists via existing message headerMessageId
-    const existingMessageWithSameHeaderMessageId =
-      await this.messageService.getFirstOrNullByHeaderMessageId(
-        headerMessageId,
-        workspaceId,
-        manager,
-      );
-
-    if (existingMessageWithSameHeaderMessageId) {
-      return Promise.resolve(
-        existingMessageWithSameHeaderMessageId.messageThreadId,
-      );
-    }
-
-    // If message thread does not exist, create new message thread
-    const newMessageThreadId = v4();
-
-    await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("id") VALUES ($1)`,
-      [newMessageThreadId],
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageThread" (id) VALUES ($1)`,
+      [messageThreadId],
+      workspaceId,
+      transactionManager,
     );
-
-    return Promise.resolve(newMessageThreadId);
   }
 }

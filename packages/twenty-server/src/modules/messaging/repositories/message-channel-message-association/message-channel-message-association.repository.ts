@@ -192,4 +192,30 @@ export class MessageChannelMessageAssociationRepository {
       transactionManager,
     );
   }
+
+  public async insert(
+    messageChannelId: string,
+    messageId: string,
+    messageExternalId: string,
+    messageThreadId: string,
+    messageThreadExternalId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageChannelMessageAssociation" ("messageChannelId", "messageId", "messageExternalId", "messageThreadId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+      [
+        messageChannelId,
+        messageId,
+        messageExternalId,
+        messageThreadId,
+        messageThreadExternalId,
+      ],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }

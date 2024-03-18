@@ -6,7 +6,9 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant/message-participant.repository';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
 export type CreateCompaniesAndContactsAfterSyncJobData = {
   workspaceId: string;
@@ -24,7 +26,9 @@ export class CreateCompaniesAndContactsAfterSyncJob
     private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelService: MessageChannelRepository,
-    private readonly messageParticipantService: MessageParticipantRepository,
+    private readonly messageParticipantService: MessageParticipantService,
+    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
+    private readonly messageParticipantRepository: MessageParticipantRepository,
   ) {}
 
   async handle(
@@ -47,7 +51,7 @@ export class CreateCompaniesAndContactsAfterSyncJob
     }
 
     const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantService.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
+      await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
         messageChannelId,
         workspaceId,
       );

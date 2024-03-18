@@ -4,7 +4,6 @@ import { EntityManager } from 'typeorm';
 
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant/message-participant.repository';
-import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import {
   GmailMessage,
@@ -15,6 +14,9 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageService } from 'src/modules/messaging/services/message/message.service';
+import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 
 @Injectable()
 export class SaveMessagesAndCreateContactsService {
@@ -23,11 +25,13 @@ export class SaveMessagesAndCreateContactsService {
   );
 
   constructor(
-    private readonly messageRepository: MessageRepository,
+    private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
+    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
     private readonly messageParticipantRepository: MessageParticipantRepository,
+    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
+    private readonly messageParticipantService: MessageParticipantService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
@@ -45,15 +49,14 @@ export class SaveMessagesAndCreateContactsService {
 
     let startTime = Date.now();
 
-    const messageExternalIdsAndIdsMap =
-      await this.messageRepository.saveMessages(
-        messagesToSave,
-        dataSourceMetadata,
-        workspaceDataSource,
-        connectedAccount,
-        gmailMessageChannelId,
-        workspaceId,
-      );
+    const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
+      messagesToSave,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount,
+      gmailMessageChannelId,
+      workspaceId,
+    );
 
     let endTime = Date.now();
 
@@ -120,7 +123,7 @@ export class SaveMessagesAndCreateContactsService {
           workspaceId,
         );
 
-      await this.messageParticipantRepository.updateMessageParticipantsAfterPeopleCreation(
+      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
         messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
       );
@@ -175,7 +178,7 @@ export class SaveMessagesAndCreateContactsService {
         (participant) => participant.messageId,
       );
 
-      await this.messageRepository.deleteMessages(
+      await this.messageService.deleteMessages(
         messagesToDelete,
         gmailMessageChannelId,
         workspaceId,
