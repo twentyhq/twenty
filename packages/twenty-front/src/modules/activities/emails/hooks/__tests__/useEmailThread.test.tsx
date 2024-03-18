@@ -33,7 +33,7 @@ describe('useEmailThread', () => {
     expect(result.current.viewableEmailThreadId).toBe(viewableEmailThreadId);
   });
 
-  it('should close email thread', () => {
+  it('should close email thread if trying to open the same thread id', () => {
     const { result } = renderHook(
       () => {
         const emailThread = useEmailThread();
