@@ -4,10 +4,11 @@ import { format, getYear } from 'date-fns';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
-import { sortCalendarEventsDesc } from '@/activities/calendar/utils/sortCalendarEvents';
+import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H3Title } from '@/ui/display/typography/components/H3Title';
 import { Section } from '@/ui/layout/section/components/Section';
-import { mockedCalendarEvents } from '~/testing/mock-data/calendar';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -23,9 +24,11 @@ const StyledYear = styled.span`
 `;
 
 export const Calendar = () => {
-  const sortedCalendarEvents = [...mockedCalendarEvents].sort(
-    sortCalendarEventsDesc,
-  );
+  const { records: calendarEvents } = useFindManyRecords<CalendarEvent>({
+    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
+    orderBy: { startsAt: 'DescNullsLast', endsAt: 'DescNullsLast' },
+    useRecordsWithoutConnection: true,
+  });
 
   const {
     calendarEventsByDayTime,
@@ -35,7 +38,13 @@ export const Calendar = () => {
     monthTimes,
     monthTimesByYear,
     updateCurrentCalendarEvent,
-  } = useCalendarEvents(sortedCalendarEvents);
+  } = useCalendarEvents(
+    calendarEvents.map((calendarEvent) => ({
+      ...calendarEvent,
+      // TODO: retrieve CalendarChannel visibility from backend
+      visibility: 'SHARE_EVERYTHING',
+    })),
+  );
 
   return (
     <CalendarContext.Provider

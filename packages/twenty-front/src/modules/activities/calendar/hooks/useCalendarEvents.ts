@@ -3,6 +3,7 @@ import { getYear, isThisMonth, startOfDay, startOfMonth } from 'date-fns';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { findUpcomingCalendarEvent } from '@/activities/calendar/utils/findUpcomingCalendarEvent';
+import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortDesc } from '~/utils/sort';
@@ -10,7 +11,8 @@ import { sortDesc } from '~/utils/sort';
 export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
   const calendarEventsByDayTime = groupArrayItemsBy(
     calendarEvents,
-    ({ startsAt }) => startOfDay(startsAt).getTime(),
+    (calendarEvent) =>
+      startOfDay(getCalendarEventStartDate(calendarEvent)).getTime(),
   );
 
   const sortedDayTimes = Object.keys(calendarEventsByDayTime)
@@ -45,17 +47,21 @@ export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
     () => findUpcomingCalendarEvent(calendarEvents),
     [calendarEvents],
   );
-  const lastEventInCalendar = calendarEvents[0];
+  const lastEventInCalendar = calendarEvents.length
+    ? calendarEvents[0]
+    : undefined;
 
   const [currentCalendarEvent, setCurrentCalendarEvent] = useState(
     (initialUpcomingCalendarEvent &&
-      (isThisMonth(initialUpcomingCalendarEvent.startsAt)
+      (isThisMonth(getCalendarEventStartDate(initialUpcomingCalendarEvent))
         ? initialUpcomingCalendarEvent
         : getPreviousCalendarEvent(initialUpcomingCalendarEvent))) ||
       lastEventInCalendar,
   );
 
   const updateCurrentCalendarEvent = () => {
+    if (!currentCalendarEvent) return;
+
     const nextCurrentCalendarEvent = getNextCalendarEvent(currentCalendarEvent);
 
     if (isDefined(nextCurrentCalendarEvent)) {

@@ -11,7 +11,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   eagerLoadedRelations,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItem: Pick<ObjectMetadataItem, 'fields'>;
+  objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
   depth?: number;
   eagerLoadedRelations?: Record<string, any>;
 }): any => {

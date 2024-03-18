@@ -4,7 +4,7 @@ module.exports = {
   clearMocks: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
-
+  modulePathIgnorePatterns: ['<rootDir>/dist'],
   moduleFileExtensions: ['js', 'json', 'ts'],
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
