@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { groupBy } from 'lodash.groupBy';
 
-import { TIMELINE_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/constants/calendar.constants';
+import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/constants/calendar.constants';
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
 import { TimelineCalendarEvent } from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dtos/timeline-calendar-events-with-total.dto';
@@ -31,7 +31,7 @@ export class TimelineCalendarEventService {
     workspaceId: string,
     personIds: string[],
     page: number = 1,
-    pageSize: number = TIMELINE_EVENTS_DEFAULT_PAGE_SIZE,
+    pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineCalendarEventsWithTotal> {
     const offset = (page - 1) * pageSize;
 
