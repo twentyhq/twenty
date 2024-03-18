@@ -181,11 +181,11 @@ export class TimelineCalendarEventService {
       event.visibility = calendarEventVisibilityByEventId[event.id];
 
       if (event.visibility === 'METADATA') {
-        event.title = null;
-        event.description = null;
-        event.location = null;
-        event.conferenceSolution = null;
-        event.conferenceUri = null;
+        event.title = '';
+        event.description = '';
+        event.location = '';
+        event.conferenceSolution = '';
+        event.conferenceUri = '';
       }
     });
 

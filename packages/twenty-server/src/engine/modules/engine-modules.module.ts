@@ -27,6 +27,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     OpenApiModule,
     RefreshTokenModule,
     TimelineMessagingModule,
+    TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
   ],

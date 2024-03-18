@@ -10,7 +10,7 @@ export class TimelineCalendarEvent {
   id: string;
 
   @Field()
-  title: string | null;
+  title: string;
 
   @Field()
   isCanceled: boolean;
@@ -25,18 +25,18 @@ export class TimelineCalendarEvent {
   endsAt: string;
 
   @Field()
-  description: string | null;
+  description: string;
 
   @Field()
-  location: string | null;
+  location: string;
 
   @Field()
-  conferenceSolution: string | null;
+  conferenceSolution: string;
 
   @Field()
-  conferenceUri: string | null;
+  conferenceUri: string;
 
-  @Field()
+  @Field(() => [TimelineCalendarEventAttendee])
   eventAttendees: TimelineCalendarEventAttendee[];
 
   @Field()
