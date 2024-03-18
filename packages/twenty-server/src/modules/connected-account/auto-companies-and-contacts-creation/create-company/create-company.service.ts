@@ -6,11 +6,16 @@ import axios, { AxiosInstance } from 'axios';
 
 import { CompanyRepository } from 'src/modules/company/repositories/company/company.repository';
 import { getCompanyNameFromDomainName } from 'src/modules/messaging/utils/get-company-name-from-domain-name.util';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
-  constructor(private readonly companyService: CompanyRepository) {
+  constructor(
+    @InjectObjectMetadataRepository(CompanyObjectMetadata)
+    private readonly companyRepository: CompanyRepository,
+  ) {
     this.httpService = axios.create({
       baseURL: 'https://companies.twenty.com',
     });
@@ -30,7 +35,7 @@ export class CreateCompanyService {
     const uniqueDomainNames = [...new Set(domainNames)];
 
     const existingCompanies =
-      await this.companyService.getExistingCompaniesByDomainNames(
+      await this.companyRepository.getExistingCompaniesByDomainNames(
         uniqueDomainNames,
         workspaceId,
         transactionManager,
@@ -80,7 +85,7 @@ export class CreateCompanyService {
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
-    this.companyService.createCompany(
+    this.companyRepository.createCompany(
       workspaceId,
       {
         id: companyId,

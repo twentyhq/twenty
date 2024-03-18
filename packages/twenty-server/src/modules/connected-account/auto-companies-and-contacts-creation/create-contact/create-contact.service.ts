@@ -26,7 +26,7 @@ type FormattedContactToCreate = {
 export class CreateContactService {
   constructor(
     @InjectObjectMetadataRepository(PersonObjectMetadata)
-    private readonly personService: PersonRepository,
+    private readonly personRepository: PersonRepository,
   ) {}
 
   public formatContacts(
@@ -59,7 +59,7 @@ export class CreateContactService {
 
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    await this.personService.createPeople(
+    await this.personRepository.createPeople(
       formattedContacts,
       workspaceId,
       transactionManager,

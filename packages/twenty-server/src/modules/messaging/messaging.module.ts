@@ -20,10 +20,8 @@ import { MessagingMessageChannelListener } from 'src/modules/messaging/listeners
 import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
 import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
-import { CompanyModule } from 'src/modules/company/repositories/company/company.module';
 import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-messages-and-create-contacts.service';
 import { MessagingConnectedAccountListener } from 'src/modules/messaging/listeners/messaging-connected-account.listener';
-import { BlocklistModule } from 'src/modules/connected-account/repositories/blocklist/blocklist.module';
 import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch.service';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository.module';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
@@ -41,7 +39,6 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
     MessageParticipantModule,
     CreateCompaniesAndContactsModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
-    CompanyModule,
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountObjectMetadata,
       MessageChannelObjectMetadata,
@@ -50,7 +47,6 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
       PersonObjectMetadata,
       WorkspaceMemberObjectMetadata,
     ]),
-    BlocklistModule,
     HttpModule.register({
       baseURL: 'https://www.googleapis.com/batch/gmail/v1',
     }),

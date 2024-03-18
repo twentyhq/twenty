@@ -19,12 +19,12 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 @Injectable()
 export class CreateCompanyAndContactService {
   constructor(
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
-    private readonly personService: PersonRepository,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
+    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    private readonly personRepository: PersonRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
-    private readonly workspaceMemberService: WorkspaceMemberRepository,
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
   async createCompaniesAndContacts(
@@ -41,7 +41,7 @@ export class CreateCompanyAndContactService {
     const isContactAutoCreationForNonWorkEmailsEnabled = false;
 
     const workspaceMembers =
-      await this.workspaceMemberService.getAllByWorkspaceId(
+      await this.workspaceMemberRepository.getAllByWorkspaceId(
         workspaceId,
         transactionManager,
       );
@@ -60,7 +60,7 @@ export class CreateCompanyAndContactService {
       return;
     }
 
-    const alreadyCreatedContacts = await this.personService.getByEmails(
+    const alreadyCreatedContacts = await this.personRepository.getByEmails(
       uniqueHandles,
       workspaceId,
     );
