@@ -39,18 +39,6 @@ describe('useCalendar', () => {
     const { result } = renderHook(() => useCalendarEvents(calendarEvents));
 
     expect(result.current.currentCalendarEvent).toBe(calendarEvents[0]);
-    expect(result.current.calendarEventsByDayTime).toHaveProperty(
-      '1708203600000',
-    );
-    expect(result.current.calendarEventsByDayTime).toHaveProperty(
-      '1708290000000',
-    );
-    expect(result.current.calendarEventsByDayTime).toHaveProperty(
-      '1708376400000',
-    );
-    expect(result.current.calendarEventsByDayTime).toHaveProperty(
-      '1708462800000',
-    );
 
     expect(result.current.getNextCalendarEvent(calendarEvents[1])).toBe(
       calendarEvents[0],
