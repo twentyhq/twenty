@@ -42,20 +42,20 @@ export class TimelineCalendarEventService {
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT
             "calendarEvent".*
-            FROM
-                ${dataSourceSchema}."calendarEvent" "calendarEvent"
-            LEFT JOIN
-                ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee" ON "calendarEvent".id = "calendarEventAttendee"."calendarEventId"
-            LEFT JOIN
-                ${dataSourceSchema}."person" "person" ON "calendarEventAttendee"."personId" = "person".id
-            WHERE
-                "calendarEventAttendee"."personId" = ANY($1)
-            GROUP BY
-                "calendarEvent".id
-            ORDER BY
-                "calendarEvent"."startsAt" DESC
-            LIMIT $2
-            OFFSET $3`,
+        FROM
+            ${dataSourceSchema}."calendarEvent" "calendarEvent"
+        LEFT JOIN
+            ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee" ON "calendarEvent".id = "calendarEventAttendee"."calendarEventId"
+        LEFT JOIN
+            ${dataSourceSchema}."person" "person" ON "calendarEventAttendee"."personId" = "person".id
+        WHERE
+            "calendarEventAttendee"."personId" = ANY($1)
+        GROUP BY
+            "calendarEvent".id
+        ORDER BY
+            "calendarEvent"."startsAt" DESC
+        LIMIT $2
+        OFFSET $3`,
         [personIds, pageSize, offset],
         workspaceId,
       );
@@ -121,9 +121,12 @@ export class TimelineCalendarEventService {
     const totalNumberOfCalendarEvents: { count: number }[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `
-      SELECT COUNT(DISTINCT "calendarEventId")
-      FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
-      WHERE "calendarEventAttendee"."personId" = ANY($1)
+      SELECT
+          COUNT(DISTINCT "calendarEventId")
+      FROM
+          ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
+      WHERE
+          "calendarEventAttendee"."personId" = ANY($1)
       `,
         [personIds],
         workspaceId,
