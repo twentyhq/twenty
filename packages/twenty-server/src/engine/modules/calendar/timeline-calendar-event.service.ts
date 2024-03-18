@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { groupBy } from 'lodash.groupBy';
 
 import { TIMELINE_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/constants/calendar.constants';
+import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
+import { TimelineCalendarEvent } from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
@@ -24,7 +26,7 @@ export class TimelineCalendarEventService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarEvents =
+    const calendarEvents: Omit<TimelineCalendarEvent, 'attendees'>[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT
       "calendarEvent".*,
@@ -46,7 +48,7 @@ export class TimelineCalendarEventService {
       };
     }
 
-    const calendarEventAttendees =
+    const calendarEventAttendees: TimelineCalendarEventAttendee[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT *
       FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
@@ -55,12 +57,11 @@ export class TimelineCalendarEventService {
         workspaceId,
       );
 
-    const calendarEventAttendeesByEventId = groupBy(
-      calendarEventAttendees,
-      'calendarEventId',
-    );
+    const calendarEventAttendeesByEventId: {
+      [calendarEventId: string]: TimelineCalendarEventAttendee[];
+    } = groupBy(calendarEventAttendees, 'calendarEventId');
 
-    const totalNumberOfCalendarEvents =
+    const totalNumberOfCalendarEvents: { count: number }[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `
       SELECT COUNT(DISTINCT "calendarEventId")
@@ -79,6 +80,39 @@ export class TimelineCalendarEventService {
         attendees,
       };
     });
+
+    const calendarEventVisibility:
+      | {
+          id: string;
+          visibility: 'metadata' | 'subject' | 'share_everything';
+        }[]
+      | undefined = await this.workspaceDataSourceService.executeRawQuery(
+      `
+      SELECT
+          "calendarEvent".id,
+          "calendarChannel"."visibility"
+      FROM
+          ${dataSourceSchema}."calendarChannel" "calendarChannel"
+      LEFT JOIN
+          ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation" ON "calendarChannel".id = "calendarChannelEventAssociation"."calendarChannelId"
+      WHERE
+          "calendarEvent".id = ANY($1)
+      `,
+      [timelineCalendarEvents.map((event) => event.id)],
+      workspaceId,
+    );
+
+    if (calendarEventVisibility) {
+      timelineCalendarEvents.forEach((event) => {
+        const visibility = calendarEventVisibility.find(
+          (visibility) => visibility.id === event.id,
+        );
+
+        if (visibility) {
+          event.visibility = visibility.visibility;
+        }
+      });
+    }
 
     return {
       totalNumberOfCalendarEvents: totalNumberOfCalendarEvents[0].count,
