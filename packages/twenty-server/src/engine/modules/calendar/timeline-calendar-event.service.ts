@@ -194,4 +194,49 @@ export class TimelineCalendarEventService {
       timelineCalendarEvents,
     };
   }
+
+  async getCalendarEventsFromCompanyId(
+    workspaceMemberId: string,
+    workspaceId: string,
+    companyId: string,
+    page: number = 1,
+    pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+  ): Promise<TimelineCalendarEventsWithTotal> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const personIds = await this.workspaceDataSourceService.executeRawQuery(
+      `
+        SELECT 
+            p."id"
+        FROM
+            ${dataSourceSchema}."person" p
+        WHERE
+            p."companyId" = $1
+        `,
+      [companyId],
+      workspaceId,
+    );
+
+    if (!personIds) {
+      return {
+        totalNumberOfCalendarEvents: 0,
+        timelineCalendarEvents: [],
+      };
+    }
+
+    const formattedPersonIds = personIds.map(
+      (personId: { id: string }) => personId.id,
+    );
+
+    const messageThreads = await this.getCalendarEventsFromPersonIds(
+      workspaceMemberId,
+      workspaceId,
+      formattedPersonIds,
+      page,
+      pageSize,
+    );
+
+    return messageThreads;
+  }
 }
