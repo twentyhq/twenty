@@ -106,7 +106,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: 'Delete',
+        label: `Delete (${selectedRecordIds.length})`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => handleDeleteClick(),
@@ -118,7 +118,7 @@ export const useRecordActionBar = ({
         onClick: () => download(),
       },
     ],
-    [handleDeleteClick, download, progress],
+    [handleDeleteClick, download, progress, selectedRecordIds],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
