@@ -27,12 +27,12 @@ export class TimelineCalendarEventService {
     const calendarEvents =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT
-      calendarEvent.*,
-      FROM ${dataSourceSchema}.calendarEvent calendarEvent
-      INNER JOIN ${dataSourceSchema}.calendarEventAttendee calendarEventAttendee ON calendarEvent.id = calendarEventAttendee.calendarEventId
-      WHERE calendarEventAttendee.personId IN ANY($1)
-      GROUP BY calendarEvent.id,
-      ORDER BY calendarEvent.startDateTime DESC
+      "calendarEvent".*,
+      FROM ${dataSourceSchema}."calendarEvent" "calendarEvent"
+      INNER JOIN ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee" ON "calendarEvent".id = "calendarEventAttendee"."calendarEventId"
+      WHERE "calendarEventAttendee"."personId" IN ANY($1)
+      GROUP BY "calendarEvent".id,
+      ORDER BY "calendarEvent"."startDateTime" DESC
       LIMIT $2
       OFFSET $3`,
         [personIds, pageSize, offset],
@@ -49,8 +49,8 @@ export class TimelineCalendarEventService {
     const calendarEventAttendees =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT *
-      FROM ${dataSourceSchema}.calendarEventAttendee calendarEventAttendee
-      WHERE calendarEventAttendee.calendarEventId IN ANY($1)`,
+      FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
+      WHERE "calendarEventAttendee"."calendarEventId" IN ANY($1)`,
         [calendarEvents.map((event) => event.id)],
         workspaceId,
       );
@@ -60,6 +60,17 @@ export class TimelineCalendarEventService {
       'calendarEventId',
     );
 
+    const totalNumberOfCalendarEvents =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `
+      SELECT COUNT(DISTINCT "calendarEventId")
+      FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
+      WHERE "calendarEventAttendee"."personId" IN ANY($1)
+      `,
+        [personIds],
+        workspaceId,
+      );
+
     const timelineCalendarEvents = calendarEvents.map((event) => {
       const attendees = calendarEventAttendeesByEventId[event.id] || [];
 
@@ -68,5 +79,10 @@ export class TimelineCalendarEventService {
         attendees,
       };
     });
+
+    return {
+      totalNumberOfCalendarEvents: totalNumberOfCalendarEvents[0].count,
+      timelineCalendarEvents,
+    };
   }
 }
