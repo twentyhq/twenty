@@ -8,9 +8,9 @@ import {
   GmailPartialSyncJob,
   GmailPartialSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 
 interface GmailPartialSyncOptions {
   workspaceId: string;
