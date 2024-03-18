@@ -26,11 +26,11 @@ class Billing {
   @Field(() => Boolean)
   isBillingEnabled: boolean;
 
-  @Field(() => String)
-  billingUrl: string;
+  @Field(() => String, { nullable: true })
+  billingUrl?: string;
 
   @Field(() => Number, { nullable: true })
-  billingFreeTrialDurationInDays: number | undefined;
+  billingFreeTrialDurationInDays?: number;
 }
 
 @ObjectType()
@@ -39,13 +39,13 @@ class Support {
   supportDriver: string;
 
   @Field(() => String, { nullable: true })
-  supportFrontChatId: string | undefined;
+  supportFrontChatId?: string;
 }
 
 @ObjectType()
 class Sentry {
   @Field(() => String, { nullable: true })
-  dsn: string | undefined;
+  dsn?: string;
 }
 
 @ObjectType()
