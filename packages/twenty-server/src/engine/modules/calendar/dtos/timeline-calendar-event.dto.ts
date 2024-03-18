@@ -37,7 +37,7 @@ export class TimelineCalendarEvent {
   conferenceUri: string;
 
   @Field(() => [TimelineCalendarEventAttendee])
-  eventAttendees: TimelineCalendarEventAttendee[];
+  attendees: TimelineCalendarEventAttendee[];
 
   @Field()
   visibility: string;

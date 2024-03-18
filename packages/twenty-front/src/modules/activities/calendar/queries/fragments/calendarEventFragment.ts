@@ -8,8 +8,8 @@ export const calendarEventFragment = gql`
     title
     description
     location
-    startDate
-    endDate
+    startsAt
+    endsAt
     isFullDay
     attendees {
       ...AttendeeFragment
