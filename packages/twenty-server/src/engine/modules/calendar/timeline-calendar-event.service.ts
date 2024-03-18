@@ -83,13 +83,13 @@ export class TimelineCalendarEventService {
 
     const calendarEventVisibility:
       | {
-          id: string;
+          calendarEventId: string;
           visibility: 'metadata' | 'subject' | 'share_everything';
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
       SELECT
-          "calendarEvent".id,
+          "calendarEvent".id AS "calendarEventId",
           "calendarChannel"."visibility"
       FROM
           ${dataSourceSchema}."calendarChannel" "calendarChannel"
@@ -105,11 +105,17 @@ export class TimelineCalendarEventService {
     if (calendarEventVisibility) {
       timelineCalendarEvents.forEach((event) => {
         const visibility = calendarEventVisibility.find(
-          (visibility) => visibility.id === event.id,
+          (visibility) => visibility.calendarEventId === event.id,
         );
 
-        if (visibility) {
-          event.visibility = visibility.visibility;
+        if (!visibility) {
+          return;
+        }
+
+        event.visibility = visibility.visibility;
+
+        if (visibility.visibility === 'metadata') {
+          event.subject = null;
         }
       });
     }
