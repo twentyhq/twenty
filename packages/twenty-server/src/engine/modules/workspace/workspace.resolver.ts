@@ -21,6 +21,7 @@ import { UpdateWorkspaceInput } from 'src/engine/modules/workspace/dtos/update-w
 import { User } from 'src/engine/modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
+import { WorkspaceCacheVersionService } from 'src/engine-metadata/workspace-cache-version/workspace-cache-version.service';
 import { BillingSubscription } from 'src/engine/modules/billing/entities/billing-subscription.entity';
 import { BillingService } from 'src/engine/modules/billing/billing.service';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
@@ -34,6 +35,7 @@ import { WorkspaceService } from './services/workspace.service';
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly fileUploadService: FileUploadService,
     private readonly billingService: BillingService,
   ) {}
@@ -103,6 +105,13 @@ export class WorkspaceResolver {
     }
 
     return 'inactive';
+  }
+
+  @ResolveField(() => String)
+  async currentCacheVersion(
+    @Parent() workspace: Workspace,
+  ): Promise<string | null> {
+    return this.workspaceCacheVersionService.getVersion(workspace.id);
   }
 
   @ResolveField(() => BillingSubscription)

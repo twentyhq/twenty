@@ -12,6 +12,7 @@ import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.
 import { User } from 'src/engine/modules/user/user.entity';
 import { UserWorkspaceModule } from 'src/engine/modules/user-workspace/user-workspace.module';
 import { BillingModule } from 'src/engine/modules/billing/billing.module';
+import { WorkspaceCacheVersionModule } from 'src/engine-metadata/workspace-cache-version/workspace-cache-version.module';
 
 import { Workspace } from './workspace.entity';
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -25,6 +26,7 @@ import { WorkspaceService } from './services/workspace.service';
       imports: [
         BillingModule,
         FileModule,
+        WorkspaceCacheVersionModule,
         NestjsQueryTypeOrmModule.forFeature(
           [User, Workspace, UserWorkspace, FeatureFlagEntity],
           'core',
