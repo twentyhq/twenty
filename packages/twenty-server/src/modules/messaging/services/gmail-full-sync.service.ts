@@ -22,6 +22,11 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/modules/feature-flag/feature-flag.entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -32,10 +37,16 @@ export class GmailFullSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountRepository,
-    private readonly messageChannelService: MessageChannelRepository,
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
-    private readonly blocklistService: BlocklistRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    private readonly messageChannelRepository: MessageChannelRepository,
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
+    private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -46,7 +57,7 @@ export class GmailFullSyncService {
     connectedAccountId: string,
     nextPageToken?: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getById(
+    const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
     );
@@ -70,7 +81,7 @@ export class GmailFullSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountId(
+      await this.messageChannelRepository.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
@@ -99,7 +110,7 @@ export class GmailFullSyncService {
       isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
 
     const blocklist = isBlocklistEnabled
-      ? await this.blocklistService.getByWorkspaceMemberId(
+      ? await this.blocklistRepository.getByWorkspaceMemberId(
           workspaceMemberId,
           workspaceId,
         )
@@ -140,7 +151,7 @@ export class GmailFullSyncService {
     startTime = Date.now();
 
     const existingMessageChannelMessageAssociations =
-      await this.messageChannelMessageAssociationService.getByMessageExternalIdsAndMessageChannelId(
+      await this.messageChannelMessageAssociationRepository.getByMessageExternalIdsAndMessageChannelId(
         messageExternalIds,
         gmailMessageChannelId,
         workspaceId,
@@ -221,7 +232,7 @@ export class GmailFullSyncService {
 
     startTime = Date.now();
 
-    await this.connectedAccountService.updateLastSyncHistoryIdIfHigher(
+    await this.connectedAccountRepository.updateLastSyncHistoryIdIfHigher(
       historyId,
       connectedAccount.id,
       workspaceId,

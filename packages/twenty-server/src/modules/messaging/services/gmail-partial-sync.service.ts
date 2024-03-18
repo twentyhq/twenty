@@ -24,6 +24,10 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/modules/feature-flag/feature-flag.entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
 @Injectable()
 export class GmailPartialSyncService {
@@ -34,10 +38,13 @@ export class GmailPartialSyncService {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountRepository,
-    private readonly messageChannelService: MessageChannelRepository,
-    private readonly messageService: MessageRepository,
-    private readonly blocklistService: BlocklistRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly messageRepository: MessageRepository,
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
     private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -48,7 +55,7 @@ export class GmailPartialSyncService {
     connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getById(
+    const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
     );
@@ -103,7 +110,7 @@ export class GmailPartialSyncService {
         `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: invalid lastSyncHistoryId, falling back to full sync.`,
       );
 
-      await this.connectedAccountService.deleteHistoryId(
+      await this.connectedAccountRepository.deleteHistoryId(
         connectedAccountId,
         workspaceId,
       );
@@ -143,7 +150,7 @@ export class GmailPartialSyncService {
     }
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountId(
+      await this.messageChannelRepository.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
@@ -183,7 +190,7 @@ export class GmailPartialSyncService {
       isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
 
     const blocklist = isBlocklistEnabled
-      ? await this.blocklistService.getByWorkspaceMemberId(
+      ? await this.blocklistRepository.getByWorkspaceMemberId(
           connectedAccount.accountOwnerId,
           workspaceId,
         )
@@ -213,7 +220,7 @@ export class GmailPartialSyncService {
     if (messagesDeleted.length !== 0) {
       startTime = Date.now();
 
-      await this.messageService.deleteMessages(
+      await this.messageRepository.deleteMessages(
         messagesDeleted,
         gmailMessageChannelId,
         workspaceId,
@@ -251,7 +258,7 @@ export class GmailPartialSyncService {
     }
     startTime = Date.now();
 
-    await this.connectedAccountService.updateLastSyncHistoryId(
+    await this.connectedAccountRepository.updateLastSyncHistoryId(
       historyId,
       connectedAccount.id,
       workspaceId,

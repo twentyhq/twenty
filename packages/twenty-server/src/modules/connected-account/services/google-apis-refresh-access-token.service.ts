@@ -3,20 +3,23 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 
 @Injectable()
 export class GoogleAPIsRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly connectedAccountService: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async refreshAndSaveAccessToken(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getById(
+    const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
     );
@@ -37,7 +40,7 @@ export class GoogleAPIsRefreshAccessTokenService {
 
     const accessToken = await this.refreshAccessToken(refreshToken);
 
-    await this.connectedAccountService.updateAccessToken(
+    await this.connectedAccountRepository.updateAccessToken(
       accessToken,
       connectedAccountId,
       workspaceId,

@@ -17,11 +17,9 @@ import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { UserModule } from 'src/engine/modules/user/user.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
-import { ConnectedAccountModule } from 'src/modules/connected-account/repositories/connected-account/connected-account.module';
 import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
-import { MessageChannelModule } from 'src/modules/messaging/repositories/message-channel/message-channel.module';
 import { MessageParticipantModule } from 'src/modules/messaging/repositories/message-participant/message-participant.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
@@ -33,27 +31,25 @@ import { UserWorkspaceModule } from 'src/engine/modules/user-workspace/user-work
 import { StripeModule } from 'src/engine/modules/billing/stripe/stripe.module';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { GoogleCalendarFullSyncJob } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
+import { GoogleCalendarFullSyncModule } from 'src/modules/calendar/services/google-calendar-full-sync.module';
 
 @Module({
   imports: [
     BillingModule,
     DataSourceModule,
-    ConnectedAccountModule,
     CreateCompaniesAndContactsModule,
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
     MessagingModule,
     MessageParticipantModule,
-    MessageChannelModule,
-    CalendarModule,
+    GoogleCalendarFullSyncModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,

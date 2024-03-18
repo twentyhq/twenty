@@ -14,6 +14,7 @@ import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/modules/messagi
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -22,7 +23,7 @@ export class CreateCompanyAndContactService {
     private readonly personService: PersonRepository,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 

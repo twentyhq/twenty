@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
-import { ConnectedAccountModule } from 'src/modules/connected-account/repositories/connected-account/connected-account.module';
-import { MessageChannelMessageAssociationModule } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-assocation.module';
-import { MessageChannelModule } from 'src/modules/messaging/repositories/message-channel/message-channel.module';
 import { MessageThreadModule } from 'src/modules/messaging/repositories/message-thread/message-thread.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { MessagingPersonListener } from 'src/modules/messaging/listeners/messaging-person.listener';
@@ -31,13 +28,14 @@ import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-b
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository.module';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 @Module({
   imports: [
     EnvironmentModule,
     WorkspaceDataSourceModule,
-    ConnectedAccountModule,
-    MessageChannelModule,
-    MessageChannelMessageAssociationModule,
     MessageModule,
     MessageThreadModule,
     MessageParticipantModule,
@@ -45,6 +43,10 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     CompanyModule,
     ObjectMetadataRepositoryModule.forFeature([
+      ConnectedAccountObjectMetadata,
+      MessageChannelObjectMetadata,
+      MessageChannelMessageAssociationObjectMetadata,
+      BlocklistObjectMetadata,
       PersonObjectMetadata,
       WorkspaceMemberObjectMetadata,
     ]),

@@ -9,6 +9,8 @@ import {
   GoogleCalendarFullSyncJobData,
   GoogleCalendarFullSyncJob,
 } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 
 interface GoogleCalendarFullSyncOptions {
   workspaceId: string;
@@ -23,7 +25,8 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {
     super();
   }
@@ -48,7 +51,7 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
 
   private async fetchWorkspaceCalendars(workspaceId: string): Promise<void> {
     const connectedAccounts =
-      await this.connectedAccountService.getAll(workspaceId);
+      await this.connectedAccountRepository.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
       await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(

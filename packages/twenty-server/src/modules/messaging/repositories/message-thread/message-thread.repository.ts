@@ -7,10 +7,15 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
 @Injectable()
 export class MessageThreadRepository {
   constructor(
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @Inject(forwardRef(() => MessageRepository))

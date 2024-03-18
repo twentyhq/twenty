@@ -15,15 +15,23 @@ import { MessageChannelRepository } from 'src/modules/messaging/repositories/mes
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
 export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
   constructor(
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelService: MessageChannelRepository,
-    private readonly connectedAccountService: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
@@ -78,7 +86,7 @@ export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
       await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
 
     const messageChannelsConnectedAccounts =
-      await this.connectedAccountService.getByIds(
+      await this.connectedAccountRepository.getByIds(
         messageChannels.map((channel) => channel.connectedAccountId),
         workspaceId,
       );

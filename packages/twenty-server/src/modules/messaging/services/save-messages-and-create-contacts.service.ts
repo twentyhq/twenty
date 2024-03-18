@@ -13,6 +13,8 @@ import {
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Injectable()
 export class SaveMessagesAndCreateContactsService {
@@ -21,10 +23,11 @@ export class SaveMessagesAndCreateContactsService {
   );
 
   constructor(
-    private readonly messageService: MessageRepository,
-    private readonly messageChannelService: MessageChannelRepository,
+    private readonly messageRepository: MessageRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
-    private readonly messageParticipantService: MessageParticipantRepository,
+    private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
@@ -42,14 +45,15 @@ export class SaveMessagesAndCreateContactsService {
 
     let startTime = Date.now();
 
-    const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+    const messageExternalIdsAndIdsMap =
+      await this.messageRepository.saveMessages(
+        messagesToSave,
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount,
+        gmailMessageChannelId,
+        workspaceId,
+      );
 
     let endTime = Date.now();
 
@@ -60,7 +64,7 @@ export class SaveMessagesAndCreateContactsService {
     );
 
     const gmailMessageChannel =
-      await this.messageChannelService.getFirstByConnectedAccountId(
+      await this.messageChannelRepository.getFirstByConnectedAccountId(
         connectedAccount.id,
         workspaceId,
       );
@@ -111,12 +115,12 @@ export class SaveMessagesAndCreateContactsService {
       );
 
       const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-        await this.messageParticipantService.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+        await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
           handles,
           workspaceId,
         );
 
-      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+      await this.messageParticipantRepository.updateMessageParticipantsAfterPeopleCreation(
         messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
         workspaceId,
       );
@@ -157,7 +161,7 @@ export class SaveMessagesAndCreateContactsService {
     jobName?: string,
   ) {
     try {
-      await this.messageParticipantService.saveMessageParticipants(
+      await this.messageParticipantRepository.saveMessageParticipants(
         participantsWithMessageId,
         workspaceId,
       );
@@ -171,7 +175,7 @@ export class SaveMessagesAndCreateContactsService {
         (participant) => participant.messageId,
       );
 
-      await this.messageService.deleteMessages(
+      await this.messageRepository.deleteMessages(
         messagesToDelete,
         gmailMessageChannelId,
         workspaceId,

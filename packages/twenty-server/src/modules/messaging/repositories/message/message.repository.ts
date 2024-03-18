@@ -12,6 +12,9 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread/message-thread.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
 @Injectable()
 export class MessageRepository {
@@ -19,9 +22,13 @@ export class MessageRepository {
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
     private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
     @Inject(forwardRef(() => MessageThreadRepository))
     private readonly messageThreadService: MessageThreadRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelService: MessageChannelRepository,
   ) {}
 
