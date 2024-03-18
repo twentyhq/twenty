@@ -115,7 +115,7 @@ export class TimelineCalendarEventService {
         event.visibility = visibility.visibility;
 
         if (visibility.visibility === 'metadata') {
-          event.subject = null;
+          event.title = null;
         }
       });
     }

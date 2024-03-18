@@ -10,7 +10,7 @@ export class TimelineCalendarEvent {
   id: string;
 
   @Field()
-  title: string;
+  title: string | null;
 
   @Field()
   isCanceled: boolean;
@@ -25,32 +25,20 @@ export class TimelineCalendarEvent {
   endsAt: string;
 
   @Field()
-  externalCreatedAt: string;
+  description: string | null;
 
   @Field()
-  externalUpdatedAt: string;
+  location: string | null;
 
   @Field()
-  description: string;
+  conferenceSolution: string | null;
 
   @Field()
-  location: string;
-
-  @Field()
-  iCalUID: string;
-
-  @Field()
-  conferenceSolution: string;
-
-  @Field()
-  conferenceUri: string;
-
-  @Field()
-  recurringEventExternalId: string;
-
-  @Field()
-  calendarChannelEventAssociations: string[];
+  conferenceUri: string | null;
 
   @Field()
   eventAttendees: TimelineCalendarEventAttendee[];
+
+  @Field()
+  visibility: string;
 }
