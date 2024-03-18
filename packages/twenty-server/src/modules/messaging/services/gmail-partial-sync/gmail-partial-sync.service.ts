@@ -12,12 +12,12 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/modules/messaging/utils/is-person-email.util';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist/blocklist.repository';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-message-and-create-contact/save-messages-and-create-contacts.service';
 import {
   FeatureFlagEntity,

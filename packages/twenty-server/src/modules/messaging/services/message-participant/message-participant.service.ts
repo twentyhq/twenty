@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ParticipantWithId } from 'src/modules/messaging/types/gmail-message';
-import { PersonRepository } from 'src/modules/person/repositories/person/person.repository';
+import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 

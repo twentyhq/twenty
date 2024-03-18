@@ -4,11 +4,11 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';
-import { MessageRepository } from 'src/modules/messaging/repositories/message/message.repository';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
+import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread/message-thread.repository';
+import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 
 @Injectable()

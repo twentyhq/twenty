@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant/message-participant.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import {
   GmailMessage,

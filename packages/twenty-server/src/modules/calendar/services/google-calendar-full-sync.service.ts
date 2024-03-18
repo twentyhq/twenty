@@ -3,23 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist/blocklist.repository';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
 import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
-import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.repository';
-import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel/calendar-channel.repository';
+import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
+import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event/calendar-event.repository';
+import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
 import { GoogleCalendarFullSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
-import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.repository';
+import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
