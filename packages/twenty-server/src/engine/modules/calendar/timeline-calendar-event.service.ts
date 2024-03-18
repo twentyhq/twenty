@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { groupBy } from 'lodash.groupBy';
+import groupBy from 'lodash.groupBy';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/constants/calendar.constants';
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
@@ -41,7 +41,7 @@ export class TimelineCalendarEventService {
     const calendarEvents: Omit<TimelineCalendarEvent, 'attendees'>[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT
-            "calendarEvent".*,
+            "calendarEvent".*
             FROM
                 ${dataSourceSchema}."calendarEvent" "calendarEvent"
             LEFT JOIN
@@ -49,11 +49,11 @@ export class TimelineCalendarEventService {
             LEFT JOIN
                 ${dataSourceSchema}."person" "person" ON "calendarEventAttendee"."personId" = "person".id
             WHERE
-                "calendarEventAttendee"."personId" IN ANY($1)
+                "calendarEventAttendee"."personId" = ANY($1)
             GROUP BY
-                "calendarEvent".id,
+                "calendarEvent".id
             ORDER BY
-                "calendarEvent"."startDateTime" DESC
+                "calendarEvent"."startsAt" DESC
             LIMIT $2
             OFFSET $3`,
         [personIds, pageSize, offset],
@@ -76,7 +76,7 @@ export class TimelineCalendarEventService {
             "person"."avatarUrl" as "personAvatarUrl",
             "workspaceMember"."nameFirstName" as "workspaceMemberFirstName",
             "workspaceMember"."nameLastName" as "workspaceMemberLastName",
-            "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl",
+            "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl"
         FROM
             ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
         LEFT JOIN
@@ -84,7 +84,7 @@ export class TimelineCalendarEventService {
         LEFT JOIN
             ${dataSourceSchema}."workspaceMember" "workspaceMember" ON "calendarEventAttendee"."workspaceMemberId" = "workspaceMember".id
         WHERE
-            "calendarEventAttendee"."calendarEventId" IN ANY($1)`,
+            "calendarEventAttendee"."calendarEventId" = ANY($1)`,
         [calendarEvents.map((event) => event.id)],
         workspaceId,
       );
@@ -123,7 +123,7 @@ export class TimelineCalendarEventService {
         `
       SELECT COUNT(DISTINCT "calendarEventId")
       FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
-      WHERE "calendarEventAttendee"."personId" IN ANY($1)
+      WHERE "calendarEventAttendee"."personId" = ANY($1)
       `,
         [personIds],
         workspaceId,
@@ -146,14 +146,14 @@ export class TimelineCalendarEventService {
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
       SELECT
-          "calendarEvent".id AS "calendarEventId",
+          "calendarChannelEventAssociation"."calendarEventId",
           "calendarChannel"."visibility"
       FROM
           ${dataSourceSchema}."calendarChannel" "calendarChannel"
       LEFT JOIN
           ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation" ON "calendarChannel".id = "calendarChannelEventAssociation"."calendarChannelId"
       WHERE
-          "calendarEvent".id = ANY($1)
+          "calendarChannelEventAssociation"."calendarEventId" = ANY($1)
       `,
       [timelineCalendarEvents.map((event) => event.id)],
       workspaceId,
