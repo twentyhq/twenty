@@ -2,7 +2,6 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { GoogleAPIsOauthGuard } from 'src/engine/modules/auth/guards/google-apis-oauth.guard';
 import { GoogleAPIsProviderEnabledGuard } from 'src/engine/modules/auth/guards/google-apis-provider-enabled.guard';
 import { GoogleAPIsService } from 'src/engine/modules/auth/services/google-apis.service';
@@ -26,7 +25,7 @@ export class GoogleGmailAuthController {
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard, DemoEnvGuard)
+  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
@@ -37,6 +36,12 @@ export class GoogleGmailAuthController {
 
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
+
+    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
+
+    if (demoWorkspaceIds.includes(workspaceId)) {
+      throw new Error('Cannot connect Gmail account to demo workspace');
+    }
 
     if (!workspaceId) {
       throw new Error('Workspace not found');
