@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
@@ -12,6 +14,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   objectMetadataItems: ObjectMetadataItem[];
   depth?: number;
 }) => {
+  const allObjectMetadataItems = useRecoilValue(objectMetadataItemsState());
   const capitalizedObjectNameSingulars = objectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
@@ -44,7 +47,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   const limitPerMetadataItemArray = capitalizedObjectNameSingulars
     .map(
       (capitalizedObjectNameSingular) =>
-        `$limit${capitalizedObjectNameSingular}: Float = 5`,
+        `$limit${capitalizedObjectNameSingular}: Float`,
     )
     .join(', ');
 
@@ -69,7 +72,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             )}){
           edges {
             node ${mapObjectMetadataToGraphQLQuery({
-              objectMetadataItems,
+              objectMetadataItems: allObjectMetadataItems,
               objectMetadataItem,
               depth,
             })}
@@ -80,6 +83,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             startCursor
             endCursor
           }
+          totalCount
         }`,
         )
         .join('\n')}

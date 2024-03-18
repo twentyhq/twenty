@@ -82,7 +82,7 @@ export const RecordTableWithWrappers = ({
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
-  const objectLabel = foundObjectMetadataItem?.nameSingular;
+  const objectLabel = foundObjectMetadataItem?.labelSingular;
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>

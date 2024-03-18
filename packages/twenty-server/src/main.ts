@@ -10,9 +10,9 @@ import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
-import { settings } from './constants/settings';
-import { LoggerService } from './integrations/logger/logger.service';
-import { EnvironmentService } from './integrations/environment/environment.service';
+import { settings } from './engine/constants/settings';
+import { LoggerService } from './engine/integrations/logger/logger.service';
+import { EnvironmentService } from './engine/integrations/environment/environment.service';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -53,7 +53,7 @@ const bootstrap = async () => {
     }),
   );
 
-  await app.listen(app.get(EnvironmentService).getPort());
+  await app.listen(app.get(EnvironmentService).get('PORT'));
 };
 
 bootstrap();

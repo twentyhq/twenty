@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { billingState } from '@/client-config/states/billingState.ts';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -35,7 +37,7 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
-  const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
+  const billing = useRecoilValue(billingState());
 
   return (
     <>
@@ -88,12 +90,13 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
-        <SettingsNavigationDrawerItem
-          label="Billing"
-          path={SettingsPath.Billing}
-          Icon={IconCurrencyDollar}
-          soon={!isSelfBillingEnabled}
-        />
+        {billing?.isBillingEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Billing"
+            path={SettingsPath.Billing}
+            Icon={IconCurrencyDollar}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Data model"
           path={SettingsPath.Objects}

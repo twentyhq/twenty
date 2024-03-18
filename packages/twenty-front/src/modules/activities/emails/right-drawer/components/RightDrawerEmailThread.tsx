@@ -1,11 +1,14 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import { useRecoilCallback } from 'recoil';
 
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
+import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/state/lastViewableEmailThreadIdState';
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -20,6 +23,22 @@ const StyledContainer = styled.div`
 export const RightDrawerEmailThread = () => {
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
+
+  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
+    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  );
+
+  useRegisterClickOutsideListenerCallback({
+    callbackId:
+      'EmailThreadClickOutsideCallBack-' + thread.id ?? 'no-thread-id',
+    callbackFunction: useRecoilCallback(
+      ({ set }) =>
+        () => {
+          set(emailThreadIdWhenEmailThreadWasClosedState(), thread.id);
+        },
+      [thread],
+    ),
+  });
 
   if (!thread) {
     return null;
