@@ -11,7 +11,7 @@ const configService = new ConfigService();
 export const connectionSource = new DataSource({
   type: 'postgres',
   logging: false,
-  url: configService.get<string>('PG_DATABASE_URL'),
+  url: configService.get('PG_DATABASE_URL'),
 });
 
 export const camelToSnakeCase = (str) =>

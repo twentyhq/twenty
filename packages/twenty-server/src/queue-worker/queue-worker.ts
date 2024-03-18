@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 
 import {
   MessageQueueJob,
@@ -19,8 +20,10 @@ async function bootstrap() {
   let loggerService: LoggerService | undefined;
 
   try {
+    const configService = new ConfigService();
+
     const app = await NestFactory.createApplicationContext(QueueWorkerModule, {
-      bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
+      bufferLogs: configService.get('LOGGER_IS_BUFFER_ENABLED') === 'true',
     });
 
     loggerService = app.get(LoggerService);
