@@ -6,7 +6,7 @@ import axios, { AxiosInstance } from 'axios';
 
 import { CompanyRepository } from 'src/modules/company/repositories/company/company.repository';
 import { getCompanyNameFromDomainName } from 'src/modules/messaging/utils/get-company-name-from-domain-name.util';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 @Injectable()
 export class CreateCompanyService {

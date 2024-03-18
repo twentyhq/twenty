@@ -9,7 +9,7 @@ import {
   GoogleCalendarFullSyncJobData,
   GoogleCalendarFullSyncJob,
 } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 
 interface GoogleCalendarFullSyncOptions {

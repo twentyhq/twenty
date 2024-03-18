@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { GmailFullSyncCommand } from 'src/modules/messaging/commands/gmail-full-sync.command';
 import { GmailPartialSyncCommand } from 'src/modules/messaging/commands/gmail-partial-sync.command';

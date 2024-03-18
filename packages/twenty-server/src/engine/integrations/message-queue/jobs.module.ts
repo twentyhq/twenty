@@ -40,6 +40,10 @@ import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Module({
   imports: [
@@ -65,6 +69,11 @@ import { MessageParticipantModule } from 'src/modules/messaging/services/message
     GmailFullSyncModule,
     GmailPartialSyncModule,
     MessageParticipantModule,
+    ObjectMetadataRepositoryModule.forFeature([
+      ConnectedAccountObjectMetadata,
+      MessageParticipantObjectMetadata,
+      MessageChannelObjectMetadata,
+    ]),
   ],
   providers: [
     {

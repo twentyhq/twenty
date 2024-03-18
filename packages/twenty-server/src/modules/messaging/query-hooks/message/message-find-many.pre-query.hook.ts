@@ -14,7 +14,7 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel/message-channel.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account/connected-account.repository';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';

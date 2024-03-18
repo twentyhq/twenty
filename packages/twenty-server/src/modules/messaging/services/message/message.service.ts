@@ -4,7 +4,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.repository';

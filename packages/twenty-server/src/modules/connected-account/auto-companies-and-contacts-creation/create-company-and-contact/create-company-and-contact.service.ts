@@ -12,7 +12,7 @@ import { WorkspaceMemberRepository } from 'src/modules/workspace-member/reposito
 import { getUniqueParticipantsAndHandles } from 'src/modules/messaging/utils/get-unique-participants-and-handles.util';
 import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/modules/messaging/utils/filter-out-participants-from-company-or-workspace.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
