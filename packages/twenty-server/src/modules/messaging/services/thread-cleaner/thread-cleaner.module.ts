@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
-import { MessageThreadModule } from 'src/modules/messaging/repositories/message-thread/message-thread.module';
-import { MessageModule } from 'src/modules/messaging/repositories/message/message.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ThreadCleanerService } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.service';
+import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
+import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 
 @Module({
   imports: [
-    DataSourceModule,
-    TypeORMModule,
-    MessageThreadModule,
-    MessageModule,
+    ObjectMetadataRepositoryModule.forFeature([
+      MessageObjectMetadata,
+      MessageThreadObjectMetadata,
+    ]),
   ],
   providers: [ThreadCleanerService],
   exports: [ThreadCleanerService],

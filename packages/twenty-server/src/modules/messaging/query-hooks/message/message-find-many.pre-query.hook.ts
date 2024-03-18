@@ -10,18 +10,29 @@ import { groupBy } from 'lodash';
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { MessageChannelMessageAssociationService } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
-import { MessageChannelService } from 'src/modules/messaging/repositories/message-channel/message-channel.service';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
-import { WorkspaceMemberService } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.service';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
 export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
   constructor(
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationService,
-    private readonly messageChannelService: MessageChannelService,
-    private readonly connectedAccountService: ConnectedAccountService,
-    private readonly workspaceMemberService: WorkspaceMemberService,
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
+    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    private readonly messageChannelService: MessageChannelRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
   async execute(
@@ -75,7 +86,7 @@ export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
       await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
 
     const messageChannelsConnectedAccounts =
-      await this.connectedAccountService.getByIds(
+      await this.connectedAccountRepository.getByIds(
         messageChannels.map((channel) => channel.connectedAccountId),
         workspaceId,
       );

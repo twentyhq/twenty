@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { GoogleAPIsRefreshAccessTokenService } from 'src/modules/connected-account/services/google-apis-refresh-access-token.service';
-import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
+import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
 
 export type GmailPartialSyncJobData = {
   workspaceId: string;
@@ -17,7 +17,7 @@ export class GmailPartialSyncJob
   private readonly logger = new Logger(GmailPartialSyncJob.name);
 
   constructor(
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIsRefreshAccessTokenService,
+    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly gmailPartialSyncService: GmailPartialSyncService,
   ) {}
 
