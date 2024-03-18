@@ -58,7 +58,7 @@ export const WithSearch: Story = {
 
     await sleep(100);
 
-    const searchedIcon = canvas.getByRole('button', {
+    const searchedIcon = await canvas.findByRole('button', {
       name: 'Icon Building Skyscraper',
     });
 
@@ -81,7 +81,7 @@ export const WithSearchAndClose: Story = {
 
     await sleep(100);
 
-    const searchedIcon = canvas.getByRole('button', {
+    const searchedIcon = await canvas.findByRole('button', {
       name: 'Icon Building Skyscraper',
     });
 
