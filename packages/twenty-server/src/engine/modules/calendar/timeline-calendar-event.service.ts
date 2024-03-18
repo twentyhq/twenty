@@ -6,8 +6,20 @@ import { TIMELINE_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/c
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
 import { TimelineCalendarEvent } from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dtos/timeline-calendar-events-with-total.dto';
+import { maxVisibility } from 'src/engine/modules/calendar/utils/max-visibility.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 
+type TimelineCalendarEventAttendeeWithPersonInformation =
+  ObjectRecord<CalendarEventAttendeeObjectMetadata> & {
+    personFirstName: string;
+    personLastName: string;
+    personAvatarUrl: string;
+    workspaceMemberFirstName: string;
+    workspaceMemberLastName: string;
+    workspaceMemberAvatarUrl: string;
+  };
 @Injectable()
 export class TimelineCalendarEventService {
   constructor(
@@ -29,14 +41,21 @@ export class TimelineCalendarEventService {
     const calendarEvents: Omit<TimelineCalendarEvent, 'attendees'>[] =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT
-      "calendarEvent".*,
-      FROM ${dataSourceSchema}."calendarEvent" "calendarEvent"
-      INNER JOIN ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee" ON "calendarEvent".id = "calendarEventAttendee"."calendarEventId"
-      WHERE "calendarEventAttendee"."personId" IN ANY($1)
-      GROUP BY "calendarEvent".id,
-      ORDER BY "calendarEvent"."startDateTime" DESC
-      LIMIT $2
-      OFFSET $3`,
+            "calendarEvent".*,
+            FROM
+                ${dataSourceSchema}."calendarEvent" "calendarEvent"
+            LEFT JOIN
+                ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee" ON "calendarEvent".id = "calendarEventAttendee"."calendarEventId"
+            LEFT JOIN
+                ${dataSourceSchema}."person" "person" ON "calendarEventAttendee"."personId" = "person".id
+            WHERE
+                "calendarEventAttendee"."personId" IN ANY($1)
+            GROUP BY
+                "calendarEvent".id,
+            ORDER BY
+                "calendarEvent"."startDateTime" DESC
+            LIMIT $2
+            OFFSET $3`,
         [personIds, pageSize, offset],
         workspaceId,
       );
@@ -48,18 +67,56 @@ export class TimelineCalendarEventService {
       };
     }
 
-    const calendarEventAttendees: TimelineCalendarEventAttendee[] =
+    const calendarEventAttendees: TimelineCalendarEventAttendeeWithPersonInformation[] =
       await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT *
-      FROM ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
-      WHERE "calendarEventAttendee"."calendarEventId" IN ANY($1)`,
+        `SELECT
+            "calendarEventAttendee".*,
+            "person"."nameFirstName" as "personFirstName",
+            "person"."nameLastName" as "personLastName",
+            "person"."avatarUrl" as "personAvatarUrl",
+            "workspaceMember"."nameFirstName" as "workspaceMemberFirstName",
+            "workspaceMember"."nameLastName" as "workspaceMemberLastName",
+            "workspaceMember"."avatarUrl" as "workspaceMemberAvatarUrl",
+        FROM
+            ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
+        LEFT JOIN
+            ${dataSourceSchema}."person" "person" ON "calendarEventAttendee"."personId" = "person".id
+        LEFT JOIN
+            ${dataSourceSchema}."workspaceMember" "workspaceMember" ON "calendarEventAttendee"."workspaceMemberId" = "workspaceMember".id
+        WHERE
+            "calendarEventAttendee"."calendarEventId" IN ANY($1)`,
         [calendarEvents.map((event) => event.id)],
         workspaceId,
       );
 
+    const formattedCalendarEventAttendees: TimelineCalendarEventAttendee[] =
+      calendarEventAttendees.map((attendee) => {
+        const firstName =
+          attendee.personFirstName || attendee.workspaceMemberFirstName || '';
+
+        const lastName =
+          attendee.personLastName || attendee.workspaceMemberLastName || '';
+
+        const displayName =
+          firstName || attendee.displayName || attendee.handle;
+
+        const avatarUrl =
+          attendee.personAvatarUrl || attendee.workspaceMemberAvatarUrl || '';
+
+        return {
+          personId: attendee.personId,
+          workspaceMemberId: attendee.workspaceMemberId,
+          firstName,
+          lastName,
+          displayName,
+          avatarUrl,
+          handle: attendee.handle,
+        };
+      });
+
     const calendarEventAttendeesByEventId: {
       [calendarEventId: string]: TimelineCalendarEventAttendee[];
-    } = groupBy(calendarEventAttendees, 'calendarEventId');
+    } = groupBy(formattedCalendarEventAttendees, 'calendarEventId');
 
     const totalNumberOfCalendarEvents: { count: number }[] =
       await this.workspaceDataSourceService.executeRawQuery(
@@ -84,7 +141,7 @@ export class TimelineCalendarEventService {
     const calendarEventVisibility:
       | {
           calendarEventId: string;
-          visibility: 'metadata' | 'subject' | 'share_everything';
+          visibility: 'METADATA' | 'SHARE_EVERYTHING';
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
@@ -102,23 +159,35 @@ export class TimelineCalendarEventService {
       workspaceId,
     );
 
-    if (calendarEventVisibility) {
-      timelineCalendarEvents.forEach((event) => {
-        const visibility = calendarEventVisibility.find(
-          (visibility) => visibility.calendarEventId === event.id,
+    if (!calendarEventVisibility) {
+      throw new Error('Failed to fetch calendar event visibility');
+    }
+
+    const calendarEventVisibilityByEventId: {
+      [calendarEventId: string]: string;
+    } = calendarEventVisibility.reduce(
+      (acc, { calendarEventId, visibility }) => {
+        acc[calendarEventId] = maxVisibility(
+          acc[calendarEventId] || 'METADATA',
+          visibility,
         );
 
-        if (!visibility) {
-          return;
-        }
+        return acc;
+      },
+      {},
+    );
 
-        event.visibility = visibility.visibility;
+    timelineCalendarEvents.forEach((event) => {
+      event.visibility = calendarEventVisibilityByEventId[event.id];
 
-        if (visibility.visibility === 'metadata') {
-          event.title = null;
-        }
-      });
-    }
+      if (event.visibility === 'METADATA') {
+        event.title = null;
+        event.description = null;
+        event.location = null;
+        event.conferenceSolution = null;
+        event.conferenceUri = null;
+      }
+    });
 
     return {
       totalNumberOfCalendarEvents: totalNumberOfCalendarEvents[0].count,
