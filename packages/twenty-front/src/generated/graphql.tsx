@@ -61,7 +61,7 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
-  billingUrl: Scalars['String'];
+  billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
 };
 
@@ -492,6 +492,23 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
+
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -656,6 +673,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -716,6 +734,7 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
@@ -937,7 +956,7 @@ export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -972,7 +991,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1947,6 +1966,7 @@ export const GetCurrentUserDocument = gql`
         value
         workspaceId
       }
+      currentCacheVersion
       currentBillingSubscription {
         status
       }
