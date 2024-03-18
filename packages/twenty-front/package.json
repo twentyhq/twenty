@@ -18,7 +18,7 @@
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "jest",
-    "test-watch": "jest src/modules/activities/calendar/hooks/__tests__/useCalendarEvents.test.tsx --watch",
+    "test-watch": "jest --watch",
     "tsup": "tsup",
     "coverage": "jest --coverage",
     "storybook:modules:dev": "STORYBOOK_SCOPE=modules yarn storybook:dev",
