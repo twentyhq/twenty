@@ -23,7 +23,7 @@ export class MessagingWorkspaceMemberListener {
   async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>,
   ) {
-    if (payload.createdRecord.userEmail === null) {
+    if (payload.details.after.userEmail === null) {
       return;
     }
 
@@ -31,8 +31,8 @@ export class MessagingWorkspaceMemberListener {
       MatchMessageParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        email: payload.createdRecord.userEmail,
-        workspaceMemberId: payload.createdRecord.id,
+        email: payload.details.after.userEmail,
+        workspaceMemberId: payload.details.after.id,
       },
     );
   }
@@ -43,16 +43,16 @@ export class MessagingWorkspaceMemberListener {
   ) {
     if (
       objectRecordUpdateEventChangedProperties(
-        payload.previousRecord,
-        payload.updatedRecord,
+        payload.details.before,
+        payload.details.after,
       ).includes('userEmail')
     ) {
       await this.messageQueueService.add<MatchMessageParticipantsJobData>(
         MatchMessageParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: payload.updatedRecord.userEmail,
-          workspaceMemberId: payload.updatedRecord.id,
+          email: payload.details.after.userEmail,
+          workspaceMemberId: payload.recordId,
         },
       );
     }

@@ -9,6 +9,8 @@ import { AuthModule } from 'src/engine/modules/auth/auth.module';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
+import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
+
 @Module({
   imports: [
     AuthModule,
@@ -20,6 +22,7 @@ import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
     WorkspaceQueryRunnerService,
     ...workspaceQueryRunnerFactories,
     RecordPositionListener,
+    EntityEventsToDbListener,
   ],
   exports: [WorkspaceQueryRunnerService],
 })

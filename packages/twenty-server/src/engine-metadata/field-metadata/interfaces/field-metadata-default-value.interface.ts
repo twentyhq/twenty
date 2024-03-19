@@ -3,6 +3,7 @@ import {
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueJson,
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
@@ -50,6 +51,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
+  [FieldMetadataType.JSON]: FieldMetadataDefaultValueJson;
 };
 
 type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [

@@ -1,7 +1,9 @@
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 
-export class ObjectRecordUpdateEvent<T extends BaseObjectMetadata> {
-  workspaceId: string;
-  previousRecord: T;
-  updatedRecord: T;
+export class ObjectRecordUpdateEvent<T> extends ObjectRecordBaseEvent {
+  operation = 'updated';
+  details: {
+    before: T;
+    after: T;
+  };
 }

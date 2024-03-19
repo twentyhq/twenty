@@ -24,16 +24,16 @@ export class MessagingMessageChannelListener {
   ) {
     if (
       objectRecordChangedProperties(
-        payload.previousRecord,
-        payload.updatedRecord,
+        payload.details.before,
+        payload.details.after,
       ).includes('isContactAutoCreationEnabled') &&
-      payload.updatedRecord.isContactAutoCreationEnabled
+      payload.details.after.isContactAutoCreationEnabled
     ) {
       this.messageQueueService.add<CreateCompaniesAndContactsAfterSyncJobData>(
         CreateCompaniesAndContactsAfterSyncJob.name,
         {
           workspaceId: payload.workspaceId,
-          messageChannelId: payload.updatedRecord.id,
+          messageChannelId: payload.recordId,
         },
       );
     }

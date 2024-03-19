@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql, HttpResponse } from 'msw';
 
-import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
+import { CREATE_EVENT } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -34,7 +34,7 @@ export const graphqlMocks = {
     graphql.mutation(getOperationName(CREATE_EVENT) ?? '', () => {
       return HttpResponse.json({
         data: {
-          createEvent: { success: 1, __typename: 'Event' },
+          track: { success: 1, __typename: 'Event' },
         },
       });
     }),
