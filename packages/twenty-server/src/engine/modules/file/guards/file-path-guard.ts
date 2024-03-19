@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
@@ -34,6 +40,13 @@ export class FilePathGuard implements CanActivate {
       return true;
     }
 
-    return new Date(expirationDate) < new Date();
+    if (new Date(expirationDate) < new Date()) {
+      throw new HttpException(
+        'This url has expired. Please reload twenty page and open file again.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    return false;
   }
 }
