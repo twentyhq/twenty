@@ -106,12 +106,12 @@ export class StripeService {
     await this.stripe.invoices.pay(latestInvoice.id);
   }
 
-  async updateBillingSubscription(
-    stripeSubscriptionId: string,
-    newItems: { id: string; price: string }[],
+  async updateBillingSubscriptionItem(
+    stripeSubscriptionItemId: string,
+    stripePriceId: string,
   ) {
-    await this.stripe.subscriptions.update(stripeSubscriptionId, {
-      items: newItems,
+    await this.stripe.subscriptionItems.update(stripeSubscriptionItemId, {
+      price: stripePriceId,
     });
   }
 }

@@ -155,9 +155,6 @@ export class BillingService {
   }
 
   async updateBillingSubscription(user: User): Promise<boolean> {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId: user.defaultWorkspaceId,
-    });
     const billingSubscriptionItem = await this.getBillingSubscriptionItem(
       user.defaultWorkspaceId,
     );
@@ -172,16 +169,9 @@ export class BillingService {
       (price) => price.recurringInterval === 'year',
     )?.[0]?.stripePriceId;
 
-    const newItems = [
-      {
-        id: billingSubscriptionItem.stripeSubscriptionItemId,
-        price: stripePriceId,
-      },
-    ];
-
-    await this.stripeService.updateBillingSubscription(
-      billingSubscription?.stripeSubscriptionId,
-      newItems,
+    await this.stripeService.updateBillingSubscriptionItem(
+      billingSubscriptionItem.stripeSubscriptionItemId,
+      stripePriceId,
     );
 
     return true;
