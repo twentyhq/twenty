@@ -17,10 +17,10 @@ export class TimelineCalendarEvent {
   isFullDay: boolean;
 
   @Field()
-  startsAt: string;
+  startsAt: Date;
 
   @Field()
-  endsAt: string;
+  endsAt: Date;
 
   @Field()
   description: string;

@@ -584,12 +584,12 @@ export type TimelineCalendarEvent = {
   conferenceSolution: Scalars['String'];
   conferenceUri: Scalars['String'];
   description: Scalars['String'];
-  endsAt: Scalars['String'];
+  endsAt: Scalars['DateTime'];
   id: Scalars['ID'];
   isCanceled: Scalars['Boolean'];
   isFullDay: Scalars['Boolean'];
   location: Scalars['String'];
-  startsAt: Scalars['String'];
+  startsAt: Scalars['DateTime'];
   title: Scalars['String'];
   visibility: Scalars['String'];
 };
