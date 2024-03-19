@@ -7,13 +7,15 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import {
   GmailPartialSyncJobData,
   GmailPartialSyncJob,
 } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 
 @Injectable()
 export class FetchAllWorkspacesMessagesJob
@@ -28,7 +30,8 @@ export class FetchAllWorkspacesMessagesJob
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async handle(): Promise<void> {
@@ -59,7 +62,7 @@ export class FetchAllWorkspacesMessagesJob
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     try {
       const connectedAccounts =
-        await this.connectedAccountService.getAll(workspaceId);
+        await this.connectedAccountRepository.getAll(workspaceId);
 
       for (const connectedAccount of connectedAccounts) {
         await this.messageQueueService.add<GmailPartialSyncJobData>(

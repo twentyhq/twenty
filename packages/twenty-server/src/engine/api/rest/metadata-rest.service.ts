@@ -7,6 +7,7 @@ import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
 import { parseMetadataPath } from 'src/engine/api/rest/api-rest-query-builder/utils/parse-path.utils';
 import { capitalize } from 'src/utils/capitalize';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class ApiRestMetadataService {
@@ -18,7 +19,10 @@ export class ApiRestMetadataService {
   ) {}
 
   async callMetadata(request, data: ApiRestQuery) {
-    const baseUrl = this.environmentService.getBaseUrl(request);
+    const baseUrl = getServerUrl(
+      request,
+      this.environmentService.get('SERVER_URL'),
+    );
 
     try {
       return await this.httpService.axiosRef.post(`${baseUrl}/metadata`, data, {

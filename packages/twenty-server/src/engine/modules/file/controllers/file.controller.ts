@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 
+import { FilePathGuard } from 'src/engine/modules/file/guards/file-path-guard';
 import {
   checkFilePath,
   checkFilename,
@@ -10,6 +11,7 @@ import { FileService } from 'src/engine/modules/file/services/file.service';
 
 // TODO: Add cookie authentication
 @Controller('files')
+@UseGuards(FilePathGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 

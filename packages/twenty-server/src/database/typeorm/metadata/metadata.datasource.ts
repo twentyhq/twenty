@@ -7,7 +7,7 @@ config();
 const configService = new ConfigService();
 
 export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
-  url: configService.get<string>('PG_DATABASE_URL'),
+  url: configService.get('PG_DATABASE_URL'),
   type: 'postgres',
   logging: ['error'],
   schema: 'metadata',

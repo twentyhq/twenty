@@ -7,19 +7,24 @@ import { Participant } from 'src/modules/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/modules/messaging/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { CreateContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-contact/create-contact.service';
-import { PersonService } from 'src/modules/person/repositories/person/person.service';
-import { WorkspaceMemberService } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.service';
+import { PersonRepository } from 'src/modules/person/repositories/person.repository';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { getUniqueParticipantsAndHandles } from 'src/modules/messaging/utils/get-unique-participants-and-handles.util';
 import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/modules/messaging/utils/filter-out-participants-from-company-or-workspace.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
 export class CreateCompanyAndContactService {
   constructor(
-    private readonly personService: PersonService,
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    private readonly workspaceMemberService: WorkspaceMemberService,
+    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    private readonly personRepository: PersonRepository,
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
   async createCompaniesAndContacts(
@@ -36,7 +41,7 @@ export class CreateCompanyAndContactService {
     const isContactAutoCreationForNonWorkEmailsEnabled = false;
 
     const workspaceMembers =
-      await this.workspaceMemberService.getAllByWorkspaceId(
+      await this.workspaceMemberRepository.getAllByWorkspaceId(
         workspaceId,
         transactionManager,
       );
@@ -55,7 +60,7 @@ export class CreateCompanyAndContactService {
       return;
     }
 
-    const alreadyCreatedContacts = await this.personService.getByEmails(
+    const alreadyCreatedContacts = await this.personRepository.getByEmails(
       uniqueHandles,
       workspaceId,
     );
