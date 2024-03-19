@@ -44,6 +44,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 
 @Module({
   imports: [
@@ -129,6 +130,10 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
+    },
+    {
+      provide: CreateCompanyAndContactJob.name,
+      useClass: CreateCompanyAndContactJob,
     },
   ],
 })
