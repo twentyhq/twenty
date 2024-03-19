@@ -11,16 +11,14 @@ export const ObjectMetadataItemsProvider = ({
 }: React.PropsWithChildren) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
-  const shouldDisplayChildren = () => {
-    if (objectMetadataItems.length > 0) {
-      return true;
-    }
-    return !currentWorkspaceMember;
-  };
+
+  const shouldDisplayChildren =
+    objectMetadataItems.length > 0 || !currentWorkspaceMember;
+
   return (
     <>
       <ObjectMetadataItemsLoadEffect />
-      {shouldDisplayChildren() && (
+      {shouldDisplayChildren && (
         <RelationPickerScope relationPickerScopeId="relation-picker">
           {children}
         </RelationPickerScope>

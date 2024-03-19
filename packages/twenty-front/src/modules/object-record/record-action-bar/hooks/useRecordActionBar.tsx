@@ -6,9 +6,11 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   IconClick,
+  IconFileExport,
   IconHeart,
   IconHeartOff,
   IconMail,
@@ -94,16 +96,29 @@ export const useRecordActionBar = ({
     );
   }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
+  const { progress, download } = useExportTableData({
+    delayMs: 100,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    recordIndexId: objectMetadataItem.namePlural,
+  });
+
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: 'Delete',
+        label: `Delete (${selectedRecordIds.length})`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => handleDeleteClick(),
       },
+      {
+        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        Icon: IconFileExport,
+        accent: 'default',
+        onClick: () => download(),
+      },
     ],
-    [handleDeleteClick],
+    [handleDeleteClick, download, progress, selectedRecordIds],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(

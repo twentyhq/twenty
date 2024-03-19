@@ -108,6 +108,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
             handleMultipleOptionSelectChange(option, selected)
           }
           text={option.label}
+          color={option.color}
           className=""
         />
       ))}

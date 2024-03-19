@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
 
 import * as Sentry from '@sentry/node';
 import { graphqlUploadExpress } from 'graphql-upload';
@@ -10,14 +11,16 @@ import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
-import { settings } from './constants/settings';
-import { LoggerService } from './integrations/logger/logger.service';
-import { EnvironmentService } from './integrations/environment/environment.service';
+import { settings } from './engine/constants/settings';
+import { LoggerService } from './engine/integrations/logger/logger.service';
+import { EnvironmentService } from './engine/integrations/environment/environment.service';
 
 const bootstrap = async () => {
+  const environmentService = new EnvironmentService(new ConfigService());
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
-    bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
+    bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
     rawBody: true,
   });
   const logger = app.get(LoggerService);
@@ -53,7 +56,7 @@ const bootstrap = async () => {
     }),
   );
 
-  await app.listen(app.get(EnvironmentService).getPort());
+  await app.listen(app.get(EnvironmentService).get('PORT'));
 };
 
 bootstrap();

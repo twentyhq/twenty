@@ -1,5 +1,6 @@
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
+import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { sortAsc } from '~/utils/sort';
 
 export const sortCalendarEventsAsc = (
@@ -7,18 +8,16 @@ export const sortCalendarEventsAsc = (
   calendarEventB: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'>,
 ) => {
   const startsAtSort = sortAsc(
-    calendarEventA.startsAt.getTime(),
-    calendarEventB.startsAt.getTime(),
+    getCalendarEventStartDate(calendarEventA).getTime(),
+    getCalendarEventStartDate(calendarEventB).getTime(),
   );
 
-  if (startsAtSort === 0) {
-    const endsAtA = getCalendarEventEndDate(calendarEventA);
-    const endsAtB = getCalendarEventEndDate(calendarEventB);
+  if (startsAtSort !== 0) return startsAtSort;
 
-    return sortAsc(endsAtA.getTime(), endsAtB.getTime());
-  }
-
-  return startsAtSort;
+  return sortAsc(
+    getCalendarEventEndDate(calendarEventA).getTime(),
+    getCalendarEventEndDate(calendarEventB).getTime(),
+  );
 };
 
 export const sortCalendarEventsDesc = (

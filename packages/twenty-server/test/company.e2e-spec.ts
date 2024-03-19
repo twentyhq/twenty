@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 
 import request from 'supertest';
 
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 
 import { createApp } from './utils/create-app';
 

@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
+import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
 
 const tableName = 'featureFlag';
 
@@ -22,6 +22,11 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKeys.IsBlocklistEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsEventObjectEnabled,
         workspaceId: workspaceId,
         value: true,
       },
