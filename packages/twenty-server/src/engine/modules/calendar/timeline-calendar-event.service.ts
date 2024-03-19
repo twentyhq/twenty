@@ -6,7 +6,6 @@ import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/c
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
 import { TimelineCalendarEvent } from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dtos/timeline-calendar-events-with-total.dto';
-import { maxVisibility } from 'src/engine/modules/calendar/utils/max-visibility.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
@@ -142,47 +141,65 @@ export class TimelineCalendarEventService {
       };
     });
 
-    const calendarEventVisibility:
+    const calendarEventIdsWithWorkspaceMemberInAttendees =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `
+      SELECT
+          "calendarEventId"
+      FROM
+          ${dataSourceSchema}."calendarEventAttendee" "calendarEventAttendee"
+      WHERE
+          "calendarEventAttendee"."workspaceMemberId" = $1
+      `,
+        [workspaceMemberId],
+        workspaceId,
+      );
+
+    const calendarEventIdsWithWorkspaceMemberInAttendeesFormatted =
+      calendarEventIdsWithWorkspaceMemberInAttendees.map(
+        (event: { calendarEventId: string }) => event.calendarEventId,
+      );
+
+    const calendarEventIdsToFetchVisibilityFor = timelineCalendarEvents
+      .filter(
+        (event) =>
+          !calendarEventIdsWithWorkspaceMemberInAttendeesFormatted.includes(
+            event.id,
+          ),
+      )
+      .map((event) => event.id);
+
+    const calendarEventIdsForWhichVisibilityIsMetadata:
       | {
-          calendarEventId: string;
-          visibility: 'METADATA' | 'SHARE_EVERYTHING';
+          id: string;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
       SELECT
-          "calendarChannelEventAssociation"."calendarEventId",
-          "calendarChannel"."visibility"
+          "calendarChannelEventAssociation"."calendarEventId" AS "id"
       FROM
           ${dataSourceSchema}."calendarChannel" "calendarChannel"
       LEFT JOIN
           ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation" ON "calendarChannel".id = "calendarChannelEventAssociation"."calendarChannelId"
       WHERE
           "calendarChannelEventAssociation"."calendarEventId" = ANY($1)
+      AND
+          "calendarChannel"."visibility" = 'METADATA'
       `,
-      [timelineCalendarEvents.map((event) => event.id)],
+      [calendarEventIdsToFetchVisibilityFor],
       workspaceId,
     );
 
-    if (!calendarEventVisibility) {
+    if (!calendarEventIdsForWhichVisibilityIsMetadata) {
       throw new Error('Failed to fetch calendar event visibility');
     }
 
-    const calendarEventVisibilityByEventId: {
-      [calendarEventId: string]: string;
-    } = calendarEventVisibility.reduce(
-      (acc, { calendarEventId, visibility }) => {
-        acc[calendarEventId] = maxVisibility(
-          acc[calendarEventId] || 'METADATA',
-          visibility,
-        );
-
-        return acc;
-      },
-      {},
-    );
-
     timelineCalendarEvents.forEach((event) => {
-      event.visibility = calendarEventVisibilityByEventId[event.id];
+      event.visibility = calendarEventIdsForWhichVisibilityIsMetadata.some(
+        (calendarEvent) => calendarEvent.id === event.id,
+      )
+        ? 'METADATA'
+        : 'SHARE_EVERYTHING';
 
       if (event.visibility === 'METADATA') {
         event.title = '';
