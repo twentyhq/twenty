@@ -1,13 +1,13 @@
-import { Participant } from 'src/modules/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/modules/messaging/utils/get-domain-name-from-handle.util';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 
-export function filterOutParticipantsFromCompanyOrWorkspace(
-  participants: Participant[],
+export function filterOutContactsFromCompanyOrWorkspace(
+  contacts: Contacts,
   selfHandle: string,
   workspaceMembers: ObjectRecord<WorkspaceMemberObjectMetadata>[],
-): Participant[] {
+): Contacts {
   const selfDomainName = getDomainNameFromHandle(selfHandle);
 
   const workspaceMembersMap = workspaceMembers.reduce(
@@ -19,9 +19,9 @@ export function filterOutParticipantsFromCompanyOrWorkspace(
     new Map<string, boolean>(),
   );
 
-  return participants.filter(
-    (participant) =>
-      getDomainNameFromHandle(participant.handle) !== selfDomainName &&
-      !workspaceMembersMap[participant.handle],
+  return contacts.filter(
+    (contact) =>
+      getDomainNameFromHandle(contact.handle) !== selfDomainName &&
+      !workspaceMembersMap[contact.handle],
   );
 }

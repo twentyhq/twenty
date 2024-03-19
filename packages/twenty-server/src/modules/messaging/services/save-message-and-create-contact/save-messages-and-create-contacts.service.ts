@@ -88,48 +88,6 @@ export class SaveMessagesAndCreateContactsService {
           : [];
       });
 
-    // const contactsToCreate = messagesToSave
-    //   .filter((message) => connectedAccount.handle === message.fromHandle)
-    //   .flatMap((message) => message.participants);
-
-    // if (isContactAutoCreationEnabled) {
-    //   startTime = Date.now();
-
-    //   await workspaceDataSource?.transaction(
-    //     async (transactionManager: EntityManager) => {
-    //       await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-    //         connectedAccount.handle,
-    //         contactsToCreate,
-    //         workspaceId,
-    //         transactionManager,
-    //       );
-    //     },
-    //   );
-
-    //   const handles = participantsWithMessageId.map(
-    //     (participant) => participant.handle,
-    //   );
-
-    //   const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-    //     await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-    //       handles,
-    //       workspaceId,
-    //     );
-
-    //   await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-    //     messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-    //     workspaceId,
-    //   );
-
-    //   endTime = Date.now();
-
-    //   this.logger.log(
-    //     `${jobName} creating companies and contacts for workspace ${workspaceId} and account ${
-    //       connectedAccount.id
-    //     } in ${endTime - startTime}ms`,
-    //   );
-    // }
-
     startTime = Date.now();
 
     await this.tryToSaveMessageParticipantsOrDeleteMessagesIfError(

@@ -3,18 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import compact from 'lodash/compact';
 
-import { Participant } from 'src/modules/messaging/types/gmail-message';
 import { getDomainNameFromHandle } from 'src/modules/messaging/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { CreateContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-contact/create-contact.service';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { getUniqueParticipantsAndHandles } from 'src/modules/messaging/utils/get-unique-participants-and-handles.util';
-import { filterOutParticipantsFromCompanyOrWorkspace } from 'src/modules/messaging/utils/filter-out-participants-from-company-or-workspace.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
+import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
+import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -25,15 +29,19 @@ export class CreateCompanyAndContactService {
     private readonly personRepository: PersonRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
+    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
+    private readonly messageParticipantRepository: MessageParticipantRepository,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   async createCompaniesAndContacts(
     selfHandle: string,
-    participants: Participant[],
+    contactsToCreate: Contacts,
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    if (!participants || participants.length === 0) {
+    if (!contactsToCreate || contactsToCreate.length === 0) {
       return;
     }
 
@@ -46,15 +54,16 @@ export class CreateCompanyAndContactService {
         transactionManager,
       );
 
-    const participantsFromOtherCompanies =
-      filterOutParticipantsFromCompanyOrWorkspace(
-        participants,
+    const contactsToCreateFromOtherCompanies =
+      filterOutContactsFromCompanyOrWorkspace(
+        contactsToCreate,
         selfHandle,
         workspaceMembers,
       );
 
-    const { uniqueParticipants, uniqueHandles } =
-      getUniqueParticipantsAndHandles(participantsFromOtherCompanies);
+    const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
+      contactsToCreateFromOtherCompanies,
+    );
 
     if (uniqueHandles.length === 0) {
       return;
@@ -69,7 +78,7 @@ export class CreateCompanyAndContactService {
       ({ email }) => email,
     );
 
-    const filteredParticipants = uniqueParticipants.filter(
+    const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
         !alreadyCreatedContactEmails.includes(participant.handle) &&
         participant.handle.includes('@') &&
@@ -77,8 +86,8 @@ export class CreateCompanyAndContactService {
           isWorkEmail(participant.handle)),
     );
 
-    const filteredParticipantsWithCompanyDomainNames =
-      filteredParticipants?.map((participant) => ({
+    const filteredContactsToCreateWithCompanyDomainNames =
+      filteredContactsToCreate?.map((participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
         companyDomainName: isWorkEmail(participant.handle)
@@ -87,7 +96,7 @@ export class CreateCompanyAndContactService {
       }));
 
     const domainNamesToCreate = compact(
-      filteredParticipantsWithCompanyDomainNames.map(
+      filteredContactsToCreateWithCompanyDomainNames.map(
         (participant) => participant.companyDomainName,
       ),
     );
@@ -98,20 +107,54 @@ export class CreateCompanyAndContactService {
       transactionManager,
     );
 
-    const contactsToCreate = filteredParticipantsWithCompanyDomainNames.map(
-      (participant) => ({
+    const formattedContactsToCreate =
+      filteredContactsToCreateWithCompanyDomainNames.map((participant) => ({
         handle: participant.handle,
         displayName: participant.displayName,
         companyId:
           participant.companyDomainName &&
           companiesObject[participant.companyDomainName],
-      }),
-    );
+      }));
 
     await this.createContactService.createContacts(
-      contactsToCreate,
+      formattedContactsToCreate,
       workspaceId,
       transactionManager,
+    );
+  }
+
+  async createCompaniesAndContactsAndUpdateContactsToCreate(
+    selfHandle: string,
+    contactsToCreate: Contacts,
+    workspaceId: string,
+  ) {
+    const { dataSource: workspaceDataSource } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
+
+    await workspaceDataSource?.transaction(
+      async (transactionManager: EntityManager) => {
+        await this.createCompaniesAndContacts(
+          selfHandle,
+          contactsToCreate,
+          workspaceId,
+          transactionManager,
+        );
+      },
+    );
+
+    const handles = contactsToCreate.map((participant) => participant.handle);
+
+    const messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId =
+      await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+        handles,
+        workspaceId,
+      );
+
+    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+      messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId,
+      workspaceId,
     );
   }
 }

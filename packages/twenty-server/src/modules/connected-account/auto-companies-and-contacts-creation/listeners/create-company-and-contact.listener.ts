@@ -3,6 +3,10 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import {
+  CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+} from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 
 @Injectable()
 export class CreateCompanyAndContactListener {
@@ -19,6 +23,9 @@ export class CreateCompanyAndContactListener {
       handle: string;
     }[];
   }) {
-    console.log(payload);
+    this.messageQueueService.add<CreateCompanyAndContactJobData>(
+      CreateCompanyAndContactJob.name,
+      payload,
+    );
   }
 }

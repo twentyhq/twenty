@@ -6,6 +6,8 @@ import { CreateContactModule } from 'src/modules/connected-account/auto-companie
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
       PersonObjectMetadata,
       WorkspaceMemberObjectMetadata,
     ]),
+    MessageParticipantModule,
+    WorkspaceDataSourceModule,
   ],
   providers: [CreateCompanyAndContactService],
   exports: [CreateCompanyAndContactService],
