@@ -51,7 +51,7 @@ export class QueryResultGettersFactory {
           ms(fileTokenExpiresIn),
         );
 
-        const signedExpirationDate = await this.tokenService.encodePayload(
+        const signedPayload = await this.tokenService.encodePayload(
           {
             expiration_date: expirationDate,
             attachment_id: attachment.node.id,
@@ -61,7 +61,7 @@ export class QueryResultGettersFactory {
           },
         );
 
-        attachment.node.fullPath = `${attachment.node.fullPath}?token=${signedExpirationDate}`;
+        attachment.node.fullPath = `${attachment.node.fullPath}?token=${signedPayload}`;
 
         return attachment;
       }),
