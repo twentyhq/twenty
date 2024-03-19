@@ -5,11 +5,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspacePreQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.module';
 import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
 import { RecordPositionListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/record-position.listener';
+import { AuthModule } from 'src/engine/modules/auth/auth.module';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
 @Module({
   imports: [
+    AuthModule,
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
     WorkspacePreQueryHookModule,

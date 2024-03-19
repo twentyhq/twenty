@@ -19,7 +19,7 @@ import {
 } from 'src/engine/modules/auth/auth.util';
 import { User } from 'src/engine/modules/user/user.entity';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';

@@ -6,7 +6,7 @@ import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { SignUpService } from 'src/engine/modules/auth/services/sign-up.service';
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
 
 describe('SignUpService', () => {

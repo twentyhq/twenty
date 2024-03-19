@@ -13,7 +13,7 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.interface';
 
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
