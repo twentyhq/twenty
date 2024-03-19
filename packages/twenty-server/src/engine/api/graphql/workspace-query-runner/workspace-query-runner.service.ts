@@ -45,6 +45,7 @@ import { WorkspacePreQueryHookService } from 'src/engine/api/graphql/workspace-q
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { NotFoundError } from 'src/engine/filters/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -61,6 +62,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
+    private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
@@ -133,7 +135,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     const result = await this.execute(query, workspaceId);
-    const parsedResult = this.parseResult<IConnection<Record>>(
+    const parsedResult = await this.parseResult<IConnection<Record>>(
       result,
       objectMetadataItem,
       '',
@@ -174,7 +176,7 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-      const parsedResult = this.parseResult<Record<string, unknown>>(
+      const parsedResult = await this.parseResult<Record<string, unknown>>(
         existingRecordResult,
         objectMetadataItem,
         '',
@@ -227,10 +229,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'insertInto',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'insertInto',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -280,10 +284,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'update',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'update',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -316,10 +322,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'update',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'update',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -349,10 +357,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'deleteFrom',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'deleteFrom',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -382,10 +392,12 @@ export class WorkspaceQueryRunnerService {
     );
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'deleteFrom',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'deleteFrom',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -445,11 +457,11 @@ export class WorkspaceQueryRunnerService {
     return results;
   }
 
-  private parseResult<Result>(
+  private async parseResult<Result>(
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
-  ): Result {
+  ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
       objectMetadataItem,
     )}Collection`;
@@ -481,7 +493,12 @@ export class WorkspaceQueryRunnerService {
       throw error;
     }
 
-    return parseResult(result);
+    const resultWithGetters = await this.queryResultGettersFactory.create(
+      result,
+      objectMetadataItem,
+    );
+
+    return parseResult(resultWithGetters);
   }
 
   async executeAndParse<Result>(
