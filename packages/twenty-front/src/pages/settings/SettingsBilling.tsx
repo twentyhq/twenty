@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconCircleX } from '@tabler/icons-react';
+import { IconCalendarEvent, IconCircleX } from '@tabler/icons-react';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
@@ -16,7 +16,10 @@ import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
 import { Button } from '@/ui/input/button/components/Button.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section.tsx';
-import { useBillingPortalSessionQuery } from '~/generated/graphql.tsx';
+import {
+  useBillingPortalSessionQuery,
+  useUpdateBillingSubscriptionMutation,
+} from '~/generated/graphql.tsx';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledH1Title = styled(H1Title)`
@@ -30,6 +33,7 @@ const StyledInvisibleChat = styled.div`
 export const SettingsBilling = () => {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
+  const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -53,6 +57,11 @@ export const SettingsBilling = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       window.location.replace(data.billingPortalSession.url);
     }
+  };
+
+  const switchToYearly = async () => {
+    const data = await updateBillingSubscription();
+    console.log(data);
   };
 
   const redirectToSubscribePage = () => {
@@ -99,6 +108,18 @@ export const SettingsBilling = () => {
                 title="View billing details"
                 variant="secondary"
                 onClick={openBillingPortal}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Edit billing interval"
+                description="Switch from monthly to yearly"
+              />
+              <Button
+                Icon={IconCalendarEvent}
+                title="Switch to yearly"
+                variant="secondary"
+                onClick={switchToYearly}
                 disabled={billingPortalButtonDisabled}
               />
             </Section>

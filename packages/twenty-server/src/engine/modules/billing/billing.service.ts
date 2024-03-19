@@ -154,6 +154,39 @@ export class BillingService {
     return session.url;
   }
 
+  async updateBillingSubscription(user: User): Promise<boolean> {
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      workspaceId: user.defaultWorkspaceId,
+    });
+    const billingSubscriptionItem = await this.getBillingSubscriptionItem(
+      user.defaultWorkspaceId,
+    );
+    const stripeProductId = this.getProductStripeId(AvailableProduct.BasePlan);
+
+    if (!stripeProductId) {
+      return false;
+    }
+    const productPrices = await this.getProductPrices(stripeProductId);
+
+    const stripePriceId = productPrices.filter(
+      (price) => price.recurringInterval === 'year',
+    )?.[0]?.stripePriceId;
+
+    const newItems = [
+      {
+        id: billingSubscriptionItem.stripeSubscriptionItemId,
+        price: stripePriceId,
+      },
+    ];
+
+    await this.stripeService.updateBillingSubscription(
+      billingSubscription?.stripeSubscriptionId,
+      newItems,
+    );
+
+    return true;
+  }
+
   async computeCheckoutSessionURL(
     user: User,
     priceId: string,

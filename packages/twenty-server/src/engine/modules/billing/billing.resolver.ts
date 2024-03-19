@@ -14,6 +14,7 @@ import { User } from 'src/engine/modules/user/user.entity';
 import { CheckoutSessionInput } from 'src/engine/modules/billing/dto/checkout-session.input';
 import { SessionEntity } from 'src/engine/modules/billing/dto/session.entity';
 import { BillingSessionInput } from 'src/engine/modules/billing/dto/billing-session.input';
+import { UpdateBillingEntity } from 'src/engine/modules/billing/dto/UpdateBilling.entity';
 
 @Resolver()
 export class BillingResolver {
@@ -87,5 +88,15 @@ export class BillingResolver {
         successUrlPath,
       ),
     };
+  }
+
+  @Mutation(() => UpdateBillingEntity)
+  @UseGuards(JwtAuthGuard)
+  async updateBillingSubscription(@AuthUser() user: User) {
+    try {
+      return { success: this.billingService.updateBillingSubscription(user) };
+    } catch (e) {
+      return { success: false };
+    }
   }
 }
