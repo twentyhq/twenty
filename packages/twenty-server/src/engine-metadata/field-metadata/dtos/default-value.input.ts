@@ -2,6 +2,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsJSON,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
@@ -14,6 +15,12 @@ export class FieldMetadataDefaultValueString {
   @ValidateIf((_object, value) => value !== null)
   @IsString()
   value: string | null;
+}
+
+export class FieldMetadataDefaultValueJson {
+  @ValidateIf((_object, value) => value !== null)
+  @IsJSON()
+  value: JSON | null;
 }
 
 export class FieldMetadataDefaultValueNumber {

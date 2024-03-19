@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { telemetryState } from '@/client-config/states/telemetryState';
-import { useCreateEventMutation } from '~/generated/graphql';
+import { useTrackMutation } from '~/generated/graphql';
 
 interface EventLocation {
   pathname: string;
@@ -14,7 +14,7 @@ export interface EventData {
 
 export const useEventTracker = () => {
   const telemetry = useRecoilValue(telemetryState());
-  const [createEventMutation] = useCreateEventMutation();
+  const [createEventMutation] = useTrackMutation();
 
   return useCallback(
     (eventType: string, eventData: EventData) => {

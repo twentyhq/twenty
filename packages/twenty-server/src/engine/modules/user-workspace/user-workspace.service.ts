@@ -62,8 +62,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       new ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>();
 
     payload.workspaceId = workspaceId;
-    payload.createdRecord = new WorkspaceMemberObjectMetadata();
-    payload.createdRecord = workspaceMember[0];
+    payload.details = {
+      after: workspaceMember[0],
+    };
+    payload.recordId = workspaceMember[0].id;
 
     this.eventEmitter.emit('workspaceMember.created', payload);
   }

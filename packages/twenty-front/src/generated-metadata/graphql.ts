@@ -66,9 +66,31 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']['output']>;
-  billingUrl: Scalars['String']['output'];
+  billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
 };
+
+export type BillingSubscription = {
+  __typename?: 'BillingSubscription';
+  id: Scalars['ID']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type BillingSubscriptionFilter = {
+  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
+};
+
+export type BillingSubscriptionSort = {
+  direction: SortDirection;
+  field: BillingSubscriptionSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingSubscriptionSortFields {
+  Id = 'id'
+}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
@@ -241,6 +263,7 @@ export enum FieldMetadataType {
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
+  Json = 'JSON',
   Link = 'LINK',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
@@ -301,7 +324,6 @@ export type Mutation = {
   activateWorkspace: Workspace;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
-  createEvent: Analytics;
   createOneField: Field;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
@@ -318,6 +340,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  track: Analytics;
   updateOneField: Field;
   updateOneObject: Object;
   updatePasswordViaResetToken: InvalidatePassword;
@@ -344,12 +367,6 @@ export type MutationChallengeArgs = {
 export type MutationCheckoutSessionArgs = {
   recurringInterval: Scalars['String']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationCreateEventArgs = {
-  data: Scalars['JSON']['input'];
-  type: Scalars['String']['input'];
 };
 
 
@@ -418,6 +435,12 @@ export type MutationSignUpArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationTrackArgs = {
+  data: Scalars['JSON']['input'];
+  type: Scalars['String']['input'];
 };
 
 
@@ -631,6 +654,23 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
+
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']['output']>;
@@ -831,7 +871,9 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: Scalars['String']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
+  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
+  currentBillingSubscription?: Maybe<BillingSubscription>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;
@@ -841,6 +883,12 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']['output']>;
   subscriptionStatus: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+
+export type WorkspaceBillingSubscriptionsArgs = {
+  filter?: BillingSubscriptionFilter;
+  sorting?: Array<BillingSubscriptionSort>;
 };
 
 
@@ -886,6 +934,7 @@ export type Field = {
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime']['output'];

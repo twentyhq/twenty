@@ -44,6 +44,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
 
 @Module({
   imports: [
@@ -129,6 +130,10 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
+    },
+    {
+      provide: SaveEventToDbJob.name,
+      useClass: SaveEventToDbJob,
     },
   ],
 })

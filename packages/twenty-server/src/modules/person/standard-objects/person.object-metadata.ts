@@ -21,6 +21,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.person,
@@ -218,4 +219,23 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @IsSystem()
   calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: personStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the company',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @Gate({
+    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
+  })
+  @IsSystem()
+  events: EventObjectMetadata[];
 }
