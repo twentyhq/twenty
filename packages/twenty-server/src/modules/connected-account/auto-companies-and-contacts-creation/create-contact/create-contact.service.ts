@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { PersonService } from 'src/modules/person/repositories/person/person.service';
+import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/messaging/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
 type ContactToCreate = {
   handle: string;
@@ -22,7 +24,10 @@ type FormattedContactToCreate = {
 
 @Injectable()
 export class CreateContactService {
-  constructor(private readonly personService: PersonService) {}
+  constructor(
+    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    private readonly personRepository: PersonRepository,
+  ) {}
 
   public formatContacts(
     contactsToCreate: ContactToCreate[],
@@ -54,7 +59,7 @@ export class CreateContactService {
 
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    await this.personService.createPeople(
+    await this.personRepository.createPeople(
       formattedContacts,
       workspaceId,
       transactionManager,

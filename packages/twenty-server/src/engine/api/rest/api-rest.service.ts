@@ -8,6 +8,7 @@ import { ApiRestQueryBuilderFactory } from 'src/engine/api/rest/api-rest-query-b
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
 import { ApiRestResponse } from 'src/engine/api/rest/types/api-rest-response.type';
 import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class ApiRestService {
@@ -22,7 +23,10 @@ export class ApiRestService {
     request: Request,
     data: ApiRestQuery,
   ): Promise<ApiRestResponse> {
-    const baseUrl = this.environmentService.getBaseUrl(request);
+    const baseUrl = getServerUrl(
+      request,
+      this.environmentService.get('SERVER_URL'),
+    );
 
     try {
       return await this.httpService.axiosRef.post(`${baseUrl}/graphql`, data, {

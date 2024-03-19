@@ -361,7 +361,9 @@ export class TokenService {
   }
 
   computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.getFrontAuthCallbackUrl()}?loginToken=${loginToken}`;
+    return `${this.environmentService.get(
+      'FRONT_BASE_URL',
+    )}/verify?loginToken=${loginToken}`;
   }
 
   async verifyJwt(token: string, secret?: string) {

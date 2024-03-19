@@ -21,6 +21,7 @@ import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handle
 import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
+import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -35,17 +36,17 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  DEBUG_MODE: boolean;
+  DEBUG_MODE: boolean = false;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  SIGN_IN_PREFILLED: boolean;
+  SIGN_IN_PREFILLED: boolean = false;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_BILLING_ENABLED: boolean;
+  IS_BILLING_ENABLED: boolean = false;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -59,7 +60,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS: number;
+  BILLING_FREE_TRIAL_DURATION_IN_DAYS: number = 7;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -72,17 +73,17 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ENABLED: boolean;
+  TELEMETRY_ENABLED: boolean = true;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED: boolean;
+  TELEMETRY_ANONYMIZATION_ENABLED: boolean = true;
 
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  PORT: number;
+  PORT: number = 3000;
 
   // Database
   @IsDefined()
@@ -108,25 +109,25 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  ACCESS_TOKEN_EXPIRES_IN: string;
+  ACCESS_TOKEN_EXPIRES_IN: string = '30m';
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN: string;
+  REFRESH_TOKEN_EXPIRES_IN: string = '30m';
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_COOL_DOWN: string;
+  REFRESH_TOKEN_COOL_DOWN: string = '1m';
 
   @IsString()
-  LOGIN_TOKEN_SECRET: string;
+  LOGIN_TOKEN_SECRET: string = '30m';
 
   @IsDuration()
   @IsOptional()
-  LOGIN_TOKEN_EXPIRES_IN: string;
+  LOGIN_TOKEN_EXPIRES_IN: string = '15m';
 
   // Auth
   @IsUrl({ require_tld: false })
@@ -136,7 +137,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  AUTH_GOOGLE_ENABLED: boolean;
+  AUTH_GOOGLE_ENABLED: boolean = false;
 
   @IsString()
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
@@ -153,7 +154,7 @@ export class EnvironmentVariables {
   // Storage
   @IsEnum(StorageDriverType)
   @IsOptional()
-  STORAGE_TYPE: StorageDriverType;
+  STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
 
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsAWSRegion()
@@ -170,12 +171,12 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
-  STORAGE_LOCAL_PATH: string;
+  STORAGE_LOCAL_PATH: string = '.local-storage';
 
   // Support
   @IsEnum(SupportDriver)
   @IsOptional()
-  SUPPORT_DRIVER: SupportDriver;
+  SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
 
   @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
   @IsString()
@@ -187,19 +188,20 @@ export class EnvironmentVariables {
 
   @IsEnum(LoggerDriverType)
   @IsOptional()
-  LOGGER_DRIVER: LoggerDriverType;
+  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
 
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
-  EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver;
+  EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
+    ExceptionHandlerDriver.Console;
 
   @CastToLogLevelArray()
   @IsOptional()
-  LOG_LEVELS: LogLevel[];
+  LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
 
   @CastToStringArray()
   @IsOptional()
-  DEMO_WORKSPACE_IDS: string[];
+  DEMO_WORKSPACE_IDS: string[] = [];
 
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
@@ -209,7 +211,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  PASSWORD_RESET_TOKEN_EXPIRES_IN: string;
+  PASSWORD_RESET_TOKEN_EXPIRES_IN: string = '5m';
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -219,48 +221,48 @@ export class EnvironmentVariables {
       '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number = 30;
 
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number = 60;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_SIGN_UP_DISABLED: boolean;
+  IS_SIGN_UP_DISABLED: boolean = false;
 
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED: number;
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number = 100;
 
-  REDIS_HOST: string;
+  REDIS_HOST: string = '127.0.0.1';
 
-  REDIS_PORT: number;
+  REDIS_PORT: number = 6379;
 
-  API_TOKEN_EXPIRES_IN: string;
+  API_TOKEN_EXPIRES_IN: string = '100y';
 
-  SHORT_TERM_TOKEN_EXPIRES_IN: string;
+  SHORT_TERM_TOKEN_EXPIRES_IN: string = '5m';
 
-  MESSAGING_PROVIDER_GMAIL_ENABLED: boolean;
+  MESSAGING_PROVIDER_GMAIL_ENABLED: boolean = false;
 
   MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
 
-  MESSAGE_QUEUE_TYPE: string;
+  MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
 
-  EMAIL_FROM_ADDRESS: string;
+  EMAIL_FROM_ADDRESS: string = 'noreply@yourdomain.com';
 
-  EMAIL_SYSTEM_ADDRESS: string;
+  EMAIL_SYSTEM_ADDRESS: string = 'system@yourdomain.com';
 
-  EMAIL_FROM_NAME: string;
+  EMAIL_FROM_NAME: string = 'Felix from Twenty';
 
-  EMAIL_DRIVER: EmailDriver;
+  EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
   EMAIL_SMTP_HOST: string;
 
-  EMAIL_SMTP_PORT: number;
+  EMAIL_SMTP_PORT: number = 587;
 
   EMAIL_SMTP_USER: string;
 
@@ -268,15 +270,19 @@ export class EnvironmentVariables {
 
   OPENROUTER_API_KEY: string;
 
-  API_RATE_LIMITING_TTL: number;
+  API_RATE_LIMITING_TTL: number = 100;
 
-  API_RATE_LIMITING_LIMIT: number;
+  API_RATE_LIMITING_LIMIT: number = 500;
 
-  CACHE_STORAGE_TYPE: string;
+  CACHE_STORAGE_TYPE: string = 'memory';
 
-  CACHE_STORAGE_TTL: number;
-  CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean;
+  CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
+
+  CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
+
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
+
+  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 }
 
 export const validate = (config: Record<string, unknown>) => {
