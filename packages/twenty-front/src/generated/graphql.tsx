@@ -591,7 +591,7 @@ export type TimelineCalendarEvent = {
   location: Scalars['String'];
   startsAt: Scalars['DateTime'];
   title: Scalars['String'];
-  visibility: Scalars['String'];
+  visibility: TimelineCalendarEventVisibility;
 };
 
 export type TimelineCalendarEventAttendee = {
@@ -604,6 +604,12 @@ export type TimelineCalendarEventAttendee = {
   personId?: Maybe<Scalars['ID']>;
   workspaceMemberId?: Maybe<Scalars['ID']>;
 };
+
+/** Visibility of the calendar event */
+export enum TimelineCalendarEventVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
 
 export type TimelineCalendarEventsWithTotal = {
   __typename?: 'TimelineCalendarEventsWithTotal';

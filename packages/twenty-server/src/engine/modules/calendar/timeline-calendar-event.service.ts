@@ -4,7 +4,10 @@ import groupBy from 'lodash.groupBy';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/modules/calendar/constants/calendar.constants';
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
-import { TimelineCalendarEvent } from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
+import {
+  TimelineCalendarEvent,
+  TimelineCalendarEventVisibility,
+} from 'src/engine/modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
@@ -198,8 +201,8 @@ export class TimelineCalendarEventService {
       event.visibility = calendarEventIdsForWhichVisibilityIsMetadata.some(
         (calendarEvent) => calendarEvent.id === event.id,
       )
-        ? 'METADATA'
-        : 'SHARE_EVERYTHING';
+        ? TimelineCalendarEventVisibility.METADATA
+        : TimelineCalendarEventVisibility.SHARE_EVERYTHING;
 
       if (event.visibility === 'METADATA') {
         event.title = '';
