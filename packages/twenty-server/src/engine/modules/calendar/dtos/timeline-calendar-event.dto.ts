@@ -1,12 +1,10 @@
 import { ObjectType, ID, Field } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { TimelineCalendarEventAttendee } from 'src/engine/modules/calendar/dtos/timeline-calendar-event-attendee.dto';
 
 @ObjectType('TimelineCalendarEvent')
 export class TimelineCalendarEvent {
-  @IDField(() => ID)
+  @Field(() => ID)
   id: string;
 
   @Field()
