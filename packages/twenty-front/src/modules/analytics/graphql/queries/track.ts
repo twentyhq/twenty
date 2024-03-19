@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const CREATE_EVENT = gql`
+export const TRACK = gql`
   mutation Track($type: String!, $data: JSON!) {
     track(type: $type, data: $data) {
       success

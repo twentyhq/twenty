@@ -4,6 +4,5 @@ export class ObjectRecordBaseEvent {
   workspaceId: string;
   recordId: string;
   objectMetadata: ObjectMetadataInterface;
-  operation: string;
   details: any;
 }

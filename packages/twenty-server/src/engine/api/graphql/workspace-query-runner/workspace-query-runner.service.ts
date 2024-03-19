@@ -248,7 +248,6 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        operation: 'created',
         details: {
           after: record,
         },
@@ -303,7 +302,6 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
-      operation: 'updated',
       details: {
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
@@ -343,6 +341,10 @@ export class WorkspaceQueryRunnerService {
     );
 
     // TODO: check - NO EVENT SENT?
+    // OK I spent 2 hours trying to implement before/after diff and
+    // figured out why it hasn't been implement
+    // Doing a findMany in that context is very hard as long as we don't
+    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
 
     return parsedResults;
   }
@@ -384,7 +386,6 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        operation: 'deleted',
         details: {
           before: [this.removeNestedProperties(record)],
         },
@@ -423,7 +424,6 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
-      operation: 'deleted',
       details: {
         before: this.removeNestedProperties(parsedResults?.[0]),
       },

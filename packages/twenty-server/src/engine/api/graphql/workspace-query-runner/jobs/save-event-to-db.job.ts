@@ -38,7 +38,7 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
     if (
       data.objectName != 'person' &&
       data.objectName != 'company' &&
-      data.objectName != 'opportunity'
+      data.objectName != 'opportunities'
     ) {
       return;
     }

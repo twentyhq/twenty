@@ -1,9 +1,11 @@
 import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
 import { eventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -22,6 +24,9 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconJson',
 })
 @IsSystem()
+@Gate({
+  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
+})
 export class EventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: eventStandardFieldIds.properties,
