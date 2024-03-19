@@ -61,7 +61,7 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
-  billingUrl: Scalars['String'];
+  billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
 };
 
@@ -417,6 +417,8 @@ export type Query = {
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
+  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
@@ -447,6 +449,20 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  personId: Scalars['ID'];
 };
 
 
@@ -491,6 +507,23 @@ export type RelationConnection = {
   /** Paging information */
   pageInfo: PageInfo;
 };
+
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
 
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
@@ -543,6 +576,45 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type TimelineCalendarEvent = {
+  __typename?: 'TimelineCalendarEvent';
+  attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceSolution: Scalars['String'];
+  conferenceUri: Scalars['String'];
+  description: Scalars['String'];
+  endsAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  isCanceled: Scalars['Boolean'];
+  isFullDay: Scalars['Boolean'];
+  location: Scalars['String'];
+  startsAt: Scalars['DateTime'];
+  title: Scalars['String'];
+  visibility: TimelineCalendarEventVisibility;
+};
+
+export type TimelineCalendarEventAttendee = {
+  __typename?: 'TimelineCalendarEventAttendee';
+  avatarUrl: Scalars['String'];
+  displayName: Scalars['String'];
+  firstName: Scalars['String'];
+  handle: Scalars['String'];
+  lastName: Scalars['String'];
+  personId?: Maybe<Scalars['ID']>;
+  workspaceMemberId?: Maybe<Scalars['ID']>;
+};
+
+/** Visibility of the calendar event */
+export enum TimelineCalendarEventVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
+
+export type TimelineCalendarEventsWithTotal = {
+  __typename?: 'TimelineCalendarEventsWithTotal';
+  timelineCalendarEvents: Array<TimelineCalendarEvent>;
+  totalNumberOfCalendarEvents: Scalars['Int'];
 };
 
 export type TimelineThread = {
@@ -716,6 +788,7 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
@@ -793,6 +866,30 @@ export type RelationEdge = {
   /** The node containing the relation */
   node: Relation;
 };
+
+export type AttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+
+export type CalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+
+export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
+
+
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
+  personId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
+
+
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
@@ -937,7 +1034,7 @@ export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1007,6 +1104,39 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const AttendeeFragmentFragmentDoc = gql`
+    fragment AttendeeFragment on TimelineCalendarEventAttendee {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const CalendarEventFragmentFragmentDoc = gql`
+    fragment CalendarEventFragment on TimelineCalendarEvent {
+  id
+  title
+  description
+  location
+  startsAt
+  endsAt
+  isFullDay
+  attendees {
+    ...AttendeeFragment
+  }
+}
+    ${AttendeeFragmentFragmentDoc}`;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
+  totalNumberOfCalendarEvents
+  timelineCalendarEvents {
+    ...CalendarEventFragment
+  }
+}
+    ${CalendarEventFragmentFragmentDoc}`;
 export const ParticipantFragmentFragmentDoc = gql`
     fragment ParticipantFragment on TimelineThreadParticipant {
   personId
@@ -1103,6 +1233,88 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
 }
     `;
+export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
+    query GetTimelineCalendarEventsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineCalendarEventsFromCompanyId(
+    companyId: $companyId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineCalendarEventsWithTotalFragment
+  }
+}
+    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineCalendarEventsFromCompanyIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineCalendarEventsFromCompanyIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineCalendarEventsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineCalendarEventsFromCompanyIdQuery({
+ *   variables: {
+ *      companyId: // value for 'companyId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineCalendarEventsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
+      }
+export function useGetTimelineCalendarEventsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
+        }
+export type GetTimelineCalendarEventsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdQuery>;
+export type GetTimelineCalendarEventsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdLazyQuery>;
+export type GetTimelineCalendarEventsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>;
+export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
+    query GetTimelineCalendarEventsFromPersonId($personId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineCalendarEventsFromPersonId(
+    personId: $personId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineCalendarEventsWithTotalFragment
+  }
+}
+    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineCalendarEventsFromPersonIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineCalendarEventsFromPersonIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineCalendarEventsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineCalendarEventsFromPersonIdQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineCalendarEventsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+      }
+export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+        }
+export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdQuery>;
+export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
+export type GetTimelineCalendarEventsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
     query GetTimelineThreadsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromCompanyId(
