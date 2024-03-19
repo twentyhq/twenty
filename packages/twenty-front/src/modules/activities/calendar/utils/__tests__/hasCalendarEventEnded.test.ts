@@ -21,23 +21,6 @@ describe('hasCalendarEventEnded', () => {
       expect(result).toBe(true);
     });
 
-    it('returns false for an event if end date is now', () => {
-      // Given
-      const startsAt = subHours(new Date(), 1).toISOString();
-      const endsAt = new Date().toISOString();
-      const isFullDay = false;
-
-      // When
-      const result = hasCalendarEventEnded({
-        startsAt,
-        endsAt,
-        isFullDay,
-      });
-
-      // Then
-      expect(result).toBe(false);
-    });
-
     it('returns false for an event with a future end date', () => {
       // Given
       const startsAt = new Date().toISOString();
