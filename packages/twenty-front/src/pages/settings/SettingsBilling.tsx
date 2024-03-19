@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconCircleX } from '@tabler/icons-react';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
@@ -79,28 +80,43 @@ export const SettingsBilling = () => {
             onClick={redirectToSubscribePage}
           />
         )}
-        {displaySubscribeInfo && (
+        {displaySubscribeInfo ? (
           <Info
             text={'Your workspace does not have an active subscription'}
             buttonTitle={'Subscribe'}
             accent={'danger'}
             onClick={redirectToSubscribePage}
           />
-        )}
-        {!displaySubscribeInfo && (
-          <Section>
-            <H2Title
-              title="Manage your subscription"
-              description="Edit payment method, see your invoices and more"
-            />
-            <Button
-              Icon={IconCreditCard}
-              title="View billing details"
-              variant="secondary"
-              onClick={openBillingPortal}
-              disabled={billingPortalButtonDisabled}
-            />
-          </Section>
+        ) : (
+          <>
+            <Section>
+              <H2Title
+                title="Manage your subscription"
+                description="Edit payment method, see your invoices and more"
+              />
+              <Button
+                Icon={IconCreditCard}
+                title="View billing details"
+                variant="secondary"
+                onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Cancel your subscription"
+                description="Your workspace will be disabled"
+              />
+              <Button
+                Icon={IconCircleX}
+                title="Cancel Plan"
+                variant="secondary"
+                accent="danger"
+                onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
+              />
+            </Section>
+          </>
         )}
       </SettingsPageContainer>
       <StyledInvisibleChat>
