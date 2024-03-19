@@ -6,7 +6,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardHeader } from '@/ui/layout/card/components/CardHeader';
-import { REACT_APP_SERVER_AUTH_URL } from '~/config';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useGenerateTransientTokenMutation } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`
@@ -30,14 +30,14 @@ export const SettingsAccountsListEmptyStateCard = ({
   const [generateTransientToken] = useGenerateTransientTokenMutation();
 
   const handleGmailLogin = useCallback(async () => {
-    const authServerUrl = REACT_APP_SERVER_AUTH_URL;
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
 
     const transientToken = await generateTransientToken();
 
     const token =
       transientToken.data?.generateTransientToken.transientToken.token;
 
-    window.location.href = `${authServerUrl}/google-gmail?transientToken=${token}`;
+    window.location.href = `${authServerUrl}/auth/google-gmail?transientToken=${token}`;
   }, [generateTransientToken]);
 
   return (
