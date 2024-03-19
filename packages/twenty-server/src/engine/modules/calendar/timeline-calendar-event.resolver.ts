@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import {
   Query,
   Args,
@@ -20,6 +20,7 @@ import { TimelineCalendarEventsWithTotal } from 'src/engine/modules/calendar/dto
 import { TimelineCalendarEventService } from 'src/engine/modules/calendar/timeline-calendar-event.service';
 import { UserService } from 'src/engine/modules/user/services/user.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
+import { NotFoundError } from 'src/engine/filters/utils/graphql-errors.util';
 
 @ArgsType()
 class GetTimelineCalendarEventsFromPersonIdArgs {
@@ -65,10 +66,7 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      throw new HttpException(
-        'Workspace member not found',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundError('Workspace member not found');
     }
 
     const timelineCalendarEvents =
@@ -93,10 +91,7 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      throw new HttpException(
-        'Workspace member not found',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundError('Workspace member not found');
     }
 
     const timelineCalendarEvents =
