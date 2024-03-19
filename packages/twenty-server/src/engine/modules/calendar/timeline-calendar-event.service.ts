@@ -209,7 +209,7 @@ export class TimelineCalendarEventService {
         calendarEventIdsForWhichVisibilityIsMetadataMap.get(event.id) ??
         TimelineCalendarEventVisibility.SHARE_EVERYTHING;
 
-      if (event.visibility === 'METADATA') {
+      if (event.visibility === TimelineCalendarEventVisibility.METADATA) {
         event.title = '';
         event.description = '';
         event.location = '';
