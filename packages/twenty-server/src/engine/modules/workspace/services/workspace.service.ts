@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import assert from 'assert';
 
@@ -15,6 +16,8 @@ import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-wor
 import { BillingService } from 'src/engine/modules/billing/billing.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -29,6 +32,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private eventEmitter: EventEmitter2,
   ) {
     super(workspaceRepository);
   }
@@ -173,6 +177,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       // workspace which it doesnt have access to. So we delete the user.
       await this.userRepository.delete({ id: workspaceMemberUser.id });
     }
+
+    const payload =
+      new ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>();
+
+    payload.workspaceId = workspaceId;
+
+    this.eventEmitter.emit('workspaceMember.deleted', payload);
 
     return memberId;
   }
