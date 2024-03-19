@@ -527,11 +527,11 @@ export class TokenService {
     return { success: true };
   }
 
-  async encodePayload(payload: any): Promise<string> {
-    return this.jwtService.sign(payload);
+  async encodePayload(payload: any, options?: any): Promise<string> {
+    return this.jwtService.sign(payload, options);
   }
 
-  async decodePayload(payload: any): Promise<string> {
-    return this.jwtService.decode(payload);
+  async decodePayload(payload: any, options?: any): Promise<string> {
+    return this.jwtService.decode(payload, options);
   }
 }

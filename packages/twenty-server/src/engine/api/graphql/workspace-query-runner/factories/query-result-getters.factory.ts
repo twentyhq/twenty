@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
+import { addMilliseconds } from 'date-fns';
+import ms from 'ms';
+
 import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
 
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { TokenService } from 'src/engine/modules/auth/services/token.service';
 
 @Injectable()
 export class QueryResultGettersFactory {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   async create<Result>(
     result: Result,
@@ -28,18 +35,33 @@ export class QueryResultGettersFactory {
       return attachments;
     }
 
+    const fileTokenExpiresIn = this.environmentService.get(
+      'FILE_TOKEN_EXPIRES_IN',
+    );
+    const secret = this.environmentService.get('FILE_TOKEN_SECRET');
+
     const mappedEdges = await Promise.all(
       attachments.edges.map(async (attachment: any) => {
-        if (attachment?.node?.fullPath) {
-          const todayDate = new Date();
-          const expirationDate = todayDate.setDate(todayDate.getDate() + 1);
-
-          const signedExpirationDate = await this.tokenService.encodePayload({
-            expiration_date: expirationDate,
-          });
-
-          attachment.node.fullPath = `${attachment.node.fullPath}?token=${signedExpirationDate}`;
+        if (!attachment.node.id || !attachment?.node?.fullPath) {
+          return attachment;
         }
+
+        const expirationDate = addMilliseconds(
+          new Date(),
+          ms(fileTokenExpiresIn),
+        );
+
+        const signedExpirationDate = await this.tokenService.encodePayload(
+          {
+            expiration_date: expirationDate,
+            attachment_id: attachment.node.id,
+          },
+          {
+            secret,
+          },
+        );
+
+        attachment.node.fullPath = `${attachment.node.fullPath}?token=${signedExpirationDate}`;
 
         return attachment;
       }),
