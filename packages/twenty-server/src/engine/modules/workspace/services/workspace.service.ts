@@ -5,7 +5,6 @@ import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
@@ -76,23 +75,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       .then((workspaces) => workspaces.map((workspace) => workspace.id));
   }
 
-  private async createNewWorkspace(user: User) {
-    const workspaceToCreate = this.workspaceRepository.create({
-      displayName: '',
-      domainName: '',
-      inviteHash: v4(),
-      subscriptionStatus: 'incomplete',
-    });
-
-    const workspace = await this.workspaceRepository.save(workspaceToCreate);
-
-    await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-      updatedAt: new Date().toISOString(),
-    });
-  }
-
   private async reassignDefaultWorkspace(
     currentWorkspaceId: string,
     user: User,
@@ -121,9 +103,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         break;
       }
 
-      // if no workspaces are valid then we assign a new one
+      // if no workspaces are valid then we delete the user
       if (index === filteredUserWorkspaces.length - 1) {
-        await this.createNewWorkspace(user);
+        await this.userRepository.delete({ id: user.id });
       }
     }
   }
@@ -188,8 +170,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
 
       // After deleting the user-workspace mapping, we have a condition where we have the users default workspace points to a
-      // workspace which it doesnt have access to. So we create a new workspace and make it as a default for the user.
-      await this.createNewWorkspace(workspaceMemberUser);
+      // workspace which it doesnt have access to. So we delete the user.
+      await this.userRepository.delete({ id: workspaceMemberUser.id });
     }
 
     return memberId;
