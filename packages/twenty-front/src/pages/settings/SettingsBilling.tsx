@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { IconCalendarEvent, IconCircleX } from '@tabler/icons-react';
@@ -14,6 +14,7 @@ import { Info } from '@/ui/display/info/components/Info.tsx';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
 import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
 import { Button } from '@/ui/input/button/components/Button.tsx';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section.tsx';
 import {
@@ -33,6 +34,8 @@ const StyledInvisibleChat = styled.div`
 export const SettingsBilling = () => {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
+  const [isSwitchingToYearlyModalOpen, setIsSwitchingToYearlyModalOpen] =
+    useState(false);
   const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
@@ -59,9 +62,12 @@ export const SettingsBilling = () => {
     }
   };
 
+  const openSwitchingToYearlyModal = () => {
+    setIsSwitchingToYearlyModalOpen(true);
+  };
+
   const switchToYearly = async () => {
-    const data = await updateBillingSubscription();
-    console.log(data);
+    await updateBillingSubscription();
   };
 
   const redirectToSubscribePage = () => {
@@ -119,7 +125,7 @@ export const SettingsBilling = () => {
                 Icon={IconCalendarEvent}
                 title="Switch to yearly"
                 variant="secondary"
-                onClick={switchToYearly}
+                onClick={openSwitchingToYearlyModal}
                 disabled={billingPortalButtonDisabled}
               />
             </Section>
@@ -143,6 +149,20 @@ export const SettingsBilling = () => {
       <StyledInvisibleChat>
         <SupportChat />
       </StyledInvisibleChat>
+      <ConfirmationModal
+        isOpen={isSwitchingToYearlyModalOpen}
+        setIsOpen={setIsSwitchingToYearlyModalOpen}
+        title="Switch billing to yearly"
+        subtitle={
+          <>
+            Are you sure that you want to change your billing interval to
+            yearly? You will be charged immediately for the full year.
+          </>
+        }
+        onConfirmClick={switchToYearly}
+        deleteButtonText="Change"
+        confirmButtonAccent={'blue'}
+      />
     </SubMenuTopBarContainer>
   );
 };
