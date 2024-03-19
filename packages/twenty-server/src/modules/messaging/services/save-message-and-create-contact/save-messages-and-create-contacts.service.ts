@@ -163,9 +163,13 @@ export class SaveMessagesAndCreateContactsService {
       );
 
       if (gmailMessageChannel.isContactAutoCreationEnabled) {
+        const contactsToCreate = participantsWithMessageId.filter(
+          (participant) => participant.role === 'from',
+        );
+
         this.eventEmitter.emit(`createContacts`, {
           workspaceId,
-          contactsInformation: participantsWithMessageId,
+          contactsToCreate,
         });
       }
     } catch (error) {
