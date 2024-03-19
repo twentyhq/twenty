@@ -26,6 +26,7 @@ import {
 } from 'src/engine/modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/modules/open-api/utils/request-body.utils';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
 export class OpenApiService {
@@ -36,7 +37,10 @@ export class OpenApiService {
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = this.environmentService.getBaseUrl(request);
+    const baseUrl = getServerUrl(
+      request,
+      this.environmentService.get('SERVER_URL'),
+    );
 
     const schema = baseSchema('core', baseUrl);
 
@@ -93,7 +97,10 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = this.environmentService.getBaseUrl(request);
+    const baseUrl = getServerUrl(
+      request,
+      this.environmentService.get('SERVER_URL'),
+    );
 
     const schema = baseSchema('metadata', baseUrl);
 

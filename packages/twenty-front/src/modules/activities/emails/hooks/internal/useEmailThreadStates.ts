@@ -1,4 +1,4 @@
-import { emailThreadsPageComponentState } from '@/activities/emails/state/emailThreadsPageComponentState';
+import { emailThreadsPageComponentState } from '@/activities/emails/states/emailThreadsPageComponentState';
 import { TabListScopeInternalContext } from '@/ui/layout/tab/scopes/scope-internal-context/TabListScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
