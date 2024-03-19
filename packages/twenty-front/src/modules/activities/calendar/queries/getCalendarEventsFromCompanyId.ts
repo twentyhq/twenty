@@ -1,20 +1,20 @@
 import { gql } from '@apollo/client';
 
-import { timelineThreadWithTotalFragment } from '@/activities/emails/queries/fragments/timelineThreadWithTotalFragment';
+import { timelineCalendarEventWithTotalFragment } from '@/activities/calendar/queries/fragments/calendarEventFragmentWithTotalFragment';
 
-export const getTimelineThreadsFromCompanyId = gql`
-  query GetTimelineThreadsFromCompanyId(
+export const getTimelineCalendarEventsFromCompanyId = gql`
+  query GetTimelineCalendarEventsFromCompanyId(
     $companyId: ID!
     $page: Int!
     $pageSize: Int!
   ) {
-    getTimelineThreadsFromCompanyId(
+    getTimelineCalendarEventsFromCompanyId(
       companyId: $companyId
       page: $page
       pageSize: $pageSize
     ) {
-      ...TimelineThreadsWithTotalFragment
+      ...TimelineCalendarEventsWithTotalFragment
     }
   }
-  ${timelineThreadWithTotalFragment}
+  ${timelineCalendarEventWithTotalFragment}
 `;
