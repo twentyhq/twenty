@@ -35,6 +35,9 @@ export const SettingsBilling = () => {
     },
   });
 
+  const billingPortalButtonDisabled =
+    loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
+
   const displayPaymentFailInfo =
     onboardingStatus === OnboardingStatus.PastDue ||
     onboardingStatus === OnboardingStatus.Unpaid;
@@ -46,7 +49,7 @@ export const SettingsBilling = () => {
     onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
 
   const openBillingPortal = () => {
-    if (isDefined(data)) {
+    if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       window.location.replace(data.billingPortalSession.url);
     }
   };
@@ -95,7 +98,7 @@ export const SettingsBilling = () => {
               title="View billing details"
               variant="secondary"
               onClick={openBillingPortal}
-              disabled={loading}
+              disabled={billingPortalButtonDisabled}
             />
           </Section>
         )}

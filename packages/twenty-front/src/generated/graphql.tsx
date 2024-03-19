@@ -61,7 +61,7 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
-  billingUrl: Scalars['String'];
+  billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
 };
 
@@ -492,6 +492,23 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
+
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -518,7 +535,7 @@ export type Sentry = {
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 /** Sort Directions */
@@ -716,6 +733,7 @@ export type Field = {
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
@@ -917,7 +935,7 @@ export type BillingPortalSessionQueryVariables = Exact<{
 }>;
 
 
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url: string } };
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: Scalars['String'];
@@ -925,7 +943,7 @@ export type CheckoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url: string } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
@@ -937,7 +955,7 @@ export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
