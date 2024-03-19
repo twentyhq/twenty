@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -12,8 +14,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   objectMetadataItems: ObjectMetadataItem[];
   depth?: number;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
-
+  const allObjectMetadataItems = useRecoilValue(objectMetadataItemsState());
   const capitalizedObjectNameSingulars = objectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
@@ -46,7 +47,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   const limitPerMetadataItemArray = capitalizedObjectNameSingulars
     .map(
       (capitalizedObjectNameSingular) =>
-        `$limit${capitalizedObjectNameSingular}: Float = 5`,
+        `$limit${capitalizedObjectNameSingular}: Float`,
     )
     .join(', ');
 
@@ -59,26 +60,22 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
     ) {
       ${objectMetadataItems
         .map(
-          ({ namePlural, nameSingular, fields }) =>
-            `${namePlural}(filter: $filter${capitalize(
-              nameSingular,
+          (objectMetadataItem) =>
+            `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
+              objectMetadataItem.nameSingular,
             )}, orderBy: $orderBy${capitalize(
-              nameSingular,
+              objectMetadataItem.nameSingular,
             )}, first: $limit${capitalize(
-              nameSingular,
-            )}, after: $lastCursor${capitalize(nameSingular)}){
+              objectMetadataItem.nameSingular,
+            )}, after: $lastCursor${capitalize(
+              objectMetadataItem.nameSingular,
+            )}){
           edges {
-            node {
-              id
-              ${fields
-                .map((field) =>
-                  mapFieldMetadataToGraphQLQuery({
-                    field,
-                    maxDepthForRelations: depth,
-                  }),
-                )
-                .join('\n')}
-            }
+            node ${mapObjectMetadataToGraphQLQuery({
+              objectMetadataItems: allObjectMetadataItems,
+              objectMetadataItem,
+              depth,
+            })}
             cursor
           }
           pageInfo {
@@ -86,6 +83,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             startCursor
             endCursor
           }
+          totalCount
         }`,
         )
         .join('\n')}

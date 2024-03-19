@@ -72,7 +72,6 @@ export const query = gql`
               startCursor
               endCursor
             }
-            totalCount
           }
         }
       }
@@ -82,7 +81,6 @@ export const query = gql`
         startCursor
         endCursor
       }
-      totalCount
     }
   }
 `;

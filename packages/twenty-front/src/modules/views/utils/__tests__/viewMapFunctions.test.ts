@@ -1,6 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
@@ -8,7 +7,6 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ViewSort } from '@/views/types/ViewSort';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
-import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
@@ -189,84 +187,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
     });
 
     expect(actualColumnDefinitions).toEqual(expectedColumnDefinitions);
-  });
-});
-
-describe('mapViewFieldsToBoardFieldDefinitions', () => {
-  it('should map visible ViewFields to BoardFieldDefinitions and filter out missing fieldMetadata', () => {
-    const viewFields = [
-      {
-        id: 1,
-        fieldMetadataId: 1,
-        position: 1,
-        isVisible: true,
-      },
-      {
-        id: 2,
-        fieldMetadataId: 2,
-        position: 2,
-        isVisible: false,
-      },
-      {
-        id: 3,
-        fieldMetadataId: 3,
-        position: 3,
-        isVisible: true,
-      },
-    ];
-
-    const fieldsMetadata = [
-      {
-        fieldMetadataId: 1,
-        label: 'Field 1',
-        metadata: {},
-        position: 1,
-        infoTooltipContent: 'Tooltip content for Field 1',
-        iconName: 'icon-field-1',
-        type: 'string',
-      },
-      {
-        fieldMetadataId: 3,
-        label: 'Field 3',
-        metadata: {},
-        position: 3,
-        infoTooltipContent: 'Tooltip for Field 3',
-        iconName: 'icon-field-3',
-        type: 'number',
-      },
-    ];
-
-    const expectedBoardFieldDefinitions = [
-      {
-        fieldMetadataId: 1,
-        label: 'Field 1',
-        metadata: {},
-        position: 1,
-        infoTooltipContent: 'Tooltip content for Field 1',
-        iconName: 'icon-field-1',
-        type: 'string',
-        isVisible: true,
-        viewFieldId: 1,
-      },
-      {
-        fieldMetadataId: 3,
-        label: 'Field 3',
-        metadata: {},
-        position: 3,
-        infoTooltipContent: 'Tooltip for Field 3',
-        iconName: 'icon-field-3',
-        type: 'number',
-        isVisible: true,
-        viewFieldId: 3,
-      },
-    ];
-
-    const actualBoardFieldDefinitions = mapViewFieldsToBoardFieldDefinitions(
-      viewFields as unknown as ViewField[],
-      fieldsMetadata as unknown as BoardFieldDefinition<FieldMetadata>[],
-    );
-
-    expect(actualBoardFieldDefinitions).toEqual(expectedBoardFieldDefinitions);
   });
 });
 

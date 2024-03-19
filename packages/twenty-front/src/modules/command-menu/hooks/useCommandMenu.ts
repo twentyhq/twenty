@@ -1,10 +1,13 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { isDefined } from '~/utils/isDefined';
 
 import { COMMAND_MENU_COMMANDS } from '../constants/CommandMenuCommands';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -14,17 +17,17 @@ import { Command } from '../types/Command';
 export const useCommandMenu = () => {
   const navigate = useNavigate();
   const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
-  const setCommands = useSetRecoilState(commandMenuCommandsState);
+  const setCommands = useSetRecoilState(commandMenuCommandsState());
   const { resetSelectedItem } = useSelectableList('command-menu-list');
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const openCommandMenu = () => {
+  const openCommandMenu = useCallback(() => {
     setIsCommandMenuOpened(true);
     setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
-  };
+  }, [setHotkeyScopeAndMemorizePreviousScope, setIsCommandMenuOpened]);
 
   const closeCommandMenu = useRecoilCallback(
     ({ snapshot }) =>
@@ -42,17 +45,23 @@ export const useCommandMenu = () => {
     [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
   );
 
-  const toggleCommandMenu = useRecoilCallback(({ snapshot }) => async () => {
-    const isCommandMenuOpened = snapshot
-      .getLoadable(isCommandMenuOpenedState)
-      .getValue();
+  const toggleCommandMenu = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
 
-    if (isCommandMenuOpened) {
-      closeCommandMenu();
-    } else {
-      openCommandMenu();
-    }
-  });
+        set(commandMenuSearchState(), '');
+
+        if (isCommandMenuOpened) {
+          closeCommandMenu();
+        } else {
+          openCommandMenu();
+        }
+      },
+    [closeCommandMenu, openCommandMenu],
+  );
 
   const addToCommandMenu = useCallback(
     (addCommand: Command[]) => {
@@ -69,11 +78,11 @@ export const useCommandMenu = () => {
     (onClick?: () => void, to?: string) => {
       toggleCommandMenu();
 
-      if (onClick) {
+      if (isDefined(onClick)) {
         onClick();
         return;
       }
-      if (to) {
+      if (isNonEmptyString(to)) {
         navigate(to);
         return;
       }

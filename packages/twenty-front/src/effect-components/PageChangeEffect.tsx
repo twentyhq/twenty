@@ -18,6 +18,8 @@ import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -43,7 +45,7 @@ export const PageChangeEffect = () => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
+  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState());
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -64,7 +66,8 @@ export const PageChangeEffect = () => {
       isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired);
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess);
 
     const navigateToSignUp = () => {
       enqueueSnackBar('workspace does not exist', {
@@ -80,13 +83,24 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.SignIn);
     } else if (
-      onboardingStatus &&
-      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
-        onboardingStatus,
-      ) &&
+      isDefined(onboardingStatus) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
+    } else if (
+      isDefined(onboardingStatus) &&
+      [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
+        onboardingStatus,
+      ) &&
+      !(
+        isMatchingLocation(AppPath.SettingsCatchAll) ||
+        isMatchingLocation(AppPath.PlanRequired)
+      )
+    ) {
+      navigate(
+        `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
+      );
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace) &&
@@ -99,7 +113,8 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.CreateProfile);
     } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
+      (onboardingStatus === OnboardingStatus.Completed ||
+        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription) &&
       isMatchingOnboardingRoute
     ) {
       navigate(AppPath.Index);
@@ -113,7 +128,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
+          if (isUndefinedOrNull(data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },

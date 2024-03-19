@@ -1,6 +1,6 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const isPersistingViewScopedState = createStateScopeMap<boolean>({
+export const isPersistingViewScopedState = createComponentState<boolean>({
   key: 'isPersistingViewScopedState',
   defaultValue: false,
 });

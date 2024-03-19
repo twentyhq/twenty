@@ -8,7 +8,7 @@ type IconsProviderProps = {
 };
 
 export const IconsProvider = ({ children }: IconsProviderProps) => {
-  const setIcons = useSetRecoilState(iconsState);
+  const setIcons = useSetRecoilState(iconsState());
 
   useEffect(() => {
     import('../constants/index').then((lazyLoadedIcons) => {

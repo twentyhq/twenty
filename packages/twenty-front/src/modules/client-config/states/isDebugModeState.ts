@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const isDebugModeState = atom<boolean>({
+export const isDebugModeState = createState<boolean>({
   key: 'isDebugModeState',
-  default: false,
+  defaultValue: false,
 });

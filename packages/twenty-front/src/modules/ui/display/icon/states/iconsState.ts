@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const iconsState = atom<Record<string, IconComponent>>({
+export const iconsState = createState<Record<string, IconComponent>>({
   key: 'iconsState',
-  default: {},
+  defaultValue: {},
 });

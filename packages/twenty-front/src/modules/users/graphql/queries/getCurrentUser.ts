@@ -35,6 +35,17 @@ export const GET_CURRENT_USER = gql`
           value
           workspaceId
         }
+        currentBillingSubscription {
+          status
+        }
+      }
+      workspaces {
+        workspace {
+          id
+          displayName
+          logo
+          domainName
+        }
       }
     }
   }

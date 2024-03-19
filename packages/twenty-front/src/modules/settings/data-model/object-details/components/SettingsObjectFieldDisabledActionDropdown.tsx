@@ -6,17 +6,17 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-type SettingsObjectFieldDisabledActionDropdownProps = {
+type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;
 };
 
-export const SettingsObjectFieldDisabledActionDropdown = ({
+export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
   scopeKey,
-}: SettingsObjectFieldDisabledActionDropdownProps) => {
+}: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);

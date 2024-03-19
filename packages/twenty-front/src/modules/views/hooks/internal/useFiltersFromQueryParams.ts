@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import qs from 'qs';
 import { useRecoilCallback } from 'recoil';
 import z from 'zod';
@@ -14,7 +15,8 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const filterQueryParamsSchema = z.object({
   filter: z.record(
@@ -69,7 +71,7 @@ export const useFiltersFromQueryParams = () => {
                     field: fieldMetadataItem,
                   });
 
-                if (!filterDefinition) return null;
+                if (isUndefinedOrNull(filterDefinition)) return null;
 
                 const relationObjectMetadataNameSingular =
                   fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
@@ -94,8 +96,8 @@ export const useFiltersFromQueryParams = () => {
                 const relationRecordNames = [];
 
                 if (
-                  relationObjectMetadataNamePlural &&
-                  relationObjectMetadataItem &&
+                  isNonEmptyString(relationObjectMetadataNamePlural) &&
+                  isDefined(relationObjectMetadataItem) &&
                   Array.isArray(filterValueFromURL)
                 ) {
                   const queryResult = await apolloClient.query<
@@ -142,7 +144,7 @@ export const useFiltersFromQueryParams = () => {
               },
             ),
           )
-        ).filter(isNonNullable);
+        ).filter(isDefined);
       },
     [
       apolloClient,

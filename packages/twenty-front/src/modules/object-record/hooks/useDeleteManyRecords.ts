@@ -4,7 +4,7 @@ import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -56,7 +56,7 @@ export const useDeleteManyRecords = ({
 
             const cachedRecords = records
               .map((record) => getRecordFromCache(record.id, cache))
-              .filter(isNonNullable);
+              .filter(isDefined);
 
             triggerDeleteRecordsOptimisticEffect({
               cache,

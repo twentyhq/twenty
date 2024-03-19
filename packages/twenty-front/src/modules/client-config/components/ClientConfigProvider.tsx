@@ -11,28 +11,29 @@ import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setIsDebugMode = useSetRecoilState(isDebugModeState);
+  const setAuthProviders = useSetRecoilState(authProvidersState());
+  const setIsDebugMode = useSetRecoilState(isDebugModeState());
 
-  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
-  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
+  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState());
+  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState());
 
-  const setBilling = useSetRecoilState(billingState);
-  const setTelemetry = useSetRecoilState(telemetryState);
-  const setSupportChat = useSetRecoilState(supportChatState);
+  const setBilling = useSetRecoilState(billingState());
+  const setTelemetry = useSetRecoilState(telemetryState());
+  const setSupportChat = useSetRecoilState(supportChatState());
 
-  const setSentryConfig = useSetRecoilState(sentryConfigState);
+  const setSentryConfig = useSetRecoilState(sentryConfigState());
 
   const setCaptchaProvider = useSetRecoilState(captchaProviderState);
 
   const { data, loading } = useGetClientConfigQuery();
 
   useEffect(() => {
-    if (data?.clientConfig) {
+    if (isDefined(data?.clientConfig)) {
       setAuthProviders({
         google: data?.clientConfig.authProviders.google,
         password: data?.clientConfig.authProviders.password,

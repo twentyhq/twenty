@@ -1,6 +1,6 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const recordLoadingFamilyState = atomFamily<boolean, string>({
+export const recordLoadingFamilyState = createFamilyState<boolean, string>({
   key: 'recordLoadingFamilyState',
-  default: false,
+  defaultValue: false,
 });

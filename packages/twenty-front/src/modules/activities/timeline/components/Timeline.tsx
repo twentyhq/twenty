@@ -33,7 +33,7 @@ export const Timeline = ({
   targetableObject: ActivityTargetableObject;
 }) => {
   const { initialized, noActivities } = useRecoilValue(
-    timelineActivitiesNetworkingState,
+    timelineActivitiesNetworkingState(),
   );
 
   const showEmptyState = noActivities;

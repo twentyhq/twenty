@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -154,12 +155,12 @@ export const SettingsObjectFieldEdit = () => {
     try {
       if (
         validatedFormValues.type === FieldMetadataType.Relation &&
-        relationFieldMetadataItem?.id &&
+        isNonEmptyString(relationFieldMetadataItem?.id) &&
         hasRelationFormChanged
       ) {
         await editMetadataField({
           icon: validatedFormValues.relation.field.icon,
-          id: relationFieldMetadataItem.id,
+          id: relationFieldMetadataItem?.id,
           label: validatedFormValues.relation.field.label,
         });
       }

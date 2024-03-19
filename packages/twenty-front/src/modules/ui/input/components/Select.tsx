@@ -24,9 +24,11 @@ export type SelectProps<Value extends string | number | null> = {
   disabled?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
+  emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
   onChange?: (value: Value) => void;
+  onBlur?: () => void;
   options: SelectOption<Value>[];
   value?: Value;
   withSearchInput?: boolean;
@@ -57,7 +59,6 @@ const StyledLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledControlLabel = styled.div`
@@ -73,12 +74,14 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
 
 export const Select = <Value extends string | number | null>({
   className,
-  disabled,
+  disabled: disabledFromProps,
   dropdownId,
   dropdownWidth = 176,
+  emptyOption,
   fullWidth,
   label,
   onChange,
+  onBlur,
   options,
   value,
   withSearchInput,
@@ -87,7 +90,9 @@ export const Select = <Value extends string | number | null>({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const selectedOption =
-    options.find(({ value: key }) => key === value) || options[0];
+    options.find(({ value: key }) => key === value) ||
+    options[0] ||
+    emptyOption;
   const filteredOptions = useMemo(
     () =>
       searchInputValue
@@ -98,28 +103,37 @@ export const Select = <Value extends string | number | null>({
     [options, searchInputValue],
   );
 
+  const isDisabled = disabledFromProps || options.length <= 1;
+
   const { closeDropdown } = useDropdown(dropdownId);
 
   const selectControl = (
-    <StyledControlContainer disabled={disabled}>
+    <StyledControlContainer disabled={isDisabled}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
           <selectedOption.Icon
-            color={disabled ? theme.font.color.light : theme.font.color.primary}
+            color={
+              isDisabled ? theme.font.color.light : theme.font.color.primary
+            }
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />
         )}
         {selectedOption?.label}
       </StyledControlLabel>
-      <StyledIconChevronDown disabled={disabled} size={theme.icon.size.md} />
+      <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>
   );
 
   return (
-    <StyledContainer className={className} fullWidth={fullWidth}>
+    <StyledContainer
+      className={className}
+      fullWidth={fullWidth}
+      tabIndex={0}
+      onBlur={onBlur}
+    >
       {!!label && <StyledLabel>{label}</StyledLabel>}
-      {disabled ? (
+      {isDisabled ? (
         selectControl
       ) : (
         <Dropdown
@@ -148,6 +162,7 @@ export const Select = <Value extends string | number | null>({
                       text={option.label}
                       onClick={() => {
                         onChange?.(option.value);
+                        onBlur?.();
                         closeDropdown();
                       }}
                     />

@@ -20,7 +20,7 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettingsAccountsEmailsAccountsListCard = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const navigate = useNavigate();
 
   const { records: accounts, loading: accountsLoading } =

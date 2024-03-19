@@ -9,7 +9,7 @@ const StyledTitle = styled.div`
 
   @media (max-width: 810px) {
     font-size: 1em;
-    margin: 16px auto;
+    margin: 64px auto;
   }
 `;
 const StyledHeader = styled.h1`
@@ -17,6 +17,7 @@ const StyledHeader = styled.h1`
   margin: 0;
 `;
 const StyledSubHeader = styled.h1`
+  color: #141414;
   margin: 0;
 `;
 

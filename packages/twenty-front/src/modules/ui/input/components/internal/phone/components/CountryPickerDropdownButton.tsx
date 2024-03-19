@@ -9,6 +9,7 @@ import { CountryCallingCode } from 'libphonenumber-js';
 import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
@@ -112,13 +113,14 @@ export const CountryPickerDropdownButton = ({
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);
-    if (country) {
+    if (isDefined(country)) {
       setSelectedCountry(country);
     }
   }, [countries, value]);
 
   return (
     <Dropdown
+      dropdownMenuWidth={'100%'}
       dropdownId="country-picker-dropdown-id"
       dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
       clickableComponent={

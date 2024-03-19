@@ -57,7 +57,7 @@ describe('useFindManyRecords', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
+          currentWorkspaceMemberState(),
         );
         setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
@@ -67,7 +67,7 @@ describe('useFindManyRecords', () => {
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
 
         setMetadataItems(mockObjectMetadataItems);
 

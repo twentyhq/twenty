@@ -9,7 +9,8 @@
     "**/*.spec.tsx",
     "**/*.test.tsx",
     "jest.config.ts",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "tsup.ui.index.tsx"
   ],
-  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }

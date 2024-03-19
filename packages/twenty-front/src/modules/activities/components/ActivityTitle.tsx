@@ -22,7 +22,7 @@ import {
 } from '@/ui/input/components/Checkbox';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
@@ -71,7 +71,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   const activity = activityInStore as Activity;
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
-    canCreateActivityState,
+    canCreateActivityState(),
   );
 
   const { upsertActivity } = useUpsertActivity();
@@ -166,7 +166,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     });
   };
 
-  const completed = isNonNullable(activity.completedAt);
+  const completed = isDefined(activity.completedAt);
 
   return (
     <StyledContainer>

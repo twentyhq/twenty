@@ -1,7 +1,7 @@
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const availableSortDefinitionsScopedState = createStateScopeMap<
+export const availableSortDefinitionsScopedState = createComponentState<
   SortDefinition[]
 >({
   key: 'availableSortDefinitionsScopedState',
