@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import {
   Query,
   Args,
@@ -65,7 +65,10 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      throw new Error('Workspace member not found');
+      throw new HttpException(
+        'Workspace member not found',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const timelineCalendarEvents =
@@ -90,7 +93,10 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      throw new Error('Workspace member not found');
+      throw new HttpException(
+        'Workspace member not found',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const timelineCalendarEvents =
