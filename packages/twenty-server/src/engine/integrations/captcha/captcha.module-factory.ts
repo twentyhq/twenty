@@ -1,15 +1,15 @@
 import {
   CaptchaDriverOptions,
   CaptchaModuleOptions,
-} from 'src/integrations/captcha/interfaces';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+} from 'src/engine/integrations/captcha/interfaces';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 export const captchaModuleFactory = (
   environmentService: EnvironmentService,
 ): CaptchaModuleOptions | undefined => {
-  const driver = environmentService.getCaptchaDriver();
-  const siteKey = environmentService.getCaptchaSiteKey();
-  const secretKey = environmentService.getCaptchaSecretKey();
+  const driver = environmentService.get('CAPTCHA_DRIVER');
+  const siteKey = environmentService.get('CAPTCHA_SITE_KEY');
+  const secretKey = environmentService.get('CAPTCHA_SECRET_KEY');
 
   if (!driver) {
     return;

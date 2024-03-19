@@ -6,6 +6,7 @@ import { StorageDriverType } from 'src/engine/integrations/file-storage/interfac
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
 import { EnvironmentVariables } from 'src/engine/integrations/environment/environment-variables';
+import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
 
 const EnvironmentDefault = new EnvironmentVariables();
 
@@ -73,5 +74,8 @@ EnvironmentDefault.API_RATE_LIMITING_LIMIT = 500;
 EnvironmentDefault.MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
 EnvironmentDefault.CACHE_STORAGE_TYPE = 'memory';
 EnvironmentDefault.CACHE_STORAGE_TTL = 3600 * 24 * 7;
+EnvironmentDefault.CAPTCHA_DRIVER = CaptchaDriverType.GoogleRecatpcha;
+EnvironmentDefault.CAPTCHA_SITE_KEY = '';
+EnvironmentDefault.CAPTCHA_SECRET_KEY = '';
 
 export { EnvironmentDefault };

@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 import { Captcha } from '~/generated/graphql';
 
-export const captchaProviderState = atom<Captcha | null>({
+export const captchaProviderState = createState<Captcha | null>({
   key: 'captchaProviderState',
-  default: null,
+  defaultValue: null,
 });

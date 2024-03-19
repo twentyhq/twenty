@@ -1,4 +1,4 @@
-import { CaptchaValidateResult } from 'src/integrations/captcha/interfaces';
+import { CaptchaValidateResult } from 'src/engine/integrations/captcha/interfaces';
 
 export interface CaptchaDriver {
   validate(token: string): Promise<CaptchaValidateResult>;

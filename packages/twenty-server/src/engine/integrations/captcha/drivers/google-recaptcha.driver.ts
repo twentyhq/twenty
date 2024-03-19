@@ -1,20 +1,20 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { CaptchaDriver } from 'src/integrations/captcha/drivers/interfaces/captcha-driver.interface';
+import { CaptchaDriver } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-driver.interface';
 
 import {
   CaptchaDriverOptions,
   CaptchaValidateResult,
-} from 'src/integrations/captcha/interfaces';
+} from 'src/engine/integrations/captcha/interfaces';
 
-export type TurnstileServerResponse = {
+export type GoogleRecatpchaServerResponse = {
   success: boolean;
   challenge_ts: string;
   hostname: string;
   'error-codes': string[];
 };
 
-export class TurnstileDriver implements CaptchaDriver {
+export class GoogleRecaptchaDriver implements CaptchaDriver {
   private readonly siteKey: string;
   private readonly secretKey: string;
   private readonly httpService: AxiosInstance;
@@ -22,7 +22,7 @@ export class TurnstileDriver implements CaptchaDriver {
     this.siteKey = options.siteKey;
     this.secretKey = options.secretKey;
     this.httpService = axios.create({
-      baseURL: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      baseURL: 'https://www.google.com/recaptcha/api/siteverify',
     });
   }
 
@@ -31,9 +31,9 @@ export class TurnstileDriver implements CaptchaDriver {
       secret: this.secretKey,
       response: token,
     });
-    const response = await this.httpService.post('', formData);
 
-    const responseData = response.data as TurnstileServerResponse;
+    const response = await this.httpService.post('', formData);
+    const responseData = response.data as GoogleRecatpchaServerResponse;
 
     return {
       success: responseData.success,

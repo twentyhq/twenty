@@ -157,14 +157,14 @@ export const useAuth = () => {
         const captchaProvider = snapshot.getLoadable(captchaProviderState()).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState, iconsValue);
-          set(authProvidersState, authProvidersValue);
-          set(billingState, billing);
-          set(isSignInPrefilledState, isSignInPrefilled);
-          set(supportChatState, supportChat);
-          set(telemetryState, telemetry);
-          set(isDebugModeState, isDebugMode);
-          set(captchaProviderState, captchaProvider);
+          set(iconsState(), iconsValue);
+          set(authProvidersState(), authProvidersValue);
+          set(billingState(), billing);
+          set(isSignInPrefilledState(), isSignInPrefilled);
+          set(supportChatState(), supportChat);
+          set(telemetryState(), telemetry);
+          set(isDebugModeState(), isDebugMode);
+          set(captchaProviderState(), captchaProvider);
           return undefined;
         });
 

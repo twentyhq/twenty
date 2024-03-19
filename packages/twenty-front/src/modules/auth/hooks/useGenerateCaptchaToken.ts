@@ -11,7 +11,7 @@ declare global {
 }
 
 export const useGenerateCaptchaToken = () => {
-  const captchaProvider = useRecoilValue(captchaProviderState);
+  const captchaProvider = useRecoilValue(captchaProviderState());
 
   const generateGoogleRecaptchaToken = useCallback(async () => {
     if (

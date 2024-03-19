@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { CaptchaService } from 'src/integrations/captcha/captcha.service';
+import { CaptchaService } from 'src/engine/integrations/captcha/captcha.service';
 
 @Injectable()
 export class CaptchaGuard implements CanActivate {

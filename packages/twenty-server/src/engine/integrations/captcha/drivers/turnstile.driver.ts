@@ -1,20 +1,20 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { CaptchaDriver } from 'src/integrations/captcha/drivers/interfaces/captcha-driver.interface';
+import { CaptchaDriver } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-driver.interface';
 
 import {
   CaptchaDriverOptions,
   CaptchaValidateResult,
-} from 'src/integrations/captcha/interfaces';
+} from 'src/engine/integrations/captcha/interfaces';
 
-export type HCaptchaRecatpchaServerResponse = {
+export type TurnstileServerResponse = {
   success: boolean;
   challenge_ts: string;
   hostname: string;
   'error-codes': string[];
 };
 
-export class HCaptchaDriver implements CaptchaDriver {
+export class TurnstileDriver implements CaptchaDriver {
   private readonly siteKey: string;
   private readonly secretKey: string;
   private readonly httpService: AxiosInstance;
@@ -22,7 +22,7 @@ export class HCaptchaDriver implements CaptchaDriver {
     this.siteKey = options.siteKey;
     this.secretKey = options.secretKey;
     this.httpService = axios.create({
-      baseURL: 'https://api.hcaptcha.com/siteverify',
+      baseURL: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
     });
   }
 
@@ -30,12 +30,10 @@ export class HCaptchaDriver implements CaptchaDriver {
     const formData = new URLSearchParams({
       secret: this.secretKey,
       response: token,
-      siteKey: this.siteKey,
     });
-
     const response = await this.httpService.post('', formData);
 
-    const responseData = response.data as HCaptchaRecatpchaServerResponse;
+    const responseData = response.data as TurnstileServerResponse;
 
     return {
       success: responseData.success,

@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { CaptchaDriver } from 'src/integrations/captcha/drivers/interfaces/captcha-driver.interface';
+import { CaptchaDriver } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-driver.interface';
 
-import { CAPTCHA_DRIVER } from 'src/integrations/captcha/captcha.constants';
-import { CaptchaValidateResult } from 'src/integrations/captcha/interfaces';
+import { CAPTCHA_DRIVER } from 'src/engine/integrations/captcha/captcha.constants';
+import { CaptchaValidateResult } from 'src/engine/integrations/captcha/interfaces';
 
 @Injectable()
 export class CaptchaService implements CaptchaDriver {

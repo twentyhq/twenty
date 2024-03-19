@@ -5,7 +5,7 @@ import { captchaProviderState } from '@/client-config/states/captchaProviderStat
 import { getCaptchaUrlByProvider } from '~/utils/captcha';
 
 export const useInsertCaptchaScript = () => {
-  const captchaProvider = useRecoilValue(captchaProviderState);
+  const captchaProvider = useRecoilValue(captchaProviderState());
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
