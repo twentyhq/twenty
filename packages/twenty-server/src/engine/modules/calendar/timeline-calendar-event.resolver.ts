@@ -65,7 +65,7 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      return;
+      throw new Error('Workspace member not found');
     }
 
     const timelineCalendarEvents =
@@ -90,7 +90,7 @@ export class TimelineCalendarEventResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (!workspaceMember) {
-      return;
+      throw new Error('Workspace member not found');
     }
 
     const timelineCalendarEvents =
