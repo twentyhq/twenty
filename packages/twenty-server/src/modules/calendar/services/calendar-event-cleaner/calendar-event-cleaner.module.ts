@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { CalendarEventModule } from 'src/modules/calendar/repositories/calendar-event/calendar-event.module';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 

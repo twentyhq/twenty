@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
-import { WorkspaceMigrationService } from 'src/engine-metadata/workspace-migration/workspace-migration.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { demoObjectsPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()

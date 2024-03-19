@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine-metadata/workspace-cache-version/workspace-cache-version.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 @Injectable()
 export class WorkspaceSchemaStorageService {

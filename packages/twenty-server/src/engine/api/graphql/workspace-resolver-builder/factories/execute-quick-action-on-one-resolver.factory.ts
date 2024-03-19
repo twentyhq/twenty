@@ -12,7 +12,7 @@ import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
-import { QuickActionsService } from 'src/engine/modules/quick-actions/quick-actions.service';
+import { QuickActionsService } from 'src/engine/core-modules/quick-actions/quick-actions.service';
 
 @Injectable()
 export class ExecuteQuickActionOnOneResolverFactory

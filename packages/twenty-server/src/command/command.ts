@@ -1,6 +1,6 @@
 import { CommandFactory } from 'nest-commander';
 
-import { filterException } from 'src/engine/filters/utils/global-exception-handler.util';
+import { filterException } from 'src/engine/utils/global-exception-handler.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/integrations/logger/logger.service';
 

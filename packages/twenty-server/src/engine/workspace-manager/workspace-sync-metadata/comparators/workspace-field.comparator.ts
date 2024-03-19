@@ -9,12 +9,12 @@ import {
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { ComputedPartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/engine-metadata/field-metadata/field-metadata.entity';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 const commonFieldPropertiesToIgnore = [
   'id',

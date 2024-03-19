@@ -11,6 +11,8 @@ import {
   IsBoolean,
   IsNumber,
   IsDefined,
+  Min,
+  Max,
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
@@ -36,6 +38,13 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   DEBUG_MODE: boolean;
+
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(65535)
+  DEBUG_PORT: number = 9000;
 
   @CastToBoolean()
   @IsOptional()
@@ -188,6 +197,11 @@ export class EnvironmentVariables {
   @IsEnum(LoggerDriverType)
   @IsOptional()
   LOGGER_DRIVER: LoggerDriverType;
+
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()

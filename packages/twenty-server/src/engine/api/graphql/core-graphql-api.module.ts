@@ -1,25 +1,32 @@
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 
-import { MetadataModule } from 'src/engine-metadata/metadata.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
+import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+
 import { WorkspaceSchemaStorageModule } from 'src/engine/api/graphql/workspace-schema-storage/workspace-schema-storage.module';
-import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object-metadata.module';
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { WorkspaceSchemaBuilderModule } from 'src/engine/api/graphql/workspace-schema-builder/workspace-schema-builder.module';
 import { WorkspaceResolverBuilderModule } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.module';
+import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
+import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
+import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
-import { WorkspaceFactory } from './workspace.factory';
+import { WorkspaceSchemaFactory } from './workspace-schema.factory';
 
 @Module({
   imports: [
-    MetadataModule,
-    DataSourceModule,
-    ObjectMetadataModule,
+    GraphQLModule.forRootAsync<YogaDriverConfig>({
+      driver: YogaDriver,
+      imports: [CoreEngineModule, GraphQLConfigModule],
+      useClass: GraphQLConfigService,
+    }),
+    MetadataEngineModule,
     WorkspaceSchemaBuilderModule,
     WorkspaceResolverBuilderModule,
     WorkspaceSchemaStorageModule,
   ],
-  providers: [WorkspaceFactory, ScalarsExplorerService],
-  exports: [WorkspaceFactory],
+  providers: [WorkspaceSchemaFactory, ScalarsExplorerService],
+  exports: [WorkspaceSchemaFactory],
 })
-export class CoreGraphqlApiModule {}
+export class CoreGraphQLApiModule {}

@@ -11,7 +11,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   logging: ['error'],
   schema: 'core',
-  entities: ['dist/src/engine/modules/**/*.entity{.ts,.js}'],
+  entities: ['dist/src/engine/core-modules/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',

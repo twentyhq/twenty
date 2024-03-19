@@ -22,7 +22,7 @@ import { MessagingWorkspaceMemberListener } from 'src/modules/messaging/listener
 import { MessagingMessageChannelListener } from 'src/modules/messaging/listeners/messaging-message-channel.listener';
 import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
 import { WorkspaceMemberModule } from 'src/modules/workspace-member/repositories/workspace-member/workspace-member.module';
-import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
 import { CompanyModule } from 'src/modules/messaging/repositories/company/company.module';
 import { PersonModule } from 'src/modules/person/repositories/person/person.module';

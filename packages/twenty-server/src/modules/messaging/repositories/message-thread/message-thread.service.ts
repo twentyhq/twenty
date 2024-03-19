@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { MessageChannelMessageAssociationService } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.service';
 import { MessageService } from 'src/modules/messaging/repositories/message/message.service';
 

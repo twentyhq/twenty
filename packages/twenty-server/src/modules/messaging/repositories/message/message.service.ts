@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationService } from 'src/modules/messaging/repositories/message-channel-message-association/message-channel-message-association.service';

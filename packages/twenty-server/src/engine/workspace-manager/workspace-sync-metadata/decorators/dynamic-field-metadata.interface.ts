@@ -1,7 +1,7 @@
 import { DynamicRelationFieldMetadataDecoratorParams } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-computed-relation-field-metadata.interface';
 
 import { TypedReflect } from 'src/utils/typed-reflect';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export function DynamicRelationFieldMetadata(
   params: DynamicRelationFieldMetadataDecoratorParams,
