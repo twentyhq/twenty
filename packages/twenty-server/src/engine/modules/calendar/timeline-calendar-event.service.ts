@@ -104,6 +104,7 @@ export class TimelineCalendarEventService {
           attendee.personAvatarUrl || attendee.workspaceMemberAvatarUrl || '';
 
         return {
+          calendarEventId: attendee.calendarEventId,
           personId: attendee.personId,
           workspaceMemberId: attendee.workspaceMemberId,
           firstName,
@@ -183,12 +184,7 @@ export class TimelineCalendarEventService {
     timelineCalendarEvents.forEach((event) => {
       event.visibility = calendarEventVisibilityByEventId[event.id];
 
-      if (
-        event.visibility === 'METADATA' &&
-        !event.attendees
-          .map((attendee) => attendee.workspaceMemberId)
-          .includes(workspaceMemberId)
-      ) {
+      if (event.visibility === 'METADATA') {
         event.title = '';
         event.description = '';
         event.location = '';
