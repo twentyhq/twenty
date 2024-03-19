@@ -197,12 +197,17 @@ export class TimelineCalendarEventService {
       throw new Error('Failed to fetch calendar event visibility');
     }
 
+    const calendarEventIdsForWhichVisibilityIsMetadataMap = new Map(
+      calendarEventIdsForWhichVisibilityIsMetadata.map((event) => [
+        event.id,
+        TimelineCalendarEventVisibility.METADATA,
+      ]),
+    );
+
     timelineCalendarEvents.forEach((event) => {
-      event.visibility = calendarEventIdsForWhichVisibilityIsMetadata.some(
-        (calendarEvent) => calendarEvent.id === event.id,
-      )
-        ? TimelineCalendarEventVisibility.METADATA
-        : TimelineCalendarEventVisibility.SHARE_EVERYTHING;
+      event.visibility =
+        calendarEventIdsForWhichVisibilityIsMetadataMap.get(event.id) ??
+        TimelineCalendarEventVisibility.SHARE_EVERYTHING;
 
       if (event.visibility === 'METADATA') {
         event.title = '';
