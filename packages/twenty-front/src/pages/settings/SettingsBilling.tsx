@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconCalendarEvent, IconCircleX } from '@tabler/icons-react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
@@ -11,6 +10,7 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat.tsx';
 import { AppPath } from '@/types/AppPath.ts';
+import { IconCalendarEvent, IconCircleX } from '@/ui/display/icon';
 import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info.tsx';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';

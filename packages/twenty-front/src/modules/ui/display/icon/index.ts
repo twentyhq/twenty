@@ -37,6 +37,7 @@ export {
   IconChevronUp,
   IconCircleDot,
   IconCircleOff,
+  IconCircleX,
   IconClick,
   IconCode,
   IconCoins,
