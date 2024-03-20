@@ -64,8 +64,8 @@ export const SettingsBilling = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
     currentWorkspace?.currentBillingSubscription?.interval === 'year'
       ? switchInfos.year
