@@ -24,7 +24,7 @@ export class CreateCompanyAndContactJob
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
     const { workspaceId, connectedAccountHandle, contactsToCreate } = data;
 
-    this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccountHandle,
       contactsToCreate.map((contact) => ({
         handle: contact.handle,

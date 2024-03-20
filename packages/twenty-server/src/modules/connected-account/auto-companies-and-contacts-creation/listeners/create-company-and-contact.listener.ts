@@ -24,7 +24,7 @@ export class CreateCompanyAndContactListener {
       handle: string;
     }[];
   }) {
-    this.messageQueueService.add<CreateCompanyAndContactJobData>(
+    await this.messageQueueService.add<CreateCompanyAndContactJobData>(
       CreateCompanyAndContactJob.name,
       payload,
     );

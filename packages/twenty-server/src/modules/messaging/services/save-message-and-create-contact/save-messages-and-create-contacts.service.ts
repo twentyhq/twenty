@@ -127,6 +127,7 @@ export class SaveMessagesAndCreateContactsService {
 
         this.eventEmitter.emit(`createContacts`, {
           workspaceId,
+          connectedAccountHandle: connectedAccount.handle,
           contactsToCreate,
         });
       }
