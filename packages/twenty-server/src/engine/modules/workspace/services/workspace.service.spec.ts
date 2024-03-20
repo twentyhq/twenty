@@ -7,8 +7,6 @@ import { User } from 'src/engine/modules/user/user.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
 import { BillingService } from 'src/engine/modules/billing/billing.service';
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -41,14 +39,6 @@ describe('WorkspaceService', () => {
         },
         {
           provide: BillingService,
-          useValue: {},
-        },
-        {
-          provide: DataSourceService,
-          useValue: {},
-        },
-        {
-          provide: TypeORMService,
           useValue: {},
         },
       ],

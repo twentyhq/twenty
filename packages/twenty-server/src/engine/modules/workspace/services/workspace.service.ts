@@ -1,20 +1,17 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
 import { BillingService } from 'src/engine/modules/billing/billing.service';
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -28,9 +25,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    private eventEmitter: EventEmitter2,
   ) {
     super(workspaceRepository);
   }
