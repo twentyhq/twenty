@@ -8,7 +8,8 @@ import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background
 import { SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockFilterDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_SORT_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockSortDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useInitViewBar } from '@/views/hooks/useInitViewBar';
+import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
 type SignInBackgroundMockContainerEffectProps = {
@@ -44,8 +45,10 @@ export const SignInBackgroundMockContainerEffect = ({
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
-    setEntityCountInCurrentView,
-  } = useViewBar({ viewBarId: viewId });
+  } = useInitViewBar(viewId);
+
+  const { setRecordCountInCurrentView } =
+    useSetRecordCountInCurrentView(viewId);
 
   useEffect(() => {
     setViewObjectMetadataId?.(objectMetadataItem.id);
@@ -85,9 +88,9 @@ export const SignInBackgroundMockContainerEffect = ({
 
   useEffect(() => {
     setOnEntityCountChange(
-      () => (entityCount: number) => setEntityCountInCurrentView(entityCount),
+      () => (entityCount: number) => setRecordCountInCurrentView(entityCount),
     );
-  }, [setEntityCountInCurrentView, setOnEntityCountChange]);
+  }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
   return <></>;
 };

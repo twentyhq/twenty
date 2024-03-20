@@ -29,10 +29,10 @@ describe('useAttachRelationInBothDirections', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState(),
+          objectMetadataItemsState,
         );
 
         const res = useAttachRelationInBothDirections();

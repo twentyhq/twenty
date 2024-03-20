@@ -12,12 +12,10 @@ describe('useRightDrawer', () => {
   it('Should test the default behavior of useRightDrawer and change the states as the function calls', async () => {
     const useCombinedHooks = () => {
       const { openRightDrawer, closeRightDrawer } = useRightDrawer();
-      const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState());
-      const isRightDrawerExpanded = useRecoilValue(
-        isRightDrawerExpandedState(),
-      );
+      const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
+      const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
 
-      const rightDrawerPage = useRecoilValue(rightDrawerPageState());
+      const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
       return {
         openRightDrawer,

@@ -13,21 +13,21 @@ export const useEmailThread = () => {
     ({ snapshot, set }) =>
       (threadId: string) => {
         const isRightDrawerOpen = snapshot
-          .getLoadable(isRightDrawerOpenState())
+          .getLoadable(isRightDrawerOpenState)
           .getValue();
 
         const viewableEmailThreadId = snapshot
-          .getLoadable(viewableEmailThreadIdState())
+          .getLoadable(viewableEmailThreadIdState)
           .getValue();
 
         if (isRightDrawerOpen && viewableEmailThreadId === threadId) {
-          set(viewableEmailThreadIdState(), null);
+          set(viewableEmailThreadIdState, null);
           closeRightDrawer();
           return;
         }
 
         openEmailThredRightDrawer();
-        set(viewableEmailThreadIdState(), threadId);
+        set(viewableEmailThreadIdState, threadId);
       },
     [closeRightDrawer, openEmailThredRightDrawer],
   );

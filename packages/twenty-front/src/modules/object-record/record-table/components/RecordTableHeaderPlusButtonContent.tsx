@@ -17,9 +17,9 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 export const RecordTableHeaderPlusButtonContent = () => {
   const { closeDropdown } = useDropdown();
 
-  const { getHiddenTableColumnsSelector } = useRecordTableStates();
+  const { hiddenTableColumnsSelector } = useRecordTableStates();
 
-  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
 
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns();

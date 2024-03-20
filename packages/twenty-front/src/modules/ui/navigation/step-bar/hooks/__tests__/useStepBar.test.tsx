@@ -11,7 +11,7 @@ const renderHooks = (initialStep: number) => {
       const { nextStep, prevStep, reset, setStep } = useStepBar({
         initialStep,
       });
-      const stepBarInternal = useRecoilValue(stepBarInternalState());
+      const stepBarInternal = useRecoilValue(stepBarInternalState);
 
       return {
         nextStep,

@@ -58,12 +58,12 @@ export const EmailThreads = ({
 }) => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { getEmailThreadsPageState } = useEmailThreadStates({
+  const { emailThreadsPageState } = useEmailThreadStates({
     emailThreadScopeId: getScopeIdFromComponentId(entity.id),
   });
 
   const [emailThreadsPage, setEmailThreadsPage] = useRecoilState(
-    getEmailThreadsPageState(),
+    emailThreadsPageState,
   );
 
   const [isFetchingMoreEmails, setIsFetchingMoreEmails] = useState(false);

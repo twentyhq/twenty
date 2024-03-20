@@ -13,7 +13,7 @@ export interface EventData {
 }
 
 export const useEventTracker = () => {
-  const telemetry = useRecoilValue(telemetryState());
+  const telemetry = useRecoilValue(telemetryState);
   const [createEventMutation] = useTrackMutation();
 
   return useCallback(

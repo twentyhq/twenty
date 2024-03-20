@@ -12,7 +12,7 @@ describe('useFilterOutUnexistingObjectMetadataItems', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
         setMetadataItems(mockObjectMetadataItems.slice(1));
         return useFilterOutUnexistingObjectMetadataItems();

@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
@@ -9,6 +12,8 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
+  const currentUser = useRecoilValue(currentUserState);
+
   const {
     objectMetadataItem: objectMetadataItemView,
     upsertRecordsInCache: upsertViewsInCache,
@@ -27,16 +32,18 @@ export const PrefetchRunQueriesEffect = () => {
 
   const prefetchFindManyQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
+      targetObjectMetadataItems: [
+        objectMetadataItemView,
+        objectMetadataItemFavorite,
+      ],
       depth: 2,
     });
 
-  if (!isDefined(prefetchFindManyQuery)) {
-    throw new Error('Could not prefetch recrds');
-  }
-
   const { data } = useQuery<MultiObjectRecordQueryResult>(
-    prefetchFindManyQuery,
+    prefetchFindManyQuery ?? EMPTY_QUERY,
+    {
+      skip: !currentUser,
+    },
   );
 
   useEffect(() => {

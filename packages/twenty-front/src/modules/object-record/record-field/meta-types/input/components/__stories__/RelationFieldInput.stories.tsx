@@ -30,9 +30,9 @@ import {
 } from '../RelationFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState(),
+    currentWorkspaceMemberState,
   );
 
   useEffect(() => {

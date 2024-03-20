@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
 export const CheckboxCell = () => {
   const { recordId } = useContext(RecordTableRowContext);
   const { isRowSelectedFamilyState } = useRecordTableStates();
-  const setActionBarOpenState = useSetRecoilState(actionBarOpenState());
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 

@@ -4,20 +4,21 @@ import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarFilterEffectProps = {
   filterDropdownId: string;
-  onFilterSelect?: ((filter: Filter) => void) | undefined;
 };
 
 export const ViewBarFilterEffect = ({
   filterDropdownId,
-  onFilterSelect,
 }: ViewBarFilterEffectProps) => {
-  const { availableFilterDefinitionsState, currentViewFiltersState } =
-    useViewScopedStates();
+  const { availableFilterDefinitionsState, unsavedToUpsertViewFiltersState } =
+    useViewStates();
+
+  const { upsertCombinedViewFilter } = useCombinedViewFilters();
 
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
@@ -25,32 +26,38 @@ export const ViewBarFilterEffect = ({
   const {
     setAvailableFilterDefinitions,
     setOnFilterSelect,
-    filterDefinitionUsedInDropdown,
+    filterDefinitionUsedInDropdownState,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
-    isObjectFilterDropdownUnfolded,
   } = useFilterDropdown({ filterDropdownId });
+
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
 
   useEffect(() => {
     if (isDefined(availableFilterDefinitions)) {
       setAvailableFilterDefinitions(availableFilterDefinitions);
     }
-
-    if (isDefined(onFilterSelect)) {
-      setOnFilterSelect(() => onFilterSelect);
-    }
+    setOnFilterSelect(() => (filter: Filter | null) => {
+      if (isDefined(filter)) {
+        upsertCombinedViewFilter(filter);
+      }
+    });
   }, [
     availableFilterDefinitions,
-    onFilterSelect,
     setAvailableFilterDefinitions,
     setOnFilterSelect,
+    upsertCombinedViewFilter,
   ]);
 
-  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const unsavedToUpsertViewFilters = useRecoilValue(
+    unsavedToUpsertViewFiltersState,
+  );
 
   useEffect(() => {
     if (filterDefinitionUsedInDropdown?.type === 'RELATION') {
-      const viewFilterUsedInDropdown = currentViewFilters.find(
+      const viewFilterUsedInDropdown = unsavedToUpsertViewFilters.find(
         (filter) =>
           filter.fieldMetadataId ===
           filterDefinitionUsedInDropdown.fieldMetadataId,
@@ -64,7 +71,7 @@ export const ViewBarFilterEffect = ({
 
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
     } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
-      const viewFilterUsedInDropdown = currentViewFilters.find(
+      const viewFilterUsedInDropdown = unsavedToUpsertViewFilters.find(
         (filter) =>
           filter.fieldMetadataId ===
           filterDefinitionUsedInDropdown.fieldMetadataId,
@@ -82,10 +89,9 @@ export const ViewBarFilterEffect = ({
     }
   }, [
     filterDefinitionUsedInDropdown,
-    currentViewFilters,
     setObjectFilterDropdownSelectedRecordIds,
-    isObjectFilterDropdownUnfolded,
     setObjectFilterDropdownSelectedOptionValues,
+    unsavedToUpsertViewFilters,
   ]);
 
   return <></>;
