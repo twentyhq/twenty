@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 export type SaveEventToDbJobData = {
