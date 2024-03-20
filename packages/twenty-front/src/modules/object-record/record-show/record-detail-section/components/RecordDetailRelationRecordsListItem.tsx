@@ -1,8 +1,14 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
-import { IconDotsVertical, IconTrash, IconUnlink } from 'twenty-ui';
+import {
+  IconChevronDown,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
+} from 'twenty-ui';
 
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -25,6 +31,7 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -53,10 +60,15 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
 `;
 
 const StyledClickableZone = styled.div`
+  align-items: center;
   cursor: pointer;
+  display: flex;
   flex: 1 0 auto;
   height: 100%;
+  justify-content: flex-end;
 `;
+
+const MotionIconChevronDown = motion(IconChevronDown);
 
 type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
@@ -158,6 +170,20 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const handleClick = () => onClick(relationRecord.id);
 
+  const AnimatedIconChevronDown = useCallback<IconComponent>(
+    (props) => (
+      <MotionIconChevronDown
+        className={props.className}
+        color={props.color}
+        size={props.size}
+        stroke={props.stroke}
+        initial={{ rotate: isExpanded ? 0 : -180 }}
+        animate={{ rotate: isExpanded ? -180 : 0 }}
+      />
+    ),
+    [isExpanded],
+  );
+
   return (
     <>
       <StyledListItem isDropdownOpen={isDropdownOpen}>
@@ -174,7 +200,13 @@ export const RecordDetailRelationRecordsListItem = ({
               onCompleted: (record) => setRecords([record]),
             })
           }
-        />
+        >
+          <LightIconButton
+            className="displayOnHover"
+            Icon={AnimatedIconChevronDown}
+            accent="tertiary"
+          />
+        </StyledClickableZone>
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
             dropdownId={dropdownScopeId}
