@@ -38,8 +38,6 @@ RUN yarn workspaces focus --production twenty-emails twenty-server
 FROM common-deps as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
-ARG REACT_APP_SERVER_AUTH_URL
-ARG REACT_APP_SERVER_FILES_URL
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
@@ -59,13 +57,12 @@ ARG REACT_APP_SERVER_BASE_URL
 ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 
 # Copy built applications from previous stages
-COPY --from=twenty-server-build /app /app
-COPY --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
+COPY --chown=twentyuser --from=twenty-server-build /app /app
+COPY --chown=twentyuser --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
 COPY --chown=twentyuser --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
-COPY ./packages/twenty-docker/prod/twenty/inject-runtime-env.sh /app
 
 # Set metadata and labels
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend and frontend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
 
-CMD ["/bin/sh", "-c", "/app/inject-runtime-env.sh && node dist/src/main"]
+CMD ["node", "dist/src/main"]
