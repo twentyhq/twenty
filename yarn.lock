@@ -3555,9 +3555,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blocknote/core@npm:^0.11.2":
-  version: 0.11.2
-  resolution: "@blocknote/core@npm:0.11.2"
+"@blocknote/core@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "@blocknote/core@npm:0.12.1"
   dependencies:
     "@tiptap/core": "npm:^2.0.3"
     "@tiptap/extension-bold": "npm:^2.0.3"
@@ -3598,23 +3598,21 @@ __metadata:
     y-prosemirror: "npm:1.2.1"
     y-protocols: "npm:^1.0.5"
     yjs: "npm:^13.6.1"
-  checksum: a9a5affe263481bf46b556ded4b5dd583f24e0b090d536550eb2484f7d091e76258d8a865171459fbf3be114abee638e406d419d0d32f07aa5a82c638d00fcb3
+  checksum: 3b00572a2d98964722b7bcd75f8399856c3fcdcbc88e7217e883d7f6eba13fa36aeea8dde439335c9ea475a25f179b771fa397e9b78219c608c74663db1557f2
   languageName: node
   linkType: hard
 
-"@blocknote/react@npm:^0.11.2":
-  version: 0.11.2
-  resolution: "@blocknote/react@npm:0.11.2"
+"@blocknote/react@npm:^0.12.1":
+  version: 0.12.2
+  resolution: "@blocknote/react@npm:0.12.2"
   dependencies:
-    "@blocknote/core": "npm:^0.11.2"
+    "@blocknote/core": "npm:^0.12.1"
     "@floating-ui/react": "npm:^0.26.4"
     "@mantine/core": "npm:^7.5.0"
     "@mantine/hooks": "npm:^7.5.0"
     "@mantine/utils": "npm:^6.0.21"
     "@tiptap/core": "npm:^2.0.3"
     "@tiptap/react": "npm:^2.0.3"
-    lodash.foreach: "npm:^4.5.0"
-    lodash.groupby: "npm:^4.6.0"
     lodash.merge: "npm:^4.6.2"
     react: "npm:^18"
     react-dom: "npm:^18.2.0"
@@ -3623,7 +3621,7 @@ __metadata:
   peerDependencies:
     react: ^18
     react-dom: ^18
-  checksum: a3dcfd40ea3e3b0e4c238b161be908e726b1d404337efe9903e92b7cf518d3165a7df8d78bce606f86354198751fd009d96f1cc8f23de51734e9faa663225981
+  checksum: 2dcae5268e104398bb2be13f650b6d141eecc74542dcc38b78b3cad7cc499e2e2fd5ecd225ce969fbfadd346cc74d2354316fbb2a61ce5f38c2d339849dd4b0e
   languageName: node
   linkType: hard
 
@@ -33362,24 +33360,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.foreach@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "lodash.foreach@npm:4.5.0"
-  checksum: bd9cc83e87e805b21058ce6cf718dd22db137c7ca08eddbd608549db59989911c571b7195707f615cb37f27bb4f9a9fa9980778940d768c24095f5a04b244c84
-  languageName: node
-  linkType: hard
-
 "lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 48f40d471a1654397ed41685495acb31498d5ed696185ac8973daef424a749ca0c7871bf7b665d5c14f5cc479394479e0307e781f61d5573831769593411be6e
-  languageName: node
-  linkType: hard
-
-"lodash.groupby@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "lodash.groupby@npm:4.6.0"
-  checksum: 3d136cad438ad6c3a078984ef60e057a3498b1312aa3621b00246ecb99e8f2c4d447e2815460db7a0b661a4fe4e2eeee96c84cb661a824bad04b6cf1f7bc6e9b
   languageName: node
   linkType: hard
 
@@ -45826,8 +45810,8 @@ __metadata:
     "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@babel/core": "npm:^7.14.5"
     "@babel/preset-react": "npm:^7.14.5"
-    "@blocknote/core": "npm:^0.11.2"
-    "@blocknote/react": "npm:^0.11.2"
+    "@blocknote/core": "npm:^0.12.1"
+    "@blocknote/react": "npm:^0.12.1"
     "@chakra-ui/accordion": "npm:^2.3.0"
     "@chakra-ui/system": "npm:^2.6.0"
     "@codesandbox/sandpack-react": "npm:^2.13.5"
