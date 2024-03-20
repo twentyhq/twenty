@@ -16,6 +16,7 @@ export * from './menu-item/components/MenuItemSelect';
 export * from './menu-item/components/MenuItemSelectAvatar';
 export * from './menu-item/components/MenuItemSelectColor';
 export * from './menu-item/components/MenuItemSelectTag';
+export * from './menu-item/components/MenuItemSuggestion';
 export * from './menu-item/components/MenuItemToggle';
 export * from './menu-item/internals/components/MenuItemLeftContent';
 export * from './menu-item/internals/components/StyledMenuItemBase';

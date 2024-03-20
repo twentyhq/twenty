@@ -14,10 +14,6 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-  NavigationDrawerItem,
-  NavigationDrawerItemGroup,
-  NavigationDrawerSection,
-  NavigationDrawerSectionTitle,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -25,6 +21,10 @@ import { billingState } from '@/client-config/states/billingState.ts';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavigationDrawerItems = () => {

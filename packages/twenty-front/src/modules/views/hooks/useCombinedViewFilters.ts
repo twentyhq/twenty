@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
+import { getSnapshotValue } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { ViewFilter } from '@/views/types/ViewFilter';

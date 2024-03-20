@@ -3,14 +3,16 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   GithubVersionLink,
   isNavigationDrawerOpenState,
-  NavigationDrawer,
-  NavigationDrawerProps,
   useIsMobile,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportChat } from '@/support/components/SupportChat';
+import {
+  NavigationDrawer,
+  NavigationDrawerProps,
+} from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
 import packageJson from '../../../../package.json';

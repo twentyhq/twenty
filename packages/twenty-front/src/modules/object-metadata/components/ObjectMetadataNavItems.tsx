@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { NavigationDrawerItem, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 

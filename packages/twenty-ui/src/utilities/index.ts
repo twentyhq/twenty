@@ -22,8 +22,6 @@ export * from './recoil-scope/scopes-internal/utils/createScopeInternalContext';
 export * from './recoil-scope/states/RecoilScopeContext';
 export * from './recoil-scope/types/RecoilScopedSelector';
 export * from './recoil-scope/types/RecoilScopedState';
-export * from './recoil-scope/utils/getScopedFamilyStateDeprecated';
-export * from './recoil-scope/utils/getScopedSelectorDeprecated';
 export * from './recoil-scope/utils/getScopedStateDeprecated';
 export * from './recoil-scope/utils/getScopeIdFromComponentId';
 export * from './recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';

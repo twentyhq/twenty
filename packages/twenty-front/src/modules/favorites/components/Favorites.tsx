@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
-import {
-  Avatar,
-  DraggableItem,
-  DraggableList,
-  NavigationDrawerItem,
-  NavigationDrawerSection,
-  NavigationDrawerSectionTitle,
-} from 'twenty-ui';
+import { Avatar, DraggableItem, DraggableList } from 'twenty-ui';
+
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 import { useFavorites } from '../hooks/useFavorites';
 

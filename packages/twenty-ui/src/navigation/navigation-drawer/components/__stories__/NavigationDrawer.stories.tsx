@@ -15,14 +15,15 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui';
+import { GithubVersionLink } from 'twenty-ui';
 
 import { Favorites } from '@/favorites/components/Favorites';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
+import packageJson from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
@@ -143,6 +144,6 @@ export const Submenu: Story = {
         </NavigationDrawerSection>
       </>
     ),
-    footer: <GithubVersionLink />,
+    footer: <GithubVersionLink version={packageJson.version} />,
   },
 };

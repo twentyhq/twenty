@@ -30,6 +30,5 @@ export * from './components/Select';
 export * from './components/TextArea';
 export * from './components/TextInput';
 export * from './components/Toggle';
-export * from './editor/components/BlockEditor';
 export * from './relation-picker/components/CreateNewButton';
 export * from './relation-picker/components/skeletons/DropdownMenuSkeletonItem';

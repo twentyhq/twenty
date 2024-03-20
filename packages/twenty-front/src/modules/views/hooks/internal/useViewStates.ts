@@ -1,6 +1,9 @@
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import {
+  extractComponentReadOnlySelector,
+  extractComponentState,
+  useAvailableScopeIdOrThrow,
+} from 'twenty-ui';
+
 import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';

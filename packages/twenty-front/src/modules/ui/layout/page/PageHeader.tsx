@@ -10,10 +10,11 @@ import {
   IconComponent,
   isNavigationDrawerOpenState,
   MOBILE_VIEWPORT,
-  NavigationDrawerCollapseButton,
   OverflowingTextWithTooltip,
   useIsMobile,
 } from 'twenty-ui';
+
+import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 

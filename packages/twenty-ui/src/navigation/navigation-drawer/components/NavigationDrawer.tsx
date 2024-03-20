@@ -3,10 +3,12 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
+import {
+  isNavigationDrawerOpenState,
+  MOBILE_VIEWPORT,
+  useIsMobile,
+} from 'twenty-ui';
 
-import { MOBILE_VIEWPORT } from '../../../theme/constants/MobileViewport';
-import { useIsMobile } from '../../../utilities/responsive/hooks/useIsMobile';
-import { isNavigationDrawerOpenState } from '../../states/isNavigationDrawerOpenState';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
 
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';

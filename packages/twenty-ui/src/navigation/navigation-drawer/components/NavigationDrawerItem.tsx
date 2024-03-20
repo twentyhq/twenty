@@ -3,12 +3,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useSetRecoilState } from 'recoil';
+import {
+  IconComponent,
+  isNavigationDrawerOpenState,
+  MOBILE_VIEWPORT,
+  useIsMobile,
+} from 'twenty-ui';
 
-import { IconComponent } from '../../../display';
-import { MOBILE_VIEWPORT } from '../../../theme/constants/MobileViewport';
-import { useIsMobile } from '../../../utilities/responsive/hooks/useIsMobile';
-import { isDefined } from '../../../utils/isDefined';
-import { isNavigationDrawerOpenState } from '../../states/isNavigationDrawerOpenState';
+import { isDefined } from '~/utils/isDefined';
 
 export type NavigationDrawerItemProps = {
   className?: string;
