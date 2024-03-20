@@ -1,4 +1,4 @@
 .git
-server/node_modules/
-server/.env
+.env
 node_modules
+.nx/cache
