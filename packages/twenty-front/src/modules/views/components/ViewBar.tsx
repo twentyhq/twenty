@@ -10,12 +10,8 @@ import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEff
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
-import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
-import { ViewField } from '@/views/types/ViewField';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewSort } from '@/views/types/ViewSort';
-import { ViewType } from '@/views/types/ViewType';
+import { GraphQLView } from '@/views/types/GraphQLView';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
@@ -28,13 +24,7 @@ export type ViewBarProps = {
   className?: string;
   optionsDropdownButton: ReactNode;
   optionsDropdownScopeId: string;
-  onViewSortsChange?: (sorts: ViewSort[]) => void | Promise<void>;
-  onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
-  onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
-  onViewTypeChange?: (viewType: ViewType) => void | Promise<void>;
-  onViewCompactModeChange?: (
-    isCompactModeActive: boolean,
-  ) => void | Promise<void>;
+  onCurrentViewChange: (view: GraphQLView | undefined) => void | Promise<void>;
 };
 
 export const ViewBar = ({
@@ -42,18 +32,12 @@ export const ViewBar = ({
   className,
   optionsDropdownButton,
   optionsDropdownScopeId,
-  onViewFieldsChange,
-  onViewFiltersChange,
-  onViewSortsChange,
-  onViewTypeChange,
-  onViewCompactModeChange,
+  onCurrentViewChange,
 }: ViewBarProps) => {
   const { openDropdown: openOptionsDropdownButton } = useDropdown(
     optionsDropdownScopeId,
   );
-  const { upsertViewSort, upsertViewFilter } = useViewBar({
-    viewBarId,
-  });
+
   const { objectNamePlural } = useParams();
 
   const filterDropdownId = 'view-filter';
@@ -62,21 +46,11 @@ export const ViewBar = ({
   return (
     <ViewScope
       viewScopeId={viewBarId}
-      onViewFieldsChange={onViewFieldsChange}
-      onViewFiltersChange={onViewFiltersChange}
-      onViewSortsChange={onViewSortsChange}
-      onViewTypeChange={onViewTypeChange}
-      onViewCompactModeChange={onViewCompactModeChange}
+      onCurrentViewChange={onCurrentViewChange}
     >
-      <ViewBarEffect />
-      <ViewBarFilterEffect
-        filterDropdownId={filterDropdownId}
-        onFilterSelect={upsertViewFilter}
-      />
-      <ViewBarSortEffect
-        sortDropdownId={sortDropdownId}
-        onSortSelect={upsertViewSort}
-      />
+      <ViewBarEffect viewBarId={viewBarId} />
+      <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
+      <ViewBarSortEffect sortDropdownId={sortDropdownId} />
       {!!objectNamePlural && <FilterQueryParamsEffect />}
 
       <TopBar

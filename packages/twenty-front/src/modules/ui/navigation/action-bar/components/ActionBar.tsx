@@ -28,8 +28,8 @@ const StyledContainerActionBar = styled.div`
 `;
 
 export const ActionBar = () => {
-  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState());
-  const actionBarEntries = useRecoilValue(actionBarEntriesState());
+  const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
+  const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   if (contextMenuIsOpen) {

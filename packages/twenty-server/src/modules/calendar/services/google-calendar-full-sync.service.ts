@@ -8,7 +8,7 @@ import { BlocklistRepository } from 'src/modules/connected-account/repositories/
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
 import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';

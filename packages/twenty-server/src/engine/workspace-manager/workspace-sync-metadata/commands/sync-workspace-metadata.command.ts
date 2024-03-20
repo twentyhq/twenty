@@ -2,10 +2,10 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
-import { WorkspaceService } from 'src/engine/modules/workspace/services/workspace.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 

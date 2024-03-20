@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { PartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
-import { FeatureFlagMap } from 'src/engine/modules/feature-flag/interfaces/feature-flag-map.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { TypedReflect } from 'src/utils/typed-reflect';

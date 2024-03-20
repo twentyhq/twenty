@@ -21,7 +21,7 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;

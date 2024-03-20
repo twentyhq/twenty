@@ -7,16 +7,16 @@ import {
   WorkspaceTableStructure,
   WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
-import { FieldMetadataDefaultValue } from 'src/engine-metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { fieldMetadataTypeToColumnType } from 'src/engine-metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { serializeTypeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-type-default-value.util';
-import { isCompositeFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-composite-field-metadata-type.util';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
+import { serializeTypeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-type-default-value.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @Injectable()

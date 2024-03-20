@@ -13,21 +13,15 @@ export const useSortDropdown = (props?: UseSortProps) => {
     props?.sortDropdownId,
   );
   const {
-    availableSortDefinitions,
-    setAvailableSortDefinitions,
-    isSortSelected,
-    setIsSortSelected,
-    onSortSelect,
-    setOnSortSelect,
+    availableSortDefinitionsState,
+    isSortSelectedState,
+    onSortSelectState,
   } = useSortDropdownStates(scopeId);
 
   return {
     scopeId,
-    availableSortDefinitions,
-    isSortSelected,
-    setIsSortSelected,
-    setAvailableSortDefinitions,
-    onSortSelect,
-    setOnSortSelect,
+    availableSortDefinitionsState,
+    isSortSelectedState,
+    onSortSelectState,
   };
 };

@@ -133,12 +133,12 @@ export const RecordBoardCard = () => {
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
   const {
-    getIsCompactModeActiveState,
+    isCompactModeActiveState,
     isRecordBoardCardSelectedFamilyState,
-    getVisibleFieldDefinitionsState,
+    visibleFieldDefinitionsState,
   } = useRecordBoardStates();
 
-  const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
+  const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
   const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
 
@@ -146,14 +146,14 @@ export const RecordBoardCard = () => {
     isRecordBoardCardSelectedFamilyState(recordId),
   );
 
-  const visibleBoardCardFieldDefinitions = useRecoilValue(
-    getVisibleFieldDefinitionsState(),
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
   );
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -247,7 +247,7 @@ export const RecordBoardCard = () => {
             isOpen={!isCardInCompactMode || !isCompactModeActive}
             initial={false}
           >
-            {visibleBoardCardFieldDefinitions.map((fieldDefinition) => (
+            {visibleFieldDefinitions.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
               >

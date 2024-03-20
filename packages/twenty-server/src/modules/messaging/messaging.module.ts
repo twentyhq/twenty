@@ -5,7 +5,8 @@ import { MessagingPersonListener } from 'src/modules/messaging/listeners/messagi
 import { MessagingWorkspaceMemberListener } from 'src/modules/messaging/listeners/messaging-workspace-member.listener';
 import { MessagingMessageChannelListener } from 'src/modules/messaging/listeners/messaging-message-channel.listener';
 import { MessagingConnectedAccountListener } from 'src/modules/messaging/listeners/messaging-connected-account.listener';
-import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+
 @Module({
   imports: [TypeOrmModule.forFeature([FeatureFlagEntity], 'core')],
   providers: [

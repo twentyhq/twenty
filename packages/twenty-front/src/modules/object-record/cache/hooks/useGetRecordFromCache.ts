@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { gql, useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
@@ -13,21 +14,22 @@ export const useGetRecordFromCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const apolloClient = useApolloClient();
 
-  return <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
-    recordId: string,
-    cache = apolloClient.cache,
-  ) => {
-    if (isUndefinedOrNull(objectMetadataItem)) {
-      return null;
-    }
+  return useCallback(
+    <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
+      recordId: string,
+      cache = apolloClient.cache,
+    ) => {
+      if (isUndefinedOrNull(objectMetadataItem)) {
+        return null;
+      }
 
-    const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+      const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
-    const cacheReadFragment = gql`
+      const cacheReadFragment = gql`
       fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
         {
           objectMetadataItems,
@@ -36,14 +38,16 @@ export const useGetRecordFromCache = ({
       )}
     `;
 
-    const cachedRecordId = cache.identify({
-      __typename: capitalize(objectMetadataItem.nameSingular),
-      id: recordId,
-    });
+      const cachedRecordId = cache.identify({
+        __typename: capitalize(objectMetadataItem.nameSingular),
+        id: recordId,
+      });
 
-    return cache.readFragment<CachedObjectRecord & { __typename: string }>({
-      id: cachedRecordId,
-      fragment: cacheReadFragment,
-    });
-  };
+      return cache.readFragment<CachedObjectRecord & { __typename: string }>({
+        id: cachedRecordId,
+        fragment: cacheReadFragment,
+      });
+    },
+    [objectMetadataItem, objectMetadataItems, apolloClient],
+  );
 };

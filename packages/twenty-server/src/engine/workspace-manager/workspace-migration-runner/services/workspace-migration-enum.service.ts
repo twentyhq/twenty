@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceMigrationColumnAlter } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { serializeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-default-value';
+import { WorkspaceMigrationColumnAlter } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 
 @Injectable()
 export class WorkspaceMigrationEnumService {

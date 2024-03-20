@@ -8,5 +8,5 @@ export const extractComponentState = <StateType>(
   ) => RecoilState<StateType>,
   scopeId: string,
 ) => {
-  return () => componentState({ scopeId });
+  return componentState({ scopeId });
 };

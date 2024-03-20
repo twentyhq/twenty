@@ -10,7 +10,7 @@ import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState
 
 export const RightDrawerTopBarExpandButton = () => {
   const [isRightDrawerExpanded, setIsRightDrawerExpanded] = useRecoilState(
-    isRightDrawerExpandedState(),
+    isRightDrawerExpandedState,
   );
 
   const handleButtonClick = () => {

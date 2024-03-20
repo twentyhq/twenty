@@ -8,14 +8,14 @@ import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
-  objectMetadataItems,
+  targetObjectMetadataItems,
   depth,
 }: {
-  objectMetadataItems: ObjectMetadataItem[];
+  targetObjectMetadataItems: ObjectMetadataItem[];
   depth?: number;
 }) => {
-  const allObjectMetadataItems = useRecoilValue(objectMetadataItemsState());
-  const capitalizedObjectNameSingulars = objectMetadataItems.map(
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const capitalizedObjectNameSingulars = targetObjectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
 
@@ -58,7 +58,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
       ${lastCursorPerMetadataItemArray}, 
       ${limitPerMetadataItemArray}
     ) {
-      ${objectMetadataItems
+      ${targetObjectMetadataItems
         .map(
           (objectMetadataItem) =>
             `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
@@ -72,7 +72,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             )}){
           edges {
             node ${mapObjectMetadataToGraphQLQuery({
-              objectMetadataItems: allObjectMetadataItems,
+              objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
               depth,
             })}

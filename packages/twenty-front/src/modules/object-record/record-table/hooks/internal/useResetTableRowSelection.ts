@@ -4,18 +4,18 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
-  const { getTableRowIdsState, isRowSelectedFamilyState } =
+  const { tableRowIdsState, isRowSelectedFamilyState } =
     useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const tableRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
+        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         for (const rowId of tableRowIds) {
           set(isRowSelectedFamilyState(rowId), false);
         }
       },
-    [getTableRowIdsState, isRowSelectedFamilyState],
+    [tableRowIdsState, isRowSelectedFamilyState],
   );
 };

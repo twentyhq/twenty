@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceMigrationColumnAlter } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationColumnAlter } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
 @Injectable()
 export class WorkspaceMigrationTypeService {

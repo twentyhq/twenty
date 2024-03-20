@@ -30,7 +30,7 @@ describe('useEmailThreadStates hook', () => {
     );
 
     expect(result.current.scopeId).toBe(mockScopeId);
-    expect(result.current.getEmailThreadsPageState).toBe(
+    expect(result.current.emailThreadsPageState).toBe(
       mockGetEmailThreadsPageState,
     );
   });

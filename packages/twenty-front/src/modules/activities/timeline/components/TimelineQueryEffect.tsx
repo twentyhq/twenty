@@ -35,10 +35,10 @@ export const TimelineQueryEffect = ({
   });
 
   const [timelineActivitiesNetworking, setTimelineActivitiesNetworking] =
-    useRecoilState(timelineActivitiesNetworkingState());
+    useRecoilState(timelineActivitiesNetworkingState);
 
   const [timelineActivitiesForGroup, setTimelineActivitiesForGroup] =
-    useRecoilState(timelineActivitiesForGroupState());
+    useRecoilState(timelineActivitiesForGroupState);
 
   useEffect(() => {
     if (!isDefined(targetableObject)) {

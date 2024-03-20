@@ -3,21 +3,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
-import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageThreadService } from 'src/modules/messaging/services/message-thread/message-thread.service';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class MessageService {

@@ -1,10 +1,10 @@
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';

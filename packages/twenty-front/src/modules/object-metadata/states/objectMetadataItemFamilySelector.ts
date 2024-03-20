@@ -16,7 +16,7 @@ export const objectMetadataItemFamilySelector = selectorFamily<
   get:
     ({ objectNameType, objectName }: ObjectMetadataItemSelector) =>
     ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsState());
+      const objectMetadataItems = get(objectMetadataItemsState);
 
       if (objectNameType === 'singular') {
         return (

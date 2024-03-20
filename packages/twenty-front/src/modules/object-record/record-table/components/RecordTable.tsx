@@ -122,7 +122,7 @@ export const RecordTable = ({
   createRecord,
 }: RecordTableProps) => {
   const { scopeId } = useRecordTableStates(recordTableId);
-  const scrollLeft = useRecoilValue(scrollLeftState());
+  const scrollLeft = useRecoilValue(scrollLeftState);
 
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,

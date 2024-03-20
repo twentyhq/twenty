@@ -109,11 +109,11 @@ export const useExportTableData = ({
   const [progress, setProgress] = useState<number | undefined>(undefined);
   const [hasNextPage, setHasNextPage] = useState(true);
 
-  const { getVisibleTableColumnsSelector, getSelectedRowIdsSelector } =
+  const { visibleTableColumnsSelector, selectedRowIdsSelector } =
     useRecordTableStates(recordIndexId);
 
-  const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+  const columns = useRecoilValue(visibleTableColumnsSelector());
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const hasSelectedRows = selectedRowIds.length > 0;
 

@@ -25,7 +25,7 @@ import {
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -43,8 +43,9 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { NotFoundError } from 'src/engine/filters/utils/graphql-errors.util';
+import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -61,6 +62,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
+    private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
@@ -133,7 +135,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     const result = await this.execute(query, workspaceId);
-    const parsedResult = this.parseResult<IConnection<Record>>(
+    const parsedResult = await this.parseResult<IConnection<Record>>(
       result,
       objectMetadataItem,
       '',
@@ -174,7 +176,7 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-      const parsedResult = this.parseResult<Record<string, unknown>>(
+      const parsedResult = await this.parseResult<Record<string, unknown>>(
         existingRecordResult,
         objectMetadataItem,
         '',
@@ -227,10 +229,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'insertInto',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'insertInto',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -242,10 +246,10 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
-        createdRecord: this.removeNestedProperties(record),
-        createdObjectMetadata: {
-          nameSingular: objectMetadataItem.nameSingular,
-          isCustom: objectMetadataItem.isCustom,
+        recordId: record.id,
+        objectMetadata: objectMetadataItem,
+        details: {
+          after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
     });
@@ -280,10 +284,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'update',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'update',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -294,8 +300,12 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       workspaceId,
-      previousRecord: this.removeNestedProperties(existingRecord as Record),
-      updatedRecord: this.removeNestedProperties(parsedResults?.[0]),
+      recordId: (existingRecord as Record).id,
+      objectMetadata: objectMetadataItem,
+      details: {
+        before: this.removeNestedProperties(existingRecord as Record),
+        after: this.removeNestedProperties(parsedResults?.[0]),
+      },
     } satisfies ObjectRecordUpdateEvent<any>);
 
     return parsedResults?.[0];
@@ -316,10 +326,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'update',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'update',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -327,6 +339,12 @@ export class WorkspaceQueryRunnerService {
       CallWebhookJobsJobOperation.update,
       options,
     );
+
+    // TODO: check - NO EVENT SENT?
+    // OK I spent 2 hours trying to implement before/after diff and
+    // figured out why it hasn't been implement
+    // Doing a findMany in that context is very hard as long as we don't
+    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
 
     return parsedResults;
   }
@@ -349,10 +367,12 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'deleteFrom',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'deleteFrom',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -364,7 +384,11 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         workspaceId,
-        deletedRecord: [this.removeNestedProperties(record)],
+        recordId: record.id,
+        objectMetadata: objectMetadataItem,
+        details: {
+          before: [this.removeNestedProperties(record)],
+        },
       } satisfies ObjectRecordDeleteEvent<any>);
     });
 
@@ -382,10 +406,12 @@ export class WorkspaceQueryRunnerService {
     );
     const result = await this.execute(query, workspaceId);
 
-    const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      objectMetadataItem,
-      'deleteFrom',
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'deleteFrom',
+      )
     )?.records;
 
     await this.triggerWebhooks<Record>(
@@ -396,7 +422,11 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
-      deletedRecord: this.removeNestedProperties(parsedResults?.[0]),
+      recordId: args.id,
+      objectMetadata: objectMetadataItem,
+      details: {
+        before: this.removeNestedProperties(parsedResults?.[0]),
+      },
     } satisfies ObjectRecordDeleteEvent<any>);
 
     return parsedResults?.[0];
@@ -445,11 +475,11 @@ export class WorkspaceQueryRunnerService {
     return results;
   }
 
-  private parseResult<Result>(
+  private async parseResult<Result>(
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
-  ): Result {
+  ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
       objectMetadataItem,
     )}Collection`;
@@ -481,7 +511,12 @@ export class WorkspaceQueryRunnerService {
       throw error;
     }
 
-    return parseResult(result);
+    const resultWithGetters = await this.queryResultGettersFactory.create(
+      result,
+      objectMetadataItem,
+    );
+
+    return parseResult(resultWithGetters);
   }
 
   async executeAndParse<Result>(

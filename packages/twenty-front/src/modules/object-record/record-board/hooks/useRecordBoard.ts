@@ -7,17 +7,17 @@ import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/i
 export const useRecordBoard = (recordBoardId?: string) => {
   const {
     scopeId,
-    getFieldDefinitionsState,
-    getObjectSingularNameState,
-    getSelectedRecordIdsSelector,
-    getIsCompactModeActiveState,
-    getOnFetchMoreVisibilityChangeState,
+    fieldDefinitionsState,
+    objectSingularNameState,
+    selectedRecordIdsSelector,
+    isCompactModeActiveState,
+    onFetchMoreVisibilityChangeState,
   } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
   const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
-  const setFieldDefinitions = useSetRecoilState(getFieldDefinitionsState());
-  const setObjectSingularName = useSetRecoilState(getObjectSingularNameState());
+  const setFieldDefinitions = useSetRecoilState(fieldDefinitionsState);
+  const setObjectSingularName = useSetRecoilState(objectSingularNameState);
 
   return {
     scopeId,
@@ -25,8 +25,8 @@ export const useRecordBoard = (recordBoardId?: string) => {
     setRecordIds,
     setFieldDefinitions,
     setObjectSingularName,
-    getSelectedRecordIdsSelector,
-    getIsCompactModeActiveState,
-    getOnFetchMoreVisibilityChangeState,
+    selectedRecordIdsSelector,
+    isCompactModeActiveState,
+    onFetchMoreVisibilityChangeState,
   };
 };

@@ -10,7 +10,7 @@ import { AppPath } from '@/types/AppPath';
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const isLogged = useIsLogged();
   const navigate = useNavigate();

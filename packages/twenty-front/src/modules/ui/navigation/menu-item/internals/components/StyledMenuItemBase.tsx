@@ -107,11 +107,13 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     pointer-events: none;
     position: fixed;
     right: ${({ theme }) => theme.spacing(2)};
+    opacity: 0;
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
   &:hover {
     & .hoverable-buttons {
+      opacity: 1;
       pointer-events: auto;
       position: static;
     }

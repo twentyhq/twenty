@@ -9,13 +9,13 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     scopeId,
     recordIdsByColumnIdFamilyState,
     columnsFamilySelector,
-    getColumnIdsState,
+    columnIdsState,
   } = useRecordBoardStates(recordBoardId);
 
   const setRecordIds = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
-        const columnIds = snapshot.getLoadable(getColumnIdsState()).getValue();
+        const columnIds = snapshot.getLoadable(columnIdsState).getValue();
 
         columnIds.forEach((columnId) => {
           const column = snapshot
@@ -36,7 +36,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
           }
         });
       },
-    [columnsFamilySelector, getColumnIdsState, recordIdsByColumnIdFamilyState],
+    [columnsFamilySelector, columnIdsState, recordIdsByColumnIdFamilyState],
   );
 
   return {

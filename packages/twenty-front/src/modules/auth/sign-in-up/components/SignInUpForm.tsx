@@ -46,7 +46,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
-  const [authProviders] = useRecoilState(authProvidersState());
+  const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
@@ -54,6 +54,7 @@ export const SignInUpForm = () => {
   const { form } = useSignInUpForm();
 
   const {
+    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
@@ -89,14 +90,14 @@ export const SignInUpForm = () => {
   }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
-    if (signInUpMode === SignInUpMode.Invite) {
+    if (isInviteMode) {
       return `Join ${workspace?.displayName ?? ''} team`;
     }
 
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in to Twenty'
       : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName]);
+  }, [signInUpMode, workspace?.displayName, isInviteMode]);
 
   const theme = useTheme();
 

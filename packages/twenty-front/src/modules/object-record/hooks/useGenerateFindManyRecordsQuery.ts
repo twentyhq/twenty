@@ -7,7 +7,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsQuery = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   return ({
     objectMetadataItem,
