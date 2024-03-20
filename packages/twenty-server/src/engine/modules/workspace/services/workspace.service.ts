@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import assert from 'assert';
@@ -16,8 +16,6 @@ import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-wor
 import { BillingService } from 'src/engine/modules/billing/billing.service';
 import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
 import { ActivateWorkspaceInput } from 'src/engine/modules/workspace/dtos/activate-workspace-input';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -114,6 +112,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
+  /* 
   async removeWorkspaceMember(workspaceId: string, memberId: string) {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -190,4 +189,5 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     return memberId;
   }
+  */
 }
