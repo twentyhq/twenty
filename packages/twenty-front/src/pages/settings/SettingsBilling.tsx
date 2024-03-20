@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { IconCalendarEvent, IconCircleX } from '@tabler/icons-react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,6 +15,7 @@ import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info.tsx';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
 import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
 import { Button } from '@/ui/input/button/components/Button.tsx';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -31,10 +34,43 @@ const StyledInvisibleChat = styled.div`
   display: none;
 `;
 
+type SwitchInfo = {
+  newInterval: string;
+  to: string;
+  from: string;
+  impact: string;
+};
+
+const monthlySwitchInfo: SwitchInfo = {
+  newInterval: 'year',
+  to: 'to yearly',
+  from: 'from monthly to yearly',
+  impact: 'You will be charged immediately for the full year.',
+};
+
+const yearlySwitchInfo: SwitchInfo = {
+  newInterval: 'month',
+  to: 'to monthly',
+  from: 'from yearly to monthly',
+  impact: 'Your credit balance will be used to pay the monthly bills.',
+};
+
+const switchInfos = {
+  year: yearlySwitchInfo,
+  month: monthlySwitchInfo,
+};
+
 export const SettingsBilling = () => {
   const navigate = useNavigate();
+  const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
-  const [isSwitchingToYearlyModalOpen, setIsSwitchingToYearlyModalOpen] =
+  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+  const switchingInfo =
+    currentWorkspace?.currentBillingSubscription?.interval === 'year'
+      ? switchInfos.year
+      : switchInfos.month;
+  const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
     useState(false);
   const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
   const { data, loading } = useBillingPortalSessionQuery({
@@ -62,12 +98,34 @@ export const SettingsBilling = () => {
     }
   };
 
-  const openSwitchingToYearlyModal = () => {
-    setIsSwitchingToYearlyModalOpen(true);
+  const openSwitchingIntervalModal = () => {
+    setIsSwitchingIntervalModalOpen(true);
   };
 
-  const switchToYearly = async () => {
-    await updateBillingSubscription();
+  const switchInterval = async () => {
+    const { data } = await updateBillingSubscription();
+    if (!data?.updateBillingSubscription.success) {
+      enqueueSnackBar(
+        `Error while switching subscription ${switchingInfo.to}.`,
+        {
+          variant: 'error',
+        },
+      );
+      return;
+    }
+    if (isDefined(currentWorkspace?.currentBillingSubscription)) {
+      const newCurrentWorkspace = {
+        ...currentWorkspace,
+        currentBillingSubscription: {
+          ...currentWorkspace?.currentBillingSubscription,
+          interval: switchingInfo.newInterval,
+        },
+      };
+      setCurrentWorkspace(newCurrentWorkspace);
+    }
+    enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
+      variant: 'success',
+    });
   };
 
   const redirectToSubscribePage = () => {
@@ -119,13 +177,13 @@ export const SettingsBilling = () => {
             <Section>
               <H2Title
                 title="Edit billing interval"
-                description="Switch from monthly to yearly"
+                description={`Switch ${switchingInfo.from}`}
               />
               <Button
                 Icon={IconCalendarEvent}
-                title="Switch to yearly"
+                title={`Switch ${switchingInfo.to}`}
                 variant="secondary"
-                onClick={openSwitchingToYearlyModal}
+                onClick={openSwitchingIntervalModal}
                 disabled={billingPortalButtonDisabled}
               />
             </Section>
@@ -150,17 +208,17 @@ export const SettingsBilling = () => {
         <SupportChat />
       </StyledInvisibleChat>
       <ConfirmationModal
-        isOpen={isSwitchingToYearlyModalOpen}
-        setIsOpen={setIsSwitchingToYearlyModalOpen}
-        title="Switch billing to yearly"
+        isOpen={isSwitchingIntervalModalOpen}
+        setIsOpen={setIsSwitchingIntervalModalOpen}
+        title={`Switch billing ${switchingInfo.to}`}
         subtitle={
           <>
-            Are you sure that you want to change your billing interval to
-            yearly? You will be charged immediately for the full year.
+            {`Are you sure that you want to change your billing interval? 
+            ${switchingInfo.impact}`}
           </>
         }
-        onConfirmClick={switchToYearly}
-        deleteButtonText="Change"
+        onConfirmClick={switchInterval}
+        deleteButtonText={`Change ${switchingInfo.to}`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>

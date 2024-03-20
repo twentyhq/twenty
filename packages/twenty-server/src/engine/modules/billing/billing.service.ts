@@ -155,6 +155,11 @@ export class BillingService {
   }
 
   async updateBillingSubscription(user: User): Promise<boolean> {
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      workspaceId: user.defaultWorkspaceId,
+    });
+    const newInterval =
+      billingSubscription?.interval === 'year' ? 'month' : 'year';
     const billingSubscriptionItem = await this.getBillingSubscriptionItem(
       user.defaultWorkspaceId,
     );
@@ -166,15 +171,13 @@ export class BillingService {
     const productPrices = await this.getProductPrices(stripeProductId);
 
     const stripePriceId = productPrices.filter(
-      (price) => price.recurringInterval === 'year',
+      (price) => price.recurringInterval === newInterval,
     )?.[0]?.stripePriceId;
 
-    await this.stripeService.updateBillingSubscriptionItem(
+    return await this.stripeService.updateBillingSubscriptionItem(
       billingSubscriptionItem.stripeSubscriptionItemId,
       stripePriceId,
     );
-
-    return true;
   }
 
   async computeCheckoutSessionURL(
@@ -253,6 +256,7 @@ export class BillingService {
         stripeCustomerId: data.object.customer as string,
         stripeSubscriptionId: data.object.id,
         status: data.object.status,
+        interval: data.object.items.data[0].plan.interval,
       },
       {
         conflictPaths: ['stripeSubscriptionId'],

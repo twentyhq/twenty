@@ -51,6 +51,10 @@ export class BillingSubscription {
   @Column({ nullable: false })
   status: Stripe.Subscription.Status;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  interval: Stripe.Price.Recurring.Interval;
+
   @OneToMany(
     () => BillingSubscriptionItem,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,

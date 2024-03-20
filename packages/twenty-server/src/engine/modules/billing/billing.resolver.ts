@@ -93,10 +93,6 @@ export class BillingResolver {
   @Mutation(() => UpdateBillingEntity)
   @UseGuards(JwtAuthGuard)
   async updateBillingSubscription(@AuthUser() user: User) {
-    try {
-      return { success: this.billingService.updateBillingSubscription(user) };
-    } catch (e) {
-      return { success: false };
-    }
+    return { success: this.billingService.updateBillingSubscription(user) };
   }
 }
