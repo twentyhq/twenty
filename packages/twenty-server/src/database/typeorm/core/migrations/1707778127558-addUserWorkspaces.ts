@@ -14,10 +14,6 @@ export class AddUserWorkspaces1707778127558 implements MigrationInterface {
                 "deletedAt" TIMESTAMP
             )`,
     );
-
-    await queryRunner.query(
-      `ALTER TABLE "core"."user" DROP CONSTRAINT "FK_2ec910029395fa7655621c88908"`,
-    );
   }
 
   public async down(): Promise<void> {}
