@@ -108,12 +108,12 @@ export class CreateCompanyAndContactService {
     );
 
     const formattedContactsToCreate =
-      filteredContactsToCreateWithCompanyDomainNames.map((participant) => ({
-        handle: participant.handle,
-        displayName: participant.displayName,
+      filteredContactsToCreateWithCompanyDomainNames.map((contact) => ({
+        handle: contact.handle,
+        displayName: contact.displayName,
         companyId:
-          participant.companyDomainName &&
-          companiesObject[participant.companyDomainName],
+          contact.companyDomainName &&
+          companiesObject[contact.companyDomainName],
       }));
 
     await this.createContactService.createContacts(
@@ -141,20 +141,24 @@ export class CreateCompanyAndContactService {
           workspaceId,
           transactionManager,
         );
+
+        const handles = contactsToCreate.map(
+          (participant) => participant.handle,
+        );
+
+        const messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId =
+          await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+            handles,
+            workspaceId,
+            transactionManager,
+          );
+
+        await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+          messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId,
+          workspaceId,
+          transactionManager,
+        );
       },
-    );
-
-    const handles = contactsToCreate.map((participant) => participant.handle);
-
-    const messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId =
-      await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-        handles,
-        workspaceId,
-      );
-
-    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId,
-      workspaceId,
     );
   }
 }
