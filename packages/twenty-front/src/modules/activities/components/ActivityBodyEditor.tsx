@@ -339,7 +339,7 @@ export const ActivityBodyEditor = ({
       if (
         isDefined(currentBlockContent) &&
         isArray(currentBlockContent) &&
-        currentBlockContent[0] &&
+        isDefined(currentBlockContent[0]) &&
         currentBlockContent[0].type === 'text'
       ) {
         // Text block case

@@ -36,16 +36,8 @@ export const usePersistViewRecord = () => {
     [updateOneRecord],
   );
 
-  const removeViewRecord = useRecoilCallback(
-    () => async () => {
-      return;
-    },
-    [],
-  );
-
   return {
     createViewRecord,
     updateViewRecord,
-    removeViewRecord,
   };
 };

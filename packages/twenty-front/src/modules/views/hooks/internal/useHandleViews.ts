@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useHandleCurrentViewFilterAndSorts } from '@/views/hooks/internal/useHandleCurrentViewFilterAndSorts';
 import { usePersistViewRecord } from '@/views/hooks/internal/usePersistViewRecord';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
@@ -15,11 +17,21 @@ export const useHandleViews = (viewBarComponentId?: string) => {
 
   const { currentViewIdState } = useViewStates(viewBarComponentId);
 
-  const removeView = useRecoilCallback(() => () => {}, []);
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
+
   const createEmptyView = useRecoilCallback(() => () => {}, []);
   const createViewFromCurrent = useRecoilCallback(() => () => {}, []);
 
   const [_, setSearchParams] = useSearchParams();
+
+  const removeView = useRecoilCallback(
+    () => (viewId: string) => {
+      deleteOneRecord(viewId);
+    },
+    [deleteOneRecord],
+  );
 
   const changeViewInUrl = useCallback(
     (viewId: string) => {

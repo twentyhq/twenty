@@ -113,11 +113,11 @@ export const ViewsDropdownButton = ({
 
   const handleDeleteViewButtonClick = async (
     event: MouseEvent<HTMLButtonElement>,
-    _viewId: string,
+    viewId: string,
   ) => {
     event.stopPropagation();
 
-    await removeView();
+    await removeView(viewId);
     closeViewsDropdown();
   };
 
@@ -151,11 +151,13 @@ export const ViewsDropdownButton = ({
               <MenuItem
                 key={view.id}
                 iconButtons={[
-                  {
-                    Icon: IconPencil,
-                    onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                      handleEditViewButtonClick(event, view.id),
-                  },
+                  currentViewWithCombinedFiltersAndSorts?.id === view.id
+                    ? {
+                        Icon: IconPencil,
+                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                          handleEditViewButtonClick(event, view.id),
+                      }
+                    : null,
                   viewsOnCurrentObject.length > 1
                     ? {
                         Icon: IconTrash,
