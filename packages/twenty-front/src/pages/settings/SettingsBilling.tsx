@@ -41,23 +41,23 @@ type SwitchInfo = {
   impact: string;
 };
 
-const monthlySwitchInfo: SwitchInfo = {
+const MONTHLY_SWITCH_INFO: SwitchInfo = {
   newInterval: 'year',
   to: 'to yearly',
   from: 'from monthly to yearly',
   impact: 'You will be charged immediately for the full year.',
 };
 
-const yearlySwitchInfo: SwitchInfo = {
+const YEARLY_SWITCH_INFO: SwitchInfo = {
   newInterval: 'month',
   to: 'to monthly',
   from: 'from yearly to monthly',
   impact: 'Your credit balance will be used to pay the monthly bills.',
 };
 
-const switchInfos = {
-  year: yearlySwitchInfo,
-  month: monthlySwitchInfo,
+const SWITCH_INFOS = {
+  year: YEARLY_SWITCH_INFO,
+  month: MONTHLY_SWITCH_INFO,
 };
 
 export const SettingsBilling = () => {
@@ -68,8 +68,8 @@ export const SettingsBilling = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
     currentWorkspace?.currentBillingSubscription?.interval === 'year'
-      ? switchInfos.year
-      : switchInfos.month;
+      ? SWITCH_INFOS.year
+      : SWITCH_INFOS.month;
   const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
     useState(false);
   const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
