@@ -69,6 +69,9 @@ const getSchemaComponentsProperties = (
           ),
         };
         break;
+      case FieldMetadataType.JSON:
+        type: 'object';
+        break;
       default:
         itemProperty.type = 'string';
         break;

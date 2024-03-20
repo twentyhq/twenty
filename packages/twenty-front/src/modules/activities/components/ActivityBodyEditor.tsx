@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { BlockNoteEditor } from '@blocknote/core';
-import { useBlockNote } from '@blocknote/react';
+import { ClipboardEvent, useCallback, useMemo } from 'react';
+import { useCreateBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
@@ -8,6 +7,7 @@ import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
+import { blockSchema } from '@/activities/blocks/schema';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
@@ -28,8 +28,6 @@ import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { blockSpecs } from '../blocks/blockSpecs';
-import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
 
 import '@blocknote/react/style.css';
@@ -120,8 +118,6 @@ export const ActivityBodyEditor = ({
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
     canCreateActivityState(),
   );
-
-  const slashMenuItems = getSlashMenu();
 
   const [uploadFile] = useUploadFileMutation();
 
@@ -216,8 +212,8 @@ export const ActivityBodyEditor = ({
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
-  const handleEditorChange = (newEditor: BlockNoteEditor) => {
-    const newStringifiedBody = JSON.stringify(newEditor.topLevelBlocks) ?? '';
+  const handleEditorChange = () => {
+    const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
     setActivityBody(newStringifiedBody);
 
@@ -238,16 +234,11 @@ export const ActivityBodyEditor = ({
     }
   }, [activity, activityBody]);
 
-  const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
+  const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: handleEditorChange,
-    slashMenuItems,
-    blockSpecs: blockSpecs,
+    schema: blockSchema,
     uploadFile: handleUploadAttachment,
-    onEditorReady: (editor: BlockNoteEditor) => {
-      editor.domElement.addEventListener('paste', handleImagePaste);
-    },
   });
 
   const handleImagePaste = async (event: ClipboardEvent) => {
@@ -361,7 +352,7 @@ export const ActivityBodyEditor = ({
       const newBlockId = v4();
       const newBlock = {
         id: newBlockId,
-        type: 'paragraph',
+        type: 'paragraph' as const,
         content: keyboardEvent.key,
       };
       editor.insertBlocks([newBlock], blockIdentifier, 'after');
@@ -387,6 +378,8 @@ export const ActivityBodyEditor = ({
       <BlockEditor
         onFocus={handleBlockEditorFocus}
         onBlur={handlerBlockEditorBlur}
+        onPaste={handleImagePaste}
+        onChange={handleEditorChange}
         editor={editor}
       />
     </StyledBlockNoteStyledContainer>
