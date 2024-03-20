@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
 
@@ -53,6 +54,7 @@ export class GoogleCalendarFullSyncService {
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   public async startGoogleCalendarFullSync(
@@ -238,6 +240,16 @@ export class GoogleCalendarFullSyncService {
           transactionManager,
         );
       });
+
+      if (calendarChannel.isContactAutoCreationEnabled) {
+        const contactsToCreate = attendeesToSave;
+
+        this.eventEmitter.emit(`createContacts`, {
+          workspaceId,
+          connectedAccountHandle: connectedAccount.handle,
+          contactsToCreate,
+        });
+      }
     } else {
       this.logger.log(
         `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
