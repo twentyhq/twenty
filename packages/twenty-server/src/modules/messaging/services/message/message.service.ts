@@ -11,17 +11,13 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
-import {
-  GmailMessage,
-  ParticipantWithMessageId,
-} from 'src/modules/messaging/types/gmail-message';
+import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageThreadService } from 'src/modules/messaging/services/message-thread/message-thread.service';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 
 @Injectable()
 export class MessageService {
@@ -40,7 +36,6 @@ export class MessageService {
     @InjectObjectMetadataRepository(MessageThreadObjectMetadata)
     private readonly messageThreadRepository: MessageThreadRepository,
     private readonly messageThreadService: MessageThreadService,
-    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   public async saveMessages(
@@ -269,81 +264,5 @@ export class MessageService {
         manager,
       );
     });
-  }
-
-  async saveMessagesAndEmitContactCreationEvent(
-    messagesToSave: GmailMessage[],
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    workspaceId: string,
-    gmailMessageChannelId: string,
-    jobName?: string,
-  ) {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
-      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-        workspaceId,
-      );
-
-    let startTime = Date.now();
-
-    const messageExternalIdsAndIdsMap = await this.saveMessages(
-      messagesToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-      gmailMessageChannelId,
-      workspaceId,
-    );
-
-    let endTime = Date.now();
-
-    this.logger.log(
-      `${jobName} saving messages for workspace ${workspaceId} and account ${
-        connectedAccount.id
-      } in ${endTime - startTime}ms`,
-    );
-
-    const gmailMessageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    if (!gmailMessageChannel) {
-      this.logger.error(
-        `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessagesAndCreateContacts`,
-      );
-
-      return;
-    }
-
-    const participantsWithMessageId: ParticipantWithMessageId[] =
-      messagesToSave.flatMap((message) => {
-        const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
-
-        return messageId
-          ? message.participants.map((participant) => ({
-              ...participant,
-              messageId,
-            }))
-          : [];
-      });
-
-    startTime = Date.now();
-
-    await this.messageParticipantService.tryToSaveMessageParticipantsOrDeleteMessagesIfError(
-      participantsWithMessageId,
-      gmailMessageChannel,
-      workspaceId,
-      connectedAccount,
-      jobName,
-    );
-
-    endTime = Date.now();
-
-    this.logger.log(
-      `${jobName} saving message participants for workspace ${workspaceId} and account in ${
-        connectedAccount.id
-      } ${endTime - startTime}ms`,
-    );
   }
 }
