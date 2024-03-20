@@ -140,11 +140,11 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  FILE_TOKEN_SECRET: string;
+  FILE_TOKEN_SECRET: string = 'random_string';
 
   @IsDuration()
   @IsOptional()
-  FILE_TOKEN_EXPIRES_IN: string;
+  FILE_TOKEN_EXPIRES_IN: string = '1d';
 
   // Auth
   @IsUrl({ require_tld: false })
