@@ -7,6 +7,7 @@ export const mapColumnDefinitionsToViewFields = (
   columnDefinitions: ColumnDefinition<FieldMetadata>[],
 ): ViewField[] => {
   return columnDefinitions.map((columnDefinition) => ({
+    __typename: 'ViewField',
     id: columnDefinition.viewFieldId || '',
     fieldMetadataId: columnDefinition.fieldMetadataId,
     position: columnDefinition.position,

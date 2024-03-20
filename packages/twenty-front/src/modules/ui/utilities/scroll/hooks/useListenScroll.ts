@@ -15,7 +15,7 @@ export const useListenScroll = <T extends Element>({
   const hideScrollBarsCallback = useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const isScrolling = snapshot.getLoadable(isScrollingState()).getValue();
+        const isScrolling = snapshot.getLoadable(isScrollingState).getValue();
 
         if (!isScrolling) {
           scrollableRef.current?.classList.remove('scrolling');
@@ -27,13 +27,13 @@ export const useListenScroll = <T extends Element>({
   const handleScrollStart = useRecoilCallback(
     ({ set }) =>
       (event: Event) => {
-        set(isScrollingState(), true);
+        set(isScrollingState, true);
         scrollableRef.current?.classList.add('scrolling');
 
         const target = event.target as HTMLElement;
 
-        set(scrollTopState(), target.scrollTop);
-        set(scrollLeftState(), target.scrollLeft);
+        set(scrollTopState, target.scrollTop);
+        set(scrollLeftState, target.scrollLeft);
       },
     [scrollableRef],
   );
@@ -41,7 +41,7 @@ export const useListenScroll = <T extends Element>({
   const handleScrollEnd = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(isScrollingState(), false);
+        set(isScrollingState, false);
         debounce(hideScrollBarsCallback, 1000)();
       },
     [hideScrollBarsCallback],

@@ -28,9 +28,9 @@ export const RecordIndexBoardContainerEffect = ({
   const {
     setColumns,
     setObjectSingularName,
-    getSelectedRecordIdsSelector,
+    selectedRecordIdsSelector,
     setFieldDefinitions,
-    getOnFetchMoreVisibilityChangeState,
+    onFetchMoreVisibilityChangeState,
   } = useRecordBoard(recordBoardId);
 
   const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
@@ -40,7 +40,7 @@ export const RecordIndexBoardContainerEffect = ({
   });
 
   const setOnFetchMoreVisibilityChange = useSetRecoilState(
-    getOnFetchMoreVisibilityChangeState(),
+    onFetchMoreVisibilityChangeState,
   );
 
   useEffect(() => {
@@ -78,14 +78,14 @@ export const RecordIndexBoardContainerEffect = ({
   ]);
 
   const recordIndexFieldDefinitions = useRecoilValue(
-    recordIndexFieldDefinitionsState(),
+    recordIndexFieldDefinitionsState,
   );
 
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
 
-  const selectedRecordIds = useRecoilValue(getSelectedRecordIdsSelector());
+  const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,

@@ -32,14 +32,14 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export const useAuth = () => {
-  const [, setTokenPair] = useRecoilState(tokenPairState());
-  const setCurrentUser = useSetRecoilState(currentUserState());
+  const [, setTokenPair] = useRecoilState(tokenPairState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState(),
+    currentWorkspaceMemberState,
   );
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
-  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -141,26 +141,26 @@ export const useAuth = () => {
     ({ snapshot }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
-        const iconsValue = snapshot.getLoadable(iconsState()).getValue();
+        const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
-          .getLoadable(authProvidersState())
+          .getLoadable(authProvidersState)
           .getValue();
-        const billing = snapshot.getLoadable(billingState()).getValue();
+        const billing = snapshot.getLoadable(billingState).getValue();
         const isSignInPrefilled = snapshot
-          .getLoadable(isSignInPrefilledState())
+          .getLoadable(isSignInPrefilledState)
           .getValue();
-        const supportChat = snapshot.getLoadable(supportChatState()).getValue();
-        const telemetry = snapshot.getLoadable(telemetryState()).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState()).getValue();
+        const supportChat = snapshot.getLoadable(supportChatState).getValue();
+        const telemetry = snapshot.getLoadable(telemetryState).getValue();
+        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState(), iconsValue);
-          set(authProvidersState(), authProvidersValue);
-          set(billingState(), billing);
-          set(isSignInPrefilledState(), isSignInPrefilled);
-          set(supportChatState(), supportChat);
-          set(telemetryState(), telemetry);
-          set(isDebugModeState(), isDebugMode);
+          set(iconsState, iconsValue);
+          set(authProvidersState, authProvidersValue);
+          set(billingState, billing);
+          set(isSignInPrefilledState, isSignInPrefilled);
+          set(supportChatState, supportChat);
+          set(telemetryState, telemetry);
+          set(isDebugModeState, isDebugMode);
           return undefined;
         });
 

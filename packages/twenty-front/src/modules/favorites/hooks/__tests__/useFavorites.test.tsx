@@ -46,11 +46,11 @@ describe('useFavorites', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useFavorites();
@@ -67,11 +67,11 @@ describe('useFavorites', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useFavorites();
@@ -95,11 +95,11 @@ describe('useFavorites', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useFavorites();
@@ -120,11 +120,11 @@ describe('useFavorites', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         setCurrentWorkspaceMember(mockWorkspaceMember);
 
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useFavorites();

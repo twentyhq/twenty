@@ -28,12 +28,12 @@ export const AppNavigationDrawer = ({
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const currentMobileNavigationDrawer = useRecoilValue(
-    currentMobileNavigationDrawerState(),
+    currentMobileNavigationDrawerState,
   );
   const setIsNavigationDrawerOpen = useSetRecoilState(
     isNavigationDrawerOpenState,
   );
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const isSettingsDrawer = isMobile
     ? currentMobileNavigationDrawer === 'settings'

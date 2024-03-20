@@ -58,7 +58,7 @@ export const CreateProfile = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState(),
+    currentWorkspaceMemberState,
   );
 
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({

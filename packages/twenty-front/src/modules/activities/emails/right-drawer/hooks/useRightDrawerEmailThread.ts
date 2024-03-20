@@ -9,7 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useRightDrawerEmailThread = () => {
-  const viewableEmailThreadId = useRecoilValue(viewableEmailThreadIdState());
+  const viewableEmailThreadId = useRecoilValue(viewableEmailThreadIdState);
 
   const apolloClient = useApolloClient();
   const thread = apolloClient.readFragment({

@@ -92,7 +92,7 @@ describe('useSpreadsheetCompanyImport', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImport = useRecoilValue(spreadsheetImportState());
+        const spreadsheetImport = useRecoilValue(spreadsheetImportState);
         const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
           CoreObjectNameSingular.Company,
         );
