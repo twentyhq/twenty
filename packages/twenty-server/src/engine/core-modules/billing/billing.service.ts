@@ -175,7 +175,7 @@ export class BillingService {
     )?.[0]?.stripePriceId;
 
     return await this.stripeService.updateBillingSubscriptionItem(
-      billingSubscriptionItem.stripeSubscriptionItemId,
+      billingSubscriptionItem,
       stripePriceId,
     );
   }

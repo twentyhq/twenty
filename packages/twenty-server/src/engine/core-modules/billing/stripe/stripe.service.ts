@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 
 @Injectable()
 export class StripeService {
@@ -107,13 +108,17 @@ export class StripeService {
   }
 
   async updateBillingSubscriptionItem(
-    stripeSubscriptionItemId: string,
+    stripeSubscriptionItem: BillingSubscriptionItem,
     stripePriceId: string,
   ) {
     try {
-      await this.stripe.subscriptionItems.update(stripeSubscriptionItemId, {
-        price: stripePriceId,
-      });
+      await this.stripe.subscriptionItems.update(
+        stripeSubscriptionItem.stripeSubscriptionItemId,
+        {
+          price: stripePriceId,
+          quantity: stripeSubscriptionItem.quantity,
+        },
+      );
 
       return true;
     } catch (e) {
