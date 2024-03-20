@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import {
-  CreatedObjectMetadata,
-  ObjectRecordCreateEvent,
-} from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
@@ -21,11 +20,11 @@ export class RecordPositionListener {
 
   @OnEvent('*.created')
   async handleAllCreate(payload: ObjectRecordCreateEvent<any>) {
-    if (!hasPositionField(payload.createdObjectMetadata)) {
+    if (!hasPositionField(payload.objectMetadata)) {
       return;
     }
 
-    if (hasPositionSet(payload.createdRecord)) {
+    if (hasPositionSet(payload.details.after)) {
       return;
     }
 
@@ -33,15 +32,19 @@ export class RecordPositionListener {
       RecordPositionBackfillJob.name,
       {
         workspaceId: payload.workspaceId,
-        recordId: payload.createdRecord.id,
-        objectMetadata: payload.createdObjectMetadata,
+        recordId: payload.recordId,
+        objectMetadata: {
+          nameSingular: payload.objectMetadata.nameSingular,
+          isCustom: payload.objectMetadata.isCustom,
+        },
       },
     );
   }
 }
 
+// TODO: use objectMetadata instead of hardcoded standard objects name
 const hasPositionField = (
-  createdObjectMetadata: CreatedObjectMetadata,
+  createdObjectMetadata: ObjectMetadataInterface,
 ): boolean => {
   return (
     createdObjectMetadata.isCustom ||

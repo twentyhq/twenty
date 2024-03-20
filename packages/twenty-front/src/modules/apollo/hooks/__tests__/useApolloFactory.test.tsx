@@ -77,8 +77,8 @@ describe('useApolloFactory', () => {
       await act(async () => {
         await result.current.factory.mutate({
           mutation: gql`
-            mutation CreateEvent($type: String!, $data: JSON!) {
-              createEvent(type: $type, data: $data) {
+            mutation Track($type: String!, $data: JSON!) {
+              track(type: $type, data: $data) {
                 success
               }
             }

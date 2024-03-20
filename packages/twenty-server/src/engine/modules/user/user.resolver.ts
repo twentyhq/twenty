@@ -20,7 +20,7 @@ import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.inter
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 import { assert } from 'src/utils/assert';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';

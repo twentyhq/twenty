@@ -19,6 +19,8 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -206,4 +208,23 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: companyStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the company',
+    icon: 'IconIconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @Gate({
+    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
+  })
+  @IsSystem()
+  events: EventObjectMetadata[];
 }

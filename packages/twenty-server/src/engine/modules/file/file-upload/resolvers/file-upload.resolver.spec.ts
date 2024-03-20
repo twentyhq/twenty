@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 
 import { FileUploadResolver } from './file-upload.resolver';
 

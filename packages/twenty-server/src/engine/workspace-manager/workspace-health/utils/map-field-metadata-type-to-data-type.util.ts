@@ -22,6 +22,8 @@ export const mapFieldMetadataTypeToDataType = (
       return 'boolean';
     case FieldMetadataType.DATE_TIME:
       return 'timestamp';
+    case FieldMetadataType.JSON:
+      return 'jsonb';
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:

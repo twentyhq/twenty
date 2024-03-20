@@ -1,30 +1,45 @@
-import {
-  BlockNoteEditor,
-  InlineContentSchema,
-  StyleSchema,
-} from '@blocknote/core';
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
-import { IconFile } from '@/ui/display/icon';
+import {
+  IconFile,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconList,
+  IconListNumbers,
+  IconPhoto,
+  IconPilcrow,
+  IconTable,
+} from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
 import { blockSchema } from './schema';
 
-export const getSlashMenu = () => {
-  const items = [
-    ...getDefaultReactSlashMenuItems(blockSchema),
+const Icons: Record<string, IconComponent> = {
+  'Heading 1': IconH1,
+  'Heading 2': IconH2,
+  'Heading 3': IconH3,
+  'Numbered List': IconListNumbers,
+  'Bullet List': IconList,
+  Paragraph: IconPilcrow,
+  Table: IconTable,
+  Image: IconPhoto,
+};
+
+export const getSlashMenu = (editor: typeof blockSchema.BlockNoteEditor) => {
+  const items: SuggestionItem[] = [
+    ...getDefaultReactSlashMenuItems(editor).map((x) => ({
+      ...x,
+      Icon: Icons[x.title],
+    })),
     {
-      name: 'File',
+      title: 'File',
       aliases: ['file', 'folder'],
-      group: 'Media',
-      icon: <IconFile size={16} />,
-      hint: 'Insert a file',
-      execute: (
-        editor: BlockNoteEditor<
-          typeof blockSchema,
-          InlineContentSchema,
-          StyleSchema
-        >,
-      ) => {
+      Icon: IconFile,
+      onItemClick: () => {
+        const currentBlock = editor.getTextCursorPosition().block;
+
         editor.insertBlocks(
           [
             {
@@ -34,7 +49,7 @@ export const getSlashMenu = () => {
               },
             },
           ],
-          editor.getTextCursorPosition().block,
+          currentBlock,
           'before',
         );
       },
