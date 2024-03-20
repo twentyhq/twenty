@@ -13,7 +13,6 @@ describe('useTabList', () => {
         const activeTabId = useRecoilValue(activeTabIdState);
 
         return {
-          getActiveTabIdState: activeTabIdState,
           activeTabId,
           setActiveTabId: setActiveTabId,
         };
@@ -22,7 +21,6 @@ describe('useTabList', () => {
         wrapper: RecoilRoot,
       },
     );
-    expect(result.current.getActiveTabIdState).toBeInstanceOf(Function);
     expect(result.current.setActiveTabId).toBeInstanceOf(Function);
     expect(result.current.activeTabId).toBeNull();
 

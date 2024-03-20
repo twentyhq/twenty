@@ -16,7 +16,7 @@ describe('useGenerateFindManyRecordsForMultipleMetadataItemsQuery', () => {
         const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
         return useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-          objectMetadataItems: mockObjectMetadataItems.slice(0, 2),
+          targetObjectMetadataItems: mockObjectMetadataItems.slice(0, 2),
         });
       },
       {
