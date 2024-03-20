@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 
 export const FilterQueryParamsEffect = () => {
   const { hasFiltersQueryParams, getFiltersFromQueryParams, viewIdQueryParam } =
@@ -15,7 +15,7 @@ export const FilterQueryParamsEffect = () => {
     unsavedToUpsertViewFiltersState,
   );
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
-  const { resetCurrentViewFilterAndSorts } = useViewBar();
+  const { resetCurrentView } = useResetCurrentView();
 
   useEffect(() => {
     if (isUndefined(viewIdQueryParam) || !viewIdQueryParam) {
@@ -35,12 +35,12 @@ export const FilterQueryParamsEffect = () => {
     });
 
     return () => {
-      resetCurrentViewFilterAndSorts();
+      resetCurrentView();
     };
   }, [
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
-    resetCurrentViewFilterAndSorts,
+    resetCurrentView,
     setUnsavedViewFilter,
   ]);
 

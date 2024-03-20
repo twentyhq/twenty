@@ -11,7 +11,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UPDATE_VIEW_DROPDOWN_ID } from '@/views/constants/UpdateViewDropdownId';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.color.blue};
@@ -31,7 +31,7 @@ export const UpdateViewButtonGroup = ({
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
   const { canPersistViewSelector, viewEditModeState } = useViewStates();
-  const { updateCurrentViewFilterAndSorts } = useViewBar();
+  const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
   const canPersistView = useRecoilValue(canPersistViewSelector());
@@ -42,7 +42,7 @@ export const UpdateViewButtonGroup = ({
   }, [setViewEditMode, onViewEditModeChange]);
 
   const handleViewSubmit = async () => {
-    await updateCurrentViewFilterAndSorts();
+    await saveCurrentViewFilterAndSorts();
   };
 
   if (!canPersistView) {

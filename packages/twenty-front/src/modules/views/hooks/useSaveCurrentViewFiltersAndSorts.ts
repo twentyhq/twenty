@@ -5,10 +5,11 @@ import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistVi
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useHandleCurrentViewFilterAndSorts = (
+export const useSaveCurrentViewFiltersAndSorts = (
   viewBarComponentId?: string,
 ) => {
   const { getViewFromCache } = useGetViewFromCache();
@@ -33,7 +34,9 @@ export const useHandleCurrentViewFilterAndSorts = (
     deleteViewFilterRecords,
   } = usePersistViewFilterRecords();
 
-  const persistViewSorts = useRecoilCallback(
+  const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
+
+  const saveViewSorts = useRecoilCallback(
     ({ snapshot }) =>
       async (viewId: string) => {
         const unsavedToDeleteViewSortIds = getSnapshotValue(
@@ -77,7 +80,7 @@ export const useHandleCurrentViewFilterAndSorts = (
     ],
   );
 
-  const persistViewFilters = useRecoilCallback(
+  const saveViewFilters = useRecoilCallback(
     ({ snapshot }) =>
       async (viewId: string) => {
         const unsavedToDeleteViewFilterIds = getSnapshotValue(
@@ -120,23 +123,7 @@ export const useHandleCurrentViewFilterAndSorts = (
     ],
   );
 
-  const resetCurrentViewFilterAndSorts = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        set(unsavedToDeleteViewFilterIdsState, []);
-        set(unsavedToDeleteViewSortIdsState, []);
-        set(unsavedToUpsertViewFiltersState, []);
-        set(unsavedToUpsertViewSortsState, []);
-      },
-    [
-      unsavedToDeleteViewFilterIdsState,
-      unsavedToDeleteViewSortIdsState,
-      unsavedToUpsertViewFiltersState,
-      unsavedToUpsertViewSortsState,
-    ],
-  );
-
-  const updateCurrentViewFilterAndSorts = useRecoilCallback(
+  const saveCurrentViewFilterAndSorts = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const currentViewId = snapshot
@@ -147,20 +134,14 @@ export const useHandleCurrentViewFilterAndSorts = (
           return;
         }
 
-        await persistViewFilters(currentViewId);
-        await persistViewSorts(currentViewId);
-        resetCurrentViewFilterAndSorts();
+        await saveViewFilters(currentViewId);
+        await saveViewSorts(currentViewId);
+        resetCurrentView();
       },
-    [
-      currentViewIdState,
-      persistViewFilters,
-      persistViewSorts,
-      resetCurrentViewFilterAndSorts,
-    ],
+    [currentViewIdState, resetCurrentView, saveViewFilters, saveViewSorts],
   );
 
   return {
-    updateCurrentViewFilterAndSorts,
-    resetCurrentViewFilterAndSorts,
+    saveCurrentViewFilterAndSorts,
   };
 };

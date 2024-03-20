@@ -4,16 +4,15 @@ import { useRecoilCallback } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useHandleCurrentViewFilterAndSorts } from '@/views/hooks/internal/useHandleCurrentViewFilterAndSorts';
 import { usePersistViewRecord } from '@/views/hooks/internal/usePersistViewRecord';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDefined } from '~/utils/isDefined';
 
 export const useHandleViews = (viewBarComponentId?: string) => {
   const { updateViewRecord } = usePersistViewRecord();
-  const { resetCurrentViewFilterAndSorts } =
-    useHandleCurrentViewFilterAndSorts(viewBarComponentId);
+  const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
 
   const { currentViewIdState } = useViewStates(viewBarComponentId);
 
@@ -48,9 +47,9 @@ export const useHandleViews = (viewBarComponentId?: string) => {
       async (viewId: string) => {
         set(currentViewIdState, viewId);
         changeViewInUrl(viewId);
-        resetCurrentViewFilterAndSorts();
+        resetCurrentView();
       },
-    [changeViewInUrl, currentViewIdState, resetCurrentViewFilterAndSorts],
+    [changeViewInUrl, currentViewIdState, resetCurrentView],
   );
 
   const updateCurrentView = useRecoilCallback(

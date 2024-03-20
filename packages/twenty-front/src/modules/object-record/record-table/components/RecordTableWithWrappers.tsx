@@ -20,7 +20,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -78,7 +78,7 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  const { persistViewFields } = useViewBar(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
@@ -96,13 +96,13 @@ export const RecordTableWithWrappers = ({
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={useRecoilCallback(
                     () => (columns) => {
-                      persistViewFields(
+                      saveViewFields(
                         mapColumnDefinitionsToViewFields(
                           columns as ColumnDefinition<FieldMetadata>[],
                         ),
                       );
                     },
-                    [persistViewFields],
+                    [saveViewFields],
                   )}
                   createRecord={createRecord}
                 />

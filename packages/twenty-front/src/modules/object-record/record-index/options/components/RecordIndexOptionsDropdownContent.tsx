@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
@@ -23,7 +22,8 @@ import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemTog
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useHandleViews } from '@/views/hooks/useHandleViews';
+import { useViewBarEditMode } from '@/views/hooks/useViewBarEditMode';
 import { ViewType } from '@/views/types/ViewType';
 
 type RecordIndexOptionsMenu = 'fields';
@@ -39,8 +39,8 @@ export const RecordIndexOptionsDropdownContent = ({
   recordIndexId,
   objectNameSingular,
 }: RecordIndexOptionsDropdownContentProps) => {
-  const { viewEditModeState, updateCurrentView } = useViewBar(recordIndexId);
-  const [viewEditMode, setViewEditMode] = useRecoilState(viewEditModeState);
+  const { updateCurrentView } = useHandleViews(recordIndexId);
+  const { viewEditMode, setViewEditMode } = useViewBarEditMode(recordIndexId);
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);

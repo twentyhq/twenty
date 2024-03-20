@@ -45,7 +45,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
       view.key === 'INDEX' && view.objectMetadataId === viewObjectMetadataId,
   );
 
-  const currentView = currentViewFromCurrentViewId || indexView;
+  const currentView = currentViewFromCurrentViewId ?? indexView;
 
   useEffect(() => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
@@ -84,12 +84,6 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     };
   }
 
-  const currentViewWithSavedFiltersAndSorts = {
-    ...currentView,
-    viewFilters: currentView.viewFilters,
-    viewSorts: currentView.viewSorts,
-  };
-
   const currentViewWithCombinedFiltersAndSorts = {
     ...currentView,
     viewFilters: combinedViewFilters(
@@ -106,7 +100,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
 
   return {
     componentId,
-    currentViewWithSavedFiltersAndSorts,
+    currentViewWithSavedFiltersAndSorts: currentView,
     currentViewWithCombinedFiltersAndSorts,
     viewsOnCurrentObject: viewsOnCurrentObject ?? [],
   };

@@ -21,7 +21,7 @@ import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEWS_DROPDOWN_ID } from '@/views/constants/ViewsDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { isDefined } from '~/utils/isDefined';
 
 import { useViewStates } from '../hooks/internal/useViewStates';
@@ -67,8 +67,9 @@ export const ViewsDropdownButton = ({
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
 
-  const { removeView, setCurrentViewId, selectView } = useViewBar();
+  const { removeView, selectView } = useHandleViews();
   const { entityCountInCurrentViewState, viewEditModeState } = useViewStates();
+
   const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
     useGetCurrentView();
 
@@ -104,7 +105,7 @@ export const ViewsDropdownButton = ({
     viewId: string,
   ) => {
     event.stopPropagation();
-    setCurrentViewId(viewId);
+    selectView(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
     closeViewsDropdown();

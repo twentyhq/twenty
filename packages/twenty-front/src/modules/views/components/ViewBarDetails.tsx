@@ -11,7 +11,7 @@ import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
@@ -114,10 +114,10 @@ export const ViewBarDetails = ({
     availableSortDefinitionsState,
   );
 
-  const { resetCurrentViewFilterAndSorts } = useViewBar();
+  const { resetCurrentView } = useResetCurrentView();
 
   const handleCancelClick = () => {
-    resetCurrentViewFilterAndSorts();
+    resetCurrentView();
   };
 
   const shouldExpandViewBar =

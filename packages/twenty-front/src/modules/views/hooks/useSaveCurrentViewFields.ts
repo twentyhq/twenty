@@ -8,7 +8,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useHandleCurrentViewFields = (viewBarComponentId?: string) => {
+export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
   const { createViewFieldRecords, updateViewFieldRecords } =
     usePersistViewFieldRecords();
 
@@ -17,7 +17,7 @@ export const useHandleCurrentViewFields = (viewBarComponentId?: string) => {
   const { isPersistingViewFieldsState, currentViewIdState } =
     useViewStates(viewBarComponentId);
 
-  const persistViewFields = useRecoilCallback(
+  const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
       async (fields: ViewField[]) => {
         const currentViewId = snapshot
@@ -82,6 +82,6 @@ export const useHandleCurrentViewFields = (viewBarComponentId?: string) => {
   );
 
   return {
-    persistViewFields,
+    saveViewFields,
   };
 };
