@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 const DEFAULT_DEPTH_VALUE = 2;
 

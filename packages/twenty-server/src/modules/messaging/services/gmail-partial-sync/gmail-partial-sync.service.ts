@@ -22,7 +22,7 @@ import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/serv
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';

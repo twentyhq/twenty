@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const fieldNumberMock = {
   name: 'fieldNumber',

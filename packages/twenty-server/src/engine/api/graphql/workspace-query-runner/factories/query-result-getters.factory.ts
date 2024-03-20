@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { TokenService } from 'src/engine/modules/auth/services/token.service';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 
 @Injectable()
 export class QueryResultGettersFactory {

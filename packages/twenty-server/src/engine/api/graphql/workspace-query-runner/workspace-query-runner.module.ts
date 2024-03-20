@@ -6,9 +6,9 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspacePreQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.module';
 import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
 import { RecordPositionListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/record-position.listener';
-import { AuthModule } from 'src/engine/modules/auth/auth.module';
-import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 

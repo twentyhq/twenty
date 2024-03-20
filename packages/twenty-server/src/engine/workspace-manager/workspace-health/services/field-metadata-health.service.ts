@@ -8,25 +8,25 @@ import {
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 import { WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
-import { FieldMetadataDefaultValue } from 'src/engine-metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-composite-field-metadata-type.util';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
-import { compositeDefinitions } from 'src/engine-metadata/field-metadata/composite-types';
-import { validateDefaultValueForType } from 'src/engine-metadata/field-metadata/utils/validate-default-value-for-type.util';
+import { compositeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 import {
   EnumFieldMetadataUnionType,
   isEnumFieldMetadataType,
-} from 'src/engine-metadata/field-metadata/utils/is-enum-field-metadata-type.util';
-import { validateOptionsForType } from 'src/engine-metadata/field-metadata/utils/validate-options-for-type.util';
-import { serializeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-default-value';
+} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { computeCompositeFieldMetadata } from 'src/engine/workspace-manager/workspace-health/utils/compute-composite-field-metadata.util';
-import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
+import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { customNamePrefix } from 'src/engine/utils/compute-custom-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
