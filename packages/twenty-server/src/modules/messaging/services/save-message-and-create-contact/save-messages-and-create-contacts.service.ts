@@ -76,17 +76,22 @@ export class SaveMessagesAndCreateContactsService {
       return;
     }
 
-    const participantsWithMessageId: ParticipantWithMessageId[] =
-      messagesToSave.flatMap((message) => {
-        const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+    const participantsWithMessageId: (ParticipantWithMessageId & {
+      shouldCreateContact: boolean;
+    })[] = messagesToSave.flatMap((message) => {
+      const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
-        return messageId
-          ? message.participants.map((participant) => ({
-              ...participant,
-              messageId,
-            }))
-          : [];
-      });
+      return messageId
+        ? message.participants.map((participant) => ({
+            ...participant,
+            messageId,
+            shouldCreateContact:
+              gmailMessageChannel.isContactAutoCreationEnabled &&
+              message.participants.find((p) => p.role === 'from')?.handle ===
+                connectedAccount.handle,
+          }))
+        : [];
+    });
 
     startTime = Date.now();
 
@@ -108,7 +113,9 @@ export class SaveMessagesAndCreateContactsService {
   }
 
   private async tryToSaveMessageParticipantsOrDeleteMessagesIfError(
-    participantsWithMessageId: ParticipantWithMessageId[],
+    participantsWithMessageId: (ParticipantWithMessageId & {
+      shouldCreateContact: boolean;
+    })[],
     gmailMessageChannel: ObjectRecord<MessageChannelObjectMetadata>,
     workspaceId: string,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
@@ -122,7 +129,7 @@ export class SaveMessagesAndCreateContactsService {
 
       if (gmailMessageChannel.isContactAutoCreationEnabled) {
         const contactsToCreate = participantsWithMessageId.filter(
-          (participant) => participant.role === 'from',
+          (participant) => participant.shouldCreateContact,
         );
 
         this.eventEmitter.emit(`createContacts`, {
