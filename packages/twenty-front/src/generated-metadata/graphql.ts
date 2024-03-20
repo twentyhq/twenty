@@ -67,31 +67,8 @@ export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']['output']>;
   billingUrl?: Maybe<Scalars['String']['output']>;
-  billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
 };
-
-export type BillingSubscription = {
-  __typename?: 'BillingSubscription';
-  id: Scalars['ID']['output'];
-  status: Scalars['String']['output'];
-};
-
-export type BillingSubscriptionFilter = {
-  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
-  id?: InputMaybe<IdFilterComparison>;
-  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
-};
-
-export type BillingSubscriptionSort = {
-  direction: SortDirection;
-  field: BillingSubscriptionSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum BillingSubscriptionSortFields {
-  Id = 'id'
-}
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
@@ -568,6 +545,8 @@ export type Query = {
   fields: FieldConnection;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
+  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
@@ -611,6 +590,20 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
+  companyId: Scalars['ID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['ID']['input'];
 };
 
 
@@ -694,23 +687,6 @@ export enum RelationDefinitionType {
   OneToOne = 'ONE_TO_ONE'
 }
 
-export type RelationDefinition = {
-  __typename?: 'RelationDefinition';
-  direction: RelationDefinitionType;
-  sourceFieldMetadata: Field;
-  sourceObjectMetadata: Object;
-  targetFieldMetadata: Field;
-  targetObjectMetadata: Object;
-};
-
-/** Relation definition type */
-export enum RelationDefinitionType {
-  ManyToMany = 'MANY_TO_MANY',
-  ManyToOne = 'MANY_TO_ONE',
-  OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
-}
-
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']['output']>;
@@ -737,7 +713,7 @@ export type Sentry = {
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
-  url: Scalars['String']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 /** Sort Directions */
@@ -762,6 +738,45 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean']['output'];
   enabled: Scalars['Boolean']['output'];
+};
+
+export type TimelineCalendarEvent = {
+  __typename?: 'TimelineCalendarEvent';
+  attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceSolution: Scalars['String']['output'];
+  conferenceUri: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  endsAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  isCanceled: Scalars['Boolean']['output'];
+  isFullDay: Scalars['Boolean']['output'];
+  location: Scalars['String']['output'];
+  startsAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+  visibility: TimelineCalendarEventVisibility;
+};
+
+export type TimelineCalendarEventAttendee = {
+  __typename?: 'TimelineCalendarEventAttendee';
+  avatarUrl: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  handle: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  personId?: Maybe<Scalars['ID']['output']>;
+  workspaceMemberId?: Maybe<Scalars['ID']['output']>;
+};
+
+/** Visibility of the calendar event */
+export enum TimelineCalendarEventVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
+
+export type TimelineCalendarEventsWithTotal = {
+  __typename?: 'TimelineCalendarEventsWithTotal';
+  timelineCalendarEvents: Array<TimelineCalendarEvent>;
+  totalNumberOfCalendarEvents: Scalars['Int']['output'];
 };
 
 export type TimelineThread = {
@@ -912,7 +927,6 @@ export type Workspace = {
   activationStatus: Scalars['String']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
-  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
   currentCacheVersion?: Maybe<Scalars['String']['output']>;
@@ -925,12 +939,6 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']['output']>;
   subscriptionStatus: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-};
-
-
-export type WorkspaceBillingSubscriptionsArgs = {
-  filter?: BillingSubscriptionFilter;
-  sorting?: Array<BillingSubscriptionSort>;
 };
 
 
@@ -982,7 +990,6 @@ export type Field = {
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
-  relationDefinition?: Maybe<RelationDefinition>;
   relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
