@@ -31,7 +31,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Operand',
     description: 'View Filter operand',
-    defaultValue: { value: 'Contains' },
+    defaultValue: { value: "'Contains'" },
   })
   operand: string;
 

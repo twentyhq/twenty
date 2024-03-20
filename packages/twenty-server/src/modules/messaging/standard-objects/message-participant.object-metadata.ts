@@ -42,7 +42,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
       { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
       { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
     ],
-    defaultValue: { value: 'from' },
+    defaultValue: { value: "'from'" },
   })
   role: string;
 

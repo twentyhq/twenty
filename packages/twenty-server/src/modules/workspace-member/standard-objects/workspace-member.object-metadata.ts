@@ -49,7 +49,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'Color Scheme',
     description: 'Preferred color scheme',
     icon: 'IconColorSwatch',
-    defaultValue: { value: 'Light' },
+    defaultValue: { value: "'Light'" },
   })
   colorScheme: string;
 
@@ -59,7 +59,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'Language',
     description: 'Preferred language',
     icon: 'IconLanguage',
-    defaultValue: { value: 'en' },
+    defaultValue: { value: "'en'" },
   })
   locale: string;
 

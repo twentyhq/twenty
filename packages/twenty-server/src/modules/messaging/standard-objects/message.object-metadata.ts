@@ -55,7 +55,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
       { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
       { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
     ],
-    defaultValue: { value: 'incoming' },
+    defaultValue: { value: "'incoming'" },
   })
   direction: string;
 

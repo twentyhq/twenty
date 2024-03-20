@@ -14,21 +14,21 @@ import {
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
-  FieldMetadataDynamicDefaultValueNow,
-  FieldMetadataDynamicDefaultValueUuid,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
 export const defaultValueValidatorsMap = {
   [FieldMetadataType.UUID]: [
     FieldMetadataDefaultValueString,
-    FieldMetadataDynamicDefaultValueUuid,
+    FieldMetadataDefaultValueUuidFunction,
   ],
   [FieldMetadataType.TEXT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.PHONE]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.EMAIL]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.DATE_TIME]: [
     FieldMetadataDefaultValueDateTime,
-    FieldMetadataDynamicDefaultValueNow,
+    FieldMetadataDefaultValueNowFunction,
   ],
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],

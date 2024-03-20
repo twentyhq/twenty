@@ -8,86 +8,80 @@ import {
   IsNumberString,
   IsString,
   Matches,
-  ValidateIf,
 } from 'class-validator';
 
+import { IsQuotedString } from 'src/engine/metadata-modules/field-metadata/validators/is-quoted-string.validator';
+
+export const fieldMetadataDefaultValueFunctionName = {
+  UUID: 'uuid',
+  NOW: 'now',
+} as const;
+
 export class FieldMetadataDefaultValueString {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   value: string | null;
 }
 
 export class FieldMetadataDefaultValueRawJson {
-  @ValidateIf((_object, value) => value !== null)
   @IsJSON()
   value: JSON | null;
 }
 
 export class FieldMetadataDefaultValueNumber {
-  @ValidateIf((_object, value) => value !== null)
   @IsNumber()
   value: number | null;
 }
 
 export class FieldMetadataDefaultValueBoolean {
-  @ValidateIf((_object, value) => value !== null)
   @IsBoolean()
   value: boolean | null;
 }
 
 export class FieldMetadataDefaultValueStringArray {
-  @ValidateIf((_object, value) => value !== null)
   @IsArray()
-  @IsString({ each: true })
+  @IsQuotedString({ each: true })
   value: string[] | null;
 }
 
 export class FieldMetadataDefaultValueDateTime {
-  @ValidateIf((_object, value) => value !== null)
   @IsDate()
   value: Date | null;
 }
 
 export class FieldMetadataDefaultValueLink {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   label: string | null;
 
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   url: string | null;
 }
 
 export class FieldMetadataDefaultValueCurrency {
-  @ValidateIf((_object, value) => value !== null)
   @IsNumberString()
   amountMicros: string | null;
 
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   currencyCode: string | null;
 }
 
 export class FieldMetadataDefaultValueFullName {
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   firstName: string | null;
 
-  @ValidateIf((_object, value) => value !== null)
-  @IsString()
+  @IsQuotedString()
   lastName: string | null;
 }
 
-export class FieldMetadataDynamicDefaultValueUuid {
-  @Matches('uuid')
+export class FieldMetadataDefaultValueUuidFunction {
+  @Matches(fieldMetadataDefaultValueFunctionName.UUID)
   @IsNotEmpty()
   @IsString()
-  type: 'uuid';
+  value: typeof fieldMetadataDefaultValueFunctionName.UUID;
 }
 
-export class FieldMetadataDynamicDefaultValueNow {
-  @Matches('now')
+export class FieldMetadataDefaultValueNowFunction {
+  @Matches(fieldMetadataDefaultValueFunctionName.NOW)
   @IsNotEmpty()
   @IsString()
-  type: 'now';
+  value: typeof fieldMetadataDefaultValueFunctionName.NOW;
 }

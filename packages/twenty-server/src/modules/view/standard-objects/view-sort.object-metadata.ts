@@ -32,7 +32,7 @@ export class ViewSortObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Direction',
     description: 'View Sort direction',
-    defaultValue: { value: 'asc' },
+    defaultValue: { value: "'asc'" },
   })
   direction: string;
 

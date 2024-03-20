@@ -15,9 +15,10 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { serializeTypeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-type-default-value.util';
+import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -210,9 +211,11 @@ export class DatabaseStructureService {
       fieldMetadataType,
     ) as ColumnType;
     const mainDataSource = this.typeORMService.getMainDataSource();
+    const value =
+      defaultValue && 'value' in defaultValue ? defaultValue.value : null;
 
-    if (defaultValue && 'type' in defaultValue) {
-      const serializedDefaultValue = serializeTypeDefaultValue(defaultValue);
+    if (isFunctionDefaultValue(value)) {
+      const serializedDefaultValue = serializeFunctionDefaultValue(value);
 
       // Special case for uuid_generate_v4() default value
       if (serializedDefaultValue === 'public.uuid_generate_v4()') {
@@ -221,9 +224,6 @@ export class DatabaseStructureService {
 
       return serializedDefaultValue;
     }
-
-    const value =
-      defaultValue && 'value' in defaultValue ? defaultValue.value : null;
 
     if (typeof value === 'number') {
       return value.toString();

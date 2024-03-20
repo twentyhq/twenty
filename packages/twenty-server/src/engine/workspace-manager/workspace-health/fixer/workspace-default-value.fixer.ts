@@ -85,15 +85,15 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
     }
 
     if (columnDefault === '') {
-      return { value: '' };
+      return { value: "''" };
     }
 
     if (columnDefault === 'now()') {
-      return { type: 'now' };
+      return { value: 'now' };
     }
 
     if (columnDefault.startsWith('public.uuid_generate_v4')) {
-      return { type: 'uuid' };
+      return { value: 'uuid' };
     }
 
     return { value: columnDefault };

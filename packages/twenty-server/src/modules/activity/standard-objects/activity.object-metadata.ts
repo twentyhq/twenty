@@ -47,7 +47,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     label: 'Type',
     description: 'Activity type',
     icon: 'IconCheckbox',
-    defaultValue: { value: 'Note' },
+    defaultValue: { value: "'Note'" },
   })
   type: string;
 

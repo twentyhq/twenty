@@ -8,8 +8,8 @@ import {
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
-  FieldMetadataDynamicDefaultValueNow,
-  FieldMetadataDynamicDefaultValueUuid,
+  FieldMetadataDefaultValueUuidFunction,
+  FieldMetadataDefaultValueNowFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -19,13 +19,13 @@ type FieldMetadataScalarDefaultValue =
   | FieldMetadataDefaultValueBoolean
   | FieldMetadataDefaultValueDateTime;
 
-export type FieldMetadataDynamicDefaultValue =
-  | FieldMetadataDynamicDefaultValueUuid
-  | FieldMetadataDynamicDefaultValueNow;
+export type FieldMetadataFunctionDefaultValue =
+  | FieldMetadataDefaultValueUuidFunction
+  | FieldMetadataDefaultValueNowFunction;
 
 type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataScalarDefaultValue
-  | FieldMetadataDynamicDefaultValue
+  | FieldMetadataFunctionDefaultValue
   | FieldMetadataDefaultValueLink
   | FieldMetadataDefaultValueCurrency
   | FieldMetadataDefaultValueFullName;
@@ -33,13 +33,13 @@ type AllFieldMetadataDefaultValueTypes =
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]:
     | FieldMetadataDefaultValueString
-    | FieldMetadataDynamicDefaultValueUuid;
+    | FieldMetadataDefaultValueUuidFunction;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
-    | FieldMetadataDynamicDefaultValueNow;
+    | FieldMetadataDefaultValueNowFunction;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
@@ -84,5 +84,4 @@ type FieldMetadataDefaultValueExtractedTypes = {
 
 export type FieldMetadataDefaultSerializableValue =
   | FieldMetadataDefaultValueExtractedTypes[keyof FieldMetadataDefaultValueExtractedTypes]
-  | FieldMetadataDynamicDefaultValue
   | null;

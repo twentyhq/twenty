@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -36,7 +35,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate {
     const defaultValue =
-      this.getDefaultValue(fieldMetadata.defaultValue) ?? options?.defaultValue;
+      fieldMetadata.defaultValue?.value ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
 
     return {
@@ -54,8 +53,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     const defaultValue =
-      this.getDefaultValue(alteredFieldMetadata.defaultValue) ??
-      options?.defaultValue;
+      alteredFieldMetadata.defaultValue?.value ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
     const currentColumnName = currentFieldMetadata.targetColumnMap.value;
     const alteredColumnName = alteredFieldMetadata.targetColumnMap.value;
@@ -76,7 +74,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
         isNullable: currentFieldMetadata.isNullable,
         defaultValue: serializeDefaultValue(
-          this.getDefaultValue(currentFieldMetadata.defaultValue),
+          currentFieldMetadata.defaultValue?.value,
         ),
       },
       alteredColumnDefinition: {
@@ -86,20 +84,5 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         defaultValue: serializedDefaultValue,
       },
     };
-  }
-
-  private getDefaultValue(
-    defaultValue:
-      | FieldMetadataDefaultValue<BasicFieldMetadataType>
-      | undefined
-      | null,
-  ) {
-    if (!defaultValue) return null;
-
-    if ('type' in defaultValue) {
-      return defaultValue;
-    } else {
-      return defaultValue?.value;
-    }
   }
 }
