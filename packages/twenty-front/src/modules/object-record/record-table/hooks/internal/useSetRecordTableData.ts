@@ -14,8 +14,12 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const { getTableRowIdsState, getNumberOfTableRowsState } =
-    useRecordTableStates(recordTableId);
+  const {
+    getTableRowIdsState,
+    getNumberOfTableRowsState,
+    isRowSelectedFamilyState,
+    isAllRowSelectedFamilyState,
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -32,15 +36,32 @@ export const useSetRecordTableData = ({
         }
         const currentRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
 
+        const allRowSelected = getSnapshotValue(
+          snapshot,
+          isAllRowSelectedFamilyState('all'),
+        );
+
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(getTableRowIdsState(), entityIds);
         }
 
+        if (allRowSelected) {
+          for (const rowId of entityIds) {
+            set(isRowSelectedFamilyState(rowId), true);
+          }
+        }
+
         set(getNumberOfTableRowsState(), totalCount);
         onEntityCountChange(totalCount);
       },
-    [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
+    [
+      getNumberOfTableRowsState,
+      getTableRowIdsState,
+      onEntityCountChange,
+      isRowSelectedFamilyState,
+      isAllRowSelectedFamilyState,
+    ],
   );
 };
