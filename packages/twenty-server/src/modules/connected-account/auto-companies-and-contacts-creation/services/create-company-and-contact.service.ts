@@ -40,7 +40,7 @@ export class CreateCompanyAndContactService {
   ) {}
 
   async createCompaniesAndContacts(
-    connectedAccount: { handle: string },
+    connectedAccountHandle: string,
     contactsToCreate: Contacts,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -61,7 +61,7 @@ export class CreateCompanyAndContactService {
     const contactsToCreateFromOtherCompanies =
       filterOutContactsFromCompanyOrWorkspace(
         contactsToCreate,
-        connectedAccount.handle,
+        connectedAccountHandle,
         workspaceMembers,
       );
 
@@ -128,7 +128,7 @@ export class CreateCompanyAndContactService {
   }
 
   async createCompaniesAndContactsAndUpdateParticipants(
-    connectedAccount: { handle: string },
+    connectedAccountHandle,
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
@@ -140,7 +140,7 @@ export class CreateCompanyAndContactService {
     await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
         await this.createCompaniesAndContacts(
-          connectedAccount,
+          connectedAccountHandle,
           contactsToCreate,
           workspaceId,
           transactionManager,

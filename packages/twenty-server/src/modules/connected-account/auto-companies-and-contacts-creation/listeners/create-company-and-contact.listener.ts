@@ -18,9 +18,7 @@ export class CreateCompanyAndContactListener {
   @OnEvent('createContacts')
   async handleContactCreationEvent(payload: {
     workspaceId: string;
-    connectedAccount: {
-      handle: string;
-    };
+    connectedAccountHandle: string;
     contactsToCreate: {
       displayName: string;
       handle: string;
