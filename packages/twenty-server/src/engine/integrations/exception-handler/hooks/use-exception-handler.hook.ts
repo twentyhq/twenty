@@ -13,12 +13,17 @@ import {
   convertExceptionToGraphQLError,
   filterException,
 } from 'src/engine/utils/global-exception-handler.util';
+import { CreateContextFactory } from 'src/engine/api/graphql/graphql-config/factories/create-context.factory';
 
 export type ExceptionHandlerPluginOptions = {
   /**
    * The exception handler service to use.
    */
   exceptionHandlerService: ExceptionHandlerService;
+  /**
+   * Create a context factory for the plugin.
+   */
+  createContextFactory?: CreateContextFactory;
   /**
    * The key of the event id in the error's extension. `null` to disable.
    * @default exceptionEventId
@@ -124,6 +129,25 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
       };
+    },
+    onValidate: ({ context, validateFn, params: { documentAST, schema } }) => {
+      const errors = validateFn(schema, documentAST);
+
+      if (Array.isArray(errors) && errors.length > 0) {
+        // const {workspace} = await options.createContextFactory?.create(context);
+
+        const requestSchemaVersion = context.req.headers['x-schema-version'];
+        const currentSchemaVersion = context.workspace?.currentCacheVersion;
+
+        if (
+          requestSchemaVersion &&
+          requestSchemaVersion !== currentSchemaVersion
+        ) {
+          throw new GraphQLError(
+            `Schema version mismatch: ${requestSchemaVersion}  ${currentSchemaVersion}`,
+          );
+        }
+      }
     },
   };
 };

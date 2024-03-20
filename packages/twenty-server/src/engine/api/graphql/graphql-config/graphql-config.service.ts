@@ -57,6 +57,7 @@ export class GraphQLConfigService
       }),
       useExceptionHandler({
         exceptionHandlerService: this.exceptionHandlerService,
+        createContextFactory: this.createContextFactory,
       }),
     ];
 
