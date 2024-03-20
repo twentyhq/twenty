@@ -16560,6 +16560,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.groupby@npm:^4.6.9":
+  version: 4.6.9
+  resolution: "@types/lodash.groupby@npm:4.6.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 1302531f76da99cc8f1bbd486a8c7048a833352b12c39eb5b2ded01173dd5fff76f2c7ace04f08b51c55840271170f1cfbffe4e454dde8597c3ee996e70d4e11
+  languageName: node
+  linkType: hard
+
 "@types/lodash.isempty@npm:^4.4.7":
   version: 4.4.9
   resolution: "@types/lodash.isempty@npm:4.4.9"
@@ -33367,6 +33376,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.groupby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.groupby@npm:4.6.0"
+  checksum: 3d136cad438ad6c3a078984ef60e057a3498b1312aa3621b00246ecb99e8f2c4d447e2815460db7a0b661a4fe4e2eeee96c84cb661a824bad04b6cf1f7bc6e9b
+  languageName: node
+  linkType: hard
+
 "lodash.includes@npm:^4.3.0":
   version: 4.3.0
   resolution: "lodash.includes@npm:4.3.0"
@@ -45909,6 +45925,7 @@ __metadata:
     "@types/js-cookie": "npm:^3.0.3"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.debounce": "npm:^4.0.7"
+    "@types/lodash.groupby": "npm:^4.6.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.7"
     "@types/lodash.isobject": "npm:^3.0.7"
@@ -46010,6 +46027,7 @@ __metadata:
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
     lodash.debounce: "npm:^4.0.8"
+    lodash.groupby: "npm:^4.6.0"
     lodash.isempty: "npm:^4.4.0"
     lodash.isequal: "npm:^4.5.0"
     lodash.isobject: "npm:^3.0.2"
