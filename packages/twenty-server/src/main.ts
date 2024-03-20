@@ -9,8 +9,6 @@ import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import '@sentry/tracing';
 
-import { AggregateByWorkspaceContextIdStrategy } from 'src/engine/strategies/aggregate-by-workspace-context-id.strategy';
-
 import { AppModule } from './app.module';
 
 import { settings } from './engine/constants/settings';
@@ -27,8 +25,9 @@ const bootstrap = async () => {
   });
   const logger = app.get(LoggerService);
 
-  // Apply context id strategy for durable trees
-  ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
+  // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
+  // // Apply context id strategy for durable trees
+  // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 
   console.log('create: ', ContextIdFactory.create());
 
