@@ -154,7 +154,7 @@ export class BillingService {
     return session.url;
   }
 
-  async updateBillingSubscription(user: User): Promise<boolean> {
+  async updateBillingSubscription(user: User) {
     const billingSubscription = await this.getCurrentBillingSubscription({
       workspaceId: user.defaultWorkspaceId,
     });
@@ -166,7 +166,7 @@ export class BillingService {
     const stripeProductId = this.getProductStripeId(AvailableProduct.BasePlan);
 
     if (!stripeProductId) {
-      return false;
+      throw new Error('Stripe product id not found for basePlan');
     }
     const productPrices = await this.getProductPrices(stripeProductId);
 
@@ -174,7 +174,7 @@ export class BillingService {
       (price) => price.recurringInterval === newInterval,
     )?.[0]?.stripePriceId;
 
-    return await this.stripeService.updateBillingSubscriptionItem(
+    await this.stripeService.updateBillingSubscriptionItem(
       billingSubscriptionItem,
       stripePriceId,
     );

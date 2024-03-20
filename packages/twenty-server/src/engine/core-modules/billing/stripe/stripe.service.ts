@@ -111,18 +111,12 @@ export class StripeService {
     stripeSubscriptionItem: BillingSubscriptionItem,
     stripePriceId: string,
   ) {
-    try {
-      await this.stripe.subscriptionItems.update(
-        stripeSubscriptionItem.stripeSubscriptionItemId,
-        {
-          price: stripePriceId,
-          quantity: stripeSubscriptionItem.quantity,
-        },
-      );
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    await this.stripe.subscriptionItems.update(
+      stripeSubscriptionItem.stripeSubscriptionItemId,
+      {
+        price: stripePriceId,
+        quantity: stripeSubscriptionItem.quantity,
+      },
+    );
   }
 }

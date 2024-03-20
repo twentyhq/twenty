@@ -103,29 +103,29 @@ export const SettingsBilling = () => {
   };
 
   const switchInterval = async () => {
-    const { data } = await updateBillingSubscription();
-    if (!data?.updateBillingSubscription.success) {
+    try {
+      await updateBillingSubscription();
+      if (isDefined(currentWorkspace?.currentBillingSubscription)) {
+        const newCurrentWorkspace = {
+          ...currentWorkspace,
+          currentBillingSubscription: {
+            ...currentWorkspace?.currentBillingSubscription,
+            interval: switchingInfo.newInterval,
+          },
+        };
+        setCurrentWorkspace(newCurrentWorkspace);
+      }
+      enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
+        variant: 'success',
+      });
+    } catch (error: any) {
       enqueueSnackBar(
         `Error while switching subscription ${switchingInfo.to}.`,
         {
           variant: 'error',
         },
       );
-      return;
     }
-    if (isDefined(currentWorkspace?.currentBillingSubscription)) {
-      const newCurrentWorkspace = {
-        ...currentWorkspace,
-        currentBillingSubscription: {
-          ...currentWorkspace?.currentBillingSubscription,
-          interval: switchingInfo.newInterval,
-        },
-      };
-      setCurrentWorkspace(newCurrentWorkspace);
-    }
-    enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
-      variant: 'success',
-    });
   };
 
   const redirectToSubscribePage = () => {
