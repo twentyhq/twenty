@@ -7,7 +7,6 @@ import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-toke
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/integrations/email/email.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { TokenService } from './token.service';
@@ -33,10 +32,6 @@ describe('TokenService', () => {
         },
         {
           provide: EmailService,
-          useValue: {},
-        },
-        {
-          provide: UserWorkspaceService,
           useValue: {},
         },
         {
