@@ -42,12 +42,12 @@ const StyledRightDrawer = styled.div`
 
 export const RightDrawer = () => {
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
-    isRightDrawerOpenState(),
+    isRightDrawerOpenState,
   );
 
-  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState());
+  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
 
-  const rightDrawerPage = useRecoilValue(rightDrawerPageState());
+  const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
   const { closeRightDrawer } = useRightDrawer();
 
@@ -63,11 +63,11 @@ export const RightDrawer = () => {
       ({ snapshot, set }) =>
         (event) => {
           const isRightDrawerOpen = snapshot
-            .getLoadable(isRightDrawerOpenState())
+            .getLoadable(isRightDrawerOpenState)
             .getValue();
 
           if (isRightDrawerOpen) {
-            set(rightDrawerCloseEventState(), event);
+            set(rightDrawerCloseEventState, event);
             closeRightDrawer();
           }
         },

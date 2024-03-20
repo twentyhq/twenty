@@ -13,7 +13,7 @@ export const useDefaultHomePagePath = () => {
 
   const companyViewId = records.find(
     (view: any) => view?.objectMetadataId === companyObjectMetadataItem.id,
-  )?.node.id;
+  )?.id;
   const defaultHomePagePath =
     '/objects/companies' + (companyViewId ? `?view=${companyViewId}` : '');
 

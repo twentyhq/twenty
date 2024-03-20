@@ -42,7 +42,7 @@ export const useObjectMetadataItem = (
   depth?: number,
   eagerLoadedRelations?: Record<string, any>,
 ) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
@@ -53,7 +53,7 @@ export const useObjectMetadataItem = (
     }),
   );
 
-  let objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =

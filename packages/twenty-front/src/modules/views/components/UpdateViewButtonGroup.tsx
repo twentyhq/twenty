@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
@@ -10,9 +10,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UPDATE_VIEW_DROPDOWN_ID } from '@/views/constants/UpdateViewDropdownId';
-import { useViewBar } from '@/views/hooks/useViewBar';
-
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.color.blue};
@@ -31,14 +30,11 @@ export const UpdateViewButtonGroup = ({
   hotkeyScope,
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
-  const { updateCurrentView, setViewEditMode } = useViewBar();
-  const { canPersistFiltersSelector, canPersistSortsSelector } =
-    useViewScopedStates();
+  const { canPersistViewSelector, viewEditModeState } = useViewStates();
+  const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
 
-  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
-  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
-
-  const canPersistView = canPersistFilters || canPersistSorts;
+  const setViewEditMode = useSetRecoilState(viewEditModeState);
+  const canPersistView = useRecoilValue(canPersistViewSelector());
 
   const handleCreateViewButtonClick = useCallback(() => {
     setViewEditMode('create');
@@ -46,7 +42,7 @@ export const UpdateViewButtonGroup = ({
   }, [setViewEditMode, onViewEditModeChange]);
 
   const handleViewSubmit = async () => {
-    await updateCurrentView?.();
+    await saveCurrentViewFilterAndSorts();
   };
 
   if (!canPersistView) {

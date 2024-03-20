@@ -11,6 +11,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -32,14 +33,15 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export const useAuth = () => {
-  const [, setTokenPair] = useRecoilState(tokenPairState());
-  const setCurrentUser = useSetRecoilState(currentUserState());
+  const [, setTokenPair] = useRecoilState(tokenPairState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState(),
+    currentWorkspaceMemberState,
   );
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
-  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState());
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
+  const setWorkspaces = useSetRecoilState(workspacesState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -101,6 +103,15 @@ export const useAuth = () => {
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
+      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
+        const validWorkspaces = verifyResult.data?.verify.user.workspaces
+          .filter(
+            ({ workspace }) => workspace !== null && workspace !== undefined,
+          )
+          .map((validWorkspace) => validWorkspace.workspace!);
+
+        setWorkspaces(validWorkspaces);
+      }
       return {
         user,
         workspaceMember,
@@ -114,6 +125,7 @@ export const useAuth = () => {
       setCurrentUser,
       setCurrentWorkspaceMember,
       setCurrentWorkspace,
+      setWorkspaces,
     ],
   );
 
@@ -141,26 +153,26 @@ export const useAuth = () => {
     ({ snapshot }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
-        const iconsValue = snapshot.getLoadable(iconsState()).getValue();
+        const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
-          .getLoadable(authProvidersState())
+          .getLoadable(authProvidersState)
           .getValue();
-        const billing = snapshot.getLoadable(billingState()).getValue();
+        const billing = snapshot.getLoadable(billingState).getValue();
         const isSignInPrefilled = snapshot
-          .getLoadable(isSignInPrefilledState())
+          .getLoadable(isSignInPrefilledState)
           .getValue();
-        const supportChat = snapshot.getLoadable(supportChatState()).getValue();
-        const telemetry = snapshot.getLoadable(telemetryState()).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState()).getValue();
+        const supportChat = snapshot.getLoadable(supportChatState).getValue();
+        const telemetry = snapshot.getLoadable(telemetryState).getValue();
+        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState(), iconsValue);
-          set(authProvidersState(), authProvidersValue);
-          set(billingState(), billing);
-          set(isSignInPrefilledState(), isSignInPrefilled);
-          set(supportChatState(), supportChat);
-          set(telemetryState(), telemetry);
-          set(isDebugModeState(), isDebugMode);
+          set(iconsState, iconsValue);
+          set(authProvidersState, authProvidersValue);
+          set(billingState, billing);
+          set(isSignInPrefilledState, isSignInPrefilled);
+          set(supportChatState, supportChat);
+          set(telemetryState, telemetry);
+          set(isDebugModeState, isDebugMode);
           return undefined;
         });
 

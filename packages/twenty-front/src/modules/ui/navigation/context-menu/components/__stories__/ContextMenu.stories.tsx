@@ -10,12 +10,12 @@ import { contextMenuPositionState } from '../../states/contextMenuPositionState'
 import { ContextMenu } from '../ContextMenu';
 
 const FilledContextMenu = () => {
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   setContextMenuPosition({
     x: 100,
     y: 10,
   });
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   setContextMenuOpenState(true);
   return <ContextMenu />;
 };

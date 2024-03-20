@@ -12,7 +12,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
   const {
-    getCurrentTableCellInEditModePositionState,
+    currentTableCellInEditModePositionState,
     isTableCellInEditModeFamilyState,
   } = useRecordTableStates();
 
@@ -21,7 +21,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
       () => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          getCurrentTableCellInEditModePositionState(),
+          currentTableCellInEditModePositionState,
         );
 
         const isSomeCellInEditMode = snapshot
@@ -33,7 +33,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
           .getValue();
 
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState())
+          .getLoadable(currentHotkeyScopeState)
           .getValue();
 
         if (
@@ -49,7 +49,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
         }
       },
     [
-      getCurrentTableCellInEditModePositionState,
+      currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
       setSoftFocusOnCurrentTableCell,
     ],

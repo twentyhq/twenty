@@ -8,7 +8,7 @@ export const objectMetadataItemsByNameSingularMapSelector = selector<
 >({
   key: 'objectMetadataItemsByNameSingularMapSelector',
   get: ({ get }) => {
-    const objectMetadataItems = get(objectMetadataItemsState());
+    const objectMetadataItems = get(objectMetadataItemsState);
 
     return new Map(
       objectMetadataItems.map((objectMetadataItem) => [

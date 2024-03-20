@@ -12,9 +12,10 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 
-import { Workspace } from './workspace.entity';
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
+import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
@@ -31,6 +32,8 @@ import { WorkspaceService } from './services/workspace.service';
         ),
         UserWorkspaceModule,
         WorkspaceManagerModule,
+        DataSourceModule,
+        TypeORMModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

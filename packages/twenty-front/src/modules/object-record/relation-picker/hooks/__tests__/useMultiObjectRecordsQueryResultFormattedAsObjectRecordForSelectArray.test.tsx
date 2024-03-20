@@ -58,7 +58,7 @@ describe('useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray'
                 },
               },
             ),
-          setObjectMetadata: useSetRecoilState(objectMetadataItemsState()),
+          setObjectMetadata: useSetRecoilState(objectMetadataItemsState),
         };
       },
       {

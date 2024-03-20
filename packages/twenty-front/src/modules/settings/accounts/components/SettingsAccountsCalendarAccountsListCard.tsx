@@ -20,7 +20,7 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarAccountsListCard = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
   const { records: _accounts, loading } = useFindManyRecords<ConnectedAccount>({
