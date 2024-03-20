@@ -1,19 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ParticipantWithId } from 'src/modules/messaging/types/gmail-message';
+import {
+  ParticipantWithId,
+  ParticipantWithMessageId,
+} from 'src/modules/messaging/types/gmail-message';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
+import { MessageService } from 'src/modules/messaging/services/message/message.service';
 
 @Injectable()
 export class MessageParticipantService {
+  private readonly logger = new Logger(MessageParticipantService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
+    private readonly messageParticipantRepository: MessageParticipantRepository,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly messageService: MessageService,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
@@ -55,5 +69,47 @@ export class MessageParticipantService {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async tryToSaveMessageParticipantsOrDeleteMessagesIfError(
+    participantsWithMessageId: ParticipantWithMessageId[],
+    gmailMessageChannel: ObjectRecord<MessageChannelObjectMetadata>,
+    workspaceId: string,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    jobName?: string,
+  ) {
+    try {
+      await this.messageParticipantRepository.saveMessageParticipants(
+        participantsWithMessageId,
+        workspaceId,
+      );
+
+      if (gmailMessageChannel.isContactAutoCreationEnabled) {
+        const contactsToCreate = participantsWithMessageId.filter(
+          (participant) => participant.role === 'from',
+        );
+
+        this.eventEmitter.emit(`createContacts`, {
+          workspaceId,
+          connectedAccountHandle: connectedAccount.handle,
+          contactsToCreate,
+        });
+      }
+    } catch (error) {
+      this.logger.error(
+        `${jobName} error saving message participants for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        error,
+      );
+
+      const messagesToDelete = participantsWithMessageId.map(
+        (participant) => participant.messageId,
+      );
+
+      await this.messageService.deleteMessages(
+        messagesToDelete,
+        gmailMessageChannel.id,
+        workspaceId,
+      );
+    }
   }
 }
