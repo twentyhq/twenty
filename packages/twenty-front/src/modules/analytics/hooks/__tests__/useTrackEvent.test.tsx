@@ -4,10 +4,10 @@ import { RecoilRoot } from 'recoil';
 
 import { useTrackEvent } from '../useTrackEvent';
 
-const mockCreateEventMutation = jest.fn();
+const mockTrackMutation = jest.fn();
 
 jest.mock('~/generated/graphql', () => ({
-  useCreateEventMutation: () => [mockCreateEventMutation],
+  useTrackMutation: () => [mockTrackMutation],
 }));
 
 describe('useTrackEvent', () => {
@@ -17,8 +17,8 @@ describe('useTrackEvent', () => {
     renderHook(() => useTrackEvent(eventType, eventData), {
       wrapper: RecoilRoot,
     });
-    expect(mockCreateEventMutation).toHaveBeenCalledTimes(1);
-    expect(mockCreateEventMutation).toHaveBeenCalledWith({
+    expect(mockTrackMutation).toHaveBeenCalledTimes(1);
+    expect(mockTrackMutation).toHaveBeenCalledWith({
       variables: { type: eventType, data: eventData },
     });
   });

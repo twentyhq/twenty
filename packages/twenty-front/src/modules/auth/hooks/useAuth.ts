@@ -19,7 +19,7 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { iconsState } from '@/ui/display/icon/states/iconsState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { REACT_APP_SERVER_AUTH_URL } from '~/config';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
@@ -204,9 +204,9 @@ export const useAuth = () => {
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
-    const authServerUrl = REACT_APP_SERVER_AUTH_URL;
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
     window.location.href =
-      `${authServerUrl}/google/${
+      `${authServerUrl}/auth/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
       }` || '';
   }, []);

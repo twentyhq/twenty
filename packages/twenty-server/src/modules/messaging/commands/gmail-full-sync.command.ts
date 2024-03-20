@@ -8,7 +8,9 @@ import {
   GmailFullSyncJobData,
   GmailFullSyncJob,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 
 interface GmailFullSyncOptions {
   workspaceId: string;
@@ -22,7 +24,8 @@ export class GmailFullSyncCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {
     super();
   }
@@ -47,7 +50,7 @@ export class GmailFullSyncCommand extends CommandRunner {
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     const connectedAccounts =
-      await this.connectedAccountService.getAll(workspaceId);
+      await this.connectedAccountRepository.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
       await this.messageQueueService.add<GmailFullSyncJobData>(

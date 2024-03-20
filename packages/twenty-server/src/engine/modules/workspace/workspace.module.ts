@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { FileModule } from 'src/engine/modules/file/file.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceResolver } from 'src/engine/modules/workspace/workspace.resolver';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -12,6 +11,7 @@ import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.
 import { User } from 'src/engine/modules/user/user.entity';
 import { UserWorkspaceModule } from 'src/engine/modules/user-workspace/user-workspace.module';
 import { BillingModule } from 'src/engine/modules/billing/billing.module';
+import { FileUploadModule } from 'src/engine/modules/file/file-upload/file-upload.module';
 
 import { Workspace } from './workspace.entity';
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -24,7 +24,7 @@ import { WorkspaceService } from './services/workspace.service';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         BillingModule,
-        FileModule,
+        FileUploadModule,
         NestjsQueryTypeOrmModule.forFeature(
           [User, Workspace, UserWorkspace, FeatureFlagEntity],
           'core',

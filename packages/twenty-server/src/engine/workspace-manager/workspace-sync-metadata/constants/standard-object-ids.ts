@@ -18,6 +18,7 @@ export const standardObjectIds = {
   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
+  event: '20202020-6736-4337-b5c4-8b39fae325a5',
   favorite: '20202020-ab56-4e05-92a3-e2414a499860',
   messageChannelMessageAssociation: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
   messageChannel: '20202020-fe8c-40bc-a681-b80b771449b7',

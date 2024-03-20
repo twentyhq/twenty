@@ -9,6 +9,7 @@ import { OpenApiModule } from 'src/engine/modules/open-api/open-api.module';
 import { TimelineMessagingModule } from 'src/engine/modules/messaging/timeline-messaging.module';
 import { BillingModule } from 'src/engine/modules/billing/billing.module';
 import { HealthModule } from 'src/engine/modules/health/health.module';
+import { TimelineCalendarEventModule } from 'src/engine/modules/calendar/timeline-calendar-event.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -26,6 +27,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     OpenApiModule,
     RefreshTokenModule,
     TimelineMessagingModule,
+    TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
   ],
@@ -34,6 +36,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,
+    TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
   ],

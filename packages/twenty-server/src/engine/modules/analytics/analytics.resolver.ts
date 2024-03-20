@@ -20,14 +20,14 @@ export class AnalyticsResolver {
   constructor(private readonly analyticsService: AnalyticsService) {}
 
   @Mutation(() => Analytics)
-  createEvent(
-    @Args() createEventInput: CreateAnalyticsInput,
+  track(
+    @Args() createAnalyticsInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
     @Context('req') request: Request,
   ) {
     return this.analyticsService.create(
-      createEventInput,
+      createAnalyticsInput,
       user,
       workspace,
       request,
