@@ -131,10 +131,13 @@ export class BillingService {
     workspaceId: string,
     returnUrlPath?: string,
   ) {
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { workspaceId },
-      });
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
+
+    if (!billingSubscription) {
+      return;
+    }
 
     const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
     const returnUrl = returnUrlPath
@@ -190,10 +193,9 @@ export class BillingService {
   }
 
   async deleteSubscription(workspaceId: string) {
-    const subscriptionToCancel =
-      await this.billingSubscriptionRepository.findOneBy({
-        workspaceId,
-      });
+    const subscriptionToCancel = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
 
     if (subscriptionToCancel) {
       await this.stripeService.cancelSubscription(

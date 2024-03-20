@@ -552,7 +552,7 @@ export type Sentry = {
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 /** Sort Directions */
@@ -1015,7 +1015,7 @@ export type BillingPortalSessionQueryVariables = Exact<{
 }>;
 
 
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url: string } };
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: Scalars['String'];
@@ -1023,7 +1023,7 @@ export type CheckoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url: string } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
