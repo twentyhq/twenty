@@ -119,6 +119,7 @@ export const ViewsDropdownButton = ({
     event.stopPropagation();
 
     await removeView(viewId);
+    selectView(viewsOnCurrentObject.filter((view) => view.id !== viewId)[0].id);
     closeViewsDropdown();
   };
 

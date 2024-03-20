@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { v4 } from 'uuid';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
@@ -39,7 +40,8 @@ export const RecordIndexOptionsDropdownContent = ({
   recordIndexId,
   objectNameSingular,
 }: RecordIndexOptionsDropdownContentProps) => {
-  const { updateCurrentView } = useHandleViews(recordIndexId);
+  const { updateCurrentView, createEmptyView, selectView } =
+    useHandleViews(recordIndexId);
   const { viewEditMode, setViewEditMode } = useViewBarEditMode(recordIndexId);
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -67,9 +69,16 @@ export const RecordIndexOptionsDropdownContent = ({
 
   useScopedHotkeys(
     Key.Enter,
-    () => {
+    async () => {
       const name = viewEditInputRef.current?.value;
-      updateCurrentView({ name });
+      if (viewEditMode === 'create') {
+        const id = v4();
+        await createEmptyView(id, name ?? '');
+        selectView(id);
+      } else {
+        updateCurrentView({ name });
+      }
+
       resetMenu();
       setViewEditMode('none');
       closeDropdown();

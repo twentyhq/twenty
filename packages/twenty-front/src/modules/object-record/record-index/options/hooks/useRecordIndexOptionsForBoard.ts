@@ -185,7 +185,6 @@ export const useRecordIndexOptionsForBoard = ({
       if (!view) return;
       setIsCompactModeActive(isCompactModeActive);
       updateCurrentView({
-        ...view,
         isCompact: isCompactModeActive,
       });
     },

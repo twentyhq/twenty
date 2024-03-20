@@ -45,7 +45,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
       view.key === 'INDEX' && view.objectMetadataId === viewObjectMetadataId,
   );
 
-  const currentView = currentViewFromCurrentViewId ?? indexView;
+  const currentView = currentViewId ? currentViewFromCurrentViewId : indexView;
 
   useEffect(() => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
