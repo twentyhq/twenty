@@ -5,7 +5,7 @@ import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { WorkspaceMember } from 'src/engine/modules/user/dtos/workspace-member.dto';
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 
 const tableName = 'workspaceMember';
 

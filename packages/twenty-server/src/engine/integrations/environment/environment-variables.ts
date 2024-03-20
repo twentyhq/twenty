@@ -11,6 +11,8 @@ import {
   IsBoolean,
   IsNumber,
   IsDefined,
+  Min,
+  Max,
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
@@ -37,6 +39,13 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   DEBUG_MODE: boolean = false;
+
+  @CastToPositiveNumber()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(65535)
+  DEBUG_PORT: number = 9000;
 
   @CastToBoolean()
   @IsOptional()
@@ -130,11 +139,12 @@ export class EnvironmentVariables {
   LOGIN_TOKEN_EXPIRES_IN: string = '15m';
 
   @IsString()
-  FILE_TOKEN_SECRET: string;
+  @IsOptional()
+  FILE_TOKEN_SECRET: string = 'random_string';
 
   @IsDuration()
   @IsOptional()
-  FILE_TOKEN_EXPIRES_IN: string;
+  FILE_TOKEN_EXPIRES_IN: string = '1d';
 
   // Auth
   @IsUrl({ require_tld: false })
@@ -196,6 +206,11 @@ export class EnvironmentVariables {
   @IsEnum(LoggerDriverType)
   @IsOptional()
   LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
+
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
@@ -288,8 +303,6 @@ export class EnvironmentVariables {
   CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
-
-  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 }
 
 export const validate = (config: Record<string, unknown>) => {

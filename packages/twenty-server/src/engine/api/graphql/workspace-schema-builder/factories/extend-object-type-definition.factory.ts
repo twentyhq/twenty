@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
@@ -17,7 +17,7 @@ import {
   RelationDirection,
   deduceRelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
-import { RelationMetadataType } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 import { RelationTypeFactory } from './relation-type.factory';
 import { ArgsFactory } from './args.factory';

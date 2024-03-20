@@ -17,13 +17,17 @@ import { EnvironmentService } from './engine/integrations/environment/environmen
 
 const bootstrap = async () => {
   const environmentService = new EnvironmentService(new ConfigService());
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
     bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
     rawBody: true,
+    snapshot: environmentService.get('DEBUG_MODE'),
   });
   const logger = app.get(LoggerService);
+
+  // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
+  // // Apply context id strategy for durable trees
+  // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 
   // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });

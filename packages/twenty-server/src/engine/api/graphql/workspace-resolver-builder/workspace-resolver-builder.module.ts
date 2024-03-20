@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
-import { QuickActionsModule } from 'src/engine/modules/quick-actions/quick-actions.module';
+import { QuickActionsModule } from 'src/engine/core-modules/quick-actions/quick-actions.module';
 
 import { WorkspaceResolverFactory } from './workspace-resolver.factory';
 

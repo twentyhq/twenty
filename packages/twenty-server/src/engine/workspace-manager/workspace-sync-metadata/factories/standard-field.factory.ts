@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { FeatureFlagMap } from 'src/engine/modules/feature-flag/interfaces/feature-flag-map.interface';
+import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import {
   PartialComputedFieldMetadata,
   PartialFieldMetadata,

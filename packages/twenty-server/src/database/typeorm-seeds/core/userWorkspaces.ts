@@ -4,7 +4,7 @@ import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 // import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 

@@ -10,8 +10,8 @@ import { DeleteVariablesFactory } from 'src/engine/api/rest/api-rest-query-build
 import { CreateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/get-variables.factory';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
-import { TokenService } from 'src/engine/modules/auth/services/token.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 describe('ApiRestQueryBuilderFactory', () => {

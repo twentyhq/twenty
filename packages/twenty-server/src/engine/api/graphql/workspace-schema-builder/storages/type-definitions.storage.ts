@@ -6,7 +6,7 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { EnumTypeDefinition } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import {
   InputTypeDefinition,
@@ -18,7 +18,7 @@ import {
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 
 // Must be scoped on REQUEST level
-@Injectable({ scope: Scope.REQUEST })
+@Injectable({ scope: Scope.REQUEST, durable: true })
 export class TypeDefinitionsStorage {
   private readonly enumTypeDefinitions = new Map<string, EnumTypeDefinition>();
   private readonly objectTypeDefinitions = new Map<
