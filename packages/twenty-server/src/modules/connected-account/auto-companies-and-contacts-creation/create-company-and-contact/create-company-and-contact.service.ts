@@ -19,6 +19,8 @@ import { MessageParticipantRepository } from 'src/modules/messaging/repositories
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -33,6 +35,8 @@ export class CreateCompanyAndContactService {
     private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly calendarEventAttendeeRepository: CalendarEventAttendeeRepository,
+    private readonly calendarEventAttendeeService: CalendarEventAttendeeService,
   ) {}
 
   async createCompaniesAndContacts(
@@ -146,7 +150,7 @@ export class CreateCompanyAndContactService {
           (participant) => participant.handle,
         );
 
-        const messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId =
+        const messageParticipantsToCreateWithoutPersonIdAndWorkspaceMemberId =
           await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
             handles,
             workspaceId,
@@ -154,7 +158,20 @@ export class CreateCompanyAndContactService {
           );
 
         await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-          messageContactsToCreateWithoutPersonIdAndWorkspaceMemberId,
+          messageParticipantsToCreateWithoutPersonIdAndWorkspaceMemberId,
+          workspaceId,
+          transactionManager,
+        );
+
+        const calendarEventAttendeesToCreateWithoutPersonIdAndWorkspaceMemberId =
+          await this.calendarEventAttendeeRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+            handles,
+            workspaceId,
+            transactionManager,
+          );
+
+        await this.calendarEventAttendeeService.updateCalendarEventAttendeesAfterContactCreation(
+          calendarEventAttendeesToCreateWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );
