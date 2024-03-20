@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
 @Module({
@@ -10,7 +10,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([PersonObjectMetadata]),
   ],
-  providers: [MessageParticipantService],
-  exports: [MessageParticipantService],
+  providers: [CalendarEventAttendeeService],
+  exports: [CalendarEventAttendeeService],
 })
-export class MessageParticipantModule {}
+export class CalendarEventAttendeeModule {}

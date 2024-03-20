@@ -21,6 +21,7 @@ import { MessageParticipantService } from 'src/modules/messaging/services/messag
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
+import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -35,6 +36,7 @@ export class CreateCompanyAndContactService {
     private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
+    @InjectObjectMetadataRepository(CalendarEventAttendeeObjectMetadata)
     private readonly calendarEventAttendeeRepository: CalendarEventAttendeeRepository,
     private readonly calendarEventAttendeeService: CalendarEventAttendeeService,
   ) {}
