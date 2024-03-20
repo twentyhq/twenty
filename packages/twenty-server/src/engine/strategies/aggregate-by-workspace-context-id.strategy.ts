@@ -16,18 +16,13 @@ export class AggregateByWorkspaceContextIdStrategy
   implements ContextIdStrategy
 {
   attach(contextId: ContextId, request: Request) {
-    console.log('attach', contextId);
     const token = request.header('Authorization')?.replace('Bearer ', '');
     const jwtPayload = token ? jwtDecode<JwtPayload>(token) : null;
     let workspaceSubTreeId: ContextId;
 
-    console.log('contextId', contextId);
-
     if (!jwtPayload) {
       return () => contextId;
     }
-
-    console.log('jwtPayload', jwtPayload);
 
     if (workspaces.has(jwtPayload.workspaceId)) {
       workspaceSubTreeId = workspaces.get(jwtPayload.workspaceId)!;

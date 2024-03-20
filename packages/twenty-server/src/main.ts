@@ -1,4 +1,4 @@
-import { ContextIdFactory, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
@@ -28,8 +28,6 @@ const bootstrap = async () => {
   // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
-
-  console.log('create: ', ContextIdFactory.create());
 
   // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
