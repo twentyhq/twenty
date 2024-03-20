@@ -49,6 +49,10 @@ RUN yarn nx build twenty-front
 # Final stage: Run the application
 FROM node:18.17.1-alpine as twenty
 
+# Use a non-root user
+RUN adduser -D twentyuser
+USER twentyuser
+
 WORKDIR /app/packages/twenty-server
 
 ARG REACT_APP_SERVER_BASE_URL
@@ -57,14 +61,11 @@ ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 # Copy built applications from previous stages
 COPY --from=twenty-server-build /app /app
 COPY --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
-COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+COPY --chown=twentyuser --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+COPY ./packages/twenty-docker/prod/twenty/inject-runtime-env.sh /app
 
 # Set metadata and labels
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend and frontend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
 
-# Use a non-root user
-RUN adduser -D twentyuser
-USER twentyuser
-
-CMD ["node", "dist/src/main"]
+CMD ["/bin/sh", "-c", "/app/inject-runtime-env.sh && node dist/src/main"]
