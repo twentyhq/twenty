@@ -6,11 +6,13 @@ export default {
   transform: {
     '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
   },
+  transformIgnorePatterns: ['<rootDir>/../../node_modules/'],
   moduleNameMapper: {
     '~/(.+)': '<rootDir>/src/$1',
     '@/(.+)': '<rootDir>/src/modules/$1',
     'twenty-ui': '<rootDir>/../twenty-ui/src/index.ts',
     '@testing/(.+)': '<rootDir>/src/testing/$1',
+    '\\.css$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
   },

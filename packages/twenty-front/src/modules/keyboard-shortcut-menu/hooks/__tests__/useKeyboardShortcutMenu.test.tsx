@@ -11,7 +11,7 @@ const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
 
 const mockGoBackToPreviousHotkeyScope = jest.fn();
 
-jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
+jest.mock('twenty-ui', () => ({
   usePreviousHotkeyScope: () => ({
     setHotkeyScopeAndMemorizePreviousScope:
       mockSetHotkeyScopeAndMemorizePreviousScope,

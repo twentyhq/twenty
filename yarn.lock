@@ -30059,7 +30059,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"identity-obj-proxy@npm:3.0.0":
+"identity-obj-proxy@npm:3.0.0, identity-obj-proxy@npm:^3.0.0":
   version: 3.0.0
   resolution: "identity-obj-proxy@npm:3.0.0"
   dependencies:
@@ -46069,6 +46069,7 @@ __metadata:
     graphql-yoga: "npm:^4.0.4"
     hex-rgb: "npm:^5.0.0"
     http-server: "npm:^14.1.1"
+    identity-obj-proxy: "npm:^3.0.0"
     iframe-resizer-react: "npm:^1.1.0"
     immer: "npm:^10.0.2"
     jest: "npm:29.7.0"

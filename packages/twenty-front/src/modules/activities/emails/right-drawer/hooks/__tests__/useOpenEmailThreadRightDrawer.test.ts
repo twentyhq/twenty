@@ -14,7 +14,7 @@ jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
   }),
 }));
 
-jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
+jest.mock('twenty-ui', () => ({
   useSetHotkeyScope: () => mockSetHotkeyScope,
 }));
 

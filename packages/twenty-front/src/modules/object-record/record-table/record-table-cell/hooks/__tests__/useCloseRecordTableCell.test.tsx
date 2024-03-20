@@ -17,7 +17,7 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 
 const setHotkeyScope = jest.fn();
 
-jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
+jest.mock('twenty-ui', () => ({
   useSetHotkeyScope: () => setHotkeyScope,
 }));
 
