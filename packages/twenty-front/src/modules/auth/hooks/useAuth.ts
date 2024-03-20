@@ -11,6 +11,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -40,6 +41,7 @@ export const useAuth = () => {
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
+  const setWorkspaces = useSetRecoilState(workspacesState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -101,6 +103,15 @@ export const useAuth = () => {
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
+      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
+        const validWorkspaces = verifyResult.data?.verify.user.workspaces
+          .filter(
+            ({ workspace }) => workspace !== null && workspace !== undefined,
+          )
+          .map((validWorkspace) => validWorkspace.workspace!);
+
+        setWorkspaces(validWorkspaces);
+      }
       return {
         user,
         workspaceMember,
@@ -114,6 +125,7 @@ export const useAuth = () => {
       setCurrentUser,
       setCurrentWorkspaceMember,
       setCurrentWorkspace,
+      setWorkspaces,
     ],
   );
 
