@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -20,10 +22,20 @@ export const MultipleFiltersDropdownContent = ({
   filterDropdownId,
 }: MultipleFiltersDropdownContentProps) => {
   const {
-    isObjectFilterDropdownOperandSelectUnfolded,
-    filterDefinitionUsedInDropdown,
-    selectedOperandInDropdown,
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+    filterDefinitionUsedInDropdownState,
+    selectedOperandInDropdownState,
   } = useFilterDropdown({ filterDropdownId });
+
+  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+  );
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+  const selectedOperandInDropdown = useRecoilValue(
+    selectedOperandInDropdownState,
+  );
 
   return (
     <>

@@ -20,7 +20,9 @@ describe('FieldUtils', () => {
         checkFields(objectMetadataItemMock, ['fieldNumber']),
       ).not.toThrow();
 
-      expect(() => checkFields(objectMetadataItemMock, ['wrongField'])).toThrow();
+      expect(() =>
+        checkFields(objectMetadataItemMock, ['wrongField']),
+      ).toThrow();
 
       expect(() =>
         checkFields(objectMetadataItemMock, ['fieldNumber', 'wrongField']),

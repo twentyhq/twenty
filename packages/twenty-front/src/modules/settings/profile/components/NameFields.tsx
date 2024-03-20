@@ -29,9 +29,9 @@ export const NameFields = ({
   onFirstNameUpdate,
   onLastNameUpdate,
 }: NameFieldsProps) => {
-  const currentUser = useRecoilValue(currentUserState());
+  const currentUser = useRecoilValue(currentUserState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState(),
+    currentWorkspaceMemberState,
   );
 
   const [firstName, setFirstName] = useState(

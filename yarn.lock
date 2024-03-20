@@ -16560,6 +16560,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.groupby@npm:^4.6.9":
+  version: 4.6.9
+  resolution: "@types/lodash.groupby@npm:4.6.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 1302531f76da99cc8f1bbd486a8c7048a833352b12c39eb5b2ded01173dd5fff76f2c7ace04f08b51c55840271170f1cfbffe4e454dde8597c3ee996e70d4e11
+  languageName: node
+  linkType: hard
+
 "@types/lodash.isempty@npm:^4.4.7":
   version: 4.4.9
   resolution: "@types/lodash.isempty@npm:4.4.9"
@@ -45916,6 +45925,7 @@ __metadata:
     "@types/js-cookie": "npm:^3.0.3"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.debounce": "npm:^4.0.7"
+    "@types/lodash.groupby": "npm:^4.6.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.7"
     "@types/lodash.isobject": "npm:^3.0.7"

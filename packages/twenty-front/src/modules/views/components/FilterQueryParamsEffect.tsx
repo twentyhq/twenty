@@ -1,38 +1,47 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isUndefined } from '@sniptt/guards';
+import { useSetRecoilState } from 'recoil';
 
-import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
-import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 
 export const FilterQueryParamsEffect = () => {
-  const { hasFiltersQueryParams, getFiltersFromQueryParams } =
-    useFiltersFromQueryParams();
-  const { currentViewFiltersState, onViewFiltersChangeState } =
-    useViewScopedStates();
-  const setCurrentViewFilters = useSetRecoilState(currentViewFiltersState);
-  const onViewFiltersChange = useRecoilValue(onViewFiltersChangeState);
-  const { resetViewBar } = useViewBar();
+  const { hasFiltersQueryParams, getFiltersFromQueryParams, viewIdQueryParam } =
+    useViewFromQueryParams();
+  const { unsavedToUpsertViewFiltersState, currentViewIdState } =
+    useViewStates();
+  const setUnsavedViewFilter = useSetRecoilState(
+    unsavedToUpsertViewFiltersState,
+  );
+  const setCurrentViewId = useSetRecoilState(currentViewIdState);
+  const { resetCurrentView } = useResetCurrentView();
+
+  useEffect(() => {
+    if (isUndefined(viewIdQueryParam) || !viewIdQueryParam) {
+      return;
+    }
+
+    setCurrentViewId(viewIdQueryParam);
+  }, [getFiltersFromQueryParams, setCurrentViewId, viewIdQueryParam]);
 
   useEffect(() => {
     if (!hasFiltersQueryParams) return;
 
     getFiltersFromQueryParams().then((filtersFromParams) => {
       if (Array.isArray(filtersFromParams)) {
-        setCurrentViewFilters(filtersFromParams);
-        onViewFiltersChange?.(filtersFromParams);
+        setUnsavedViewFilter(filtersFromParams);
       }
     });
 
     return () => {
-      resetViewBar();
+      resetCurrentView();
     };
   }, [
     getFiltersFromQueryParams,
     hasFiltersQueryParams,
-    onViewFiltersChange,
-    resetViewBar,
-    setCurrentViewFilters,
+    resetCurrentView,
+    setUnsavedViewFilter,
   ]);
 
   return null;

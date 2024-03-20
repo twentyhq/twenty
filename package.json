@@ -230,6 +230,7 @@
     "@types/js-cookie": "^3.0.3",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.debounce": "^4.0.7",
+    "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isequal": "^4.5.7",
     "@types/lodash.isobject": "^3.0.7",

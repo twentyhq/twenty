@@ -1,7 +1,9 @@
+import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
+import { useSortDropdownStates } from '@/object-record/object-sort-dropdown/hooks/useSortDropdownStates';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 
@@ -20,10 +22,19 @@ const sortDefinitions: SortDefinition[] = [
 
 describe('useSortDropdown', () => {
   it('should set availableSortDefinitions', async () => {
-    const { result } = renderHook(
-      () => useSortDropdown({ sortDropdownId }),
-      renderHookConfig,
-    );
+    const { result } = renderHook(() => {
+      useSortDropdown({ sortDropdownId });
+      const { availableSortDefinitionsState } =
+        useSortDropdownStates(sortDropdownId);
+
+      const [availableSortDefinitions, setAvailableSortDefinitions] =
+        useRecoilState(availableSortDefinitionsState);
+
+      return {
+        availableSortDefinitions,
+        setAvailableSortDefinitions,
+      };
+    }, renderHookConfig);
     expect(result.current.availableSortDefinitions).toEqual([]);
     act(() => {
       result.current.setAvailableSortDefinitions(sortDefinitions);
@@ -35,10 +46,18 @@ describe('useSortDropdown', () => {
   });
 
   it('should set isSortSelected', async () => {
-    const { result } = renderHook(
-      () => useSortDropdown({ sortDropdownId }),
-      renderHookConfig,
-    );
+    const { result } = renderHook(() => {
+      useSortDropdown({ sortDropdownId });
+      const { isSortSelectedState } = useSortDropdownStates(sortDropdownId);
+
+      const [isSortSelected, setIsSortSelected] =
+        useRecoilState(isSortSelectedState);
+
+      return {
+        isSortSelected,
+        setIsSortSelected,
+      };
+    }, renderHookConfig);
 
     expect(result.current.isSortSelected).toBe(false);
 
@@ -54,10 +73,17 @@ describe('useSortDropdown', () => {
   it('should set onSortSelect', async () => {
     const OnSortSelectFunction = () => {};
     const mockOnSortSelect = jest.fn(() => OnSortSelectFunction);
-    const { result } = renderHook(
-      () => useSortDropdown({ sortDropdownId }),
-      renderHookConfig,
-    );
+    const { result } = renderHook(() => {
+      useSortDropdown({ sortDropdownId });
+      const { onSortSelectState } = useSortDropdownStates(sortDropdownId);
+
+      const [onSortSelect, setOnSortSelect] = useRecoilState(onSortSelectState);
+
+      return {
+        onSortSelect,
+        setOnSortSelect,
+      };
+    }, renderHookConfig);
 
     expect(result.current.onSortSelect).toBeUndefined();
 
@@ -78,10 +104,17 @@ describe('useSortDropdown', () => {
       definition: sortDefinitions[0],
     };
 
-    const { result } = renderHook(
-      () => useSortDropdown({ sortDropdownId }),
-      renderHookConfig,
-    );
+    const { result } = renderHook(() => {
+      useSortDropdown({ sortDropdownId });
+      const { onSortSelectState } = useSortDropdownStates(sortDropdownId);
+
+      const [onSortSelect, setOnSortSelect] = useRecoilState(onSortSelectState);
+
+      return {
+        onSortSelect,
+        setOnSortSelect,
+      };
+    }, renderHookConfig);
 
     act(() => {
       result.current.setOnSortSelect(mockOnSortSelect);

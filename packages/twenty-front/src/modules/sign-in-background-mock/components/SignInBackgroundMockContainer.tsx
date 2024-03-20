@@ -24,6 +24,7 @@ export const SignInBackgroundMockContainer = () => {
     <StyledContainer>
       <ViewBar
         viewBarId={viewBarId}
+        onCurrentViewChange={async () => {}}
         optionsDropdownButton={
           <RecordIndexOptionsDropdown
             recordIndexId={recordIndexId}

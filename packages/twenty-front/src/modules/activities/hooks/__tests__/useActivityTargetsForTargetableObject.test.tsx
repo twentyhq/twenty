@@ -102,7 +102,7 @@ describe('useActivityTargetsForTargetableObject', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
 
         const res = useActivityTargetsForTargetableObject({

@@ -30,13 +30,14 @@ const StyledInputContainer = styled.div`
 export const DropdownMenuInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement>
->(({ autoFocus, defaultValue, placeholder }, ref) => {
+>(({ autoFocus, defaultValue, placeholder, onChange }, ref) => {
   return (
     <StyledInputContainer>
       <StyledInput
         autoFocus={autoFocus}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        onChange={onChange}
         ref={ref}
       />
     </StyledInputContainer>

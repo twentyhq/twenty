@@ -10,7 +10,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
     useFindManyObjectMetadataItems();
 
   const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
-    objectMetadataItemsState(),
+    objectMetadataItemsState,
   );
 
   useEffect(() => {

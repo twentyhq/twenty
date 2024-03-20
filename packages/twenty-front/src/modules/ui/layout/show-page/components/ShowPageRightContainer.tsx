@@ -61,8 +61,8 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(getActiveTabIdState());
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const shouldDisplayEmailsTab =

@@ -17,7 +17,8 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
         return [
           key,
           getRecordConnectionFromRecords({
-            objectNameSingular: key,
+            // Todo: this is a ugly and broken hack to get the singular, we need to infer this from metadata
+            objectNameSingular: key.slice(0, -1),
             records: value as ObjectRecord[],
           }),
         ];

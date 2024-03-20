@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { UserWorkspace } from 'src/engine/modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
-import { BillingService } from 'src/engine/modules/billing/billing.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
+import { BillingService } from 'src/engine/modules/billing/billing.service';
 
 import { WorkspaceService } from './workspace.service';
 

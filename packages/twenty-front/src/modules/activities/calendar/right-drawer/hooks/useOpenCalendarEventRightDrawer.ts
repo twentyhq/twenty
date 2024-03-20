@@ -10,7 +10,7 @@ export const useOpenCalendarEventRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const setHotkeyScope = useSetHotkeyScope();
   const setViewableCalendarEventId = useSetRecoilState(
-    viewableCalendarEventIdState(),
+    viewableCalendarEventIdState,
   );
 
   const openCalendarEventRightDrawer = (calendarEventId: string) => {
