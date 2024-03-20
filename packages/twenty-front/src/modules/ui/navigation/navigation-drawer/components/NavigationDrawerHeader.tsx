@@ -54,7 +54,7 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-  const workspaces = useRecoilValue(workspacesState());
+  const workspaces = useRecoilValue(workspacesState);
 
   return (
     <StyledContainer>
