@@ -129,6 +129,13 @@ export class EnvironmentVariables {
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string = '15m';
 
+  @IsString()
+  FILE_TOKEN_SECRET: string;
+
+  @IsDuration()
+  @IsOptional()
+  FILE_TOKEN_EXPIRES_IN: string;
+
   // Auth
   @IsUrl({ require_tld: false })
   @IsOptional()

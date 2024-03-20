@@ -40,7 +40,6 @@ import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/engine/modules/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/engine/modules/auth/types/jwt-data.type';
-import { UserWorkspaceService } from 'src/engine/modules/user-workspace/user-workspace.service';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 
 @Injectable()
@@ -56,7 +55,6 @@ export class TokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
-    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   async generateAccessToken(
@@ -527,5 +525,13 @@ export class TokenService {
     });
 
     return { success: true };
+  }
+
+  async encodePayload(payload: any, options?: any): Promise<string> {
+    return this.jwtService.sign(payload, options);
+  }
+
+  async decodePayload(payload: any, options?: any): Promise<string> {
+    return this.jwtService.decode(payload, options);
   }
 }

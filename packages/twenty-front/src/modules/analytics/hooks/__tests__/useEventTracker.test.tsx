@@ -11,8 +11,8 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation CreateEvent($type: String!, $data: JSON!) {
-          createEvent(type: $type, data: $data) {
+        mutation Track($type: String!, $data: JSON!) {
+          track(type: $type, data: $data) {
             success
           }
         }
@@ -24,7 +24,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        createEvent: {
+        track: {
           success: true,
         },
       },

@@ -5,7 +5,7 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/modules/file/interfaces/file-folder.interface';
 
-import { FileUploadService } from 'src/engine/modules/file/services/file-upload.service';
+import { FileUploadService } from 'src/engine/modules/file/file-upload/services/file-upload.service';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';

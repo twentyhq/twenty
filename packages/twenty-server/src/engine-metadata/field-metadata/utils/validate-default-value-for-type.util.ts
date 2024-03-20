@@ -9,6 +9,7 @@ import {
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueJson,
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
@@ -39,6 +40,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
+  [FieldMetadataType.JSON]: [FieldMetadataDefaultValueJson],
 };
 
 export const validateDefaultValueForType = (

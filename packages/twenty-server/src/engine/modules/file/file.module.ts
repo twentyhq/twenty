@@ -1,20 +1,17 @@
 import { Module } from '@nestjs/common';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { FilePathGuard } from 'src/engine/modules/file/guards/file-path-guard';
+import { AuthModule } from 'src/engine/modules/auth/auth.module';
+import { FileUploadModule } from 'src/engine/modules/file/file-upload/file-upload.module';
 
 import { FileService } from './services/file.service';
-import { FileUploadService } from './services/file-upload.service';
-import { FileUploadResolver } from './resolvers/file-upload.resolver';
 import { FileController } from './controllers/file.controller';
 
 @Module({
-  providers: [
-    FileService,
-    FileUploadService,
-    FileUploadResolver,
-    EnvironmentService,
-  ],
-  exports: [FileService, FileUploadService],
+  imports: [FileUploadModule, AuthModule],
+  providers: [FileService, EnvironmentService, FilePathGuard],
+  exports: [FileService],
   controllers: [FileController],
 })
 export class FileModule {}

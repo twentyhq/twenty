@@ -1,12 +1,10 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { TimelineThreadParticipant } from 'src/engine/modules/messaging/dtos/timeline-thread-participant.dto';
 
 @ObjectType('TimelineThread')
 export class TimelineThread {
-  @IDField(() => ID)
+  @Field(() => ID)
   id: string;
 
   @Field()

@@ -122,6 +122,7 @@ export const companyStandardFieldIds = {
   opportunities: '20202020-add3-4658-8e23-d70dccb6d0ec',
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
+  events: '20202020-0414-4daf-9c0d-64fe7b27f89f',
 };
 
 export const connectedAccountStandardFieldIds = {
@@ -133,6 +134,15 @@ export const connectedAccountStandardFieldIds = {
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
+};
+
+export const eventStandardFieldIds = {
+  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
+  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
+  person: '20202020-c414-45b9-a60a-ac27aa96229e',
+  company: '20202020-04ad-4221-a744-7a8278a5ce20',
+  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
+  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
 };
 
 export const favoriteStandardFieldIds = {
@@ -199,6 +209,7 @@ export const opportunityStandardFieldIds = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
+  events: '20202020-30e2-421f-96c7-19c69d1cf631',
 };
 
 export const personStandardFieldIds = {
@@ -218,6 +229,7 @@ export const personStandardFieldIds = {
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventAttendees: '20202020-52ee-45e9-a702-b64b3753e3a9',
+  events: '20202020-a43e-4873-9c23-e522de906ce5',
 };
 
 export const pipelineStepStandardFieldIds = {
@@ -284,6 +296,7 @@ export const workspaceMemberStandardFieldIds = {
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
   calendarEventAttendees: '20202020-0dbc-4841-9ce1-3e793b5b3512',
+  events: '20202020-e15b-47b8-94fe-8200e3c66615',
 };
 
 export const customObjectStandardFieldIds = {

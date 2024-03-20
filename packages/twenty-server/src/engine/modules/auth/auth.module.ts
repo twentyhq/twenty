@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { FileModule } from 'src/engine/modules/file/file.module';
 import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
 import { User } from 'src/engine/modules/user/user.entity';
 import { RefreshToken } from 'src/engine/modules/refresh-token/refresh-token.entity';
@@ -22,6 +21,7 @@ import { UserWorkspaceModule } from 'src/engine/modules/user-workspace/user-work
 import { SignUpService } from 'src/engine/modules/auth/services/sign-up.service';
 import { GoogleGmailAuthController } from 'src/engine/modules/auth/controllers/google-gmail-auth.controller';
 import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
+import { FileUploadModule } from 'src/engine/modules/file/file-upload/file-upload.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -42,7 +42,7 @@ const jwtModule = JwtModule.registerAsync({
 @Module({
   imports: [
     jwtModule,
-    FileModule,
+    FileUploadModule,
     DataSourceModule,
     UserModule,
     WorkspaceManagerModule,
