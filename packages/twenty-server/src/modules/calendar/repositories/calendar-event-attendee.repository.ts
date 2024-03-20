@@ -6,7 +6,10 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import { CalendarEventAttendee } from 'src/modules/calendar/types/calendar-event';
+import {
+  CalendarEventAttendee,
+  CalendarEventAttendeeWithId,
+} from 'src/modules/calendar/types/calendar-event';
 
 @Injectable()
 export class CalendarEventAttendeeRepository {
@@ -147,5 +150,32 @@ export class CalendarEventAttendeeRepository {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async getByHandlesWithoutPersonIdAndWorkspaceMemberId(
+    handles: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<CalendarEventAttendeeWithId[]> {
+    if (!workspaceId) {
+      throw new Error('WorkspaceId is required');
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarEventAttendees: CalendarEventAttendeeWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarEventAttendee".*
+        FROM ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee"
+        WHERE "calendarEventAttendee"."personId" IS NULL
+        AND "calendarEventAttendee"."workspaceMemberId" IS NULL
+        AND "calendarEventAttendee"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarEventAttendees;
   }
 }
