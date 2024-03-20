@@ -12,9 +12,9 @@ describe('useEmailThread', () => {
     const { result } = renderHook(
       () => {
         const emailThread = useEmailThread();
-        const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState());
+        const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
         const viewableEmailThreadId = useRecoilValue(
-          viewableEmailThreadIdState(),
+          viewableEmailThreadIdState,
         );
 
         return { ...emailThread, isRightDrawerOpen, viewableEmailThreadId };
@@ -38,10 +38,10 @@ describe('useEmailThread', () => {
       () => {
         const emailThread = useEmailThread();
         const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
-          isRightDrawerOpenState(),
+          isRightDrawerOpenState,
         );
         const [viewableEmailThreadId, setViewableEmailThreadId] =
-          useRecoilState(viewableEmailThreadIdState());
+          useRecoilState(viewableEmailThreadIdState);
 
         return {
           ...emailThread,

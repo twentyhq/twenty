@@ -37,7 +37,7 @@ export const SettingsNavigationDrawerItems = () => {
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   return (
     <>

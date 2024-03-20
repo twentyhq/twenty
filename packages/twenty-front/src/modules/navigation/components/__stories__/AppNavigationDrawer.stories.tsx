@@ -24,7 +24,7 @@ const MobileNavigationDrawerStateSetterEffect = ({
     isNavigationDrawerOpenState,
   );
   const setCurrentMobileNavigationDrawer = useSetRecoilState(
-    currentMobileNavigationDrawerState(),
+    currentMobileNavigationDrawerState,
   );
 
   useEffect(() => {

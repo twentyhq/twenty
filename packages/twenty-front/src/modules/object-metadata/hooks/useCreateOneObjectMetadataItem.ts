@@ -28,7 +28,10 @@ export const useCreateOneObjectMetadataItem = () => {
         input: { object: input },
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
+      refetchQueries: [
+        getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
+        'FindManyRecordsMultipleMetadataItems',
+      ],
     });
   };
 

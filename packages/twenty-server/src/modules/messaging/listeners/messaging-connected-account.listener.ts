@@ -19,7 +19,7 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class MessagingConnectedAccountListener {
@@ -46,7 +46,7 @@ export class MessagingConnectedAccountListener {
       DeleteConnectedAccountAssociatedMessagingDataJob.name,
       {
         workspaceId: payload.workspaceId,
-        connectedAccountId: payload.deletedRecord.id,
+        connectedAccountId: payload.recordId,
       },
     );
 
@@ -55,7 +55,7 @@ export class MessagingConnectedAccountListener {
         DeleteConnectedAccountAssociatedCalendarDataJob.name,
         {
           workspaceId: payload.workspaceId,
-          connectedAccountId: payload.deletedRecord.id,
+          connectedAccountId: payload.recordId,
         },
       );
     }

@@ -11,7 +11,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   logging: ['error'],
   schema: 'metadata',
-  entities: ['dist/src/engine-metadata/**/*.entity{.ts,.js}'],
+  entities: ['dist/src/engine/metadata-modules/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',

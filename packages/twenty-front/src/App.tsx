@@ -47,7 +47,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   return (
     <>

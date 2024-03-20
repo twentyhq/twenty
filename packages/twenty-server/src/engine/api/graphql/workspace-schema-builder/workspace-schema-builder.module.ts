@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object-metadata.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 import { WorkspaceGraphQLSchemaFactory } from './workspace-graphql-schema.factory';
@@ -18,7 +17,6 @@ import { TypeMapperService } from './services/type-mapper.service';
     TypeDefinitionsStorage,
     TypeMapperService,
     WorkspaceGraphQLSchemaFactory,
-    JwtAuthGuard,
   ],
   exports: [WorkspaceGraphQLSchemaFactory],
 })

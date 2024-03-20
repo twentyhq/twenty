@@ -3,7 +3,7 @@ import {
   checkFields,
   getFieldType,
 } from 'src/engine/api/rest/api-rest-query-builder/utils/fields.utils';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 describe('FieldUtils', () => {
   describe('getFieldType', () => {
@@ -20,7 +20,9 @@ describe('FieldUtils', () => {
         checkFields(objectMetadataItemMock, ['fieldNumber']),
       ).not.toThrow();
 
-      expect(() => checkFields(objectMetadataItemMock, ['wrongField'])).toThrow();
+      expect(() =>
+        checkFields(objectMetadataItemMock, ['wrongField']),
+      ).toThrow();
 
       expect(() =>
         checkFields(objectMetadataItemMock, ['fieldNumber', 'wrongField']),

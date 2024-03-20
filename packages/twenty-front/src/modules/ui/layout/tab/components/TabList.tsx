@@ -36,9 +36,9 @@ const StyledContainer = styled.div`
 export const TabList = ({ tabs, tabListId }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
-  const { getActiveTabIdState, setActiveTabId } = useTabList(tabListId);
+  const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
 
-  const activeTabId = useRecoilValue(getActiveTabIdState());
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);

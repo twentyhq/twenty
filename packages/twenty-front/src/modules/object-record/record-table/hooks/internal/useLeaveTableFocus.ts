@@ -14,18 +14,18 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   const closeCurrentCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const { getIsSoftFocusActiveState } = useRecordTableStates(recordTableId);
+  const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
         const isSoftFocusActive = getSnapshotValue(
           snapshot,
-          getIsSoftFocusActiveState(),
+          isSoftFocusActiveState,
         );
 
         const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState())
+          .getLoadable(currentHotkeyScopeState)
           .getValue();
 
         if (!isSoftFocusActive) {
@@ -39,6 +39,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
         closeCurrentCellInEditMode();
         disableSoftFocus();
       },
-    [closeCurrentCellInEditMode, disableSoftFocus, getIsSoftFocusActiveState],
+    [closeCurrentCellInEditMode, disableSoftFocus, isSoftFocusActiveState],
   );
 };

@@ -13,12 +13,12 @@ export const useSelectableList = (selectableListId?: string) => {
     selectableListScopeId: selectableListId,
   });
 
-  const setSelectableItemIds = useSetRecoilState(selectableItemIdsState());
+  const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
   const setSelectableListOnEnter = useSetRecoilState(
-    selectableListOnEnterState(),
+    selectableListOnEnterState,
   );
 
-  const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState());
+  const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState);
 
   const resetSelectedItem = () => {
     resetSelectedItemIdState();

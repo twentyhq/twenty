@@ -3,8 +3,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 import { DeleteQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/delete-query.factory';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
-import { TokenService } from 'src/engine/modules/auth/services/token.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { CreateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-query.factory';
 import { UpdateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-query.factory';
 import { FindOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-one-query.factory';
@@ -15,7 +15,7 @@ import { UpdateVariablesFactory } from 'src/engine/api/rest/api-rest-query-build
 import { GetVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/get-variables.factory';
 import { parsePath } from 'src/engine/api/rest/api-rest-query-builder/utils/parse-path.utils';
 import { computeDepth } from 'src/engine/api/rest/api-rest-query-builder/utils/compute-depth.utils';
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 

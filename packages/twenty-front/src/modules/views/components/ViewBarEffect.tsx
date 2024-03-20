@@ -1,86 +1,71 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from 'react';
+import { isUndefined } from '@sniptt/guards';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+type ViewBarEffectProps = {
+  viewBarId: string;
+};
 
-export const ViewBarEffect = () => {
+export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
+  const { currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView(viewBarId);
   const {
-    loadView,
-    changeViewInUrl,
-    loadViewFields,
-    loadViewFilters,
-    loadViewSorts,
-  } = useViewBar();
+    onCurrentViewChangeState,
+    currentViewIdState,
+    availableFilterDefinitionsState,
+    isPersistingViewFieldsState,
+  } = useViewStates(viewBarId);
 
-  const [searchParams] = useSearchParams();
-  const currentViewIdFromUrl = searchParams.get('view');
-
-  const { viewObjectMetadataIdState, viewsState, currentViewIdState } =
-    useViewScopedStates();
-
-  const [views, setViews] = useRecoilState(viewsState);
-  const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
-  const setCurrentViewId = useSetRecoilState(currentViewIdState);
-
-  const { records: newViews } = usePrefetchedData<GraphQLView>(
-    PrefetchKey.AllViews,
+  const [currentViewSnapshot, setCurrentViewSnapshot] = useState<
+    GraphQLView | undefined
+  >(undefined);
+  const onCurrentViewChange = useRecoilValue(onCurrentViewChangeState);
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
   );
-
-  const newViewsOnCurrentObject = newViews.filter(
-    (view) => view.objectMetadataId === viewObjectMetadataId,
-  );
+  const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
+  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
 
   useEffect(() => {
-    if (!newViewsOnCurrentObject.length) return;
+    if (
+      !isDeeplyEqual(
+        currentViewWithCombinedFiltersAndSorts,
+        currentViewSnapshot,
+      )
+    ) {
+      setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
 
-    if (!isDeeplyEqual(views, newViewsOnCurrentObject)) {
-      setViews(newViewsOnCurrentObject);
+      if (isUndefined(currentViewWithCombinedFiltersAndSorts)) {
+        onCurrentViewChange?.(undefined);
+        return;
+      }
+
+      if (!isPersistingViewFields) {
+        onCurrentViewChange?.(currentViewWithCombinedFiltersAndSorts);
+      }
     }
-
-    const currentView =
-      newViewsOnCurrentObject.find(
-        (view) => view.id === currentViewIdFromUrl,
-      ) ??
-      newViewsOnCurrentObject[0] ??
-      null;
-
-    if (isUndefinedOrNull(currentView)) return;
-
-    setCurrentViewId(currentView.id);
-
-    if (isDefined(currentView?.viewFields)) {
-      loadViewFields(currentView.viewFields, currentView.id);
-      loadViewFilters(currentView.viewFilters, currentView.id);
-      loadViewSorts(currentView.viewSorts, currentView.id);
-    }
-
-    if (!currentViewIdFromUrl) return changeViewInUrl(currentView.id);
   }, [
-    changeViewInUrl,
-    currentViewIdFromUrl,
-    loadViewFields,
-    loadViewFilters,
-    loadViewSorts,
-    newViewsOnCurrentObject,
-    setCurrentViewId,
-    setViews,
-    views,
+    availableFilterDefinitions,
+    currentViewSnapshot,
+    currentViewWithCombinedFiltersAndSorts,
+    isPersistingViewFields,
+    onCurrentViewChange,
   ]);
 
   useEffect(() => {
-    if (!currentViewIdFromUrl || !newViewsOnCurrentObject.length) return;
-
-    loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView, newViewsOnCurrentObject]);
+    if (
+      isDefined(currentViewWithCombinedFiltersAndSorts) &&
+      !isDefined(currentViewId)
+    ) {
+      setCurrentViewId(currentViewWithCombinedFiltersAndSorts.id);
+    }
+  }, [currentViewWithCombinedFiltersAndSorts, currentViewId, setCurrentViewId]);
 
   return <></>;
 };

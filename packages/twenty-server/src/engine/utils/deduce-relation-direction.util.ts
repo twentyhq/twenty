@@ -1,5 +1,5 @@
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
-import { RelationMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/relation-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-metadata.interface';
 
 export enum RelationDirection {
   FROM = 'from',

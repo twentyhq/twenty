@@ -28,13 +28,3 @@ export const REACT_APP_SERVER_BASE_URL =
   window._env_?.REACT_APP_SERVER_BASE_URL ||
   process.env.REACT_APP_SERVER_BASE_URL ||
   getDefaultUrl();
-
-export const REACT_APP_SERVER_AUTH_URL =
-  window._env_?.REACT_APP_SERVER_AUTH_URL ||
-  process.env.REACT_APP_SERVER_AUTH_URL ||
-  REACT_APP_SERVER_BASE_URL + '/auth';
-
-export const REACT_APP_SERVER_FILES_URL =
-  window._env_?.REACT_APP_SERVER_FILES_URL ||
-  process.env.REACT_APP_SERVER_FILES_URL ||
-  REACT_APP_SERVER_BASE_URL + '/files';

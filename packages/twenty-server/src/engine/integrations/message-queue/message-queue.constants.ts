@@ -10,4 +10,5 @@ export enum MessageQueue {
   contactCreationQueue = 'contact-creation-queue',
   billingQueue = 'billing-queue',
   recordPositionBackfillQueue = 'record-position-backfill-queue',
+  entityEventsToDbQueue = 'entity-events-to-db-queue',
 }
