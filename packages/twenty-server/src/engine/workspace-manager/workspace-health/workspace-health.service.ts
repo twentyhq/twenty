@@ -11,15 +11,15 @@ import {
 import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';
 

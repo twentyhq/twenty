@@ -34,5 +34,13 @@ export const USER_QUERY_FRAGMENT = gql`
         workspaceId
       }
     }
+    workspaces {
+      workspace {
+        id
+        logo
+        displayName
+        domainName
+      }
+    }
   }
 `;

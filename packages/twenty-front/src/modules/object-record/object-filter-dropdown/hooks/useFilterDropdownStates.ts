@@ -1,97 +1,84 @@
-import { objectFilterDropdownSelectedRecordIdsScopedState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsScopedState';
-import { onFilterSelectScopedState } from '@/object-record/object-filter-dropdown/states/onFilterSelectScopedState';
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
-
-import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
-import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
-import { isObjectFilterDropdownOperandSelectUnfoldedScopedState } from '../states/isObjectFilterDropdownOperandSelectUnfoldedScopedState';
-import { isObjectFilterDropdownUnfoldedScopedState } from '../states/isObjectFilterDropdownUnfoldedScopedState';
-import { objectFilterDropdownSearchInputScopedState } from '../states/objectFilterDropdownSearchInputScopedState';
-import { objectFilterDropdownSelectedEntityIdScopedState } from '../states/objectFilterDropdownSelectedEntityIdScopedState';
-import { objectFilterDropdownSelectedOptionValuesScopedState } from '../states/objectFilterDropdownSelectedOptionValuesScopedState';
-import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
-import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
+import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
+import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
+import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { objectFilterDropdownSelectedEntityIdComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedEntityIdComponentState';
+import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
+import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
+import { onFilterSelectComponentState } from '@/object-record/object-filter-dropdown/states/onFilterSelectComponentState';
+import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 
 export const useFilterDropdownStates = (scopeId: string) => {
-  const [availableFilterDefinitions, setAvailableFilterDefinitions] =
-    useRecoilScopedStateV2(availableFilterDefinitionsScopedState, scopeId);
-
-  const [filterDefinitionUsedInDropdown, setFilterDefinitionUsedInDropdown] =
-    useRecoilScopedStateV2(filterDefinitionUsedInDropdownScopedState, scopeId);
-
-  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
-    useRecoilScopedStateV2(objectFilterDropdownSearchInputScopedState, scopeId);
-
-  const [
-    objectFilterDropdownSelectedEntityId,
-    setObjectFilterDropdownSelectedEntityId,
-  ] = useRecoilScopedStateV2(
-    objectFilterDropdownSelectedEntityIdScopedState,
+  const availableFilterDefinitionsState = extractComponentState(
+    availableFilterDefinitionsComponentState,
     scopeId,
   );
 
-  const [
-    objectFilterDropdownSelectedRecordIds,
-    setObjectFilterDropdownSelectedRecordIds,
-  ] = useRecoilScopedStateV2(
-    objectFilterDropdownSelectedRecordIdsScopedState,
+  const filterDefinitionUsedInDropdownState = extractComponentState(
+    filterDefinitionUsedInDropdownComponentState,
     scopeId,
   );
 
-  const [
-    objectFilterDropdownSelectedOptionValues,
-    setObjectFilterDropdownSelectedOptionValues,
-  ] = useRecoilScopedStateV2(
-    objectFilterDropdownSelectedOptionValuesScopedState,
+  const objectFilterDropdownSearchInputState = extractComponentState(
+    objectFilterDropdownSearchInputComponentState,
     scopeId,
   );
 
-  const [
-    isObjectFilterDropdownOperandSelectUnfolded,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-  ] = useRecoilScopedStateV2(
-    isObjectFilterDropdownOperandSelectUnfoldedScopedState,
+  const objectFilterDropdownSelectedEntityIdState = extractComponentState(
+    objectFilterDropdownSelectedEntityIdComponentState,
     scopeId,
   );
 
-  const [isObjectFilterDropdownUnfolded, setIsObjectFilterDropdownUnfolded] =
-    useRecoilScopedStateV2(isObjectFilterDropdownUnfoldedScopedState, scopeId);
-
-  const [selectedFilter, setSelectedFilter] = useRecoilScopedStateV2(
-    selectedFilterScopedState,
+  const objectFilterDropdownSelectedRecordIdsState = extractComponentState(
+    objectFilterDropdownSelectedRecordIdsComponentState,
     scopeId,
   );
 
-  const [selectedOperandInDropdown, setSelectedOperandInDropdown] =
-    useRecoilScopedStateV2(selectedOperandInDropdownScopedState, scopeId);
+  const objectFilterDropdownSelectedOptionValuesState = extractComponentState(
+    objectFilterDropdownSelectedOptionValuesComponentState,
+    scopeId,
+  );
 
-  const [onFilterSelect, setOnFilterSelect] = useRecoilScopedStateV2(
-    onFilterSelectScopedState,
+  const isObjectFilterDropdownOperandSelectUnfoldedState =
+    extractComponentState(
+      isObjectFilterDropdownOperandSelectUnfoldedComponentState,
+      scopeId,
+    );
+
+  const isObjectFilterDropdownUnfoldedState = extractComponentState(
+    isObjectFilterDropdownUnfoldedComponentState,
+    scopeId,
+  );
+
+  const selectedFilterState = extractComponentState(
+    selectedFilterComponentState,
+    scopeId,
+  );
+
+  const selectedOperandInDropdownState = extractComponentState(
+    selectedOperandInDropdownComponentState,
+    scopeId,
+  );
+
+  const onFilterSelectState = extractComponentState(
+    onFilterSelectComponentState,
     scopeId,
   );
 
   return {
-    availableFilterDefinitions,
-    setAvailableFilterDefinitions,
-    filterDefinitionUsedInDropdown,
-    setFilterDefinitionUsedInDropdown,
-    objectFilterDropdownSearchInput,
-    setObjectFilterDropdownSearchInput,
-    objectFilterDropdownSelectedEntityId,
-    setObjectFilterDropdownSelectedEntityId,
-    objectFilterDropdownSelectedRecordIds,
-    objectFilterDropdownSelectedOptionValues,
-    setObjectFilterDropdownSelectedOptionValues,
-    setObjectFilterDropdownSelectedRecordIds,
-    isObjectFilterDropdownOperandSelectUnfolded,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-    isObjectFilterDropdownUnfolded,
-    setIsObjectFilterDropdownUnfolded,
-    selectedFilter,
-    setSelectedFilter,
-    selectedOperandInDropdown,
-    setSelectedOperandInDropdown,
-    onFilterSelect,
-    setOnFilterSelect,
+    availableFilterDefinitionsState,
+    filterDefinitionUsedInDropdownState,
+    objectFilterDropdownSearchInputState,
+    objectFilterDropdownSelectedEntityIdState,
+    objectFilterDropdownSelectedRecordIdsState,
+    objectFilterDropdownSelectedOptionValuesState,
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+    isObjectFilterDropdownUnfoldedState,
+    selectedFilterState,
+    selectedOperandInDropdownState,
+    onFilterSelectState,
   };
 };

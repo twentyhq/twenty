@@ -14,7 +14,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
 ) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
-  const { getSelectedRowIdsSelector } = useRecordTableStates(recordTableId);
+  const { selectedRowIdsSelector } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -25,7 +25,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
       ) => {
         const selectedRowIds = getSnapshotValue(
           snapshot,
-          getSelectedRowIdsSelector(),
+          selectedRowIdsSelector(),
         );
 
         let activityTargetableObjectArray: ActivityTargetableObject[] =
@@ -59,6 +59,6 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
           targetableObjects: activityTargetableObjectArray,
         });
       },
-    [openCreateActivityDrawer, getSelectedRowIdsSelector],
+    [selectedRowIdsSelector, openCreateActivityDrawer],
   );
 };

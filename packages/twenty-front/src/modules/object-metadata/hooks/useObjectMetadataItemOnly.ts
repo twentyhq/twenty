@@ -12,7 +12,7 @@ import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentif
 export const useObjectMetadataItemOnly = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
@@ -23,7 +23,7 @@ export const useObjectMetadataItemOnly = ({
     }),
   );
 
-  let objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =

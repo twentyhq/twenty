@@ -15,7 +15,7 @@ export const useAddRecordInCache = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();
 
   const { injectIntoFindOneRecordQueryCache } =

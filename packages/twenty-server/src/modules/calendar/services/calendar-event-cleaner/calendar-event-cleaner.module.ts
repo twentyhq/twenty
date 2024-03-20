@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
-import { CalendarEventModule } from 'src/modules/calendar/repositories/calendar-event/calendar-event.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
+import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 
 @Module({
-  imports: [DataSourceModule, TypeORMModule, CalendarEventModule],
+  imports: [
+    ObjectMetadataRepositoryModule.forFeature([CalendarEventObjectMetadata]),
+  ],
   providers: [CalendarEventCleanerService],
   exports: [CalendarEventCleanerService],
 })

@@ -66,7 +66,7 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']['output']>;
-  billingUrl: Scalars['String']['output'];
+  billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
 };
 
@@ -264,6 +264,7 @@ export enum FieldMetadataType {
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
+  Json = 'JSON',
   Link = 'LINK',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
@@ -324,7 +325,6 @@ export type Mutation = {
   activateWorkspace: Workspace;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
-  createEvent: Analytics;
   createOneField: Field;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
@@ -341,6 +341,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  track: Analytics;
   updateOneField: Field;
   updateOneObject: Object;
   updatePasswordViaResetToken: InvalidatePassword;
@@ -367,12 +368,6 @@ export type MutationChallengeArgs = {
 export type MutationCheckoutSessionArgs = {
   recurringInterval: Scalars['String']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type MutationCreateEventArgs = {
-  data: Scalars['JSON']['input'];
-  type: Scalars['String']['input'];
 };
 
 
@@ -441,6 +436,12 @@ export type MutationSignUpArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationTrackArgs = {
+  data: Scalars['JSON']['input'];
+  type: Scalars['String']['input'];
 };
 
 

@@ -61,7 +61,7 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
-  billingUrl: Scalars['String'];
+  billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
 };
 
@@ -184,6 +184,7 @@ export enum FieldMetadataType {
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
+  Json = 'JSON',
   Link = 'LINK',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
@@ -244,7 +245,6 @@ export type Mutation = {
   activateWorkspace: Workspace;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
-  createEvent: Analytics;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   deleteCurrentWorkspace: Workspace;
@@ -255,8 +255,10 @@ export type Mutation = {
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
   impersonate: Verify;
+  removeWorkspaceMember: Scalars['String'];
   renewToken: AuthTokens;
   signUp: LoginToken;
+  track: Analytics;
   updateOneObject: Object;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkspace: Workspace;
@@ -282,12 +284,6 @@ export type MutationChallengeArgs = {
 export type MutationCheckoutSessionArgs = {
   recurringInterval: Scalars['String'];
   successUrlPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationCreateEventArgs = {
-  data: Scalars['JSON'];
-  type: Scalars['String'];
 };
 
 
@@ -317,6 +313,11 @@ export type MutationImpersonateArgs = {
 };
 
 
+export type MutationRemoveWorkspaceMemberArgs = {
+  memberId: Scalars['String'];
+};
+
+
 export type MutationRenewTokenArgs = {
   refreshToken: Scalars['String'];
 };
@@ -326,6 +327,12 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationTrackArgs = {
+  data: Scalars['JSON'];
+  type: Scalars['String'];
 };
 
 
@@ -418,6 +425,8 @@ export type Query = {
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
+  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
@@ -448,6 +457,20 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  personId: Scalars['ID'];
 };
 
 
@@ -536,7 +559,7 @@ export type Sentry = {
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 /** Sort Directions */
@@ -561,6 +584,45 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type TimelineCalendarEvent = {
+  __typename?: 'TimelineCalendarEvent';
+  attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceSolution: Scalars['String'];
+  conferenceUri: Scalars['String'];
+  description: Scalars['String'];
+  endsAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  isCanceled: Scalars['Boolean'];
+  isFullDay: Scalars['Boolean'];
+  location: Scalars['String'];
+  startsAt: Scalars['DateTime'];
+  title: Scalars['String'];
+  visibility: TimelineCalendarEventVisibility;
+};
+
+export type TimelineCalendarEventAttendee = {
+  __typename?: 'TimelineCalendarEventAttendee';
+  avatarUrl: Scalars['String'];
+  displayName: Scalars['String'];
+  firstName: Scalars['String'];
+  handle: Scalars['String'];
+  lastName: Scalars['String'];
+  personId?: Maybe<Scalars['ID']>;
+  workspaceMemberId?: Maybe<Scalars['ID']>;
+};
+
+/** Visibility of the calendar event */
+export enum TimelineCalendarEventVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
+
+export type TimelineCalendarEventsWithTotal = {
+  __typename?: 'TimelineCalendarEventsWithTotal';
+  timelineCalendarEvents: Array<TimelineCalendarEvent>;
+  totalNumberOfCalendarEvents: Scalars['Int'];
 };
 
 export type TimelineThread = {
@@ -813,6 +875,30 @@ export type RelationEdge = {
   node: Relation;
 };
 
+export type AttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+
+export type CalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+
+export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
+  companyId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
+
+
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
+  personId: Scalars['ID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+}>;
+
+
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
 export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: string, read: boolean, visibility: string, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
@@ -839,13 +925,13 @@ export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTim
 
 export type TimelineThreadFragment = { __typename?: 'TimelineThread', id: string, subject: string, lastMessageReceivedAt: string };
 
-export type CreateEventMutationVariables = Exact<{
+export type TrackMutationVariables = Exact<{
   type: Scalars['String'];
   data: Scalars['JSON'];
 }>;
 
 
-export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
+export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'Analytics', success: boolean } };
 
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
@@ -874,6 +960,13 @@ export type GenerateApiKeyTokenMutationVariables = Exact<{
 
 export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApiKeyToken: { __typename?: 'ApiKeyToken', token: string } };
 
+export type GenerateJwtMutationVariables = Exact<{
+  workspaceId: Scalars['String'];
+}>;
+
+
+export type GenerateJwtMutation = { __typename?: 'Mutation', generateJWT: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
 export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -884,7 +977,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -915,7 +1008,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -936,7 +1029,7 @@ export type BillingPortalSessionQueryVariables = Exact<{
 }>;
 
 
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url: string } };
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: Scalars['String'];
@@ -944,7 +1037,7 @@ export type CheckoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url: string } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type GetProductPricesQueryVariables = Exact<{
   product: Scalars['String'];
@@ -956,7 +1049,7 @@ export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -974,7 +1067,7 @@ export type UploadImageMutationVariables = Exact<{
 
 export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -992,6 +1085,13 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
+
+export type RemoveWorkspaceMemberMutationVariables = Exact<{
+  memberId: Scalars['String'];
+}>;
+
+
+export type RemoveWorkspaceMemberMutation = { __typename?: 'Mutation', removeWorkspaceMember: string };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1026,6 +1126,39 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
+export const AttendeeFragmentFragmentDoc = gql`
+    fragment AttendeeFragment on TimelineCalendarEventAttendee {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const CalendarEventFragmentFragmentDoc = gql`
+    fragment CalendarEventFragment on TimelineCalendarEvent {
+  id
+  title
+  description
+  location
+  startsAt
+  endsAt
+  isFullDay
+  attendees {
+    ...AttendeeFragment
+  }
+}
+    ${AttendeeFragmentFragmentDoc}`;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
+  totalNumberOfCalendarEvents
+  timelineCalendarEvents {
+    ...CalendarEventFragment
+  }
+}
+    ${CalendarEventFragmentFragmentDoc}`;
 export const ParticipantFragmentFragmentDoc = gql`
     fragment ParticipantFragment on TimelineThreadParticipant {
   personId
@@ -1120,8 +1253,98 @@ export const UserQueryFragmentFragmentDoc = gql`
       workspaceId
     }
   }
+  workspaces {
+    workspace {
+      id
+      logo
+      displayName
+      domainName
+    }
+  }
 }
     `;
+export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
+    query GetTimelineCalendarEventsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineCalendarEventsFromCompanyId(
+    companyId: $companyId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineCalendarEventsWithTotalFragment
+  }
+}
+    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineCalendarEventsFromCompanyIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineCalendarEventsFromCompanyIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineCalendarEventsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineCalendarEventsFromCompanyIdQuery({
+ *   variables: {
+ *      companyId: // value for 'companyId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineCalendarEventsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
+      }
+export function useGetTimelineCalendarEventsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>(GetTimelineCalendarEventsFromCompanyIdDocument, options);
+        }
+export type GetTimelineCalendarEventsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdQuery>;
+export type GetTimelineCalendarEventsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromCompanyIdLazyQuery>;
+export type GetTimelineCalendarEventsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromCompanyIdQuery, GetTimelineCalendarEventsFromCompanyIdQueryVariables>;
+export const GetTimelineCalendarEventsFromPersonIdDocument = gql`
+    query GetTimelineCalendarEventsFromPersonId($personId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineCalendarEventsFromPersonId(
+    personId: $personId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineCalendarEventsWithTotalFragment
+  }
+}
+    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineCalendarEventsFromPersonIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineCalendarEventsFromPersonIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineCalendarEventsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineCalendarEventsFromPersonIdQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineCalendarEventsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+      }
+export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+        }
+export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdQuery>;
+export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
+export type GetTimelineCalendarEventsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>;
 export const GetTimelineThreadsFromCompanyIdDocument = gql`
     query GetTimelineThreadsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
   getTimelineThreadsFromCompanyId(
@@ -1204,40 +1427,40 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const CreateEventDocument = gql`
-    mutation CreateEvent($type: String!, $data: JSON!) {
-  createEvent(type: $type, data: $data) {
+export const TrackDocument = gql`
+    mutation Track($type: String!, $data: JSON!) {
+  track(type: $type, data: $data) {
     success
   }
 }
     `;
-export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation, CreateEventMutationVariables>;
+export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
 
 /**
- * __useCreateEventMutation__
+ * __useTrackMutation__
  *
- * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTrackMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ * const [trackMutation, { data, loading, error }] = useTrackMutation({
  *   variables: {
  *      type: // value for 'type'
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>) {
+export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument, options);
+        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
       }
-export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
-export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
-export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
+export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
+export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
+export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
 export const ChallengeDocument = gql`
     mutation Challenge($email: String!, $password: String!) {
   challenge(email: $email, password: $password) {
@@ -1341,6 +1564,41 @@ export function useGenerateApiKeyTokenMutation(baseOptions?: Apollo.MutationHook
 export type GenerateApiKeyTokenMutationHookResult = ReturnType<typeof useGenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationResult = Apollo.MutationResult<GenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>;
+export const GenerateJwtDocument = gql`
+    mutation GenerateJWT($workspaceId: String!) {
+  generateJWT(workspaceId: $workspaceId) {
+    tokens {
+      ...AuthTokensFragment
+    }
+  }
+}
+    ${AuthTokensFragmentFragmentDoc}`;
+export type GenerateJwtMutationFn = Apollo.MutationFunction<GenerateJwtMutation, GenerateJwtMutationVariables>;
+
+/**
+ * __useGenerateJwtMutation__
+ *
+ * To run a mutation, you first call `useGenerateJwtMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateJwtMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateJwtMutation, { data, loading, error }] = useGenerateJwtMutation({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGenerateJwtMutation(baseOptions?: Apollo.MutationHookOptions<GenerateJwtMutation, GenerateJwtMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateJwtMutation, GenerateJwtMutationVariables>(GenerateJwtDocument, options);
+      }
+export type GenerateJwtMutationHookResult = ReturnType<typeof useGenerateJwtMutation>;
+export type GenerateJwtMutationResult = Apollo.MutationResult<GenerateJwtMutation>;
+export type GenerateJwtMutationOptions = Apollo.BaseMutationOptions<GenerateJwtMutation, GenerateJwtMutationVariables>;
 export const GenerateTransientTokenDocument = gql`
     mutation generateTransientToken {
   generateTransientToken {
@@ -2008,6 +2266,37 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const RemoveWorkspaceMemberDocument = gql`
+    mutation RemoveWorkspaceMember($memberId: String!) {
+  removeWorkspaceMember(memberId: $memberId)
+}
+    `;
+export type RemoveWorkspaceMemberMutationFn = Apollo.MutationFunction<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;
+
+/**
+ * __useRemoveWorkspaceMemberMutation__
+ *
+ * To run a mutation, you first call `useRemoveWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveWorkspaceMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeWorkspaceMemberMutation, { data, loading, error }] = useRemoveWorkspaceMemberMutation({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useRemoveWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>(RemoveWorkspaceMemberDocument, options);
+      }
+export type RemoveWorkspaceMemberMutationHookResult = ReturnType<typeof useRemoveWorkspaceMemberMutation>;
+export type RemoveWorkspaceMemberMutationResult = Apollo.MutationResult<RemoveWorkspaceMemberMutation>;
+export type RemoveWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;
 export const ActivateWorkspaceDocument = gql`
     mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
   activateWorkspace(data: $input) {

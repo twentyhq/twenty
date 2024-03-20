@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object-metadata.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { FieldsStringFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/fields-string.factory';
 import { RecordPositionQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 

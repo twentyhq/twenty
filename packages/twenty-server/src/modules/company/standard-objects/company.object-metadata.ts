@@ -1,10 +1,10 @@
-import { CurrencyMetadata } from 'src/engine-metadata/field-metadata/composite-types/currency.composite-type';
-import { LinkMetadata } from 'src/engine-metadata/field-metadata/composite-types/link.composite-type';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { companyStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -19,6 +19,8 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -206,4 +208,23 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: companyStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the company',
+    icon: 'IconIconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @Gate({
+    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
+  })
+  @IsSystem()
+  events: EventObjectMetadata[];
 }

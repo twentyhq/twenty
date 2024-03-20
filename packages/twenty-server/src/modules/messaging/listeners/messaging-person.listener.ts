@@ -23,7 +23,7 @@ export class MessagingPersonListener {
   async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<PersonObjectMetadata>,
   ) {
-    if (payload.createdRecord.email === null) {
+    if (payload.details.after.email === null) {
       return;
     }
 
@@ -31,8 +31,8 @@ export class MessagingPersonListener {
       MatchMessageParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        email: payload.createdRecord.email,
-        personId: payload.createdRecord.id,
+        email: payload.details.after.email,
+        personId: payload.recordId,
       },
     );
   }
@@ -43,16 +43,16 @@ export class MessagingPersonListener {
   ) {
     if (
       objectRecordUpdateEventChangedProperties(
-        payload.previousRecord,
-        payload.updatedRecord,
+        payload.details.before,
+        payload.details.after,
       ).includes('email')
     ) {
       this.messageQueueService.add<MatchMessageParticipantsJobData>(
         MatchMessageParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: payload.updatedRecord.email,
-          personId: payload.updatedRecord.id,
+          email: payload.details.after.email,
+          personId: payload.recordId,
         },
       );
     }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { MenuItem, MenuItemMultiSelect } from 'tsup.ui.index';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
@@ -16,12 +17,25 @@ type SelectOptionForFilter = FieldMetadataItemOption & {
 
 export const ObjectFilterDropdownOptionSelect = () => {
   const {
-    filterDefinitionUsedInDropdown,
-    objectFilterDropdownSearchInput,
-    selectedOperandInDropdown,
-    objectFilterDropdownSelectedOptionValues,
+    filterDefinitionUsedInDropdownState,
+    objectFilterDropdownSearchInputState,
+    selectedOperandInDropdownState,
+    objectFilterDropdownSelectedOptionValuesState,
     selectFilter,
   } = useFilterDropdown();
+
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+  const selectedOperandInDropdown = useRecoilValue(
+    selectedOperandInDropdownState,
+  );
+  const objectFilterDropdownSearchInput = useRecoilValue(
+    objectFilterDropdownSearchInputState,
+  );
+  const objectFilterDropdownSelectedOptionValues = useRecoilValue(
+    objectFilterDropdownSelectedOptionValuesState,
+  );
 
   const fieldMetaDataId = filterDefinitionUsedInDropdown?.fieldMetadataId ?? '';
 

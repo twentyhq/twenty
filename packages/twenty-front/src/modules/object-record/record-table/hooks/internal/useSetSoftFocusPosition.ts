@@ -7,8 +7,8 @@ import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useSetSoftFocusPosition = (recordTableId?: string) => {
   const {
-    getSoftFocusPositionState,
-    getIsSoftFocusActiveState,
+    softFocusPositionState,
+    isSoftFocusActiveState,
     isSoftFocusOnTableCellFamilyState,
   } = useRecordTableStates(recordTableId);
 
@@ -17,21 +17,21 @@ export const useSetSoftFocusPosition = (recordTableId?: string) => {
       return (newPosition: TableCellPosition) => {
         const currentPosition = getSnapshotValue(
           snapshot,
-          getSoftFocusPositionState(),
+          softFocusPositionState,
         );
 
-        set(getIsSoftFocusActiveState(), true);
+        set(isSoftFocusActiveState, true);
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
-        set(getSoftFocusPositionState(), newPosition);
+        set(softFocusPositionState, newPosition);
 
         set(isSoftFocusOnTableCellFamilyState(newPosition), true);
       };
     },
     [
-      getSoftFocusPositionState,
-      getIsSoftFocusActiveState,
+      softFocusPositionState,
+      isSoftFocusActiveState,
       isSoftFocusOnTableCellFamilyState,
     ],
   );
