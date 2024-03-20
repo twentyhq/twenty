@@ -46,7 +46,7 @@ export class MessagingConnectedAccountListener {
       DeleteConnectedAccountAssociatedMessagingDataJob.name,
       {
         workspaceId: payload.workspaceId,
-        connectedAccountId: payload.deletedRecord.id,
+        connectedAccountId: payload.recordId,
       },
     );
 
@@ -55,7 +55,7 @@ export class MessagingConnectedAccountListener {
         DeleteConnectedAccountAssociatedCalendarDataJob.name,
         {
           workspaceId: payload.workspaceId,
-          connectedAccountId: payload.deletedRecord.id,
+          connectedAccountId: payload.recordId,
         },
       );
     }

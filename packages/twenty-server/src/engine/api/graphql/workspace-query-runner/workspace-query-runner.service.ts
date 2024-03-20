@@ -246,10 +246,10 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
-        createdRecord: this.removeNestedProperties(record),
-        createdObjectMetadata: {
-          nameSingular: objectMetadataItem.nameSingular,
-          isCustom: objectMetadataItem.isCustom,
+        recordId: record.id,
+        objectMetadata: objectMetadataItem,
+        details: {
+          after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
     });
@@ -300,8 +300,12 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       workspaceId,
-      previousRecord: this.removeNestedProperties(existingRecord as Record),
-      updatedRecord: this.removeNestedProperties(parsedResults?.[0]),
+      recordId: (existingRecord as Record).id,
+      objectMetadata: objectMetadataItem,
+      details: {
+        before: this.removeNestedProperties(existingRecord as Record),
+        after: this.removeNestedProperties(parsedResults?.[0]),
+      },
     } satisfies ObjectRecordUpdateEvent<any>);
 
     return parsedResults?.[0];
@@ -335,6 +339,12 @@ export class WorkspaceQueryRunnerService {
       CallWebhookJobsJobOperation.update,
       options,
     );
+
+    // TODO: check - NO EVENT SENT?
+    // OK I spent 2 hours trying to implement before/after diff and
+    // figured out why it hasn't been implement
+    // Doing a findMany in that context is very hard as long as we don't
+    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
 
     return parsedResults;
   }
@@ -374,7 +384,11 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         workspaceId,
-        deletedRecord: [this.removeNestedProperties(record)],
+        recordId: record.id,
+        objectMetadata: objectMetadataItem,
+        details: {
+          before: [this.removeNestedProperties(record)],
+        },
       } satisfies ObjectRecordDeleteEvent<any>);
     });
 
@@ -408,7 +422,11 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
-      deletedRecord: this.removeNestedProperties(parsedResults?.[0]),
+      recordId: args.id,
+      objectMetadata: objectMetadataItem,
+      details: {
+        before: this.removeNestedProperties(parsedResults?.[0]),
+      },
     } satisfies ObjectRecordDeleteEvent<any>);
 
     return parsedResults?.[0];

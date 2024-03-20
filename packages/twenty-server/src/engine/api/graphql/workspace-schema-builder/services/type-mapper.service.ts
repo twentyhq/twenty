@@ -15,6 +15,7 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import {
   DateScalarMode,
@@ -31,6 +32,7 @@ import {
   IntFilterType,
   BooleanFilterType,
   BigFloatFilterType,
+  JsonFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import { BigFloatScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -68,6 +70,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, GraphQLID],
       [FieldMetadataType.POSITION, PositionScalarType],
+      [FieldMetadataType.JSON, GraphQLJSON],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -99,6 +102,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
+      [FieldMetadataType.JSON, JsonFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -122,6 +126,7 @@ export class TypeMapperService {
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
+      [FieldMetadataType.JSON, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);
