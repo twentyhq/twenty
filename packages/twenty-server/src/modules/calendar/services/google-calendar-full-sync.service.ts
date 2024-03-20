@@ -209,31 +209,31 @@ export class GoogleCalendarFullSyncService {
         );
 
       dataSourceMetadata?.transaction(async (transactionManager) => {
-        this.calendarEventRepository.saveCalendarEvents(
+        await this.calendarEventRepository.saveCalendarEvents(
           eventsToSave,
           workspaceId,
           transactionManager,
         );
 
-        this.calendarEventRepository.updateCalendarEvents(
+        await this.calendarEventRepository.updateCalendarEvents(
           eventsToUpdate,
           workspaceId,
           transactionManager,
         );
 
-        this.calendarChannelEventAssociationRepository.saveCalendarChannelEventAssociations(
+        await this.calendarChannelEventAssociationRepository.saveCalendarChannelEventAssociations(
           calendarChannelEventAssociationsToSave,
           workspaceId,
           transactionManager,
         );
 
-        this.calendarEventAttendeesRepository.saveCalendarEventAttendees(
+        await this.calendarEventAttendeesRepository.saveCalendarEventAttendees(
           attendeesToSave,
           workspaceId,
           transactionManager,
         );
 
-        this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
+        await this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
           attendeesToUpdate,
           iCalUIDCalendarEventIdMap,
           workspaceId,
