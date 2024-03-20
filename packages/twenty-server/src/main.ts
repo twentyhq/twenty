@@ -11,7 +11,7 @@ import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
-import { generateFrontConfig } from './utils/generateFrontConfig';
+import { generateFrontConfig } from './utils/generate-front-config';
 import { settings } from './engine/constants/settings';
 import { LoggerService } from './engine/integrations/logger/logger.service';
 import { EnvironmentService } from './engine/integrations/environment/environment.service';
