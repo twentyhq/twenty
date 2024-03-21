@@ -20,6 +20,7 @@ import {
   GmailFetchMessageContentFromCacheJob,
   GmailFetchMessageContentFromCacheJobData,
 } from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
+import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class FetchAllMessagesFromCacheCron
@@ -43,6 +44,10 @@ export class FetchAllMessagesFromCacheCron
       await this.workspaceRepository.find({
         where: {
           subscriptionStatus: 'active',
+          featureFlags: {
+            key: FeatureFlagKeys.IsFullSyncV2Enabled,
+            value: true,
+          },
         },
         select: ['id'],
       })
