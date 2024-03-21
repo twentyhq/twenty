@@ -10,6 +10,7 @@ import {
   FieldNumberMetadata,
   FieldPhoneMetadata,
   FieldRatingMetadata,
+  FieldRawJsonMetadata,
   FieldRelationMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
@@ -47,8 +48,8 @@ type AssertFieldMetadataFunction = <
                             ? FieldTextMetadata
                             : E extends 'UUID'
                               ? FieldUuidMetadata
-                              : E extends 'JSON'
-                                ? FieldTextMetadata
+                              : E extends 'RAW_JSON'
+                                ? FieldRawJsonMetadata
                                 : never,
 >(
   fieldType: E,

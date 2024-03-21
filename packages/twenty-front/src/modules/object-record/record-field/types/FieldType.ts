@@ -18,4 +18,4 @@ export type FieldType =
   | 'UUID'
   | 'MULTI_SELECT'
   | 'NUMERIC'
-  | 'JSON';
+  | 'RAW_JSON';
