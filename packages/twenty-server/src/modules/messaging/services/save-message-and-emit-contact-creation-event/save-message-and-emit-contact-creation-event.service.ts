@@ -16,9 +16,9 @@ import { MessageService } from 'src/modules/messaging/services/message/message.s
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
 @Injectable()
-export class SaveMessagesAndCreateContactsService {
+export class SaveMessageAndEmitContactCreationEventService {
   private readonly logger = new Logger(
-    SaveMessagesAndCreateContactsService.name,
+    SaveMessageAndEmitContactCreationEventService.name,
   );
 
   constructor(
