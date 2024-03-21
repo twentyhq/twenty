@@ -13,6 +13,7 @@ import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
+import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -63,6 +64,9 @@ export const RecordIndexContainer = ({
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
     recordIndexIsCompactModeActiveState,
+  );
+  const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
+    recordIndexKanbanFieldMetadataIdState,
   );
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
@@ -128,6 +132,9 @@ export const RecordIndexContainer = ({
               mapViewSortsToSorts(view.viewSorts, sortDefinitions),
             );
             setRecordIndexViewType(view.type);
+            setRecordIndexViewKanbanFieldMetadataIdState(
+              view.kanbanFieldMetadataId,
+            );
             setRecordIndexIsCompactModeActive(view.isCompact);
           }}
         />

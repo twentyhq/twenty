@@ -110,7 +110,7 @@ export const UpdateViewButtonGroup = ({
       ) : (
         <Button
           title="Save as new view"
-          onClick={handleViewUpdate}
+          onClick={handleViewCreate}
           accent="blue"
           size="small"
           variant="secondary"

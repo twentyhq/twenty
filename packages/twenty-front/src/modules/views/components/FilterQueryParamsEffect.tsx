@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { isUndefined } from '@sniptt/guards';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { isDefined } from '~/utils/isDefined';
 
 export const FilterQueryParamsEffect = () => {
   const { hasFiltersQueryParams, getFiltersFromQueryParams, viewIdQueryParam } =
@@ -14,16 +15,25 @@ export const FilterQueryParamsEffect = () => {
   const setUnsavedViewFilter = useSetRecoilState(
     unsavedToUpsertViewFiltersState,
   );
-  const setCurrentViewId = useSetRecoilState(currentViewIdState);
+  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
   const { resetCurrentView } = useResetCurrentView();
 
   useEffect(() => {
-    if (isUndefined(viewIdQueryParam) || !viewIdQueryParam) {
+    if (
+      isUndefined(viewIdQueryParam) ||
+      !viewIdQueryParam ||
+      isDefined(currentViewId)
+    ) {
       return;
     }
 
     setCurrentViewId(viewIdQueryParam);
-  }, [getFiltersFromQueryParams, setCurrentViewId, viewIdQueryParam]);
+  }, [
+    currentViewId,
+    getFiltersFromQueryParams,
+    setCurrentViewId,
+    viewIdQueryParam,
+  ]);
 
   useEffect(() => {
     if (!hasFiltersQueryParams) return;

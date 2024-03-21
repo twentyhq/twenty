@@ -39,14 +39,14 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
         currentViewSnapshot,
       )
     ) {
-      setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
-
       if (isUndefined(currentViewWithCombinedFiltersAndSorts)) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
         onCurrentViewChange?.(undefined);
         return;
       }
 
       if (!isPersistingViewFields) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
         onCurrentViewChange?.(currentViewWithCombinedFiltersAndSorts);
       }
     }

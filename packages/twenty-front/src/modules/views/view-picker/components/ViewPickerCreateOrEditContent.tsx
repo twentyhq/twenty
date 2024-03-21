@@ -1,24 +1,24 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { v4 } from 'uuid';
 
 import { IconChevronLeft, IconX } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { IconPicker } from '@/ui/input/components/IconPicker';
+import { Select } from '@/ui/input/components/Select';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { ViewType } from '@/views/types/ViewType';
+import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
+import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
+import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
 
 const StyledIconAndNameContainer = styled.div`
@@ -26,6 +26,13 @@ const StyledIconAndNameContainer = styled.div`
   display: flex;
   margin-left: ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledSelectContainer = styled.div`
+  display: flex;
+  width: calc(100% - ${({ theme }) => theme.spacing(2)});
+  margin: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.light};
 `;
 
 const StyledSaveButtonContainer = styled.div`
@@ -39,7 +46,8 @@ export const ViewPickerCreateOrEditContent = () => {
     viewPickerInputNameState,
     viewPickerSelectedIconState,
     viewPickerIsPersistingState,
-    viewPickerReferenceViewIdState,
+    viewPickerKanbanFieldMetadataIdState,
+    viewPickerTypeState,
   } = useViewPickerStates();
 
   const [viewPickerInputName, setViewPickerInputName] = useRecoilState(
@@ -48,22 +56,18 @@ export const ViewPickerCreateOrEditContent = () => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] = useRecoilState(
     viewPickerSelectedIconState,
   );
-  const [viewPickerIsPersisting, setViewPickerIsPersisting] = useRecoilState(
-    viewPickerIsPersistingState,
-  );
+  const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
 
-  const viewPickerReferenceViewId = useRecoilValue(
-    viewPickerReferenceViewIdState,
-  );
+  const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
+    useRecoilState(viewPickerKanbanFieldMetadataIdState);
 
-  const { createEmptyView, selectView, removeView, updateView } =
-    useHandleViews();
-
-  const { viewsOnCurrentObject } = useGetCurrentView();
-
-  const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
+  const [viewPickerType, setViewPickerType] =
+    useRecoilState(viewPickerTypeState);
 
   const setHotkeyScope = useSetHotkeyScope();
+
+  const { handleCreate, handleDelete, handleUpdate } =
+    useViewPickerPersistView();
 
   useScopedHotkeys(
     Key.Enter,
@@ -75,16 +79,10 @@ export const ViewPickerCreateOrEditContent = () => {
         await handleCreate();
       }
       if (viewPickerMode === 'edit') {
-        setViewPickerIsPersisting(true);
-        await updateView({
-          id: viewPickerReferenceViewId,
-          name: viewPickerInputName,
-          icon: viewPickerSelectedIcon,
-        });
-        selectView(viewPickerReferenceViewId);
-        setViewPickerIsPersisting(false);
-        setViewPickerMode('list');
-        closeDropdown();
+        if (viewPickerIsPersisting) {
+          return;
+        }
+        await handleUpdate();
       }
     },
     ViewsHotkeyScope.ListDropdown,
@@ -94,43 +92,8 @@ export const ViewPickerCreateOrEditContent = () => {
     setViewPickerSelectedIcon(iconKey);
   };
 
-  const handleCreate = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const name = getSnapshotValue(snapshot, viewPickerInputNameState);
-        const iconKey = getSnapshotValue(snapshot, viewPickerSelectedIconState);
-        const id = v4();
-        setViewPickerIsPersisting(true);
-        await createEmptyView({ id, name, icon: iconKey });
-        setViewPickerIsPersisting(false);
-        setViewPickerMode('list');
-        selectView(id);
-        closeDropdown();
-      },
-    [
-      closeDropdown,
-      createEmptyView,
-      selectView,
-      setViewPickerIsPersisting,
-      setViewPickerMode,
-      viewPickerInputNameState,
-      viewPickerSelectedIconState,
-    ],
-  );
-
-  const handleDelete = async () => {
-    setViewPickerIsPersisting(true);
-    selectView(
-      viewsOnCurrentObject.filter(
-        (view) => view.id !== viewPickerReferenceViewId,
-      )[0].id,
-    );
-    await removeView(viewPickerReferenceViewId);
-
-    setViewPickerIsPersisting(false);
-    setViewPickerMode('list');
-    closeDropdown();
-  };
+  const { availableFieldsForKanban, navigateToSelectSettings } =
+    useGetAvailableFieldsForKanban();
 
   return (
     <>
@@ -150,31 +113,88 @@ export const ViewPickerCreateOrEditContent = () => {
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
           />
           <DropdownMenuInput
-            defaultValue={viewPickerInputName}
+            value={viewPickerInputName}
             onChange={(event) => setViewPickerInputName(event.target.value)}
             autoFocus
           />
         </StyledIconAndNameContainer>
+        {viewPickerMode === 'create' && (
+          <StyledSelectContainer>
+            <Select
+              disableBlur
+              label="View type"
+              fullWidth
+              value={viewPickerType}
+              onChange={(value) => setViewPickerType(value)}
+              options={[
+                { value: ViewType.Table, label: 'Table' },
+                { value: ViewType.Kanban, label: 'Kanban' },
+              ]}
+              dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
+            />
+          </StyledSelectContainer>
+        )}
+        {viewPickerType === ViewType.Kanban && viewPickerMode === 'create' && (
+          <>
+            <StyledSelectContainer>
+              <Select
+                disableBlur
+                label="Stages"
+                fullWidth
+                value={viewPickerType}
+                onChange={(value) => setViewPickerKanbanFieldMetadataId(value)}
+                options={
+                  availableFieldsForKanban.length > 0
+                    ? availableFieldsForKanban.map((field) => ({
+                        value: field.id,
+                        label: field.label,
+                      }))
+                    : [{ value: '', label: 'No Select field' }]
+                }
+                dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
+              />
+            </StyledSelectContainer>
+            <StyledSelectContainer>
+              Set up a Select field on Companies to create a Kanban
+            </StyledSelectContainer>
+          </>
+        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <StyledSaveButtonContainer>
-          {viewPickerMode === 'create' ? (
-            <Button
-              title="Create"
-              onClick={handleCreate}
-              accent="blue"
-              size="small"
-              fullWidth
-              justify="center"
-              disabled={viewPickerIsPersisting}
-            />
-          ) : (
+          {viewPickerMode === 'create' &&
+            (viewPickerType === ViewType.Table ||
+              availableFieldsForKanban.length > 0) && (
+              <Button
+                title="Create"
+                onClick={handleCreate}
+                accent="blue"
+                fullWidth
+                justify="center"
+                disabled={
+                  viewPickerIsPersisting ||
+                  (viewPickerType === ViewType.Kanban &&
+                    viewPickerKanbanFieldMetadataId === '')
+                }
+              />
+            )}
+          {viewPickerMode === 'create' &&
+            viewPickerType === ViewType.Kanban &&
+            availableFieldsForKanban.length === 0 && (
+              <Button
+                title="Go to Settings"
+                onClick={navigateToSelectSettings}
+                accent="blue"
+                fullWidth
+                justify="center"
+              />
+            )}
+          {viewPickerMode === 'edit' && (
             <Button
               title="Delete"
               onClick={handleDelete}
               accent="danger"
-              size="small"
               fullWidth
               justify="center"
               focus={false}

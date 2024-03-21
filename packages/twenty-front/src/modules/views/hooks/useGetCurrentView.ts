@@ -65,6 +65,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
       key: view.key,
       position: view.position,
       objectMetadataId: view.objectMetadataId,
+      kanbanFieldMetadataId: view.kanbanFieldMetadataId,
       icon: view.icon,
     }));
 

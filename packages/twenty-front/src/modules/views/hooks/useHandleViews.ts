@@ -19,7 +19,8 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useHandleViews = (viewBarComponentId?: string) => {
   const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
 
-  const { currentViewIdState } = useViewStates(viewBarComponentId);
+  const { currentViewIdState, isPersistingViewFieldsState } =
+    useViewStates(viewBarComponentId);
 
   const { getViewFromCache } = useGetViewFromCache();
 
@@ -47,7 +48,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
   );
 
   const createEmptyView = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async ({
         id,
         name,
@@ -72,6 +73,8 @@ export const useHandleViews = (viewBarComponentId?: string) => {
           return;
         }
 
+        set(isPersistingViewFieldsState, true);
+
         const newView = await createOneRecord({
           id: id ?? v4(),
           name: name ?? view.name,
@@ -88,12 +91,14 @@ export const useHandleViews = (viewBarComponentId?: string) => {
         }
 
         await createViewFieldRecords(view.viewFields, newView);
+        set(isPersistingViewFieldsState, false);
       },
     [
       createOneRecord,
       createViewFieldRecords,
       currentViewIdState,
       getViewFromCache,
+      isPersistingViewFieldsState,
     ],
   );
 

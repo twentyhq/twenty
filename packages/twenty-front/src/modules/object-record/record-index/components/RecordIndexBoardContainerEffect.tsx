@@ -8,7 +8,10 @@ import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoar
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
+import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type RecordIndexBoardContainerEffectProps = {
   objectNameSingular: string;
@@ -31,6 +34,7 @@ export const RecordIndexBoardContainerEffect = ({
     selectedRecordIdsSelector,
     setFieldDefinitions,
     onFetchMoreVisibilityChangeState,
+    setKanbanFieldMetadataName,
   } = useRecordBoard(recordBoardId);
 
   const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
@@ -84,6 +88,28 @@ export const RecordIndexBoardContainerEffect = ({
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
+
+  const recordIndexKanbanFieldMetadataId = useRecoilValue(
+    recordIndexKanbanFieldMetadataIdState,
+  );
+
+  useEffect(() => {
+    if (isDefined(recordIndexKanbanFieldMetadataId)) {
+      const kanbanFieldMetadataName = objectMetadataItem?.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.Select &&
+          field.id === recordIndexKanbanFieldMetadataId,
+      )?.name;
+
+      if (isDefined(kanbanFieldMetadataName)) {
+        setKanbanFieldMetadataName(kanbanFieldMetadataName);
+      }
+    }
+  }, [
+    objectMetadataItem,
+    recordIndexKanbanFieldMetadataId,
+    setKanbanFieldMetadataName,
+  ]);
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 

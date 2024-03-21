@@ -6,6 +6,7 @@ import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-pick
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
+import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 
 import { ViewScopeInternalContext } from '../../scopes/scope-internal-context/ViewScopeInternalContext';
 
@@ -39,6 +40,10 @@ export const useViewPickerStates = (viewComponentId?: string) => {
     ),
     viewPickerIsPersistingState: extractComponentState(
       viewPickerIsPersistingComponentState,
+      componentId,
+    ),
+    viewPickerTypeState: extractComponentState(
+      viewPickerTypeComponentState,
       componentId,
     ),
   };
