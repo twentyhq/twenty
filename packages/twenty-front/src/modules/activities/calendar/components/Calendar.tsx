@@ -27,7 +27,6 @@ export const Calendar = () => {
   const { records: calendarEvents } = useFindManyRecords<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     orderBy: { startsAt: 'DescNullsLast', endsAt: 'DescNullsLast' },
-    useRecordsWithoutConnection: true,
   });
 
   const {

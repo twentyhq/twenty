@@ -139,8 +139,8 @@ export const useExportTableData = ({
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
     limit: pageSize,
-    onCompleted: (_data, { hasNextPage }) => {
-      setHasNextPage(hasNextPage ?? false);
+    onCompleted: (_data, options) => {
+      setHasNextPage(options?.pageInfo?.hasNextPage ?? false);
     },
   });
 

@@ -22,7 +22,6 @@ import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
 import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
-import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
@@ -31,18 +30,21 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit,
   onCompleted,
   skip,
-  useRecordsWithoutConnection = false,
   depth,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
     onCompleted?: (
-      data: ObjectRecordConnection<T>,
-      pageInfo: ObjectRecordConnection<T>['pageInfo'],
+      records: T[],
+      options?: {
+        pageInfo?: ObjectRecordConnection['pageInfo'];
+        totalCount?: number;
+      },
     ) => void;
     skip?: boolean;
-    useRecordsWithoutConnection?: boolean;
     depth?: number;
   }) => {
+  const mapConnectionToRecords = useMapConnectionToRecords();
+
   const findManyQueryStateIdentifier =
     objectNameSingular +
     JSON.stringify(filter) +
@@ -81,9 +83,22 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       orderBy,
     },
     onCompleted: (data) => {
+      if (!isDefined(data)) {
+        onCompleted?.([]);
+      }
+
       const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
-      onCompleted?.(data[objectMetadataItem.namePlural], pageInfo);
+      const records = mapConnectionToRecords({
+        objectRecordConnection: data?.[objectMetadataItem.namePlural],
+        objectNameSingular,
+        depth: 5,
+      }) as T[];
+
+      onCompleted?.(records, {
+        pageInfo,
+        totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
+      });
 
       if (isDefined(data?.[objectMetadataItem.namePlural])) {
         setLastCursor(pageInfo.endCursor ?? '');
@@ -132,24 +147,26 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
             const pageInfo =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
+
             if (isDefined(data?.[objectMetadataItem.namePlural])) {
               setLastCursor(pageInfo.endCursor ?? '');
               setHasNextPage(pageInfo.hasNextPage ?? false);
             }
 
-            onCompleted?.(
-              {
-                __typename: `${capitalize(
-                  objectMetadataItem.nameSingular,
-                )}Connection`,
+            const records = mapConnectionToRecords({
+              objectRecordConnection: {
                 edges: newEdges,
-                pageInfo:
-                  fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
-                totalCount:
-                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
+                pageInfo,
               },
+              objectNameSingular,
+              depth: 5,
+            }) as T[];
+
+            onCompleted?.(records, {
               pageInfo,
-            );
+              totalCount:
+                fetchMoreResult?.[objectMetadataItem.namePlural]?.totalCount,
+            });
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {
@@ -194,42 +211,32 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     setLastCursor,
     setHasNextPage,
     enqueueSnackBar,
+    mapConnectionToRecords,
+    objectNameSingular,
   ]);
 
-  // TODO: remove this and use only mapConnectionToRecords when we've finished the refactor
+  const totalCount = data?.[objectMetadataItem.namePlural].totalCount ?? 0;
+
   const records = useMemo(
     () =>
-      mapPaginatedRecordsToRecords({
-        pagedRecords: data,
-        objectNamePlural: objectMetadataItem.namePlural,
+      mapConnectionToRecords({
+        objectRecordConnection: data?.[objectMetadataItem.namePlural],
+        objectNameSingular,
+        depth: 5,
       }) as T[],
-    [data, objectMetadataItem],
-  );
 
-  const mapConnectionToRecords = useMapConnectionToRecords();
-
-  const recordsWithoutConnection = useMemo(
-    () =>
-      useRecordsWithoutConnection
-        ? (mapConnectionToRecords({
-            objectRecordConnection: data?.[objectMetadataItem.namePlural],
-            objectNameSingular,
-            depth: 5,
-          }) as T[])
-        : [],
     [
       data,
       objectNameSingular,
       objectMetadataItem.namePlural,
       mapConnectionToRecords,
-      useRecordsWithoutConnection,
     ],
   );
 
   return {
     objectMetadataItem,
-    records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
-    totalCount: data?.[objectMetadataItem.namePlural].totalCount || 0,
+    records,
+    totalCount,
     loading,
     error,
     fetchMoreRecords,

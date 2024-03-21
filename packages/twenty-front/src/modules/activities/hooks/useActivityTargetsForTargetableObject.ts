@@ -26,7 +26,7 @@ export const useActivityTargetsForTargetableObject = ({
   //   If we are on a show page and we remove the current show page object corresponding activity target
   //   See also if we need to update useTimelineActivities
   const { records: activityTargets, loading: loadingActivityTargets } =
-    useFindManyRecords({
+    useFindManyRecords<ActivityTarget>({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
       skip: skipRequest,
       filter: {
@@ -42,7 +42,7 @@ export const useActivityTargetsForTargetableObject = ({
     });
 
   return {
-    activityTargets: activityTargets as ActivityTarget[],
+    activityTargets,
     loadingActivityTargets,
     initialized,
   };

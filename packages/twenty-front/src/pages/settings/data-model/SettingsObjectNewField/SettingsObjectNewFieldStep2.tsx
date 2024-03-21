@@ -10,7 +10,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -87,34 +86,30 @@ export const SettingsObjectNewFieldStep2 = () => {
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
-
+    onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
 
-      setObjectViews(data.edges.map(({ node }) => node));
+      setObjectViews(views);
     },
   });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
-
+    onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
 
-      setRelationObjectViews(data.edges.map(({ node }) => node));
+      setRelationObjectViews(views);
     },
   });
 
