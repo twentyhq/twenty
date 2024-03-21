@@ -28,7 +28,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
+      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "id" = ANY($1)`,
       [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
@@ -48,7 +48,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "calendarEventId" = ANY($1)`,
+      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "calendarEventId" = ANY($1)`,
       [calendarEventIds],
       workspaceId,
       transactionManager,
@@ -68,7 +68,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `DELETE FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
+      `DELETE FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "id" = ANY($1)`,
       [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
@@ -120,8 +120,10 @@ export class CalendarEventAttendeeRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const calendarEventIds = Array.from(iCalUIDCalendarEventIdMap.values());
+
     const existingCalendarEventAttendees = await this.getByCalendarEventIds(
-      Array.from(iCalUIDCalendarEventIdMap.values()),
+      calendarEventIds,
       workspaceId,
       transactionManager,
     );
