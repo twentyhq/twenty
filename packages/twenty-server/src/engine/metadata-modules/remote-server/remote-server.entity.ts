@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export type RemoteServerType = 'postgres';
+
 @Entity('remoteServer')
 export class RemoteServerEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -36,6 +38,9 @@ export class RemoteServerEntity {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @Column({ nullable: true })
+  type: RemoteServerType;
 
   @CreateDateColumn()
   createdAt: Date;

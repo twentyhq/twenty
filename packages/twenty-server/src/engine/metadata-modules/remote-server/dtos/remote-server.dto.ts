@@ -2,6 +2,8 @@ import { ObjectType, Field, HideField, ID } from '@nestjs/graphql';
 
 import { IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
 
+import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+
 @ObjectType('RemoteServer')
 @QueryOptions({
   defaultResultSize: 10,
@@ -28,13 +30,13 @@ export class RemoteServerDTO {
   username: string;
 
   @Field(() => String)
-  password: string;
-
-  @Field(() => String)
   schema: string;
 
   @HideField()
   workspaceId: string;
+
+  @Field(() => String)
+  type: RemoteServerType;
 
   @Field()
   createdAt: Date;

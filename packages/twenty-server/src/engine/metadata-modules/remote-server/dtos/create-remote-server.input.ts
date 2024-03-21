@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsString } from 'class-validator';
 
+import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+
 @InputType()
 export class CreateRemoteServerInput {
   @Field(() => String)
@@ -23,6 +25,10 @@ export class CreateRemoteServerInput {
   @Field(() => String)
   @IsString()
   password: string;
+
+  @Field(() => String)
+  @IsString()
+  type: RemoteServerType;
 
   // TODO: Decide if this should be added during the creation
   @Field(() => String)

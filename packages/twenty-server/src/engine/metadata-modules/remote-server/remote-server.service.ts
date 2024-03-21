@@ -6,7 +6,10 @@ import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
-import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  RemoteServerEntity,
+  RemoteServerType,
+} from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 
@@ -73,5 +76,26 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
     await mainDatasource.query(`DROP SERVER "${remoteServer.fdwId}" CASCADE`);
 
     return remoteServer;
+  }
+
+  public async findOneByIdWithinWorkspace(id: string, workspaceId: string) {
+    return this.remoteServerRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findManyByTypeWithinWorkspace(
+    type: RemoteServerType,
+    workspaceId: string,
+  ) {
+    return this.remoteServerRepository.find({
+      where: {
+        type,
+        workspaceId,
+      },
+    });
   }
 }
