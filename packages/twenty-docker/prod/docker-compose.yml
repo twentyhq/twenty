@@ -4,7 +4,6 @@ name: twenty
 services:
   server:
     image: twentycrm/twenty:${TAG}
-    user: 1000:1000
     volumes:
       - server-local-data:/app/.local-storage
     ports:
