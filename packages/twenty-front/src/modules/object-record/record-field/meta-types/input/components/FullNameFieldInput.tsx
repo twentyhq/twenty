@@ -66,9 +66,9 @@ export const FullNameFieldInput = ({
     setDraftValue(convertToFullName(newDoubleText));
   };
 
-  const handlePaste =  (newDoubleText: FieldDoubleText) => {
+  const handlePaste = (newDoubleText: FieldDoubleText) => {
     setDraftValue(convertToFullName(newDoubleText));
-  }
+  };
 
   return (
     <FieldInputOverlay>

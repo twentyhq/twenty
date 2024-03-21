@@ -1,4 +1,10 @@
-import { ChangeEvent, ClipboardEvent, ClipboardEventHandler, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  ClipboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
@@ -54,7 +60,7 @@ export const DoubleTextInput = ({
   onShiftTab,
   onTab,
   onChange,
-  onPaste
+  onPaste,
 }: DoubleTextInputProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
@@ -153,19 +159,18 @@ export const DoubleTextInput = ({
   });
 
   const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
-
-    if(firstInternalValue.length || secondInternalValue.length) {
+    if (firstInternalValue.length > 0 || secondInternalValue.length > 0) {
       return;
     }
 
-    event.preventDefault()
+    event.preventDefault();
 
     const name = event.clipboardData.getData('Text');
 
     const splittedName = name.split(' ');
 
-    onPaste?.({firstValue: splittedName[0], secondValue: splittedName[1]})
-  }
+    onPaste?.({ firstValue: splittedName[0], secondValue: splittedName[1] });
+  };
 
   return (
     <StyledContainer ref={containerRef}>
@@ -179,7 +184,9 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(event.target.value, secondInternalValue);
         }}
-        onPaste={(event: ClipboardEvent<HTMLInputElement>) => handleOnPaste(event)}
+        onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
+          handleOnPaste(event)
+        }
       />
       <StyledInput
         autoComplete="off"
@@ -190,7 +197,6 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(firstInternalValue, event.target.value);
         }}
-        onPaste={(event: ClipboardEvent<HTMLInputElement>) => handleOnPaste(event)}
       />
     </StyledContainer>
   );
