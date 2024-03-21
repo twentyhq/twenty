@@ -61,6 +61,15 @@ export const SettingsAccountsCalendarsSettings = () => {
     });
   };
 
+  const handleSyncEventsToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        isSyncEnabled: value,
+      },
+    });
+  };
+
   useEffect(() => {
     if (!loading && !calendarChannel) navigate(AppPath.NotFound);
   }, [loading, calendarChannel, navigate]);
@@ -128,7 +137,7 @@ export const SettingsAccountsCalendarsSettings = () => {
             }
             title="Sync events"
             value={!!calendarChannel.isSyncEnabled}
-            onToggle={(_value) => {}}
+            onToggle={handleSyncEventsToggle}
           />
         </Section>
       </SettingsPageContainer>
