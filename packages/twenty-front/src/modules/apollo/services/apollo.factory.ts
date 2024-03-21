@@ -60,6 +60,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         return {
           headers: {
             ...headers,
+            ...options.headers,
             authorization: this.tokenPair?.accessToken.token
               ? `Bearer ${this.tokenPair?.accessToken.token}`
               : '',
