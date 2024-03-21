@@ -3,6 +3,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import {
+  CalendarChannel,
+  CalendarChannelVisibilityValue,
+} from '@/accounts/types/CalendarChannel';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import {
   EventSettingsVisibilityValue,
   SettingsAccountsEventVisibilitySettingsCard,
 } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
@@ -16,7 +23,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};
@@ -24,10 +30,36 @@ const StyledCardMedia = styled(SettingsAccountsCardMedia)`
 
 export const SettingsAccountsCalendarsSettings = () => {
   const theme = useTheme();
-  const { accountUuid = '' } = useParams();
-  const connectedAccount = mockedConnectedAccounts.find(
-    ({ id }) => id === accountUuid,
-  );
+
+  const { accountUuid: calendarChannelId = '' } = useParams();
+
+  const { record: calendarChannel, loading } =
+    useFindOneRecord<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      objectRecordId: calendarChannelId,
+    });
+
+  const { updateOneRecord } = useUpdateOneRecord<CalendarChannel>({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+  });
+
+  const handleVisibilityChange = (value: CalendarChannelVisibilityValue) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        visibility: value,
+      },
+    });
+  };
+
+  const handleContactAutoCreationToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        isContactAutoCreationEnabled: value,
+      },
+    });
+  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -42,7 +74,7 @@ export const SettingsAccountsCalendarsSettings = () => {
               children: 'Calendars',
               href: getSettingsPagePath(SettingsPath.AccountsCalendars),
             },
-            { children: connectedAccount?.handle || '' },
+            { children: calendarChannel?.handle || '' },
           ]}
         />
         <Section>
