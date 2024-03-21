@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import differenceWith from 'lodash.differencewith';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
@@ -118,6 +119,27 @@ export class CalendarEventAttendeeRepository {
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const existingCalendarEventAttendees = await this.getByCalendarEventIds(
+      Array.from(iCalUIDCalendarEventIdMap.values()),
+      workspaceId,
+      transactionManager,
+    );
+
+    const calendarEventAttendeesToDelete = differenceWith(
+      existingCalendarEventAttendees,
+      calendarEventAttendees,
+      (existingCalendarEventAttendee, calendarEventAttendee) =>
+        existingCalendarEventAttendee.handle === calendarEventAttendee.handle,
+    );
+
+    await this.deleteByIds(
+      calendarEventAttendeesToDelete.map(
+        (calendarEventAttendee) => calendarEventAttendee.id,
+      ),
+      workspaceId,
+      transactionManager,
+    );
 
     const values = calendarEventAttendees.map((calendarEventAttendee) => ({
       ...calendarEventAttendee,
