@@ -73,4 +73,21 @@ export class CalendarChannelRepository {
       transactionManager,
     );
   }
+
+  public async updateSyncCursor(
+    syncCursor: string,
+    calendarChannelId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarChannel" SET "syncCursor" = $1 WHERE "id" = $2`,
+      [syncCursor, calendarChannelId],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }

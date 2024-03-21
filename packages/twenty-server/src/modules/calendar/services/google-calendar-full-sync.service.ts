@@ -252,11 +252,11 @@ export class GoogleCalendarFullSyncService {
 
     startTime = Date.now();
 
-    // await this.calendarChannelService.updateSyncCursor(
-    //   nextSyncToken,
-    //   connectedAccount.id,
-    //   workspaceId,
-    // );
+    await this.calendarChannelRepository.updateSyncCursor(
+      nextSyncToken,
+      calendarChannel.id,
+      workspaceId,
+    );
 
     endTime = Date.now();
 
