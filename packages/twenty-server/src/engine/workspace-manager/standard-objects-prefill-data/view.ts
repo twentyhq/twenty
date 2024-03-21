@@ -5,6 +5,7 @@ import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects
 import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
 import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
@@ -78,7 +79,7 @@ export const viewPrefillData = async (
         icon: 'IconLayoutKanban',
         kanbanFieldMetadataId:
           objectMetadataMap[standardObjectIds.opportunity].fields[
-            '20202020-d09b-4f65-ac42-06a2f20ba0e8'
+            opportunityStandardFieldIds.stage
           ],
       },
     ])
