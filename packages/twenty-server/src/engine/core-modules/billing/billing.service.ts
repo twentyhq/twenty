@@ -154,6 +154,32 @@ export class BillingService {
     return session.url;
   }
 
+  async updateBillingSubscription(user: User) {
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      workspaceId: user.defaultWorkspaceId,
+    });
+    const newInterval =
+      billingSubscription?.interval === 'year' ? 'month' : 'year';
+    const billingSubscriptionItem = await this.getBillingSubscriptionItem(
+      user.defaultWorkspaceId,
+    );
+    const stripeProductId = this.getProductStripeId(AvailableProduct.BasePlan);
+
+    if (!stripeProductId) {
+      throw new Error('Stripe product id not found for basePlan');
+    }
+    const productPrices = await this.getProductPrices(stripeProductId);
+
+    const stripePriceId = productPrices.filter(
+      (price) => price.recurringInterval === newInterval,
+    )?.[0]?.stripePriceId;
+
+    await this.stripeService.updateBillingSubscriptionItem(
+      billingSubscriptionItem,
+      stripePriceId,
+    );
+  }
+
   async computeCheckoutSessionURL(
     user: User,
     priceId: string,
@@ -230,6 +256,7 @@ export class BillingService {
         stripeCustomerId: data.object.customer as string,
         stripeSubscriptionId: data.object.id,
         status: data.object.status,
+        interval: data.object.items.data[0].plan.interval,
       },
       {
         conflictPaths: ['stripeSubscriptionId'],

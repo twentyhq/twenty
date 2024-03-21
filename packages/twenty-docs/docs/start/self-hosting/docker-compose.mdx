@@ -35,7 +35,7 @@ Complete step three and four with :
 
 ## Production docker containers
 
-Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
+Prebuilt images for both Postgres, frontend, and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/). Note that the Postgres container will not persist data if your server is not configured to be stateful (e.g. Heroku). You probably want to configure a special stateful resource for the database.
 
 ## Environment Variables
 

@@ -26,7 +26,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { UserService } from './services/user.service';
 
@@ -45,7 +44,6 @@ export class UserResolver {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
   ) {}
