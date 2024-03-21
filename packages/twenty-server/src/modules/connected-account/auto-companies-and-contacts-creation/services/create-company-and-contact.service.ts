@@ -78,6 +78,7 @@ export class CreateCompanyAndContactService {
     const alreadyCreatedContacts = await this.personRepository.getByEmails(
       uniqueHandles,
       workspaceId,
+      transactionManager,
     );
 
     const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
