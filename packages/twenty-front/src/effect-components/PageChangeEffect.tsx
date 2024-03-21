@@ -113,9 +113,14 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.CreateProfile);
     } else if (
-      (onboardingStatus === OnboardingStatus.Completed ||
-        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription) &&
+      onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute
+    ) {
+      navigate(AppPath.Index);
+    } else if (
+      onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
+      isMatchingOnboardingRoute &&
+      !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
