@@ -3,12 +3,13 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { Favorite } from '@/favorites/types/Favorite';
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
@@ -17,17 +18,15 @@ export const PrefetchRunQueriesEffect = () => {
   const {
     objectMetadataItem: objectMetadataItemView,
     upsertRecordsInCache: upsertViewsInCache,
-  } = usePrefetchRunQuery({
+  } = usePrefetchRunQuery<View>({
     prefetchKey: PrefetchKey.AllViews,
-    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const {
     objectMetadataItem: objectMetadataItemFavorite,
     upsertRecordsInCache: upsertFavoritesInCache,
-  } = usePrefetchRunQuery({
+  } = usePrefetchRunQuery<Favorite>({
     prefetchKey: PrefetchKey.AllFavorites,
-    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
   const prefetchFindManyQuery =
