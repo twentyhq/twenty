@@ -79,10 +79,14 @@ export class GoogleCalendarFullSyncService {
     }
 
     const calendarChannel =
-      await this.calendarChannelRepository.getFirstByConnectedAccountIdOrFail(
+      await this.calendarChannelRepository.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
+
+    if (!calendarChannel) {
+      return;
+    }
 
     const calendarChannelId = calendarChannel.id;
 
@@ -109,6 +113,7 @@ export class GoogleCalendarFullSyncService {
       : [];
 
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+
     let startTime = Date.now();
 
     const googleCalendarEvents = await googleCalendarClient.events.list({

@@ -28,34 +28,16 @@ export class CalendarChannelRepository {
     );
   }
 
-  public async getFirstByConnectedAccountIdOrFail(
+  public async getFirstByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>> {
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata> | undefined> {
     const calendarChannels = await this.getByConnectedAccountId(
       connectedAccountId,
       workspaceId,
     );
 
-    if (!calendarChannels || calendarChannels.length === 0) {
-      throw new Error(
-        `No calendar channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
     return calendarChannels[0];
-  }
-
-  public async getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<boolean> {
-    const calendarChannel = await this.getFirstByConnectedAccountIdOrFail(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    return calendarChannel.isContactAutoCreationEnabled;
   }
 
   public async getByIds(

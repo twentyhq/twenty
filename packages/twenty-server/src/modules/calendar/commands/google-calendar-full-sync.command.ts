@@ -11,6 +11,7 @@ import {
 } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 
 interface GoogleCalendarFullSyncOptions {
   workspaceId: string;
@@ -27,6 +28,7 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly calendarChannelRepository: CalendarChannelRepository,
   ) {
     super();
   }
@@ -54,6 +56,16 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
       await this.connectedAccountRepository.getAll(workspaceId);
 
     for (const connectedAccount of connectedAccounts) {
+      const calendarChannel =
+        await this.calendarChannelRepository.getFirstByConnectedAccountId(
+          connectedAccount.id,
+          workspaceId,
+        );
+
+      if (!calendarChannel?.isSyncEnabled) {
+        continue;
+      }
+
       await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
         GoogleCalendarFullSyncJob.name,
         {
