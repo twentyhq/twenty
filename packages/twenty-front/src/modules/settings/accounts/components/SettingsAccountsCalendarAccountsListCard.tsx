@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,26 +23,39 @@ export const SettingsAccountsCalendarAccountsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
+  const { records: accounts, loading: accountsLoading } =
+    useFindManyRecords<ConnectedAccount>({
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      filter: {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
       },
-    },
-  });
+    });
+
+  const { records: calendarChannels, loading: calendarChannelsLoading } =
+    useFindManyRecords<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      filter: {
+        connectedAccountId: {
+          in: accounts.map((account) => account.id),
+        },
+      },
+    });
 
   return (
     <SettingsAccountsListCard
-      accounts={accounts}
-      isLoading={loading}
-      onRowClick={(account) =>
-        navigate(`/settings/accounts/calendars/${account.id}`)
+      accounts={calendarChannels}
+      isLoading={accountsLoading || calendarChannelsLoading}
+      onRowClick={(calendarChannel) =>
+        navigate(`/settings/accounts/calendars/${calendarChannel.id}`)
       }
       RowIcon={IconGoogleCalendar}
-      RowRightComponent={({ account: _account }) => (
+      RowRightComponent={({ account: calendarChannel }) => (
         <StyledRowRightContainer>
-          <SettingsAccountsSynchronizationStatus synced />
+          <SettingsAccountsSynchronizationStatus
+            synced={!!calendarChannel.isSyncEnabled}
+          />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}

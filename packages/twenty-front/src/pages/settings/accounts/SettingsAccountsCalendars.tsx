@@ -1,6 +1,7 @@
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -21,14 +22,25 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
+  const { records: accounts, loading: accountsLoading } =
+    useFindManyRecords<ConnectedAccount>({
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      filter: {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
       },
-    },
-  });
+    });
+
+  const { records: calendarChannels, loading: calendarChannelsLoading } =
+    useFindManyRecords<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      filter: {
+        connectedAccountId: {
+          in: accounts.map((account) => account.id),
+        },
+      },
+    });
 
   const exampleStartDate = new Date();
   const exampleEndDate = min([
@@ -76,8 +88,7 @@ export const SettingsAccountsCalendars = () => {
           />
           <SettingsAccountsCalendarAccountsListCard />
         </Section>
-        {/* TODO: retrieve connected accounts data from back-end when the Calendar feature is ready. */}
-        {!!accounts.length && (
+        {!!calendarChannels.length && (
           <>
             <Section>
               <H2Title
