@@ -12,12 +12,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
-  account: Pick<ConnectedAccount, 'id' | 'messageChannels'>;
+  accountOrChannel: Pick<ConnectedAccount, 'id' | 'messageChannels'>;
   className?: string;
 };
 
 export const SettingsAccountsRowDropdownMenu = ({
-  account,
+  accountOrChannel: account,
   className,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;

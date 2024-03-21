@@ -22,25 +22,23 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { records: accounts, loading: accountsLoading } =
-    useFindManyRecords<ConnectedAccount>({
-      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-      filter: {
-        accountOwnerId: {
-          eq: currentWorkspaceMember?.id,
-        },
+  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
+    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+    filter: {
+      accountOwnerId: {
+        eq: currentWorkspaceMember?.id,
       },
-    });
+    },
+  });
 
-  const { records: calendarChannels, loading: calendarChannelsLoading } =
-    useFindManyRecords<CalendarChannel>({
-      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-      filter: {
-        connectedAccountId: {
-          in: accounts.map((account) => account.id),
-        },
+  const { records: calendarChannels } = useFindManyRecords<CalendarChannel>({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+    filter: {
+      connectedAccountId: {
+        in: accounts.map((account) => account.id),
       },
-    });
+    },
+  });
 
   const exampleStartDate = new Date();
   const exampleEndDate = min([

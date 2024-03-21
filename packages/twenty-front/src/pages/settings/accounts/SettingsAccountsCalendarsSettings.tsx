@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -9,14 +10,12 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import {
-  EventSettingsVisibilityValue,
-  SettingsAccountsEventVisibilitySettingsCard,
-} from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
+import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconRefresh, IconSettings, IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -30,6 +29,7 @@ const StyledCardMedia = styled(SettingsAccountsCardMedia)`
 
 export const SettingsAccountsCalendarsSettings = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { accountUuid: calendarChannelId = '' } = useParams();
 
@@ -61,6 +61,12 @@ export const SettingsAccountsCalendarsSettings = () => {
     });
   };
 
+  useEffect(() => {
+    if (!loading && !calendarChannel) navigate(AppPath.NotFound);
+  }, [loading, calendarChannel, navigate]);
+
+  if (!calendarChannel) return null;
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -83,8 +89,8 @@ export const SettingsAccountsCalendarsSettings = () => {
             description="Define what will be visible to other users in your workspace"
           />
           <SettingsAccountsEventVisibilitySettingsCard
-            value={EventSettingsVisibilityValue.Everything}
-            onChange={(_value) => {}}
+            value={calendarChannel.visibility}
+            onChange={handleVisibilityChange}
           />
         </Section>
         <Section>
@@ -102,8 +108,8 @@ export const SettingsAccountsCalendarsSettings = () => {
               </StyledCardMedia>
             }
             title="Auto-creation"
-            value={false}
-            onToggle={(_value) => {}}
+            value={!!calendarChannel.isContactAutoCreationEnabled}
+            onToggle={handleContactAutoCreationToggle}
           />
         </Section>
         <Section>
@@ -121,7 +127,7 @@ export const SettingsAccountsCalendarsSettings = () => {
               </StyledCardMedia>
             }
             title="Sync events"
-            value={false}
+            value={!!calendarChannel.isSyncEnabled}
             onToggle={(_value) => {}}
           />
         </Section>
