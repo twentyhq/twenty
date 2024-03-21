@@ -12,6 +12,7 @@ import {
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
+import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 
 interface GoogleCalendarFullSyncOptions {
   workspaceId: string;
@@ -28,6 +29,7 @@ export class GoogleCalendarFullSyncCommand extends CommandRunner {
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
     private readonly calendarChannelRepository: CalendarChannelRepository,
   ) {
     super();
