@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
@@ -19,8 +18,6 @@ export const useTimelineActivities = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { makeActivityWithoutConnection } = useActivityConnectionUtils();
-
   const [, setObjectShowPageTargetableObject] = useRecoilState(
     objectShowPageTargetableObjectState,
   );
