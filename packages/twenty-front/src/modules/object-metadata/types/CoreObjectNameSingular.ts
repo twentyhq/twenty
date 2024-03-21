@@ -15,7 +15,6 @@ export enum CoreObjectNameSingular {
   MessageThread = 'messageThread',
   Opportunity = 'opportunity',
   Person = 'person',
-  PipelineStep = 'pipelineStep',
   View = 'view',
   ViewField = 'viewField',
   ViewFilter = 'viewFilter',

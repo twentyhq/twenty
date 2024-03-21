@@ -9,9 +9,6 @@ const getRandomProbability = () => {
   return firstDigit / 10;
 };
 
-const getRandomPipelineStepId = (pipelineStepIds: { id: string }[]) =>
-  pipelineStepIds[Math.floor(Math.random() * pipelineStepIds.length)].id;
-
 const getRandomStage = () => {
   const stages = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
 
@@ -24,14 +21,7 @@ const generateRandomAmountMicros = () => {
   return firstDigit * 10000000000;
 };
 
-// Function to generate the array of opportunities
-// companiesWithPeople - selecting from the db companies and 1 person related to the company.id to use companyId, pointOfContactId and personId
-// pipelineStepIds - selecting from the db pipeline, getting random id from selected to use as pipelineStepId
-
-const generateOpportunities = (
-  companies,
-  pipelineStepIds: { id: string }[],
-) => {
+const generateOpportunities = (companies) => {
   return companies.map((company) => ({
     id: v4(),
     amountAmountMicros: generateRandomAmountMicros(),
@@ -39,7 +29,6 @@ const generateOpportunities = (
     closeDate: new Date(),
     stage: getRandomStage(),
     probability: getRandomProbability(),
-    pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,
     companyId: company.id,
   }));
@@ -55,14 +44,8 @@ export const opportunityPrefillDemoData = async (
      LEFT JOIN ${schemaName}.person ON company.id = "person"."companyId"
      LIMIT 50`,
   );
-  const pipelineStepIds = await entityManager?.query(
-    `SELECT id FROM ${schemaName}."pipelineStep"`,
-  );
 
-  const opportunities = generateOpportunities(
-    companiesWithPeople,
-    pipelineStepIds,
-  );
+  const opportunities = generateOpportunities(companiesWithPeople);
 
   await entityManager
     .createQueryBuilder()
@@ -74,7 +57,6 @@ export const opportunityPrefillDemoData = async (
       'closeDate',
       'stage',
       'probability',
-      'pipelineStepId',
       'pointOfContactId',
       'companyId',
       'position',

@@ -150,7 +150,7 @@ personId
 pointOfContactId
 updatedAt
 companyId
-pipelineStepId
+stage
 probability
 closeDate
 amount
