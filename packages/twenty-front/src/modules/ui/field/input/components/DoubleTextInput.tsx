@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ClipboardEvent, ClipboardEventHandler, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
@@ -39,6 +39,7 @@ type DoubleTextInputProps = {
     newDoubleTextValue: FieldDoubleText,
   ) => void;
   onChange?: (newDoubleTextValue: FieldDoubleText) => void;
+  onPaste?: (newDoubleTextValue: FieldDoubleText) => void;
 };
 
 export const DoubleTextInput = ({
@@ -53,6 +54,7 @@ export const DoubleTextInput = ({
   onShiftTab,
   onTab,
   onChange,
+  onPaste
 }: DoubleTextInputProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
@@ -150,6 +152,21 @@ export const DoubleTextInput = ({
     enabled: isDefined(onClickOutside),
   });
 
+  const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
+
+    if(firstInternalValue.length || secondInternalValue.length) {
+      return;
+    }
+
+    event.preventDefault()
+
+    const name = event.clipboardData.getData('Text');
+
+    const splittedName = name.split(' ');
+
+    onPaste?.({firstValue: splittedName[0], secondValue: splittedName[1]})
+  }
+
   return (
     <StyledContainer ref={containerRef}>
       <StyledInput
@@ -162,6 +179,7 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(event.target.value, secondInternalValue);
         }}
+        onPaste={(event: ClipboardEvent<HTMLInputElement>) => handleOnPaste(event)}
       />
       <StyledInput
         autoComplete="off"
@@ -172,6 +190,7 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(firstInternalValue, event.target.value);
         }}
+        onPaste={(event: ClipboardEvent<HTMLInputElement>) => handleOnPaste(event)}
       />
     </StyledContainer>
   );
