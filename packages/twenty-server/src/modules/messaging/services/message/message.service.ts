@@ -38,6 +38,28 @@ export class MessageService {
     private readonly messageThreadService: MessageThreadService,
   ) {}
 
+  // This is temporary and should replace saveMessages
+  public async saveMessagesFromCache(
+    messages: GmailMessage[],
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    gmailMessageChannelId: string,
+    workspaceId: string,
+  ): Promise<Map<string, string>> {
+    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+      await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+        workspaceId,
+      );
+
+    return await this.saveMessages(
+      messages,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount,
+      gmailMessageChannelId,
+      workspaceId,
+    );
+  }
+
   public async saveMessages(
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,

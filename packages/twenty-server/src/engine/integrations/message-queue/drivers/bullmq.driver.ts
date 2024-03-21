@@ -43,7 +43,10 @@ export class BullMQDriver implements MessageQueueDriver {
       async (job) => {
         await handler(job as { data: T; id: string });
       },
-      this.options,
+      {
+        ...this.options,
+        concurrency: 10,
+      },
     );
 
     this.workerMap[queueName] = worker;

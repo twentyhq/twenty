@@ -48,6 +48,9 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
+import { GmailFetchMessageContentFromCacheJob } from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
+import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
+import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron';
 
 @Module({
   imports: [
@@ -80,6 +83,7 @@ import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-
       EventObjectMetadata,
     ]),
     GmailFullSynV2Module,
+    GmailFetchMessageContentFromCacheModule,
   ],
   providers: [
     {
@@ -143,6 +147,14 @@ import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-
     {
       provide: SaveEventToDbJob.name,
       useClass: SaveEventToDbJob,
+    },
+    {
+      provide: GmailFetchMessageContentFromCacheJob.name,
+      useClass: GmailFetchMessageContentFromCacheJob,
+    },
+    {
+      provide: FetchAllMessagesFromCacheCron.name,
+      useClass: FetchAllMessagesFromCacheCron,
     },
   ],
 })
