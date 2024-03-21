@@ -35,12 +35,12 @@ export class CalendarEventAttendeeService {
       transactionManager,
     );
 
-    const calendarEventAttendeesToUpdate = attendees.map((attendee) => [
-      attendee.id,
-      attendeePersonIds.find(
+    const calendarEventAttendeesToUpdate = attendees.map((attendee) => ({
+      id: attendee.id,
+      personId: attendeePersonIds.find(
         (e: { id: string; email: string }) => e.email === attendee.handle,
       )?.id,
-    ]);
+    }));
 
     if (calendarEventAttendeesToUpdate.length === 0) return;
 
