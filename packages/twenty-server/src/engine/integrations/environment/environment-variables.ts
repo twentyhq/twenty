@@ -146,6 +146,9 @@ export class EnvironmentVariables {
   @IsOptional()
   FILE_TOKEN_EXPIRES_IN: string = '1d';
 
+  @IsString()
+  IV_SECRET: string;
+
   // Auth
   @IsUrl({ require_tld: false })
   @IsOptional()
