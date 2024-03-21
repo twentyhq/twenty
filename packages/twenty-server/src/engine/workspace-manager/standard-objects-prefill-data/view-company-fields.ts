@@ -1,4 +1,9 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  baseObjectStandardFieldIds,
+  companyStandardFieldIds,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewCompanyFields = (
   viewId: string,
@@ -7,8 +12,8 @@ export const viewCompanyFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-4d99-4e2e-a84c-4a27837b1ece'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.name
         ],
       viewId: viewId,
       position: 0,
@@ -17,8 +22,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-0c28-43d8-8ba5-3659924d3489'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.domainName
         ],
       viewId: viewId,
       position: 1,
@@ -27,8 +32,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-95b8-4e10-9881-edb5d4765f9d'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.accountOwner
         ],
       viewId: viewId,
       position: 2,
@@ -37,8 +42,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-66ac-4502-9975-e4d959c50311'
+        objectMetadataMap[standardObjectIds.company].fields[
+          baseObjectStandardFieldIds.createdAt
         ],
       viewId: viewId,
       position: 3,
@@ -47,8 +52,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-8965-464a-8a75-74bafc152a0b'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.employees
         ],
       viewId: viewId,
       position: 4,
@@ -57,8 +62,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-ebeb-4beb-b9ad-6848036fb451'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.linkedinLink
         ],
       viewId: viewId,
       position: 5,
@@ -67,8 +72,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].fields[
-          '20202020-a82a-4ee2-96cc-a18a3259d953'
+        objectMetadataMap[standardObjectIds.company].fields[
+          companyStandardFieldIds.address
         ],
       viewId: viewId,
       position: 6,

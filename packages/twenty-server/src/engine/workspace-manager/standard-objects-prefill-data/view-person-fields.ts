@@ -1,4 +1,9 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  baseObjectStandardFieldIds,
+  personStandardFieldIds,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewPersonFields = (
   viewId: string,
@@ -7,8 +12,8 @@ export const viewPersonFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-3875-44d5-8c33-a6239011cab8'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.name
         ],
       viewId: viewId,
       position: 0,
@@ -17,8 +22,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-a740-42bb-8849-8980fb3f12e1'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.email
         ],
       viewId: viewId,
       position: 1,
@@ -27,8 +32,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-e2f3-448e-b34c-2d625f0025fd'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.company
         ],
       viewId: viewId,
       position: 2,
@@ -37,8 +42,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-4564-4b8b-a09f-05445f2e0bce'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.phone
         ],
       viewId: viewId,
       position: 3,
@@ -47,8 +52,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-66ac-4502-9975-e4d959c50311'
+        objectMetadataMap[standardObjectIds.person].fields[
+          baseObjectStandardFieldIds.createdAt
         ],
       viewId: viewId,
       position: 4,
@@ -57,8 +62,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-5243-4ffb-afc5-2c675da41346'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.city
         ],
       viewId: viewId,
       position: 5,
@@ -67,8 +72,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-b0d0-415a-bef9-640a26dacd9b'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.jobTitle
         ],
       viewId: viewId,
       position: 6,
@@ -77,8 +82,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-f1af-48f7-893b-2007a73dd508'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.linkedinLink
         ],
       viewId: viewId,
       position: 7,
@@ -87,8 +92,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].fields[
-          '20202020-8fc2-487c-b84a-55a99b145cfd'
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.xLink
         ],
       viewId: viewId,
       position: 8,

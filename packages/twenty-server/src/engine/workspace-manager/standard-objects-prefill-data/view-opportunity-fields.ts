@@ -1,4 +1,6 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewOpportunityFields = (
   viewId: string,
@@ -7,8 +9,8 @@ export const viewOpportunityFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
-          '20202020-8609-4f65-a2d9-44009eb422b5'
+        objectMetadataMap[standardObjectIds.opportunity].fields[
+          opportunityStandardFieldIds.name
         ],
       viewId: viewId,
       position: 0,
@@ -17,8 +19,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
-          '20202020-583e-4642-8533-db761d5fa82f'
+        objectMetadataMap[standardObjectIds.opportunity].fields[
+          opportunityStandardFieldIds.amount
         ],
       viewId: viewId,
       position: 1,
@@ -27,8 +29,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
-          '20202020-527e-44d6-b1ac-c4158d307b97'
+        objectMetadataMap[standardObjectIds.opportunity].fields[
+          opportunityStandardFieldIds.closeDate
         ],
       viewId: viewId,
       position: 2,
@@ -37,8 +39,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
-          '20202020-69d4-45f3-9703-690b09fafcf0'
+        objectMetadataMap[standardObjectIds.opportunity].fields[
+          opportunityStandardFieldIds.probability
         ],
       viewId: viewId,
       position: 3,
@@ -47,8 +49,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
-          '20202020-8dfb-42fc-92b6-01afb759ed16'
+        objectMetadataMap[standardObjectIds.opportunity].fields[
+          opportunityStandardFieldIds.pointOfContact
         ],
       viewId: viewId,
       position: 4,

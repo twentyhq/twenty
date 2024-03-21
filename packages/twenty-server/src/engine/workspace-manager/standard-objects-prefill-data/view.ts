@@ -4,6 +4,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
 import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
 import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
@@ -25,8 +26,7 @@ export const viewPrefillData = async (
     .values([
       {
         name: 'Index Companies',
-        objectMetadataId:
-          objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.company].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -35,8 +35,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All Companies',
-        objectMetadataId:
-          objectMetadataMap['20202020-b374-4779-a561-80086cb2e17f'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.company].id,
         type: 'table',
         key: null,
         position: 1,
@@ -45,8 +44,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'Index People',
-        objectMetadataId:
-          objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.person].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -55,8 +53,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All People',
-        objectMetadataId:
-          objectMetadataMap['20202020-e674-48e5-a542-72570eee7213'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.person].id,
         type: 'table',
         key: null,
         position: 1,
@@ -65,8 +62,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'Index Opportunities',
-        objectMetadataId:
-          objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -75,14 +71,13 @@ export const viewPrefillData = async (
       },
       {
         name: 'By Stage',
-        objectMetadataId:
-          objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
         type: 'kanban',
         key: null,
         position: 1,
         icon: 'IconLayoutKanban',
         kanbanFieldMetadataId:
-          objectMetadataMap['20202020-9549-49dd-b2b2-883999db8938'].fields[
+          objectMetadataMap[standardObjectIds.opportunity].fields[
             '20202020-d09b-4f65-ac42-06a2f20ba0e8'
           ],
       },

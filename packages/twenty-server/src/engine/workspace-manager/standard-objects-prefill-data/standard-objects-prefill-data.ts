@@ -11,10 +11,10 @@ export const standardObjectsPrefillData = async (
   objectMetadata: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-    acc[object.nameSingular] = {
+    acc[object.standardId ?? ''] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
-        acc[field.name] = field.id;
+        acc[field.standardId ?? ''] = field.id;
 
         return acc;
       }, {}),
