@@ -3602,7 +3602,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blocknote/react@npm:^0.12.1":
+"@blocknote/react@npm:^0.12.2":
   version: 0.12.2
   resolution: "@blocknote/react@npm:0.12.2"
   dependencies:
@@ -45810,7 +45810,7 @@ __metadata:
     "@babel/core": "npm:^7.14.5"
     "@babel/preset-react": "npm:^7.14.5"
     "@blocknote/core": "npm:^0.12.1"
-    "@blocknote/react": "npm:^0.12.1"
+    "@blocknote/react": "npm:^0.12.2"
     "@chakra-ui/accordion": "npm:^2.3.0"
     "@chakra-ui/system": "npm:^2.6.0"
     "@codesandbox/sandpack-react": "npm:^2.13.5"
