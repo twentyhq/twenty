@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -43,20 +45,26 @@ const StyledButton = styled.button`
 `;
 
 type SettingsAccountsListCardProps<
-  Account extends Pick<ConnectedAccount, 'handle' | 'id'>,
+  AccountOrChannel extends Pick<
+    ConnectedAccount | CalendarChannel | MessageChannel,
+    'handle' | 'id'
+  >,
 > = {
-  accounts: Account[];
+  accountsOrChannels: AccountOrChannel[];
   hasFooter?: boolean;
   isLoading?: boolean;
-  onRowClick?: (account: Account) => void;
+  onRowClick?: (accountOrChannel: AccountOrChannel) => void;
   RowIcon?: IconComponent;
-  RowRightComponent: ComponentType<{ account: Account }>;
+  RowRightComponent: ComponentType<{ accountOrChannel: AccountOrChannel }>;
 };
 
 export const SettingsAccountsListCard = <
-  Account extends Pick<ConnectedAccount, 'handle' | 'id'> = ConnectedAccount,
+  Account extends Pick<
+    ConnectedAccount | CalendarChannel | MessageChannel,
+    'handle' | 'id'
+  >,
 >({
-  accounts,
+  accountsOrChannels,
   hasFooter,
   isLoading,
   onRowClick,
@@ -68,17 +76,17 @@ export const SettingsAccountsListCard = <
 
   if (isLoading === true) return <SettingsAccountsListSkeletonCard />;
 
-  if (!accounts.length) return <SettingsAccountsListEmptyStateCard />;
+  if (!accountsOrChannels.length) return <SettingsAccountsListEmptyStateCard />;
 
   return (
     <Card>
-      {accounts.map((account, index) => (
+      {accountsOrChannels.map((account, index) => (
         <SettingsAccountRow
           key={account.id}
           LeftIcon={RowIcon}
           account={account}
-          rightComponent={<RowRightComponent account={account} />}
-          divider={index < accounts.length - 1}
+          rightComponent={<RowRightComponent accountOrChannel={account} />}
+          divider={index < accountsOrChannels.length - 1}
           onClick={() => onRowClick?.(account)}
         />
       ))}

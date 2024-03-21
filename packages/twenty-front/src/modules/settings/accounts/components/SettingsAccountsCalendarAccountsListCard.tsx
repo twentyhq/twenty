@@ -45,13 +45,13 @@ export const SettingsAccountsCalendarAccountsListCard = () => {
 
   return (
     <SettingsAccountsListCard
-      accounts={calendarChannels}
+      accountsOrChannels={calendarChannels}
       isLoading={accountsLoading || calendarChannelsLoading}
       onRowClick={(calendarChannel) =>
         navigate(`/settings/accounts/calendars/${calendarChannel.id}`)
       }
       RowIcon={IconGoogleCalendar}
-      RowRightComponent={({ account: calendarChannel }) => (
+      RowRightComponent={({ accountOrChannel: calendarChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             synced={!!calendarChannel.isSyncEnabled}

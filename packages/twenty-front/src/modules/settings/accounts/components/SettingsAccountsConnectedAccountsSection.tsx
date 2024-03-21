@@ -18,7 +18,7 @@ export const SettingsAccountsConnectedAccountsSection = ({
       description="Manage your internet accounts."
     />
     <SettingsAccountsListCard
-      accounts={accounts}
+      accountsOrChannels={accounts}
       isLoading={loading}
       RowRightComponent={SettingsAccountsRowDropdownMenu}
       hasFooter
