@@ -206,38 +206,94 @@ export class GoogleCalendarFullSyncService {
           workspaceId,
         );
 
-      dataSourceMetadata?.transaction(async (transactionManager) => {
-        await this.calendarEventRepository.saveCalendarEvents(
-          eventsToSave,
-          workspaceId,
-          transactionManager,
-        );
+      try {
+        dataSourceMetadata?.transaction(async (transactionManager) => {
+          startTime = Date.now();
 
-        await this.calendarEventRepository.updateCalendarEvents(
-          eventsToUpdate,
-          workspaceId,
-          transactionManager,
-        );
+          await this.calendarEventRepository.saveCalendarEvents(
+            eventsToSave,
+            workspaceId,
+            transactionManager,
+          );
 
-        await this.calendarChannelEventAssociationRepository.saveCalendarChannelEventAssociations(
-          calendarChannelEventAssociationsToSave,
-          workspaceId,
-          transactionManager,
-        );
+          endTime = Date.now();
 
-        await this.calendarEventAttendeesRepository.saveCalendarEventAttendees(
-          attendeesToSave,
-          workspaceId,
-          transactionManager,
-        );
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving events in ${
+              endTime - startTime
+            }ms.`,
+          );
 
-        await this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
-          attendeesToUpdate,
-          iCalUIDCalendarEventIdMap,
-          workspaceId,
-          transactionManager,
+          startTime = Date.now();
+
+          await this.calendarEventRepository.updateCalendarEvents(
+            eventsToUpdate,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating events in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarChannelEventAssociationRepository.saveCalendarChannelEventAssociations(
+            calendarChannelEventAssociationsToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving calendar channel event associations in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarEventAttendeesRepository.saveCalendarEventAttendees(
+            attendeesToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
+            attendeesToUpdate,
+            iCalUIDCalendarEventIdMap,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+        });
+      } catch (error) {
+        this.logger.error(
+          `Error during google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}`,
         );
-      });
+      }
     } else {
       this.logger.log(
         `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
