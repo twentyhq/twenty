@@ -11,14 +11,11 @@ const StyledHeader = styled.li`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   padding: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
-
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
 `;
 
 const StyledChildrenWrapper = styled.span`
@@ -46,9 +43,10 @@ export const DropdownMenuHeader = ({
   testId,
 }: DropdownMenuHeaderProps) => {
   return (
-    <StyledHeader data-testid={testId} onClick={onClick}>
+    <StyledHeader data-testid={testId}>
       {StartIcon && (
         <LightIconButton
+          onClick={onClick}
           testId="dropdown-menu-header-end-icon"
           Icon={StartIcon}
           accent="tertiary"
@@ -58,6 +56,7 @@ export const DropdownMenuHeader = ({
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {EndIcon && (
         <StyledLightIconButton
+          onClick={onClick}
           testId="dropdown-menu-header-end-icon"
           Icon={EndIcon}
           accent="tertiary"

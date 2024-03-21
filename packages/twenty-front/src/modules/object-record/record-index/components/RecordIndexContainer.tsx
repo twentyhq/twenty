@@ -10,7 +10,6 @@ import { RecordIndexTableContainer } from '@/object-record/record-index/componen
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -131,7 +130,6 @@ export const RecordIndexContainer = ({
             setRecordIndexViewType(view.type);
             setRecordIndexIsCompactModeActive(view.isCompact);
           }}
-          optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
         />
         <RecordIndexViewBarEffect
           objectNamePlural={objectNamePlural}

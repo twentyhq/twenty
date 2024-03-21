@@ -51,13 +51,19 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
   }, [currentView, setIsCurrentViewKeyIndex]);
 
-  const viewsOnCurrentObject = views
-    .filter((view) => view.objectMetadataId === viewObjectMetadataId)
+  const viewsOnCurrentObject = [
+    ...views
+      .filter((view) => view.objectMetadataId === viewObjectMetadataId)
+      .filter((view) => view.key !== 'INDEX'),
+  ]
+    .sort((a, b) => a.position - b.position)
+    .concat(indexView ? [indexView] : [])
     .map((view) => ({
       id: view.id,
       name: view.name,
       type: view.type,
       key: view.key,
+      position: view.position,
       objectMetadataId: view.objectMetadataId,
       icon: view.icon,
     }));

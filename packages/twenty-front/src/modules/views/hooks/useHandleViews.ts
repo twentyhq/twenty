@@ -37,8 +37,6 @@ export const useHandleViews = (viewBarComponentId?: string) => {
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
 
-  const createViewFromCurrent = useRecoilCallback(() => () => {}, []);
-
   const [_, setSearchParams] = useSearchParams();
 
   const removeView = useRecoilCallback(
@@ -50,7 +48,18 @@ export const useHandleViews = (viewBarComponentId?: string) => {
 
   const createEmptyView = useRecoilCallback(
     ({ snapshot }) =>
-      async (id: string, name: string) => {
+      async ({
+        id,
+        name,
+        icon,
+        kanbanFieldMetadataId,
+        type,
+      }: Partial<
+        Pick<
+          GraphQLView,
+          'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
+        >
+      >) => {
         const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
 
         if (!isDefined(currentViewId)) {
@@ -65,9 +74,13 @@ export const useHandleViews = (viewBarComponentId?: string) => {
 
         const newView = await createOneRecord({
           id: id ?? v4(),
-          name: name,
+          name: name ?? view.name,
+          icon: icon ?? view.icon,
+          key: null,
+          kanbanFieldMetadataId:
+            kanbanFieldMetadataId ?? view.kanbanFieldMetadataId,
+          type: type ?? view.type,
           objectMetadataId: view.objectMetadataId,
-          type: view.type,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -120,11 +133,23 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     [currentViewIdState, updateOneRecord],
   );
 
+  const updateView = useRecoilCallback(
+    () => async (view: Partial<GraphQLView>) => {
+      if (isDefined(view.id)) {
+        await updateOneRecord({
+          idToUpdate: view.id,
+          updateOneRecordInput: view,
+        });
+      }
+    },
+    [updateOneRecord],
+  );
+
   return {
     selectView,
     updateCurrentView,
+    updateView,
     removeView,
     createEmptyView,
-    createViewFromCurrent,
   };
 };
