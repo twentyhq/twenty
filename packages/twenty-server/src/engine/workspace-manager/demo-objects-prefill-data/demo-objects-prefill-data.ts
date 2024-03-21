@@ -30,13 +30,15 @@ export const demoObjectsPrefillData = async (
 
   await queryRunner.connect();
 
-  workspaceDataSource.transaction(async (entityManager: EntityManager) => {
-    await companyPrefillDemoData(entityManager, schemaName);
-    await personPrefillDemoData(entityManager, schemaName);
-    await opportunityPrefillDemoData(entityManager, schemaName);
+  await workspaceDataSource.transaction(
+    async (entityManager: EntityManager) => {
+      await companyPrefillDemoData(entityManager, schemaName);
+      await personPrefillDemoData(entityManager, schemaName);
+      await opportunityPrefillDemoData(entityManager, schemaName);
 
-    await viewPrefillData(entityManager, schemaName, objectMetadataMap);
+      await viewPrefillData(entityManager, schemaName, objectMetadataMap);
 
-    await workspaceMemberPrefillData(entityManager, schemaName);
-  });
+      await workspaceMemberPrefillData(entityManager, schemaName);
+    },
+  );
 };

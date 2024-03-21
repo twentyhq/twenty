@@ -106,7 +106,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           return acc;
         }, {});
 
-        workspaceDataSource.transaction(
+        const queryRunner = workspaceDataSource.createQueryRunner();
+
+        await queryRunner.connect();
+
+        await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
             await seedCompanies(entityManager, dataSourceMetadata.schema);
             await seedPeople(entityManager, dataSourceMetadata.schema);
