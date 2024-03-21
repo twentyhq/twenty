@@ -140,7 +140,9 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
           if (
             typeof value === 'string' &&
             !value.startsWith("'") &&
-            !fieldMetadataDefaultValueFunctionName[value]
+            !Object.values(fieldMetadataDefaultValueFunctionName).includes(
+              value as FieldMetadataDefaultValueFunctionNames,
+            )
           ) {
             alteredDefaultValue = {
               ...currentDefaultValue,
