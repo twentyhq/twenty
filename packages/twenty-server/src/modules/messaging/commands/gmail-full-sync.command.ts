@@ -34,6 +34,7 @@ export class GmailFullSyncCommand extends CommandRunner {
     _passedParam: string[],
     options: GmailFullSyncOptions,
   ): Promise<void> {
+    console.log('allo');
     await this.fetchWorkspaceMessages(options.workspaceId);
 
     return;

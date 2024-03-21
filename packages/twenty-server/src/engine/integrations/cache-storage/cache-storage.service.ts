@@ -26,20 +26,22 @@ export class CacheStorageService {
   }
 
   async setAdd(key: string, value: string[]) {
+    if (value.length === 0) {
+      return;
+    }
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.sAdd(
         `${this.namespace}:${key}`,
         value,
       );
-    } else {
-      this.get(key).then((res: string[]) => {
-        if (res) {
-          this.set(key, [...res, ...value]);
-        } else {
-          this.set(key, value);
-        }
-      });
     }
+    this.get(key).then((res: string[]) => {
+      if (res) {
+        this.set(key, [...res, ...value]);
+      } else {
+        this.set(key, value);
+      }
+    });
   }
 
   async setPop(key: string, size: number = 1) {
@@ -48,13 +50,12 @@ export class CacheStorageService {
         `${this.namespace}:${key}`,
         size,
       );
-    } else {
-      this.get(key).then((res: string[]) => {
-        if (res) {
-          this.set(key, res.slice(0, -size));
-        }
-      });
     }
+    this.get(key).then((res: string[]) => {
+      if (res) {
+        this.set(key, res.slice(0, -size));
+      }
+    });
   }
 
   private isRedisCache() {
