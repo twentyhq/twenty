@@ -267,6 +267,7 @@ export const viewStandardFieldIds = {
   type: '20202020-dd11-4607-9ec7-c57217262a7f',
   key: '20202020-298e-49fa-9f4a-7b416b110443',
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
+  kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',

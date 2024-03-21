@@ -45,7 +45,7 @@ const generateOpportunities = (
   }));
 };
 
-export const seedDemoOpportunity = async (
+export const opportunityPrefillDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {

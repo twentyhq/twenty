@@ -4,7 +4,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
-import { pipelineStepPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/pipeline-step';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
@@ -28,6 +27,5 @@ export const standardObjectsPrefillData = async (
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
     await viewPrefillData(entityManager, schemaName, objectMetadataMap);
-    await pipelineStepPrefillData(entityManager, schemaName);
   });
 };

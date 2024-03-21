@@ -67,6 +67,14 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   icon: string;
 
   @FieldMetadata({
+    standardId: viewStandardFieldIds.kanbanFieldMetadataId,
+    type: FieldMetadataType.TEXT,
+    label: 'kanbanfieldMetadataId',
+    description: 'View Kanban column field',
+  })
+  kanbanFieldMetadataId: string;
+
+  @FieldMetadata({
     standardId: viewStandardFieldIds.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
