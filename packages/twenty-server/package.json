@@ -44,7 +44,8 @@
     "graphql-middleware": "^6.1.35",
     "jwt-decode": "^4.0.0",
     "passport": "^0.7.0",
-    "psl": "^1.9.0"
+    "psl": "^1.9.0",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",

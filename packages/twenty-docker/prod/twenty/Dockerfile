@@ -47,9 +47,11 @@ RUN yarn nx build twenty-front
 # Final stage: Run the application
 FROM node:18.17.1-alpine as twenty
 
-# Use a non-root user
-RUN adduser -D twentyuser
-USER twentyuser
+# Used to run healthcheck in docker
+RUN apk add --no-cache curl jq
+
+COPY ./packages/twenty-docker/prod/twenty/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 WORKDIR /app/packages/twenty-server
 
@@ -57,12 +59,19 @@ ARG REACT_APP_SERVER_BASE_URL
 ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 
 # Copy built applications from previous stages
-COPY --chown=twentyuser --from=twenty-server-build /app /app
-COPY --chown=twentyuser --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
-COPY --chown=twentyuser --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+COPY --chown=1000 --from=twenty-server-build /app /app
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server /app/packages/twenty-server
+COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 # Set metadata and labels
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend and frontend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
 
+RUN mkdir /app/.local-storage
+RUN chown -R 1000 /app
+
+# Use non root user with uid 1000
+USER 1000
+
 CMD ["node", "dist/src/main"]
+ENTRYPOINT ["/app/entrypoint.sh"]
