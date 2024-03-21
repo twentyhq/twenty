@@ -47,7 +47,9 @@ type AssertFieldMetadataFunction = <
                             ? FieldTextMetadata
                             : E extends 'UUID'
                               ? FieldUuidMetadata
-                              : never,
+                              : E extends 'JSON'
+                                ? FieldTextMetadata
+                                : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

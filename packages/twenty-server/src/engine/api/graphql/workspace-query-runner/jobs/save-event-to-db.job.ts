@@ -33,14 +33,20 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
     const eventType = `${data.operation}.${data.objectName}`;
 
     // TODO: add "workspaceMember" (who performed the action, need to send it in the event)
-    // TODO: need to support objects others than "person", "company", "opportunities"
+    // TODO: need to support objects others than "person", "company", "opportunity"
 
     if (
       data.objectName != 'person' &&
       data.objectName != 'company' &&
-      data.objectName != 'opportunities'
+      data.objectName != 'opportunity'
     ) {
       return;
+    }
+
+    if (data.details.diff) {
+      data.details = {
+        diff: data.details.diff,
+      };
     }
 
     await workspaceDataSource?.query(
