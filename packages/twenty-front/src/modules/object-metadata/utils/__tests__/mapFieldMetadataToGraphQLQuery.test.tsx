@@ -150,7 +150,6 @@ personId
 pointOfContactId
 updatedAt
 companyId
-stage
 probability
 closeDate
 amount
