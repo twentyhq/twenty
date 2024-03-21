@@ -11,7 +11,6 @@ import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/compo
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -23,7 +22,7 @@ export const SettingsAccountsCalendarAccountsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
-  const { records: _accounts, loading } = useFindManyRecords<ConnectedAccount>({
+  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {
       accountOwnerId: {
@@ -34,7 +33,7 @@ export const SettingsAccountsCalendarAccountsListCard = () => {
 
   return (
     <SettingsAccountsListCard
-      accounts={mockedConnectedAccounts}
+      accounts={accounts}
       isLoading={loading}
       onRowClick={(account) =>
         navigate(`/settings/accounts/calendars/${account.id}`)

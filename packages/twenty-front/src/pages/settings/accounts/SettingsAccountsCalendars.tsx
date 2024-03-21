@@ -18,11 +18,10 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { records: _accounts } = useFindManyRecords<ConnectedAccount>({
+  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {
       accountOwnerId: {
@@ -78,7 +77,7 @@ export const SettingsAccountsCalendars = () => {
           <SettingsAccountsCalendarAccountsListCard />
         </Section>
         {/* TODO: retrieve connected accounts data from back-end when the Calendar feature is ready. */}
-        {!!mockedConnectedAccounts.length && (
+        {!!accounts.length && (
           <>
             <Section>
               <H2Title
