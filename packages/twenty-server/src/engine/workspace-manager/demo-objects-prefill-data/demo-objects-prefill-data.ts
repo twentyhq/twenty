@@ -25,11 +25,6 @@ export const demoObjectsPrefillData = async (
     return acc;
   }, {});
 
-  // TODO: udnerstand why only with this createQueryRunner transaction below works
-  const queryRunner = workspaceDataSource.createQueryRunner();
-
-  await queryRunner.connect();
-
   await workspaceDataSource.transaction(
     async (entityManager: EntityManager) => {
       await companyPrefillDemoData(entityManager, schemaName);

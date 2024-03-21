@@ -11,10 +11,18 @@ export const standardObjectsPrefillData = async (
   objectMetadata: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-    acc[object.standardId ?? ''] = {
+    if (!object.standardId) {
+      throw new Error('Standard Id is not set for object: ${object.name}');
+    }
+
+    acc[object.standardId] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
-        acc[field.standardId ?? ''] = field.id;
+        if (!field.standardId) {
+          throw new Error('Standard Id is not set for field: ${field.name}');
+        }
+
+        acc[field.standardId] = field.id;
 
         return acc;
       }, {}),

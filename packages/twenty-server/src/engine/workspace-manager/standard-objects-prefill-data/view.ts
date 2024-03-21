@@ -87,7 +87,7 @@ export const viewPrefillData = async (
     .execute();
 
   const viewIdMap = createdViews.raw.reduce((acc, view) => {
-    acc[`${view.name}`] = view.id;
+    acc[view.name] = view.id;
 
     return acc;
   }, {});
