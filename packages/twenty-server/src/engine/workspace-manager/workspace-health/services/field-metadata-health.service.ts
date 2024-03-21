@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
 
@@ -67,18 +67,30 @@ export class FieldMetadataHealthService {
           issues.push(...defaultValueIssues);
         }
 
-        for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
-          const compositeFieldIssues = await this.healthCheckField(
+        // Only check structure on nested composite fields
+        if (options.mode === 'structure' || options.mode === 'all') {
+          for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
+            const compositeFieldStructureIssues = this.structureFieldCheck(
+              tableName,
+              workspaceTableColumns,
+              computeCompositeFieldMetadata(
+                compositeFieldMetadata,
+                fieldMetadata,
+              ),
+            );
+
+            issues.push(...compositeFieldStructureIssues);
+          }
+        }
+
+        // Only check metadata on the parent composite field
+        if (options.mode === 'metadata' || options.mode === 'all') {
+          const compositeFieldMetadataIssues = this.metadataFieldCheck(
             tableName,
-            workspaceTableColumns,
-            computeCompositeFieldMetadata(
-              compositeFieldMetadata,
-              fieldMetadata,
-            ),
-            options,
+            fieldMetadata,
           );
 
-          issues.push(...compositeFieldIssues);
+          issues.push(...compositeFieldMetadataIssues);
         }
       } else {
         const fieldIssues = await this.healthCheckField(
@@ -137,6 +149,7 @@ export class FieldMetadataHealthService {
       fieldMetadata.type,
       fieldMetadata.defaultValue,
     );
+
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,
@@ -178,7 +191,7 @@ export class FieldMetadataHealthService {
 
     if (columnDefaultValue && isEnumFieldMetadataType(fieldMetadata.type)) {
       const enumValues = fieldMetadata.options?.map((option) =>
-        serializeDefaultValue(option.value),
+        serializeDefaultValue(`'${option.value}'`),
       );
 
       if (!enumValues.includes(columnDefaultValue)) {
@@ -325,7 +338,9 @@ export class FieldMetadataHealthService {
       isEnumFieldMetadataType(fieldMetadata.type) &&
       fieldMetadata.defaultValue
     ) {
-      const enumValues = fieldMetadata.options?.map((option) => option.value);
+      const enumValues = fieldMetadata.options?.map((option) =>
+        serializeDefaultValue(`'${option.value}'`),
+      );
       const metadataDefaultValue = (
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>
       )?.value;
@@ -340,30 +355,5 @@ export class FieldMetadataHealthService {
     }
 
     return issues;
-  }
-
-  private isCompositeObjectWellStructured(
-    fieldMetadataType: FieldMetadataType,
-    object: any,
-  ): boolean {
-    const subFields = compositeDefinitions.get(fieldMetadataType)?.() ?? [];
-
-    if (!object) {
-      return true;
-    }
-
-    if (subFields.length === 0) {
-      throw new InternalServerErrorException(
-        `The composite field type ${fieldMetadataType} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
-      );
-    }
-
-    for (const subField of subFields) {
-      if (!object[subField.name]) {
-        return false;
-      }
-    }
-
-    return true;
   }
 }

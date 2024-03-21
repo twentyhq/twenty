@@ -72,7 +72,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: CalendarChannelVisibility.SHARE_EVERYTHING },
+    defaultValue: { value: `'${CalendarChannelVisibility.SHARE_EVERYTHING}'` },
   })
   visibility: string;
 
