@@ -1,13 +1,17 @@
 import { EntityManager } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
+import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
+import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
-  // Creating views
   const createdViews = await entityManager
     .createQueryBuilder()
     .insert()
@@ -18,40 +22,47 @@ export const viewPrefillData = async (
       'key',
       'position',
       'icon',
+      'kanbanFieldMetadataId',
     ])
-    .orIgnore()
     .values([
       {
         name: 'All Companies',
-        objectMetadataId: objectMetadataMap['company'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.company].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
         icon: 'IconBuildingSkyscraper',
+        kanbanFieldMetadataId: '',
       },
       {
         name: 'All People',
-        objectMetadataId: objectMetadataMap['person'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.person].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
         icon: 'IconUser',
-      },
-      {
-        name: 'By Stage',
-        objectMetadataId: objectMetadataMap['opportunity'].id,
-        type: 'kanban',
-        key: null,
-        position: 0,
-        icon: 'IconLayoutKanban',
+        kanbanFieldMetadataId: '',
       },
       {
         name: 'All Opportunities',
-        objectMetadataId: objectMetadataMap['opportunity'].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
         type: 'table',
         key: 'INDEX',
-        position: 1,
+        position: 0,
         icon: 'IconTargetArrow',
+        kanbanFieldMetadataId: '',
+      },
+      {
+        name: 'By Stage',
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
+        type: 'kanban',
+        key: null,
+        position: 1,
+        icon: 'IconLayoutKanban',
+        kanbanFieldMetadataId:
+          objectMetadataMap[standardObjectIds.opportunity].fields[
+            opportunityStandardFieldIds.stage
+          ],
       },
     ])
     .returning('*')
@@ -63,7 +74,6 @@ export const viewPrefillData = async (
     return acc;
   }, {});
 
-  // Creating viewFields
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -74,196 +84,16 @@ export const viewPrefillData = async (
       'isVisible',
       'size',
     ])
-    .orIgnore()
     .values([
-      // Company
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['name'],
-        viewId: viewIdMap['All Companies'],
-        position: 0,
-        isVisible: true,
-        size: 180,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['domainName'],
-        viewId: viewIdMap['All Companies'],
-        position: 1,
-        isVisible: true,
-        size: 100,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['accountOwner'],
-        viewId: viewIdMap['All Companies'],
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['createdAt'],
-        viewId: viewIdMap['All Companies'],
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['employees'],
-        viewId: viewIdMap['All Companies'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['linkedinLink'],
-        viewId: viewIdMap['All Companies'],
-        position: 5,
-        isVisible: true,
-        size: 170,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['company'].fields['address'],
-        viewId: viewIdMap['All Companies'],
-        position: 6,
-        isVisible: true,
-        size: 170,
-      },
-      // Person
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['name'],
-        viewId: viewIdMap['All People'],
-        position: 0,
-        isVisible: true,
-        size: 210,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['email'],
-        viewId: viewIdMap['All People'],
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['company'],
-        viewId: viewIdMap['All People'],
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['phone'],
-        viewId: viewIdMap['All People'],
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['createdAt'],
-        viewId: viewIdMap['All People'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['city'],
-        viewId: viewIdMap['All People'],
-        position: 5,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['jobTitle'],
-        viewId: viewIdMap['All People'],
-        position: 6,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['linkedinLink'],
-        viewId: viewIdMap['All People'],
-        position: 7,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['person'].fields['xLink'],
-        viewId: viewIdMap['All People'],
-        position: 8,
-        isVisible: true,
-        size: 150,
-      },
-      // Opportunity
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['name'],
-        viewId: viewIdMap['All Opportunities'],
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
-        viewId: viewIdMap['All Opportunities'],
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
-        viewId: viewIdMap['All Opportunities'],
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
-        viewId: viewIdMap['All Opportunities'],
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataMap['opportunity'].fields['pointOfContact'],
-        viewId: viewIdMap['All Opportunities'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['name'],
-        viewId: viewIdMap['By Stage'],
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
-        viewId: viewIdMap['By Stage'],
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
-        viewId: viewIdMap['By Stage'],
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
-        viewId: viewIdMap['By Stage'],
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataMap['opportunity'].fields['pointOfContact'],
-        viewId: viewIdMap['By Stage'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
+      ...viewCompanyFields(viewIdMap['Index Companies'], objectMetadataMap),
+      ...viewPersonFields(viewIdMap['Index People'], objectMetadataMap),
+      ...viewOpportunityFields(
+        viewIdMap['Index Opportunities'],
+        objectMetadataMap,
+      ),
+      ...viewCompanyFields(viewIdMap['All Companies'], objectMetadataMap),
+      ...viewPersonFields(viewIdMap['All People'], objectMetadataMap),
+      ...viewOpportunityFields(viewIdMap['By Stage'], objectMetadataMap),
     ])
     .execute();
 };

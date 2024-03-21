@@ -203,7 +203,6 @@ export const opportunityStandardFieldIds = {
   probability: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
-  pipelineStep: '20202020-cc8c-4ae7-8d83-25c3addaec5a',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
@@ -230,13 +229,6 @@ export const personStandardFieldIds = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventAttendees: '20202020-52ee-45e9-a702-b64b3753e3a9',
   events: '20202020-a43e-4873-9c23-e522de906ce5',
-};
-
-export const pipelineStepStandardFieldIds = {
-  name: '20202020-e10a-4119-9466-97873e86fa47',
-  color: '20202020-4a09-4088-90b8-ce1c72730f43',
-  position: '20202020-44e8-4520-af64-4a3cb37fa0c5',
-  opportunities: '20202020-0442-482a-867f-6d8fd4145ed1',
 };
 
 export const viewFieldStandardFieldIds = {
@@ -267,6 +259,7 @@ export const viewStandardFieldIds = {
   type: '20202020-dd11-4607-9ec7-c57217262a7f',
   key: '20202020-298e-49fa-9f4a-7b416b110443',
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
+  kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
