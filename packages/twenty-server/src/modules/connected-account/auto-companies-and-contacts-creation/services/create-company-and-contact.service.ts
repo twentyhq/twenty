@@ -12,7 +12,6 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
@@ -22,6 +21,7 @@ import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard
 import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -60,12 +60,13 @@ export class CreateCompanyAndContactService {
         transactionManager,
       );
 
-    const contactsToCreateFromOtherCompanies =
-      filterOutContactsFromCompanyOrWorkspace(
-        contactsToCreate,
-        connectedAccountHandle,
-        workspaceMembers,
-      );
+    const contactsToCreateFromOtherCompanies = contactsToCreate;
+
+    filterOutContactsFromCompanyOrWorkspace(
+      contactsToCreate,
+      connectedAccountHandle,
+      workspaceMembers,
+    );
 
     const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
       contactsToCreateFromOtherCompanies,
@@ -131,7 +132,7 @@ export class CreateCompanyAndContactService {
   }
 
   async createCompaniesAndContactsAndUpdateParticipants(
-    connectedAccountHandle,
+    connectedAccountHandle: string,
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
@@ -149,32 +150,26 @@ export class CreateCompanyAndContactService {
           transactionManager,
         );
 
-        const handles = contactsToCreate.map(
-          (participant) => participant.handle,
-        );
-
-        const messageParticipantsToCreateWithoutPersonIdAndWorkspaceMemberId =
-          await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-            handles,
+        const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+          await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
             workspaceId,
             transactionManager,
           );
 
         await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-          messageParticipantsToCreateWithoutPersonIdAndWorkspaceMemberId,
+          messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );
 
-        const calendarEventAttendeesToCreateWithoutPersonIdAndWorkspaceMemberId =
-          await this.calendarEventAttendeeRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-            handles,
+        const calendarEventAttendeesWithoutPersonIdAndWorkspaceMemberId =
+          await this.calendarEventAttendeeRepository.getWithoutPersonIdAndWorkspaceMemberId(
             workspaceId,
             transactionManager,
           );
 
         await this.calendarEventAttendeeService.updateCalendarEventAttendeesAfterContactCreation(
-          calendarEventAttendeesToCreateWithoutPersonIdAndWorkspaceMemberId,
+          calendarEventAttendeesWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );

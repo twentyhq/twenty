@@ -152,8 +152,7 @@ export class CalendarEventAttendeeRepository {
     );
   }
 
-  public async getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-    handles: string[],
+  public async getWithoutPersonIdAndWorkspaceMemberId(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<CalendarEventAttendeeWithId[]> {
@@ -169,9 +168,8 @@ export class CalendarEventAttendeeRepository {
         `SELECT "calendarEventAttendee".*
         FROM ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee"
         WHERE "calendarEventAttendee"."personId" IS NULL
-        AND "calendarEventAttendee"."workspaceMemberId" IS NULL
-        AND "calendarEventAttendee"."handle" = ANY($1)`,
-        [handles],
+        AND "calendarEventAttendee"."workspaceMemberId" IS NULL`,
+        [],
         workspaceId,
         transactionManager,
       );
