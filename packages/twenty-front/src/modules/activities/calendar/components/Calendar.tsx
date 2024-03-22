@@ -103,7 +103,7 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
           page: calendarEventsPage.pageNumber + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.timelineThreads?.length) {
+          if (!fetchMoreResult?.[queryName]?.timelineCalendarEvents?.length) {
             setCalendarEventsPage((calendarEventsPage) => ({
               ...calendarEventsPage,
               hasNextPage: false,
@@ -111,8 +111,8 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
             return {
               [queryName]: {
                 ...prev?.[queryName],
-                timelineThreads: [
-                  ...(prev?.[queryName]?.timelineThreads ?? []),
+                timelineCalendarEvents: [
+                  ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
                 ],
               },
             };
@@ -121,9 +121,9 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
           return {
             [queryName]: {
               ...prev?.[queryName],
-              timelineThreads: [
-                ...(prev?.[queryName]?.timelineThreads ?? []),
-                ...(fetchMoreResult?.[queryName]?.timelineThreads ?? []),
+              timelineCalendarEvents: [
+                ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
+                ...(fetchMoreResult?.[queryName]?.timelineCalendarEvents ?? []),
               ],
             },
           };
