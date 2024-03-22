@@ -186,10 +186,10 @@ describe('useActivityTargetObjectRecords', () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState(),
+          currentWorkspaceMemberState,
         );
         const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState(),
+          objectMetadataItemsState,
         );
 
         const { activityTargetObjectRecords, loadingActivityTargets } =

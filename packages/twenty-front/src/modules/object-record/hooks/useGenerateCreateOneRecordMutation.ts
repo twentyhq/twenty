@@ -17,7 +17,7 @@ export const useGenerateCreateOneRecordMutation = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;

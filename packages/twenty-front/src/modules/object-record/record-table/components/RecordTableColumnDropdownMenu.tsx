@@ -17,9 +17,9 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const { getVisibleTableColumnsSelector } = useRecordTableStates();
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const secondVisibleColumn = visibleTableColumns[1];
   const canMoveLeft =

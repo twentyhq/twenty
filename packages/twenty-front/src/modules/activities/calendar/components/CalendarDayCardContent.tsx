@@ -4,6 +4,7 @@ import { differenceInSeconds, endOfDay, format } from 'date-fns';
 
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 type CalendarDayCardContentProps = {
@@ -53,8 +54,8 @@ export const CalendarDayCardContent = ({
 }: CalendarDayCardContentProps) => {
   const theme = useTheme();
 
-  const endOfDayDate = endOfDay(calendarEvents[0].startsAt);
-  const endsIn = differenceInSeconds(endOfDayDate, Date.now());
+  const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
+  const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
   const weekDayLabel = format(endOfDayDate, 'EE');
   const monthDayLabel = format(endOfDayDate, 'dd');
@@ -71,7 +72,7 @@ export const CalendarDayCardContent = ({
       animate="ended"
       variants={upcomingDayCardContentVariants}
       transition={{
-        delay: Math.max(0, endsIn),
+        delay: Math.max(0, dayEndsIn),
         duration: theme.animation.duration.fast,
       }}
     >

@@ -12,9 +12,9 @@ export const useOpenActivityRightDrawer = () => {
   const { openRightDrawer, isRightDrawerOpen, rightDrawerPage } =
     useRightDrawer();
   const [viewableActivityId, setViewableActivityId] = useRecoilState(
-    viewableActivityIdState(),
+    viewableActivityIdState,
   );
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState());
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
   const setHotkeyScope = useSetHotkeyScope();
 
   return (activityId: string) => {

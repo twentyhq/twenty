@@ -41,10 +41,10 @@ describe('useOpenCreateActivityDrawerForSelectedRowIds', () => {
       () => {
         const openCreateActivityDrawerForSelectedRowIds =
           useOpenCreateActivityDrawerForSelectedRowIds(recordTableId);
-        const viewableActivityId = useRecoilValue(viewableActivityIdState());
-        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState());
+        const viewableActivityId = useRecoilValue(viewableActivityIdState);
+        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState(),
+          objectMetadataItemsState,
         );
         const scopeId = `${recordTableId}-scope`;
         const setTableRowIds = useSetRecoilState(

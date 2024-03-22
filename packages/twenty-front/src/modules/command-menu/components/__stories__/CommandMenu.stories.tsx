@@ -27,9 +27,9 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenu,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentWorkspaceMember = useSetRecoilState(
-        currentWorkspaceMemberState(),
+        currentWorkspaceMemberState,
       );
       const { addToCommandMenu, setToInitialCommandMenu, openCommandMenu } =
         useCommandMenu();

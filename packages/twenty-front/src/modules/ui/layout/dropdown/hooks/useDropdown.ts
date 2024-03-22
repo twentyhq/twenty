@@ -20,14 +20,12 @@ export const useDropdown = (dropdownId?: string) => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const [dropdownHotkeyScope] = useRecoilState(dropdownHotkeyScopeState());
+  const [dropdownHotkeyScope] = useRecoilState(dropdownHotkeyScopeState);
 
-  const [dropdownWidth, setDropdownWidth] =
-    useRecoilState(dropdownWidthState());
+  const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
 
-  const [isDropdownOpen, setIsDropdownOpen] = useRecoilState(
-    isDropdownOpenState(),
-  );
+  const [isDropdownOpen, setIsDropdownOpen] =
+    useRecoilState(isDropdownOpenState);
 
   const closeDropdown = () => {
     goBackToPreviousHotkeyScope();

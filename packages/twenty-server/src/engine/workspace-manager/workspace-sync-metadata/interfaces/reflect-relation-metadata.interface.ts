@@ -5,7 +5,7 @@ import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync
 import {
   RelationOnDeleteAction,
   RelationMetadataType,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export interface RelationMetadataDecoratorParams<T> {
   type: RelationMetadataType;

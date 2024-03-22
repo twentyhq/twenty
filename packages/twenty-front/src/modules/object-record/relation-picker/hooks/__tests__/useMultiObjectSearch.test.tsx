@@ -13,7 +13,7 @@ const query = gql`
     $filterNameSingular: NameSingularFilterInput
     $orderByNameSingular: NameSingularOrderByInput
     $lastCursorNameSingular: String
-    $limitNameSingular: Float = 5
+    $limitNameSingular: Float
   ) {
     namePlural(
       filter: $filterNameSingular
@@ -33,6 +33,7 @@ const query = gql`
         startCursor
         endCursor
       }
+      totalCount
     }
   }
 `;
@@ -104,7 +105,7 @@ describe('useMultiObjectSearch', () => {
             },
           ],
         }),
-        setObjectMetadata: useSetRecoilState(objectMetadataItemsState()),
+        setObjectMetadata: useSetRecoilState(objectMetadataItemsState),
       }),
       {
         wrapper: Wrapper,

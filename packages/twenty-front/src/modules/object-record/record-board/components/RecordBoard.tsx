@@ -50,12 +50,12 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const {
-    getColumnIdsState,
+    columnIdsState,
     columnsFamilySelector,
     recordIdsByColumnIdFamilyState,
   } = useRecordBoardStates(recordBoardId);
 
-  const columnIds = useRecoilValue(getColumnIdsState());
+  const columnIds = useRecoilValue(columnIdsState);
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);

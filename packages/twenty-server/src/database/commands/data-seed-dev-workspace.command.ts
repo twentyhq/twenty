@@ -1,19 +1,23 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
-import { seedViews } from 'src/database/typeorm-seeds/workspace/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunity';
-import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-step';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import {
+  SeedAppleWorkspaceId,
+  SeedTwentyWorkspaceId,
+} from 'src/database/typeorm-seeds/core/workspaces';
+import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 
 // TODO: implement dry-run
 @Command({
@@ -22,7 +26,7 @@ import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/objec
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+  workspaceIds = [SeedAppleWorkspaceId, SeedTwentyWorkspaceId];
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -44,78 +48,88 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         schema: 'core',
       });
 
-      await dataSource.initialize();
+      for (const workspaceId of this.workspaceIds) {
+        await dataSource.initialize();
 
-      await seedCoreSchema(dataSource, this.workspaceId);
+        await seedCoreSchema(dataSource, workspaceId);
 
-      await dataSource.destroy();
+        await dataSource.destroy();
 
-      const schemaName =
-        await this.workspaceDataSourceService.createWorkspaceDBSchema(
-          this.workspaceId,
-        );
+        const schemaName =
+          await this.workspaceDataSourceService.createWorkspaceDBSchema(
+            workspaceId,
+          );
 
-      const dataSourceMetadata =
-        await this.dataSourceService.createDataSourceMetadata(
-          this.workspaceId,
-          schemaName,
-        );
+        const dataSourceMetadata =
+          await this.dataSourceService.createDataSourceMetadata(
+            workspaceId,
+            schemaName,
+          );
 
-      await this.workspaceSyncMetadataService.synchronize({
-        workspaceId: this.workspaceId,
-        dataSourceId: dataSourceMetadata.id,
-      });
+        await this.workspaceSyncMetadataService.synchronize({
+          workspaceId: workspaceId,
+          dataSourceId: dataSourceMetadata.id,
+        });
+      }
     } catch (error) {
       console.error(error);
 
       return;
     }
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        this.workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    if (!workspaceDataSource) {
-      throw new Error('Could not connect to workspace data source');
-    }
-
-    try {
-      const objectMetadata =
-        await this.objectMetadataService.findManyWithinWorkspace(
-          this.workspaceId,
+    for (const workspaceId of this.workspaceIds) {
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          workspaceId,
         );
-      const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-        acc[object.nameSingular] = {
-          id: object.id,
-          fields: object.fields.reduce((acc, field) => {
-            acc[field.name] = field.id;
 
-            return acc;
-          }, {}),
-        };
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-        return acc;
-      }, {});
+      if (!workspaceDataSource) {
+        throw new Error('Could not connect to workspace data source');
+      }
 
-      await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
-      await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
-      await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
-      await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
+      try {
+        const objectMetadata =
+          await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+        const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+          acc[object.standardId ?? ''] = {
+            id: object.id,
+            fields: object.fields.reduce((acc, field) => {
+              acc[field.standardId ?? ''] = field.id;
 
-      await seedViews(
-        workspaceDataSource,
-        dataSourceMetadata.schema,
-        objectMetadataMap,
-      );
-      await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);
-    } catch (error) {
-      console.error(error);
+              return acc;
+            }, {}),
+          };
+
+          return acc;
+        }, {});
+
+        await workspaceDataSource.transaction(
+          async (entityManager: EntityManager) => {
+            await seedCompanies(entityManager, dataSourceMetadata.schema);
+            await seedPeople(entityManager, dataSourceMetadata.schema);
+            await seedOpportunity(entityManager, dataSourceMetadata.schema);
+            await seedCalendarEvents(entityManager, dataSourceMetadata.schema);
+            await seedWorkspaceMember(
+              entityManager,
+              dataSourceMetadata.schema,
+              workspaceId,
+            );
+
+            await viewPrefillData(
+              entityManager,
+              dataSourceMetadata.schema,
+              objectMetadataMap,
+            );
+          },
+        );
+      } catch (error) {
+        console.error(error);
+      }
+
+      await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
     }
-
-    await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
   }
 }

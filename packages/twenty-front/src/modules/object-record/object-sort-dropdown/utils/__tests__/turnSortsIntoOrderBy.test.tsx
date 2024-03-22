@@ -55,7 +55,7 @@ describe('turnSortsIntoOrderBy', () => {
     });
   });
 
-  it('should throw error if field not found', () => {
+  it('should ignore if field not found', () => {
     const sorts: Sort[] = [
       {
         fieldMetadataId: 'invalidField',
@@ -63,8 +63,8 @@ describe('turnSortsIntoOrderBy', () => {
         definition: sortDefinition,
       },
     ];
-    expect(() => turnSortsIntoOrderBy(sorts, [])).toThrow(
-      'Could not find field invalidField in metadata object',
-    );
+    expect(turnSortsIntoOrderBy(sorts, [])).toEqual({
+      position: 'AscNullsFirst',
+    });
   });
 });

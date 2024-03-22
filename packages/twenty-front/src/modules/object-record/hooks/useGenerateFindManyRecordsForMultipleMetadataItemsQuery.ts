@@ -1,18 +1,21 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
-  objectMetadataItems,
+  targetObjectMetadataItems,
   depth,
 }: {
-  objectMetadataItems: ObjectMetadataItem[];
+  targetObjectMetadataItems: ObjectMetadataItem[];
   depth?: number;
 }) => {
-  const capitalizedObjectNameSingulars = objectMetadataItems.map(
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const capitalizedObjectNameSingulars = targetObjectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
 
@@ -44,7 +47,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   const limitPerMetadataItemArray = capitalizedObjectNameSingulars
     .map(
       (capitalizedObjectNameSingular) =>
-        `$limit${capitalizedObjectNameSingular}: Float = 5`,
+        `$limit${capitalizedObjectNameSingular}: Float`,
     )
     .join(', ');
 
@@ -55,7 +58,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
       ${lastCursorPerMetadataItemArray}, 
       ${limitPerMetadataItemArray}
     ) {
-      ${objectMetadataItems
+      ${targetObjectMetadataItems
         .map(
           (objectMetadataItem) =>
             `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
@@ -69,7 +72,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             )}){
           edges {
             node ${mapObjectMetadataToGraphQLQuery({
-              objectMetadataItems,
+              objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
               depth,
             })}
@@ -80,6 +83,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             startCursor
             endCursor
           }
+          totalCount
         }`,
         )
         .join('\n')}

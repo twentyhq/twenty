@@ -64,7 +64,7 @@ export const RecordTableCellContainer = ({
   const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
 
   const setIsSoftFocusUsingMouseState = useSetRecoilState(
-    isSoftFocusUsingMouseState(),
+    isSoftFocusUsingMouseState,
   );
 
   const moveSoftFocusToCurrentCellOnHover =

@@ -4,8 +4,16 @@ const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
-  backdrop-filter: ${({ disableBlur }) => (disableBlur ? 'none' : 'blur(8px)')};
-  background: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${({ disableBlur }) =>
+    disableBlur
+      ? 'none'
+      : 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'};
+
+  background: ${({ theme, disableBlur }) =>
+    disableBlur
+      ? theme.background.primary
+      : theme.background.transparent.secondary};
+
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
 

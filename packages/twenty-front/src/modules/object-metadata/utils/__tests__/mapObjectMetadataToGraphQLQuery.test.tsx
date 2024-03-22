@@ -78,7 +78,6 @@ personId
 pointOfContactId
 updatedAt
 companyId
-pipelineStepId
 probability
 closeDate
 amount
@@ -106,7 +105,6 @@ personId
 pointOfContactId
 updatedAt
 companyId
-pipelineStepId
 probability
 closeDate
 amount

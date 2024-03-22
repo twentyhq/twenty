@@ -1,40 +1,54 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { DevtoolsModule } from '@nestjs/devtools-integration';
+import { GraphQLModule } from '@nestjs/graphql';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
 
-import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 
-import { GraphQLConfigService } from 'src/engine-graphql-config/graphql-config.service';
-import { ApiRestModule } from 'src/api/rest/api-rest.module';
-import { BusinessModule } from 'src/business/modules/business.module';
+import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
+import { ModulesModule } from 'src/modules/modules.module';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
+import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
+import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
-import { FoundationModule } from './engine/modules/foundation.module';
-import { IntegrationsModule } from './integrations/integrations.module';
-import { WorkspaceModule } from './engine/graphql/workspace.module';
-import { GraphQLConfigModule } from './engine-graphql-config/graphql-config.module';
+import { CoreEngineModule } from './engine/core-modules/core-engine.module';
+import { IntegrationsModule } from './engine/integrations/integrations.module';
 
 @Module({
   imports: [
-    // DevtoolsModule.register({
-    //   http: process.env.NODE_ENV !== 'production',
-    // }),
+    // Nest.js devtools, use devtools.nestjs.com to debug
+    DevtoolsModule.registerAsync({
+      useFactory: (environmentService: EnvironmentService) => ({
+        http: environmentService.get('DEBUG_MODE'),
+        port: environmentService.get('DEBUG_PORT'),
+      }),
+      inject: [EnvironmentService],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [FoundationModule, GraphQLConfigModule],
+      imports: [CoreEngineModule, GraphQLConfigModule],
       useClass: GraphQLConfigService,
     }),
+    // Integrations module, contains all the integrations with other services
     IntegrationsModule,
-    FoundationModule,
-    BusinessModule,
+    // Core engine module, contains all the core modules
+    CoreEngineModule,
+    // Modules module, contains all business logic modules
+    ModulesModule,
+    // Api modules
+    CoreGraphQLApiModule,
+    MetadataGraphQLApiModule,
     ApiRestModule,
-    WorkspaceModule,
+    // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
 })
