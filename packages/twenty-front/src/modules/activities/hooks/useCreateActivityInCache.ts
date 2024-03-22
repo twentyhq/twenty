@@ -12,6 +12,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { isDefined } from '~/utils/isDefined';
@@ -41,6 +42,9 @@ export const useCreateActivityInCache = () => {
   const { attachRelationInBothDirections } =
     useAttachRelationInBothDirections();
 
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
+
   const createActivityInCache = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -69,7 +73,14 @@ export const useCreateActivityInCache = () => {
               .getLoadable(recordStoreFamilyState(targetableObject.id))
               .getValue();
 
-            return targetObject;
+            const targetObjectWithRelationConnection =
+              mapRecordRelationRecordsToRelationConnection({
+                objectRecord: targetObject,
+                objectNameSingular: targetableObject.targetObjectNameSingular,
+                depth: 5,
+              });
+
+            return targetObjectWithRelationConnection;
           })
           .filter(isDefined);
 
@@ -119,6 +130,7 @@ export const useCreateActivityInCache = () => {
       createOneActivityInCache,
       currentWorkspaceMemberRecord,
       injectIntoActivityTargetInlineCellCache,
+      mapRecordRelationRecordsToRelationConnection,
     ],
   );
 
