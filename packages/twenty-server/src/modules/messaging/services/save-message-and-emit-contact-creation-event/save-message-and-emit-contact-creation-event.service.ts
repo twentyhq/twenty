@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-
-import { EntityManager } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
-import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.service';
 import {
   GmailMessage,
   ParticipantWithMessageId,
@@ -16,12 +14,11 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageService } from 'src/modules/messaging/services/message/message.service';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 
 @Injectable()
-export class SaveMessagesAndCreateContactsService {
+export class SaveMessageAndEmitContactCreationEventService {
   private readonly logger = new Logger(
-    SaveMessagesAndCreateContactsService.name,
+    SaveMessageAndEmitContactCreationEventService.name,
   );
 
   constructor(
@@ -30,8 +27,7 @@ export class SaveMessagesAndCreateContactsService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
     private readonly messageParticipantRepository: MessageParticipantRepository,
-    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly eventEmitter: EventEmitter2,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
@@ -80,68 +76,28 @@ export class SaveMessagesAndCreateContactsService {
       return;
     }
 
-    const isContactAutoCreationEnabled =
-      gmailMessageChannel.isContactAutoCreationEnabled;
+    const participantsWithMessageId: (ParticipantWithMessageId & {
+      shouldCreateContact: boolean;
+    })[] = messagesToSave.flatMap((message) => {
+      const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
-    const participantsWithMessageId: ParticipantWithMessageId[] =
-      messagesToSave.flatMap((message) => {
-        const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
-
-        return messageId
-          ? message.participants.map((participant) => ({
-              ...participant,
-              messageId,
-            }))
-          : [];
-      });
-
-    const contactsToCreate = messagesToSave
-      .filter((message) => connectedAccount.handle === message.fromHandle)
-      .flatMap((message) => message.participants);
-
-    if (isContactAutoCreationEnabled) {
-      startTime = Date.now();
-
-      await workspaceDataSource?.transaction(
-        async (transactionManager: EntityManager) => {
-          await this.createCompaniesAndContactsService.createCompaniesAndContacts(
-            connectedAccount.handle,
-            contactsToCreate,
-            workspaceId,
-            transactionManager,
-          );
-        },
-      );
-
-      const handles = participantsWithMessageId.map(
-        (participant) => participant.handle,
-      );
-
-      const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-        await this.messageParticipantRepository.getByHandlesWithoutPersonIdAndWorkspaceMemberId(
-          handles,
-          workspaceId,
-        );
-
-      await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-        messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-        workspaceId,
-      );
-
-      endTime = Date.now();
-
-      this.logger.log(
-        `${jobName} creating companies and contacts for workspace ${workspaceId} and account ${
-          connectedAccount.id
-        } in ${endTime - startTime}ms`,
-      );
-    }
+      return messageId
+        ? message.participants.map((participant) => ({
+            ...participant,
+            messageId,
+            shouldCreateContact:
+              gmailMessageChannel.isContactAutoCreationEnabled &&
+              message.participants.find((p) => p.role === 'from')?.handle ===
+                connectedAccount.handle,
+          }))
+        : [];
+    });
 
     startTime = Date.now();
 
     await this.tryToSaveMessageParticipantsOrDeleteMessagesIfError(
       participantsWithMessageId,
-      gmailMessageChannelId,
+      gmailMessageChannel,
       workspaceId,
       connectedAccount,
       jobName,
@@ -157,8 +113,10 @@ export class SaveMessagesAndCreateContactsService {
   }
 
   private async tryToSaveMessageParticipantsOrDeleteMessagesIfError(
-    participantsWithMessageId: ParticipantWithMessageId[],
-    gmailMessageChannelId: string,
+    participantsWithMessageId: (ParticipantWithMessageId & {
+      shouldCreateContact: boolean;
+    })[],
+    gmailMessageChannel: ObjectRecord<MessageChannelObjectMetadata>,
     workspaceId: string,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     jobName?: string,
@@ -168,6 +126,18 @@ export class SaveMessagesAndCreateContactsService {
         participantsWithMessageId,
         workspaceId,
       );
+
+      if (gmailMessageChannel.isContactAutoCreationEnabled) {
+        const contactsToCreate = participantsWithMessageId.filter(
+          (participant) => participant.shouldCreateContact,
+        );
+
+        this.eventEmitter.emit(`createContacts`, {
+          workspaceId,
+          connectedAccountHandle: connectedAccount.handle,
+          contactsToCreate,
+        });
+      }
     } catch (error) {
       this.logger.error(
         `${jobName} error saving message participants for workspace ${workspaceId} and account ${connectedAccount.id}`,
@@ -180,7 +150,7 @@ export class SaveMessagesAndCreateContactsService {
 
       await this.messageService.deleteMessages(
         messagesToDelete,
-        gmailMessageChannelId,
+        gmailMessageChannel.id,
         workspaceId,
       );
     }
