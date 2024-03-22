@@ -13,7 +13,7 @@ import {
   NavigationDrawer,
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
-import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 import packageJson from '../../../../package.json';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';

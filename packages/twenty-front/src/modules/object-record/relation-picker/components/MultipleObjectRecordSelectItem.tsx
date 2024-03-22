@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -44,7 +45,9 @@ export const MultipleObjectRecordSelectItem = ({
         isKeySelected={isSelectedByKeyboard}
         avatar={
           <Avatar
-            avatarUrl={objectRecordForSelect.recordIdentifier.avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(
+              objectRecordForSelect.recordIdentifier.avatarUrl,
+            )}
             entityId={objectRecordForSelect.record.id}
             placeholder={objectRecordForSelect.recordIdentifier.name}
             size="md"

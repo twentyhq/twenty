@@ -8,6 +8,7 @@ import {
 } from 'twenty-ui';
 
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,
@@ -70,7 +71,7 @@ export const MultipleRecordSelectDropdown = ({
           }
           avatar={
             <Avatar
-              avatarUrl={record.avatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl)}
               entityId={record.id}
               placeholder={record.name}
               size="md"

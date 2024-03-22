@@ -9,6 +9,7 @@ import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
 
 const StyledCardContent = styled(CardContent)<{ visibility: string }>`
   align-items: center;
@@ -150,20 +151,24 @@ export const EmailThreadPreview = ({
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(
+              thread?.firstParticipant?.avatarUrl ?? null,
+            )}
             placeholder={thread.firstParticipant.displayName}
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
-              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(
+                thread.lastTwoParticipants[0].avatarUrl,
+              )}
               placeholder={thread.lastTwoParticipants[0].displayName}
               type="rounded"
             />
           )}
           {finalDisplayedName && (
             <StyledAvatar
-              avatarUrl={finalAvatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(finalAvatarUrl)}
               placeholder={finalDisplayedName}
               type="rounded"
               color={isCountIcon ? GRAY_SCALE.gray50 : undefined}

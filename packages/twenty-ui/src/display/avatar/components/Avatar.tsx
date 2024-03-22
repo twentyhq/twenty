@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { Nullable } from '../../../types/Nullable';
-import { getImageAbsoluteURIOrBase64 } from '../../../utils/getProfilePictureAbsoluteURI';
-import { stringToHslColor } from '../../../utils/string-to-hsl';
+import { Nullable } from 'src/types/Nullable';
+import { stringToHslColor } from 'src/utils/string-to-hsl';
 
 export type AvatarType = 'squared' | 'rounded';
 
@@ -92,7 +90,7 @@ export const Avatar = ({
         const img = new Image();
         img.onload = () => resolve(false);
         img.onerror = () => resolve(true);
-        img.src = getImageAbsoluteURIOrBase64(avatarUrl) as string;
+        img.src = avatarUrl;
       }).then((res) => {
         setIsInvalidAvatarUrl(res as boolean);
       });
@@ -109,7 +107,7 @@ export const Avatar = ({
   return (
     <StyledAvatar
       className={className}
-      avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
+      avatarUrl={avatarUrl}
       placeholder={placeholder}
       size={size}
       type={type}

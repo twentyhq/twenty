@@ -15,6 +15,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { AvatarGroup } from '@/users/components/AvatarGroup';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -160,7 +161,9 @@ export const CalendarEventRow = ({
                 .join('-')}
               avatarUrl={
                 attendee.workspaceMemberId === currentWorkspaceMember?.id
-                  ? currentWorkspaceMember?.avatarUrl
+                  ? getImageAbsoluteURIOrBase64(
+                      currentWorkspaceMember?.avatarUrl,
+                    )
                   : undefined
               }
               placeholder={attendee.displayName}

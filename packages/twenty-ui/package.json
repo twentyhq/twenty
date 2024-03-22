@@ -8,6 +8,6 @@
     "nx": "NX_DEFAULT_PROJECT=twenty-ui node ../../node_modules/nx/bin/nx.js",
     "coverage": "nx test --coverage",
     "storybook:build": "storybook build",
-    "storybook:dev": "storybook dev -p 6006"
+    "storybook:dev": "storybook dev -p 6007`"
   }
 }

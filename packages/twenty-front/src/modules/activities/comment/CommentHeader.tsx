@@ -7,6 +7,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -68,7 +69,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
 
   const author = comment.author;
   const authorName = author?.name?.firstName + ' ' + author?.name?.lastName;
-  const avatarUrl = author?.avatarUrl;
+  const avatarUrl = getImageAbsoluteURIOrBase64(author?.avatarUrl ?? null);
   const commentId = comment.id;
 
   return (

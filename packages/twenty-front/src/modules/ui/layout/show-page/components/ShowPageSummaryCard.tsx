@@ -9,6 +9,7 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -97,7 +98,7 @@ export const ShowPageSummaryCard = ({
     <StyledShowPageSummaryCard>
       <StyledAvatarWrapper>
         <Avatar
-          avatarUrl={logoOrAvatar}
+          avatarUrl={getImageAbsoluteURIOrBase64(logoOrAvatar)}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           entityId={id}
