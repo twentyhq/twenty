@@ -97,7 +97,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideTarget: () => EventObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
