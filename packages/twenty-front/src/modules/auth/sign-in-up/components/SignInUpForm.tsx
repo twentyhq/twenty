@@ -18,6 +18,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -81,11 +82,9 @@ export const SignInUpForm = () => {
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
 
-        if (generateCaptchaToken) {
-          const captchaToken = await generateCaptchaToken(
-            isCaptchaScriptLoaded,
-          );
-          form.setValue('captchaToken', captchaToken || '');
+        const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+        if (!isUndefinedOrNull(captchaToken)) {
+          form.setValue('captchaToken', captchaToken);
         }
 
         form.handleSubmit(submitCredentials)();
@@ -232,11 +231,11 @@ export const SignInUpForm = () => {
               }
               setShowErrors(true);
 
-              if (generateCaptchaToken) {
-                const captchaToken = await generateCaptchaToken(
-                  isCaptchaScriptLoaded,
-                );
-                form.setValue('captchaToken', captchaToken || '');
+              const captchaToken = await generateCaptchaToken(
+                isCaptchaScriptLoaded,
+              );
+              if (!isUndefinedOrNull(captchaToken)) {
+                form.setValue('captchaToken', captchaToken);
               }
 
               form.handleSubmit(submitCredentials)();

@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -14,6 +15,7 @@ declare global {
 
 export const useGenerateCaptchaToken = () => {
   const captchaProvider = useRecoilValue(captchaProviderState);
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const captchaWidgetId = useRef<string | null>(null);
 
   const generateGoogleRecaptchaToken = useCallback(async (): Promise<
@@ -52,6 +54,7 @@ export const useGenerateCaptchaToken = () => {
     ) {
       if (captchaWidgetId.current === null) {
         captchaWidgetId.current = (window.turnstile as any).render(
+          // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
           '#captcha-widget',
           {
             sitekey: captchaProvider.siteKey,
