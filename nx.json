@@ -2,38 +2,26 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "start": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "lint": {
       "cache": true
     },
     "test": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:e2e": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "@nx/jest:jest": {
       "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/jest.preset.js"
-      ],
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
       "options": {
         "passWithNoTests": true
       },
@@ -54,20 +42,12 @@
     },
     "@nx/vite:test": {
       "cache": true,
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "inputs": ["default", "^default"]
     },
     "@nx/vite:build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     },
     "storybook:build": {
       "cache": true,
@@ -80,10 +60,7 @@
     }
   },
   "installation": {
-    "version": "17.3.2"
-  },
-  "affected": {
-    "defaultBase": "main"
+    "version": "18.1.2"
   },
   "generators": {
     "@nx/react": {
@@ -98,10 +75,10 @@
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": [
-          "storybook:build"
-        ]
+        "cacheableOperations": ["storybook:build"]
       }
     }
-  }
+  },
+  "useInferencePlugins": false,
+  "defaultBase": "main"
 }
