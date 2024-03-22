@@ -32,7 +32,7 @@ export const useInsertCaptchaScript = () => {
       };
       document.body.appendChild(scriptElement);
     }
-  }, []);
+  }, [captchaProvider?.provider, captchaProvider?.siteKey]);
 
   return isLoaded;
 };
