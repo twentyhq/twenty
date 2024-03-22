@@ -58,6 +58,7 @@ export const SignInUpForm = () => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
+    continueToSignUp,
     submitCredentials,
   } = useSignInUp(form);
 
@@ -149,7 +150,7 @@ export const SignInUpForm = () => {
                       onBlur={onBlur}
                       onChange={(value: string) => {
                         onChange(value);
-                        if (signInUpStep === SignInUpStep.Password) {
+                        if (signInUpStep === SignInUpStep.Password && signInUpMode === SignInUpMode.SignIn) {
                           continueWithEmail();
                         }
                       }}
@@ -235,8 +236,13 @@ export const SignInUpForm = () => {
         </ActionLink>
       ) : (
         <FooterNote>
-          By using Twenty, you agree to the Terms of Service and Data Processing
-          Agreement.
+          <ActionLink onClick ={() =>{
+            if (signInUpStep === SignInUpStep.Init) {
+              continueToSignUp();
+            }
+          }}>
+          Create an account
+          </ActionLink>
         </FooterNote>
       )}
     </>
