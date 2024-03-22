@@ -4,10 +4,10 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 
-import { WorkspaceService } from 'src/engine/modules/workspace/services/workspace.service';
-import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
-import { DataSourceService } from 'src/engine-metadata/data-source/data-source.service';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 
 type DeleteIncompleteWorkspacesCommandOptions = {
   dryRun?: boolean;

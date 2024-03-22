@@ -1,6 +1,6 @@
 import { ConflictException } from '@nestjs/common';
 
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const mapFieldMetadataTypeToDataType = (
   fieldMetadataType: FieldMetadataType,
@@ -22,6 +22,8 @@ export const mapFieldMetadataTypeToDataType = (
       return 'boolean';
     case FieldMetadataType.DATE_TIME:
       return 'timestamp';
+    case FieldMetadataType.RAW_JSON:
+      return 'jsonb';
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:

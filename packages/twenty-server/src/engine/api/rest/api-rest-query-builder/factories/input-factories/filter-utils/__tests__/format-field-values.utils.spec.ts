@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { formatFieldValue } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/format-field-values.utils';
 
 describe('formatFieldValue', () => {

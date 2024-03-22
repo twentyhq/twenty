@@ -5,14 +5,14 @@ import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardColumns = (recordBoardId?: string) => {
-  const { scopeId, getColumnIdsState, columnsFamilySelector } =
+  const { scopeId, columnIdsState, columnsFamilySelector } =
     useRecordBoardStates(recordBoardId);
 
   const setColumns = useRecoilCallback(
     ({ set, snapshot }) =>
       (columns: RecordBoardColumnDefinition[]) => {
         const currentColumnsIds = snapshot
-          .getLoadable(getColumnIdsState())
+          .getLoadable(columnIdsState)
           .getValue();
 
         const columnIds = columns.map(({ id }) => id);
@@ -22,7 +22,7 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
         }
 
         set(
-          getColumnIdsState(),
+          columnIdsState,
           columns.map((column) => column.id),
         );
 
@@ -38,7 +38,7 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
           set(columnsFamilySelector(column.id), column);
         });
       },
-    [columnsFamilySelector, getColumnIdsState],
+    [columnsFamilySelector, columnIdsState],
   );
 
   return {

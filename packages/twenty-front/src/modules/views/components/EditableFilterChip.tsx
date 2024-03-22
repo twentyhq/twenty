@@ -1,10 +1,10 @@
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { ViewFilter } from '@/views/types/ViewFilter';
 
 type EditableFilterChipProps = {
-  viewFilter: ViewFilter;
+  viewFilter: Filter;
   onRemove: () => void;
 };
 

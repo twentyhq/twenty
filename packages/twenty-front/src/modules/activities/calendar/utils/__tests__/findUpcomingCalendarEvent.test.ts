@@ -5,32 +5,32 @@ import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { findUpcomingCalendarEvent } from '../findUpcomingCalendarEvent';
 
 const pastEvent: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'> = {
-  startsAt: subHours(new Date(), 2),
-  endsAt: subHours(new Date(), 1),
+  startsAt: subHours(new Date(), 2).toISOString(),
+  endsAt: subHours(new Date(), 1).toISOString(),
   isFullDay: false,
 };
 const fullDayPastEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
-  startsAt: subDays(new Date(), 1),
+  startsAt: subDays(new Date(), 1).toISOString(),
   isFullDay: true,
 };
 
 const currentEvent: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'> = {
-  startsAt: addHours(new Date(), 1),
-  endsAt: addHours(new Date(), 2),
+  startsAt: addHours(new Date(), 1).toISOString(),
+  endsAt: addHours(new Date(), 2).toISOString(),
   isFullDay: false,
 };
 const currentFullDayEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
-  startsAt: startOfDay(new Date()),
+  startsAt: startOfDay(new Date()).toISOString(),
   isFullDay: true,
 };
 
 const futureEvent: Pick<CalendarEvent, 'startsAt' | 'endsAt' | 'isFullDay'> = {
-  startsAt: addDays(new Date(), 1),
-  endsAt: addDays(new Date(), 2),
+  startsAt: addDays(new Date(), 1).toISOString(),
+  endsAt: addDays(new Date(), 2).toISOString(),
   isFullDay: false,
 };
 const fullDayFutureEvent: Pick<CalendarEvent, 'startsAt' | 'isFullDay'> = {
-  startsAt: addDays(new Date(), 2),
+  startsAt: addDays(new Date(), 2).toISOString(),
   isFullDay: false,
 };
 

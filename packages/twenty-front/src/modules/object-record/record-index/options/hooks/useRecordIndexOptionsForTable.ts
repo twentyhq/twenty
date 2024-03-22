@@ -7,11 +7,11 @@ import { useTableColumns } from '@/object-record/record-table/hooks/useTableColu
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useRecordIndexOptionsForTable = (recordTableId: string) => {
-  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
     useRecordTableStates(recordTableId);
 
-  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
     { recordTableId: recordTableId },

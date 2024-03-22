@@ -9,10 +9,10 @@ import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRe
 
 export const RightDrawerCalendarEvent = () => {
   const { setRecords } = useSetRecordInStore();
-  const calendarEventId = useRecoilValue(viewableCalendarEventIdState());
+  const viewableCalendarEventId = useRecoilValue(viewableCalendarEventIdState);
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
-    objectRecordId: calendarEventId ?? '',
+    objectRecordId: viewableCalendarEventId ?? '',
     onCompleted: (record) => setRecords([record]),
   });
 

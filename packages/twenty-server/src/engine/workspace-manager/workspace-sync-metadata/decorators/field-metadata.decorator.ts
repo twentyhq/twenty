@@ -3,11 +3,11 @@ import {
   ReflectFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
 import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/gate-decorator.interface';
-import { FieldMetadataDefaultValue } from 'src/engine-metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
-import { generateDefaultValue } from 'src/engine-metadata/field-metadata/utils/generate-default-value';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
+import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 

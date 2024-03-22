@@ -1,12 +1,12 @@
-import { DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 const tableName = 'opportunity';
 
 export const seedOpportunity = async (
-  workspaceDataSource: DataSource,
+  entityManager: EntityManager,
   schemaName: string,
 ) => {
-  await workspaceDataSource
+  await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
@@ -18,7 +18,6 @@ export const seedOpportunity = async (
       'probability',
       'stage',
       'position',
-      'pipelineStepId',
       'pointOfContactId',
       'companyId',
     ])
@@ -33,7 +32,6 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'NEW',
         position: 1,
-        pipelineStepId: '6edf4ead-006a-46e1-9c6d-228f1d0143c9',
         pointOfContactId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
         companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
       },
@@ -46,7 +44,6 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'MEETING',
         position: 2,
-        pipelineStepId: 'd8361722-03fb-4e65-bd4f-ec9e52e5ec0a',
         pointOfContactId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
         companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
       },
@@ -59,7 +56,6 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'PROPOSAL',
         position: 3,
-        pipelineStepId: '30b14887-d592-427d-bd97-6e670158db02',
         pointOfContactId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
         companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
       },
@@ -72,7 +68,6 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'PROPOSAL',
         position: 4,
-        pipelineStepId: '30b14887-d592-427d-bd97-6e670158db02',
         pointOfContactId: '98406e26-80f1-4dff-b570-a74942528de3',
         companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
       },

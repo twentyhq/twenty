@@ -82,14 +82,13 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
 }) => {
-  const { getResizeFieldOffsetState, getTableColumnsState } =
-    useRecordTableStates();
+  const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    getResizeFieldOffsetState(),
+    resizeFieldOffsetState,
   );
 
-  const tableColumns = useRecoilValue(getTableColumnsState());
+  const tableColumns = useRecoilValue(tableColumnsState);
   const tableColumnsByKey = useMemo(
     () =>
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
@@ -124,7 +123,7 @@ export const RecordTableHeaderCell = ({
 
         const resizeFieldOffset = getSnapshotValue(
           snapshot,
-          getResizeFieldOffsetState(),
+          resizeFieldOffsetState,
         );
 
         const nextWidth = Math.round(
@@ -134,7 +133,7 @@ export const RecordTableHeaderCell = ({
           ),
         );
 
-        set(getResizeFieldOffsetState(), 0);
+        set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
 
@@ -150,7 +149,7 @@ export const RecordTableHeaderCell = ({
       },
     [
       resizedFieldKey,
-      getResizeFieldOffsetState,
+      resizeFieldOffsetState,
       tableColumnsByKey,
       tableColumns,
       handleColumnsChange,
@@ -165,7 +164,7 @@ export const RecordTableHeaderCell = ({
   });
 
   const isMobile = useIsMobile();
-  const scrollLeft = useRecoilValue(scrollLeftState());
+  const scrollLeft = useRecoilValue(scrollLeftState);
 
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && scrollLeft > 0;

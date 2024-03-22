@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
-} from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
-import { generateMigrationName } from 'src/engine-metadata/workspace-migration/utils/generate-migration-name.util';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 
 @Injectable()
 export class WorkspaceMigrationRelationFactory {

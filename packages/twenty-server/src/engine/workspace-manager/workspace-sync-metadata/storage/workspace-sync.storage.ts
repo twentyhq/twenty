@@ -2,9 +2,9 @@ import { ComputedPartialObjectMetadata } from 'src/engine/workspace-manager/work
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialRelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-relation-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata
