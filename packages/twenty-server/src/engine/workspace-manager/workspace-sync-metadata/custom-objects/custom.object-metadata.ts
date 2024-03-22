@@ -13,6 +13,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
@@ -85,4 +86,20 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: customObjectStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: (objectMetadata) =>
+      `Events tied to the ${objectMetadata.labelSingular}`,
+    icon: 'IconJson',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  events: EventObjectMetadata[];
 }
