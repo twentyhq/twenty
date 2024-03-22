@@ -11,10 +11,8 @@ import { useCalendarEventStates } from '@/activities/calendar/hooks/internal/use
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/queries/getCalendarEventsFromCompanyId';
 import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/queries/getCalendarEventsFromPersonId';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H3Title } from '@/ui/display/typography/components/H3Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -46,12 +44,6 @@ const StyledYear = styled.span`
 
 export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
   const { enqueueSnackBar } = useSnackBar();
-
-  const { records: calendarEvents } = useFindManyRecords<CalendarEvent>({
-    objectNameSingular: CoreObjectNameSingular.CalendarEvent,
-    orderBy: { startsAt: 'DescNullsLast', endsAt: 'DescNullsLast' },
-    useRecordsWithoutConnection: true,
-  });
 
   const { calendarEventsPageState } = useCalendarEventStates({
     calendarEventScopeId: getScopeIdFromComponentId(entity.id),
@@ -156,13 +148,7 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
     monthTimes,
     monthTimesByYear,
     updateCurrentCalendarEvent,
-  } = useCalendarEvents(
-    calendarEvents.map((calendarEvent) => ({
-      ...calendarEvent,
-      // TODO: retrieve CalendarChannel visibility from backend
-      visibility: 'SHARE_EVERYTHING',
-    })),
-  );
+  } = useCalendarEvents(timelineCalendarEvents);
 
   if (firstQueryLoading) {
     // TODO: implement loader

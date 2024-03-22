@@ -130,7 +130,7 @@ export const ShowPageRightContainer = ({
         <Attachments targetableObject={targetableObject} />
       )}
       {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
-      {activeTabId === 'calendar' && <Calendar />}
+      {activeTabId === 'calendar' && <Calendar entity={targetableObject} />}
     </StyledShowPageRightContainer>
   );
 };

@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
 import { getYear, isThisMonth, startOfDay, startOfMonth } from 'date-fns';
 
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CalendarEventOrTimelineCalendarEvent } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
 import { findUpcomingCalendarEvent } from '@/activities/calendar/utils/findUpcomingCalendarEvent';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortDesc } from '~/utils/sort';
 
-export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
+export const useCalendarEvents = (
+  calendarEvents: CalendarEventOrTimelineCalendarEvent[],
+) => {
   const calendarEventsByDayTime = groupArrayItemsBy(
     calendarEvents,
     (calendarEvent) =>
@@ -29,14 +31,18 @@ export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
 
   const monthTimesByYear = groupArrayItemsBy(sortedMonthTimes, getYear);
 
-  const getPreviousCalendarEvent = (calendarEvent: CalendarEvent) => {
+  const getPreviousCalendarEvent = (
+    calendarEvent: CalendarEventOrTimelineCalendarEvent,
+  ) => {
     const calendarEventIndex = calendarEvents.indexOf(calendarEvent);
     return calendarEventIndex < calendarEvents.length - 1
       ? calendarEvents[calendarEventIndex + 1]
       : undefined;
   };
 
-  const getNextCalendarEvent = (calendarEvent: CalendarEvent) => {
+  const getNextCalendarEvent = (
+    calendarEvent: CalendarEventOrTimelineCalendarEvent,
+  ) => {
     const calendarEventIndex = calendarEvents.indexOf(calendarEvent);
     return calendarEventIndex > 0
       ? calendarEvents[calendarEventIndex - 1]

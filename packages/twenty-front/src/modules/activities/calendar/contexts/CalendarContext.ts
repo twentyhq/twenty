@@ -1,14 +1,17 @@
 import { createContext } from 'react';
 
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CalendarEventOrTimelineCalendarEvent } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
 
 type CalendarContextValue = {
-  calendarEventsByDayTime: Record<number, CalendarEvent[] | undefined>;
-  currentCalendarEvent?: CalendarEvent;
+  calendarEventsByDayTime: Record<
+    number,
+    CalendarEventOrTimelineCalendarEvent[] | undefined
+  >;
+  currentCalendarEvent?: CalendarEventOrTimelineCalendarEvent;
   displayCurrentEventCursor?: boolean;
   getNextCalendarEvent: (
-    calendarEvent: CalendarEvent,
-  ) => CalendarEvent | undefined;
+    calendarEvent: CalendarEventOrTimelineCalendarEvent,
+  ) => CalendarEventOrTimelineCalendarEvent | undefined;
   updateCurrentCalendarEvent: () => void;
 };
 

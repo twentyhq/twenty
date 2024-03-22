@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CalendarEventOrTimelineCalendarEvent } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
@@ -20,7 +20,7 @@ import { AvatarGroup } from '@/users/components/AvatarGroup';
 import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
-  calendarEvent: CalendarEvent;
+  calendarEvent: CalendarEventOrTimelineCalendarEvent;
   className?: string;
 };
 
