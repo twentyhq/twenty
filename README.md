@@ -44,7 +44,7 @@ Install the project with the command below. By default, it installs the latest v
 ## Default Installation:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh | bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh)
 ````
 
 ## Custom Installation:
@@ -52,7 +52,7 @@ curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh | bas
 Set VERSION for a specific docker image version, BRANCH for a specific clone branch:
 
 ```bash
-VERSION=x.y.z BRANCH=branch-name curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh | bash
+VERSION=x.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh)
 ````
 Adjust x.y.z and branch-name as needed.
 

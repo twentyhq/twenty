@@ -19,7 +19,13 @@ echo "🔧 Setting up .env file"
 curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
-sed -i '' "s/TAG=latest/TAG=$version/g" .env
+if [[ $(uname) == "Darwin" ]]; then
+    # Running on macOS
+    sed -i '' "s/TAG=latest/TAG=$version/g" .env
+else
+    # Assuming Linux
+    sed -i'' "s/TAG=latest/TAG=$version/g" .env
+fi
 
 # Generate random strings for secrets
 echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
