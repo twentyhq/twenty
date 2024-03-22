@@ -125,7 +125,7 @@ export const useSaveCurrentViewFiltersAndSorts = (
 
   const saveCurrentViewFilterAndSorts = useRecoilCallback(
     ({ snapshot }) =>
-      async () => {
+      async (viewId?: string) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdState)
           .getValue();
@@ -134,8 +134,8 @@ export const useSaveCurrentViewFiltersAndSorts = (
           return;
         }
 
-        await saveViewFilters(currentViewId);
-        await saveViewSorts(currentViewId);
+        await saveViewFilters(viewId ?? currentViewId);
+        await saveViewSorts(viewId ?? currentViewId);
         resetCurrentView();
       },
     [currentViewIdState, resetCurrentView, saveViewFilters, saveViewSorts],
