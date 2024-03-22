@@ -148,7 +148,7 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
     monthTimes,
     monthTimesByYear,
     updateCurrentCalendarEvent,
-  } = useCalendarEvents(timelineCalendarEvents);
+  } = useCalendarEvents(timelineCalendarEvents || []);
 
   if (firstQueryLoading) {
     // TODO: implement loader
