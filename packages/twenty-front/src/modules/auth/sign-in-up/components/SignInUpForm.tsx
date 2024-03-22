@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -68,7 +68,9 @@ export const SignInUpForm = () => {
 
   const { generateCaptchaToken } = useGenerateCaptchaToken();
 
-  const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.key === 'Enter') {
       event.preventDefault();
 
@@ -78,8 +80,12 @@ export const SignInUpForm = () => {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
-        const captchaToken = await generateCaptchaToken();
-        form.setValue('captchaToken', captchaToken);
+
+        if (generateCaptchaToken) {
+          const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+          form.setValue('captchaToken', captchaToken || '');
+        }
+
         form.handleSubmit(submitCredentials)();
       }
     }
@@ -208,7 +214,7 @@ export const SignInUpForm = () => {
             </StyledFullWidthMotionDiv>
           )}
 
-          <div id="captcha-widget"></div>
+          <div id="captcha-widget" data-size="invisible"></div>
           <MainButton
             variant="secondary"
             title={buttonTitle}
@@ -223,8 +229,12 @@ export const SignInUpForm = () => {
                 return;
               }
               setShowErrors(true);
-              const captchaToken = await generateCaptchaToken();
-              form.setValue('captchaToken', captchaToken);
+
+              if (generateCaptchaToken) {
+                const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+                form.setValue('captchaToken', captchaToken || '');
+              }
+
               form.handleSubmit(submitCredentials)();
             }}
             Icon={() => form.formState.isSubmitting && <Loader />}
