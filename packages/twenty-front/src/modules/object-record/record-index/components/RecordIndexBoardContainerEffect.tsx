@@ -47,6 +47,10 @@ export const RecordIndexBoardContainerEffect = ({
     onFetchMoreVisibilityChangeState,
   );
 
+  const recordIndexKanbanFieldMetadataId = useRecoilValue(
+    recordIndexKanbanFieldMetadataIdState,
+  );
+
   useEffect(() => {
     setOnFetchMoreVisibilityChange(() => () => {
       if (!loading) {
@@ -71,6 +75,7 @@ export const RecordIndexBoardContainerEffect = ({
     setColumns(
       computeRecordBoardColumnDefinitionsFromObjectMetadata(
         objectMetadataItem,
+        recordIndexKanbanFieldMetadataId ?? '',
         navigateToSelectSettings,
       ),
     );
@@ -78,6 +83,7 @@ export const RecordIndexBoardContainerEffect = ({
     navigateToSelectSettings,
     objectMetadataItem,
     objectNameSingular,
+    recordIndexKanbanFieldMetadataId,
     setColumns,
   ]);
 
@@ -88,10 +94,6 @@ export const RecordIndexBoardContainerEffect = ({
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
-
-  const recordIndexKanbanFieldMetadataId = useRecoilValue(
-    recordIndexKanbanFieldMetadataIdState,
-  );
 
   useEffect(() => {
     if (isDefined(recordIndexKanbanFieldMetadataId)) {

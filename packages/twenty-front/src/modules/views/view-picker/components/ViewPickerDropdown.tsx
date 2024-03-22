@@ -67,7 +67,7 @@ export const ViewPickerDropdown = () => {
       dropdownId={VIEW_PICKER_DROPDOWN_ID}
       dropdownHotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
       dropdownOffset={{ x: 0, y: 8 }}
-      dropdownMenuWidth={220}
+      dropdownMenuWidth={200}
       onClickOutside={() => setViewPickerMode('list')}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsListDropdownOpen}>

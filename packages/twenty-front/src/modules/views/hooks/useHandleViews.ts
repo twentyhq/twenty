@@ -12,6 +12,7 @@ import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistVie
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -37,6 +38,8 @@ export const useHandleViews = (viewBarComponentId?: string) => {
   });
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
+  const { saveCurrentViewFilterAndSorts } =
+    useSaveCurrentViewFiltersAndSorts(viewBarComponentId);
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -47,7 +50,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     [deleteOneRecord],
   );
 
-  const createEmptyView = useRecoilCallback(
+  const createView = useRecoilCallback(
     ({ snapshot, set }) =>
       async ({
         id,
@@ -91,6 +94,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
         }
 
         await createViewFieldRecords(view.viewFields, newView);
+        await saveCurrentViewFilterAndSorts(newView.id);
         set(isPersistingViewFieldsState, false);
       },
     [
@@ -99,27 +103,27 @@ export const useHandleViews = (viewBarComponentId?: string) => {
       currentViewIdState,
       getViewFromCache,
       isPersistingViewFieldsState,
+      saveCurrentViewFilterAndSorts,
     ],
   );
 
   const changeViewInUrl = useCallback(
     (viewId: string) => {
-      setSearchParams((previousSearchParams) => {
-        previousSearchParams.set('view', viewId);
-        return previousSearchParams;
+      setSearchParams(() => {
+        const searchParams = new URLSearchParams();
+        searchParams.set('view', viewId);
+        return searchParams;
       });
     },
     [setSearchParams],
   );
 
   const selectView = useRecoilCallback(
-    ({ set }) =>
-      async (viewId: string) => {
-        set(currentViewIdState, viewId);
-        changeViewInUrl(viewId);
-        resetCurrentView();
-      },
-    [changeViewInUrl, currentViewIdState, resetCurrentView],
+    () => async (viewId: string) => {
+      changeViewInUrl(viewId);
+      resetCurrentView();
+    },
+    [changeViewInUrl, resetCurrentView],
   );
 
   const updateCurrentView = useRecoilCallback(
@@ -155,6 +159,6 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     updateCurrentView,
     updateView,
     removeView,
-    createEmptyView,
+    createView,
   };
 };

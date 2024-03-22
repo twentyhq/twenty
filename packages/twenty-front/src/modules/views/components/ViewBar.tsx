@@ -5,7 +5,8 @@ import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdo
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
-import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEffect';
+import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
+import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
@@ -36,6 +37,10 @@ export const ViewBar = ({
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
 
+  if (!objectNamePlural) {
+    return;
+  }
+
   return (
     <ViewScope
       viewScopeId={viewBarId}
@@ -44,7 +49,8 @@ export const ViewBar = ({
       <ViewBarEffect viewBarId={viewBarId} />
       <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
       <ViewBarSortEffect sortDropdownId={sortDropdownId} />
-      {!!objectNamePlural && <FilterQueryParamsEffect />}
+      <QueryParamsFiltersEffect />
+      <QueryParamsViewIdEffect />
 
       <TopBar
         className={className}

@@ -1,5 +1,4 @@
-import { useCallback } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -18,25 +17,14 @@ export const useViewPickerPersistView = () => {
     viewPickerTypeState,
   } = useViewPickerStates();
 
-  const viewPickerInputName = useRecoilValue(viewPickerInputNameState);
-  const viewPickerSelectedIcon = useRecoilValue(viewPickerSelectedIconState);
-  const setViewPickerIsPersisting = useSetRecoilState(
-    viewPickerIsPersistingState,
-  );
-
-  const viewPickerReferenceViewId = useRecoilValue(
-    viewPickerReferenceViewIdState,
-  );
-
-  const { createEmptyView, selectView, removeView, updateView } =
-    useHandleViews();
+  const { createView, selectView, removeView, updateView } = useHandleViews();
 
   const { viewsOnCurrentObject } = useGetCurrentView();
 
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const handleCreate = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async () => {
         const name = getSnapshotValue(snapshot, viewPickerInputNameState);
         const iconKey = getSnapshotValue(snapshot, viewPickerSelectedIconState);
@@ -46,65 +34,92 @@ export const useViewPickerPersistView = () => {
           viewPickerKanbanFieldMetadataIdState,
         );
         const id = v4();
-        setViewPickerIsPersisting(true);
-        await createEmptyView({
+        set(viewPickerIsPersistingState, true);
+        await createView({
           id,
           name,
           icon: iconKey,
           type,
           kanbanFieldMetadataId,
         });
-        selectView(id);
         closeAndResetViewPicker();
+        selectView(id);
       },
     [
       closeAndResetViewPicker,
-      createEmptyView,
+      createView,
       selectView,
-      setViewPickerIsPersisting,
       viewPickerInputNameState,
+      viewPickerIsPersistingState,
       viewPickerKanbanFieldMetadataIdState,
       viewPickerSelectedIconState,
       viewPickerTypeState,
     ],
   );
 
-  const handleDelete = useCallback(async () => {
-    setViewPickerIsPersisting(true);
-    selectView(
-      viewsOnCurrentObject.filter(
-        (view) => view.id !== viewPickerReferenceViewId,
-      )[0].id,
-    );
-    await removeView(viewPickerReferenceViewId);
-    closeAndResetViewPicker();
-  }, [
-    closeAndResetViewPicker,
-    removeView,
-    selectView,
-    setViewPickerIsPersisting,
-    viewPickerReferenceViewId,
-    viewsOnCurrentObject,
-  ]);
+  const handleDelete = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        set(viewPickerIsPersistingState, true);
+        const viewPickerReferenceViewId = getSnapshotValue(
+          snapshot,
+          viewPickerReferenceViewIdState,
+        );
 
-  const handleUpdate = useCallback(async () => {
-    setViewPickerIsPersisting(true);
-    await updateView({
-      id: viewPickerReferenceViewId,
-      name: viewPickerInputName,
-      icon: viewPickerSelectedIcon,
-    });
-    selectView(viewPickerReferenceViewId);
-    closeAndResetViewPicker();
-  }, [
-    setViewPickerIsPersisting,
-    updateView,
-    viewPickerReferenceViewId,
-    viewPickerInputName,
-    viewPickerSelectedIcon,
-    selectView,
-    closeAndResetViewPicker,
-  ]);
+        selectView(
+          viewsOnCurrentObject.filter(
+            (view) => view.id !== viewPickerReferenceViewId,
+          )[0].id,
+        );
+        await removeView(viewPickerReferenceViewId);
+        closeAndResetViewPicker();
+      },
+    [
+      closeAndResetViewPicker,
+      removeView,
+      selectView,
+      viewPickerIsPersistingState,
+      viewPickerReferenceViewIdState,
+      viewsOnCurrentObject,
+    ],
+  );
+
+  const handleUpdate = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async () => {
+        set(viewPickerIsPersistingState, true);
+
+        const viewPickerReferenceViewId = getSnapshotValue(
+          snapshot,
+          viewPickerReferenceViewIdState,
+        );
+        const viewPickerInputName = getSnapshotValue(
+          snapshot,
+          viewPickerInputNameState,
+        );
+        const viewPickerSelectedIcon = getSnapshotValue(
+          snapshot,
+          viewPickerSelectedIconState,
+        );
+
+        await updateView({
+          id: viewPickerReferenceViewId,
+          name: viewPickerInputName,
+          icon: viewPickerSelectedIcon,
+        });
+        selectView(viewPickerReferenceViewId);
+        closeAndResetViewPicker();
+      },
+    [
+      viewPickerIsPersistingState,
+      viewPickerReferenceViewIdState,
+      viewPickerInputNameState,
+      viewPickerSelectedIconState,
+      updateView,
+      selectView,
+      closeAndResetViewPicker,
+    ],
+  );
 
   return { handleCreate, handleDelete, handleUpdate };
 };
