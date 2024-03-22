@@ -1,12 +1,12 @@
-import { DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 const tableName = 'person';
 
 export const seedPeople = async (
-  workspaceDataSource: DataSource,
+  entityManager: EntityManager,
   schemaName: string,
 ) => {
-  await workspaceDataSource
+  await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

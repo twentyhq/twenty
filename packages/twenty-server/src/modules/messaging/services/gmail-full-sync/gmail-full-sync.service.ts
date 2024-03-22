@@ -211,6 +211,8 @@ export class GmailFullSyncService {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
+
+      return;
     }
 
     if (errors.length) {

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -32,7 +31,6 @@ export const SignInBackgroundMockContainer = () => {
             viewType={ViewType.Table}
           />
         }
-        optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
       />
       <SignInBackgroundMockContainerEffect
         objectNamePlural={objectNamePlural}

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import differenceWith from 'lodash.differencewith';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
@@ -30,7 +31,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
+      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "id" = ANY($1)`,
       [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
@@ -50,7 +51,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "calendarEventId" = ANY($1)`,
+      `SELECT * FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "calendarEventId" = ANY($1)`,
       [calendarEventIds],
       workspaceId,
       transactionManager,
@@ -70,7 +71,7 @@ export class CalendarEventAttendeeRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `DELETE FROM ${dataSourceSchema}."calendarEventAttendees" WHERE "id" = ANY($1)`,
+      `DELETE FROM ${dataSourceSchema}."calendarEventAttendee" WHERE "id" = ANY($1)`,
       [calendarEventAttendeeIds],
       workspaceId,
       transactionManager,
@@ -121,6 +122,29 @@ export class CalendarEventAttendeeRepository {
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarEventIds = Array.from(iCalUIDCalendarEventIdMap.values());
+
+    const existingCalendarEventAttendees = await this.getByCalendarEventIds(
+      calendarEventIds,
+      workspaceId,
+      transactionManager,
+    );
+
+    const calendarEventAttendeesToDelete = differenceWith(
+      existingCalendarEventAttendees,
+      calendarEventAttendees,
+      (existingCalendarEventAttendee, calendarEventAttendee) =>
+        existingCalendarEventAttendee.handle === calendarEventAttendee.handle,
+    );
+
+    await this.deleteByIds(
+      calendarEventAttendeesToDelete.map(
+        (calendarEventAttendee) => calendarEventAttendee.id,
+      ),
+      workspaceId,
+      transactionManager,
+    );
 
     const values = calendarEventAttendees.map((calendarEventAttendee) => ({
       ...calendarEventAttendee,

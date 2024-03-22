@@ -490,8 +490,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"
-      ("objectMetadataId", "type", "name")
-      VALUES ('${createdObjectMetadata.id}', 'table', 'All ${createdObjectMetadata.namePlural}') RETURNING *`,
+      ("objectMetadataId", "type", "name", "key", "icon")
+      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [
+        createdObjectMetadata.id,
+        'table',
+        `All ${createdObjectMetadata.namePlural}`,
+        'INDEX',
+        createdObjectMetadata.icon,
+      ],
     );
 
     createdObjectMetadata.fields.map(async (field, index) => {

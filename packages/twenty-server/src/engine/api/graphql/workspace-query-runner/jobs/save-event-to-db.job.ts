@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { EventRepository } from 'src/modules/event/repositiories/event.repository';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 export type SaveEventToDbJobData = {
   workspaceId: string;
   recordId: string;
+  userId: string | undefined;
   objectName: string;
   operation: string;
   details: any;
@@ -16,39 +20,47 @@ export type SaveEventToDbJobData = {
 @Injectable()
 export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
   constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    private readonly workspaceMemberService: WorkspaceMemberRepository,
+    @InjectObjectMetadataRepository(EventObjectMetadata)
+    private readonly eventService: EventRepository,
   ) {}
 
+  // TODO: need to support objects others than "person", "company", "opportunity"
   async handle(data: SaveEventToDbJobData): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        data.workspaceId,
-      );
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+    let workspaceMemberId: string | null = null;
+
+    if (data.userId) {
+      const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
+        data.userId,
         data.workspaceId,
       );
 
-    const eventType = `${data.operation}.${data.objectName}`;
-
-    // TODO: add "workspaceMember" (who performed the action, need to send it in the event)
-    // TODO: need to support objects others than "person", "company", "opportunities"
+      workspaceMemberId = workspaceMember.id;
+    }
 
     if (
       data.objectName != 'person' &&
       data.objectName != 'company' &&
-      data.objectName != 'opportunities'
+      data.objectName != 'opportunity'
     ) {
       return;
     }
 
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."event"
-      ("name", "properties", "${data.objectName}Id")
-      VALUES ('${eventType}', '${JSON.stringify(data.details)}', '${
-        data.recordId
-      }') RETURNING *`,
+    if (data.details.diff) {
+      // we remove "before" and "after" property for a cleaner/slimmer event payload
+      data.details = {
+        diff: data.details.diff,
+      };
+    }
+
+    await this.eventService.insert(
+      `${data.operation}.${data.objectName}`,
+      data.details,
+      workspaceMemberId,
+      data.objectName,
+      data.recordId,
+      data.workspaceId,
     );
   }
 }

@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { isUndefined } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 type ViewBarEffectProps = {
   viewBarId: string;
@@ -17,7 +16,6 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
     useGetCurrentView(viewBarId);
   const {
     onCurrentViewChangeState,
-    currentViewIdState,
     availableFilterDefinitionsState,
     isPersistingViewFieldsState,
   } = useViewStates(viewBarId);
@@ -30,7 +28,6 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
     availableFilterDefinitionsState,
   );
   const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
-  const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
 
   useEffect(() => {
     if (
@@ -39,14 +36,14 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
         currentViewSnapshot,
       )
     ) {
-      setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
-
       if (isUndefined(currentViewWithCombinedFiltersAndSorts)) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
         onCurrentViewChange?.(undefined);
         return;
       }
 
       if (!isPersistingViewFields) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
         onCurrentViewChange?.(currentViewWithCombinedFiltersAndSorts);
       }
     }
@@ -57,15 +54,6 @@ export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
     isPersistingViewFields,
     onCurrentViewChange,
   ]);
-
-  useEffect(() => {
-    if (
-      isDefined(currentViewWithCombinedFiltersAndSorts) &&
-      !isDefined(currentViewId)
-    ) {
-      setCurrentViewId(currentViewWithCombinedFiltersAndSorts.id);
-    }
-  }, [currentViewWithCombinedFiltersAndSorts, currentViewId, setCurrentViewId]);
 
   return <></>;
 };

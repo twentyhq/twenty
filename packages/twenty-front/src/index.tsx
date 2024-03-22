@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
-import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
@@ -33,10 +32,6 @@ import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
-
-// Adds messages only in a dev environment
-loadDevMessages();
-loadErrorMessages();
 
 root.render(
   <RecoilRoot>

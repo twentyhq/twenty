@@ -7,6 +7,7 @@ import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreat
 
 import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
+  findManyViewsQuery,
   query,
   responseData,
   variables,
@@ -21,6 +22,27 @@ const mocks = [
     result: jest.fn(() => ({
       data: {
         createOneObject: responseData,
+      },
+    })),
+  },
+  {
+    request: {
+      query: findManyViewsQuery,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        views: {
+          __typename: 'ViewConnection',
+          totalCount: 0,
+          pageInfo: {
+            __typename: 'PageInfo',
+            hasNextPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          edges: [],
+        },
       },
     })),
   },

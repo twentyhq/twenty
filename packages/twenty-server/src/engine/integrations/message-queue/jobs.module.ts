@@ -46,6 +46,7 @@ import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
+      EventObjectMetadata,
     ]),
   ],
   providers: [
