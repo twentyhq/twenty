@@ -28,7 +28,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 
   const setSentryConfig = useSetRecoilState(sentryConfigState);
 
-  const setCaptchaProvider = useSetRecoilState(captchaProviderState());
+  const setCaptchaProvider = useSetRecoilState(captchaProviderState);
 
   const { data, loading } = useGetClientConfigQuery();
 
