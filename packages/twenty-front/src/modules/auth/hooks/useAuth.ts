@@ -55,7 +55,7 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const handleChallenge = useCallback(
-    async (email: string, password: string, captchaToken: string) => {
+    async (email: string, password: string, captchaToken?: string) => {
       const challengeResult = await challenge({
         variables: {
           email,
@@ -132,7 +132,7 @@ export const useAuth = () => {
   );
 
   const handleCrendentialsSignIn = useCallback(
-    async (email: string, password: string, captchaToken: string) => {
+    async (email: string, password: string, captchaToken?: string) => {
       const { loginToken } = await handleChallenge(email, password, captchaToken);
       setIsVerifyPendingState(true);
 
