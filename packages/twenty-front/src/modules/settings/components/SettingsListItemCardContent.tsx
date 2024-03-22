@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
@@ -21,27 +20,27 @@ const StyledAccountHandle = styled.span`
   flex: 1 0 auto;
 `;
 
-type SettingsAccountRowProps = {
-  account: Pick<ConnectedAccount, 'handle'>;
+type SettingsListItemCardContentProps = {
+  label: string;
   divider?: boolean;
   LeftIcon: IconComponent;
   onClick?: () => void;
   rightComponent: ReactNode;
 };
 
-export const SettingsAccountRow = ({
-  account,
+export const SettingsListItemCardContent = ({
+  label,
   divider,
   LeftIcon,
   onClick,
   rightComponent,
-}: SettingsAccountRowProps) => {
+}: SettingsListItemCardContentProps) => {
   const theme = useTheme();
 
   return (
     <StyledRow onClick={onClick} divider={divider}>
       <LeftIcon size={theme.icon.size.md} />
-      <StyledAccountHandle>{account.handle}</StyledAccountHandle>
+      <StyledAccountHandle>{label}</StyledAccountHandle>
       {rightComponent}
     </StyledRow>
   );
