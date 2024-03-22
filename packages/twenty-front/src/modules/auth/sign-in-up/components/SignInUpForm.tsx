@@ -10,7 +10,6 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
-import { AppPath } from '@/types/AppPath';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -151,7 +150,10 @@ export const SignInUpForm = () => {
                       onBlur={onBlur}
                       onChange={(value: string) => {
                         onChange(value);
-                        if (signInUpStep === SignInUpStep.Password && signInUpMode === SignInUpMode.SignIn) {
+                        if (
+                          signInUpStep === SignInUpStep.Password &&
+                          signInUpMode === SignInUpMode.SignIn
+                        ) {
                           continueWithEmail();
                         }
                       }}
@@ -231,21 +233,23 @@ export const SignInUpForm = () => {
           />
         </StyledForm>
       </StyledContentContainer>
+
       {signInUpStep === SignInUpStep.Password ? (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
         </ActionLink>
       ) : signInUpMode === SignInUpMode.SignIn ? (
-        <ActionLink href={AppPath.SignUp}>Create an account</ActionLink>
+        <ActionLink
+          onClick={() => {
+            continueToSignUp();
+          }}
+        >
+          Create an account
+        </ActionLink>
       ) : (
         <FooterNote>
-          <ActionLink onClick ={() =>{
-            if (signInUpStep === SignInUpStep.Init) {
-              continueToSignUp();
-            }
-          }}>
-          Create an account
-          </ActionLink>
+          By using Twenty, you agree to the Terms of Service and Data Processing
+          Agreement.
         </FooterNote>
       )}
     </>

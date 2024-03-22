@@ -62,13 +62,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     );
   }, [setSignInUpStep, setSignInUpMode, isMatchingLocation]);
 
-  const continueToSignUp= useCallback(() =>{
+  const continueToSignUp = useCallback(() => {
     setSignInUpStep(SignInUpStep.Password);
     isMatchingLocation(AppPath.Invite)
-            ? setSignInUpMode(SignInUpMode.Invite)
-            : setSignInUpMode(SignInUpMode.SignUp);
-    
-  },[setSignInUpMode, setSignInUpStep, isMatchingLocation]);
+      ? setSignInUpMode(SignInUpMode.Invite)
+      : setSignInUpMode(SignInUpMode.SignUp);
+  }, [setSignInUpMode, setSignInUpStep, isMatchingLocation]);
 
   const continueWithCredentials = useCallback(() => {
     if (!form.getValues('email')) {
@@ -144,7 +143,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       }
-      
+
       if (signInUpStep === SignInUpStep.Email) {
         continueWithCredentials();
       }
