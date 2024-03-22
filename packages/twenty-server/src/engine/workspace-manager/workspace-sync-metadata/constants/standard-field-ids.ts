@@ -298,4 +298,5 @@ export const customObjectStandardFieldIds = {
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
+  events: '20202020-a508-4334-9724-5c2bf1b05998',
 };
