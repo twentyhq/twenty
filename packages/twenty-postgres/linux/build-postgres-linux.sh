@@ -57,6 +57,7 @@ echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
 apt update -y || handle_error "Failed to update package list."
 apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."su
 apt install -y curl || handle_error "Failed to install curl."
+apt install -y sudo || handle_error "Failed to install sudo."
 apt install build-essential -y || handle_error "Failed to install build-essential."
 apt install pkg-config -y || handle_error "Failed to install pkg-config."
 apt install libssl-dev -y || handle_error "Failed to install libssl-dev."
@@ -77,9 +78,9 @@ fi
 
 # To force a reinstall of cargo-pgrx, pass --force to the command below
 curl  https://sh.rustup.rs -sSf | sh
-source "$HOME/.cargo/env"
-cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION --force
-cargo pgrx init --pg$PG_MAIN_VERSION download
+source "$HOME/.cargo/env" || . "$HOME/.cargo/env"
+cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION --force || handle_error "Failed to install cargo"
+cargo pgrx init --pg$PG_MAIN_VERSION download || handle_error "Failed to init postgresql"
 
 # Create a temporary directory
 temp_dir=$(mktemp -d)
@@ -98,7 +99,8 @@ for patch_file in "/patches/pg_graphql/"*.patch; do
     patch -p1 < "$patch_file"
 done
 
-cargo pgrx install --release --pg-config /opt/bitnami/postgresql/bin/pg_config
+echo_header $GREEN "Step [2/4]: Building PostgreSQL service..."
+cargo pgrx install --release --pg-config /opt/bitnami/postgresql/bin/pg_config || handle_error "Failed to build postgresql"
 
 
 # Clean up the temporary directory
