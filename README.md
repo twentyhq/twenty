@@ -26,20 +26,39 @@
 
 We’ve spent thousands of hours grappling with traditional CRMs like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated — customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
-We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
+We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you run your business efficiently.
 
 <br>
 
-# Demo 
+# Demo
 Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
 ```
 email: noah@demo.dev
 password: Applecar2025
 ```
 
-See also:  
-🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)  
-🖥️ [Local Setup](https://docs.twenty.com/start/local-setup)  
+# Installation Guide
+
+Install the project with the command below. By default, it installs the latest version from the main branch. For a specific version or branch, set VERSION and BRANCH before running the command.
+
+## Default Installation:
+
+```bash
+curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh | bash
+````
+
+## Custom Installation:
+
+Set VERSION for a specific docker image version, BRANCH for a specific clone branch:
+
+```bash
+VERSION=x.y.z BRANCH=branch-name curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/install.sh | bash
+````
+Adjust x.y.z and branch-name as needed.
+
+## See also:
+🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)
+🖥️ [Local Setup](https://docs.twenty.com/start/local-setup)
 
 # Why Choose Twenty?
 We understand that the CRM landscape is vast. So why should you choose us?
@@ -55,9 +74,9 @@ We understand that the CRM landscape is vast. So why should you choose us?
 <br>
 
 # What You Can Do With Twenty
-We're currently in the development phase of Twenty's alpha version.  
+We're currently in the development phase of Twenty's alpha version.
 
-Please feel free to flag any specific need you have need by creating an issue.   
+Please feel free to flag any specific need you have need by creating an issue.
 
 Below are some features we have implemented to date:
 
@@ -162,9 +181,7 @@ Here’s what you can look forward to:
 # Join the Community
 
 - Star the repo
-- Join [discussions](https://github.com/twentyhq/twenty/discussions) and track [issues](https://github.com/twentyhq/twenty/issues) 
-- Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
+- Join [discussions](https://github.com/twentyhq/twenty/discussions) and track [issues](https://github.com/twentyhq/twenty/issues)
+- Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/)
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
-- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
-
-
+- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome!
