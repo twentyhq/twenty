@@ -17,11 +17,18 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H3Title } from '@/ui/display/typography/components/H3Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { Section } from '@/ui/layout/section/components/Section';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import {
   GetTimelineCalendarEventsFromPersonIdQueryVariables,
-  TimelineThreadsWithTotal,
+  TimelineCalendarEventsWithTotal,
 } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -90,9 +97,9 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
 
   const fetchMoreRecords = async () => {
     if (
-      (calendarEventsPage.hasNextPage &&
-        !isFetchingMoreEvents &&
-        !firstQueryLoading) === true
+      calendarEventsPage.hasNextPage &&
+      !isFetchingMoreEvents &&
+      !firstQueryLoading
     ) {
       setIsFetchingMoreEvents(true);
 
@@ -136,8 +143,10 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
     }
   };
 
-  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
-    data?.[queryName] ?? [];
+  const {
+    totalNumberOfCalendarEvents,
+    timelineCalendarEvents,
+  }: TimelineCalendarEventsWithTotal = data?.[queryName] ?? [];
 
   const {
     calendarEventsByDayTime,
@@ -159,6 +168,24 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
     // TODO: implement loader
     return;
   }
+
+  if (!firstQueryLoading && !timelineCalendarEvents?.length) {
+    // TODO: change animated placeholder
+    return (
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="noMatchRecord" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            No Events
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            No events have been scheduled with this record yet.
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      </AnimatedPlaceholderEmptyContainer>
+    );
+  }
+
   return (
     <CalendarContext.Provider
       value={{
