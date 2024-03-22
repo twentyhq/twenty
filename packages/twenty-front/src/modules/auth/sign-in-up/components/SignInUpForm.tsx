@@ -208,6 +208,7 @@ export const SignInUpForm = () => {
             </StyledFullWidthMotionDiv>
           )}
 
+          <div id="captcha-widget"></div>
           <MainButton
             variant="secondary"
             title={buttonTitle}
