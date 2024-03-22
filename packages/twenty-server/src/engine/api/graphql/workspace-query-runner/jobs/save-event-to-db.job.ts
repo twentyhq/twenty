@@ -8,6 +8,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 export type SaveEventToDbJobData = {
   workspaceId: string;
   recordId: string;
+  userId: string | undefined;
   objectName: string;
   operation: string;
   details: any;
@@ -49,12 +50,19 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
       };
     }
 
+    const workspaceMember = await workspaceDataSource?.query(`
+      SELECT "id" FROM ${dataSourceMetadata.schema}."workspaceMember"
+      WHERE ("userId" = '${data.userId}') LIMIT 1;
+  `);
+
+    const workspaceMemberId = workspaceMember[0]?.id ?? null;
+
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."event"
-      ("name", "properties", "${data.objectName}Id")
-      VALUES ('${eventType}', '${JSON.stringify(data.details)}', '${
+      ("name", "properties", "${data.objectName}Id", "workspaceMemberId")
+      VALUES ('${eventType}','${JSON.stringify(data.details)}', '${
         data.recordId
-      }') RETURNING *`,
+      }', '${workspaceMemberId}') RETURNING *`,
     );
   }
 }

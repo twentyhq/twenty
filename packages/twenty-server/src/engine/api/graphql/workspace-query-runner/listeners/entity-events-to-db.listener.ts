@@ -65,6 +65,7 @@ export class EntityEventsToDbListener {
 
     this.messageQueueService.add<SaveEventToDbJobData>(SaveEventToDbJob.name, {
       workspaceId: payload.workspaceId,
+      userId: payload.userId,
       recordId: payload.recordId,
       objectName: payload.objectMetadata.nameSingular,
       operation: operation,

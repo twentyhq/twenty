@@ -3,6 +3,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 export class ObjectRecordBaseEvent {
   workspaceId: string;
   recordId: string;
+  userId?: string;
   objectMetadata: ObjectMetadataInterface;
   details: any;
 }
