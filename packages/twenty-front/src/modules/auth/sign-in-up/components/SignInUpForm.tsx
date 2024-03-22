@@ -59,7 +59,6 @@ export const SignInUpForm = () => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
-    continueToSignUp,
     submitCredentials,
   } = useSignInUp(form);
 
@@ -151,10 +150,7 @@ export const SignInUpForm = () => {
                       onBlur={onBlur}
                       onChange={(value: string) => {
                         onChange(value);
-                        if (
-                          signInUpStep === SignInUpStep.Password &&
-                          signInUpMode === SignInUpMode.SignIn
-                        ) {
+                        if (signInUpStep === SignInUpStep.Password) {
                           continueWithEmail();
                         }
                       }}
@@ -234,18 +230,9 @@ export const SignInUpForm = () => {
           />
         </StyledForm>
       </StyledContentContainer>
-
       {signInUpStep === SignInUpStep.Password ? (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
-        </ActionLink>
-      ) : signInUpMode === SignInUpMode.SignIn ? (
-        <ActionLink
-          onClick={() => {
-            continueToSignUp();
-          }}
-        >
-          Create an account
         </ActionLink>
       ) : (
         <FooterNote>

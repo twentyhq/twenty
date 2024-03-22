@@ -16536,6 +16536,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.differencewith@npm:^4.5.9":
+  version: 4.5.9
+  resolution: "@types/lodash.differencewith@npm:4.5.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: e2433f6daf390c9c09e32532dbd434f133c6ba9e10248d4655ad6c20208d29e620d467fd8a69efe1c66ae15854fca94a4ae36f5ebe0caeb5355272f71b28639f
+  languageName: node
+  linkType: hard
+
 "@types/lodash.groupby@npm:^4.6.9":
   version: 4.6.9
   resolution: "@types/lodash.groupby@npm:4.6.9"
@@ -33330,6 +33339,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.differencewith@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.differencewith@npm:4.5.0"
+  checksum: 685a51f5e78aa4bb8ff1a22f144b9729e9189ee44d498bd94ab6061885a33efb906436f7e828b50ec91f3b86bd9f35e240da526ec062eac8f7edb42b989c15ed
+  languageName: node
+  linkType: hard
+
 "lodash.filter@npm:^4.6.0":
   version: 4.6.0
   resolution: "lodash.filter@npm:4.6.0"
@@ -45748,6 +45764,7 @@ __metadata:
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
     "@nx/js": "npm:17.2.8"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@types/lodash.differencewith": "npm:^4.5.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"
     "@types/lodash.isobject": "npm:^3.0.7"
@@ -45760,6 +45777,7 @@ __metadata:
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
     jwt-decode: "npm:^4.0.0"
+    lodash.differencewith: "npm:^4.5.0"
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
