@@ -1,14 +1,28 @@
+import { useState } from 'react';
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
+import { useRecoilState } from 'recoil';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
+import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
+import { useCalendarEventStates } from '@/activities/calendar/hooks/internal/useCalendarEventStates';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
+import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/queries/getCalendarEventsFromCompanyId';
+import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/queries/getCalendarEventsFromPersonId';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H3Title } from '@/ui/display/typography/components/H3Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Section } from '@/ui/layout/section/components/Section';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import {
+  GetTimelineCalendarEventsFromPersonIdQueryVariables,
+  TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -23,12 +37,107 @@ const StyledYear = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Calendar = () => {
+export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
+  const { enqueueSnackBar } = useSnackBar();
+
   const { records: calendarEvents } = useFindManyRecords<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     orderBy: { startsAt: 'DescNullsLast', endsAt: 'DescNullsLast' },
     useRecordsWithoutConnection: true,
   });
+
+  const { calendarEventsPageState } = useCalendarEventStates({
+    calendarEventScopeId: getScopeIdFromComponentId(entity.id),
+  });
+
+  const [calendarEventsPage, setCalendarEventsPage] = useRecoilState(
+    calendarEventsPageState,
+  );
+
+  const [isFetchingMoreEvents, setIsFetchingMoreEvents] = useState(false);
+
+  const [threadQuery, queryName] =
+    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+      ? [
+          getTimelineCalendarEventsFromPersonId,
+          'getTimelineCalendarEventsFromPersonId',
+        ]
+      : [
+          getTimelineCalendarEventsFromCompanyId,
+          'getTimelineCalendarEventsFromCompanyId',
+        ];
+
+  const threadQueryVariables = {
+    ...(entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+      ? { personId: entity.id }
+      : { companyId: entity.id }),
+    page: 1,
+    pageSize: TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+  } as GetTimelineCalendarEventsFromPersonIdQueryVariables;
+
+  const {
+    data,
+    loading: firstQueryLoading,
+    fetchMore,
+  } = useQuery(threadQuery, {
+    variables: threadQueryVariables,
+    onError: (error) => {
+      enqueueSnackBar(error.message || 'Error loading event threads', {
+        variant: 'error',
+      });
+    },
+  });
+
+  const fetchMoreRecords = async () => {
+    if (
+      (calendarEventsPage.hasNextPage &&
+        !isFetchingMoreEvents &&
+        !firstQueryLoading) === true
+    ) {
+      setIsFetchingMoreEvents(true);
+
+      await fetchMore({
+        variables: {
+          ...threadQueryVariables,
+          page: calendarEventsPage.pageNumber + 1,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult?.[queryName]?.timelineThreads?.length) {
+            setCalendarEventsPage((calendarEventsPage) => ({
+              ...calendarEventsPage,
+              hasNextPage: false,
+            }));
+            return {
+              [queryName]: {
+                ...prev?.[queryName],
+                timelineThreads: [
+                  ...(prev?.[queryName]?.timelineThreads ?? []),
+                ],
+              },
+            };
+          }
+
+          return {
+            [queryName]: {
+              ...prev?.[queryName],
+              timelineThreads: [
+                ...(prev?.[queryName]?.timelineThreads ?? []),
+                ...(fetchMoreResult?.[queryName]?.timelineThreads ?? []),
+              ],
+            },
+          };
+        },
+      });
+      setCalendarEventsPage((calendarEventsPage) => ({
+        ...calendarEventsPage,
+        pageNumber: calendarEventsPage.pageNumber + 1,
+      }));
+      setIsFetchingMoreEvents(false);
+    }
+  };
+
+  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
+    data?.[queryName] ?? [];
 
   const {
     calendarEventsByDayTime,
@@ -46,6 +155,10 @@ export const Calendar = () => {
     })),
   );
 
+  if (firstQueryLoading) {
+    // TODO: implement loader
+    return;
+  }
   return (
     <CalendarContext.Provider
       value={{
