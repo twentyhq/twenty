@@ -4686,7 +4686,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/babel-plugin@npm:^11.11.0":
+"@emotion/babel-plugin@npm:11.11.0, @emotion/babel-plugin@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/babel-plugin@npm:11.11.0"
   dependencies:
@@ -45824,6 +45824,7 @@ __metadata:
     "@docusaurus/module-type-aliases": "npm:^3.1.0"
     "@docusaurus/preset-classic": "npm:^3.1.0"
     "@docusaurus/tsconfig": "npm:3.1.0"
+    "@emotion/babel-plugin": "npm:11.11.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@envelop/on-resolve": "npm:^4.1.0"

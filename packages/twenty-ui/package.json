@@ -1,13 +1,12 @@
 {
   "name": "twenty-ui",
   "version": "0.0.1",
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts",
-  "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-ui node ../../node_modules/nx/bin/nx.js",
-    "coverage": "nx test --coverage",
-    "storybook:build": "storybook build",
-    "storybook:dev": "storybook dev -p 6007`"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   }
 }

@@ -90,7 +90,7 @@ const StyledButton = styled.button<
 
   &:hover {
     background: ${({ theme, isActive }) =>
-      !!isActive ?? theme.background.transparent.lighter};
+      isActive && theme.background.transparent.lighter};
   }
 
   &:active {

@@ -1,11 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "jsxImportSource": "@emotion/react",
     "types": ["vite/client"],
     "baseUrl": "."
   },
@@ -16,10 +16,8 @@
       "path": "./tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.spec.json"
-    },
-    {
       "path": "./tsconfig.storybook.json"
     }
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }

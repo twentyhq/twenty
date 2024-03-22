@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-
 import { IconArrowRight } from 'src/display/icon';
 import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
 
