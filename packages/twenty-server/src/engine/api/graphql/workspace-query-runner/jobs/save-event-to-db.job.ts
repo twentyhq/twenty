@@ -51,6 +51,9 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
     }
 
     const workspaceMember = await workspaceDataSource?.query(`
+          SELECT "id" FROM ${dataSourceMetadata.schema}."workspaceMember"
+      WHERE ("userId" = $1) LIMIT 1;
+      `, [data.userId])
       SELECT "id" FROM ${dataSourceMetadata.schema}."workspaceMember"
       WHERE ("userId" = '${data.userId}') LIMIT 1;
   `);
