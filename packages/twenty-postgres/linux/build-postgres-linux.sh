@@ -55,7 +55,6 @@ TARGETARCH=$(dpkg --print-architecture)
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
 apt update -y || handle_error "Failed to update package list."
-apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."su
 apt install -y curl || handle_error "Failed to install curl."
 apt install -y sudo || handle_error "Failed to install sudo."
 apt install build-essential -y || handle_error "Failed to install build-essential."
@@ -94,7 +93,7 @@ cd "pg_graphql-$PG_GRAPHQL_VERSION"
 
 # Apply patches to pg_graphql files
 echo "Applying patches to pg_graphql files..."
-for patch_file in "/patches/pg_graphql/"*.patch; do
+for patch_file in "/twenty/patches/pg_graphql/"*.patch; do
     echo "Applying patch: $patch_file"
     patch -p1 < "$patch_file"
 done
