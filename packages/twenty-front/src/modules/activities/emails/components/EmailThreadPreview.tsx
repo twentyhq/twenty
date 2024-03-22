@@ -9,7 +9,7 @@ import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledCardContent = styled(CardContent)<{ visibility: string }>`
   align-items: center;

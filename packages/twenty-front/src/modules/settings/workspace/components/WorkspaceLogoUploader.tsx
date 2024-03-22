@@ -6,8 +6,8 @@ import {
   useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();

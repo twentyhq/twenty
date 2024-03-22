@@ -8,8 +8,8 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;

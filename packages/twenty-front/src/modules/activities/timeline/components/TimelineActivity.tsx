@@ -11,7 +11,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/utils/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledAvatarContainer = styled.div`
   align-items: center;
