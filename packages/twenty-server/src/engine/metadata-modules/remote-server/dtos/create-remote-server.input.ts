@@ -10,13 +10,13 @@ import {
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @InputType()
-export class CreateRemoteServerInput {
+export class CreateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
-  fdwType: RemoteServerType;
+  fdwType: T;
 
   @IsOptional()
   @Field(() => GraphQLJSON)
-  fdwOptions: FdwOptions;
+  fdwOptions: FdwOptions<T>;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

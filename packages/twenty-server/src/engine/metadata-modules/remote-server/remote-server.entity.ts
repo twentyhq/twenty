@@ -1,3 +1,5 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -17,7 +19,8 @@ type PostgresFdwOptions = {
   dbname: string;
 };
 
-export type FdwOptions = PostgresFdwOptions;
+export type FdwOptions<T extends RemoteServerType> =
+  T extends RemoteServerType.POSTGRES_FDW ? PostgresFdwOptions : never;
 
 export type UserMappingOptions = {
   username: string;
@@ -25,7 +28,8 @@ export type UserMappingOptions = {
 };
 
 @Entity('remoteServer')
-export class RemoteServerEntity {
+@ObjectType('RemoteServer')
+export class RemoteServerEntity<T extends RemoteServerType> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -34,10 +38,10 @@ export class RemoteServerEntity {
   fdwId: string;
 
   @Column({ nullable: true })
-  fdwType: RemoteServerType;
+  fdwType: T;
 
   @Column({ nullable: true, type: 'jsonb' })
-  fdwOptions: FdwOptions;
+  fdwOptions: FdwOptions<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
   userMappingOptions: UserMappingOptions;

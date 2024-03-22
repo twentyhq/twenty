@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -16,20 +15,20 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 
 @Injectable()
-export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity> {
+export class RemoteServerService<T extends RemoteServerType> {
   constructor(
     @InjectRepository(RemoteServerEntity, 'metadata')
-    private readonly remoteServerRepository: Repository<RemoteServerEntity>,
+    private readonly remoteServerRepository: Repository<
+      RemoteServerEntity<RemoteServerType>
+    >,
     private readonly typeORMService: TypeORMService,
     private readonly environmentService: EnvironmentService,
-  ) {
-    super(remoteServerRepository);
-  }
+  ) {}
 
   async createOneRemoteServer(
-    remoteServerInput: CreateRemoteServerInput,
+    remoteServerInput: CreateRemoteServerInput<T>,
     workspaceId: string,
-  ): Promise<RemoteServerEntity> {
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
     const mainDatasource = this.typeORMService.getMainDataSource();
 
     let remoteServerToCreate = {
@@ -55,7 +54,8 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
       };
     }
 
-    const createdRemoteServer = await super.createOne(remoteServerToCreate);
+    const createdRemoteServer =
+      await this.remoteServerRepository.create(remoteServerToCreate);
 
     const fdwQuery = this.buildFDWQuery(
       createdRemoteServer.fdwId,
@@ -74,13 +74,15 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
       await mainDatasource.query(userMappingQuery);
     }
 
+    await this.remoteServerRepository.save(createdRemoteServer);
+
     return createdRemoteServer;
   }
 
   async deleteOneRemoteServer(
     id: string,
     workspaceId: string,
-  ): Promise<RemoteServerEntity> {
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
         id,
@@ -92,11 +94,10 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
       throw new NotFoundException('Object does not exist');
     }
 
-    await this.remoteServerRepository.delete(id);
-
     const mainDatasource = this.typeORMService.getMainDataSource();
 
     await mainDatasource.query(`DROP SERVER "${remoteServer.fdwId}" CASCADE`);
+    await this.remoteServerRepository.delete(id);
 
     return remoteServer;
   }
@@ -110,8 +111,8 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
     });
   }
 
-  public async findManyByTypeWithinWorkspace(
-    fdwType: RemoteServerType,
+  public async findManyByTypeWithinWorkspace<T extends RemoteServerType>(
+    fdwType: T,
     workspaceId: string,
   ) {
     return this.remoteServerRepository.find({
@@ -131,11 +132,7 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
   }
 
   // TODO: Move to a query builder once the logic is validated
-  private buildFDWQuery(
-    fdwId: string,
-    fdwType: RemoteServerType,
-    fdwOptions: FdwOptions,
-  ) {
+  private buildFDWQuery(fdwId: string, fdwType: T, fdwOptions: FdwOptions<T>) {
     let fdwQueryOptions = '';
 
     switch (fdwType) {
@@ -149,7 +146,7 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
     return `CREATE SERVER IF NOT EXISTS "${fdwId}" FOREIGN DATA WRAPPER postgres_fdw OPTIONS (${fdwQueryOptions})`;
   }
 
-  private buildPostgresFDWQueryOptions(fdwOptions: FdwOptions) {
+  private buildPostgresFDWQueryOptions(fdwOptions: FdwOptions<T>) {
     return `dbname '${fdwOptions.dbname}', host '${fdwOptions.host}', port '${fdwOptions.port}'`;
   }
 }

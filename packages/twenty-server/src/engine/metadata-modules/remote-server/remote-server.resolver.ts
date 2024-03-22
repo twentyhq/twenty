@@ -8,16 +8,19 @@ import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-serv
 import { RemoteServerIdInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-id.input';
 import { RemoteServerTypeInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-type.input';
 import { RemoteServerDTO } from 'src/engine/metadata-modules/remote-server/dtos/remote-server.dto';
+import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
 export class RemoteServerResolver {
-  constructor(private readonly remoteServerService: RemoteServerService) {}
+  constructor(
+    private readonly remoteServerService: RemoteServerService<RemoteServerType>,
+  ) {}
 
   @Mutation(() => RemoteServerDTO)
   async createOneRemoteServer(
-    @Args('input') input: CreateRemoteServerInput,
+    @Args('input') input: CreateRemoteServerInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.remoteServerService.createOneRemoteServer(input, workspaceId);
@@ -41,7 +44,7 @@ export class RemoteServerResolver {
 
   @Query(() => [RemoteServerDTO])
   async findManyRemoteServersByType(
-    @Args('input') { fdwType }: RemoteServerTypeInput,
+    @Args('input') { fdwType }: RemoteServerTypeInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.remoteServerService.findManyByTypeWithinWorkspace(

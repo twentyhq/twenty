@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddRemoteServerTable1711104284380 implements MigrationInterface {
-  name = 'AddRemoteServerTable1711104284380';
+export class AddRemoteServerTable1711124466598 implements MigrationInterface {
+  name = 'AddRemoteServerTable1711124466598';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
