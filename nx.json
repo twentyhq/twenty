@@ -32,13 +32,17 @@
         }
       }
     },
-    "@nx/vite:test": {
+    "@nx/eslint:lint": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
+      ]
     }
   },
   "installation": {
-    "version": "17.2.8"
+    "version": "17.3.2"
   },
   "affected": {
     "defaultBase": "main"
