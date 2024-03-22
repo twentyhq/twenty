@@ -6,6 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
@@ -33,6 +34,9 @@ export const useCreateOneRecord = <
       objectMetadataItem,
     });
 
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const createOneRecord = async (
@@ -41,14 +45,20 @@ export const useCreateOneRecord = <
   ) => {
     const idForCreation = input.id ?? v4();
 
+    const inputWithNestedConnections =
+      mapRecordRelationRecordsToRelationConnection({
+        objectRecord: input,
+        objectNameSingular,
+      });
+
     const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: { ...input, id: idForCreation },
+      recordInput: { ...inputWithNestedConnections, id: idForCreation },
     });
 
     const optimisticallyCreatedRecord =
       generateObjectRecordOptimisticResponse<CreatedObjectRecord>({
-        ...input,
+        ...inputWithNestedConnections,
         ...sanitizedCreateOneRecordInput,
       });
 

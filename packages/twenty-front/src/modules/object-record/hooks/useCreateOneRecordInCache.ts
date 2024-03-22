@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type useCreateOneRecordInCacheProps = {
@@ -23,9 +24,23 @@ export const useCreateOneRecordInCache = <T>({
     objectMetadataItem,
   });
 
-  const createOneRecordInCache = (input: ObjectRecord) => {
-    const generatedCachedObjectRecord =
-      generateObjectRecordOptimisticResponse(input);
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
+
+  const createOneRecordInCache = (recordToCreate: ObjectRecord) => {
+    const recordToCreateWithNestedConnections =
+      mapRecordRelationRecordsToRelationConnection({
+        objectRecord: recordToCreate,
+        objectNameSingular,
+      });
+
+    if (!recordToCreateWithNestedConnections) {
+      throw new Error('Record to create with nested connections is undefined');
+    }
+
+    const generatedCachedObjectRecord = generateObjectRecordOptimisticResponse(
+      recordToCreateWithNestedConnections,
+    );
 
     addRecordInCache(generatedCachedObjectRecord);
 

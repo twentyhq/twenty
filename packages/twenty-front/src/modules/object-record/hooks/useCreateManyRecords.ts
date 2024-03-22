@@ -7,6 +7,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
@@ -31,22 +32,32 @@ export const useCreateManyRecords = <
       objectMetadataItem,
     });
 
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const createManyRecords = async (
-    data: Partial<CreatedObjectRecord>[],
+    recordsToCreate: Partial<CreatedObjectRecord>[],
     options?: CreateManyRecordsOptions,
   ) => {
-    const sanitizedCreateManyRecordsInput = data.map((input) => {
-      const idForCreation = input.id ?? v4();
+    const sanitizedCreateManyRecordsInput = recordsToCreate.map(
+      (recordToCreate) => {
+        const input = mapRecordRelationRecordsToRelationConnection({
+          objectRecord: recordToCreate,
+          objectNameSingular,
+        });
 
-      const sanitizedRecordInput = sanitizeRecordInput({
-        objectMetadataItem,
-        recordInput: { ...input, id: idForCreation },
-      });
+        const idForCreation = input?.id ?? v4();
 
-      return sanitizedRecordInput;
-    });
+        const sanitizedRecordInput = sanitizeRecordInput({
+          objectMetadataItem,
+          recordInput: { ...input, id: idForCreation },
+        });
+
+        return sanitizedRecordInput;
+      },
+    );
 
     const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
       (record) =>

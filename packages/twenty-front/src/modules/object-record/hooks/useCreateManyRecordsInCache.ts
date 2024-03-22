@@ -4,6 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
@@ -23,11 +24,21 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectMetadataItem,
   });
 
-  const createManyRecordsInCache = (data: Partial<T>[]) => {
-    const recordsWithId = data.map((record) => ({
-      ...record,
-      id: (record.id as string) ?? v4(),
-    }));
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
+
+  const createManyRecordsInCache = (recordsToCreate: Partial<T>[]) => {
+    const recordsWithId = recordsToCreate
+      .map((record) => {
+        return mapRecordRelationRecordsToRelationConnection({
+          objectRecord: {
+            ...record,
+            id: (record.id as string) ?? v4(),
+          },
+          objectNameSingular,
+        });
+      })
+      .filter(isDefined);
 
     const createdRecordsInCache = [] as T[];
 

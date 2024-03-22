@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/client';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
@@ -9,8 +8,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 
 // TODO: this should be useDeleteRecordFromCache
 export const useDeleteActivityFromCache = () => {
-  const { makeActivityWithConnection } = useActivityConnectionUtils();
-
   const apolloClient = useApolloClient();
 
   const { objectMetadataItem: objectMetadataItemActivity } =
@@ -21,15 +18,11 @@ export const useDeleteActivityFromCache = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const deleteActivityFromCache = (activityToDelete: ActivityForEditor) => {
-    const { activityWithConnection } = makeActivityWithConnection(
-      activityToDelete as any, // TODO: fix type
-    );
-
     triggerDeleteRecordsOptimisticEffect({
       cache: apolloClient.cache,
       objectMetadataItem: objectMetadataItemActivity,
       objectMetadataItems,
-      recordsToDelete: [activityWithConnection],
+      recordsToDelete: [{ ...activityToDelete, __typename: 'Activity' }],
     });
   };
 

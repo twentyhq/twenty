@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
+import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
@@ -28,6 +29,8 @@ export const useUpdateOneRecord = <
     });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { mapRecordRelationRecordsToRelationConnection } =
+    useMapRelationRecordsToRelationConnection();
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -38,9 +41,19 @@ export const useUpdateOneRecord = <
   }) => {
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
+    const updateOneRecordInputWithNestedConnections =
+      mapRecordRelationRecordsToRelationConnection({
+        objectRecord: updateOneRecordInput,
+        objectNameSingular,
+      });
+
+    if (!updateOneRecordInputWithNestedConnections) {
+      throw new Error('Record to update with nested connections is undefined');
+    }
+
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: updateOneRecordInput,
+      recordInput: updateOneRecordInputWithNestedConnections,
     });
 
     const optimisticallyUpdatedRecord = generateObjectRecordOptimisticResponse({

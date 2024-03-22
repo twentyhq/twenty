@@ -17,14 +17,14 @@ export const useMapRelationRecordsToRelationConnection = () => {
   const mapRecordsToConnection = useMapRecordsToConnection();
 
   const mapRecordRelationRecordsToRelationConnection = useCallback(
-    <T extends ObjectRecord>({
+    <T extends Partial<ObjectRecord>>({
       objectRecord,
       objectNameSingular,
-      depth,
+      depth = 5,
     }: {
-      objectRecord: ObjectRecord | undefined | null;
+      objectRecord: T | undefined | null;
       objectNameSingular: string;
-      depth: number;
+      depth?: number;
     }): T | null => {
       if (!isDefined(objectRecord) || !isNonEmptyArray(objectMetadataItems)) {
         return null;

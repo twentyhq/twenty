@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useInjectIntoActivitiesQueries } from '@/activities/hooks/useInjectIntoActivitiesQueries';
 import { useInjectIntoActivityTargetsQueries } from '@/activities/hooks/useInjectIntoActivityTargetsQueries';
@@ -52,8 +51,6 @@ export const useUpsertActivity = () => {
   const { injectIntoTimelineActivitiesQueries } =
     useInjectIntoTimelineActivitiesQueries();
 
-  const { makeActivityWithConnection } = useActivityConnectionUtils();
-
   const currentCompletedTaskQueryVariables = useRecoilValue(
     currentCompletedTaskQueryVariablesState,
   );
@@ -81,17 +78,14 @@ export const useUpsertActivity = () => {
         ...input,
       };
 
-      const { activityWithConnection } =
-        makeActivityWithConnection(activityToCreate);
-
       if (weAreOnTaskPage) {
-        if (isDefined(activityWithConnection.completedAt)) {
+        if (isDefined(activityToCreate.completedAt)) {
           injectActivitiesQueries({
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
               currentCompletedTaskQueryVariables?.orderBy,
             activityTargetsToInject: activityToCreate.activityTargets,
-            activityToInject: activityWithConnection,
+            activityToInject: activityToCreate,
             targetableObjects: [],
           });
         } else {
@@ -100,7 +94,7 @@ export const useUpsertActivity = () => {
             activitiesOrderByVariables:
               currentIncompleteTaskQueryVariables?.orderBy,
             activityTargetsToInject: activityToCreate.activityTargets,
-            activityToInject: activityWithConnection,
+            activityToInject: activityToCreate,
             targetableObjects: [],
           });
         }
@@ -115,15 +109,15 @@ export const useUpsertActivity = () => {
       if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
-          activityToInject: activityWithConnection,
+          activityToInject: activityToCreate,
           activityTargetsToInject: activityToCreate.activityTargets,
         });
 
         const injectOnlyInIdFilterForTaskQueries =
-          activityWithConnection.type !== 'Task';
+          activityToCreate.type !== 'Task';
 
         const injectOnlyInIdFilterForNotesQueries =
-          activityWithConnection.type !== 'Note';
+          activityToCreate.type !== 'Note';
 
         if (isDefined(currentCompletedTaskQueryVariables)) {
           injectActivitiesQueries({
@@ -131,7 +125,7 @@ export const useUpsertActivity = () => {
             activitiesOrderByVariables:
               currentCompletedTaskQueryVariables?.orderBy,
             activityTargetsToInject: activityToCreate.activityTargets,
-            activityToInject: activityWithConnection,
+            activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForTaskQueries,
           });
@@ -144,7 +138,7 @@ export const useUpsertActivity = () => {
             activitiesOrderByVariables:
               currentIncompleteTaskQueryVariables?.orderBy ?? {},
             activityTargetsToInject: activityToCreate.activityTargets,
-            activityToInject: activityWithConnection,
+            activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForTaskQueries,
           });
@@ -155,7 +149,7 @@ export const useUpsertActivity = () => {
             activitiesFilters: currentNotesQueryVariables?.filter,
             activitiesOrderByVariables: currentNotesQueryVariables?.orderBy,
             activityTargetsToInject: activityToCreate.activityTargets,
-            activityToInject: activityWithConnection,
+            activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForNotesQueries,
           });
