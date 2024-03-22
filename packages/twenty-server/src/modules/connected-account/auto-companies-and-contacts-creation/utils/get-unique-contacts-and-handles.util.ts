@@ -1,4 +1,5 @@
-import { uniq, uniqBy } from 'lodash';
+import uniq from 'lodash.uniq';
+import uniqBy from 'lodash.uniqby';
 
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 
