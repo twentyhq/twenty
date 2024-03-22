@@ -16,36 +16,47 @@ export const useGenerateCaptchaToken = () => {
   const captchaProvider = useRecoilValue(captchaProviderState);
   const captchaWidgetId = useRef<string | null>(null);
 
-  const generateGoogleRecaptchaToken = useCallback(async (): Promise<string|undefined> => {
+  const generateGoogleRecaptchaToken = useCallback(async (): Promise<
+    string | undefined
+  > => {
     if (
       'grecaptcha' in window &&
       captchaProvider?.provider &&
       captchaProvider?.siteKey
     ) {
-
       if (captchaWidgetId.current === null) {
-        captchaWidgetId.current = (window.grecaptcha as any).render('captcha-widget', {
-          sitekey: captchaProvider.siteKey,
-        });
+        captchaWidgetId.current = (window.grecaptcha as any).render(
+          'captcha-widget',
+          {
+            sitekey: captchaProvider.siteKey,
+          },
+        );
       }
 
       return new Promise((resolve, reject) => {
-        (window.grecaptcha as any).execute(captchaWidgetId.current, {action: 'submit'}).then((token: string) => resolve(token)).catch((error: any) => reject(error));
+        (window.grecaptcha as any)
+          .execute(captchaWidgetId.current, { action: 'submit' })
+          .then((token: string) => resolve(token))
+          .catch((error: any) => reject(error));
       });
     }
   }, [captchaProvider?.provider, captchaProvider?.siteKey]);
 
-  const generateTurnstileCaptchaToken = useCallback(async ():Promise<string|undefined> => {
+  const generateTurnstileCaptchaToken = useCallback(async (): Promise<
+    string | undefined
+  > => {
     if (
       'turnstile' in window &&
       captchaProvider?.provider &&
       captchaProvider.siteKey
     ) {
-
       if (captchaWidgetId.current === null) {
-        captchaWidgetId.current = (window.turnstile as any).render('#captcha-widget', {
-          sitekey: captchaProvider.siteKey,
-        });
+        captchaWidgetId.current = (window.turnstile as any).render(
+          '#captcha-widget',
+          {
+            sitekey: captchaProvider.siteKey,
+          },
+        );
       }
 
       return new Promise((resolve, reject) => {
@@ -56,50 +67,61 @@ export const useGenerateCaptchaToken = () => {
           },
           'error-callback': (error: any) => {
             reject(error);
-          }
+          },
         });
       });
     }
   }, [captchaProvider?.provider, captchaProvider?.siteKey]);
 
-  const generateHcaptchaToken = useCallback(async (): Promise<string|undefined> => {
+  const generateHcaptchaToken = useCallback(async (): Promise<
+    string | undefined
+  > => {
     if (
       'hcaptcha' in window &&
       captchaProvider?.provider &&
       captchaProvider.siteKey
     ) {
       if (captchaWidgetId.current === null) {
-        captchaWidgetId.current = (window.hcaptcha as any).render('captcha-widget', {
-          sitekey: captchaProvider.siteKey,
-        });
+        captchaWidgetId.current = (window.hcaptcha as any).render(
+          'captcha-widget',
+          {
+            sitekey: captchaProvider.siteKey,
+          },
+        );
       }
 
       return new Promise((resolve, reject) => {
-        window.hcaptcha.execute(captchaWidgetId.current, {async: true}).then(({response}: any) => resolve(response)).catch((error: any) => reject(error) );
+        window.hcaptcha
+          .execute(captchaWidgetId.current, { async: true })
+          .then(({ response }: any) => resolve(response))
+          .catch((error: any) => reject(error));
       });
     }
   }, [captchaProvider?.provider, captchaProvider?.siteKey]);
 
-  const generateCaptchaToken = useCallback(( isLoaded: boolean ) => {
-    if (!isLoaded || !captchaProvider?.provider || !captchaProvider.siteKey) {
-      return;
-    }
+  const generateCaptchaToken = useCallback(
+    (isLoaded: boolean) => {
+      if (!isLoaded || !captchaProvider?.provider || !captchaProvider.siteKey) {
+        return;
+      }
 
-    switch (captchaProvider.provider) {
-      case CaptchaDriverType.GoogleRecatpcha:
-        return generateGoogleRecaptchaToken();
-      case CaptchaDriverType.Turnstile:
-        return generateTurnstileCaptchaToken();
-      case CaptchaDriverType.HCaptcha:
-        return generateHcaptchaToken();
-    }
-  }, [
-    captchaProvider?.provider,
-    captchaProvider?.siteKey,
-    generateGoogleRecaptchaToken,
-    generateTurnstileCaptchaToken,
-    generateHcaptchaToken,
-  ]);
+      switch (captchaProvider.provider) {
+        case CaptchaDriverType.GoogleRecatpcha:
+          return generateGoogleRecaptchaToken();
+        case CaptchaDriverType.Turnstile:
+          return generateTurnstileCaptchaToken();
+        case CaptchaDriverType.HCaptcha:
+          return generateHcaptchaToken();
+      }
+    },
+    [
+      captchaProvider?.provider,
+      captchaProvider?.siteKey,
+      generateGoogleRecaptchaToken,
+      generateTurnstileCaptchaToken,
+      generateHcaptchaToken,
+    ],
+  );
 
   return { generateCaptchaToken };
 };

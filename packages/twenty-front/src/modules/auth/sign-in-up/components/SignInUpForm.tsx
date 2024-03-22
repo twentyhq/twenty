@@ -82,7 +82,9 @@ export const SignInUpForm = () => {
         setShowErrors(true);
 
         if (generateCaptchaToken) {
-          const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+          const captchaToken = await generateCaptchaToken(
+            isCaptchaScriptLoaded,
+          );
           form.setValue('captchaToken', captchaToken || '');
         }
 
@@ -231,7 +233,9 @@ export const SignInUpForm = () => {
               setShowErrors(true);
 
               if (generateCaptchaToken) {
-                const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+                const captchaToken = await generateCaptchaToken(
+                  isCaptchaScriptLoaded,
+                );
                 form.setValue('captchaToken', captchaToken || '');
               }
 
