@@ -57,8 +57,7 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     const isMatchingOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.SignInUp) ||
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.Verify);
 
@@ -73,7 +72,7 @@ export const PageChangeEffect = () => {
       enqueueSnackBar('workspace does not exist', {
         variant: 'error',
       });
-      navigate(AppPath.SignUp);
+      navigate(AppPath.SignInUp);
     };
 
     if (
@@ -81,7 +80,7 @@ export const PageChangeEffect = () => {
       !isMatchingOngoingUserCreationRoute &&
       !isMatchingLocation(AppPath.ResetPassword)
     ) {
-      navigate(AppPath.SignIn);
+      navigate(AppPath.SignInUp);
     } else if (
       isDefined(onboardingStatus) &&
       onboardingStatus === OnboardingStatus.Incomplete &&
@@ -141,8 +140,6 @@ export const PageChangeEffect = () => {
           navigateToSignUp();
         },
       });
-    } else if (isMatchingLocation(AppPath.SignUp) && isSignUpDisabled) {
-      navigate(AppPath.SignIn);
     }
   }, [
     enqueueSnackBar,
@@ -185,11 +182,7 @@ export const PageChangeEffect = () => {
         break;
       }
 
-      case isMatchingLocation(AppPath.SignIn): {
-        setHotkeyScope(PageHotkeyScope.SignInUp);
-        break;
-      }
-      case isMatchingLocation(AppPath.SignUp): {
+      case isMatchingLocation(AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }
