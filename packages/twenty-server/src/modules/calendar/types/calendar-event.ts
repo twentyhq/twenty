@@ -29,3 +29,7 @@ export type CalendarEventWithAttendees = CalendarEvent & {
   externalId: string;
   attendees: CalendarEventAttendee[];
 };
+
+export type CalendarEventAttendeeWithId = CalendarEventAttendee & {
+  id: string;
+};
