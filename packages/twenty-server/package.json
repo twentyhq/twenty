@@ -43,6 +43,7 @@
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
     "jwt-decode": "^4.0.0",
+    "lodash.differencewith": "^4.5.0",
     "passport": "^0.7.0",
     "psl": "^1.9.0",
     "tsconfig-paths": "^4.2.0"
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@nestjs/cli": "10.3.0",
     "@nx/js": "17.2.8",
+    "@types/lodash.differencewith": "^4.5.9",
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.isobject": "^3.0.7",
