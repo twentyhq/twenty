@@ -6,7 +6,8 @@
   "typings": "./index.d.ts",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-ui node ../../node_modules/nx/bin/nx.js",
-    "start": "storybook dev -p 6006",
-    "build": "storybook build"
+    "coverage": "nx test --coverage",
+    "storybook:build": "storybook build",
+    "storybook:dev": "storybook dev -p 6006"
   }
 }

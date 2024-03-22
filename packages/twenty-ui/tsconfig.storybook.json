@@ -1,37 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "outDir": ""
+    "types": ["node", "@nx/react/typings/image.d.ts", "vite/client"]
   },
-  "files": [
-    "../../node_modules/@nx/react/typings/styled-jsx.d.ts",
-    "../../node_modules/@nx/react/typings/cssmodule.d.ts",
-    "../../node_modules/@nx/react/typings/image.d.ts"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.js",
-    "src/**/*.test.js",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.jsx",
-    "src/**/*.test.js"
-  ],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "**/*.stories.ts",
-    "src/**/*.stories.ts",
-    "src/**/*.stories.js",
-    "src/**/*.stories.jsx",
-    "src/**/*.stories.tsx",
-    "src/**/*.stories.mdx",
-    ".storybook/*.js",
-    ".storybook/*.ts",
-    ".storybook/main.tsx"
-  ]
+  "include": ["src/**/*.stories.tsx", ".storybook/*.ts", ".storybook/*.tsx"]
 }
