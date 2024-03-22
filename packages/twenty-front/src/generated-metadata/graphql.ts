@@ -73,10 +73,7 @@ export type Billing = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['ID']['output'];
-<<<<<<< HEAD
-=======
   interval?: Maybe<Scalars['String']['output']>;
->>>>>>> main
   status: Scalars['String']['output'];
 };
 
