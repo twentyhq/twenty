@@ -39,7 +39,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: eventStandardFieldIds.properties,
-    type: FieldMetadataType.JSON,
+    type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
     icon: 'IconListDetails',

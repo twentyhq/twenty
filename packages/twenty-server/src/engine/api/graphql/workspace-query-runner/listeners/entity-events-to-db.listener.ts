@@ -15,6 +15,8 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter/utils/object-record-changed-values';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -31,7 +33,12 @@ export class EntityEventsToDbListener {
   }
 
   @OnEvent('*.updated')
-  async handleUpdate(payload: ObjectRecordCreateEvent<any>) {
+  async handleUpdate(payload: ObjectRecordUpdateEvent<any>) {
+    payload.details.diff = objectRecordChangedValues(
+      payload.details.before,
+      payload.details.after,
+    );
+
     return this.handle(payload, 'updated');
   }
 
@@ -58,6 +65,7 @@ export class EntityEventsToDbListener {
 
     this.messageQueueService.add<SaveEventToDbJobData>(SaveEventToDbJob.name, {
       workspaceId: payload.workspaceId,
+      userId: payload.userId,
       recordId: payload.recordId,
       objectName: payload.objectMetadata.nameSingular,
       operation: operation,
