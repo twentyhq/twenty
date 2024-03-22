@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
 import { useRecoilState } from 'recoil';
 
+import { CalendarEventFetchMoreLoader } from '@/activities/calendar/components/CalendarEventFetchMoreLoader';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -36,6 +37,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(6)};
   width: 100%;
+  overflow: scroll;
 `;
 
 const StyledYear = styled.span`
@@ -135,10 +137,8 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
     }
   };
 
-  const {
-    totalNumberOfCalendarEvents,
-    timelineCalendarEvents,
-  }: TimelineCalendarEventsWithTotal = data?.[queryName] ?? [];
+  const { timelineCalendarEvents }: TimelineCalendarEventsWithTotal =
+    data?.[queryName] ?? [];
 
   const {
     calendarEventsByDayTime,
@@ -204,6 +204,10 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
             </Section>
           );
         })}
+        <CalendarEventFetchMoreLoader
+          loading={isFetchingMoreEvents || firstQueryLoading}
+          onLastRowVisible={fetchMoreRecords}
+        />
       </StyledContainer>
     </CalendarContext.Provider>
   );
