@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
@@ -45,6 +46,9 @@ export const SettingsIntegrationDetail = () => {
             { children: 'Integrations', href: '/settings/integrations' },
             { children: integration.text },
           ]}
+        />
+        <SettingsIntegrationPreview
+          integrationLogoUrl={integration.from.image}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
