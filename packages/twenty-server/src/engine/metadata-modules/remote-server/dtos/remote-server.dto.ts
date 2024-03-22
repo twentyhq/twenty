@@ -1,8 +1,13 @@
 import { ObjectType, Field, HideField, ID } from '@nestjs/graphql';
 
 import { IDField, QueryOptions } from '@ptc-org/nestjs-query-graphql';
+import { IsOptional } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
-import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  FdwOptions,
+  RemoteServerType,
+} from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @ObjectType('RemoteServer')
 @QueryOptions({
@@ -18,25 +23,14 @@ export class RemoteServerDTO {
   fwdId: string;
 
   @Field(() => String)
-  host: string;
+  fdwType: RemoteServerType;
 
-  @Field(() => String)
-  port: string;
-
-  @Field(() => String)
-  database: string;
-
-  @Field(() => String)
-  username: string;
-
-  @Field(() => String)
-  schema: string;
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  fdwOptions?: FdwOptions;
 
   @HideField()
   workspaceId: string;
-
-  @Field(() => String)
-  type: RemoteServerType;
 
   @Field()
   createdAt: Date;

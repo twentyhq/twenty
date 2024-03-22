@@ -8,5 +8,5 @@ import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remo
 export class RemoteServerTypeInput {
   @Field(() => String)
   @IsString()
-  type!: RemoteServerType;
+  fdwType!: RemoteServerType;
 }

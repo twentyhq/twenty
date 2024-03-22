@@ -7,8 +7,10 @@ import { Repository } from 'typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import {
+  FdwOptions,
   RemoteServerEntity,
   RemoteServerType,
+  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
@@ -29,27 +31,48 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
     workspaceId: string,
   ): Promise<RemoteServerEntity> {
     const mainDatasource = this.typeORMService.getMainDataSource();
-    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
-    const iv = this.environmentService.get('IV_SECRET');
-    const encryptedPassword = await encryptText(
-      remoteServerInput.password,
-      key,
-      iv,
-    );
 
-    const createdRemoteServer = await super.createOne({
+    let remoteServerToCreate = {
       ...remoteServerInput,
-      password: encryptedPassword,
       workspaceId,
-    });
+    };
 
-    await mainDatasource.query(
-      `CREATE SERVER IF NOT EXISTS "${createdRemoteServer.fdwId}" FOREIGN DATA WRAPPER postgres_fdw OPTIONS (dbname '${remoteServerInput.database}', host '${remoteServerInput.host}', port '${remoteServerInput.port}')`,
+    if (remoteServerInput.userMappingOptions) {
+      const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+      const iv = this.environmentService.get('IV_SECRET');
+      const encryptedPassword = await encryptText(
+        remoteServerInput.userMappingOptions.password,
+        key,
+        iv,
+      );
+
+      remoteServerToCreate = {
+        ...remoteServerToCreate,
+        userMappingOptions: {
+          ...remoteServerInput.userMappingOptions,
+          password: encryptedPassword,
+        },
+      };
+    }
+
+    const createdRemoteServer = await super.createOne(remoteServerToCreate);
+
+    const fdwQuery = this.buildFDWQuery(
+      createdRemoteServer.fdwId,
+      remoteServerInput.fdwType,
+      remoteServerInput.fdwOptions,
     );
 
-    await mainDatasource.query(
-      `CREATE USER MAPPING IF NOT EXISTS FOR ${remoteServerInput.username} SERVER "${createdRemoteServer.fdwId}" OPTIONS (user '${remoteServerInput.username}', password '${remoteServerInput.password}')`,
-    );
+    await mainDatasource.query(fdwQuery);
+
+    if (remoteServerInput.userMappingOptions) {
+      const userMappingQuery = this.buildUserMappingQuery(
+        createdRemoteServer.fdwId,
+        remoteServerInput.userMappingOptions,
+      );
+
+      await mainDatasource.query(userMappingQuery);
+    }
 
     return createdRemoteServer;
   }
@@ -88,14 +111,45 @@ export class RemoteServerService extends TypeOrmQueryService<RemoteServerEntity>
   }
 
   public async findManyByTypeWithinWorkspace(
-    type: RemoteServerType,
+    fdwType: RemoteServerType,
     workspaceId: string,
   ) {
     return this.remoteServerRepository.find({
       where: {
-        type,
+        fdwType,
         workspaceId,
       },
     });
+  }
+
+  // TODO: Move to a query builder once the logic is validated
+  private buildUserMappingQuery(
+    fdwId: string,
+    userMappingOptions: UserMappingOptions,
+  ) {
+    return `CREATE USER MAPPING IF NOT EXISTS FOR ${userMappingOptions.username} SERVER "${fdwId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
+  }
+
+  // TODO: Move to a query builder once the logic is validated
+  private buildFDWQuery(
+    fdwId: string,
+    fdwType: RemoteServerType,
+    fdwOptions: FdwOptions,
+  ) {
+    let fdwQueryOptions = '';
+
+    switch (fdwType) {
+      case RemoteServerType.POSTGRES_FDW:
+        fdwQueryOptions = this.buildPostgresFDWQueryOptions(fdwOptions);
+        break;
+      default:
+        throw new Error('FDW type not supported');
+    }
+
+    return `CREATE SERVER IF NOT EXISTS "${fdwId}" FOREIGN DATA WRAPPER postgres_fdw OPTIONS (${fdwQueryOptions})`;
+  }
+
+  private buildPostgresFDWQueryOptions(fdwOptions: FdwOptions) {
+    return `dbname '${fdwOptions.dbname}', host '${fdwOptions.host}', port '${fdwOptions.port}'`;
   }
 }

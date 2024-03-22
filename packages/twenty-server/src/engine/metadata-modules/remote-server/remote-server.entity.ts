@@ -7,7 +7,22 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export type RemoteServerType = 'postgres';
+export enum RemoteServerType {
+  POSTGRES_FDW = 'postgres_fdw',
+}
+
+type PostgresFdwOptions = {
+  host: string;
+  port: number;
+  dbname: string;
+};
+
+export type FdwOptions = PostgresFdwOptions;
+
+export type UserMappingOptions = {
+  username: string;
+  password: string;
+};
 
 @Entity('remoteServer')
 export class RemoteServerEntity {
@@ -19,28 +34,16 @@ export class RemoteServerEntity {
   fdwId: string;
 
   @Column({ nullable: true })
-  host: string;
+  fdwType: RemoteServerType;
 
-  @Column({ nullable: true })
-  port: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  fdwOptions: FdwOptions;
 
-  @Column({ nullable: true })
-  database: string;
-
-  @Column({ nullable: true })
-  username: string;
-
-  @Column({ nullable: true })
-  password: string;
-
-  @Column({ nullable: true })
-  schema: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  userMappingOptions: UserMappingOptions;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
-
-  @Column({ nullable: true })
-  type: RemoteServerType;
 
   @CreateDateColumn()
   createdAt: Date;

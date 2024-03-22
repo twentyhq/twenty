@@ -41,11 +41,11 @@ export class RemoteServerResolver {
 
   @Query(() => [RemoteServerDTO])
   async findManyRemoteServersByType(
-    @Args('input') { type }: RemoteServerTypeInput,
+    @Args('input') { fdwType }: RemoteServerTypeInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.remoteServerService.findManyByTypeWithinWorkspace(
-      type,
+      fdwType,
       workspaceId,
     );
   }
