@@ -2,7 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -12,6 +14,8 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/SettingsObjectInactiveMenuDropDown';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -34,12 +38,10 @@ export const SettingsObjects = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const {
-    activateObjectMetadataItem,
-    activeObjectMetadataItems,
-    inactiveObjectMetadataItems,
-    eraseObjectMetadataItem,
-  } = useObjectMetadataItemForSettings();
+  const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
+    useObjectMetadataItemForSettings();
+  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -51,7 +53,9 @@ export const SettingsObjects = () => {
             title="Add object"
             accent="blue"
             size="small"
-            onClick={() => navigate('/settings/objects/new')}
+            onClick={() =>
+              navigate(getSettingsPagePath(SettingsPath.NewObject))
+            }
           />
         </SettingsHeaderContainer>
         <div>
@@ -101,13 +105,14 @@ export const SettingsObjects = () => {
                             isCustomObject={inactiveObjectMetadataItem.isCustom}
                             scopeKey={inactiveObjectMetadataItem.namePlural}
                             onActivate={() =>
-                              activateObjectMetadataItem(
-                                inactiveObjectMetadataItem,
-                              )
+                              updateOneObjectMetadataItem({
+                                idToUpdate: inactiveObjectMetadataItem.id,
+                                updatePayload: { isActive: true },
+                              })
                             }
                             onErase={() =>
-                              eraseObjectMetadataItem(
-                                inactiveObjectMetadataItem,
+                              deleteOneObjectMetadataItem(
+                                inactiveObjectMetadataItem.id,
                               )
                             }
                           />

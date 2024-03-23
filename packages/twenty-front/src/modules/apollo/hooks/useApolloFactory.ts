@@ -9,6 +9,7 @@ import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { isDefined } from '~/utils/isDefined';
 
 import { ApolloFactory } from '../services/apollo.factory';
 
@@ -40,12 +41,11 @@ export const useApolloFactory = () => {
         setTokenPair(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignIn) &&
-          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.SignInUp) &&
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
-          navigate(AppPath.SignIn);
+          navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],
@@ -57,7 +57,7 @@ export const useApolloFactory = () => {
   }, [setTokenPair, isDebugMode]);
 
   useUpdateEffect(() => {
-    if (apolloRef.current) {
+    if (isDefined(apolloRef.current)) {
       apolloRef.current.updateTokenPair(tokenPair);
     }
   }, [tokenPair]);

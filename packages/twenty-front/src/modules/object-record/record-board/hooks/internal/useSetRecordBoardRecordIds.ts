@@ -9,13 +9,14 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     scopeId,
     recordIdsByColumnIdFamilyState,
     columnsFamilySelector,
-    getColumnIdsState,
+    columnIdsState,
+    kanbanFieldMetadataNameState,
   } = useRecordBoardStates(recordBoardId);
 
   const setRecordIds = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
-        const columnIds = snapshot.getLoadable(getColumnIdsState()).getValue();
+        const columnIds = snapshot.getLoadable(columnIdsState).getValue();
 
         columnIds.forEach((columnId) => {
           const column = snapshot
@@ -26,8 +27,19 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .getLoadable(recordIdsByColumnIdFamilyState(columnId))
             .getValue();
 
+          const kanbanFieldMetadataName = snapshot
+            .getLoadable(kanbanFieldMetadataNameState)
+            .getValue();
+
+          if (!kanbanFieldMetadataName) {
+            return;
+          }
+
           const columnRecordIds = records
-            .filter((record) => record.stage === column?.value)
+            .filter(
+              (record) => record[kanbanFieldMetadataName] === column?.value,
+            )
+            .sort(sortRecordsByPosition)
             .map((record) => record.id);
 
           if (!isDeeplyEqual(existingColumnRecordIds, columnRecordIds)) {
@@ -35,11 +47,34 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
           }
         });
       },
-    [columnsFamilySelector, getColumnIdsState, recordIdsByColumnIdFamilyState],
+    [
+      columnIdsState,
+      columnsFamilySelector,
+      recordIdsByColumnIdFamilyState,
+      kanbanFieldMetadataNameState,
+    ],
   );
 
   return {
     scopeId,
     setRecordIds,
   };
+};
+
+const sortRecordsByPosition = (
+  record1: ObjectRecord,
+  record2: ObjectRecord,
+) => {
+  if (
+    typeof record1.position == 'number' &&
+    typeof record2.position == 'number'
+  ) {
+    return record1.position - record2.position;
+  } else if (record1.position === 'first' || record2.position === 'last') {
+    return -1;
+  } else if (record2.position === 'first' || record1.position === 'last') {
+    return 1;
+  } else {
+    return 0;
+  }
 };

@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsByNameSingularMapSelector } from '@/object-metadata/states/objectMetadataItemsByNameSingularMapSelector';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useFilterOutUnexistingObjectMetadataItems = () => {
   const objectMetadataItemsByNameSingularMap = useRecoilValue(
@@ -12,7 +12,7 @@ export const useFilterOutUnexistingObjectMetadataItems = () => {
   const filterOutUnexistingObjectMetadataItems = (
     objectMetadatItem: ObjectMetadataItem,
   ) =>
-    isNonNullable(
+    isDefined(
       objectMetadataItemsByNameSingularMap.get(objectMetadatItem.nameSingular),
     );
 

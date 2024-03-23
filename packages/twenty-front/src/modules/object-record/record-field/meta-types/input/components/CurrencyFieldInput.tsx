@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
@@ -79,10 +79,18 @@ export const CurrencyFieldInput = ({
     });
   };
 
+  const handleSelect = (newValue: string) => {
+    setDraftValue({
+      amount: draftValue?.amount ?? '',
+      currencyCode: newValue as CurrencyCode,
+    });
+  };
+
   return (
     <FieldInputOverlay>
-      <TextInput
+      <CurrencyInput
         value={draftValue?.amount?.toString() ?? ''}
+        currencyCode={draftValue?.currencyCode ?? CurrencyCode.USD}
         autoFocus
         placeholder="Currency"
         onClickOutside={handleClickOutside}
@@ -90,8 +98,9 @@ export const CurrencyFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={hotkeyScope}
         onChange={handleChange}
+        onSelect={handleSelect}
+        hotkeyScope={hotkeyScope}
       />
     </FieldInputOverlay>
   );

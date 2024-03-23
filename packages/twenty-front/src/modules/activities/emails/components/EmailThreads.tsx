@@ -8,7 +8,6 @@ import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/Email
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { useEmailThreadStates } from '@/activities/emails/hooks/internal/useEmailThreadStates';
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -57,15 +56,14 @@ export const EmailThreads = ({
 }: {
   entity: ActivityTargetableObject;
 }) => {
-  const { openEmailThread } = useEmailThread();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { getEmailThreadsPageState } = useEmailThreadStates({
+  const { emailThreadsPageState } = useEmailThreadStates({
     emailThreadScopeId: getScopeIdFromComponentId(entity.id),
   });
 
   const [emailThreadsPage, setEmailThreadsPage] = useRecoilState(
-    getEmailThreadsPageState(),
+    emailThreadsPageState,
   );
 
   const [isFetchingMoreEmails, setIsFetchingMoreEmails] = useState(false);
@@ -87,9 +85,13 @@ export const EmailThreads = ({
     data,
     loading: firstQueryLoading,
     fetchMore,
-    error,
   } = useQuery(threadQuery, {
     variables: threadQueryVariables,
+    onError: (error) => {
+      enqueueSnackBar(error.message || 'Error loading email threads', {
+        variant: 'error',
+      });
+    },
   });
 
   const fetchMoreRecords = async () => {
@@ -140,12 +142,6 @@ export const EmailThreads = ({
     }
   };
 
-  if (error) {
-    enqueueSnackBar(error.message || 'Error loading email threads', {
-      variant: 'error',
-    });
-  }
-
   const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
     data?.[queryName] ?? [];
 
@@ -187,18 +183,6 @@ export const EmailThreads = ({
                 key={index}
                 divider={index < timelineThreads.length - 1}
                 thread={thread}
-                onClick={
-                  thread.visibility === 'share_everything'
-                    ? () => openEmailThread(thread.id)
-                    : () => {}
-                }
-                visibility={
-                  // TODO: Fix typing for visibility
-                  thread.visibility as
-                    | 'metadata'
-                    | 'subject'
-                    | 'share_everything'
-                }
               />
             ))}
           </Card>

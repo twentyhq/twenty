@@ -21,7 +21,7 @@ import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenera
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -40,6 +40,7 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
+  eagerLoadedRelations?: Record<string, any>,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -63,7 +64,7 @@ export const useObjectMetadataItem = (
     objectMetadataItems = mockObjectMetadataItems;
   }
 
-  if (!isNonNullable(objectMetadataItem)) {
+  if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(
       objectNameSingular,
       objectMetadataItems,
@@ -90,6 +91,7 @@ export const useObjectMetadataItem = (
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
+    eagerLoadedRelations,
   });
 
   const generateFindDuplicateRecordsQuery =

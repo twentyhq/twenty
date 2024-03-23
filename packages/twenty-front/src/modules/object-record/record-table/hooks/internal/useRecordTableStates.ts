@@ -1,31 +1,31 @@
-import { isRowSelectedFamilyStateScopeMap } from '@/object-record/record-table/record-table-row/states/isRowSelectedFamilyStateScopeMap';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { availableTableColumnsStateScopeMap } from '@/object-record/record-table/states/availableTableColumnsStateScopeMap';
-import { currentTableCellInEditModePositionStateScopeMap } from '@/object-record/record-table/states/currentTableCellInEditModePositionStateScopeMap';
-import { isRecordTableInitialLoadingStateScopeMap } from '@/object-record/record-table/states/isRecordTableInitialLoadingStateScopeMap';
-import { isSoftFocusActiveStateScopeMap } from '@/object-record/record-table/states/isSoftFocusActiveStateScopeMap';
-import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/record-table/states/isSoftFocusOnTableCellFamilyStateScopeMap';
-import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
-import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
-import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
-import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
-import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
-import { allRowsSelectedStatusSelectorScopeMap } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusSelectorScopeMap';
-import { hiddenTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/hiddenTableColumnsSelectorScopeMap';
-import { numberOfTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/numberOfTableColumnsSelectorScopeMap';
-import { selectedRowIdsSelectorScopeMap } from '@/object-record/record-table/states/selectors/selectedRowIdsSelectorScopeMap';
-import { visibleTableColumnsSelectorScopeMap } from '@/object-record/record-table/states/selectors/visibleTableColumnsSelectorScopeMap';
-import { softFocusPositionStateScopeMap } from '@/object-record/record-table/states/softFocusPositionStateScopeMap';
-import { tableColumnsStateScopeMap } from '@/object-record/record-table/states/tableColumnsStateScopeMap';
-import { tableFiltersStateScopeMap } from '@/object-record/record-table/states/tableFiltersStateScopeMap';
-import { tableLastRowVisibleStateScopeMap } from '@/object-record/record-table/states/tableLastRowVisibleStateScopeMap';
-import { tableRowIdsStateScopeMap } from '@/object-record/record-table/states/tableRowIdsStateScopeMap';
-import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tableSortsStateScopeMap';
+import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
+import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
+import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
+import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
+import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
+import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
+import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
+import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
+import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
+import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
+import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
@@ -35,78 +35,87 @@ export const useRecordTableStates = (recordTableId?: string) => {
 
   return {
     scopeId,
-    getAvailableTableColumnsState: getState(
-      availableTableColumnsStateScopeMap,
+    availableTableColumnsState: extractComponentState(
+      availableTableColumnsComponentState,
       scopeId,
     ),
-    getTableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
-    getTableSortsState: getState(tableSortsStateScopeMap, scopeId),
-    getTableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
+    tableFiltersState: extractComponentState(
+      tableFiltersComponentState,
+      scopeId,
+    ),
+    tableSortsState: extractComponentState(tableSortsComponentState, scopeId),
+    tableColumnsState: extractComponentState(
+      tableColumnsComponentState,
+      scopeId,
+    ),
 
-    getOnColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
-    getOnEntityCountChangeState: getState(
-      onEntityCountChangeStateScopeMap,
+    onColumnsChangeState: extractComponentState(
+      onColumnsChangeComponentState,
       scopeId,
     ),
-    getTableLastRowVisibleState: getState(
-      tableLastRowVisibleStateScopeMap,
+    onEntityCountChangeState: extractComponentState(
+      onEntityCountChangeComponentState,
       scopeId,
     ),
-    getSoftFocusPositionState: getState(
-      softFocusPositionStateScopeMap,
+    tableLastRowVisibleState: extractComponentState(
+      tableLastRowVisibleComponentState,
       scopeId,
     ),
-    getNumberOfTableRowsState: getState(
-      numberOfTableRowsStateScopeMap,
+    softFocusPositionState: extractComponentState(
+      softFocusPositionComponentState,
       scopeId,
     ),
-    getCurrentTableCellInEditModePositionState: getState(
-      currentTableCellInEditModePositionStateScopeMap,
+    numberOfTableRowsState: extractComponentState(
+      numberOfTableRowsComponentState,
       scopeId,
     ),
-    isTableCellInEditModeFamilyState: getFamilyState(
-      isTableCellInEditModeFamilyStateScopeMap,
+    currentTableCellInEditModePositionState: extractComponentState(
+      currentTableCellInEditModePositionComponentState,
       scopeId,
     ),
-    getIsSoftFocusActiveState: getState(
-      isSoftFocusActiveStateScopeMap,
+    isTableCellInEditModeFamilyState: extractComponentFamilyState(
+      isTableCellInEditModeComponentFamilyState,
       scopeId,
     ),
-    getTableRowIdsState: getState(tableRowIdsStateScopeMap, scopeId),
-    getIsRecordTableInitialLoadingState: getState(
-      isRecordTableInitialLoadingStateScopeMap,
+    isSoftFocusActiveState: extractComponentState(
+      isSoftFocusActiveComponentState,
       scopeId,
     ),
-    getResizeFieldOffsetState: getState(
-      resizeFieldOffsetStateScopeMap,
+    tableRowIdsState: extractComponentState(tableRowIdsComponentState, scopeId),
+    isRecordTableInitialLoadingState: extractComponentState(
+      isRecordTableInitialLoadingComponentState,
       scopeId,
     ),
-    isSoftFocusOnTableCellFamilyState: getFamilyState(
-      isSoftFocusOnTableCellFamilyStateScopeMap,
+    resizeFieldOffsetState: extractComponentState(
+      resizeFieldOffsetComponentState,
       scopeId,
     ),
-    isRowSelectedFamilyState: getFamilyState(
-      isRowSelectedFamilyStateScopeMap,
+    isSoftFocusOnTableCellFamilyState: extractComponentFamilyState(
+      isSoftFocusOnTableCellComponentFamilyState,
       scopeId,
     ),
-    getAllRowsSelectedStatusSelector: getSelectorReadOnly(
-      allRowsSelectedStatusSelectorScopeMap,
+    isRowSelectedFamilyState: extractComponentFamilyState(
+      isRowSelectedComponentFamilyState,
       scopeId,
     ),
-    getHiddenTableColumnsSelector: getSelectorReadOnly(
-      hiddenTableColumnsSelectorScopeMap,
+    allRowsSelectedStatusSelector: extractComponentReadOnlySelector(
+      allRowsSelectedStatusComponentSelector,
       scopeId,
     ),
-    getNumberOfTableColumnsSelector: getSelectorReadOnly(
-      numberOfTableColumnsSelectorScopeMap,
+    hiddenTableColumnsSelector: extractComponentReadOnlySelector(
+      hiddenTableColumnsComponentSelector,
       scopeId,
     ),
-    getSelectedRowIdsSelector: getSelectorReadOnly(
-      selectedRowIdsSelectorScopeMap,
+    numberOfTableColumnsSelector: extractComponentReadOnlySelector(
+      numberOfTableColumnsComponentSelector,
       scopeId,
     ),
-    getVisibleTableColumnsSelector: getSelectorReadOnly(
-      visibleTableColumnsSelectorScopeMap,
+    selectedRowIdsSelector: extractComponentReadOnlySelector(
+      selectedRowIdsComponentSelector,
+      scopeId,
+    ),
+    visibleTableColumnsSelector: extractComponentReadOnlySelector(
+      visibleTableColumnsComponentSelector,
       scopeId,
     ),
   };

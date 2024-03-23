@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql, HttpResponse } from 'msw';
 
-import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
+import { TRACK } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -12,7 +12,6 @@ import {
   mockedDuplicateCompanyData,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 import { mockedUsersData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -32,10 +31,10 @@ export const graphqlMocks = {
         },
       });
     }),
-    graphql.mutation(getOperationName(CREATE_EVENT) ?? '', () => {
+    graphql.mutation(getOperationName(TRACK) ?? '', () => {
       return HttpResponse.json({
         data: {
-          createEvent: { success: 1, __typename: 'Event' },
+          track: { success: 1, __typename: 'TRACK' },
         },
       });
     }),
@@ -239,29 +238,6 @@ export const graphqlMocks = {
         data: {
           favorites: {
             edges: [],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
-        },
-      });
-    }),
-    graphql.query('FindManyPipelineSteps', () => {
-      return HttpResponse.json({
-        data: {
-          pipelineSteps: {
-            edges: mockedPipelineSteps.map((step) => ({
-              node: {
-                ...step,
-                opportunities: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,

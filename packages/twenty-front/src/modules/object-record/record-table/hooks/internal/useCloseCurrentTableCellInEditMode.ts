@@ -5,7 +5,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const {
-    getCurrentTableCellInEditModePositionState,
+    currentTableCellInEditModePositionState,
     isTableCellInEditModeFamilyState,
   } = useRecordTableStates(recordTableId);
 
@@ -14,7 +14,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
       return async () => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          getCurrentTableCellInEditModePositionState(),
+          currentTableCellInEditModePositionState,
         );
 
         set(
@@ -23,9 +23,6 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
         );
       };
     },
-    [
-      getCurrentTableCellInEditModePositionState,
-      isTableCellInEditModeFamilyState,
-    ],
+    [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],
   );
 };

@@ -229,14 +229,6 @@ resource "azurerm_container_app" "twenty_front" {
         name  = "REACT_APP_SERVER_BASE_URL"
         value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}"
       }
-      env {
-        name  = "REACT_APP_SERVER_AUTH_URL"
-        value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}/auth"
-      }
-      env {
-        name  = "REACT_APP_SERVER_FILES_URL"
-        value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}/files"
-      }
     }
   }
 }

@@ -18,6 +18,8 @@ import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -55,8 +57,7 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     const isMatchingOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.SignInUp) ||
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.Verify);
 
@@ -64,13 +65,14 @@ export const PageChangeEffect = () => {
       isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired);
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess);
 
     const navigateToSignUp = () => {
       enqueueSnackBar('workspace does not exist', {
         variant: 'error',
       });
-      navigate(AppPath.SignUp);
+      navigate(AppPath.SignInUp);
     };
 
     if (
@@ -78,15 +80,26 @@ export const PageChangeEffect = () => {
       !isMatchingOngoingUserCreationRoute &&
       !isMatchingLocation(AppPath.ResetPassword)
     ) {
-      navigate(AppPath.SignIn);
+      navigate(AppPath.SignInUp);
     } else if (
-      onboardingStatus &&
-      [OnboardingStatus.Canceled, OnboardingStatus.Incomplete].includes(
-        onboardingStatus,
-      ) &&
+      isDefined(onboardingStatus) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
+    } else if (
+      isDefined(onboardingStatus) &&
+      [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
+        onboardingStatus,
+      ) &&
+      !(
+        isMatchingLocation(AppPath.SettingsCatchAll) ||
+        isMatchingLocation(AppPath.PlanRequired)
+      )
+    ) {
+      navigate(
+        `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
+      );
     } else if (
       onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
       !isMatchingLocation(AppPath.CreateWorkspace) &&
@@ -103,6 +116,12 @@ export const PageChangeEffect = () => {
       isMatchingOnboardingRoute
     ) {
       navigate(AppPath.Index);
+    } else if (
+      onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
+      isMatchingOnboardingRoute &&
+      !isMatchingLocation(AppPath.PlanRequired)
+    ) {
+      navigate(AppPath.Index);
     } else if (isMatchingLocation(AppPath.Invite)) {
       const inviteHash =
         matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)
@@ -113,7 +132,7 @@ export const PageChangeEffect = () => {
           inviteHash,
         },
         onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
+          if (isUndefinedOrNull(data.findWorkspaceFromInviteHash)) {
             navigateToSignUp();
           }
         },
@@ -121,8 +140,6 @@ export const PageChangeEffect = () => {
           navigateToSignUp();
         },
       });
-    } else if (isMatchingLocation(AppPath.SignUp) && isSignUpDisabled) {
-      navigate(AppPath.SignIn);
     }
   }, [
     enqueueSnackBar,
@@ -165,11 +182,7 @@ export const PageChangeEffect = () => {
         break;
       }
 
-      case isMatchingLocation(AppPath.SignIn): {
-        setHotkeyScope(PageHotkeyScope.SignInUp);
-        break;
-      }
-      case isMatchingLocation(AppPath.SignUp): {
+      case isMatchingLocation(AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }

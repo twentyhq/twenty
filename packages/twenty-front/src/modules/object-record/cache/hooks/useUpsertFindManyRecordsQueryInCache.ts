@@ -10,7 +10,10 @@ import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQu
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'namePlural' | 'nameSingular'
+  >;
 }) => {
   const apolloClient = useApolloClient();
 
@@ -20,14 +23,16 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
+    depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
   }: {
     queryVariables: ObjectRecordQueryVariables;
+    depth?: number;
     objectRecordsToOverwrite: T[];
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
-      depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION, // TODO: fix this
+      depth, // TODO: fix this
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({

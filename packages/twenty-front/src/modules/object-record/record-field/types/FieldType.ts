@@ -15,4 +15,7 @@ export type FieldType =
   | 'SELECT'
   | 'TEXT'
   | 'URL'
-  | 'UUID';
+  | 'UUID'
+  | 'MULTI_SELECT'
+  | 'NUMERIC'
+  | 'RAW_JSON';

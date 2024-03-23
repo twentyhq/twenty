@@ -10,15 +10,19 @@ import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/con
 
 import { useFindManyRecords } from '../../hooks/useFindManyRecords';
 
-export const useFindManyParams = (objectNameSingular: string) => {
+export const useFindManyParams = (
+  objectNameSingular: string,
+  recordTableId?: string,
+) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const { getTableFiltersState, getTableSortsState } = useRecordTableStates();
+  const { tableFiltersState, tableSortsState } =
+    useRecordTableStates(recordTableId);
 
-  const tableFilters = useRecoilValue(getTableFiltersState());
-  const tableSorts = useRecoilValue(getTableSortsState());
+  const tableFilters = useRecoilValue(tableFiltersState);
+  const tableSorts = useRecoilValue(tableSortsState);
 
   const filter = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
@@ -36,8 +40,8 @@ export const useFindManyParams = (objectNameSingular: string) => {
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-  const { getTableLastRowVisibleState } = useRecordTableStates();
-  const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
+  const { tableLastRowVisibleState } = useRecordTableStates();
+  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 

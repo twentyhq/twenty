@@ -23,8 +23,6 @@ import TabItem from '@theme/TabItem';
 
 <OptionTable options={[
     ['REACT_APP_SERVER_BASE_URL', 'http://localhost:3000', 'Url of backend server'],
-    ['REACT_APP_SERVER_AUTH_URL', 'http://localhost:3000/auth', 'Auth Url of backend server'],
-    ['REACT_APP_SERVER_FILES_URL', 'http://localhost:3000/files', 'Files Url of backend server'],
     ['GENERATE_SOURCEMAP', 'false', 'Generate source maps for debugging'],
     ['CHROMATIC_PROJECT_TOKEN', '', 'Chromatic token used for CI'],
     ]}></OptionTable>
@@ -41,6 +39,8 @@ import TabItem from '@theme/TabItem';
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
     ['PORT', '3000', 'Port'],
+    ['CACHE_STORAGE_TYPE', 'memory', 'Cache type (memory, redis...)'],
+    ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></OptionTable>
 
 ### Security
@@ -66,7 +66,9 @@ import TabItem from '@theme/TabItem';
 
 <OptionTable options={[
     ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
+    ['CALENDAR_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Google Calendar API connection'],
     ['MESSAGING_PROVIDER_GMAIL_CALLBACK_URL', '', 'Gmail auth callback'],
+    ['AUTH_GOOGLE_APIS_CALLBACK_URL', '', 'Google API auth callback'],
     ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Goole SSO login'],
     ['AUTH_GOOGLE_CLIENT_ID', '', 'Google client ID'],
     ['AUTH_GOOGLE_CLIENT_SECRET', '', 'Google client secret'],

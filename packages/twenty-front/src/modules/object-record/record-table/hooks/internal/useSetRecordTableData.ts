@@ -14,7 +14,7 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const { getTableRowIdsState, getNumberOfTableRowsState } =
+  const { tableRowIdsState, numberOfTableRowsState } =
     useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
@@ -24,23 +24,23 @@ export const useSetRecordTableData = ({
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
             .getLoadable(recordStoreFamilyState(entity.id))
-            .valueOrThrow();
+            .getValue();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
             set(recordStoreFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
+        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(getTableRowIdsState(), entityIds);
+          set(tableRowIdsState, entityIds);
         }
 
-        set(getNumberOfTableRowsState(), totalCount);
+        set(numberOfTableRowsState, totalCount);
         onEntityCountChange(totalCount);
       },
-    [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
+    [numberOfTableRowsState, tableRowIdsState, onEntityCountChange],
   );
 };

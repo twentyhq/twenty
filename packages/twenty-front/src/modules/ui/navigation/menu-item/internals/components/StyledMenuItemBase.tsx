@@ -16,10 +16,6 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   align-items: center;
 
-  background: ${({ isKeySelected, theme }) =>
-    isKeySelected
-      ? theme.background.transparent.light
-      : theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
 
@@ -108,10 +104,10 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isMenuOpen: boolean;
 }>`
   & .hoverable-buttons {
-    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
     pointer-events: none;
     position: fixed;
     right: ${({ theme }) => theme.spacing(2)};
+    opacity: 0;
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 

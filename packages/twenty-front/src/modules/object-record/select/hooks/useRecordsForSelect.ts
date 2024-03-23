@@ -56,7 +56,7 @@ export const useRecordsForSelect = ({
       fieldNames.map((fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
-        if (subFieldName) {
+        if (isNonEmptyString(subFieldName)) {
           // Composite field
           return {
             [parentFieldName]: {

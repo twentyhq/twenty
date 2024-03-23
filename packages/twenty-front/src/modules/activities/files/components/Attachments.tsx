@@ -16,6 +16,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -46,7 +47,7 @@ export const Attachments = ({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) onUploadFile?.(e.target.files[0]);
+    if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
   };
 
   const handleUploadFileClick = () => {

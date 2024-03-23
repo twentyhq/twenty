@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
+  UpdateObjectInput,
   UpdateOneObjectMetadataItemMutation,
   UpdateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -27,16 +28,7 @@ export const useUpdateOneObjectMetadataItem = () => {
     updatePayload,
   }: {
     idToUpdate: UpdateOneObjectMetadataItemMutationVariables['idToUpdate'];
-    updatePayload: Pick<
-      UpdateOneObjectMetadataItemMutationVariables['updatePayload'],
-      | 'description'
-      | 'icon'
-      | 'isActive'
-      | 'labelPlural'
-      | 'labelSingular'
-      | 'namePlural'
-      | 'nameSingular'
-    >;
+    updatePayload: UpdateObjectInput;
   }) => {
     return await mutate({
       variables: {

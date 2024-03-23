@@ -14,7 +14,7 @@ import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRec
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useCreateActivityInCache = () => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
@@ -32,7 +32,7 @@ export const useCreateActivityInCache = () => {
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
-    depth: 3,
+    depth: 0,
   });
 
   const { injectIntoActivityTargetInlineCellCache } =
@@ -71,7 +71,7 @@ export const useCreateActivityInCache = () => {
 
             return targetObject;
           })
-          .filter(isNonNullable);
+          .filter(isDefined);
 
         const activityTargetsToCreate =
           makeActivityTargetsToCreateFromTargetableObjects({

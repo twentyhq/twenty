@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -39,13 +40,10 @@ export const useSelectableListHotKeys = (
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
       (direction: Direction) => {
-        const selectedItemId = getSnapshotValue(
-          snapshot,
-          selectedItemIdState(),
-        );
+        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
         const selectableItemIds = getSnapshotValue(
           snapshot,
-          selectableItemIdsState(),
+          selectableItemIdsState,
         );
 
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
@@ -104,12 +102,12 @@ export const useSelectableListHotKeys = (
         const nextId = computeNextId(direction);
 
         if (selectedItemId !== nextId) {
-          if (nextId) {
+          if (isNonEmptyString(nextId)) {
             set(isSelectedItemIdSelector(nextId), true);
-            set(selectedItemIdState(), nextId);
+            set(selectedItemIdState, nextId);
           }
 
-          if (selectedItemId) {
+          if (isNonEmptyString(selectedItemId)) {
             set(isSelectedItemIdSelector(selectedItemId), false);
           }
         }
@@ -137,14 +135,14 @@ export const useSelectableListHotKeys = (
         () => {
           const selectedItemId = getSnapshotValue(
             snapshot,
-            selectedItemIdState(),
+            selectedItemIdState,
           );
           const onEnter = getSnapshotValue(
             snapshot,
-            selectableListOnEnterState(),
+            selectableListOnEnterState,
           );
 
-          if (selectedItemId) {
+          if (isNonEmptyString(selectedItemId)) {
             onEnter?.(selectedItemId);
           }
         },

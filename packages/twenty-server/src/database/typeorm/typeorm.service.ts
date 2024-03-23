@@ -2,15 +2,15 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { User } from 'src/core/user/user.entity';
-import { Workspace } from 'src/core/workspace/workspace.entity';
-import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
-import { BillingSubscription } from 'src/core/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/core/billing/entities/billing-subscription-item.entity';
-import { UserWorkspace } from 'src/core/user-workspace/user-workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -20,7 +20,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   constructor(private readonly environmentService: EnvironmentService) {
     this.mainDataSource = new DataSource({
-      url: environmentService.getPGDatabaseUrl(),
+      url: environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
       logging: false,
       schema: 'core',
@@ -83,9 +83,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const schema = dataSource.schema;
 
     const workspaceDataSource = new DataSource({
-      url: dataSource.url ?? this.environmentService.getPGDatabaseUrl(),
+      url: dataSource.url ?? this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: this.environmentService.isDebugMode()
+      logging: this.environmentService.get('DEBUG_MODE')
         ? ['query', 'error']
         : ['error'],
       schema,

@@ -24,7 +24,7 @@ export const DeleteWorkspace = () => {
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const deleteWorkspace = async () => {

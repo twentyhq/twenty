@@ -9,7 +9,7 @@ import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRec
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 // TODO: add extensive unit tests for this function
@@ -71,7 +71,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
         const rootQueryLimit = rootQueryVariables?.first;
 
-        const shouldTryToMatchFilter = isNonNullable(rootQueryFilter);
+        const shouldTryToMatchFilter = isDefined(rootQueryFilter);
 
         if (shouldTryToMatchFilter) {
           const updatedRecordMatchesThisRootQueryFilter =
@@ -101,7 +101,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           if (updatedRecordShouldBeAddedToRootQueryEdges) {
             const updatedRecordNodeReference = toReference(updatedRecord);
 
-            if (isNonNullable(updatedRecordNodeReference)) {
+            if (isDefined(updatedRecordNodeReference)) {
               rootQueryNextEdges.push({
                 __typename: objectEdgeTypeName,
                 node: updatedRecordNodeReference,
@@ -115,8 +115,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           }
         }
 
-        const rootQueryNextEdgesShouldBeSorted =
-          isNonNullable(rootQueryOrderBy);
+        const rootQueryNextEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
 
         if (
           rootQueryNextEdgesShouldBeSorted &&
@@ -129,7 +128,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           });
         }
 
-        const shouldLimitNextRootQueryEdges = isNonNullable(rootQueryLimit);
+        const shouldLimitNextRootQueryEdges = isDefined(rootQueryLimit);
 
         // TODO: not sure that we should trigger a DELETE here, as it will trigger a network request
         // Is it the responsibility of this optimistic effect function to delete a root query that will trigger a network request ?

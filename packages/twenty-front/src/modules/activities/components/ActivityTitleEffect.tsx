@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isDefined } from '~/utils/isDefined';
 
 export const ActivityTitleEffect = ({ activityId }: { activityId: string }) => {
   const [activityFromStore] = useRecoilState(
@@ -16,7 +17,7 @@ export const ActivityTitleEffect = ({ activityId }: { activityId: string }) => {
   useEffect(() => {
     if (
       activityTitle === '' &&
-      activityFromStore &&
+      isDefined(activityFromStore) &&
       activityTitle !== activityFromStore.title
     ) {
       setActivityTitle(activityFromStore.title);

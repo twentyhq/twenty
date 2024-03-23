@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
+import { isDefined } from '~/utils/isDefined';
+
 import { ButtonPosition, ButtonProps } from './Button';
 
 const StyledButtonGroupContainer = styled.div`
@@ -39,15 +41,15 @@ export const ButtonGroup = ({
 
       const additionalProps: any = { position, variant, accent, size };
 
-      if (variant) {
+      if (isDefined(variant)) {
         additionalProps.variant = variant;
       }
 
-      if (accent) {
+      if (isDefined(accent)) {
         additionalProps.variant = variant;
       }
 
-      if (size) {
+      if (isDefined(size)) {
         additionalProps.size = size;
       }
 

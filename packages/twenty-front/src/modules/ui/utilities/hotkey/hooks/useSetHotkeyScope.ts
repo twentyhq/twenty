@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
@@ -27,10 +27,10 @@ export const useSetHotkeyScope = () =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         if (currentHotkeyScope.scope === hotkeyScopeToSet) {
-          if (!isNonNullable(customScopes)) {
+          if (!isDefined(customScopes)) {
             if (
               isCustomScopesEqual(
                 currentHotkeyScope?.customScopes,
@@ -63,15 +63,15 @@ export const useSetHotkeyScope = () =>
 
         const scopesToSet: string[] = [];
 
-        if (newHotkeyScope.customScopes?.commandMenu) {
+        if (newHotkeyScope.customScopes?.commandMenu === true) {
           scopesToSet.push(AppHotkeyScope.CommandMenu);
         }
 
-        if (newHotkeyScope?.customScopes?.goto) {
+        if (newHotkeyScope?.customScopes?.goto === true) {
           scopesToSet.push(AppHotkeyScope.Goto);
         }
 
-        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu) {
+        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu === true) {
           scopesToSet.push(AppHotkeyScope.KeyboardShortcutMenu);
         }
 

@@ -16,12 +16,12 @@ const StyledText = styled.div`
 `;
 
 export const RecordBoardColumnFetchMoreLoader = () => {
-  const { getIsFetchingRecordState, getOnFetchMoreVisibilityChangeState } =
+  const { isFetchingRecordState, onFetchMoreVisibilityChangeState } =
     useRecordBoardStates();
-  const isFetchingRecords = useRecoilValue(getIsFetchingRecordState());
+  const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
   const onFetchMoreVisibilityChange = useRecoilValue(
-    getOnFetchMoreVisibilityChangeState(),
+    onFetchMoreVisibilityChangeState,
   );
 
   const { ref } = useInView({
@@ -30,7 +30,7 @@ export const RecordBoardColumnFetchMoreLoader = () => {
 
   return (
     <div ref={ref}>
-      {isFetchingRecords && <StyledText>Loading more...</StyledText>}
+      {isFetchingRecord && <StyledText>Loading more...</StyledText>}
     </div>
   );
 };

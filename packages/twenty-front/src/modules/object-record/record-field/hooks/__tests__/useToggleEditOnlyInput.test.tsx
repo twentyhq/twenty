@@ -14,10 +14,6 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 
-jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => ({
-  useMapFieldMetadataToGraphQLQuery: () => () => '\n',
-}));
-
 const entityId = 'entityId';
 
 const mocks: MockedResponse[] = [
@@ -29,7 +25,28 @@ const mocks: MockedResponse[] = [
           $input: CompanyUpdateInput!
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
+            __typename
+            xLink {
+              label
+              url
+            }
+            linkedinLink {
+              label
+              url
+            }
+            domainName
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            createdAt
+            address
+            updatedAt
+            name
+            accountOwnerId
+            employees
             id
+            idealCustomerProfile
           }
         }
       `,

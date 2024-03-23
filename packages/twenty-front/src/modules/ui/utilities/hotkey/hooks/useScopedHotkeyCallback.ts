@@ -25,9 +25,10 @@ export const useScopedHotkeyCallback = () =>
       }) => {
         const currentHotkeyScopes = snapshot
           .getLoadable(internalHotkeysEnabledScopesState)
-          .valueOrThrow();
+          .getValue();
 
         if (!currentHotkeyScopes.includes(scope)) {
+          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (DEBUG_HOTKEY_SCOPE) {
             logDebug(
               `%cI can't call hotkey (${
@@ -42,6 +43,7 @@ export const useScopedHotkeyCallback = () =>
           return;
         }
 
+        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug(
             `%cI can call hotkey (${

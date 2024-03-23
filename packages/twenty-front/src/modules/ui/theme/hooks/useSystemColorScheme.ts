@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSystemColorScheme = (): ColorScheme => {
   const mediaQuery = useMemo(
@@ -13,7 +14,7 @@ export const useSystemColorScheme = (): ColorScheme => {
   );
 
   useEffect(() => {
-    if (!window.matchMedia) {
+    if (isUndefinedOrNull(window.matchMedia)) {
       return;
     }
 

@@ -4,96 +4,62 @@ import { useParams } from 'react-router-dom';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
-import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEffect';
+import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
+import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
-import { ViewObjectFilterButton } from '@/views/components/ViewObjectFilterButton';
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
-import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
-import { ViewField } from '@/views/types/ViewField';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewSort } from '@/views/types/ViewSort';
-import { ViewType } from '@/views/types/ViewType';
+import { GraphQLView } from '@/views/types/GraphQLView';
+import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
-import { ViewsDropdownButton } from './ViewsDropdownButton';
 
 export type ViewBarProps = {
   viewBarId: string;
   className?: string;
   optionsDropdownButton: ReactNode;
-  optionsDropdownScopeId: string;
-  onViewSortsChange?: (sorts: ViewSort[]) => void | Promise<void>;
-  onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
-  onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
-  onViewTypeChange?: (viewType: ViewType) => void | Promise<void>;
-  onViewCompactModeChange?: (
-    isCompactModeActive: boolean,
-  ) => void | Promise<void>;
+  onCurrentViewChange: (view: GraphQLView | undefined) => void | Promise<void>;
 };
 
 export const ViewBar = ({
   viewBarId,
   className,
   optionsDropdownButton,
-  optionsDropdownScopeId,
-  onViewFieldsChange,
-  onViewFiltersChange,
-  onViewSortsChange,
-  onViewTypeChange,
-  onViewCompactModeChange,
+  onCurrentViewChange,
 }: ViewBarProps) => {
-  const { openDropdown: openOptionsDropdownButton } = useDropdown(
-    optionsDropdownScopeId,
-  );
-  const { upsertViewSort, upsertViewFilter } = useViewBar({
-    viewBarId,
-  });
   const { objectNamePlural } = useParams();
   const { hasFiltersQueryParams } = useFiltersFromQueryParams();
 
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
 
+  if (!objectNamePlural) {
+    return;
+  }
+
   return (
     <ViewScope
       viewScopeId={viewBarId}
-      onViewFieldsChange={onViewFieldsChange}
-      onViewFiltersChange={onViewFiltersChange}
-      onViewSortsChange={onViewSortsChange}
-      onViewTypeChange={onViewTypeChange}
-      onViewCompactModeChange={onViewCompactModeChange}
+      onCurrentViewChange={onCurrentViewChange}
     >
-      <ViewBarEffect />
-      <ViewBarFilterEffect
-        filterDropdownId={filterDropdownId}
-        onFilterSelect={upsertViewFilter}
-      />
-      <ViewBarSortEffect
-        sortDropdownId={sortDropdownId}
-        onSortSelect={upsertViewSort}
-      />
-      {!!objectNamePlural && <FilterQueryParamsEffect />}
+      <ViewBarEffect viewBarId={viewBarId} />
+      <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
+      <ViewBarSortEffect sortDropdownId={sortDropdownId} />
+      <QueryParamsFiltersEffect />
+      <QueryParamsViewIdEffect />
 
       <TopBar
         className={className}
         leftComponent={
-          hasFiltersQueryParams ? (
-            <ViewObjectFilterButton />
-          ) : (
-            <ViewsDropdownButton
-              onViewEditModeChange={openOptionsDropdownButton}
-              hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
-              optionsDropdownScopeId={optionsDropdownScopeId}
-            />
-          )
+          <>
+            <ViewPickerDropdown />
+          </>
         }
         displayBottomBorder={false}
         rightComponent={
@@ -119,12 +85,11 @@ export const ViewBar = ({
             hasFilterButton
             viewBarId={viewBarId}
             rightComponent={
-              !hasFiltersQueryParams ? (
-                <UpdateViewButtonGroup
-                  onViewEditModeChange={openOptionsDropdownButton}
-                  hotkeyScope={{ scope: ViewsHotkeyScope.CreateDropdown }}
-                />
-              ) : null
+              <UpdateViewButtonGroup
+                hotkeyScope={{
+                  scope: ViewsHotkeyScope.UpdateViewButtonDropdown,
+                }}
+              />
             }
           />
         }
