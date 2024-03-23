@@ -69,7 +69,6 @@ const StyledTable = styled.table<{
     border-right: none;
   }
 
-  thead th:nth-of-type(1),
   tbody td:nth-of-type(1) {
     left: 0;
   }
@@ -77,13 +76,14 @@ const StyledTable = styled.table<{
   // Label identifier column
   thead th:nth-of-type(1),
   thead th:nth-of-type(2) {
+    left: 0;
     top: 0;
     z-index: 4;
   }
 
   thead th:nth-child(n + 3) {
     top: 0;
-    z-index: 4;
+    z-index: 3;
     position: sticky;
   }
 
