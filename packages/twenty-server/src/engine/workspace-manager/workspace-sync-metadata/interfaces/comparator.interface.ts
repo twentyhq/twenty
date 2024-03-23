@@ -1,5 +1,5 @@
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 import { ComputedPartialFieldMetadata } from './partial-field-metadata.interface';
 import { ComputedPartialObjectMetadata } from './partial-object-metadata.interface';

@@ -34,8 +34,8 @@ export const useRecordActionBar = ({
   selectedRecordIds,
   callback,
 }: useRecordActionBarProps) => {
-  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState());
-  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState());
+  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
+  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
@@ -106,7 +106,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: 'Delete',
+        label: `Delete (${selectedRecordIds.length})`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => handleDeleteClick(),
@@ -118,7 +118,7 @@ export const useRecordActionBar = ({
         onClick: () => download(),
       },
     ],
-    [handleDeleteClick, download, progress],
+    [handleDeleteClick, download, progress, selectedRecordIds],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(

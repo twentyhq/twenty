@@ -18,8 +18,8 @@ describe('useOpenActivityRightDrawer', () => {
     const { result } = renderHook(
       () => {
         const openActivityRightDrawer = useOpenActivityRightDrawer();
-        const viewableActivityId = useRecoilValue(viewableActivityIdState());
-        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState());
+        const viewableActivityId = useRecoilValue(viewableActivityIdState);
+        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         return {
           openActivityRightDrawer,
           activityIdInDrawer,

@@ -27,7 +27,7 @@ export const RecordIndexPageHeader = ({
     findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
   );
 
-  const recordIndexViewType = useRecoilValue(recordIndexViewTypeState());
+  const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
   return (
     <PageHeader title={capitalize(objectNamePlural)} Icon={Icon}>

@@ -6,8 +6,8 @@ import {
   WorkspaceIssueTypeToInterface,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
 export class CompareEntity<T> {
   current: T | null;

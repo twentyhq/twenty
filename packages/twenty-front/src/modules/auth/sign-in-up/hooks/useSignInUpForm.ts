@@ -19,7 +19,7 @@ const validationSchema = z
 
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState());
+  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const form = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -29,7 +29,7 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    if (isSignInPrefilled) {
+    if (isSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }

@@ -1,2 +1,4 @@
-server/node_modules/
-server/.env
+.git
+.env
+node_modules
+.nx/cache

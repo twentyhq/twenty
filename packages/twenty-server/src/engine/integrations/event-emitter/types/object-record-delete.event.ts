@@ -1,6 +1,7 @@
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 
-export declare class ObjectRecordDeleteEvent<T extends BaseObjectMetadata> {
-  workspaceId: string;
-  deletedRecord: T;
+export class ObjectRecordDeleteEvent<T> extends ObjectRecordBaseEvent {
+  details: {
+    before: T;
+  };
 }

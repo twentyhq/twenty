@@ -65,11 +65,11 @@ jest.mock(
   '@/object-record/record-table/hooks/internal/useRecordTableStates',
   () => ({
     useRecordTableStates: () => ({
-      getSoftFocusPositionState: () => mockSoftFocusPositionState,
-      getIsSoftFocusActiveState: () => mockSoftFocusActiveState,
+      softFocusPositionState: mockSoftFocusPositionState,
+      isSoftFocusActiveState: mockSoftFocusActiveState,
       isSoftFocusOnTableCellFamilyState: () =>
         mockIsSoftFocusOnTableCellFamilyState,
-      getCurrentTableCellInEditModePositionState: () =>
+      currentTableCellInEditModePositionState:
         mockCurrentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState: () =>
         mockIsTableCellInEditModeFamilyState,

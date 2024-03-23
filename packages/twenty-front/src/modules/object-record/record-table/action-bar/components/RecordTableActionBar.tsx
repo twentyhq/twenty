@@ -9,9 +9,9 @@ export const RecordTableActionBar = ({
 }: {
   recordTableId: string;
 }) => {
-  const { getSelectedRowIdsSelector } = useRecordTableStates(recordTableId);
+  const { selectedRowIdsSelector } = useRecordTableStates(recordTableId);
 
-  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const [selectedRecords, setSelectedRecords] = useRecoilState(
     selectedRecordsComponentState(),
