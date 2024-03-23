@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -6,7 +8,7 @@ import { RecordBoardActionBar } from '@/object-record/record-board/action-bar/co
 import { RecordBoard } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardContextMenu } from '@/object-record/record-board/context-menu/components/RecordBoardContextMenu';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 
 type RecordIndexBoardContainerProps = {
   recordBoardId: string;
@@ -23,8 +25,12 @@ export const RecordIndexBoardContainer = ({
     objectNameSingular,
   });
 
+  const recordIndexKanbanFieldMetadataId = useRecoilValue(
+    recordIndexKanbanFieldMetadataIdState,
+  );
+
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.type === FieldMetadataType.Select,
+    (field) => field.id === recordIndexKanbanFieldMetadataId,
   );
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
