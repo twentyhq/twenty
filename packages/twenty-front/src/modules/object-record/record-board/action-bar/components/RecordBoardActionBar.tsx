@@ -1,7 +1,6 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { selectedRecordsComponentState } from '@/object-record/record-table/states/selectedRecordsComponentState';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 
 type RecordBoardActionBarProps = {
@@ -15,13 +14,7 @@ export const RecordBoardActionBar = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const [selectedRecords, setSelectedRecords] = useRecoilState(
-    selectedRecordsComponentState(),
-  );
-
-  setSelectedRecords(selectedRecordIds.length);
-
-  if (!selectedRecords) {
+  if (!selectedRecordIds.length) {
     return null;
   }
 
