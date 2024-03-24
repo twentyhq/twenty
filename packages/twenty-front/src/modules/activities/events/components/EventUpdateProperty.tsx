@@ -10,9 +10,9 @@ type EventUpdatePropertyProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   gap: ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
 `;
 
 const StyledPropertyName = styled.div``;

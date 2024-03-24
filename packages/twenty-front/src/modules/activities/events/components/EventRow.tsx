@@ -7,7 +7,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import {
   IconCirclePlus,
   IconEditCircle,
-  IconQuestionMark,
+  IconFocusCentered,
 } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -28,13 +28,10 @@ const StyledIconContainer = styled.div`
   z-index: 2;
 `;
 
-const StyledActivityTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  flex: 1;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+const StyledActionName = styled.span`
   overflow: hidden;
+  flex: none;
+  white-space: nowrap;
 `;
 
 const StyledItemContainer = styled.div`
@@ -58,16 +55,18 @@ const StyledItemTitleContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledItemAuthorText = styled.div`
+const StyledItemAuthorText = styled.span`
   display: flex;
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(1)};
+  white-space: nowrap;
 `;
 
-const StyledItemTitle = styled.div`
+const StyledItemTitle = styled.span`
   display: flex;
   flex-flow: row nowrap;
   overflow: hidden;
+  white-space: nowrap;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -152,7 +151,7 @@ export const EventRow = ({
           {isEventType('created') && <IconCirclePlus />}
           {isEventType('updated') && <IconEditCircle />}
           {!isEventType('created') && !isEventType('updated') && (
-            <IconQuestionMark />
+            <IconFocusCentered />
           )}
         </StyledIconContainer>
         <StyledItemContainer>
@@ -161,30 +160,24 @@ export const EventRow = ({
               {event.workspaceMember?.name.firstName}{' '}
               {event.workspaceMember?.name.lastName}
             </StyledItemAuthorText>
+            <StyledActionName>
+              {isEventType('created') && 'created'}
+              {isEventType('updated') && 'updated'}
+              {!isEventType('created') && !isEventType('updated') && event.name}
+            </StyledActionName>
             <StyledItemTitle>
-              <StyledActivityTitle>
-                {isEventType('created') &&
-                  `created ${
-                    diff?.name ||
-                    'a new ' + targetableObject.targetObjectNameSingular
-                  }`}
-                {isEventType('updated') && (
-                  <>
-                    updated
-                    {Object.entries(diff).map(([key, value]) => (
-                      <EventUpdateProperty
-                        propertyName={key}
-                        after={value?.after}
-                      ></EventUpdateProperty>
-                    ))}
-                  </>
-                )}
-                {!isEventType('created') && !isEventType('updated') && (
-                  <>
-                    {event.name}: {event.properties}
-                  </>
-                )}
-              </StyledActivityTitle>
+              {isEventType('created') &&
+                `a new ${targetableObject.targetObjectNameSingular}`}
+              {isEventType('updated') &&
+                Object.entries(diff).map(([key, value]) => (
+                  <EventUpdateProperty
+                    propertyName={key}
+                    after={value?.after}
+                  ></EventUpdateProperty>
+                ))}
+              {!isEventType('created') &&
+                !isEventType('updated') &&
+                JSON.stringify(diff)}
             </StyledItemTitle>
           </StyledItemTitleContainer>
           <StyledItemTitleDate id={`id-${event.id}`}>
