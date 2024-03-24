@@ -6,8 +6,8 @@ export type Event = {
   updatedAt: string;
   deletedAt: string | null;
   opportunityId: string | null;
-  companyId: string;
-  personId: string;
+  companyId: string | null;
+  personId: string | null;
   workspaceMemberId: string;
   workspaceMember: WorkspaceMember;
   properties: any;
