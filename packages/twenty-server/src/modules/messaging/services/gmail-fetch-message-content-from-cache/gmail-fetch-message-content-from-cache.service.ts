@@ -80,8 +80,15 @@ export class GmailFetchMessageContentFromCacheService {
 
       return;
     }
-
+    
     const gmailMessageChannelId = gmailMessageChannel.id;
+
+
+    await this.messageChannelRepository.updateSyncStatus(
+      gmailMessageChannelId,
+      MessageChannelSyncStatus.ONGOING,
+      workspaceId,
+    );
 
     const messageIdsToFetch = await this.cacheStorage.setPop(
       `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,

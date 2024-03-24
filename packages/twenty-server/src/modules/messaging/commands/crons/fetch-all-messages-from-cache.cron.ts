@@ -5,22 +5,22 @@ import { Repository, In } from 'typeorm';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
+import {
+  GmailFetchMessageContentFromCacheJobData,
+  GmailFetchMessageContentFromCacheJob,
+} from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import {
   MessageChannelObjectMetadata,
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import {
-  GmailFetchMessageContentFromCacheJob,
-  GmailFetchMessageContentFromCacheJobData,
-} from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
-import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class FetchAllMessagesFromCacheCron
