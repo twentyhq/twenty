@@ -109,7 +109,9 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `Delete${selectedRecordIds.length > 1 ? ` (${selectedRecordIds.length})` : ''}`,
+        label: `Delete${
+          selectedRecordIds.length > 1 ? ` (${selectedRecordIds.length})` : ''
+        }`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => setIsDeleteRecordsModalOpen(true),
@@ -124,7 +126,9 @@ export const useRecordActionBar = ({
               selectedRecordIds.length === 1 ? 'this record' : 'these records'
             }`}
             onConfirmClick={() => handleDeleteClick()}
-            deleteButtonText={`Delete ${selectedRecordIds.length > 1 ? 'Records' : 'Record'}`}
+            deleteButtonText={`Delete ${
+              selectedRecordIds.length > 1 ? 'Records' : 'Record'
+            }`}
           />
         ),
       },
