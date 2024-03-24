@@ -109,7 +109,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `Delete (${selectedRecordIds.length})`,
+        label: `Delete${selectedRecordIds.length > 1 ? ` (${selectedRecordIds.length})` : ''}`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => setIsDeleteRecordsModalOpen(true),
@@ -117,12 +117,14 @@ export const useRecordActionBar = ({
           <ConfirmationModal
             isOpen={isDeleteRecordsModalOpen}
             setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${selectedRecordIds.length} records`}
-            subtitle={
-              'This action cannot be undone. This will permanently delete these records'
-            }
+            title={`Delete ${selectedRecordIds.length} ${
+              selectedRecordIds.length === 1 ? `record` : 'records'
+            }`}
+            subtitle={`This action cannot be undone. This will permanently delete ${
+              selectedRecordIds.length === 1 ? 'this record' : 'these records'
+            }`}
             onConfirmClick={() => handleDeleteClick()}
-            deleteButtonText="Delete Records"
+            deleteButtonText={`Delete ${selectedRecordIds.length > 1 ? 'Records' : 'Record'}`}
           />
         ),
       },
