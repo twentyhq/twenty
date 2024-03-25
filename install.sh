@@ -63,11 +63,15 @@ echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
 echo "✨ .env configuration completed"
 
 # Ask user if he wants to start the project
-read -p "🚀 Do you want to start the project now? (y/N) " answer
-if [ "$answer" = "y" ]; then
-  echo "🐳 Starting Docker containers..."
+read -p "🚀 Do you want to start the project now? (Y/n) " answer
+if [ "$answer" = "n" ]; then
+  echo "✅ Project setup completed. Run 'docker-compose up -d' to start."
+  exit 0
+else
+  echo "  🐳 Starting Docker containers..."
   docker compose up -d
-  echo "✅ Project started!"
+  echo "  🐳 Project started!"
+fi
 else
   echo "👋 Project setup completed. Run 'docker-compose up -d' to start."
 fi
