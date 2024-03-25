@@ -5,7 +5,7 @@ services:
   server:
     image: twentycrm/twenty:${TAG}
     volumes:
-      - server-local-data:/app/.local-storage
+      - server-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
     ports:
       - "3000:3000"
     environment:
@@ -18,7 +18,6 @@ services:
 
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
       STORAGE_TYPE: ${STORAGE_TYPE}
-      STORAGE_LOCAL_PATH: .local-storage
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
