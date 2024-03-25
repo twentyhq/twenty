@@ -2,17 +2,17 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { RelationMetadataType } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
   deduceRelationDirection,
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
-import { ObjectMetadataService } from 'src/engine-metadata/object-metadata/object-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 import { FieldsStringFactory } from './fields-string.factory';

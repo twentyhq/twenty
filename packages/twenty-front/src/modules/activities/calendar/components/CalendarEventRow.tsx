@@ -102,7 +102,7 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { displayCurrentEventCursor = false } = useContext(CalendarContext);
   const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
 

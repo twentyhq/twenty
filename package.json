@@ -5,8 +5,8 @@
     "@apollo/server": "^4.7.3",
     "@aws-sdk/client-s3": "^3.363.0",
     "@aws-sdk/credential-providers": "^3.363.0",
-    "@blocknote/core": "^0.11.2",
-    "@blocknote/react": "^0.11.2",
+    "@blocknote/core": "^0.12.1",
+    "@blocknote/react": "^0.12.2",
     "@chakra-ui/accordion": "^2.3.0",
     "@chakra-ui/system": "^2.6.0",
     "@codesandbox/sandpack-react": "^2.13.5",
@@ -108,6 +108,7 @@
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "lodash.debounce": "^4.0.8",
+    "lodash.groupby": "^4.6.0",
     "lodash.isempty": "^4.4.0",
     "lodash.isequal": "^4.5.0",
     "lodash.isobject": "^3.0.2",
@@ -229,11 +230,13 @@
     "@types/js-cookie": "^3.0.3",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.debounce": "^4.0.7",
+    "@types/lodash.groupby": "^4.6.9",
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isequal": "^4.5.7",
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.mapvalues": "^4.6.9",
+    "@types/lodash.omit": "^4.5.9",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/luxon": "^3.3.0",
@@ -316,7 +319,7 @@
   },
   "version": "0.2.1",
   "scripts": {
-    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start:dev twenty-server\" \"yarn nx start twenty-front\""
+    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start twenty-server\" \"yarn nx start twenty-front\""
   },
   "workspaces": {
     "packages": [

@@ -9,15 +9,15 @@ import {
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
-import { isCompositeFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import {
   AbstractWorkspaceFixer,

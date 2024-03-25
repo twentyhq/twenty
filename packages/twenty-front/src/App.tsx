@@ -38,6 +38,7 @@ import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-ke
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
+import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
@@ -47,7 +48,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 
 export const App = () => {
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   return (
     <>
@@ -57,8 +58,7 @@ export const App = () => {
       <DefaultLayout>
         <Routes>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
-          <Route path={AppPath.SignIn} element={<SignInUp />} />
-          <Route path={AppPath.SignUp} element={<SignInUp />} />
+          <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
@@ -170,6 +170,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Integrations}
                   element={<SettingsIntegrations />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationDetail}
+                  element={<SettingsIntegrationDetail />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}

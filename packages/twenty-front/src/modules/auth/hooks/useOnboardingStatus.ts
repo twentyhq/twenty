@@ -11,9 +11,9 @@ import {
 } from '../utils/getOnboardingStatus';
 
 export const useOnboardingStatus = (): OnboardingStatus | undefined => {
-  const billing = useRecoilValue(billingState());
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const billing = useRecoilValue(billingState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isLoggedIn = useIsLogged();
 
   return getOnboardingStatus({

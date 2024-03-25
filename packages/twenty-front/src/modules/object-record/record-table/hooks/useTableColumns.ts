@@ -18,15 +18,15 @@ export const useTableColumns = (props?: useRecordTableProps) => {
   });
 
   const {
-    getAvailableTableColumnsState,
-    getTableColumnsState,
-    getVisibleTableColumnsSelector,
+    availableTableColumnsState,
+    tableColumnsState,
+    visibleTableColumnsSelector,
   } = useRecordTableStates(props?.recordTableId);
 
-  const availableTableColumns = useRecoilValue(getAvailableTableColumnsState());
+  const availableTableColumns = useRecoilValue(availableTableColumnsState);
 
-  const tableColumns = useRecoilValue(getTableColumnsState());
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const tableColumns = useRecoilValue(tableColumnsState);
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const { handleColumnMove } = useMoveViewColumns();
 
@@ -47,6 +47,11 @@ export const useTableColumns = (props?: useRecordTableProps) => {
         (tableColumns) =>
           tableColumns.fieldMetadataId === viewField.fieldMetadataId,
       );
+      const lastTableColumnPosition = [...tableColumns]
+        .sort((a, b) => b.position - a.position)
+        .map((column) => column.position);
+
+      const lastPosition = lastTableColumnPosition[0] ?? 0;
 
       if (isNewColumn) {
         const newColumn = availableTableColumns.find(
@@ -57,7 +62,7 @@ export const useTableColumns = (props?: useRecordTableProps) => {
 
         const nextColumns = [
           ...tableColumns,
-          { ...newColumn, isVisible: true },
+          { ...newColumn, isVisible: true, position: lastPosition + 1 },
         ];
 
         await handleColumnsChange(nextColumns);

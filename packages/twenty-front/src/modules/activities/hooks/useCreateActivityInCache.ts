@@ -27,7 +27,7 @@ export const useCreateActivityInCache = () => {
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,

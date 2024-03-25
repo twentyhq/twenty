@@ -20,6 +20,7 @@ export type ButtonProps = {
   position?: ButtonPosition;
   accent?: ButtonAccent;
   soon?: boolean;
+  justify?: 'center' | 'flex-start' | 'flex-end';
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -28,7 +29,13 @@ export type ButtonProps = {
 const StyledButton = styled.button<
   Pick<
     ButtonProps,
-    'fullWidth' | 'variant' | 'size' | 'position' | 'accent' | 'focus'
+    | 'fullWidth'
+    | 'variant'
+    | 'size'
+    | 'position'
+    | 'accent'
+    | 'focus'
+    | 'justify'
   >
 >`
   align-items: center;
@@ -177,9 +184,7 @@ const StyledButton = styled.button<
             `;
           case 'danger':
             return css`
-              background: ${!disabled
-                ? theme.background.transparent.primary
-                : 'transparent'};
+              background: transparent;
               border-color: ${variant === 'secondary'
                 ? focus
                   ? theme.color.red
@@ -236,6 +241,7 @@ const StyledButton = styled.button<
   font-weight: 500;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  justify-content: ${({ justify }) => justify};
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)}`;
   }};
@@ -266,6 +272,7 @@ export const Button = ({
   position = 'standalone',
   soon = false,
   disabled = false,
+  justify = 'flex-start',
   focus = false,
   onClick,
 }: ButtonProps) => {
@@ -279,6 +286,7 @@ export const Button = ({
       position={position}
       disabled={soon || disabled}
       focus={focus}
+      justify={justify}
       accent={accent}
       className={className}
       onClick={onClick}

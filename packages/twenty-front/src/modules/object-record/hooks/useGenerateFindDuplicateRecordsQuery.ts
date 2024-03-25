@@ -11,7 +11,7 @@ export const getFindDuplicateRecordsQueryResponseField = (
 ) => `${objectNameSingular}Duplicates`;
 
 export const useGenerateFindDuplicateRecordsQuery = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   return ({
     objectMetadataItem,

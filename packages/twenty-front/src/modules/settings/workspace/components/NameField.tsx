@@ -27,7 +27,7 @@ export const NameField = ({
   autoSave = true,
   onNameUpdate,
 }: NameFieldProps) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',

@@ -1,9 +1,9 @@
-import { FullNameMetadata } from 'src/engine-metadata/field-metadata/composite-types/full-name.composite-type';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { workspaceMemberStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -21,6 +21,8 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.workspaceMember,
@@ -231,4 +233,20 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
   calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the workspace member',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @IsSystem()
+  events: EventObjectMetadata[];
 }

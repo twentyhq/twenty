@@ -8,6 +8,7 @@ import { onRecordBoardFetchMoreVisibilityChangeComponentState } from '@/object-r
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
 import { recordBoardFiltersComponentState } from '@/object-record/record-board/states/recordBoardFiltersComponentState';
+import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { recordBoardObjectSingularNameComponentState } from '@/object-record/record-board/states/recordBoardObjectSingularNameComponentState';
 import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
 import { recordBoardSortsComponentState } from '@/object-record/record-board/states/recordBoardSortsComponentState';
@@ -28,15 +29,19 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
 
   return {
     scopeId,
-    getObjectSingularNameState: extractComponentState(
+    objectSingularNameState: extractComponentState(
       recordBoardObjectSingularNameComponentState,
       scopeId,
     ),
-    getIsFetchingRecordState: extractComponentState(
+    kanbanFieldMetadataNameState: extractComponentState(
+      recordBoardKanbanFieldMetadataNameComponentState,
+      scopeId,
+    ),
+    isFetchingRecordState: extractComponentState(
       isRecordBoardFetchingRecordsComponentState,
       scopeId,
     ),
-    getColumnIdsState: extractComponentState(
+    columnIdsState: extractComponentState(
       recordBoardColumnIdsComponentState,
       scopeId,
     ),
@@ -53,19 +58,16 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       scopeId,
     ),
 
-    getFiltersState: extractComponentState(
+    filtersState: extractComponentState(
       recordBoardFiltersComponentState,
       scopeId,
     ),
-    getSortsState: extractComponentState(
-      recordBoardSortsComponentState,
-      scopeId,
-    ),
-    getFieldDefinitionsState: extractComponentState(
+    sortsState: extractComponentState(recordBoardSortsComponentState, scopeId),
+    fieldDefinitionsState: extractComponentState(
       recordBoardFieldDefinitionsComponentState,
       scopeId,
     ),
-    getVisibleFieldDefinitionsState: extractComponentReadOnlySelector(
+    visibleFieldDefinitionsState: extractComponentReadOnlySelector(
       recordBoardVisibleFieldDefinitionsComponentSelector,
       scopeId,
     ),
@@ -78,17 +80,17 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       isRecordBoardCardSelectedComponentFamilyState,
       scopeId,
     ),
-    getSelectedRecordIdsSelector: extractComponentReadOnlySelector(
+    selectedRecordIdsSelector: extractComponentReadOnlySelector(
       recordBoardSelectedRecordIdsComponentSelector,
       scopeId,
     ),
 
-    getIsCompactModeActiveState: extractComponentState(
+    isCompactModeActiveState: extractComponentState(
       isRecordBoardCompactModeActiveComponentState,
       scopeId,
     ),
 
-    getOnFetchMoreVisibilityChangeState: extractComponentState(
+    onFetchMoreVisibilityChangeState: extractComponentState(
       onRecordBoardFetchMoreVisibilityChangeComponentState,
       scopeId,
     ),

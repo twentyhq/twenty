@@ -17,14 +17,14 @@ export const DeleteWorkspace = () => {
     useState(false);
 
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
-  const currentUser = useRecoilValue(currentUserState());
+  const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const deleteWorkspace = async () => {

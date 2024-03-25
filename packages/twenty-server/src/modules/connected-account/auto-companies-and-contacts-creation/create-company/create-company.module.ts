@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
-import { CompanyModule } from 'src/modules/messaging/repositories/company/company.module';
 
 @Module({
-  imports: [WorkspaceDataSourceModule, CompanyModule],
+  imports: [ObjectMetadataRepositoryModule.forFeature([CompanyObjectMetadata])],
   providers: [CreateCompanyService],
   exports: [CreateCompanyService],
 })

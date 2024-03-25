@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldDateTimeValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -13,7 +14,11 @@ export const useDateTimeField = () => {
   const { entityId, fieldDefinition, hotkeyScope, clearable } =
     useContext(FieldContext);
 
-  assertFieldMetadata('DATE_TIME', isFieldDateTime, fieldDefinition);
+  assertFieldMetadata(
+    FieldMetadataType.DateTime,
+    isFieldDateTime,
+    fieldDefinition,
+  );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

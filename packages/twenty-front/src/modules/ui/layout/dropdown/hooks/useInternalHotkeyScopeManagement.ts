@@ -15,7 +15,7 @@ export const useInternalHotkeyScopeManagement = ({
   const { dropdownHotkeyScopeState } = useDropdownStates({ dropdownScopeId });
 
   const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilState(
-    dropdownHotkeyScopeState(),
+    dropdownHotkeyScopeState,
   );
 
   useEffect(() => {

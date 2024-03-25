@@ -7,7 +7,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { parseDate } from '~/utils/date-utils';
 
 export const useCurrentUserTaskCount = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: tasks } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Activity,

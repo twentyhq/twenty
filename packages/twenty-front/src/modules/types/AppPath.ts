@@ -1,8 +1,7 @@
 export enum AppPath {
   // Not logged-in
   Verify = '/verify',
-  SignIn = '/sign-in',
-  SignUp = '/sign-up',
+  SignInUp = '/welcome',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
 
