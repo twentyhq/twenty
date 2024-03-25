@@ -1,4 +1,4 @@
-import { SettingsIntegrationCategory } from '~/pages/settings/integrations/types/SettingsIntegrationCategory';
+import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 
 export const SETTINGS_INTEGRATION_WINDMILL_CATEGORY: SettingsIntegrationCategory =
   {

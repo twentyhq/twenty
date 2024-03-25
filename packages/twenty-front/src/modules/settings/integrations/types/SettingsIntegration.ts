@@ -1,4 +1,9 @@
-export type SettingsIntegrationType = 'Use' | 'Goto' | 'Soon';
+export type SettingsIntegrationType =
+  | 'Active'
+  | 'Add'
+  | 'Goto'
+  | 'Soon'
+  | 'Use';
 
 export type SettingsIntegration = {
   from: { key: string; image: string };

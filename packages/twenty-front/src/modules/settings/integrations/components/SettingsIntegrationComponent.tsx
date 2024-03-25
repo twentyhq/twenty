@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Pill } from 'twenty-ui';
 
-import { IconArrowUpRight, IconBolt } from '@/ui/display/icon';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { IconArrowUpRight, IconBolt, IconPlus } from '@/ui/display/icon';
+import { Status } from '@/ui/display/status/components/Status';
 import { Button } from '@/ui/input/button/components/Button';
-import { SettingsIntegration } from '~/pages/settings/integrations/types/SettingsIntegration';
+import { isDefined } from '~/utils/isDefined';
 
 interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
@@ -19,6 +23,12 @@ const StyledContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(3)};
+
+  ${({ onClick }) =>
+    isDefined(onClick) &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 const StyledSection = styled.div`
@@ -48,33 +58,52 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
-  const openLinkInTab = (link: string) => {
-    window.open(link);
-  };
+  const navigate = useNavigate();
+
+  const navigateToIntegrationPage = () => navigate(integration.link);
+  const openExternalLink = () => window.open(integration.link);
 
   return (
-    <StyledContainer>
+    <StyledContainer
+      onClick={
+        integration.type === 'Active' ? navigateToIntegrationPage : undefined
+      }
+    >
       <StyledSection>
         <StyledIntegrationLogo>
           <StyledLogo src={integration.from.image} alt={integration.from.key} />
-          {integration.to ? (
+          {isDefined(integration.to) && (
             <>
               <div>→</div>
               <StyledLogo src={integration.to.image} alt={integration.to.key} />
             </>
-          ) : (
-            <></>
           )}
         </StyledIntegrationLogo>
         {integration.text}
       </StyledSection>
       {integration.type === 'Soon' ? (
         <StyledSoonPill label="Soon" />
+      ) : integration.type === 'Active' ? (
+        <Status color="green" text="Active" />
+      ) : integration.type === 'Add' ? (
+        <Button
+          onClick={navigateToIntegrationPage}
+          Icon={IconPlus}
+          title="Add"
+          size="small"
+        />
+      ) : integration.type === 'Use' ? (
+        <Button
+          onClick={openExternalLink}
+          Icon={IconBolt}
+          title="Use"
+          size="small"
+        />
       ) : (
         <Button
-          onClick={() => openLinkInTab(integration.link)}
-          Icon={integration.type === 'Goto' ? IconArrowUpRight : IconBolt}
-          title={integration.type === 'Goto' ? integration.linkText : 'Use'}
+          onClick={openExternalLink}
+          Icon={IconArrowUpRight}
+          title={integration.linkText}
           size="small"
         />
       )}
