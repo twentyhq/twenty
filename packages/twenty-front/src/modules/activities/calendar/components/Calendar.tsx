@@ -37,13 +37,12 @@ const StyledYear = styled.span`
 `;
 
 export const Calendar = ({
-  activityTargetableObject,
+  targetableObject,
 }: {
-  activityTargetableObject: ActivityTargetableObject;
+  targetableObject: ActivityTargetableObject;
 }) => {
   const [threadQuery, queryName] =
-    activityTargetableObject.targetObjectNameSingular ===
-    CoreObjectNameSingular.Person
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [
           getTimelineCalendarEventsFromPersonId,
           'getTimelineCalendarEventsFromPersonId',
@@ -57,7 +56,7 @@ export const Calendar = ({
     useCustomResolver(
       threadQuery,
       queryName,
-      activityTargetableObject,
+      targetableObject,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
@@ -90,7 +89,7 @@ export const Calendar = ({
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
             No events have been scheduled with this{' '}
-            {activityTargetableObject.targetObjectNameSingular} yet.
+            {targetableObject.targetObjectNameSingular} yet.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

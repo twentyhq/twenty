@@ -52,14 +52,14 @@ const StyledEmailCount = styled.span`
 `;
 
 export const EmailThreads = ({
-  activityTargetableObject,
+  targetableObject,
 }: {
-  activityTargetableObject: ActivityTargetableObject;
+  targetableObject: ActivityTargetableObject;
 }) => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { emailThreadsPageState } = useEmailThreadStates({
-    emailThreadScopeId: getScopeIdFromComponentId(activityTargetableObject.id),
+    emailThreadScopeId: getScopeIdFromComponentId(targetableObject.id),
   });
 
   const [emailThreadsPage, setEmailThreadsPage] = useRecoilState(
@@ -69,16 +69,15 @@ export const EmailThreads = ({
   const [isFetchingMoreEmails, setIsFetchingMoreEmails] = useState(false);
 
   const [threadQuery, queryName] =
-    activityTargetableObject.targetObjectNameSingular ===
-    CoreObjectNameSingular.Person
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
       : [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId'];
 
   const threadQueryVariables = {
-    ...(activityTargetableObject.targetObjectNameSingular ===
+    ...(targetableObject.targetObjectNameSingular ===
     CoreObjectNameSingular.Person
-      ? { personId: activityTargetableObject.id }
-      : { companyId: activityTargetableObject.id }),
+      ? { personId: targetableObject.id }
+      : { companyId: targetableObject.id }),
     page: 1,
     pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   } as GetTimelineThreadsFromPersonIdQueryVariables;
