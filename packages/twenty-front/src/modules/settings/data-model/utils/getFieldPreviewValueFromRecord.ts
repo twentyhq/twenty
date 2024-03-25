@@ -18,7 +18,7 @@ export const getFieldPreviewValueFromRecord = ({
   if (fieldMetadataItem.type === FieldMetadataType.Select) {
     return selectOptions?.find(
       (selectOption) => selectOption.value === recordFieldValue,
-    );
+    )?.value;
   }
 
   // Relation fields (to many)

@@ -25,7 +25,7 @@ import {
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -43,7 +43,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { WorkspacePreQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { NotFoundError } from 'src/engine/filters/utils/graphql-errors.util';
+import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 
@@ -216,7 +216,7 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const computedArgs = await this.queryRunnerArgsFactory.create(
       args,
       options,
@@ -246,6 +246,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
+        userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         details: {
@@ -270,7 +271,7 @@ export class WorkspaceQueryRunnerService {
     args: UpdateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
 
     const existingRecord = await this.findOne(
       { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
@@ -300,6 +301,7 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       workspaceId,
+      userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
       details: {
@@ -356,7 +358,7 @@ export class WorkspaceQueryRunnerService {
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
     );
@@ -384,6 +386,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         workspaceId,
+        userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         details: {
@@ -399,7 +402,7 @@ export class WorkspaceQueryRunnerService {
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,
       options,
@@ -422,6 +425,7 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
+      userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       details: {

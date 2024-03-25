@@ -18,11 +18,11 @@ import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isPersonEmail } from 'src/modules/messaging/utils/is-person-email.util';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-message-and-create-contact/save-messages-and-create-contacts.service';
+import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
@@ -45,7 +45,7 @@ export class GmailPartialSyncService {
     private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    private readonly saveMessagesAndCreateContactsService: SaveMessageAndEmitContactCreationEventService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}

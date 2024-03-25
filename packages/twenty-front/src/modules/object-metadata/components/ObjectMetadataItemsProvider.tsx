@@ -9,8 +9,8 @@ import { RelationPickerScope } from '@/object-record/relation-picker/scopes/Rela
 export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const shouldDisplayChildren =
     objectMetadataItems.length > 0 || !currentWorkspaceMember;

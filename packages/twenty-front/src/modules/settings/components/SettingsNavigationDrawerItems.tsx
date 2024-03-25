@@ -33,11 +33,11 @@ export const SettingsNavigationDrawerItems = () => {
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   return (
     <>

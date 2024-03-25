@@ -43,7 +43,7 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 export const ChooseYourPlan = () => {
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   const [planSelected, setPlanSelected] = useState('month');
 

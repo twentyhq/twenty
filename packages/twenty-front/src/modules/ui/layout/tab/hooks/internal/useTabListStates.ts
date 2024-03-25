@@ -15,9 +15,6 @@ export const useTabListStates = ({ tabListScopeId }: useTabListStatesProps) => {
 
   return {
     scopeId,
-    getActiveTabIdState: extractComponentState(
-      activeTabIdComponentState,
-      scopeId,
-    ),
+    activeTabIdState: extractComponentState(activeTabIdComponentState, scopeId),
   };
 };

@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -14,9 +16,14 @@ export const ObjectFilterDropdownButton = ({
   filterDropdownId,
   hotkeyScope,
 }: ObjectFilterDropdownButtonProps) => {
-  const { availableFilterDefinitions } = useFilterDropdown({
+  const { availableFilterDefinitionsState } = useFilterDropdown({
     filterDropdownId: filterDropdownId,
   });
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+
   const hasOnlyOneEntityFilter =
     availableFilterDefinitions.length === 1 &&
     availableFilterDefinitions[0].type === 'RELATION';

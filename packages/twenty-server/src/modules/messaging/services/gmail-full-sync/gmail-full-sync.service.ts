@@ -17,11 +17,11 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmail-search-filter.util';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-message-and-create-contact/save-messages-and-create-contacts.service';
+import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
@@ -47,7 +47,7 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    private readonly saveMessagesAndCreateContactsService: SaveMessageAndEmitContactCreationEventService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -211,6 +211,8 @@ export class GmailFullSyncService {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
+
+      return;
     }
 
     if (errors.length) {

@@ -109,11 +109,11 @@ export const useExportTableData = ({
   const [progress, setProgress] = useState<number | undefined>(undefined);
   const [hasNextPage, setHasNextPage] = useState(true);
 
-  const { getVisibleTableColumnsSelector, getSelectedRowIdsSelector } =
+  const { visibleTableColumnsSelector, selectedRowIdsSelector } =
     useRecordTableStates(recordIndexId);
 
-  const columns = useRecoilValue(getVisibleTableColumnsSelector());
-  const selectedRowIds = useRecoilValue(getSelectedRowIdsSelector());
+  const columns = useRecoilValue(visibleTableColumnsSelector());
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const hasSelectedRows = selectedRowIds.length > 0;
 
@@ -136,8 +136,10 @@ export const useExportTableData = ({
     ? selectedFindManyParams
     : findManyRecordsParams;
 
+  // Todo: this needs to be done on click on the Export not button, not to be reactive. Use Lazy query for example
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
+    depth: 0,
     limit: pageSize,
     onCompleted: (_data, { hasNextPage }) => {
       setHasNextPage(hasNextPage ?? false);

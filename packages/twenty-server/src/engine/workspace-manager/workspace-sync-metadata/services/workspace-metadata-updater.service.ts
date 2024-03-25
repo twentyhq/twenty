@@ -6,13 +6,13 @@ import omit from 'lodash.omit';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
-import { FieldMetadataComplexOption } from 'src/engine-metadata/field-metadata/dtos/options.input';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()

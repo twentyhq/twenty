@@ -34,6 +34,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       'RATING',
       'SELECT',
       'POSITION',
+      'RAW_JSON',
     ] as FieldMetadataType[]
   ).includes(fieldType);
 

@@ -32,7 +32,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
     ({ snapshot, set }) =>
       (event: MouseEvent | TouchEvent) => {
         const clickOutsideListenerIsActivated = snapshot
-          .getLoadable(getClickOutsideListenerIsActivatedState())
+          .getLoadable(getClickOutsideListenerIsActivatedState)
           .getValue();
 
         const isListening = clickOutsideListenerIsActivated && enabled;
@@ -47,7 +47,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
             .some((ref) => ref.current?.contains(event.target as Node));
 
           set(
-            getClickOutsideListenerIsMouseDownInsideState(),
+            getClickOutsideListenerIsMouseDownInsideState,
             clickedOnAtLeastOneRef,
           );
         }
@@ -84,7 +84,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
             });
 
           set(
-            getClickOutsideListenerIsMouseDownInsideState(),
+            getClickOutsideListenerIsMouseDownInsideState,
             clickedOnAtLeastOneRef,
           );
         }
@@ -102,7 +102,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
         const isMouseDownInside = snapshot
-          .getLoadable(getClickOutsideListenerIsMouseDownInsideState())
+          .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
           .getValue();
 
         if (mode === ClickOutsideMode.compareHTMLRef) {

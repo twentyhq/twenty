@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
@@ -17,7 +18,7 @@ type FormValues = {
   description?: string;
   icon: string;
   label: string;
-  type: FieldMetadataType;
+  type: SettingsSupportedFieldType;
 } & SettingsDataModelFieldSettingsFormValues;
 
 export const fieldMetadataFormDefaultValues: FormValues = {

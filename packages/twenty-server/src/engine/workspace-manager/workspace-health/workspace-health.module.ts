@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
-import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object-metadata.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';

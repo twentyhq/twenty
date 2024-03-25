@@ -30,7 +30,7 @@ export const MobileNavigationBar = () => {
     isNavigationDrawerOpenState,
   );
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useRecoilState(currentMobileNavigationDrawerState());
+    useRecoilState(currentMobileNavigationDrawerState);
 
   const activeItemName = isNavigationDrawerOpen
     ? currentMobileNavigationDrawer

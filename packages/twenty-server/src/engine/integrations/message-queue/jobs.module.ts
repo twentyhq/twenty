@@ -7,29 +7,29 @@ import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job
 import { CallWebhookJobsJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { ObjectMetadataModule } from 'src/engine-metadata/object-metadata/object-metadata.module';
-import { DataSourceModule } from 'src/engine-metadata/data-source/data-source.module';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
-import { UserModule } from 'src/engine/modules/user/user.module';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
-import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
+import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
-import { UpdateSubscriptionJob } from 'src/engine/modules/billing/jobs/update-subscription.job';
-import { BillingModule } from 'src/engine/modules/billing/billing.module';
-import { UserWorkspaceModule } from 'src/engine/modules/user-workspace/user-workspace.module';
-import { StripeModule } from 'src/engine/modules/billing/stripe/stripe.module';
-import { Workspace } from 'src/engine/modules/workspace/workspace.entity';
-import { FeatureFlagEntity } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { DataSourceEntity } from 'src/engine-metadata/data-source/data-source.entity';
+import { UpdateSubscriptionJob } from 'src/engine/core-modules/billing/jobs/update-subscription.job';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { GoogleCalendarFullSyncJob } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
@@ -44,13 +44,15 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @Module({
   imports: [
     BillingModule,
     DataSourceModule,
-    CreateCompaniesAndContactsModule,
+    AutoCompaniesAndContactsCreationModule,
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
@@ -74,6 +76,7 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
+      EventObjectMetadata,
     ]),
   ],
   providers: [
@@ -130,6 +133,10 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
+    },
+    {
+      provide: CreateCompanyAndContactJob.name,
+      useClass: CreateCompanyAndContactJob,
     },
     {
       provide: SaveEventToDbJob.name,

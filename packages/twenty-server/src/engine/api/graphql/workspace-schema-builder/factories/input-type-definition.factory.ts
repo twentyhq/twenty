@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import { InputTypeFactory } from './input-type.factory';
 

@@ -9,9 +9,9 @@ describe('useOpenCalendarEventRightDrawer', () => {
   it('opens the right drawer with the calendar event', () => {
     const { result } = renderHook(
       () => {
-        const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState());
+        const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
         const viewableCalendarEventId = useRecoilValue(
-          viewableCalendarEventIdState(),
+          viewableCalendarEventIdState,
         );
         return {
           ...useOpenCalendarEventRightDrawer(),

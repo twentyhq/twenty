@@ -19,7 +19,7 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class MessagingConnectedAccountListener {

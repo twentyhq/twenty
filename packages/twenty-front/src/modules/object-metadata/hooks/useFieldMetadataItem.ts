@@ -1,6 +1,5 @@
 import { v4 } from 'uuid';
 
-import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -29,7 +28,7 @@ export const useFieldMetadataItem = () => {
       ...formatFieldMetadataItemInput(input),
       defaultValue: input.defaultValue,
       objectMetadataId: input.objectMetadataId,
-      type: input.type as FieldType,
+      type: input.type,
     });
 
   const editMetadataField = (

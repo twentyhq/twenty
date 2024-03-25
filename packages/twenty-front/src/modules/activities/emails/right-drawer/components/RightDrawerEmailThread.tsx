@@ -34,7 +34,7 @@ export const RightDrawerEmailThread = () => {
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {
-          set(emailThreadIdWhenEmailThreadWasClosedState(), thread.id);
+          set(emailThreadIdWhenEmailThreadWasClosedState, thread.id);
         },
       [thread],
     ),

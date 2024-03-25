@@ -1,6 +1,6 @@
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
 
 // Compute composite field metadata by combining the composite field metadata with the field metadata
