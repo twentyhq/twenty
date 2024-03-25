@@ -40,6 +40,13 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledModal = styled.div`
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+`;
+
 export const ActionBarItem = ({ item }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
@@ -88,7 +95,7 @@ export const ActionBarItem = ({ item }: ActionBarItemProps) => {
             {item.Icon && <item.Icon size={theme.icon.size.md} />}
             <StyledButtonLabel>{item.label}</StyledButtonLabel>
           </StyledButton>
-          {item.ConfirmationModal}
+          <StyledModal>{item.ConfirmationModal}</StyledModal>
         </>
       )}
     </>

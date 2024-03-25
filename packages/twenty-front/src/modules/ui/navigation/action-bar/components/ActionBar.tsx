@@ -7,6 +7,10 @@ import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/cont
 
 import { ActionBarItem } from './ActionBarItem';
 
+type ActionBarProps = {
+  selectedIds?: string[];
+};
+
 const StyledContainerActionBar = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
@@ -17,15 +21,25 @@ const StyledContainerActionBar = styled.div`
   display: flex;
   height: 48px;
 
-  left: 40%;
+  left: 50%;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   position: absolute;
   top: auto;
+
+  /* transform: translateX(-50%); */
   z-index: 20;
 `;
 
-export const ActionBar = () => {
+const StyledLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+export const ActionBar = ({ selectedIds }: ActionBarProps) => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -40,6 +54,7 @@ export const ActionBar = () => {
       className="action-bar"
       ref={wrapperRef}
     >
+      {selectedIds && <StyledLabel>{selectedIds.length} selected:</StyledLabel>}
       {actionBarEntries.map((item, index) => (
         <ActionBarItem key={index} item={item} />
       ))}

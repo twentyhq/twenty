@@ -109,9 +109,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `Delete${
-          selectedRecordIds.length > 1 ? ` (${selectedRecordIds.length})` : ''
-        }`,
+        label: 'Delete',
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => setIsDeleteRecordsModalOpen(true),
