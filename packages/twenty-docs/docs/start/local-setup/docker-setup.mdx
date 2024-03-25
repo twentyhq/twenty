@@ -97,7 +97,7 @@ Setup database, run migrations, and seed:
 ```bash
 make docker-dev-sh
 yarn
-yarn nx database:init twenty-server
+yarn nx database:reset twenty-server
 ```
 
 ## Step 5: Start Twenty
@@ -106,7 +106,7 @@ Run the project with the following commands from the `root` folder:
 
 ```bash
 make docker-dev-sh
-yarn nx start:dev twenty-server
+yarn nx start twenty-server
 ```
 
 and in a separate terminal:

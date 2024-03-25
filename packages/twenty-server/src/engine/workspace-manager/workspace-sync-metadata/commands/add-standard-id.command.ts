@@ -56,6 +56,8 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_BLOCKLIST_ENABLED: true,
             IS_CALENDAR_ENABLED: true,
             IS_EVENT_OBJECT_ENABLED: true,
+            IS_AIRTABLE_INTEGRATION_ENABLED: true,
+            IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -68,6 +70,8 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_BLOCKLIST_ENABLED: true,
           IS_CALENDAR_ENABLED: true,
           IS_EVENT_OBJECT_ENABLED: true,
+          IS_AIRTABLE_INTEGRATION_ENABLED: true,
+          IS_POSTGRESQL_INTEGRATION_ENABLED: true,
         },
       );
 
@@ -120,10 +124,7 @@ export class AddStandardIdCommand extends CommandRunner {
           customObjectMetadataCollection,
         );
 
-        if (
-          !originalObjectMetadata.isCustom &&
-          !originalObjectMetadata.standardId
-        ) {
+        if (!originalObjectMetadata.isCustom) {
           updateObjectMetadataCollection.push({
             id: originalObjectMetadata.id,
             standardId: computedStandardObjectMetadata.standardId,
@@ -136,7 +137,7 @@ export class AddStandardIdCommand extends CommandRunner {
               (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 
-          if (!standardFieldMetadata || fieldMetadata.standardId) {
+          if (!standardFieldMetadata) {
             continue;
           }
 

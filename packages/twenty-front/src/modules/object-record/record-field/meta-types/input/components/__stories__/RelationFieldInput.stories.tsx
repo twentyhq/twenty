@@ -14,6 +14,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -65,7 +66,7 @@ const RelationFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'relation',
           label: 'Relation',
-          type: 'RELATION',
+          type: FieldMetadataType.Relation,
           iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
