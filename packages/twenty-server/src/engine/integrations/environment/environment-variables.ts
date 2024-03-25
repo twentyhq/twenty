@@ -290,6 +290,7 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   LOGGER_IS_BUFFER_ENABLED: boolean = true;
+  CHROME_EXTENSION_REDIRECT_URL: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {
