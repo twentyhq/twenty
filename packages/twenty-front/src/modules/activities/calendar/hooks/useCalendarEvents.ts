@@ -1,12 +1,17 @@
 import { useMemo, useState } from 'react';
 import { getYear, isThisMonth, startOfDay, startOfMonth } from 'date-fns';
 
-import { CalendarEventGeneric } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
+import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { findUpcomingCalendarEvent } from '@/activities/calendar/utils/findUpcomingCalendarEvent';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortDesc } from '~/utils/sort';
+
+type CalendarEventGeneric = Omit<
+  CalendarEvent,
+  'attendees' | 'externalCreatedAt'
+>;
 
 export const useCalendarEvents = <T extends CalendarEventGeneric>(
   calendarEvents: T[],
