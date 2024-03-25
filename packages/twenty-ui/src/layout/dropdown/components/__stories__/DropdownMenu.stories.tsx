@@ -4,13 +4,14 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
 
-import { Avatar } from '../../../../display';
-import { Button } from '../../../../input';
-import { DropdownMenuSkeletonItem } from '../../../../input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { MenuItem } from '../../../../navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelectAvatar } from '../../../../navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { MenuItemSelectAvatar } from '../../../../navigation/menu-item/components/MenuItemSelectAvatar';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { Avatar } from 'src/display';
+import { Button } from 'src/input';
+import { DropdownMenuSkeletonItem } from 'src/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { MenuItem } from 'src/navigation/menu-item/components/MenuItem';
+import { MenuItemMultiSelectAvatar } from 'src/navigation/menu-item/components/MenuItemMultiSelectAvatar';
+import { MenuItemSelectAvatar } from 'src/navigation/menu-item/components/MenuItemSelectAvatar';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';

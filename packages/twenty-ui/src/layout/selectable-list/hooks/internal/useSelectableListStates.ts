@@ -1,6 +1,7 @@
-import { useAvailableScopeIdOrThrow } from '../../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { extractComponentFamilyState } from '../../../../utilities/state/component-state/utils/extractComponentFamilyState';
-import { extractComponentState } from '../../../../utilities/state/component-state/utils/extractComponentState';
+import { useAvailableScopeIdOrThrow } from 'src/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { extractComponentFamilyState } from 'src/utilities/state/component-state/utils/extractComponentFamilyState';
+import { extractComponentState } from 'src/utilities/state/component-state/utils/extractComponentState';
+
 import { SelectableListScopeInternalContext } from '../../scopes/scope-internal-context/SelectableListScopeInternalContext';
 import { selectableItemIdsComponentState } from '../../states/selectableItemIdsComponentState';
 import { selectableListOnEnterComponentState } from '../../states/selectableListOnEnterComponentState';

@@ -1,5 +1,6 @@
-import { IconComponent } from '../../../display';
-import { Toggle, ToggleSize } from '../../../input/components/Toggle';
+import { IconComponent } from 'src/display';
+import { Toggle, ToggleSize } from 'src/input/components/Toggle';
+
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,

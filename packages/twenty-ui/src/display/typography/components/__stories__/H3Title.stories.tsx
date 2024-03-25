@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { H3Title } from '../H3Title';
 
 const meta: Meta<typeof H3Title> = {
@@ -16,6 +17,4 @@ export default meta;
 
 type Story = StoryObj<typeof H3Title>;
 
-export const Default: Story = {
-  decorators: [ComponentDecorator],
-};
+export const Default: Story = {};

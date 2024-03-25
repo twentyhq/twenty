@@ -4,7 +4,7 @@ import {
   IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
-} from '../../../../display';
+} from 'src/display';
 
 import {
   StyledMenuItemLabel,

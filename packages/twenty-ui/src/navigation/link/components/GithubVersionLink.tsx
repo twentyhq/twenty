@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 
-import { IconBrandGithub } from '../../../display';
+import { IconBrandGithub } from 'src/display';
+
 import { GITHUB_LINK } from '../constants/GithubLink';
 
 import { ActionLink } from './ActionLink';

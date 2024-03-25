@@ -1,4 +1,4 @@
-import { createComponentState } from '../../../utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'src/utilities/state/component-state/utils/createComponentState';
 
 export const selectableListOnEnterComponentState = createComponentState<
   ((itemId: string) => void) | undefined

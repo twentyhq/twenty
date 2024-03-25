@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { TextInput, TextInputComponentProps } from '../TextInput';
 
 type RenderProps = TextInputComponentProps;

@@ -9,11 +9,12 @@ import {
 } from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
-import { HotkeyEffect } from '../../../utilities/hotkey/components/HotkeyEffect';
-import { useScopedHotkeys } from '../../../utilities/hotkey/hooks/useScopedHotkeys';
-import { HotkeyScope } from '../../../utilities/hotkey/types/HotkeyScope';
-import { useListenClickOutside } from '../../../utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '../../../utils/isDefined';
+import { HotkeyEffect } from 'src/utilities/hotkey/components/HotkeyEffect';
+import { useScopedHotkeys } from 'src/utilities/hotkey/hooks/useScopedHotkeys';
+import { HotkeyScope } from 'src/utilities/hotkey/types/HotkeyScope';
+import { useListenClickOutside } from 'src/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from 'src/utils/isDefined';
+
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 import { DropdownScope } from '../scopes/DropdownScope';

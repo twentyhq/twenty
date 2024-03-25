@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { HOVER_BACKGROUND } from '../../../../theme/constants/HoverBackground';
+import { HOVER_BACKGROUND } from 'src/theme/constants/HoverBackground';
+
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {

@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { DropdownMenu } from '../../../../../layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '../../../../../layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '../../../../../layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '../../../../../layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItem } from '../../../../../navigation/menu-item/components/MenuItem';
-import { MenuItemSelectAvatar } from '../../../../../navigation/menu-item/components/MenuItemSelectAvatar';
+import { DropdownMenu } from 'src/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from 'src/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from 'src/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from 'src/layout/dropdown/components/DropdownMenuSeparator';
+import { MenuItem } from 'src/navigation/menu-item/components/MenuItem';
+import { MenuItemSelectAvatar } from 'src/navigation/menu-item/components/MenuItemSelectAvatar';
 
 import { Country } from './CountryPickerDropdownButton';
 

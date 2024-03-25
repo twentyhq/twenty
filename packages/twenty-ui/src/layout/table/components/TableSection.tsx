@@ -2,7 +2,7 @@ import { ReactNode, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconChevronDown, IconChevronUp } from '../../../display';
+import { IconChevronDown, IconChevronUp } from 'src/display';
 
 import { TableBody } from './TableBody';
 

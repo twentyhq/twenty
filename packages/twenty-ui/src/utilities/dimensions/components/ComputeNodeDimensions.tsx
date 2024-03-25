@@ -1,7 +1,7 @@
 import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { isDefined } from '../../../utils/isDefined';
+import { isDefined } from 'src/utils/isDefined';
 
 type ComputeNodeDimensionsProps = {
   children: (

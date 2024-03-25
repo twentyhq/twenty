@@ -1,8 +1,8 @@
 import { ComponentProps, MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '../../../display';
-import { LightIconButton } from '../../../input';
+import { IconComponent } from 'src/display';
+import { LightIconButton } from 'src/input';
 
 const StyledHeader = styled.li`
   align-items: center;

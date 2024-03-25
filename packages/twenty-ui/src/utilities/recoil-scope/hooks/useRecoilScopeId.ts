@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { RecoilScopeContext } from '../../../types/RecoilScopeContext';
+import { RecoilScopeContext } from 'src/types/RecoilScopeContext';
 
 /**
  * @deprecated Use a custom scope instead and desctructure the scope id from the scope context

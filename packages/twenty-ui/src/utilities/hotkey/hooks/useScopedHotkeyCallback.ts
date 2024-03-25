@@ -1,7 +1,8 @@
 import { Hotkey } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 
-import { logDebug } from '../../../utils/logDebug';
+import { logDebug } from 'src/utils/logDebug';
+
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 
 const DEBUG_HOTKEY_SCOPE = false;

@@ -1,14 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Avatar } from '../../../../display';
+import { Avatar } from 'src/display';
 import {
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { avatarUrl } from '../../../../testing/mock-data/users';
-import { CatalogStory } from '../../../../testing/types';
+} from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { avatarUrl } from 'src/testing/mock-data/users';
+import { CatalogStory } from 'src/testing/types';
+
 import { MenuItemMultiSelectAvatar } from '../MenuItemMultiSelectAvatar';
 
 const meta: Meta<typeof MenuItemMultiSelectAvatar> = {

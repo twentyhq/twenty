@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
-import { isUndefinedOrNull } from '../../../utils/isUndefinedOrNull';
+import { isUndefinedOrNull } from 'src/utils/isUndefinedOrNull';
+
 import { ScrollWrapperContext } from '../components/ScrollWrapper';
 
 export const useScrollWrapperScopedRef = () => {

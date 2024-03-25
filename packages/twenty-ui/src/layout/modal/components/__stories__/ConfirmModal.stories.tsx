@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { ConfirmationModal } from '../ConfirmationModal';
 
 const meta: Meta<typeof ConfirmationModal> = {

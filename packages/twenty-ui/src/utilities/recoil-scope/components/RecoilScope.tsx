@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { v4 } from 'uuid';
 
-import { RecoilScopeContext as RecoilScopeContextType } from '../../../types/RecoilScopeContext';
+import { RecoilScopeContext as RecoilScopeContextType } from 'src/types/RecoilScopeContext';
+
 import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
 /**

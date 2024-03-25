@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
 const StyledContainer = styled.div`

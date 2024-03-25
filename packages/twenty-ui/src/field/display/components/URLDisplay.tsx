@@ -1,12 +1,12 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { RoundedLink } from '../../../navigation/link/components/RoundedLink';
+import { RoundedLink } from 'src/navigation/link/components/RoundedLink';
 import {
   LinkType,
   SocialLink,
-} from '../../../navigation/link/components/SocialLink';
-import { checkUrlType } from '../../../utils/checkUrlType';
+} from 'src/navigation/link/components/SocialLink';
+import { checkUrlType } from 'src/utils/checkUrlType';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

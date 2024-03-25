@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { AnimatedCheckmark } from '../../../display';
-import { MOBILE_VIEWPORT } from '../../../theme/constants/MobileViewport';
-import { useIsMobile } from '../../../utilities/responsive/hooks/useIsMobile';
+import { AnimatedCheckmark } from 'src/display';
+import { MOBILE_VIEWPORT } from 'src/theme/constants/MobileViewport';
+import { useIsMobile } from 'src/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;

@@ -1,4 +1,4 @@
-import { OverflowingTextWithTooltip } from '../../../display';
+import { OverflowingTextWithTooltip } from 'src/display';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

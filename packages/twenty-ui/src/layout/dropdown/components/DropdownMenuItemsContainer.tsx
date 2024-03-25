@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ScrollWrapper } from '../../../utilities/scroll/components/ScrollWrapper';
+import { ScrollWrapper } from 'src/utilities/scroll/components/ScrollWrapper';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;

@@ -2,7 +2,8 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconComponent } from '../../../display';
+import { IconComponent } from 'src/display';
+
 import { useTabList } from '../hooks/useTabList';
 import { TabListScope } from '../scopes/TabListScope';
 

@@ -1,7 +1,8 @@
 import { ReactNode, useEffect } from 'react';
 
-import { arrayToChunks } from '../../../utils/array/arrayToChunks';
-import { isDefined } from '../../../utils/isDefined';
+import { arrayToChunks } from 'src/utils/array/arrayToChunks';
+import { isDefined } from 'src/utils/isDefined';
+
 import { useSelectableListHotKeys } from '../hooks/internal/useSelectableListHotKeys';
 import { useSelectableList } from '../hooks/useSelectableList';
 import { SelectableListScope } from '../scopes/SelectableListScope';

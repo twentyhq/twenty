@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
 
-import { usePreviousHotkeyScope } from '../../../utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '../../../utilities/hotkey/hooks/useScopedHotkeys';
+import { usePreviousHotkeyScope } from 'src/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from 'src/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
   useListenClickOutside,
-} from '../../../utilities/pointer-event/hooks/useListenClickOutside';
+} from 'src/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 

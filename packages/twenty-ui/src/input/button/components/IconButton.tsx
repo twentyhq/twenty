@@ -2,7 +2,7 @@ import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '../../../display/icon/types/IconComponent';
+import { IconComponent } from 'src/display/icon/types/IconComponent';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

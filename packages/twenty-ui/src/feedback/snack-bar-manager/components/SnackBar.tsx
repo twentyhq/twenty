@@ -2,9 +2,10 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconAlertTriangle, IconX } from '../../../display/icon';
-import { RGBA } from '../../../theme/constants/Rgba';
-import { isDefined } from '../../../utils/isDefined';
+import { IconAlertTriangle, IconX } from 'src/display/icon';
+import { RGBA } from 'src/theme/constants/Rgba';
+import { isDefined } from 'src/utils/isDefined';
+
 import {
   ProgressBar,
   ProgressBarControls,

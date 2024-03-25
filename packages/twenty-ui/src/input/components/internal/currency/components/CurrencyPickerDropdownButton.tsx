@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconChevronDown } from '../../../../../display';
-import { Dropdown } from '../../../../../layout/dropdown/components/Dropdown';
-import { useDropdown } from '../../../../../layout/dropdown/hooks/useDropdown';
-import { CurrencyCode } from '../../../../../types/CurrencyCode';
-import { isDefined } from '../../../../../utils/isDefined';
+import { IconChevronDown } from 'src/display';
+import { Dropdown } from 'src/layout/dropdown/components/Dropdown';
+import { useDropdown } from 'src/layout/dropdown/hooks/useDropdown';
+import { CurrencyCode } from 'src/types/CurrencyCode';
+import { isDefined } from 'src/utils/isDefined';
+
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';

@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
 

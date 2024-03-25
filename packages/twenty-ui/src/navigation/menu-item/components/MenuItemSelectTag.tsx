@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 
-import { IconCheck, Tag } from '../../../display';
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
+import { IconCheck, Tag } from 'src/display';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
+
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
 import { StyledMenuItemSelect } from './MenuItemSelect';

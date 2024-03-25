@@ -1,9 +1,10 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '../../../display';
-import { MenuItemDraggable } from '../../../navigation/menu-item/components/MenuItemDraggable';
-import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
+import { IconBell } from 'src/display';
+import { MenuItemDraggable } from 'src/navigation/menu-item/components/MenuItemDraggable';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { DraggableItem } from '../components/DraggableItem';
 
 const meta: Meta<typeof DraggableItem> = {

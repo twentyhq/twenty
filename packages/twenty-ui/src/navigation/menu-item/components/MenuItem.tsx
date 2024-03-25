@@ -1,7 +1,8 @@
 import { MouseEvent } from 'react';
 
-import { IconComponent } from '../../../display';
-import { LightIconButtonGroup } from '../../../input';
+import { IconComponent } from 'src/display';
+import { LightIconButtonGroup } from 'src/input';
+
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,

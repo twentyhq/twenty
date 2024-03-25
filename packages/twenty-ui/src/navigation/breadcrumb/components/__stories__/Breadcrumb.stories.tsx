@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { ComponentWithRouterDecorator } from '../../../../testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+
 import { Breadcrumb } from '../Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {

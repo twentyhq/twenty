@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useAvailableScopeIdOrThrow } from '../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useAvailableScopeIdOrThrow } from 'src/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+
 import { SnackBarManagerScopeInternalContext } from '../scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import {
   snackBarInternalScopedState,

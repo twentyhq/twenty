@@ -1,4 +1,5 @@
-import { createComponentFamilySelector } from '../../../../utilities/state/component-state/utils/createComponentFamilySelector';
+import { createComponentFamilySelector } from 'src/utilities/state/component-state/utils/createComponentFamilySelector';
+
 import { isSelectedItemIdComponentFamilyState } from '../isSelectedItemIdComponentFamilyState';
 
 export const isSelectedItemIdFamilySelector = createComponentFamilySelector<

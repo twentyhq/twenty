@@ -3,9 +3,10 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import debounce from 'lodash.debounce';
 
-import { H1Title, H1TitleFontColor } from '../../../display';
-import { Button } from '../../../input';
-import { TextInput } from '../../../input/components/TextInput';
+import { H1Title, H1TitleFontColor } from 'src/display';
+import { Button } from 'src/input';
+import { TextInput } from 'src/input/components/TextInput';
+
 import {
   Section,
   SectionAlignment,

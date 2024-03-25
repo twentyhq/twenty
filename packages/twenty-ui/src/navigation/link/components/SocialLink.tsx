@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { getDisplayValueByUrlType } from '../../../utils/getDisplayValueByUrlType';
+import { getDisplayValueByUrlType } from 'src/utils/getDisplayValueByUrlType';
 
 import { RoundedLink } from './RoundedLink';
 

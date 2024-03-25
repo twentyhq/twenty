@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { Card } from '../Card';
 import { CardContent } from '../CardContent';
 import { CardFooter } from '../CardFooter';

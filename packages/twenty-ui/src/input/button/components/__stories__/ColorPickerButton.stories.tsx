@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+
 import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
 
 import { ColorPickerButton } from '../ColorPickerButton';

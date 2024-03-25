@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '../../../display';
+import { IconComponent } from 'src/display';
+
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,

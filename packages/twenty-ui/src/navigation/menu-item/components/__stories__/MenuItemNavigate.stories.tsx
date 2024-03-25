@@ -1,13 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '../../../../display';
+import { IconBell } from 'src/display';
 import {
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../../testing/types';
+} from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
+
 import { MenuItemNavigate } from '../MenuItemNavigate';
 
 const meta: Meta<typeof MenuItemNavigate> = {

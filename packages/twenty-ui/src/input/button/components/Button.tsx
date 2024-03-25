@@ -2,8 +2,8 @@ import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '../../../display/icon/types/IconComponent';
-import { Pill } from '../../../display/pill/components/Pill';
+import { IconComponent } from 'src/display/icon/types/IconComponent';
+import { Pill } from 'src/display/pill/components/Pill';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

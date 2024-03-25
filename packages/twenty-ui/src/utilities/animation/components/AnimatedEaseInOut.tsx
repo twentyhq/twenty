@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { AnimationDuration } from '../../../theme/constants/Animation';
+import { AnimationDuration } from 'src/theme/constants/Animation';
 
 type AnimatedEaseInOutProps = {
   isOpen: boolean;

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { Nullable } from '../../../types/Nullable';
-import { Avatar, AvatarType } from '../../avatar/components/Avatar';
-import { IconComponent } from '../../icon/types/IconComponent';
+import { Avatar, AvatarType } from 'src/display/avatar/components/Avatar';
+import { IconComponent } from 'src/display/icon';
+import { Nullable } from 'src/types/Nullable';
 
 import { Chip, ChipVariant } from './Chip';
 

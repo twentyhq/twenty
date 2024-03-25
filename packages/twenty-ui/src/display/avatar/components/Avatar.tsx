@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+
 import { Nullable } from 'src/types/Nullable';
 import { stringToHslColor } from 'src/utils/string-to-hsl';
 

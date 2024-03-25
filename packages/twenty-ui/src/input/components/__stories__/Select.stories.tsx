@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
-import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { Select, SelectProps } from '../Select';
 
 type RenderProps = SelectProps<string | number | null>;

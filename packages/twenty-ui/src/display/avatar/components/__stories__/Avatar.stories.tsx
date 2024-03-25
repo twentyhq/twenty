@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { avatarUrl } from '../../../../testing/mock-data/users';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { avatarUrl } from 'src/testing/mock-data/users';
+
 import { Avatar } from '../Avatar';
 
 const meta: Meta<typeof Avatar> = {

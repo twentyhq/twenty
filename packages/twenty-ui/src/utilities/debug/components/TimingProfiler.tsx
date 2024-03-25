@@ -1,7 +1,7 @@
 import { Profiler } from 'react';
 import { Interaction } from 'scheduler/tracing';
 
-import { logDebug } from '../../../utils/logDebug';
+import { logDebug } from 'src/utils/logDebug';
 
 type TimingProfilerProps = {
   id: string;

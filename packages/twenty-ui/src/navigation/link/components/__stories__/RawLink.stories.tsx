@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { ComponentWithRouterDecorator } from '../../../../testing/decorators/ComponentWithRouterDecorator';
+import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+
 import { RawLink } from '../RawLink';
 
 const meta: Meta<typeof RawLink> = {

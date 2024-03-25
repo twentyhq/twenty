@@ -1,13 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { CatalogDecorator } from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../../testing/types';
-import {
-  MAIN_COLOR_NAMES,
-  ThemeColor,
-} from '../../../../theme/constants/MainColorNames';
+import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
+import { MAIN_COLOR_NAMES, ThemeColor } from 'src/theme';
+
 import { Tag } from '../Tag';
 
 const meta: Meta<typeof Tag> = {

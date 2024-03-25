@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 
 const placeholderText =

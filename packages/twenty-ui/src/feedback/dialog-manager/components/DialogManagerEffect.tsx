@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
-import { usePreviousHotkeyScope } from '../../../utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePreviousHotkeyScope } from 'src/utilities/hotkey/hooks/usePreviousHotkeyScope';
+
 import { useDialogManagerScopedStates } from '../hooks/internal/useDialogManagerScopedStates';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 

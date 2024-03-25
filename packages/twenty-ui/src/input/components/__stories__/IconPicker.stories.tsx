@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
-import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
-import { IconsProviderDecorator } from '../../../testing/decorators/IconsProviderDecorator';
-import { sleep } from '../../../testing/sleep';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { IconsProviderDecorator } from 'src/testing/decorators/IconsProviderDecorator';
+import { sleep } from 'src/testing/sleep';
+
 import { IconPicker } from '../IconPicker';
 
 const meta: Meta<typeof IconPicker> = {

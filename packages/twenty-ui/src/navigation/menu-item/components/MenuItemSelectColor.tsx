@@ -1,7 +1,8 @@
 import { useTheme } from '@emotion/react';
 
-import { ColorSample, ColorSampleVariant, IconCheck } from '../../../display';
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
+import { ColorSample, ColorSampleVariant, IconCheck } from 'src/display';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
+
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { Chip, ChipSize, ChipVariant } from '../../../display';
+import { Chip, ChipSize, ChipVariant } from 'src/display';
 
 type RoundedLinkProps = {
   href: string;

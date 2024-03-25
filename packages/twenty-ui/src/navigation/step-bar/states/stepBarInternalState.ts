@@ -1,4 +1,4 @@
-import { createState } from '../../../utilities/state/utils/createState';
+import { createState } from 'src/utilities/state/utils/createState';
 
 export type StepsState = {
   activeStep: number;

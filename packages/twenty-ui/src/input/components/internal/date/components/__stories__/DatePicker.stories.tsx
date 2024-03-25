@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
-import { ComponentDecorator } from '../../../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { InternalDatePicker } from '../InternalDatePicker';
 
 const meta: Meta<typeof InternalDatePicker> = {

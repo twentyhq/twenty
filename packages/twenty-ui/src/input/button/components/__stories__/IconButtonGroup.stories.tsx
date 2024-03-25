@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+
 import { IconCheckbox, IconNotes, IconTimelineEvent } from 'src/display/icon';
 import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';

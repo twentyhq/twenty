@@ -2,7 +2,8 @@ import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '../../../input';
+import { Button } from 'src/input';
+
 import { IconInfoCircle } from '../../icon';
 
 export type InfoAccent = 'blue' | 'danger';

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import {
   ColorSample,
   ColorSampleProps,
-} from '../../../display/color/components/ColorSample';
+} from 'src/display/color/components/ColorSample';
 
 import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 

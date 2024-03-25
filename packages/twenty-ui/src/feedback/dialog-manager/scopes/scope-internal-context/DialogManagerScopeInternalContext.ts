@@ -1,5 +1,5 @@
-import { createScopeInternalContext } from '../../../../utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { ComponentStateKey } from '../../../../utilities/state/component-state/types/ComponentStateKey';
+import { createScopeInternalContext } from 'src/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
+import { ComponentStateKey } from 'src/utilities/state/component-state/types/ComponentStateKey';
 
 type DialogManagerScopeInternalContextProps = ComponentStateKey;
 

@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
-import { IconCheckbox } from '../../../../display';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { RecoilScope } from '../../../../utilities/recoil-scope/components/RecoilScope';
+import { IconCheckbox } from 'src/display';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RecoilScope } from 'src/utilities/recoil-scope/components/RecoilScope';
+
 import { TabList } from '../TabList';
 
 const tabs = [

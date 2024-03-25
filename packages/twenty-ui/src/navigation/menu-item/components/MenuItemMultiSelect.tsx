@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 
-import { IconComponent, Tag } from '../../../display';
-import { Checkbox } from '../../../input/components/Checkbox';
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
+import { IconComponent, Tag } from 'src/display';
+import { Checkbox } from 'src/input/components/Checkbox';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
+
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 

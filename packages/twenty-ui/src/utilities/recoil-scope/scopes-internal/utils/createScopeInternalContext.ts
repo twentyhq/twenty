@@ -1,6 +1,6 @@
 import { Context, createContext } from 'react';
 
-import { ComponentStateKey } from '../../../state/component-state/types/ComponentStateKey';
+import { ComponentStateKey } from 'src/utilities/state/component-state/types/ComponentStateKey';
 
 type ScopeInternalContext<T extends ComponentStateKey> = Context<T | null>;
 

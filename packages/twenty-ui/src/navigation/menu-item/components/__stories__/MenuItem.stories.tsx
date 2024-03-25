@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconBell } from '../../../../display';
-import { CatalogDecorator } from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../../testing/types';
+import { IconBell } from 'src/display';
+import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
+
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItem } from '../MenuItem';
 

@@ -1,5 +1,6 @@
-import { useAvailableScopeIdOrThrow } from '../../../../utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { extractComponentState } from '../../../../utilities/state/component-state/utils/extractComponentState';
+import { useAvailableScopeIdOrThrow } from 'src/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { extractComponentState } from 'src/utilities/state/component-state/utils/extractComponentState';
+
 import { DropdownScopeInternalContext } from '../../scopes/scope-internal-context/DropdownScopeInternalContext';
 import { dropdownHotkeyComponentState } from '../../states/dropdownHotkeyComponentState';
 import { dropdownWidthComponentState } from '../../states/dropdownWidthComponentState';

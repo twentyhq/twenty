@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { isDefined } from '../../../utils/isDefined';
+import { isDefined } from 'src/utils/isDefined';
+
 import { getScopeIdFromComponentId } from '../../recoil-scope/utils/getScopeIdFromComponentId';
 import { ClickOutsideListenerCallback } from '../types/ClickOutsideListenerCallback';
 

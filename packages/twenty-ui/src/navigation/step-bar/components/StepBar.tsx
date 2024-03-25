@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { MOBILE_VIEWPORT } from '../../../theme/constants/MobileViewport';
-import { useIsMobile } from '../../../utilities/responsive/hooks/useIsMobile';
+import { MOBILE_VIEWPORT } from 'src/theme/constants/MobileViewport';
+import { useIsMobile } from 'src/utilities/responsive/hooks/useIsMobile';
 
 import { Step, StepProps } from './Step';
 

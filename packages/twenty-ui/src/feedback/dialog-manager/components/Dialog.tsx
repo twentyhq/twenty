@@ -3,9 +3,10 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Key } from 'ts-key-enum';
 
-import { Button } from '../../../input';
-import { useScopedHotkeys } from '../../../utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from '../../../utils/isDefined';
+import { Button } from 'src/input';
+import { useScopedHotkeys } from 'src/utilities/hotkey/hooks/useScopedHotkeys';
+import { isDefined } from 'src/utils/isDefined';
+
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 const StyledDialogOverlay = styled(motion.div)`

@@ -1,8 +1,8 @@
 import { forwardRef, InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 
-import { RGBA } from '../../../theme/constants/Rgba';
-import { TEXT_INPUT_STYLE } from '../../../theme/constants/TextInputStyle';
+import { RGBA } from 'src/theme/constants/Rgba';
+import { TEXT_INPUT_STYLE } from 'src/theme/constants/TextInputStyle';
 
 const StyledInput = styled.input`
   ${TEXT_INPUT_STYLE}

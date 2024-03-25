@@ -7,8 +7,8 @@ import {
   useAnimation,
 } from 'framer-motion';
 
-import { Checkmark } from '../../../display';
-import { ColorScheme } from '../../../types/ColorScheme';
+import { Checkmark } from 'src/display';
+import { ColorScheme } from 'src/types/ColorScheme';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>

@@ -1,8 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { CatalogDecorator } from '../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../testing/types';
+import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
+
 import {
   Checkbox,
   CheckboxShape,

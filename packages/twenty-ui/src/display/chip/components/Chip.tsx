@@ -2,7 +2,7 @@ import { MouseEvent, ReactNode } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { OverflowingTextWithTooltip } from '../../tooltip/components/OverflowingTextWithTooltip';
+import { OverflowingTextWithTooltip } from 'src/display/tooltip/components/OverflowingTextWithTooltip';
 
 export enum ChipSize {
   Large = 'large',

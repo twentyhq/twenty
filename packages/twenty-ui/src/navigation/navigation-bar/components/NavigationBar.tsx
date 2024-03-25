@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { IconComponent } from '../../../display/icon/types/IconComponent';
+import { IconComponent } from 'src/display/icon/types/IconComponent';
 
 import { NavigationBarItem } from './NavigationBarItem';
 

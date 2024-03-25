@@ -1,4 +1,4 @@
-import { formatToHumanReadableDate } from '../../../utils/formatToHumanReadableDate';
+import { formatToHumanReadableDate } from 'src/utils/formatToHumanReadableDate';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 

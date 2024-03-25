@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCheck } from '../../icon';
+import { IconCheck } from 'src/display';
 
 const StyledContainer = styled.div`
   align-items: center;

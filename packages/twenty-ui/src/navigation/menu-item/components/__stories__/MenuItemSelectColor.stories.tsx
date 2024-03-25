@@ -1,17 +1,18 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ColorSampleVariant } from '../../../../display';
+import { ColorSampleVariant } from 'src/display';
 import {
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../../testing/types';
+} from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
 import {
   MAIN_COLOR_NAMES,
   ThemeColor,
-} from '../../../../theme/constants/MainColorNames';
+} from 'src/theme/constants/MainColorNames';
+
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 
 const meta: Meta<typeof MenuItemSelectColor> = {

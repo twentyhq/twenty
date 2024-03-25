@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { IconCheckbox } from '../../../../display';
-import { CatalogDecorator } from '../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
-import { CatalogStory } from '../../../../testing/types';
+import { IconCheckbox } from 'src/display';
+import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { CatalogStory } from 'src/testing/types';
+
 import { Tab } from '../Tab';
 
 const meta: Meta<typeof Tab> = {

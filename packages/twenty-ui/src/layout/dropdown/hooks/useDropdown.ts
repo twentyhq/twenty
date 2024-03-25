@@ -1,8 +1,9 @@
 import { useRecoilState } from 'recoil';
 
-import { usePreviousHotkeyScope } from '../../../utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { getScopeIdOrUndefinedFromComponentId } from '../../../utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { isDefined } from '../../../utils/isDefined';
+import { usePreviousHotkeyScope } from 'src/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { getScopeIdOrUndefinedFromComponentId } from 'src/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { isDefined } from 'src/utils/isDefined';
+
 import { useDropdownStates } from '../hooks/internal/useDropdownStates';
 
 export const useDropdown = (dropdownId?: string) => {

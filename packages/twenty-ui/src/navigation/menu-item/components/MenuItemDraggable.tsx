@@ -1,5 +1,6 @@
-import { IconComponent } from '../../../display';
-import { LightIconButtonGroup } from '../../../input';
+import { IconComponent } from 'src/display';
+import { LightIconButtonGroup } from 'src/input';
+
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';

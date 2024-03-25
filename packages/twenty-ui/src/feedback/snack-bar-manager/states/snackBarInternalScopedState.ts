@@ -1,4 +1,5 @@
-import { createComponentState } from '../../../utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'src/utilities/state/component-state/utils/createComponentState';
+
 import { SnackBarProps } from '../components/SnackBar';
 
 export type SnackBarOptions = SnackBarProps & {

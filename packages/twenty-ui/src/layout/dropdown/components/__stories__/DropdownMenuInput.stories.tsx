@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '../../../../testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
 import { DropdownMenuInput } from '../DropdownMenuInput';
 
 const meta: Meta<typeof DropdownMenuInput> = {

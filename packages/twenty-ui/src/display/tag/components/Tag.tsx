@@ -1,8 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
-import { themeColorSchema } from '../../../theme/utils/themeColorSchema';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
+import { themeColorSchema } from 'src/theme/utils/themeColorSchema';
+
 import { IconComponent } from '../../icon/types/IconComponent';
 
 const StyledTag = styled.h3<{

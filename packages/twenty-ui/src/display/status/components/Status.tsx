@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { ThemeColor } from '../../../theme/constants/MainColorNames';
-import { themeColorSchema } from '../../../theme/utils/themeColorSchema';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
+import { themeColorSchema } from 'src/theme/utils/themeColorSchema';
 
 const StyledStatus = styled.h3<{
   color: ThemeColor;
