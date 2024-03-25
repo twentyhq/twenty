@@ -4,7 +4,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
-import { pipelineStepPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/pipeline-step';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
@@ -12,10 +11,18 @@ export const standardObjectsPrefillData = async (
   objectMetadata: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-    acc[object.nameSingular] = {
+    if (!object.standardId) {
+      throw new Error('Standard Id is not set for object: ${object.name}');
+    }
+
+    acc[object.standardId] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
-        acc[field.name] = field.id;
+        if (!field.standardId) {
+          throw new Error('Standard Id is not set for field: ${field.name}');
+        }
+
+        acc[field.standardId] = field.id;
 
         return acc;
       }, {}),
@@ -28,6 +35,5 @@ export const standardObjectsPrefillData = async (
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
     await viewPrefillData(entityManager, schemaName, objectMetadataMap);
-    await pipelineStepPrefillData(entityManager, schemaName);
   });
 };

@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { SeedUserIds } from 'src/database/typeorm-seeds/core/users';
 import {
@@ -26,7 +26,7 @@ type WorkspaceMembers = Pick<
 };
 
 export const seedWorkspaceMember = async (
-  workspaceDataSource: DataSource,
+  entityManager: EntityManager,
   schemaName: string,
   workspaceId: string,
 ) => {
@@ -77,7 +77,7 @@ export const seedWorkspaceMember = async (
       },
     ];
   }
-  await workspaceDataSource
+  await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

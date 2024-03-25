@@ -26,7 +26,7 @@ export const query = gql`
                 pointOfContactId
                 updatedAt
                 companyId
-                pipelineStepId
+                stage
                 probability
                 closeDate
                 amount {
@@ -52,7 +52,7 @@ export const query = gql`
                 pointOfContactId
                 updatedAt
                 companyId
-                pipelineStepId
+                stage
                 probability
                 closeDate
                 amount {

@@ -67,7 +67,7 @@ export class WorkspaceMigrationFactory {
       [FieldMetadataType.NUMERIC, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.NUMBER, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.POSITION, { factory: this.basicColumnActionFactory }],
-      [FieldMetadataType.JSON, { factory: this.basicColumnActionFactory }],
+      [FieldMetadataType.RAW_JSON, { factory: this.basicColumnActionFactory }],
       [
         FieldMetadataType.PROBABILITY,
         { factory: this.basicColumnActionFactory },

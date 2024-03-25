@@ -1,9 +1,9 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsIntegrationGroup } from '@/settings/integrations/components/SettingsIntegrationGroup';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { SETTINGS_INTEGRATION_CATEGORIES } from '~/pages/settings/integrations/constants/SettingsIntegrationCategories';
-import { SettingsIntegrationGroup } from '~/pages/settings/integrations/SettingsIntegrationGroup';
 
 export const SettingsIntegrations = () => {
   return (

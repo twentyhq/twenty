@@ -1,5 +1,6 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const recordTableRow = {
   rowIndex: 2,
@@ -19,7 +20,7 @@ export const recordTableCell: {
     fieldMetadataId: 'fieldMetadataId',
     label: 'label',
     iconName: 'iconName',
-    type: 'TEXT',
+    type: FieldMetadataType.Text,
     metadata: {
       placeHolder: 'placeHolder',
       fieldName: 'fieldName',

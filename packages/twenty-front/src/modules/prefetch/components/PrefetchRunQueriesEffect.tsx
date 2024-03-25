@@ -36,7 +36,7 @@ export const PrefetchRunQueriesEffect = () => {
         objectMetadataItemView,
         objectMetadataItemFavorite,
       ],
-      depth: 2,
+      depth: 1,
     });
 
   const { data } = useQuery<MultiObjectRecordQueryResult>(

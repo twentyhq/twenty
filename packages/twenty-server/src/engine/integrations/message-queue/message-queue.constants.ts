@@ -7,6 +7,7 @@ export enum MessageQueue {
   cronQueue = 'cron-queue',
   emailQueue = 'email-queue',
   calendarQueue = 'calendar-queue',
+  contactCreationQueue = 'contact-creation-queue',
   billingQueue = 'billing-queue',
   recordPositionBackfillQueue = 'record-position-backfill-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',

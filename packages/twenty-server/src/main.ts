@@ -11,6 +11,7 @@ import '@sentry/tracing';
 
 import { AppModule } from './app.module';
 
+import { generateFrontConfig } from './utils/generate-front-config';
 import { settings } from './engine/constants/settings';
 import { LoggerService } from './engine/integrations/logger/logger.service';
 import { EnvironmentService } from './engine/integrations/environment/environment.service';
@@ -59,6 +60,9 @@ const bootstrap = async () => {
       maxFiles: 10,
     }),
   );
+
+  // Create the env-config.js of the front at runtime
+  generateFrontConfig();
 
   await app.listen(app.get(EnvironmentService).get('PORT'));
 };

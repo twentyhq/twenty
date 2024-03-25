@@ -3,8 +3,6 @@ import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelati
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
-import { parseFieldType } from './parseFieldType';
-
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
   objectMetadataItem: ObjectMetadataItem;
@@ -31,7 +29,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     label: field.label,
     showLabel,
     labelWidth,
-    type: parseFieldType(field.type),
+    type: field.type,
     metadata: {
       fieldName: field.name,
       placeHolder: field.label,
