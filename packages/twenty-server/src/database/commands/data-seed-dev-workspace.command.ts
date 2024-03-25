@@ -17,6 +17,12 @@ import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
 } from 'src/database/typeorm-seeds/core/workspaces';
+import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connectedAccount';
+import { seedMessage } from 'src/database/typeorm-seeds/workspace/message';
+import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/messageChannel';
+import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/messageChannelMessageAssociation';
+import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/messageParticipant';
+import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/messageThread';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 
 // TODO: implement dry-run
@@ -117,7 +123,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               dataSourceMetadata.schema,
               workspaceId,
             );
-
             await viewPrefillData(
               entityManager,
               dataSourceMetadata.schema,
@@ -125,6 +130,34 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             );
           },
         );
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        if (workspaceId === SeedAppleWorkspaceId) {
+          await seedMessageThread(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedConnectedAccount(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessage(workspaceDataSource, dataSourceMetadata.schema);
+          await seedMessageChannel(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessageChannelMessageAssociation(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessageParticipant(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+        }
       } catch (error) {
         console.error(error);
       }
