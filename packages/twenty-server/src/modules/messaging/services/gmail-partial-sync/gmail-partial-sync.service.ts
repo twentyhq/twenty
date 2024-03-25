@@ -45,7 +45,7 @@ export class GmailPartialSyncService {
     private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly saveMessagesAndCreateContactsService: SaveMessageAndEmitContactCreationEventService,
+    private readonly saveMessagesAndEmitContactCreationEventService: SaveMessageAndEmitContactCreationEventService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -208,12 +208,11 @@ export class GmailPartialSyncService {
     );
 
     if (messagesToSave.length !== 0) {
-      await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+      await this.saveMessagesAndEmitContactCreationEventService.saveMessagesAndEmitContactCreation(
         messagesToSave,
         connectedAccount,
         workspaceId,
         gmailMessageChannelId,
-        'gmail partial-sync',
       );
     }
 

@@ -53,7 +53,7 @@ export class GmailPartialSyncV2Service {
 
     if (!connectedAccount) {
       this.logger.error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during partial-sync`,
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
 
       return;
@@ -63,7 +63,7 @@ export class GmailPartialSyncV2Service {
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
 
@@ -75,7 +75,7 @@ export class GmailPartialSyncV2Service {
 
     if (!gmailMessageChannel) {
       this.logger.error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-syn`,
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
 
       return;
@@ -83,7 +83,7 @@ export class GmailPartialSyncV2Service {
 
     if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
       this.logger.log(
-        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} is not pending, partial sync will be retried later.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending, import will be retried later.`,
       );
 
       return;
@@ -106,7 +106,7 @@ export class GmailPartialSyncV2Service {
 
         if (!lastSyncHistoryId) {
           this.logger.log(
-            `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: no lastSyncHistoryId, falling back to full sync.`,
+            `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
           await this.fallbackToFullSync(workspaceId, connectedAccountId);
@@ -124,7 +124,7 @@ export class GmailPartialSyncV2Service {
 
         if (error?.code === 404) {
           this.logger.log(
-            `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: invalid lastSyncHistoryId, falling back to full sync.`,
+            `404: Invalid lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
           await this.messageChannelRepository.resetSyncExternalId(
@@ -140,7 +140,7 @@ export class GmailPartialSyncV2Service {
 
         if (error?.code === 429) {
           this.logger.log(
-            `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}: Error 429: ${error.message}, partial sync will be retried later.`,
+            `429: rate limit reached for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}, import will be retried later.`,
           );
 
           return;
@@ -148,19 +148,19 @@ export class GmailPartialSyncV2Service {
 
         if (error) {
           throw new Error(
-            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${error.message}`,
+            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
           );
         }
 
         if (!historyId) {
           throw new Error(
-            `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+            `No historyId found for ${connectedAccountId} in workspace ${workspaceId} in gmail history response.`,
           );
         }
 
         if (historyId === lastSyncHistoryId || !history?.length) {
           this.logger.log(
-            `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to update.`,
+            `Messaging import done with nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
           );
 
           return;
@@ -185,13 +185,6 @@ export class GmailPartialSyncV2Service {
           workspaceId,
           transactionManager,
         );
-
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.PENDING,
-          workspaceId,
-          transactionManager,
-        );
       })
       .catch(async (error) => {
         await this.messageChannelRepository.updateSyncStatus(
@@ -201,7 +194,7 @@ export class GmailPartialSyncV2Service {
         );
 
         this.logger.error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${error.message}`,
+          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       })
       .finally(async () => {

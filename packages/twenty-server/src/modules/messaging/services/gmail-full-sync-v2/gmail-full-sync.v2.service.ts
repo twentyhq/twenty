@@ -71,7 +71,7 @@ export class GmailFullSyncV2Service {
 
     if (!connectedAccount) {
       this.logger.error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during full-sync`,
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
 
       return;
@@ -81,7 +81,7 @@ export class GmailFullSyncV2Service {
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
 
@@ -93,7 +93,7 @@ export class GmailFullSyncV2Service {
 
     if (!gmailMessageChannel) {
       this.logger.error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-syn`,
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
 
       return;
@@ -101,7 +101,7 @@ export class GmailFullSyncV2Service {
 
     if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
       this.logger.log(
-        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} is not pending, partial sync will be retried later.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending, import will be retried later.`,
       );
 
       return;
@@ -128,7 +128,7 @@ export class GmailFullSyncV2Service {
           workspaceId,
         );
 
-        await this.fetchAllMessageIdsFromGmail(
+        await this.fetchAllMessageIdsFromGmailAndStoreInCache(
           gmailClient,
           gmailMessageChannel.id,
           blocklistedEmails,
@@ -165,7 +165,7 @@ export class GmailFullSyncV2Service {
       });
   }
 
-  public async fetchAllMessageIdsFromGmail(
+  public async fetchAllMessageIdsFromGmailAndStoreInCache(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
     blocklistedEmails: string[],

@@ -12,13 +12,13 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
-import { MessageService } from 'src/modules/messaging/services/message/message.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
 import { MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE } from 'src/modules/messaging/constants/messages-to-delete-from-cache-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 
 @Injectable()
 export class GmailFetchMessageContentFromCacheService {
@@ -32,7 +32,7 @@ export class GmailFetchMessageContentFromCacheService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly messageService: MessageService,
+    private readonly saveMessageAndEmitContactCreationEventService: SaveMessageAndEmitContactCreationEventService,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -49,7 +49,7 @@ export class GmailFetchMessageContentFromCacheService {
 
     if (!connectedAccount) {
       this.logger.error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId} during full-sync`,
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
 
       return;
@@ -60,7 +60,7 @@ export class GmailFetchMessageContentFromCacheService {
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
 
@@ -72,7 +72,7 @@ export class GmailFetchMessageContentFromCacheService {
 
     if (!gmailMessageChannel) {
       this.logger.error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-syn`,
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
 
       return;
@@ -80,7 +80,7 @@ export class GmailFetchMessageContentFromCacheService {
 
     if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
       this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} is not pending.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending.`,
       );
 
       return;
@@ -108,7 +108,7 @@ export class GmailFetchMessageContentFromCacheService {
       );
 
       this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import or delete.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import or delete.`,
       );
 
       return;
@@ -143,37 +143,30 @@ export class GmailFetchMessageContentFromCacheService {
         }
 
         if (errors.length) {
-          this.logger.error(
-            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${JSON.stringify(
-              errors,
-              null,
-              2,
-            )}`,
-          );
-
           const errorsCanBeIgnored = errors.every(
             (error) => error.code === 404,
           );
 
           if (!errorsCanBeIgnored) {
             throw new Error(
-              `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+              `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${JSON.stringify(
+                errors,
+                null,
+                2,
+              )}`,
             );
           }
         }
 
-        const savedMessagesMap =
-          await this.messageService.saveMessagesFromCache(
-            messagesToSave,
-            connectedAccount,
-            gmailMessageChannelId,
-            workspaceId,
-            transactionManager,
-          );
+        await this.saveMessageAndEmitContactCreationEventService.saveMessagesAndEmitContactCreationEventWithinTransaction(
+          messagesToSave,
+          connectedAccount,
+          workspaceId,
+          gmailMessageChannel,
+          transactionManager,
+        );
 
-        const savedMessageExternalIds = [...savedMessagesMap.keys()];
-
-        const lastModifiedMessageId = savedMessageExternalIds[0];
+        const lastModifiedMessageId = messageIdsToFetch[0];
 
         const historyId = messagesToSave.find(
           (message) => message.externalId === lastModifiedMessageId,
@@ -181,7 +174,7 @@ export class GmailFetchMessageContentFromCacheService {
 
         if (!historyId) {
           throw new Error(
-            `No historyId found for message ${lastModifiedMessageId} in workspace ${workspaceId} during full-sync`,
+            `No historyId found for message ${lastModifiedMessageId} in workspace ${workspaceId}`,
           );
         }
 
@@ -210,7 +203,7 @@ export class GmailFetchMessageContentFromCacheService {
         );
 
         this.logger.error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync: ${error.message}`,
+          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       })
       .finally(async () => {
