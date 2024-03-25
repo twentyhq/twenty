@@ -1,31 +1,19 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
 export const useActivityTargetObjectRecords = ({
-  activityId,
+  activity,
 }: {
-  activityId: string;
+  activity: Activity;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { records: activityTargets, loading: loadingActivityTargets } =
-    useFindManyRecords<ActivityTarget>({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      skip: !isNonEmptyString(activityId),
-      filter: {
-        activityId: {
-          eq: activityId,
-        },
-      },
-    });
+  const activityTargets = activity.activityTargets;
 
   const activityTargetObjectRecords = activityTargets
     .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
@@ -36,7 +24,18 @@ export const useActivityTargetObjectRecords = ({
       );
 
       if (!correspondingObjectMetadataItem) {
-        return null;
+        throw new Error(
+          `Cannot find target object record on activity target, this shouldn't happen, make sure the request for activities eagerly loads for the target objects on activity target relation.`,
+        );
+      }
+
+      const targetObjectRecord =
+        activityTarget[correspondingObjectMetadataItem.nameSingular];
+
+      if (!targetObjectRecord) {
+        throw new Error(
+          `Cannot find target object record of type ${correspondingObjectMetadataItem.nameSingular}, make sure the request for activities eagerly loads for the target objects on activity target relation.`,
+        );
       }
 
       return {
@@ -51,6 +50,5 @@ export const useActivityTargetObjectRecords = ({
 
   return {
     activityTargetObjectRecords,
-    loadingActivityTargets,
   };
 };

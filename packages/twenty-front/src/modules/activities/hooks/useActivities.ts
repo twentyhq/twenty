@@ -5,6 +5,7 @@ import { useRecoilCallback } from 'recoil';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -26,6 +27,8 @@ export const useActivities = ({
   skipActivityTargets?: boolean;
 }) => {
   const [initialized, setInitialized] = useState(false);
+
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
     activityTargets,
@@ -61,11 +64,25 @@ export const useActivities = ({
     (!skipActivityTargets &&
       (!initializedActivityTargets || !activityTargetsFound));
 
+  const targetObjectNameSingularToLoadEagerly = Object.fromEntries(
+    objectMetadataItems
+      .filter(
+        (objectMetadataItem) =>
+          objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+      )
+      .map((objectMetadataItem) => [objectMetadataItem.nameSingular, true]),
+  );
+
+  const eagerLoadedRelations: Record<string, any> = {
+    activityTargets: targetObjectNameSingularToLoadEagerly,
+  };
+
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: skipActivities,
       objectNameSingular: CoreObjectNameSingular.Activity,
-      depth: 1,
+      depth: 3,
+      eagerLoadedRelations,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(

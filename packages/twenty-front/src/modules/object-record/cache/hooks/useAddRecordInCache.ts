@@ -25,7 +25,7 @@ export const useAddRecordInCache = ({
 
   return useRecoilCallback(
     ({ set }) =>
-      (record: ObjectRecord) => {
+      (record: ObjectRecord, depth: number = 1) => {
         const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -34,6 +34,7 @@ export const useAddRecordInCache = ({
           )} ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
             objectMetadataItem,
+            objectRecord: record,
           })}
         `;
 
@@ -49,7 +50,7 @@ export const useAddRecordInCache = ({
         });
 
         // TODO: should we keep this here ? Or should the caller of createOneRecordInCache/createManyRecordsInCache be responsible for this ?
-        injectIntoFindOneRecordQueryCache(cachedObjectRecord);
+        injectIntoFindOneRecordQueryCache(cachedObjectRecord, depth);
 
         // TODO: remove this once we get rid of entityFieldsFamilyState
         set(recordStoreFamilyState(record.id), record);

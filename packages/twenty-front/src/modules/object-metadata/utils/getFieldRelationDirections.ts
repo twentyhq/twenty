@@ -6,7 +6,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const getFieldRelationDirections = (
-  field: FieldMetadataItem | undefined,
+  field: Pick<FieldMetadataItem, 'type' | 'relationDefinition'> | undefined,
 ): RelationDirections => {
   if (!field || field.type !== FieldMetadataType.Relation) {
     throw new Error(`Field is not a relation field.`);

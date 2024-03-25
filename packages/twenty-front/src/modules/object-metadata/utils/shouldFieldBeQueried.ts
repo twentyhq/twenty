@@ -1,6 +1,9 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { FieldType } from '@/object-record/record-field/types/FieldType';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
@@ -8,10 +11,12 @@ export const shouldFieldBeQueried = ({
   field,
   depth,
   eagerLoadedRelations,
+  objectRecord,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
   depth?: number;
   eagerLoadedRelations?: Record<string, boolean>;
+  objectRecord?: ObjectRecord;
 }): any => {
   const fieldType = field.type as FieldType;
 
@@ -23,11 +28,15 @@ export const shouldFieldBeQueried = ({
     return false;
   }
 
+  if (isDefined(objectRecord) && !isDefined(objectRecord[field.name])) {
+    return false;
+  }
+
   if (
     fieldType === 'RELATION' &&
-    !isUndefined(eagerLoadedRelations) &&
-    (isUndefined(eagerLoadedRelations[field.name]) ||
-      !eagerLoadedRelations[field.name])
+    !isUndefinedOrNull(eagerLoadedRelations) &&
+    (isUndefinedOrNull(eagerLoadedRelations[field.name]) ||
+      !isDefined(eagerLoadedRelations[field.name]))
   ) {
     return false;
   }

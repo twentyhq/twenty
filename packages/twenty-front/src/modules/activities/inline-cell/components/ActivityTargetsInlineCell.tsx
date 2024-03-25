@@ -19,7 +19,7 @@ export const ActivityTargetsInlineCell = ({
   activity,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
-    activityId: activity?.id ?? '',
+    activity,
   });
   const { closeInlineCell } = useInlineCell();
 
