@@ -151,6 +151,4 @@ export const useSelectableListHotKeys = (
     hotkeyScope,
     [],
   );
-
-  return <></>;
 };
