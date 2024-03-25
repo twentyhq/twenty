@@ -17,7 +17,10 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import {
+  CalendarChannelObjectMetadata,
+  CalendarChannelVisibility,
+} from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 
 @Injectable()
@@ -80,7 +83,11 @@ export class CalendarEventFindManyPreQueryHook
       (channel) => channel.visibility,
     );
 
-    if (calendarChannelsGroupByVisibility.share_everything) {
+    if (
+      calendarChannelsGroupByVisibility[
+        CalendarChannelVisibility.SHARE_EVERYTHING
+      ]
+    ) {
       return;
     }
 
