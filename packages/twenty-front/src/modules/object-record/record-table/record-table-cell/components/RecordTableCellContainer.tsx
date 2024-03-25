@@ -1,6 +1,6 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -15,6 +15,7 @@ import { IconArrowUpRight } from '@/ui/display/icon';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -71,7 +72,6 @@ export const RecordTableCellContainer = ({
 
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
   const isSomeCellInEditModeState = useGetIsSomeCellInEditModeState();
-  const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
 
   const setIsSoftFocusUsingMouseState = useSetRecoilState(
     isSoftFocusUsingMouseState,
@@ -107,13 +107,26 @@ export const RecordTableCellContainer = ({
     setContextMenuOpenState(true);
   };
 
-  const handleContainerMouseEnter = () => {
-    if (!isHovered && !isSomeCellInEditMode) {
-      setIsHovered(true);
-      moveSoftFocusToCurrentCellOnHover();
-      setIsSoftFocusUsingMouseState(true);
-    }
-  };
+  const handleContainerMouseEnter = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isSomeCellInEditMode = getSnapshotValue(
+          snapshot,
+          isSomeCellInEditModeState(),
+        );
+        if (!isHovered && !isSomeCellInEditMode) {
+          setIsHovered(true);
+          moveSoftFocusToCurrentCellOnHover();
+          setIsSoftFocusUsingMouseState(true);
+        }
+      },
+    [
+      isHovered,
+      isSomeCellInEditModeState,
+      moveSoftFocusToCurrentCellOnHover,
+      setIsSoftFocusUsingMouseState,
+    ],
+  );
 
   const handleContainerMouseLeave = () => {
     setIsHovered(false);
