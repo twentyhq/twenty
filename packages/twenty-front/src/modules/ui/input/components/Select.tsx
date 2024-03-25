@@ -22,6 +22,7 @@ export type SelectOption<Value extends string | number | null> = {
 export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
+  disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   emptyOption?: SelectOption<Value>;
@@ -75,6 +76,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
 export const Select = <Value extends string | number | null>({
   className,
   disabled: disabledFromProps,
+  disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
   emptyOption,
@@ -141,6 +143,7 @@ export const Select = <Value extends string | number | null>({
           dropdownMenuWidth={dropdownWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={selectControl}
+          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (

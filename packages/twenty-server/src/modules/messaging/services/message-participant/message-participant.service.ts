@@ -7,6 +7,7 @@ import { ParticipantWithId } from 'src/modules/messaging/types/gmail-message';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 
 @Injectable()
 export class MessageParticipantService {
@@ -34,24 +35,29 @@ export class MessageParticipantService {
       transactionManager,
     );
 
-    const messageParticipantsToUpdate = participants.map((participant) => [
-      participant.id,
-      participantPersonIds.find(
+    const messageParticipantsToUpdate = participants.map((participant) => ({
+      id: participant.id,
+      personId: participantPersonIds.find(
         (e: { id: string; email: string }) => e.email === participant.handle,
       )?.id,
-    ]);
+    }));
 
     if (messageParticipantsToUpdate.length === 0) return;
 
-    const valuesString = messageParticipantsToUpdate
-      .map((_, index) => `($${index * 2 + 1}::uuid, $${index * 2 + 2}::uuid)`)
-      .join(', ');
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        messageParticipantsToUpdate,
+        {
+          id: 'uuid',
+          personId: 'uuid',
+        },
+      );
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
       WHERE "messageParticipant"."id" = "data"."id"`,
-      messageParticipantsToUpdate.flat(),
+      flattenedValues,
       workspaceId,
       transactionManager,
     );

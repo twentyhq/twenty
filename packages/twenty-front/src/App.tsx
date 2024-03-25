@@ -57,8 +57,7 @@ export const App = () => {
       <DefaultLayout>
         <Routes>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
-          <Route path={AppPath.SignIn} element={<SignInUp />} />
-          <Route path={AppPath.SignUp} element={<SignInUp />} />
+          <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />

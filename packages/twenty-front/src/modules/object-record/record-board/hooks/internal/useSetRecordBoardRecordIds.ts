@@ -10,6 +10,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     recordIdsByColumnIdFamilyState,
     columnsFamilySelector,
     columnIdsState,
+    kanbanFieldMetadataNameState,
   } = useRecordBoardStates(recordBoardId);
 
   const setRecordIds = useRecoilCallback(
@@ -26,8 +27,18 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             .getLoadable(recordIdsByColumnIdFamilyState(columnId))
             .getValue();
 
+          const kanbanFieldMetadataName = snapshot
+            .getLoadable(kanbanFieldMetadataNameState)
+            .getValue();
+
+          if (!kanbanFieldMetadataName) {
+            return;
+          }
+
           const columnRecordIds = records
-            .filter((record) => record.stage === column?.value)
+            .filter(
+              (record) => record[kanbanFieldMetadataName] === column?.value,
+            )
             .sort(sortRecordsByPosition)
             .map((record) => record.id);
 
@@ -36,7 +47,12 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
           }
         });
       },
-    [columnsFamilySelector, columnIdsState, recordIdsByColumnIdFamilyState],
+    [
+      columnIdsState,
+      columnsFamilySelector,
+      recordIdsByColumnIdFamilyState,
+      kanbanFieldMetadataNameState,
+    ],
   );
 
   return {

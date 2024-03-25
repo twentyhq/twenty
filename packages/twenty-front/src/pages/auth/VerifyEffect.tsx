@@ -20,7 +20,7 @@ export const VerifyEffect = () => {
   useEffect(() => {
     const getTokens = async () => {
       if (!loginToken) {
-        navigate(AppPath.SignIn);
+        navigate(AppPath.SignInUp);
       } else {
         await verify(loginToken);
 

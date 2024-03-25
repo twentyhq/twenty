@@ -85,14 +85,12 @@ export const viewPrefillData = async (
       'size',
     ])
     .values([
-      ...viewCompanyFields(viewIdMap['Index Companies'], objectMetadataMap),
-      ...viewPersonFields(viewIdMap['Index People'], objectMetadataMap),
-      ...viewOpportunityFields(
-        viewIdMap['Index Opportunities'],
-        objectMetadataMap,
-      ),
       ...viewCompanyFields(viewIdMap['All Companies'], objectMetadataMap),
       ...viewPersonFields(viewIdMap['All People'], objectMetadataMap),
+      ...viewOpportunityFields(
+        viewIdMap['All Opportunities'],
+        objectMetadataMap,
+      ),
       ...viewOpportunityFields(viewIdMap['By Stage'], objectMetadataMap),
     ])
     .execute();

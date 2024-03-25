@@ -52,7 +52,10 @@ export const useViewFromQueryParams = () => {
     [queryParamsValidation],
   );
   const viewIdQueryParam = useMemo(
-    () => queryParamsValidation.success && queryParamsValidation.data.view,
+    () =>
+      queryParamsValidation.success
+        ? queryParamsValidation.data.view
+        : undefined,
     [queryParamsValidation],
   );
 
