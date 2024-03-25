@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -54,8 +55,18 @@ export const RecordIndexBoardContainerEffect = ({
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
+    navigate(`/settings/objects/${objectMetadataItem.namePlural}/stage`);
   }, [navigate, objectMetadataItem.namePlural]);
+
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
+    objectNameSingular,
+  });
+
+  const createEmptyObjectWithStage = useCallback(async () => {
+    await createOneObject?.({
+      position: 'first',
+    });
+  }, [createOneObject]);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
@@ -68,10 +79,12 @@ export const RecordIndexBoardContainerEffect = ({
       computeRecordBoardColumnDefinitionsFromObjectMetadata(
         objectMetadataItem,
         navigateToSelectSettings,
+        createEmptyObjectWithStage,
       ),
     );
   }, [
     navigateToSelectSettings,
+    createEmptyObjectWithStage,
     objectMetadataItem,
     objectNameSingular,
     setColumns,

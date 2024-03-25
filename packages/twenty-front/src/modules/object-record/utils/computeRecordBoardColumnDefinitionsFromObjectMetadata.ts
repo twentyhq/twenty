@@ -1,11 +1,12 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
-import { IconPencil } from '@/ui/display/icon';
+import { IconEyeOff, IconPlus, IconSettings } from '@/ui/display/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
   navigateToSelectSettings: () => void,
+  createEmptyObjectWithStage: () => void,
 ): RecordBoardColumnDefinition[] => {
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.type === FieldMetadataType.Select,
@@ -30,10 +31,24 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
     actions: [
       {
         id: 'edit',
-        label: 'Edit from settings',
-        icon: IconPencil,
+        label: 'Edit',
+        icon: IconSettings,
         position: 0,
         callback: navigateToSelectSettings,
+      },
+      {
+        id: 'hide',
+        label: 'Hide',
+        icon: IconEyeOff,
+        position: 0,
+        callback: navigateToSelectSettings,
+      },
+      {
+        id: 'add',
+        label: 'Add record',
+        icon: IconPlus,
+        position: 0,
+        callback: createEmptyObjectWithStage,
       },
     ],
   }));
