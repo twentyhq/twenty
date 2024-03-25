@@ -4,7 +4,7 @@ import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import {
-  FdwOptions,
+  ForeignDataWrapperOptions,
   RemoteServerType,
   UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
@@ -12,11 +12,11 @@ import {
 @InputType()
 export class CreateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
-  fdwType: T;
+  foreignDataWrapperType: T;
 
   @IsOptional()
   @Field(() => GraphQLJSON)
-  fdwOptions: FdwOptions<T>;
+  foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

@@ -4,7 +4,7 @@ import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import {
-  FdwOptions,
+  ForeignDataWrapperOptions,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
@@ -14,14 +14,14 @@ export class RemoteServerDTO<T extends RemoteServerType> {
   id: string;
 
   @Field(() => ID)
-  fwdId: string;
+  foreignDataWrapperId: string;
 
   @Field(() => String)
-  fdwType: T;
+  foreignDataWrapperType: T;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  fdwOptions?: FdwOptions<T>;
+  foreignDataWrapperOptions?: ForeignDataWrapperOptions<T>;
 
   @HideField()
   workspaceId: string;

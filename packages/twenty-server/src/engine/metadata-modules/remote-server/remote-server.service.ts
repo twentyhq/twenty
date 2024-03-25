@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { v4 } from 'uuid';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -33,17 +34,19 @@ export class RemoteServerService<T extends RemoteServerType> {
     remoteServerInput: CreateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateObject(remoteServerInput.fdwOptions);
+    validateObject(remoteServerInput.foreignDataWrapperOptions);
 
     if (remoteServerInput.userMappingOptions) {
       validateObject(remoteServerInput.userMappingOptions);
     }
 
     const mainDatasource = this.typeORMService.getMainDataSource();
+    const foreignDataWrapperId = v4();
 
     let remoteServerToCreate = {
       ...remoteServerInput,
       workspaceId,
+      foreignDataWrapperId,
     };
 
     if (remoteServerInput.userMappingOptions) {
@@ -67,18 +70,19 @@ export class RemoteServerService<T extends RemoteServerType> {
     const createdRemoteServer =
       await this.remoteServerRepository.create(remoteServerToCreate);
 
-    const fdwQuery = this.foreignDataWrapperQueryFactory.createFDW(
-      createdRemoteServer.fdwId,
-      remoteServerInput.fdwType,
-      remoteServerInput.fdwOptions,
-    );
+    const foreignDataWrapperQuery =
+      this.foreignDataWrapperQueryFactory.createForeignDataWrapper(
+        createdRemoteServer.foreignDataWrapperId,
+        remoteServerInput.foreignDataWrapperType,
+        remoteServerInput.foreignDataWrapperOptions,
+      );
 
-    await mainDatasource.query(fdwQuery);
+    await mainDatasource.query(foreignDataWrapperQuery);
 
     if (remoteServerInput.userMappingOptions) {
       const userMappingQuery =
         this.foreignDataWrapperQueryFactory.createUserMapping(
-          createdRemoteServer.fdwId,
+          createdRemoteServer.foreignDataWrapperId,
           remoteServerInput.userMappingOptions,
         );
 
@@ -109,7 +113,9 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     const mainDatasource = this.typeORMService.getMainDataSource();
 
-    await mainDatasource.query(`DROP SERVER "${remoteServer.fdwId}" CASCADE`);
+    await mainDatasource.query(
+      `DROP SERVER "${remoteServer.foreignDataWrapperId}" CASCADE`,
+    );
     await this.remoteServerRepository.delete(id);
 
     return remoteServer;
@@ -125,12 +131,12 @@ export class RemoteServerService<T extends RemoteServerType> {
   }
 
   public async findManyByTypeWithinWorkspace<T extends RemoteServerType>(
-    fdwType: T,
+    foreignDataWrapperType: T,
     workspaceId: string,
   ) {
     return this.remoteServerRepository.find({
       where: {
-        fdwType,
+        foreignDataWrapperType,
         workspaceId,
       },
     });

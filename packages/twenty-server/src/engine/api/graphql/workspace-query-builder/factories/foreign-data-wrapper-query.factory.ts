@@ -1,40 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FdwOptions,
+  ForeignDataWrapperOptions,
   RemoteServerType,
   UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @Injectable()
 export class ForeignDataWrapperQueryFactory {
-  createFDW(
-    fdwId: string,
-    fdwType: RemoteServerType,
-    fdwOptions: FdwOptions<RemoteServerType>,
+  createForeignDataWrapper(
+    foreignDataWrapperId: string,
+    foreignDataWrapperType: RemoteServerType,
+    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType>,
   ) {
-    let fdwName = '';
-    let options = '';
+    const [name, options] = this.buildNameAndOptionsFromType(
+      foreignDataWrapperType,
+      foreignDataWrapperOptions,
+    );
 
-    switch (fdwType) {
-      case RemoteServerType.POSTGRES_FDW:
-        fdwName = 'postgres_fdw';
-        options = this.buildPostgresFDWQueryOptions(fdwOptions);
-        break;
-      default:
-        throw new Error('FDW type not supported');
-    }
-
-    return `CREATE SERVER IF NOT EXISTS "${fdwId}" FOREIGN DATA WRAPPER ${fdwName} OPTIONS (${options})`;
+    return `CREATE SERVER "${foreignDataWrapperId}" FOREIGN DATA WRAPPER ${name} OPTIONS (${options})`;
   }
 
-  createUserMapping(fdwId: string, userMappingOptions: UserMappingOptions) {
-    return `CREATE USER MAPPING IF NOT EXISTS FOR ${userMappingOptions.username} SERVER "${fdwId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
+  createUserMapping(
+    foreignDataWrapperId: string,
+    userMappingOptions: UserMappingOptions,
+  ) {
+    return `CREATE USER MAPPING IF NOT EXISTS FOR ${userMappingOptions.username} SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
+  }
+
+  private buildNameAndOptionsFromType(
+    type: RemoteServerType,
+    options: ForeignDataWrapperOptions<RemoteServerType>,
+  ) {
+    switch (type) {
+      case RemoteServerType.POSTGRES_FDW:
+        return ['postgres_fdw', this.buildPostgresFDWQueryOptions(options)];
+      default:
+        throw new Error('Foreign data wrapper type not supported');
+    }
   }
 
   private buildPostgresFDWQueryOptions(
-    fdwOptions: FdwOptions<RemoteServerType>,
+    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType>,
   ) {
-    return `dbname '${fdwOptions.dbname}', host '${fdwOptions.host}', port '${fdwOptions.port}'`;
+    return `dbname '${foreignDataWrapperOptions.dbname}', host '${foreignDataWrapperOptions.host}', port '${foreignDataWrapperOptions.port}'`;
   }
 }

@@ -13,14 +13,16 @@ export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
 }
 
-type PostgresFdwOptions = {
+type PostgresForeignDataWrapperOptions = {
   host: string;
   port: number;
   dbname: string;
 };
 
-export type FdwOptions<T extends RemoteServerType> =
-  T extends RemoteServerType.POSTGRES_FDW ? PostgresFdwOptions : never;
+export type ForeignDataWrapperOptions<T extends RemoteServerType> =
+  T extends RemoteServerType.POSTGRES_FDW
+    ? PostgresForeignDataWrapperOptions
+    : never;
 
 export type UserMappingOptions = {
   username: string;
@@ -35,13 +37,13 @@ export class RemoteServerEntity<T extends RemoteServerType> {
 
   @Column()
   @Generated('uuid')
-  fdwId: string;
+  foreignDataWrapperId: string;
 
   @Column({ nullable: true })
-  fdwType: T;
+  foreignDataWrapperType: T;
 
   @Column({ nullable: true, type: 'jsonb' })
-  fdwOptions: FdwOptions<T>;
+  foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
   userMappingOptions: UserMappingOptions;
