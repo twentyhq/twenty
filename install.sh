@@ -27,9 +27,16 @@ branch=${BRANCH:-main}
 
 echo "🚀 Using version $version and branch $branch"
 
-# Create a directory named Twenty
-echo "📁 Creating directory 'Twenty'"
-mkdir -p Twenty && cd Twenty
+dir_name="twenty"
+
+while [ -d "$dir_name" ]; do
+  read -p "Directory '$dir_name' already exists. Please enter a new directory name: " user_input
+  dir_name=$user_input
+done
+
+# Create a directory named twenty
+echo "📁 Creating directory '$dir_name'"
+mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
 # Copy the twenty/packages/twenty-docker/prod/docker-compose.yml file in it
 echo "📄 Copying docker-compose.yml"
