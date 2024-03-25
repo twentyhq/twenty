@@ -13,22 +13,9 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-type FieldMetadataScalarDefaultValue =
-  | FieldMetadataDefaultValueString
-  | FieldMetadataDefaultValueNumber
-  | FieldMetadataDefaultValueBoolean
-  | FieldMetadataDefaultValueDateTime;
+type ExtractValueType<T> = T extends { value: infer V } ? V : T;
 
-export type FieldMetadataFunctionDefaultValue =
-  | FieldMetadataDefaultValueUuidFunction
-  | FieldMetadataDefaultValueNowFunction;
-
-type AllFieldMetadataDefaultValueTypes =
-  | FieldMetadataScalarDefaultValue
-  | FieldMetadataFunctionDefaultValue
-  | FieldMetadataDefaultValueLink
-  | FieldMetadataDefaultValueCurrency
-  | FieldMetadataDefaultValueFullName;
+type UnionOfValues<T> = T[keyof T];
 
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]:
@@ -54,30 +41,27 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
 };
 
+export type FieldMetadataClassValidation =
+  UnionOfValues<FieldMetadataDefaultValueMapping>;
+
+export type FieldMetadataFunctionDefaultValue = ExtractValueType<
+  FieldMetadataDefaultValueUuidFunction | FieldMetadataDefaultValueNowFunction
+>;
+
 type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
   T,
 ] extends [keyof FieldMetadataDefaultValueMapping]
-  ? FieldMetadataDefaultValueMapping[T] | null
+  ? ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null
   : T extends 'default'
-    ? AllFieldMetadataDefaultValueTypes | null
+    ? ExtractValueType<UnionOfValues<FieldMetadataDefaultValueMapping>> | null
     : never;
 
 export type FieldMetadataDefaultValue<
   T extends FieldMetadataType | 'default' = 'default',
 > = DefaultValueByFieldMetadata<T>;
 
-type FieldMetadataDefaultValueExtractNestedType<T> = T extends {
-  value: infer U;
-}
-  ? U
-  : T extends object
-    ? { [K in keyof T]: T[K] } extends { value: infer V }
-      ? V
-      : T[keyof T]
-    : never;
-
 type FieldMetadataDefaultValueExtractedTypes = {
-  [K in keyof FieldMetadataDefaultValueMapping]: FieldMetadataDefaultValueExtractNestedType<
+  [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<
     FieldMetadataDefaultValueMapping[K]
   >;
 };

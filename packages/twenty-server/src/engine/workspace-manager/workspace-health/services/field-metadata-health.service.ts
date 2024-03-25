@@ -341,9 +341,8 @@ export class FieldMetadataHealthService {
       const enumValues = fieldMetadata.options?.map((option) =>
         serializeDefaultValue(`'${option.value}'`),
       );
-      const metadataDefaultValue = (
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>
-      )?.value;
+      const metadataDefaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>;
 
       if (metadataDefaultValue && !enumValues.includes(metadataDefaultValue)) {
         issues.push({

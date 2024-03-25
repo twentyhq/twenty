@@ -220,12 +220,22 @@ export class DatabaseStructureService {
       fieldMetadataType,
     ) as ColumnType;
     const mainDataSource = this.typeORMService.getMainDataSource();
-    let value =
-      defaultValue && 'value' in defaultValue ? defaultValue.value : null;
+
+    let value: any =
+      // Old formart default values
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'value' in defaultValue
+        ? defaultValue.value
+        : defaultValue;
 
     // Old format for default values
     // TODO: Should be removed once all default values are migrated
-    if (defaultValue && 'type' in defaultValue) {
+    if (
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'type' in defaultValue
+    ) {
       return this.computeFunctionDefaultValue(defaultValue.type);
     }
 
@@ -251,7 +261,7 @@ export class DatabaseStructureService {
   }
 
   private computeFunctionDefaultValue(
-    value: FieldMetadataFunctionDefaultValue['value'],
+    value: FieldMetadataFunctionDefaultValue,
   ) {
     const serializedDefaultValue = serializeFunctionDefaultValue(value);
 

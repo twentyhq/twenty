@@ -10,7 +10,7 @@ import {
 
 export const isFunctionDefaultValue = (
   defaultValue: FieldMetadataDefaultSerializableValue,
-): defaultValue is FieldMetadataFunctionDefaultValue['value'] => {
+): defaultValue is FieldMetadataFunctionDefaultValue => {
   return (
     typeof defaultValue === 'string' &&
     !defaultValue.startsWith("'") &&

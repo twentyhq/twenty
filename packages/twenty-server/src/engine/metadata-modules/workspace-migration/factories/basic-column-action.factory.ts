@@ -34,8 +34,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
     fieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate {
-    const defaultValue =
-      fieldMetadata.defaultValue?.value ?? options?.defaultValue;
+    const defaultValue = fieldMetadata.defaultValue ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
 
     return {
@@ -53,7 +52,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     const defaultValue =
-      alteredFieldMetadata.defaultValue?.value ?? options?.defaultValue;
+      alteredFieldMetadata.defaultValue ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
     const currentColumnName = currentFieldMetadata.targetColumnMap.value;
     const alteredColumnName = alteredFieldMetadata.targetColumnMap.value;
@@ -73,9 +72,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         columnName: currentColumnName,
         columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
         isNullable: currentFieldMetadata.isNullable,
-        defaultValue: serializeDefaultValue(
-          currentFieldMetadata.defaultValue?.value,
-        ),
+        defaultValue: serializeDefaultValue(currentFieldMetadata.defaultValue),
       },
       alteredColumnDefinition: {
         columnName: alteredColumnName,

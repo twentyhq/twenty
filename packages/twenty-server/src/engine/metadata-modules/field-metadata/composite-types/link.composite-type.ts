@@ -34,9 +34,7 @@ export const linkFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.label ?? null,
-            },
+            defaultValue: inferredFieldMetadata.defaultValue?.label ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -52,9 +50,7 @@ export const linkFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.url ?? null,
-            },
+            defaultValue: inferredFieldMetadata.defaultValue?.url ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,

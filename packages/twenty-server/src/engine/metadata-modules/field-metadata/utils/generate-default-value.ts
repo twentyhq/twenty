@@ -9,9 +9,7 @@ export function generateDefaultValue(
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
-      return {
-        value: "''",
-      };
+      return "''";
     case FieldMetadataType.FULL_NAME:
       return {
         firstName: "''",

@@ -121,11 +121,11 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
         null;
 
       // Check if it's an old function default value
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       if (currentDefaultValue && 'type' in currentDefaultValue) {
-        alteredDefaultValue = {
-          value:
-            currentDefaultValue.type as FieldMetadataDefaultValueFunctionNames,
-        };
+        alteredDefaultValue =
+          currentDefaultValue.type as FieldMetadataDefaultValueFunctionNames;
       }
 
       // Check if it's an old string default value
@@ -137,20 +137,32 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
 
           const value = currentDefaultValue[key];
 
-          if (
+          const newValue =
             typeof value === 'string' &&
             !value.startsWith("'") &&
             !Object.values(fieldMetadataDefaultValueFunctionName).includes(
               value as FieldMetadataDefaultValueFunctionNames,
             )
-          ) {
-            alteredDefaultValue = {
-              ...currentDefaultValue,
-              ...alteredDefaultValue,
-              [key]: `'${value}'`,
-            };
-          }
+              ? `'${value}'`
+              : value;
+
+          alteredDefaultValue = {
+            ...(currentDefaultValue as any),
+            ...(alteredDefaultValue as any),
+            [key]: newValue,
+          };
         }
+      }
+
+      // Old formart default values
+      if (
+        alteredDefaultValue &&
+        typeof alteredDefaultValue === 'object' &&
+        'value' in alteredDefaultValue
+      ) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        alteredDefaultValue = alteredDefaultValue.value;
       }
 
       if (alteredDefaultValue === null) {
@@ -187,29 +199,29 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
     }
 
     if (!isNaN(Number(columnDefault))) {
-      return { value: +columnDefault };
+      return +columnDefault;
     }
 
     if (columnDefault === 'true') {
-      return { value: true };
+      return true;
     }
 
     if (columnDefault === 'false') {
-      return { value: false };
+      return false;
     }
 
     if (columnDefault === '') {
-      return { value: "''" };
+      return "''";
     }
 
     if (columnDefault === 'now()') {
-      return { value: 'now' };
+      return 'now';
     }
 
     if (columnDefault.startsWith('public.uuid_generate_v4')) {
-      return { value: 'uuid' };
+      return 'uuid';
     }
 
-    return { value: columnDefault };
+    return columnDefault;
   }
 }
