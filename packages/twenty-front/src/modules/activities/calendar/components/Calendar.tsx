@@ -44,11 +44,17 @@ const StyledYear = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
+export const Calendar = ({
+  activityTargetableObject,
+}: {
+  activityTargetableObject: ActivityTargetableObject;
+}) => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { calendarEventsPageState } = useCalendarEventStates({
-    calendarEventScopeId: getScopeIdFromComponentId(entity.id),
+    calendarEventScopeId: getScopeIdFromComponentId(
+      activityTargetableObject.id,
+    ),
   });
 
   const [calendarEventsPage, setCalendarEventsPage] = useRecoilState(
@@ -58,7 +64,8 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
   const [isFetchingMoreEvents, setIsFetchingMoreEvents] = useState(false);
 
   const [threadQuery, queryName] =
-    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
+    activityTargetableObject.targetObjectNameSingular ===
+    CoreObjectNameSingular.Person
       ? [
           getTimelineCalendarEventsFromPersonId,
           'getTimelineCalendarEventsFromPersonId',
@@ -69,9 +76,10 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
         ];
 
   const threadQueryVariables = {
-    ...(entity.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? { personId: entity.id }
-      : { companyId: entity.id }),
+    ...(activityTargetableObject.targetObjectNameSingular ===
+    CoreObjectNameSingular.Person
+      ? { personId: activityTargetableObject.id }
+      : { companyId: activityTargetableObject.id }),
     page: 1,
     pageSize: TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   } as GetTimelineCalendarEventsFromPersonIdQueryVariables;
@@ -166,7 +174,7 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
             No events have been scheduled with this{' '}
-            {entity.targetObjectNameSingular} yet.
+            {activityTargetableObject.targetObjectNameSingular} yet.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
