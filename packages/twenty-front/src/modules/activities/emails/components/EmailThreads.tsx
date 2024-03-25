@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
@@ -106,7 +106,7 @@ export const EmailThreads = ({
             ))}
           </Card>
         )}
-        <CustomResolverFetchMoreLoader
+        <FetchMoreLoader
           loading={isFetchingMore || firstQueryLoading}
           onLastRowVisible={fetchMoreRecords}
         />

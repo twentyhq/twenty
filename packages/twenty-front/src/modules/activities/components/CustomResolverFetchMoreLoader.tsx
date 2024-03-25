@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
-type CustomResolverFetchMoreLoaderProps = {
+type FetchMoreLoaderProps = {
   loading: boolean;
   onLastRowVisible: (...args: any[]) => any;
 };
@@ -18,10 +18,10 @@ const StyledText = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const CustomResolverFetchMoreLoader = ({
+export const FetchMoreLoader = ({
   loading,
   onLastRowVisible,
-}: CustomResolverFetchMoreLoaderProps) => {
+}: FetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
   });
