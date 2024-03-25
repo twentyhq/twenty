@@ -18,7 +18,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
-  SeedWorkspaceIds,
 } from 'src/database/typeorm-seeds/core/workspaces';
 
 // TODO: implement dry-run
@@ -28,9 +27,7 @@ import {
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceIds = [SeedAppleWorkspaceId, SeedTwentyWorkspaceId].concat(
-    SeedWorkspaceIds,
-  );
+  workspaceIds = [SeedAppleWorkspaceId, SeedTwentyWorkspaceId];
 
   constructor(
     private readonly environmentService: EnvironmentService,
