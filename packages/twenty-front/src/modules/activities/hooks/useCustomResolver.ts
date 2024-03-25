@@ -6,8 +6,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useCustomResolver = (
-  threadQuery: any,
+  query: any,
   queryName: string,
+  objectName: string,
   activityTargetableObject: ActivityTargetableObject,
   pageSize: number,
 ): {
@@ -25,7 +26,7 @@ export const useCustomResolver = (
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const threadQueryVariables = {
+  const queryVariables = {
     ...(activityTargetableObject.targetObjectNameSingular ===
     CoreObjectNameSingular.Person
       ? { personId: activityTargetableObject.id }
@@ -38,8 +39,8 @@ export const useCustomResolver = (
     data,
     loading: firstQueryLoading,
     fetchMore,
-  } = useQuery(threadQuery, {
-    variables: threadQueryVariables,
+  } = useQuery(query, {
+    variables: queryVariables,
     onError: (error) => {
       enqueueSnackBar(error.message || 'Error loading event threads', {
         variant: 'error',
@@ -53,21 +54,20 @@ export const useCustomResolver = (
 
       await fetchMore({
         variables: {
-          ...threadQueryVariables,
+          ...queryVariables,
           page: page.pageNumber + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.timelineCalendarEvents?.length) {
+          if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
             setPage((calendarEventsPage) => ({
               ...calendarEventsPage,
               hasNextPage: false,
             }));
+
             return {
               [queryName]: {
                 ...prev?.[queryName],
-                timelineCalendarEvents: [
-                  ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
-                ],
+                [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
               },
             };
           }
@@ -75,18 +75,20 @@ export const useCustomResolver = (
           return {
             [queryName]: {
               ...prev?.[queryName],
-              timelineCalendarEvents: [
-                ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
-                ...(fetchMoreResult?.[queryName]?.timelineCalendarEvents ?? []),
+              [objectName]: [
+                ...(prev?.[queryName]?.[objectName] ?? []),
+                ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
               ],
             },
           };
         },
       });
+
       setPage((calendarEventsPage) => ({
         ...calendarEventsPage,
         pageNumber: calendarEventsPage.pageNumber + 1,
       }));
+
       setIsFetchingMore(false);
     }
   };

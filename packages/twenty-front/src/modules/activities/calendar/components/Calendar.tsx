@@ -41,7 +41,7 @@ export const Calendar = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const [threadQuery, queryName] =
+  const [query, queryName] =
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [
           getTimelineCalendarEventsFromPersonId,
@@ -54,8 +54,9 @@ export const Calendar = ({
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
     useCustomResolver(
-      threadQuery,
+      query,
       queryName,
+      'timelineCalendarEvents',
       targetableObject,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
