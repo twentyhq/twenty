@@ -120,10 +120,7 @@ export class AddStandardIdCommand extends CommandRunner {
           customObjectMetadataCollection,
         );
 
-        if (
-          !originalObjectMetadata.isCustom &&
-          !originalObjectMetadata.standardId
-        ) {
+        if (!originalObjectMetadata.isCustom) {
           updateObjectMetadataCollection.push({
             id: originalObjectMetadata.id,
             standardId: computedStandardObjectMetadata.standardId,
@@ -136,7 +133,7 @@ export class AddStandardIdCommand extends CommandRunner {
               (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 
-          if (!standardFieldMetadata || fieldMetadata.standardId) {
+          if (!standardFieldMetadata) {
             continue;
           }
 
