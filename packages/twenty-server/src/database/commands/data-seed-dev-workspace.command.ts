@@ -1,12 +1,10 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
-import { seedViews } from 'src/database/typeorm-seeds/workspace/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunity';
-import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-step';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
@@ -19,6 +17,13 @@ import {
   SeedAppleWorkspaceId,
   SeedTwentyWorkspaceId,
 } from 'src/database/typeorm-seeds/core/workspaces';
+import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connectedAccount';
+import { seedMessage } from 'src/database/typeorm-seeds/workspace/message';
+import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/messageChannel';
+import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/messageChannelMessageAssociation';
+import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/messageParticipant';
+import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/messageThread';
+import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 
 // TODO: implement dry-run
 @Command({
@@ -95,10 +100,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         const objectMetadata =
           await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
         const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-          acc[object.nameSingular] = {
+          acc[object.standardId ?? ''] = {
             id: object.id,
             fields: object.fields.reduce((acc, field) => {
-              acc[field.name] = field.id;
+              acc[field.standardId ?? ''] = field.id;
 
               return acc;
             }, {}),
@@ -107,25 +112,52 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           return acc;
         }, {});
 
-        await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
-        await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
-        await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
-        await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
-        await seedCalendarEvents(
-          workspaceDataSource,
-          dataSourceMetadata.schema,
+        await workspaceDataSource.transaction(
+          async (entityManager: EntityManager) => {
+            await seedCompanies(entityManager, dataSourceMetadata.schema);
+            await seedPeople(entityManager, dataSourceMetadata.schema);
+            await seedOpportunity(entityManager, dataSourceMetadata.schema);
+            await seedCalendarEvents(entityManager, dataSourceMetadata.schema);
+            await seedWorkspaceMember(
+              entityManager,
+              dataSourceMetadata.schema,
+              workspaceId,
+            );
+            await viewPrefillData(
+              entityManager,
+              dataSourceMetadata.schema,
+              objectMetadataMap,
+            );
+          },
         );
+      } catch (error) {
+        console.error(error);
+      }
 
-        await seedViews(
-          workspaceDataSource,
-          dataSourceMetadata.schema,
-          objectMetadataMap,
-        );
-        await seedWorkspaceMember(
-          workspaceDataSource,
-          dataSourceMetadata.schema,
-          workspaceId,
-        );
+      try {
+        if (workspaceId === SeedAppleWorkspaceId) {
+          await seedMessageThread(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedConnectedAccount(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessage(workspaceDataSource, dataSourceMetadata.schema);
+          await seedMessageChannel(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessageChannelMessageAssociation(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+          await seedMessageParticipant(
+            workspaceDataSource,
+            dataSourceMetadata.schema,
+          );
+        }
       } catch (error) {
         console.error(error);
       }

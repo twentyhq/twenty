@@ -35,7 +35,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
     case FieldMetadataType.POSITION:
-    case FieldMetadataType.JSON:
+    case FieldMetadataType.RAW_JSON:
       return {
         value: columnName,
       };

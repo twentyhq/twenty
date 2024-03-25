@@ -35,6 +35,7 @@ type DropdownProps = {
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
+  disableBlur?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -50,6 +51,7 @@ export const Dropdown = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   dropdownOffset = { x: 0, y: 0 },
+  disableBlur = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -109,7 +111,10 @@ export const Dropdown = ({
         {clickableComponent && (
           <div
             ref={refs.setReference}
-            onClick={toggleDropdown}
+            onClick={() => {
+              toggleDropdown();
+              onClickOutside?.();
+            }}
             className={className}
           >
             {clickableComponent}
@@ -123,6 +128,7 @@ export const Dropdown = ({
         )}
         {isDropdownOpen && (
           <DropdownMenu
+            disableBlur={disableBlur}
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}

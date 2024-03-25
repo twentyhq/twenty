@@ -17,9 +17,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { PipelineStepObjectMetadata } from 'src/modules/pipeline-step/standard-objects/pipeline-step.object-metadata';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.opportunity,
@@ -102,18 +100,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   position: number;
 
-  // Relations
-  @FieldMetadata({
-    standardId: opportunityStandardFieldIds.pipelineStep,
-    type: FieldMetadataType.RELATION,
-    label: 'Pipeline Step',
-    description: 'Opportunity pipeline step',
-    icon: 'IconKanban',
-    joinColumn: 'pipelineStepId',
-  })
-  @IsNullable()
-  pipelineStep: PipelineStepObjectMetadata;
-
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.pointOfContact,
     type: FieldMetadataType.RELATION,
@@ -191,9 +177,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => EventObjectMetadata,
-  })
-  @Gate({
-    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
   })
   @IsNullable()
   events: EventObjectMetadata[];

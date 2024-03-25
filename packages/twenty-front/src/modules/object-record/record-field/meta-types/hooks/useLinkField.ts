@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
@@ -14,7 +15,7 @@ import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
 export const useLinkField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('LINK', isFieldLink, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Link, isFieldLink, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

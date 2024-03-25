@@ -3,6 +3,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { usePhoneField } from '../../../hooks/usePhoneField';
@@ -44,7 +45,7 @@ const PhoneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'phone',
           label: 'Phone',
-          type: 'TEXT',
+          type: FieldMetadataType.Text,
           iconName: 'IconPhone',
           metadata: {
             fieldName: 'phone',

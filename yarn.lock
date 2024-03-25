@@ -16536,6 +16536,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.differencewith@npm:^4.5.9":
+  version: 4.5.9
+  resolution: "@types/lodash.differencewith@npm:4.5.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: e2433f6daf390c9c09e32532dbd434f133c6ba9e10248d4655ad6c20208d29e620d467fd8a69efe1c66ae15854fca94a4ae36f5ebe0caeb5355272f71b28639f
+  languageName: node
+  linkType: hard
+
 "@types/lodash.groupby@npm:^4.6.9":
   version: 4.6.9
   resolution: "@types/lodash.groupby@npm:4.6.9"
@@ -16632,6 +16641,24 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 69c565f5d914628314de307ac30bcaf6060d2a1e782e87bc25a9c0d287ad06a29cc9308af285ea49e485dba3d909d4fc3b0a0b279cf7545492b37926f1fb2f8f
+  languageName: node
+  linkType: hard
+
+"@types/lodash.uniq@npm:^4.5.9":
+  version: 4.5.9
+  resolution: "@types/lodash.uniq@npm:4.5.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: feb01dfd7b6e3d2b4d29bdb0d00cce8ffa685f1c219b34ae531f098811faab11696b7bdfc3654edcf65f6180ad0cda6471cec7da8a9e7688f294b5c8177cfea7
+  languageName: node
+  linkType: hard
+
+"@types/lodash.uniqby@npm:^4.7.9":
+  version: 4.7.9
+  resolution: "@types/lodash.uniqby@npm:4.7.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: b508927c8bd9a840c629169f8573d0f33a12c7232b4315785537f25914dec441323c54ba609f75fdefaa53f7ecd56f29bd6f598c3920ade45532b8eab76bf044
   languageName: node
   linkType: hard
 
@@ -33330,6 +33357,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.differencewith@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.differencewith@npm:4.5.0"
+  checksum: 685a51f5e78aa4bb8ff1a22f144b9729e9189ee44d498bd94ab6061885a33efb906436f7e828b50ec91f3b86bd9f35e240da526ec062eac8f7edb42b989c15ed
+  languageName: node
+  linkType: hard
+
 "lodash.filter@npm:^4.6.0":
   version: 4.6.0
   resolution: "lodash.filter@npm:4.6.0"
@@ -33570,6 +33604,13 @@ __metadata:
   version: 4.5.0
   resolution: "lodash.uniq@npm:4.5.0"
   checksum: 262d400bb0952f112162a320cc4a75dea4f66078b9e7e3075ffbc9c6aa30b3e9df3cf20e7da7d566105e1ccf7804e4fbd7d804eee0b53de05d83f16ffbf41c5e
+  languageName: node
+  linkType: hard
+
+"lodash.uniqby@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "lodash.uniqby@npm:4.7.0"
+  checksum: c505c0de20ca759599a2ba38710e8fb95ff2d2028e24d86c901ef2c74be8056518571b9b754bfb75053b2818d30dd02243e4a4621a6940c206bbb3f7626db656
   languageName: node
   linkType: hard
 
@@ -45748,11 +45789,14 @@ __metadata:
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
     "@nx/js": "npm:17.2.8"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@types/lodash.differencewith": "npm:^4.5.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"
     "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.omit": "npm:^4.5.9"
     "@types/lodash.snakecase": "npm:^4.1.7"
+    "@types/lodash.uniq": "npm:^4.5.9"
+    "@types/lodash.uniqby": "npm:^4.7.9"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/react": "npm:^18.2.39"
     cache-manager: "npm:^5.4.0"
@@ -45760,9 +45804,13 @@ __metadata:
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
     jwt-decode: "npm:^4.0.0"
+    lodash.differencewith: "npm:^4.5.0"
+    lodash.uniq: "npm:^4.5.0"
+    lodash.uniqby: "npm:^4.7.0"
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
+    tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
@@ -45915,6 +45963,7 @@ __metadata:
     "@types/lodash.kebabcase": "npm:^4.1.7"
     "@types/lodash.mapvalues": "npm:^4.6.9"
     "@types/lodash.merge": "npm:^4.6.7"
+    "@types/lodash.omit": "npm:^4.5.9"
     "@types/lodash.pick": "npm:^4.3.7"
     "@types/lodash.snakecase": "npm:^4.1.7"
     "@types/lodash.upperfirst": "npm:^4.3.7"
