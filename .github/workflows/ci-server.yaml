@@ -39,4 +39,3 @@ jobs:
           cp .env.example .env
       - name: Worker / Run
         run: MESSAGE_QUEUE_TYPE=sync yarn nx worker twenty-server
->>>>>>> main
