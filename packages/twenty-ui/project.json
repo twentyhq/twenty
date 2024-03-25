@@ -58,6 +58,27 @@
       "options": {
         "command": "test-storybook -c packages/twenty-ui/.storybook --url=http://localhost:4400"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "packages/twenty-ui/jest.config.ts"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true
+        },
+        "coverage": {
+          "codeCoverage": true,
+          "coverageReporters": [
+            "text",
+            "text-summary"
+          ]
+        }
+      }
     }
   }
 }
