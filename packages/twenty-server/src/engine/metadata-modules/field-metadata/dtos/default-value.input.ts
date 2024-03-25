@@ -17,7 +17,7 @@ export class FieldMetadataDefaultValueString {
   value: string | null;
 }
 
-export class FieldMetadataDefaultValueJson {
+export class FieldMetadataDefaultValueRawJson {
   @ValidateIf((_object, value) => value !== null)
   @IsJSON()
   value: JSON | null;

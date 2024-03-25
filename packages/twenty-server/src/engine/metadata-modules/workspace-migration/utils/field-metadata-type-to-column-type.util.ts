@@ -29,7 +29,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
       return 'enum';
-    case FieldMetadataType.JSON:
+    case FieldMetadataType.RAW_JSON:
       return 'jsonb';
     default:
       throw new Error(`Cannot convert ${fieldMetadataType} to column type.`);

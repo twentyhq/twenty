@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -10,7 +11,11 @@ import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 export const useBooleanField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('BOOLEAN', isFieldBoolean, fieldDefinition);
+  assertFieldMetadata(
+    FieldMetadataType.Boolean,
+    isFieldBoolean,
+    fieldDefinition,
+  );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

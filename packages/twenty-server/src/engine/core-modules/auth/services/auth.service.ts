@@ -152,7 +152,7 @@ export class AuthService {
       where: {
         id: userId,
       },
-      relations: ['defaultWorkspace'],
+      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);

@@ -15,7 +15,7 @@ import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info.tsx';
 import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
 import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts';
 import { Button } from '@/ui/input/button/components/Button.tsx';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal.tsx';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';

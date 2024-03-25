@@ -41,12 +41,11 @@ export const useApolloFactory = () => {
         setTokenPair(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignIn) &&
-          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.SignInUp) &&
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
-          navigate(AppPath.SignIn);
+          navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],

@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { ChipFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ChipFieldDisplay';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -37,7 +38,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'full name',
             label: 'Henry Cavill',
-            type: 'FULL_NAME',
+            type: FieldMetadataType.FullName,
             iconName: 'IconCalendarEvent',
             metadata: {
               fieldName: 'full name',

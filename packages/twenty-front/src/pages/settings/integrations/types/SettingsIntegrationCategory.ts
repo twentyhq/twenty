@@ -4,6 +4,6 @@ export type SettingsIntegrationCategory = {
   key: string;
   title: string;
   hyperlinkText?: string;
-  hyperlink: string | null;
+  hyperlink?: string | null;
   integrations: SettingsIntegration[];
 };

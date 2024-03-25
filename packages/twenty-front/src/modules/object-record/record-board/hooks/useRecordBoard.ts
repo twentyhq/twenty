@@ -12,12 +12,16 @@ export const useRecordBoard = (recordBoardId?: string) => {
     selectedRecordIdsSelector,
     isCompactModeActiveState,
     onFetchMoreVisibilityChangeState,
+    kanbanFieldMetadataNameState,
   } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
   const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
   const setFieldDefinitions = useSetRecoilState(fieldDefinitionsState);
   const setObjectSingularName = useSetRecoilState(objectSingularNameState);
+  const setKanbanFieldMetadataName = useSetRecoilState(
+    kanbanFieldMetadataNameState,
+  );
 
   return {
     scopeId,
@@ -25,6 +29,7 @@ export const useRecordBoard = (recordBoardId?: string) => {
     setRecordIds,
     setFieldDefinitions,
     setObjectSingularName,
+    setKanbanFieldMetadataName,
     selectedRecordIdsSelector,
     isCompactModeActiveState,
     onFetchMoreVisibilityChangeState,
