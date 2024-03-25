@@ -1,11 +1,12 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
+import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { DefaultPageTitle } from '~/DefaultPageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
@@ -14,7 +15,6 @@ import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -46,13 +46,16 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const { pathname } = useLocation();
+  const pageTitle = getPageTitleFromPath(pathname);
 
   return (
     <>
-      <DefaultPageTitle />
+      <PageTitle title={pageTitle} />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
       <DefaultLayout>
