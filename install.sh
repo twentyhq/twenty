@@ -39,28 +39,28 @@ echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
 # Copy the twenty/packages/twenty-docker/prod/docker-compose.yml file in it
-echo "📄 Copying docker-compose.yml"
+echo "  📄 Copying docker-compose.yml"
 curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/docker-compose.yml
 
 # Copy twenty/packages/twenty-docker/prod/.env.example to .env
-echo "🔧 Setting up .env file"
+echo "  🔧 Setting up .env file"
 curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
 if [[ $(uname) == "Darwin" ]]; then
-    # Running on macOS
-    sed -i '' "s/TAG=latest/TAG=$version/g" .env
+  # Running on macOS
+  sed -i '' "s/TAG=latest/TAG=$version/g" .env
 else
-    # Assuming Linux
-    sed -i'' "s/TAG=latest/TAG=$version/g" .env
+  # Assuming Linux
+  sed -i'' "s/TAG=latest/TAG=$version/g" .env
 fi
 
 # Generate random strings for secrets
-echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
-echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
-echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >> .env
+echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 
-echo "✨ .env configuration completed"
+echo "  ✨ .env configuration completed"
 
 # Ask user if he wants to start the project
 read -p "🚀 Do you want to start the project now? (Y/n) " answer
