@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# Catch errors
+set -e
+function on_exit {
+  # $? is the exit status of the last command executed
+  local exit_status=$?
+  if [ $exit_status -ne 0 ]; then
+    echo "❌ Something went wrong, exiting: $exit_status"
+  fi
+}
+trap on_exit EXIT
+
+echo "🔧 Checking dependencies..."
+if ! command -v docker &>/dev/null; then
+  echo "  ❌ Docker is not installed or not in PATH. Please install Docker first."
+  exit 1
+fi
+if ! command -v curl &>/dev/null; then
+  echo "  ❌ Curl is not installed or not in PATH. Please install Curl first."
+  exit 1
+fi
+
 # Use environment variables VERSION and BRANCH, with defaults if not set
 version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)}
 branch=${BRANCH:-main}
