@@ -1,3 +1,4 @@
+import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -28,7 +29,6 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
-import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -111,12 +111,13 @@ export const RecordShowContainer = ({
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-  const { inlineFieldMetadataItems, relationFieldMetadataItems } =
-    groupArrayItemsBy(availableFieldMetadataItems, (fieldMetadataItem) =>
+  const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
+    availableFieldMetadataItems,
+    (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.Relation
         ? 'relationFieldMetadataItems'
         : 'inlineFieldMetadataItems',
-    );
+  );
 
   return (
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
@@ -160,7 +161,7 @@ export const RecordShowContainer = ({
                 }
               />
               <PropertyBox>
-                {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
+                {inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
                     value={{
@@ -188,7 +189,7 @@ export const RecordShowContainer = ({
                 objectRecordId={objectRecordId}
                 objectNameSingular={objectNameSingular}
               />
-              {relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+              {relationFieldMetadataItems.map((fieldMetadataItem, index) => (
                 <FieldContext.Provider
                   key={objectRecordId + fieldMetadataItem.id}
                   value={{
