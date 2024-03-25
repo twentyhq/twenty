@@ -36,7 +36,7 @@ The file shares are used to store uploaded images and files through the UI, and 
 3. Run `terraform plan -out tfplan`
 4. Run `terraform apply tfplan`
 5. Connect to server `az containerapp exec --name twenty-server -g twenty-crm-rg`
-6. Initialize the database from the server `yarn database:init`
+6. Initialize the database from the server `yarn database:init:prod`
 7. Go to https://your-twenty-front-fqdn - located in the portal
 
 #### Production docker containers

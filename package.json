@@ -318,7 +318,7 @@
   },
   "version": "0.2.1",
   "scripts": {
-    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start:dev twenty-server\" \"yarn nx start twenty-front\""
+    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start twenty-server\" \"yarn nx start twenty-front\""
   },
   "workspaces": {
     "packages": [

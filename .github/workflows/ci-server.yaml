@@ -30,6 +30,6 @@ jobs:
       - name: Server / Run linter
         run: yarn nx lint twenty-server
       - name: Server / Run jest tests
-        run: yarn nx test twenty-server
+        run: yarn nx test:unit twenty-server
       # - name: Server / Run e2e tests
       #   run: yarn nx test:e2e twenty-server
