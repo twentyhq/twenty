@@ -118,8 +118,13 @@ export const useClickOutsideListener = (componentId: string) => {
         const callbackToUnsubscribeIsFound = indexOfCallbackToUnsubscribe > -1;
 
         if (callbackToUnsubscribeIsFound) {
-          const newCallbacksWithoutCallbackToUnsubscribe =
-            existingCallbacks.toSpliced(indexOfCallbackToUnsubscribe, 1);
+          const newCallbacksWithoutCallbackToUnsubscribe = [
+            ...existingCallbacks,
+          ];
+          newCallbacksWithoutCallbackToUnsubscribe.splice(
+            indexOfCallbackToUnsubscribe,
+            1,
+          );
 
           set(
             getClickOutsideListenerCallbacksState(),

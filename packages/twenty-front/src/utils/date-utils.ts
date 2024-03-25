@@ -116,7 +116,7 @@ export const hasDatePassed = (date: Date | string | number) => {
 export const beautifyDateDiff = (
   date: string,
   dateToCompareWith?: string,
-  short: boolean = false,
+  short = false,
 ) => {
   const dateDiff = DateTime.fromISO(date).diff(
     dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),

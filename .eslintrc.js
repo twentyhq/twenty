@@ -11,9 +11,10 @@ module.exports = {
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
-    'no-unused-vars': 'off',
     'no-control-regex': 0,
+    'no-duplicate-imports': 'error',
     'no-undef': 'off',
+    'no-unused-vars': 'off',
 
     '@nx/enforce-module-boundaries': [
       'error',
@@ -70,9 +71,20 @@ module.exports = {
       extends: ['plugin:@nx/typescript'],
       rules: {
         '@typescript-eslint/ban-ts-comment': 'error',
-        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          { prefer: 'no-type-imports' },
+        ],
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': [
+          'error',
+          {
+            allowSingleExtends: true,
+          },
+        ],
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-unused-vars': [
           'warn',
@@ -82,10 +94,6 @@ module.exports = {
             args: 'after-used',
             argsIgnorePattern: '^_',
           },
-        ],
-        '@typescript-eslint/consistent-type-imports': [
-          'error',
-          { prefer: 'no-type-imports' },
         ],
       },
     },

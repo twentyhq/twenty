@@ -6,7 +6,12 @@
   "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/twenty-ui/src/**/*.{ts,tsx}"
+        ]
+      }
     },
     "build": {
       "executor": "@nx/vite:build",

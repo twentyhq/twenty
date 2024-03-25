@@ -1,8 +1,7 @@
 import { ReactNode, useMemo } from 'react';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useIsMobile, useScreenSize } from 'twenty-ui';
 
 import { AuthModal } from '@/auth/components/Modal';

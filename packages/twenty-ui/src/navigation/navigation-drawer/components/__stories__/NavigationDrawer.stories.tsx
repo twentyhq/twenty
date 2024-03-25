@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
+  GithubVersionLink,
   IconAt,
   IconBell,
   IconBuildingSkyscraper,
@@ -15,7 +16,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui';
-import { GithubVersionLink } from 'twenty-ui';
 
 import { Favorites } from '@/favorites/components/Favorites';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';

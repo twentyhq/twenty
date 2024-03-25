@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -7,11 +8,10 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/modules/*"],
-      "~/*": ["src/*"],
-      "twenty-ui": ["../twenty-ui/src/index.ts"]
+      "@/*": ["packages/twenty-front/src/modules/*"],
+      "~/*": ["packages/twenty-front/src/*"],
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
     },
 
     /* Bundler mode */
