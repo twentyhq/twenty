@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -15,6 +17,8 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
+import { MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE } from 'src/modules/messaging/constants/messages-to-delete-from-cache-batch-size.constant';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class GmailFetchMessageContentFromCacheService {
@@ -31,6 +35,7 @@ export class GmailFetchMessageContentFromCacheService {
     private readonly messageService: MessageService,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   async fetchMessageContentFromCache(
@@ -80,9 +85,34 @@ export class GmailFetchMessageContentFromCacheService {
 
       return;
     }
-    
+
     const gmailMessageChannelId = gmailMessageChannel.id;
 
+    const messageIdsToFetch =
+      (await this.cacheStorage.setPop(
+        `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
+        GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
+      )) ?? [];
+
+    const messageIdsToDelete =
+      (await this.cacheStorage.setPop(
+        `messages-to-delete:${workspaceId}:gmail:${gmailMessageChannelId}`,
+        MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE,
+      )) ?? [];
+
+    if (!messageIdsToFetch?.length && !messageIdsToDelete?.length) {
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncStatus.SUCCEEDED,
+        workspaceId,
+      );
+
+      this.logger.log(
+        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import or delete.`,
+      );
+
+      return;
+    }
 
     await this.messageChannelRepository.updateSyncStatus(
       gmailMessageChannelId,
@@ -90,107 +120,113 @@ export class GmailFetchMessageContentFromCacheService {
       workspaceId,
     );
 
-    const messageIdsToFetch = await this.cacheStorage.setPop(
-      `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
-      GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
-    );
-
-    if (!messageIdsToFetch || !messageIdsToFetch.length) {
-      await this.messageChannelRepository.updateSyncStatus(
-        gmailMessageChannelId,
-        MessageChannelSyncStatus.SUCCEEDED,
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
 
-      this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
-      );
+    await workspaceDataSource
+      ?.transaction(async (transactionManager: EntityManager) => {
+        const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
-      return;
-    }
+        const { messages: messagesToSave, errors } =
+          await this.fetchMessagesByBatchesService.fetchAllMessages(
+            messageQueries,
+            accessToken,
+            'gmail full-sync',
+            workspaceId,
+            connectedAccountId,
+          );
 
-    const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
+        if (!messagesToSave.length) {
+          return;
+        }
 
-    let startTime = Date.now();
+        if (errors.length) {
+          this.logger.error(
+            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync: ${JSON.stringify(
+              errors,
+              null,
+              2,
+            )}`,
+          );
 
-    const { messages: messagesToSave, errors } =
-      await this.fetchMessagesByBatchesService.fetchAllMessages(
-        messageQueries,
-        accessToken,
-        'gmail full-sync',
-        workspaceId,
-        connectedAccountId,
-      );
+          const errorsCanBeIgnored = errors.every(
+            (error) => error.code === 404,
+          );
 
-    let endTime = Date.now();
+          if (!errorsCanBeIgnored) {
+            throw new Error(
+              `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during partial-sync`,
+            );
+          }
+        }
 
-    this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: fetching all messages in ${
-        endTime - startTime
-      }ms.`,
-    );
+        const savedMessagesMap =
+          await this.messageService.saveMessagesFromCache(
+            messagesToSave,
+            connectedAccount,
+            gmailMessageChannelId,
+            workspaceId,
+            transactionManager,
+          );
 
-    if (!messagesToSave.length) {
-      this.logger.log(
-        `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
-      );
+        const savedMessageExternalIds = [...savedMessagesMap.keys()];
 
-      return;
-    }
+        const lastModifiedMessageId = savedMessageExternalIds[0];
 
-    const savedMessagesMap = await this.messageService.saveMessagesFromCache(
-      messagesToSave,
-      connectedAccount,
-      gmailMessageChannelId,
-      workspaceId,
-    );
+        const historyId = messagesToSave.find(
+          (message) => message.externalId === lastModifiedMessageId,
+        )?.historyId;
 
-    if (errors.length) {
-      await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
-        messageIdsToFetch,
-      );
+        if (!historyId) {
+          throw new Error(
+            `No historyId found for message ${lastModifiedMessageId} in workspace ${workspaceId} during full-sync`,
+          );
+        }
 
-      throw new Error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
-      );
-    }
-    const savedMessageExternalIds = [...savedMessagesMap.keys()];
+        await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
+          gmailMessageChannelId,
+          historyId,
+          workspaceId,
+          transactionManager,
+        );
+      })
+      .catch(async (error) => {
+        await this.cacheStorage.setAdd(
+          `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
+          messageIdsToFetch,
+        );
 
-    const lastModifiedMessageId = savedMessageExternalIds[0];
+        await this.cacheStorage.setAdd(
+          `messages-to-delete:${workspaceId}:gmail:${gmailMessageChannelId}`,
+          messageIdsToDelete,
+        );
 
-    const historyId = messagesToSave.find(
-      (message) => message.externalId === lastModifiedMessageId,
-    )?.historyId;
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncStatus.FAILED,
+          workspaceId,
+        );
 
-    if (!historyId) {
-      throw new Error(
-        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
-      );
-    }
-
-    startTime = Date.now();
-
-    await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
-      gmailMessageChannelId,
-      historyId,
-      workspaceId,
-    );
-
-    endTime = Date.now();
-
-    this.logger.log(
-      `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating last sync history id in ${
-        endTime - startTime
-      }ms.`,
-    );
-
-    if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-      await this.messageChannelRepository.updateSyncStatus(
-        gmailMessageChannelId,
-        MessageChannelSyncStatus.SUCCEEDED,
-        workspaceId,
-      );
-    }
+        this.logger.error(
+          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId} during full-sync: ${error.message}`,
+        );
+      })
+      .finally(async () => {
+        if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannelId,
+            MessageChannelSyncStatus.SUCCEEDED,
+            workspaceId,
+          );
+        } else {
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannelId,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
+          );
+        }
+      });
   }
 }

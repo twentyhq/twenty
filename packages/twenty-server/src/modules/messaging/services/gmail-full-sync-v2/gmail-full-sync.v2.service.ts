@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { gmail_v1 } from 'googleapis';
 
 import {
@@ -20,10 +20,6 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-messages-list-max-result.constant';
-import {
-  GmailFetchMessageContentFromCacheJobData,
-  GmailFetchMessageContentFromCacheJob,
-} from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
@@ -33,6 +29,11 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import {
+  GmailFetchMessageContentFromCacheJobData,
+  GmailFetchMessageContentFromCacheJob,
+} from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
 
 @Injectable()
 export class GmailFullSyncV2Service {
@@ -56,6 +57,7 @@ export class GmailFullSyncV2Service {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -76,7 +78,6 @@ export class GmailFullSyncV2Service {
     }
 
     const refreshToken = connectedAccount.refreshToken;
-    const workspaceMemberId = connectedAccount.accountOwnerId;
 
     if (!refreshToken) {
       throw new Error(
@@ -98,43 +99,78 @@ export class GmailFullSyncV2Service {
       return;
     }
 
-    const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
+    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
+      this.logger.log(
+        `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId} is not pending, partial sync will be retried later.`,
+      );
 
-    const isBlocklistEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId,
-        key: FeatureFlagKeys.IsBlocklistEnabled,
-        value: true,
-      });
+      return;
+    }
 
-    const isBlocklistEnabled =
-      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
-
-    const blocklist = isBlocklistEnabled
-      ? await this.blocklistRepository.getByWorkspaceMemberId(
-          workspaceMemberId,
-          workspaceId,
-        )
-      : [];
-
-    const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
-
-    await this.fetchAllMessageIdsFromGmail(
-      gmailClient,
+    await this.messageChannelRepository.updateSyncStatus(
       gmailMessageChannel.id,
-      connectedAccountId,
-      blocklistedEmails,
+      MessageChannelSyncStatus.ONGOING,
       workspaceId,
     );
+
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    await workspaceDataSource
+      ?.transaction(async (transactionManager) => {
+        const gmailClient: gmail_v1.Gmail =
+          await this.gmailClientProvider.getGmailClient(refreshToken);
+
+        const blocklistedEmails = await this.fetchBlocklistEmails(
+          connectedAccount.accountOwnerId,
+          workspaceId,
+        );
+
+        await this.fetchAllMessageIdsFromGmail(
+          gmailClient,
+          gmailMessageChannel.id,
+          blocklistedEmails,
+          workspaceId,
+          transactionManager,
+        );
+      })
+      .catch(async (error) => {
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncStatus.FAILED,
+          workspaceId,
+        );
+
+        this.logger.error(
+          `Error occurred while fetching message ids from Gmail for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+          error,
+        );
+      })
+      .finally(async () => {
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncStatus.SUCCEEDED,
+          workspaceId,
+        );
+
+        await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
+          GmailFetchMessageContentFromCacheJob.name,
+          {
+            workspaceId,
+            connectedAccountId,
+          },
+        );
+      });
   }
 
   public async fetchAllMessageIdsFromGmail(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
-    connectedAccountId: string,
     blocklistedEmails: string[],
     workspaceId: string,
+    transactionManager?: EntityManager,
   ) {
     let pageToken: string | undefined;
     let hasMoreMessages = true;
@@ -144,7 +180,7 @@ export class GmailFullSyncV2Service {
       const response = await gmailClient.users.messages.list({
         userId: 'me',
         maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
-        pageToken: pageToken,
+        pageToken,
         q: gmailSearchFilterExcludeEmails(blocklistedEmails),
       });
 
@@ -158,6 +194,7 @@ export class GmailFullSyncV2Service {
             messageExternalIds,
             messageChannelId,
             workspaceId,
+            transactionManager,
           );
 
         const existingMessageChannelMessageAssociationsExternalIds =
@@ -198,19 +235,29 @@ export class GmailFullSyncV2Service {
     this.logger.log(
       `Fetched all ${messageIdsToFetch} message ids from Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId} and added to cache for import`,
     );
+  }
 
-    await this.messageChannelRepository.updateSyncStatus(
-      messageChannelId,
-      MessageChannelSyncStatus.PENDING,
-      workspaceId,
-    );
-
-    await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
-      GmailFetchMessageContentFromCacheJob.name,
-      {
+  public async fetchBlocklistEmails(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ) {
+    const isBlocklistEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
         workspaceId,
-        connectedAccountId,
-      },
-    );
+        key: FeatureFlagKeys.IsBlocklistEnabled,
+        value: true,
+      });
+
+    const isBlocklistEnabled =
+      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
+
+    const blocklist = isBlocklistEnabled
+      ? await this.blocklistRepository.getByWorkspaceMemberId(
+          workspaceMemberId,
+          workspaceId,
+        )
+      : [];
+
+    return blocklist.map((blocklist) => blocklist.handle);
   }
 }

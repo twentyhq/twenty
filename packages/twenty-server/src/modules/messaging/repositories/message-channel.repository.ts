@@ -67,25 +67,15 @@ export class MessageChannelRepository {
   public async getFirstByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<ObjectRecord<MessageChannelObjectMetadata> | undefined> {
     const messageChannels = await this.getByConnectedAccountId(
       connectedAccountId,
       workspaceId,
+      transactionManager,
     );
 
     return messageChannels[0];
-  }
-
-  public async getIsContactAutoCreationEnabledByConnectedAccountIdOrFail(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<boolean> {
-    const messageChannel = await this.getFirstByConnectedAccountIdOrFail(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    return messageChannel.isContactAutoCreationEnabled;
   }
 
   public async getByIds(
@@ -140,6 +130,23 @@ export class MessageChannelRepository {
       WHERE "id" = $2
       AND ("syncExternalId" < $1 OR "syncExternalId" = '')`,
       [syncExternalId, id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async resetSyncExternalId(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncExternalId" = ''
+      WHERE "id" = $1`,
+      [id],
       workspaceId,
       transactionManager,
     );

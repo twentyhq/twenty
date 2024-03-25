@@ -44,6 +44,7 @@ export class MessageService {
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     gmailMessageChannelId: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<Map<string, string>> {
     const { dataSource: workspaceDataSource, dataSourceMetadata } =
       await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
