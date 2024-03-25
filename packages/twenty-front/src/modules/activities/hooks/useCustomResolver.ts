@@ -42,7 +42,7 @@ export const useCustomResolver = (
   } = useQuery(query, {
     variables: queryVariables,
     onError: (error) => {
-      enqueueSnackBar(error.message || 'Error loading event threads', {
+      enqueueSnackBar(error.message || `Error loading ${objectName}`, {
         variant: 'error',
       });
     },
