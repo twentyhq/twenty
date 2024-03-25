@@ -52,13 +52,13 @@ export const SettingsAccountsEmailsAccountsListCard = () => {
 
   return (
     <SettingsAccountsListCard
-      accountsOrChannels={messageChannelsWithSyncedEmails}
+      items={messageChannelsWithSyncedEmails}
       isLoading={accountsLoading || messageChannelsLoading}
       onRowClick={(messageChannel) =>
         navigate(`/settings/accounts/emails/${messageChannel.id}`)
       }
       RowIcon={IconGmail}
-      RowRightComponent={({ accountOrChannel: messageChannel }) => (
+      RowRightComponent={({ item: messageChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             synced={messageChannel.isSynced}

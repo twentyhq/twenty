@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -44,50 +41,45 @@ const StyledButton = styled.button`
   }
 `;
 
-type SettingsAccountsListCardProps<
-  AccountOrChannel extends Pick<
-    ConnectedAccount | CalendarChannel | MessageChannel,
-    'handle' | 'id'
-  >,
-> = {
-  accountsOrChannels: AccountOrChannel[];
-  hasFooter?: boolean;
-  isLoading?: boolean;
-  onRowClick?: (accountOrChannel: AccountOrChannel) => void;
-  RowIcon?: IconComponent;
-  RowRightComponent: ComponentType<{ accountOrChannel: AccountOrChannel }>;
+type ItemType = {
+  handle: string;
+  id: string;
 };
 
-export const SettingsAccountsListCard = <
-  Account extends Pick<
-    ConnectedAccount | CalendarChannel | MessageChannel,
-    'handle' | 'id'
-  >,
->({
-  accountsOrChannels,
+type SettingsAccountsListCardProps<T extends ItemType> = {
+  items: T[];
+  hasFooter?: boolean;
+  isLoading?: boolean;
+  onRowClick?: (item: T) => void;
+  RowIcon?: IconComponent;
+  RowRightComponent: ComponentType<{ item: T }>;
+};
+
+export const SettingsAccountsListCard = <T extends ItemType>({
+  items,
   hasFooter,
   isLoading,
   onRowClick,
   RowIcon = IconGoogle,
   RowRightComponent,
-}: SettingsAccountsListCardProps<Account>) => {
+}: SettingsAccountsListCardProps<T>) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
   if (isLoading === true) return <SettingsAccountsListSkeletonCard />;
 
-  if (!accountsOrChannels.length) return <SettingsAccountsListEmptyStateCard />;
+  if (!items.length) return <SettingsAccountsListEmptyStateCard />;
 
   return (
     <Card>
-      {accountsOrChannels.map((account, index) => (
+      {items.map((item, index) => (
         <SettingsAccountRow
-          key={account.id}
+          key={item.id}
           LeftIcon={RowIcon}
-          account={account}
-          rightComponent={<RowRightComponent accountOrChannel={account} />}
-          divider={index < accountsOrChannels.length - 1}
-          onClick={() => onRowClick?.(account)}
+          account={item}
+          rightComponent={<RowRightComponent item={item} />}
+          divider={index < items.length - 1}
+          onClick={() => onRowClick?.(item)}
         />
       ))}
       {hasFooter && (
