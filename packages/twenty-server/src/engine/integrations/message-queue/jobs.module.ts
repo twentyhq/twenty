@@ -18,7 +18,7 @@ import { EnvironmentModule } from 'src/engine/integrations/environment/environme
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
-import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
+import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
@@ -44,13 +44,15 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @Module({
   imports: [
     BillingModule,
     DataSourceModule,
-    CreateCompaniesAndContactsModule,
+    AutoCompaniesAndContactsCreationModule,
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
@@ -74,6 +76,7 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
+      EventObjectMetadata,
     ]),
   ],
   providers: [
@@ -130,6 +133,10 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
+    },
+    {
+      provide: CreateCompanyAndContactJob.name,
+      useClass: CreateCompanyAndContactJob,
     },
     {
       provide: SaveEventToDbJob.name,

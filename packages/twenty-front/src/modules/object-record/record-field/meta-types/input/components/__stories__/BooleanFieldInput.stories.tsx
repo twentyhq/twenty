@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import {
@@ -43,7 +44,7 @@ const BooleanFieldInputWithContext = ({
         fieldMetadataId: 'boolean',
         label: 'Boolean',
         iconName: 'Icon123',
-        type: 'BOOLEAN',
+        type: FieldMetadataType.Boolean,
         metadata: {
           fieldName: 'Boolean',
         },

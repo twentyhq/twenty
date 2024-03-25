@@ -69,7 +69,7 @@ const getSchemaComponentsProperties = (
           ),
         };
         break;
-      case FieldMetadataType.JSON:
+      case FieldMetadataType.RAW_JSON:
         type: 'object';
         break;
       default:

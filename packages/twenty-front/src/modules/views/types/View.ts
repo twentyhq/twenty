@@ -1,4 +1,3 @@
-import { Position } from '@/object-metadata/types/Position';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -11,10 +10,11 @@ export type View = {
   type: ViewType;
   key: ViewKey | null;
   objectMetadataId: string;
+  kanbanFieldMetadataId: string;
   isCompact: boolean;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
   viewSorts: ViewSort[];
-  position: Position;
+  position: number;
   icon: string;
 };

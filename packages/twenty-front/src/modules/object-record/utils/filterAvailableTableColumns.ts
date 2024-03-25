@@ -16,12 +16,5 @@ export const filterAvailableTableColumns = (
     return false;
   }
 
-  if (
-    isFieldRelation(columnDefinition) &&
-    columnDefinition.metadata?.fieldName === 'pipelineStep'
-  ) {
-    return false;
-  }
-
   return true;
 };

@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldPhoneValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
@@ -14,7 +15,7 @@ import { isFieldPhone } from '../../types/guards/isFieldPhone';
 export const usePhoneField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('TEXT', isFieldPhone, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Text, isFieldPhone, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

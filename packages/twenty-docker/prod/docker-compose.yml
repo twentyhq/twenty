@@ -1,0 +1,52 @@
+version: '3.8'
+name: twenty
+
+services:
+  server:
+    image: twentycrm/twenty:${TAG}
+    volumes:
+      - server-local-data:/app/.local-storage
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      SERVER_URL: ${SERVER_URL}
+      FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
+
+      ENABLE_DB_MIGRATIONS: true
+
+      SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
+      STORAGE_TYPE: local
+      STORAGE_LOCAL_PATH: .local-storage
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:3000/healthz | jq -e '.status == \"ok\"' > /dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  db:
+    image: twentycrm/twenty-postgres:${TAG}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      #POSTGRES_USER: ${POSTGRES_USER}
+      #POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twenty -d default"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+volumes:
+  db-data:
+  server-local-data:
