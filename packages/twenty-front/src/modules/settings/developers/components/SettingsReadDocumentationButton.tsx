@@ -1,7 +1,7 @@
 import { IconBook2 } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 
-export const ReadDocumentationButton = () => {
+export const SettingsReadDocumentationButton = () => {
   return (
     <Button
       title="Read documentation"
