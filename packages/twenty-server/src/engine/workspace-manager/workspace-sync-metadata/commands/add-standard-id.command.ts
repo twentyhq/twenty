@@ -56,6 +56,8 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_BLOCKLIST_ENABLED: true,
             IS_CALENDAR_ENABLED: true,
             IS_EVENT_OBJECT_ENABLED: true,
+            IS_AIRTABLE_INTEGRATION_ENABLED: true,
+            IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -68,6 +70,8 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_BLOCKLIST_ENABLED: true,
           IS_CALENDAR_ENABLED: true,
           IS_EVENT_OBJECT_ENABLED: true,
+          IS_AIRTABLE_INTEGRATION_ENABLED: true,
+          IS_POSTGRESQL_INTEGRATION_ENABLED: true,
         },
       );
 

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
+import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
-import { SettingsIntegrationComponent } from '~/pages/settings/integrations/SettingsIntegrationComponent';
 import { SettingsIntegrationCategory } from '~/pages/settings/integrations/types/SettingsIntegrationCategory';
 
 interface SettingsIntegrationGroupProps {
