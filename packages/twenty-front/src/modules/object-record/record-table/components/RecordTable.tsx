@@ -106,6 +106,7 @@ const StyledTable = styled.table<{
       position: absolute;
       width: 4px;
       right: -4px;
+      top: 0;
 
       ${({ freezeFirstColumns, theme }) =>
         freezeFirstColumns &&
