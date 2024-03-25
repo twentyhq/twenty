@@ -10,14 +10,14 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { CalendarEventOrTimelineCalendarEvent } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { hasCalendarEventStarted } from '@/activities/calendar/utils/hasCalendarEventStarted';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 type CalendarCurrentEventCursorProps = {
-  calendarEvent: CalendarEventOrTimelineCalendarEvent;
+  calendarEvent: TimelineCalendarEvent;
 };
 
 const StyledCurrentEventCursor = styled(motion.div)`

@@ -1,17 +1,14 @@
 import { createContext } from 'react';
 
-import { CalendarEventOrTimelineCalendarEvent } from '@/activities/calendar/types/CalendarEventOrTimelineCalendarEvent';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 type CalendarContextValue = {
-  calendarEventsByDayTime: Record<
-    number,
-    CalendarEventOrTimelineCalendarEvent[] | undefined
-  >;
-  currentCalendarEvent?: CalendarEventOrTimelineCalendarEvent;
+  calendarEventsByDayTime: Record<number, TimelineCalendarEvent[] | undefined>;
+  currentCalendarEvent?: TimelineCalendarEvent;
   displayCurrentEventCursor?: boolean;
   getNextCalendarEvent: (
-    calendarEvent: CalendarEventOrTimelineCalendarEvent,
-  ) => CalendarEventOrTimelineCalendarEvent | undefined;
+    calendarEvent: TimelineCalendarEvent,
+  ) => TimelineCalendarEvent | undefined;
   updateCurrentCalendarEvent: () => void;
 };
 
