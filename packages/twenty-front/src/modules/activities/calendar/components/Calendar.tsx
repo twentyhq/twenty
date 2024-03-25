@@ -165,7 +165,8 @@ export const Calendar = ({ entity }: { entity: ActivityTargetableObject }) => {
             No Events
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            No events have been scheduled with this record yet.
+            No events have been scheduled with this{' '}
+            {entity.targetObjectNameSingular} yet.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
