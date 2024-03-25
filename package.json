@@ -236,6 +236,7 @@
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.mapvalues": "^4.6.9",
+    "@types/lodash.omit": "^4.5.9",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/luxon": "^3.3.0",
