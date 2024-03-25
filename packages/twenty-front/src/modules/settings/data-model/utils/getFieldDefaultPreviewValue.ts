@@ -3,7 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
-import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
+import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -39,12 +39,16 @@ export const getFieldDefaultPreviewValue = ({
 
     if (!relationLabelIdentifierFieldMetadataItem) return null;
 
+    const { type: relationLabelIdentifierFieldType } =
+      relationLabelIdentifierFieldMetadataItem;
+    const relationFieldTypeConfig = getSettingsFieldTypeConfig(
+      relationLabelIdentifierFieldType,
+    );
+
     const defaultRelationLabelIdentifierFieldValue =
-      relationLabelIdentifierFieldMetadataItem.type === FieldMetadataType.Text
+      relationLabelIdentifierFieldType === FieldMetadataType.Text
         ? relationObjectMetadataItem.labelSingular
-        : SETTINGS_FIELD_METADATA_TYPES[
-            relationLabelIdentifierFieldMetadataItem.type
-          ]?.defaultValue;
+        : relationFieldTypeConfig?.defaultValue;
 
     const defaultRelationRecord = {
       [relationLabelIdentifierFieldMetadataItem.name]:
@@ -54,6 +58,7 @@ export const getFieldDefaultPreviewValue = ({
     return defaultRelationRecord;
   }
 
+  // Other fields
   const isLabelIdentifier =
     !!fieldMetadataItem.id &&
     !!fieldMetadataItem.name &&
@@ -65,8 +70,9 @@ export const getFieldDefaultPreviewValue = ({
       objectMetadataItem,
     });
 
-  // Other fields
+  const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type);
+
   return isLabelIdentifier && fieldMetadataItem.type === FieldMetadataType.Text
     ? objectMetadataItem.labelSingular
-    : SETTINGS_FIELD_METADATA_TYPES[fieldMetadataItem.type]?.defaultValue;
+    : fieldTypeConfig?.defaultValue;
 };

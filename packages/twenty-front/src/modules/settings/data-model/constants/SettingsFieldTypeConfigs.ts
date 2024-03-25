@@ -1,5 +1,6 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import {
   IconCalendarEvent,
   IconCheck,
@@ -20,11 +21,15 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 
-export const SETTINGS_FIELD_METADATA_TYPES: Partial<
-  Record<
-    FieldMetadataType,
-    { label: string; Icon: IconComponent; defaultValue?: unknown }
-  >
+export type SettingsFieldTypeConfig = {
+  label: string;
+  Icon: IconComponent;
+  defaultValue?: unknown;
+};
+
+export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
+  SettingsSupportedFieldType,
+  SettingsFieldTypeConfig
 > = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
