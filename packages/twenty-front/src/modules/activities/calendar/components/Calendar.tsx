@@ -1,21 +1,17 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
-import { useRecoilState } from 'recoil';
 
 import { CalendarEventFetchMoreLoader } from '@/activities/calendar/components/CalendarEventFetchMoreLoader';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { useCalendarEventStates } from '@/activities/calendar/hooks/internal/useCalendarEventStates';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/queries/getTimelineCalendarEventsFromCompanyId';
 import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/queries/getTimelineCalendarEventsFromPersonId';
+import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { H3Title } from '@/ui/display/typography/components/H3Title';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
   AnimatedPlaceholderEmptyContainer,
@@ -24,11 +20,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { Section } from '@/ui/layout/section/components/Section';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import {
-  GetTimelineCalendarEventsFromPersonIdQueryVariables,
-  TimelineCalendarEventsWithTotal,
-} from '~/generated/graphql';
+import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -49,20 +41,6 @@ export const Calendar = ({
 }: {
   activityTargetableObject: ActivityTargetableObject;
 }) => {
-  const { enqueueSnackBar } = useSnackBar();
-
-  const { calendarEventsPageState } = useCalendarEventStates({
-    calendarEventScopeId: getScopeIdFromComponentId(
-      activityTargetableObject.id,
-    ),
-  });
-
-  const [calendarEventsPage, setCalendarEventsPage] = useRecoilState(
-    calendarEventsPageState,
-  );
-
-  const [isFetchingMoreEvents, setIsFetchingMoreEvents] = useState(false);
-
   const [threadQuery, queryName] =
     activityTargetableObject.targetObjectNameSingular ===
     CoreObjectNameSingular.Person
@@ -75,75 +53,13 @@ export const Calendar = ({
           'getTimelineCalendarEventsFromCompanyId',
         ];
 
-  const threadQueryVariables = {
-    ...(activityTargetableObject.targetObjectNameSingular ===
-    CoreObjectNameSingular.Person
-      ? { personId: activityTargetableObject.id }
-      : { companyId: activityTargetableObject.id }),
-    page: 1,
-    pageSize: TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
-  } as GetTimelineCalendarEventsFromPersonIdQueryVariables;
-
-  const {
-    data,
-    loading: firstQueryLoading,
-    fetchMore,
-  } = useQuery(threadQuery, {
-    variables: threadQueryVariables,
-    onError: (error) => {
-      enqueueSnackBar(error.message || 'Error loading event threads', {
-        variant: 'error',
-      });
-    },
-  });
-
-  const fetchMoreRecords = async () => {
-    if (
-      calendarEventsPage.hasNextPage &&
-      !isFetchingMoreEvents &&
-      !firstQueryLoading
-    ) {
-      setIsFetchingMoreEvents(true);
-
-      await fetchMore({
-        variables: {
-          ...threadQueryVariables,
-          page: calendarEventsPage.pageNumber + 1,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.timelineCalendarEvents?.length) {
-            setCalendarEventsPage((calendarEventsPage) => ({
-              ...calendarEventsPage,
-              hasNextPage: false,
-            }));
-            return {
-              [queryName]: {
-                ...prev?.[queryName],
-                timelineCalendarEvents: [
-                  ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
-                ],
-              },
-            };
-          }
-
-          return {
-            [queryName]: {
-              ...prev?.[queryName],
-              timelineCalendarEvents: [
-                ...(prev?.[queryName]?.timelineCalendarEvents ?? []),
-                ...(fetchMoreResult?.[queryName]?.timelineCalendarEvents ?? []),
-              ],
-            },
-          };
-        },
-      });
-      setCalendarEventsPage((calendarEventsPage) => ({
-        ...calendarEventsPage,
-        pageNumber: calendarEventsPage.pageNumber + 1,
-      }));
-      setIsFetchingMoreEvents(false);
-    }
-  };
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+    useCustomResolver(
+      threadQuery,
+      queryName,
+      activityTargetableObject,
+      TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+    );
 
   const { timelineCalendarEvents }: TimelineCalendarEventsWithTotal =
     data?.[queryName] ?? [];
@@ -214,7 +130,7 @@ export const Calendar = ({
           );
         })}
         <CalendarEventFetchMoreLoader
-          loading={isFetchingMoreEvents || firstQueryLoading}
+          loading={isFetchingMore || firstQueryLoading}
           onLastRowVisible={fetchMoreRecords}
         />
       </StyledContainer>
