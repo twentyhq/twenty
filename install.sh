@@ -72,6 +72,29 @@ else
   docker compose up -d
   echo "  🐳 Project started!"
 fi
+
+function ask_open_browser {
+  read -p "🌐 Do you want to open the project in your browser? (Y/n) " answer
+  if [ "$answer" = "n" ]; then
+    echo "✅ Setup completed. Access your project at http://localhost:3000"
+    exit 0
+  fi
+}
+
+# Ask user if he wants to open the project
+# Running on macOS
+if [[ $(uname) == "Darwin" ]]; then
+  ask_open_browser
+
+  open "http://localhost:3000"
+# Assuming Linux
 else
-  echo "👋 Project setup completed. Run 'docker-compose up -d' to start."
+  # xdg-open is not installed, we could be running in a non gui environment
+  if command -v xdg-open >/dev/null 2>&1; then
+    ask_open_browser
+
+    xdg-open "http://localhost:3000"
+  else
+    echo "✅ Setup completed. Your project is available at http://localhost:3000"
+  fi
 fi
