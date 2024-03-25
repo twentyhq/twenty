@@ -31,5 +31,11 @@ jobs:
         run: yarn nx lint twenty-server
       - name: Server / Run jest tests
         run: yarn nx test twenty-server
-      # - name: Server / Run e2e tests
-      #   run: yarn nx test:e2e twenty-server
+      - name: Server / Build
+        run: yarn nx build twenty-server
+      - name: Server / Write .env
+        run: |
+          cd packages/twenty-server
+          cp .env.example .env
+      - name: Worker / Run
+        run: MESSAGE_QUEUE_TYPE=sync yarn nx queue:work twenty-server
