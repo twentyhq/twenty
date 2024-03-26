@@ -12,6 +12,7 @@ import { CommandType } from '@/command-menu/types/Command';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
+import { CustomPath } from '@/types/CustomPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconCheckbox } from '@/ui/display/icon';
@@ -72,8 +73,10 @@ export const PageChangeEffect = () => {
       });
       navigate(AppPath.SignUp);
     };
-
-    if (
+    if (isMatchingLocation(CustomPath.CampaignForm)) {
+      navigate(CustomPath.CampaignForm);
+      return;
+    } else if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
       !isMatchingOngoingUserCreationRoute &&
       !isMatchingLocation(AppPath.ResetPassword)
@@ -145,6 +148,13 @@ export const PageChangeEffect = () => {
       }
       case isMatchingLocation(AppPath.RecordShowPage): {
         setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
+      case isMatchingLocation(CustomPath.CampaignForm): {
+        setHotkeyScope(PageHotkeyScope.CampaignForm, {
           goto: true,
           keyboardShortcutMenu: true,
         });

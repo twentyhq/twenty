@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
@@ -9,8 +9,8 @@ import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
-import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
+import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
@@ -18,7 +18,9 @@ import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
+import { CampaignForm } from '~/pages/campaigns/CampaignForm';
 import { Campaigns } from '~/pages/campaigns/Campaigns';
+import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -51,8 +53,6 @@ import { TemplatesList } from '~/pages/Templates/TemplatesList';
 import { TextTemplate } from '~/pages/Templates/TextTemplate';
 import { VideoTemplate } from '~/pages/Templates/VideoTemplate';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { DefaultHomePage } from '~/pages/DefaultHomePage';
-import { Scrollbar } from '~/pages/campaigns/scrollbar';
 
 export const App = () => {
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
@@ -209,6 +209,8 @@ export const App = () => {
             element={<TextTemplate />}
           />
           <Route path={CustomPath.CampaignsPage} element={<Campaigns />} />
+          <Route path={CustomPath.CampaignForm} element={<CampaignForm />} />
+
           <Route
             path={CustomPath.AudioTemplatePage}
             element={<AudioTemplate targetableObject={targetableObject} />}
@@ -222,7 +224,6 @@ export const App = () => {
             element={<DocumentTemplate targetableObject={targetableObject} />}
           />
           <Route path={CustomPath.TemplatesPage} element={<TemplatesList />} />
-
         </Routes>
       </DefaultLayout>
     </>

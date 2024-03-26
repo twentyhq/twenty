@@ -1,10 +1,12 @@
+import { AppBasePath } from '@/types/AppBasePath';
+
 export enum AppPath {
   // Not logged-in
-  Verify = '/verify',
-  SignIn = '/sign-in',
-  SignUp = '/sign-up',
-  Invite = '/invite/:workspaceInviteHash',
-  ResetPassword = '/reset-password/:passwordResetToken',
+  Verify = `${AppBasePath.Auth}/verify`,
+  SignIn = `${AppBasePath.Auth}/sign-in`,
+  SignUp = `${AppBasePath.Auth}/sign-up`,
+  Invite = `${AppBasePath.Auth}/invite/:workspaceInviteHash`,
+  ResetPassword = `${AppBasePath.Auth}/reset-password/:passwordResetToken`,
 
   // Onboarding
   CreateWorkspace = '/create/workspace',

@@ -13,4 +13,5 @@ export enum PageHotkeyScope {
   ProfilePage = 'profile-page',
   WorkspaceMemberPage = 'workspace-member-page',
   TaskPage = 'task-page',
+  CampaignForm = 'campaignform',
 }

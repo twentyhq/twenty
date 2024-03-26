@@ -22,7 +22,7 @@ const StyledModalDiv = styled(motion.div)<{
   color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   overflow: hidden;
-  max-height: 90vh;
+  height: 100vh;
   z-index: 10000; // should be higher than Backdrop's z-index
 
   width: ${({ size, theme }) => {
@@ -33,6 +33,8 @@ const StyledModalDiv = styled(motion.div)<{
         return theme.modal.size.md;
       case 'large':
         return theme.modal.size.lg;
+      case 'extralarge':
+        return theme.modal.size.xl;
       default:
         return 'auto';
     }
@@ -120,11 +122,10 @@ type ModalFooterProps = React.PropsWithChildren & {
 const ModalFooter = ({ children, className }: ModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
-
 /**
  * Modal
  */
-export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalSize = 'small' | 'medium' | 'large' | 'extralarge';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 
 type ModalProps = React.PropsWithChildren & {

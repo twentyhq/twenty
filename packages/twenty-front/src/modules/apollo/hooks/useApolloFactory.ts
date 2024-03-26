@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
+import { CustomPath } from '@/types/CustomPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
@@ -37,8 +38,10 @@ export const useApolloFactory = () => {
         setTokenPair(tokenPair);
       },
       onUnauthenticatedError: () => {
-        setTokenPair(null);
-        if (
+        // setTokenPair(null);
+        if (isMatchingLocation(CustomPath.CampaignForm)) {
+          navigate(CustomPath.CampaignForm);
+        } else if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignIn) &&
           !isMatchingLocation(AppPath.SignUp) &&
