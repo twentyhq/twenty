@@ -74,6 +74,7 @@ export const currencyObjectDefinition = {
   isActive: true,
   isSystem: true,
   isCustom: false,
+  isRemote: false,
 } satisfies ObjectMetadataInterface;
 
 export type CurrencyMetadata = {

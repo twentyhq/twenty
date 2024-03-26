@@ -74,6 +74,7 @@ export const fullNameObjectDefinition = {
   isActive: true,
   isSystem: true,
   isCustom: false,
+  isRemote: false,
 } satisfies ObjectMetadataInterface;
 
 export type FullNameMetadata = {
