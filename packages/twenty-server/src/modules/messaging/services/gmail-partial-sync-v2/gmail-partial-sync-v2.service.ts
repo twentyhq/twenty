@@ -109,6 +109,13 @@ export class GmailPartialSyncV2Service {
             `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
+            transactionManager,
+          );
+
           await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
           return;
@@ -124,11 +131,18 @@ export class GmailPartialSyncV2Service {
 
         if (error?.code === 404) {
           this.logger.log(
-            `404: Invalid lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
+            `404: Invalid lastSyncHistoryId: ${lastSyncHistoryId} for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
           await this.messageChannelRepository.resetSyncExternalId(
             gmailMessageChannel.id,
+            workspaceId,
+            transactionManager,
+          );
+
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.PENDING,
             workspaceId,
             transactionManager,
           );
@@ -141,6 +155,13 @@ export class GmailPartialSyncV2Service {
         if (error?.code === 429) {
           this.logger.log(
             `429: rate limit reached for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}, import will be retried later.`,
+          );
+
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
+            transactionManager,
           );
 
           return;
@@ -161,6 +182,12 @@ export class GmailPartialSyncV2Service {
         if (historyId === lastSyncHistoryId || !history?.length) {
           this.logger.log(
             `Messaging import done with nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
+
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
           );
 
           return;

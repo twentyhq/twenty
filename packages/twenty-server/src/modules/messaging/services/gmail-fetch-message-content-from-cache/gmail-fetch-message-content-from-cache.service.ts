@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
+import { gmail_v1 } from 'googleapis';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -19,6 +20,7 @@ import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/const
 import { MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE } from 'src/modules/messaging/constants/messages-to-delete-from-cache-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
+import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
 
 @Injectable()
 export class GmailFetchMessageContentFromCacheService {
@@ -36,6 +38,7 @@ export class GmailFetchMessageContentFromCacheService {
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly gmailClientProvider: GmailClientProvider,
   ) {}
 
   async fetchMessageContentFromCache(
@@ -142,6 +145,12 @@ export class GmailFetchMessageContentFromCacheService {
           );
 
         if (!messagesToSave.length) {
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannelId,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
+          );
+
           return;
         }
 
@@ -169,26 +178,14 @@ export class GmailFetchMessageContentFromCacheService {
           transactionManager,
         );
 
-        const lastModifiedMessageId = messageIdsToFetch[0];
-
-        const historyId = messagesToSave.find(
-          (message) => message.externalId === lastModifiedMessageId,
-        )?.historyId;
-
-        if (!historyId) {
-          throw new Error(
-            `No historyId found for message ${lastModifiedMessageId} in workspace ${workspaceId}`,
-          );
-        }
-
-        await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
-          gmailMessageChannelId,
-          historyId,
-          workspaceId,
-          transactionManager,
-        );
-
         if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
+          await this.updateLastSyncExternalId(
+            gmailMessageChannelId,
+            refreshToken,
+            workspaceId,
+            transactionManager,
+          );
+
           await this.messageChannelRepository.updateSyncStatus(
             gmailMessageChannelId,
             MessageChannelSyncStatus.SUCCEEDED,
@@ -233,5 +230,60 @@ export class GmailFetchMessageContentFromCacheService {
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       });
+  }
+
+  private async updateLastSyncExternalId(
+    messageChannelId: string,
+    refreshToken: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const gmailClient: gmail_v1.Gmail =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
+
+    const response = await gmailClient.users.messages.list({
+      userId: 'me',
+      maxResults: 1,
+    });
+
+    if (response.data?.messages) {
+      const lastMessage = response.data.messages[0];
+
+      if (!lastMessage || !lastMessage.id) {
+        throw new Error(
+          `No last message found for workspace ${workspaceId} and account ${messageChannelId}`,
+        );
+      }
+
+      const lastMessageContent = await gmailClient.users.messages.get({
+        userId: 'me',
+        id: lastMessage.id,
+      });
+
+      if (!lastMessageContent?.data) {
+        throw new Error(
+          `No last message content found for message ${lastMessage.id} in workspace ${workspaceId}`,
+        );
+      }
+
+      const historyId = lastMessageContent?.data?.historyId;
+
+      if (!historyId) {
+        throw new Error(
+          `No historyId found for message ${lastMessage.id} in workspace ${workspaceId}`,
+        );
+      }
+
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and account ${messageChannelId} succeeded, updating last external id: ${historyId}.`,
+      );
+
+      await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
+        messageChannelId,
+        historyId,
+        workspaceId,
+        transactionManager,
+      );
+    }
   }
 }
