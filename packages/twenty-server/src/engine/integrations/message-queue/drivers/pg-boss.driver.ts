@@ -11,6 +11,8 @@ import { MessageQueueDriver } from './interfaces/message-queue-driver.interface'
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
+const DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED = '*/10 * * * *';
+
 export class PgBossDriver implements MessageQueueDriver {
   private pgBoss: PgBoss;
 
@@ -41,7 +43,8 @@ export class PgBossDriver implements MessageQueueDriver {
   ): Promise<void> {
     await this.pgBoss.schedule(
       `${queueName}.${jobName}`,
-      options?.repeat?.pattern ?? '*/10 * * * *',
+      options?.repeat?.pattern ??
+        DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED,
       data as object,
       options
         ? {

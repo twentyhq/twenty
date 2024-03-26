@@ -30,10 +30,6 @@ import {
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmail-search-filter.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  GmailFetchMessageContentFromCacheJobData,
-  GmailFetchMessageContentFromCacheJob,
-} from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
 
 @Injectable()
 export class GmailFullSyncV2Service {
@@ -144,14 +140,6 @@ export class GmailFullSyncV2Service {
           MessageChannelSyncStatus.PENDING,
           workspaceId,
           transactionManager,
-        );
-
-        await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
-          GmailFetchMessageContentFromCacheJob.name,
-          {
-            workspaceId,
-            connectedAccountId,
-          },
         );
       })
       .catch(async (error) => {

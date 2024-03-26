@@ -6,7 +6,6 @@ import { GmailFullSyncCommand } from 'src/modules/messaging/commands/gmail-full-
 import { GmailPartialSyncCommand } from 'src/modules/messaging/commands/gmail-partial-sync.command';
 import { StartFetchAllWorkspacesMessagesFromCacheCronCommand } from 'src/modules/messaging/commands/start-fetch-all-workspaces-messages-from-cache.cron.command';
 import { StartFetchAllWorkspacesMessagesCronCommand } from 'src/modules/messaging/commands/start-fetch-all-workspaces-messages.cron.command';
-import { StopFetchAllWorkspacesMessagesFromCacheCronCommand } from 'src/modules/messaging/commands/stop-fetch-all-workspaces-messages-from-cache.cron.command';
 import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/modules/messaging/commands/stop-fetch-all-workspaces-messages.cron.command';
 
 @Module({
@@ -19,7 +18,6 @@ import { StopFetchAllWorkspacesMessagesCronCommand } from 'src/modules/messaging
     StartFetchAllWorkspacesMessagesCronCommand,
     StopFetchAllWorkspacesMessagesCronCommand,
     StartFetchAllWorkspacesMessagesFromCacheCronCommand,
-    StopFetchAllWorkspacesMessagesFromCacheCronCommand,
   ],
 })
 export class FetchWorkspaceMessagesCommandsModule {}
