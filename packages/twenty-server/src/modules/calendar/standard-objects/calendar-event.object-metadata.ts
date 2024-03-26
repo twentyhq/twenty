@@ -59,8 +59,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.startsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Start DateTime',
-    description: 'Start DateTime',
+    label: 'Start Date',
+    description: 'Start Date',
     icon: 'IconCalendarClock',
   })
   @IsNullable()
@@ -69,8 +69,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.endsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'End DateTime',
-    description: 'End DateTime',
+    label: 'End Date',
+    description: 'End Date',
     icon: 'IconCalendarClock',
   })
   @IsNullable()
@@ -135,10 +135,11 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.conferenceUri,
     type: FieldMetadataType.TEXT,
-    label: 'Conference URI',
-    description: 'Conference URI',
+    label: 'Meet Link',
+    description: 'Meet Link',
     icon: 'IconLink',
   })
+  @IsNullable()
   conferenceUri: string;
 
   @FieldMetadata({
