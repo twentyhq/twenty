@@ -53,7 +53,7 @@ export const EmailThreads = ({
       : [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId'];
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
-    useCustomResolver(
+    useCustomResolver<TimelineThreadsWithTotal>(
       query,
       queryName,
       'timelineThreads',
@@ -61,8 +61,7 @@ export const EmailThreads = ({
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 
-  const { totalNumberOfThreads, timelineThreads }: TimelineThreadsWithTotal =
-    data?.[queryName] ?? [];
+  const { totalNumberOfThreads, timelineThreads } = data?.[queryName] ?? {};
 
   if (firstQueryLoading) {
     return <EmailLoader />;

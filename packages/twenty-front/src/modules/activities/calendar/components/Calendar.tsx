@@ -53,7 +53,7 @@ export const Calendar = ({
         ];
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
-    useCustomResolver(
+    useCustomResolver<TimelineCalendarEventsWithTotal>(
       query,
       queryName,
       'timelineCalendarEvents',
@@ -61,8 +61,7 @@ export const Calendar = ({
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
-  const { timelineCalendarEvents }: TimelineCalendarEventsWithTotal =
-    data?.[queryName] ?? [];
+  const { timelineCalendarEvents } = data?.[queryName] ?? {};
 
   const {
     calendarEventsByDayTime,

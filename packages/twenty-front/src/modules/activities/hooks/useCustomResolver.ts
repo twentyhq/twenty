@@ -1,18 +1,37 @@
 import { useState } from 'react';
-import { useQuery } from '@apollo/client';
+import {
+  DocumentNode,
+  OperationVariables,
+  TypedDocumentNode,
+  useQuery,
+} from '@apollo/client';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-export const useCustomResolver = (
-  query: any,
+type CustomResolverQueryResult<
+  T extends {
+    [key: string]: any;
+  },
+> = {
+  [queryName: string]: T;
+};
+
+export const useCustomResolver = <
+  T extends {
+    [key: string]: any;
+  },
+>(
+  query:
+    | DocumentNode
+    | TypedDocumentNode<CustomResolverQueryResult<T>, OperationVariables>,
   queryName: string,
   objectName: string,
   activityTargetableObject: ActivityTargetableObject,
   pageSize: number,
 ): {
-  data: any;
+  data: CustomResolverQueryResult<T> | undefined;
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
   fetchMoreRecords: () => Promise<void>;
@@ -39,7 +58,7 @@ export const useCustomResolver = (
     data,
     loading: firstQueryLoading,
     fetchMore,
-  } = useQuery(query, {
+  } = useQuery<CustomResolverQueryResult<T>>(query, {
     variables: queryVariables,
     onError: (error) => {
       enqueueSnackBar(error.message || `Error loading ${objectName}`, {
