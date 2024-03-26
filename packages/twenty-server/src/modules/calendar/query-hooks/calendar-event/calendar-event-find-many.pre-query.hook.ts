@@ -1,27 +1,16 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
-import { groupBy } from 'lodash';
-
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
-import {
-  CalendarChannelObjectMetadata,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
+import { CanAccessCalendarEventProvider } from 'src/modules/calendar/query-hooks/calendar-event/providers/can-access-calendar-event.provider';
 
 @Injectable()
 export class CalendarEventFindManyPreQueryHook
@@ -32,12 +21,7 @@ export class CalendarEventFindManyPreQueryHook
       CalendarChannelEventAssociationObjectMetadata,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
-    private readonly calendarChannelRepository: CalendarChannelRepository,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
-    private readonly workspaceMemberService: WorkspaceMemberRepository,
+    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventProvider,
   ) {}
 
   async execute(
@@ -59,58 +43,10 @@ export class CalendarEventFindManyPreQueryHook
       throw new NotFoundException();
     }
 
-    await this.canAccessCalendarEvent(
+    await this.canAccessCalendarEventProvider.canAccessCalendarEvent(
       userId,
       workspaceId,
       calendarChannelCalendarEventAssociations,
     );
-  }
-
-  private async canAccessCalendarEvent(
-    userId: string,
-    workspaceId: string,
-    calendarChannelCalendarEventAssociations: any[],
-  ) {
-    const calendarChannels = await this.calendarChannelRepository.getByIds(
-      calendarChannelCalendarEventAssociations.map(
-        (association) => association.calendarChannelId,
-      ),
-      workspaceId,
-    );
-
-    const calendarChannelsGroupByVisibility = groupBy(
-      calendarChannels,
-      (channel) => channel.visibility,
-    );
-
-    if (
-      calendarChannelsGroupByVisibility[
-        CalendarChannelVisibility.SHARE_EVERYTHING
-      ]
-    ) {
-      return;
-    }
-
-    const currentWorkspaceMember =
-      await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
-
-    const calendarChannelsConnectedAccounts =
-      await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel) => channel.connectedAccountId),
-        workspaceId,
-      );
-
-    const calendarChannelsWorkspaceMemberIds =
-      calendarChannelsConnectedAccounts.map(
-        (connectedAccount) => connectedAccount.accountOwnerId,
-      );
-
-    if (
-      calendarChannelsWorkspaceMemberIds.includes(currentWorkspaceMember.id)
-    ) {
-      return;
-    }
-
-    throw new ForbiddenException();
   }
 }
