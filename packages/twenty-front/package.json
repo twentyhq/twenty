@@ -6,14 +6,11 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
     "start:prod": "NODE_ENV=production vite --host",
-    "tsc:ci": "tsc",
-    "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
     "tsup": "tsup",
     "storybook:build": "storybook build",
     "storybook:modules:build": "STORYBOOK_SCOPE=modules yarn storybook:build",
     "storybook:pages:build": "STORYBOOK_SCOPE=pages yarn storybook:build",
-    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs yarn storybook:build",
-    "chromatic:ci": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes"
+    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs yarn storybook:build"
   },
   "engines": {
     "node": "^18.17.1",
