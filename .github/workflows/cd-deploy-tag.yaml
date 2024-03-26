@@ -1,4 +1,4 @@
-name: CD deploy main
+name: CD deploy tag
 on:
   push:
     tags:
