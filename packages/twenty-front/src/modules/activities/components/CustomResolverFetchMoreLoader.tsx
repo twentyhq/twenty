@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
-type EmailThreadFetchMoreLoaderProps = {
+type FetchMoreLoaderProps = {
   loading: boolean;
   onLastRowVisible: (...args: any[]) => any;
 };
@@ -18,10 +18,10 @@ const StyledText = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const EmailThreadFetchMoreLoader = ({
+export const FetchMoreLoader = ({
   loading,
   onLastRowVisible,
-}: EmailThreadFetchMoreLoaderProps) => {
+}: FetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
   });
