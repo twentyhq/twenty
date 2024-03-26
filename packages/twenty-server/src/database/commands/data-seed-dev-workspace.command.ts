@@ -4,8 +4,8 @@ import { DataSource, EntityManager } from 'typeorm';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunity';
-import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
+import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
+import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -14,15 +14,15 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
-  SeedAppleWorkspaceId,
-  SeedTwentyWorkspaceId,
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_TWENTY_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connectedAccount';
-import { seedMessage } from 'src/database/typeorm-seeds/workspace/message';
-import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/messageChannel';
-import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/messageChannelMessageAssociation';
-import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/messageParticipant';
-import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/messageThread';
+import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
+import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
+import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
+import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
+import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
+import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 
 // TODO: implement dry-run
@@ -32,7 +32,7 @@ import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-p
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceIds = [SeedAppleWorkspaceId, SeedTwentyWorkspaceId];
+  workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
 
   constructor(
     private readonly environmentService: EnvironmentService,
@@ -123,6 +123,28 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               dataSourceMetadata.schema,
               workspaceId,
             );
+
+            if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+              await seedMessageThread(entityManager, dataSourceMetadata.schema);
+              await seedConnectedAccount(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedMessage(entityManager, dataSourceMetadata.schema);
+              await seedMessageChannel(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedMessageChannelMessageAssociation(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedMessageParticipant(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+            }
+
             await viewPrefillData(
               entityManager,
               dataSourceMetadata.schema,
@@ -135,29 +157,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       }
 
       try {
-        if (workspaceId === SeedAppleWorkspaceId) {
-          await seedMessageThread(
-            workspaceDataSource,
-            dataSourceMetadata.schema,
-          );
-          await seedConnectedAccount(
-            workspaceDataSource,
-            dataSourceMetadata.schema,
-          );
-          await seedMessage(workspaceDataSource, dataSourceMetadata.schema);
-          await seedMessageChannel(
-            workspaceDataSource,
-            dataSourceMetadata.schema,
-          );
-          await seedMessageChannelMessageAssociation(
-            workspaceDataSource,
-            dataSourceMetadata.schema,
-          );
-          await seedMessageParticipant(
-            workspaceDataSource,
-            dataSourceMetadata.schema,
-          );
-        }
       } catch (error) {
         console.error(error);
       }
