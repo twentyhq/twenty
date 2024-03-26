@@ -43,17 +43,11 @@ export class FileUploadService {
     ext: string;
     mimeType: string | undefined;
   }): Buffer | Uint8Array | string {
-    const fileString = file.toString();
-
-    if (
-      fileString.includes('svg') &&
-      ext === 'svg' &&
-      mimeType === 'image/svg+xml'
-    ) {
+    if (ext === 'svg' || mimeType === 'image/svg+xml') {
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
 
-      return purify.sanitize(fileString);
+      return purify.sanitize(file.toString());
     }
 
     return file;
