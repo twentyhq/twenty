@@ -13,6 +13,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   maxWidth?: number;
   className?: string;
+  variant?: EntityChipVariant;
 };
 
 export const RecordChip = ({
@@ -20,6 +21,7 @@ export const RecordChip = ({
   record,
   maxWidth,
   className,
+  variant = EntityChipVariant.Transparent,
 }: RecordChipProps) => {
   const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
@@ -40,7 +42,7 @@ export const RecordChip = ({
       linkToEntity={objectRecordIdentifier.linkToShowPage}
       maxWidth={maxWidth}
       className={className}
-      variant={EntityChipVariant.Transparent}
+      variant={variant}
     />
   );
 };
