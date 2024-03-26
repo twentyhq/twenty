@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
-    "start": "npx vite --host",
-    "start:clean": "yarn start --force",
+    "start:prod": "NODE_ENV=production vite --host",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 yarn build",
     "tsc:ci": "yarn tsc --project tsconfig.json",
     "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
