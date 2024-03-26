@@ -215,6 +215,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         await workspaceQueryRunner.release();
       }
 
+      await queryRunner.commitTransaction();
+
       return createdFieldMetadata;
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -339,6 +341,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           updatedFieldMetadata.workspaceId,
         );
       }
+
+      await queryRunner.commitTransaction();
 
       return updatedFieldMetadata;
     } catch (error) {
