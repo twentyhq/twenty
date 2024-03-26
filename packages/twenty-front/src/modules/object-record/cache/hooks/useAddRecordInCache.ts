@@ -30,7 +30,7 @@ export const useAddRecordInCache = ({
             objectMetadataItems,
             objectMetadataItem,
             eagerLoadedRelations,
-            onlyIdTypename: true,
+            onlyIdTypenameOnRelations: true,
           })}
         `;
 
