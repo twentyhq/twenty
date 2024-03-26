@@ -1,10 +1,10 @@
-name: CD deploy main
+name: CD deploy tag
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 jobs:
-  deploy-main:
+  deploy-tag:
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch
@@ -12,5 +12,5 @@ jobs:
         with:
           token: ${{ secrets.TWENTY_INFRA_TOKEN }}
           repository: twentyhq/twenty-infra
-          event-type: auto-deploy-main
+          event-type: auto-deploy-tag
           client-payload: '{"github": ${{ toJson(github) }}}' # Passes the entire github context to the downstream workflow
