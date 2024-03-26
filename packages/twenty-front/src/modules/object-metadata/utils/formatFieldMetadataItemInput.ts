@@ -44,7 +44,7 @@ export const formatFieldMetadataItemInput = (
 
   return {
     defaultValue: defaultOption
-      ? getOptionValueFromLabel(defaultOption.label)
+      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
       : undefined,
     description: input.description?.trim() ?? null,
     icon: input.icon,
