@@ -14,11 +14,11 @@ import { isDefined } from '~/utils/isDefined';
 export const useActivityTargetObjectRecords = ({
   activity,
 }: {
-  activity: Activity | null | undefined;
+  activity: Activity;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const activityTargets = activity?.activityTargets ?? [];
+  const activityTargets = activity.activityTargets ?? [];
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItemOnly({

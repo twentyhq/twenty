@@ -142,6 +142,15 @@ export const useCreateActivityInCache = () => {
           activityTargetsToInject: createdActivityTargetsInCache,
         });
 
+        attachRelationInBothDirections({
+          sourceRecord: createdActivityInCache,
+          fieldNameOnSourceRecord: 'activityTargets',
+          sourceObjectNameSingular: CoreObjectNameSingular.Activity,
+          fieldNameOnTargetRecord: 'activity',
+          targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
+          targetRecords: createdActivityTargetsInCache,
+        });
+
         // TODO: should refactor when refactoring make activity connection utils
         set(recordStoreFamilyState(activityId), {
           ...createdActivityInCache,
@@ -165,6 +174,7 @@ export const useCreateActivityInCache = () => {
       mapRecordRelationRecordsToRelationConnection,
       client,
       modifyActivityFromCache,
+      attachRelationInBothDirections,
     ],
   );
 
