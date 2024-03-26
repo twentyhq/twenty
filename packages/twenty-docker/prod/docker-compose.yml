@@ -22,6 +22,7 @@ services:
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
     depends_on:
       db:
         condition: service_healthy
