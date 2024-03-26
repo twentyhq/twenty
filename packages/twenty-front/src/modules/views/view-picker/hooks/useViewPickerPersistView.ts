@@ -35,6 +35,7 @@ export const useViewPickerPersistView = () => {
         );
         const id = v4();
         set(viewPickerIsPersistingState, true);
+        closeAndResetViewPicker();
         await createView({
           id,
           name,
@@ -42,7 +43,6 @@ export const useViewPickerPersistView = () => {
           type,
           kanbanFieldMetadataId,
         });
-        closeAndResetViewPicker();
         selectView(id);
       },
     [
@@ -61,6 +61,7 @@ export const useViewPickerPersistView = () => {
     ({ set, snapshot }) =>
       async () => {
         set(viewPickerIsPersistingState, true);
+        closeAndResetViewPicker();
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
           viewPickerReferenceViewIdState,
@@ -72,7 +73,6 @@ export const useViewPickerPersistView = () => {
           )[0].id,
         );
         await removeView(viewPickerReferenceViewId);
-        closeAndResetViewPicker();
       },
     [
       closeAndResetViewPicker,
@@ -88,6 +88,7 @@ export const useViewPickerPersistView = () => {
     ({ set, snapshot }) =>
       async () => {
         set(viewPickerIsPersistingState, true);
+        closeAndResetViewPicker();
 
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
@@ -108,7 +109,6 @@ export const useViewPickerPersistView = () => {
           icon: viewPickerSelectedIcon,
         });
         selectView(viewPickerReferenceViewId);
-        closeAndResetViewPicker();
       },
     [
       viewPickerIsPersistingState,

@@ -102,11 +102,20 @@ export const ViewPickerCreateOrEditContent = () => {
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
+  const handleClose = async () => {
+    if (viewPickerMode === 'create') {
+      await handleCreate();
+    } else {
+      await handleUpdate();
+    }
+    setViewPickerMode('list');
+  };
+
   return (
     <>
       <DropdownMenuHeader
         StartIcon={viewPickerMode === 'create' ? IconX : IconChevronLeft}
-        onClick={() => setViewPickerMode('list')}
+        onClick={handleClose}
       >
         {viewPickerMode === 'create' ? 'Create view' : 'Edit view'}
       </DropdownMenuHeader>
