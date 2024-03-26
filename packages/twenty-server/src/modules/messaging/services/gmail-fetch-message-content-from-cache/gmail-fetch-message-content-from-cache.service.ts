@@ -17,7 +17,6 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
-import { MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE } from 'src/modules/messaging/constants/messages-to-delete-from-cache-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
@@ -97,13 +96,7 @@ export class GmailFetchMessageContentFromCacheService {
         GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
       )) ?? [];
 
-    const messageIdsToDelete =
-      (await this.cacheStorage.setPop(
-        `messages-to-delete:${workspaceId}:gmail:${gmailMessageChannelId}`,
-        MESSAGES_TO_DELETE_FROM_CACHE_BATCH_SIZE,
-      )) ?? [];
-
-    if (!messageIdsToFetch?.length && !messageIdsToDelete?.length) {
+    if (!messageIdsToFetch?.length) {
       await this.messageChannelRepository.updateSyncStatus(
         gmailMessageChannelId,
         MessageChannelSyncStatus.SUCCEEDED,
@@ -213,11 +206,6 @@ export class GmailFetchMessageContentFromCacheService {
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
           messageIdsToFetch,
-        );
-
-        await this.cacheStorage.setAdd(
-          `messages-to-delete:${workspaceId}:gmail:${gmailMessageChannelId}`,
-          messageIdsToDelete,
         );
 
         await this.messageChannelRepository.updateSyncStatus(
