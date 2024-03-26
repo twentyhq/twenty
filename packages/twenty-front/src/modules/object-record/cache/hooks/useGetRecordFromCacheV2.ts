@@ -9,7 +9,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useGetRecordFromCache = ({
+export const useGetRecordFromCacheV2 = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;

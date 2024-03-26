@@ -31,6 +31,7 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
       queryVariables: PREFETCH_CONFIG[prefetchKey].variables,
       depth: PREFETCH_CONFIG[prefetchKey].depth,
       objectRecordsToOverwrite: records,
+      objectRecordSampleForFindManyQueryGeneration: records[0],
     });
     setPrefetchDataIsLoadedLoaded(true);
   };

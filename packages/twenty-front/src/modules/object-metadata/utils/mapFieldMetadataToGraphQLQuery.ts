@@ -2,7 +2,6 @@ import { isUndefined } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
@@ -13,7 +12,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   field,
   relationFieldDepth = 0,
   relationFieldEagerLoad,
-  objectRecord,
+  queryFields,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   field: Pick<
@@ -22,7 +21,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   >;
   relationFieldDepth?: number;
   relationFieldEagerLoad?: Record<string, any>;
-  objectRecord?: ObjectRecord;
+  queryFields?: Record<string, any>;
 }): any => {
   const fieldType = field.type;
 
@@ -58,15 +57,13 @@ export const mapFieldMetadataToGraphQLQuery = ({
       return '';
     }
 
-    const relationObjectRecord = objectRecord?.[field.name];
-
     return `${field.name}
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
   eagerLoadedRelations: relationFieldEagerLoad,
   depth: relationFieldDepth - 1,
-  objectRecord: relationObjectRecord,
+  queryFields,
 })}`;
   } else if (
     fieldType === 'RELATION' &&
@@ -83,8 +80,6 @@ ${mapObjectMetadataToGraphQLQuery({
       return '';
     }
 
-    const relationObjectRecord = objectRecord?.[field.name];
-
     return `${field.name}
 {
   edges {
@@ -93,7 +88,7 @@ ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItem: relationMetadataItem,
       eagerLoadedRelations: relationFieldEagerLoad,
       depth: relationFieldDepth - 1,
-      objectRecord: relationObjectRecord,
+      queryFields,
     })}
   }
 }`;

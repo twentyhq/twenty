@@ -8,7 +8,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCacheV2 } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCacheV2';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -22,7 +22,7 @@ export const useInjectIntoActivitiesQueries = () => {
 
   const {
     upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
+  } = useUpsertFindManyRecordsQueryInCacheV2({
     objectMetadataItem: objectMetadataItemActivity,
   });
 
@@ -59,6 +59,16 @@ export const useInjectIntoActivitiesQueries = () => {
     injectOnlyInIdFilter?: boolean;
   }) => {
     const hasActivityTargets = isNonEmptyArray(targetableObjects);
+
+    console.log({
+      hasActivityTargets,
+      activityToInject,
+      activityTargetsToInject,
+      targetableObjects,
+      activitiesFilters,
+      activitiesOrderByVariables,
+      injectOnlyInIdFilter,
+    });
 
     if (hasActivityTargets) {
       const findManyActivitiyTargetsQueryFilter = getActivityTargetsFilter({
@@ -128,9 +138,19 @@ export const useInjectIntoActivitiesQueries = () => {
         newActivities.unshift(newActivity);
       }
 
+      console.log({
+        newActivities,
+      });
+
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
+        queryFields: {
+          id: true,
+          __typename: true,
+          title: true,
+          body: true,
+        },
       });
     } else {
       const currentFindManyActivitiesQueryVariables = {
@@ -165,6 +185,20 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
+        eagerLoadedRelations: {
+          activityTarget: {
+            id: true,
+            __typename: true,
+          },
+          author: {
+            id: true,
+            __typename: true,
+          },
+          assignee: {
+            id: true,
+            __typename: true,
+          },
+        },
       });
     }
   };

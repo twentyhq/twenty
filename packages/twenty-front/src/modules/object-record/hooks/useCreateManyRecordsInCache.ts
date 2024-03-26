@@ -27,7 +27,10 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
   const { mapRecordRelationRecordsToRelationConnection } =
     useMapRelationRecordsToRelationConnection();
 
-  const createManyRecordsInCache = (recordsToCreate: Partial<T>[]) => {
+  const createManyRecordsInCache = (
+    recordsToCreate: Partial<T>[],
+    eagerLoadedRelations?: Record<string, any>,
+  ) => {
     const recordsWithId = recordsToCreate
       .map((record) => {
         return mapRecordRelationRecordsToRelationConnection({
@@ -47,7 +50,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
         generateObjectRecordOptimisticResponse<T>(record);
 
       if (isDefined(generatedCachedObjectRecord)) {
-        addRecordInCache(generatedCachedObjectRecord);
+        addRecordInCache(generatedCachedObjectRecord, eagerLoadedRelations);
 
         createdRecordsInCache.push(generatedCachedObjectRecord);
       }

@@ -40,7 +40,7 @@ export const useUpsertActivity = () => {
   );
 
   const { injectActivitiesQueries } = useInjectIntoActivitiesQueries();
-  const { injectActivityTargetsQueries } =
+  const { injectIntoActivityTargetsQueries } =
     useInjectIntoActivityTargetsQueries();
 
   const { pathname } = useLocation();
@@ -99,7 +99,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        injectActivityTargetsQueries({
+        injectIntoActivityTargetsQueries({
           activityTargetsToInject: activityToCreate.activityTargets,
           targetableObjects: [],
         });
@@ -107,6 +107,14 @@ export const useUpsertActivity = () => {
 
       // Call optimistic effects
       if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
+        console.log('Object show page targetable object is defined');
+
+        console.log({
+          timelineTargetableObject: objectShowPageTargetableObject,
+          activityToInject: activityToCreate,
+          activityTargetsToInject: activityToCreate.activityTargets,
+        });
+        // TODO: see here
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
           activityToInject: activityToCreate,
@@ -155,7 +163,7 @@ export const useUpsertActivity = () => {
           });
         }
 
-        injectActivityTargetsQueries({
+        injectIntoActivityTargetsQueries({
           activityTargetsToInject: activityToCreate.activityTargets,
           targetableObjects: [objectShowPageTargetableObject],
         });

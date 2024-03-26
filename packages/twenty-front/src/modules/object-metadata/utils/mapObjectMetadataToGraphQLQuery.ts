@@ -3,20 +3,21 @@ import { isUndefined } from '@sniptt/guards';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItems,
   objectMetadataItem,
   depth = 1,
   eagerLoadedRelations,
-  objectRecord,
+  queryFields,
+  onlyIdTypename,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
   depth?: number;
   eagerLoadedRelations?: Record<string, any>;
-  objectRecord?: ObjectRecord;
+  queryFields?: Record<string, any>;
+  onlyIdTypename?: boolean;
 }): any => {
   const fieldsThatShouldBeQueried =
     objectMetadataItem?.fields
@@ -26,9 +27,16 @@ export const mapObjectMetadataToGraphQLQuery = ({
           field,
           depth,
           eagerLoadedRelations,
-          objectRecord,
+          queryFields,
+          onlyIdTypename,
         }),
       ) ?? [];
+
+  if (objectMetadataItem.nameSingular === 'ActivityTarget') {
+    console.log({
+      fieldsThatShouldBeQueried,
+    });
+  }
 
   return `{
 __typename
@@ -41,7 +49,8 @@ ${fieldsThatShouldBeQueried
       relationFieldEagerLoad: isUndefined(eagerLoadedRelations)
         ? undefined
         : eagerLoadedRelations[field.name] ?? undefined,
-      objectRecord,
+
+      queryFields: queryFields?.[field.name],
     }),
   )
   .join('\n')}

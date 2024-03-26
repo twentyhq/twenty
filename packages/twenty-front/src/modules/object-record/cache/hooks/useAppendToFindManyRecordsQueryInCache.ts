@@ -41,6 +41,7 @@ export const useAppendToFindManyRecordsQueryInCache = ({
     overwriteFindManyRecordsQueryInCache({
       objectRecordsToOverwrite: newObjectRecordList,
       queryVariables,
+      objectRecordSampleForFindManyQueryGeneration: objectRecordsToAppend[0],
     });
   };
 

@@ -27,7 +27,10 @@ export const useCreateOneRecordInCache = <T>({
   const { mapRecordRelationRecordsToRelationConnection } =
     useMapRelationRecordsToRelationConnection();
 
-  const createOneRecordInCache = (recordToCreate: ObjectRecord) => {
+  const createOneRecordInCache = (
+    recordToCreate: ObjectRecord,
+    eagerLoadedRelations?: Record<string, any>,
+  ) => {
     const recordToCreateWithNestedConnections =
       mapRecordRelationRecordsToRelationConnection({
         objectRecord: recordToCreate,
@@ -42,7 +45,7 @@ export const useCreateOneRecordInCache = <T>({
       recordToCreateWithNestedConnections,
     );
 
-    addRecordInCache(generatedCachedObjectRecord);
+    addRecordInCache(generatedCachedObjectRecord, eagerLoadedRelations);
 
     return generatedCachedObjectRecord as T;
   };

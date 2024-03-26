@@ -6,7 +6,7 @@ import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsF
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCacheV2 } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCacheV2';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 // TODO: create a generic hook from this
@@ -25,11 +25,11 @@ export const useInjectIntoActivityTargetsQueries = () => {
   const {
     upsertFindManyRecordsQueryInCache:
       overwriteFindManyActivityTargetsQueryInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
+  } = useUpsertFindManyRecordsQueryInCacheV2({
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 
-  const injectActivityTargetsQueries = ({
+  const injectIntoActivityTargetsQueries = ({
     activityTargetsToInject,
     targetableObjects,
   }: {
@@ -67,16 +67,33 @@ export const useInjectIntoActivityTargetsQueries = () => {
     const newActivityTargets = [
       ...existingActivityTargetsWithoutDuplicates,
       ...activityTargetsToInject,
-    ];
+    ].map((activityTarget) => ({
+      ...activityTarget,
+      activity: {
+        __typename: 'Activity',
+        id: activityTarget.activity.id,
+      },
+    }));
+
+    // const sampleRecord = {
+    //   ...activityTargetsToInject[0],
+    //   activity: {
+    //     __typename: 'Activity',
+    //     id: activityTargetsToInject[0].activity.id,
+    //   },
+    // };
 
     overwriteFindManyActivityTargetsQueryInCache({
       objectRecordsToOverwrite: newActivityTargets,
       queryVariables: findManyActivitiyTargetsQueryVariables,
-      depth: 2,
+      queryFields: {
+        __typename: true,
+        id: true,
+      },
     });
   };
 
   return {
-    injectActivityTargetsQueries,
+    injectIntoActivityTargetsQueries,
   };
 };

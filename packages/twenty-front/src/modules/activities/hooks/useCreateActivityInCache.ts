@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -45,6 +46,10 @@ export const useCreateActivityInCache = () => {
   const { mapRecordRelationRecordsToRelationConnection } =
     useMapRelationRecordsToRelationConnection();
 
+  const client = useApolloClient();
+
+  const cache = client.cache;
+
   const createActivityInCache = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -58,14 +63,20 @@ export const useCreateActivityInCache = () => {
       }) => {
         const activityId = v4();
 
-        const createdActivityInCache = createOneActivityInCache({
-          id: activityId,
-          author: currentWorkspaceMemberRecord,
-          authorId: currentWorkspaceMemberRecord?.id,
-          assignee: customAssignee ?? currentWorkspaceMemberRecord,
-          assigneeId: customAssignee?.id ?? currentWorkspaceMemberRecord?.id,
-          type,
-        });
+        const createdActivityInCache = createOneActivityInCache(
+          {
+            id: activityId,
+            author: currentWorkspaceMemberRecord,
+            authorId: currentWorkspaceMemberRecord?.id,
+            assignee: customAssignee ?? currentWorkspaceMemberRecord,
+            assigneeId: customAssignee?.id ?? currentWorkspaceMemberRecord?.id,
+            type,
+          },
+          {
+            author: true,
+            assignee: true,
+          },
+        );
 
         const targetObjectRecords = targetableObjects
           .map((targetableObject) => {
@@ -86,13 +97,14 @@ export const useCreateActivityInCache = () => {
 
         const activityTargetsToCreate =
           makeActivityTargetsToCreateFromTargetableObjects({
-            activityId,
+            activity: createdActivityInCache,
             targetableObjects,
             targetObjectRecords,
           });
 
         const createdActivityTargetsInCache = createManyActivityTargetsInCache(
           activityTargetsToCreate,
+          {},
         );
 
         injectIntoActivityTargetInlineCellCache({

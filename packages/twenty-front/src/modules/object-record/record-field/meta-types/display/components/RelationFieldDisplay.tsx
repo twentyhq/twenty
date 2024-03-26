@@ -5,6 +5,12 @@ import { useRelationField } from '../../hooks/useRelationField';
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
 
+  console.log({
+    fieldValue,
+    fieldDefinition,
+    maxWidth,
+  });
+
   if (!fieldValue || !fieldDefinition) return null;
 
   return (
