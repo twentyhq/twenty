@@ -35,7 +35,6 @@ export const useViewPickerPersistView = () => {
         );
         const id = v4();
         set(viewPickerIsPersistingState, true);
-        closeAndResetViewPicker();
         await createView({
           id,
           name,
@@ -43,6 +42,7 @@ export const useViewPickerPersistView = () => {
           type,
           kanbanFieldMetadataId,
         });
+        closeAndResetViewPicker();
         selectView(id);
       },
     [

@@ -103,9 +103,7 @@ export const ViewPickerCreateOrEditContent = () => {
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
   const handleClose = async () => {
-    if (viewPickerMode === 'create') {
-      await handleCreate();
-    } else {
+    if (viewPickerMode !== 'create') {
       await handleUpdate();
     }
     setViewPickerMode('list');

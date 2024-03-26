@@ -50,7 +50,7 @@ export const ViewPickerDropdown = () => {
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const { handleCreate, handleUpdate } = useViewPickerPersistView();
+  const { handleUpdate } = useViewPickerPersistView();
 
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
@@ -67,9 +67,7 @@ export const ViewPickerDropdown = () => {
 
   const handleClickOutside = async () => {
     if (isViewsListDropdownOpen && viewPickerMode !== 'list') {
-      if (viewPickerMode === 'create') {
-        await handleCreate();
-      } else {
+      if (viewPickerMode !== 'create') {
         await handleUpdate();
       }
     }
