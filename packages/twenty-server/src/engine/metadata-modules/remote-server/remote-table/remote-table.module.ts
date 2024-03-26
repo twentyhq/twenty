@@ -12,6 +12,5 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     WorkspaceDataSourceModule,
   ],
   providers: [RemoteTableService, RemoteTableResolver],
-  exports: [RemoteTableService],
 })
 export class RemoteTableModule {}
