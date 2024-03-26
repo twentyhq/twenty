@@ -9,7 +9,10 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { makeActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { getReferenceRecordConnectionFromRecords } from '@/object-record/cache/utils/getReferenceRecordConnectionFromRecords';
 import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -46,6 +49,15 @@ export const useCreateActivityInCache = () => {
   const { mapRecordRelationRecordsToRelationConnection } =
     useMapRelationRecordsToRelationConnection();
 
+  const { objectMetadataItem: objectMetadataItemActivity } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+    });
+
+  const modifyActivityFromCache = useModifyRecordFromCache({
+    objectMetadataItem: objectMetadataItemActivity,
+  });
+
   const client = useApolloClient();
 
   const cache = client.cache;
@@ -75,6 +87,9 @@ export const useCreateActivityInCache = () => {
           {
             author: true,
             assignee: true,
+            // TODO: this is very hacky because it is silently tied to cache.modify which can't create a field if it doesn't exist
+            // We should find a way to explicitly have to put the field that could be later modified in the creation schema
+            activityTargets: true,
           },
         );
 
@@ -104,21 +119,27 @@ export const useCreateActivityInCache = () => {
 
         const createdActivityTargetsInCache = createManyActivityTargetsInCache(
           activityTargetsToCreate,
-          {},
+          // TODO: add all non system objects
+          {
+            person: true,
+            company: true,
+          },
         );
+
+        const activityTargetsConnection =
+          getReferenceRecordConnectionFromRecords({
+            apolloClient: client,
+            objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+            records: createdActivityTargetsInCache,
+          });
+
+        modifyActivityFromCache(createdActivityInCache.id, {
+          activityTargets: () => activityTargetsConnection,
+        });
 
         injectIntoActivityTargetInlineCellCache({
           activityId,
           activityTargetsToInject: createdActivityTargetsInCache,
-        });
-
-        attachRelationInBothDirections({
-          sourceRecord: createdActivityInCache,
-          fieldNameOnSourceRecord: 'activityTargets',
-          sourceObjectNameSingular: CoreObjectNameSingular.Activity,
-          fieldNameOnTargetRecord: 'activity',
-          targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
-          targetRecords: createdActivityTargetsInCache,
         });
 
         // TODO: should refactor when refactoring make activity connection utils
@@ -137,12 +158,13 @@ export const useCreateActivityInCache = () => {
         };
       },
     [
-      attachRelationInBothDirections,
       createManyActivityTargetsInCache,
       createOneActivityInCache,
       currentWorkspaceMemberRecord,
       injectIntoActivityTargetInlineCellCache,
       mapRecordRelationRecordsToRelationConnection,
+      client,
+      modifyActivityFromCache,
     ],
   );
 

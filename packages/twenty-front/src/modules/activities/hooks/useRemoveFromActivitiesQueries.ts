@@ -6,7 +6,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
+import { useUpsertFindManyRecordsQueryInCacheV2 } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCacheV2';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -20,7 +20,7 @@ export const useRemoveFromActivitiesQueries = () => {
 
   const {
     upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
-  } = useUpsertFindManyRecordsQueryInCache({
+  } = useUpsertFindManyRecordsQueryInCacheV2({
     objectMetadataItem: objectMetadataItemActivity,
   });
 
