@@ -102,7 +102,6 @@
     "hex-rgb": "^5.0.0",
     "iframe-resizer-react": "^1.1.0",
     "immer": "^10.0.2",
-    "is-svg": "^5.0.0",
     "jest-mock-extended": "^3.0.4",
     "js-cookie": "^3.0.5",
     "js-levenshtein": "^1.1.6",
