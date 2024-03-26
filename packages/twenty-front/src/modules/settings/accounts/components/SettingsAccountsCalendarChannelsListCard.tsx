@@ -19,7 +19,7 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsCalendarAccountsListCard = () => {
+export const SettingsAccountsCalendarChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 

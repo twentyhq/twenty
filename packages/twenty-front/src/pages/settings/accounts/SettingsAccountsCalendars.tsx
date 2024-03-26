@@ -8,7 +8,7 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsCalendarAccountsListCard } from '@/settings/accounts/components/SettingsAccountsCalendarAccountsListCard';
+import { SettingsAccountsCalendarChannelsListCard } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsListCard';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -94,7 +94,7 @@ export const SettingsAccountsCalendars = () => {
             title="Calendar settings"
             description="Sync your calendars and set your preferences"
           />
-          <SettingsAccountsCalendarAccountsListCard />
+          <SettingsAccountsCalendarChannelsListCard />
         </Section>
         {!!calendarChannels.length && (
           <>
