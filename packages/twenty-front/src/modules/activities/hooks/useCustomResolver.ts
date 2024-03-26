@@ -59,8 +59,8 @@ export const useCustomResolver = (
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
-            setPage((calendarEventsPage) => ({
-              ...calendarEventsPage,
+            setPage((page) => ({
+              ...page,
               hasNextPage: false,
             }));
 
@@ -84,9 +84,9 @@ export const useCustomResolver = (
         },
       });
 
-      setPage((calendarEventsPage) => ({
-        ...calendarEventsPage,
-        pageNumber: calendarEventsPage.pageNumber + 1,
+      setPage((page) => ({
+        ...page,
+        pageNumber: page.pageNumber + 1,
       }));
 
       setIsFetchingMore(false);
