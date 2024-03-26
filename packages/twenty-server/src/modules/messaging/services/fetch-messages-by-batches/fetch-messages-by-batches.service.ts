@@ -19,7 +19,6 @@ export class FetchMessagesByBatchesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
-    jobName?: string,
     workspaceId?: string,
     connectedAccountId?: string,
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
@@ -32,7 +31,7 @@ export class FetchMessagesByBatchesService {
     let endTime = Date.now();
 
     this.logger.log(
-      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
         queries.length
       } messages in ${endTime - startTime}ms`,
     );
@@ -45,7 +44,7 @@ export class FetchMessagesByBatchesService {
     endTime = Date.now();
 
     this.logger.log(
-      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
         queries.length
       } messages in ${endTime - startTime}ms`,
     );

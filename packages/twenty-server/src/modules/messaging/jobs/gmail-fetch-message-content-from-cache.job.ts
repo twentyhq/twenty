@@ -24,24 +24,6 @@ export class GmailFetchMessageContentFromCacheJob
   ) {}
 
   async handle(data: GmailFetchMessageContentFromCacheJobData): Promise<void> {
-    this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}}`,
-    );
-
-    try {
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        data.workspaceId,
-        data.connectedAccountId,
-      );
-    } catch (e) {
-      this.logger.error(
-        `Error refreshing access token for connected account ${data.connectedAccountId} in workspace ${data.workspaceId}`,
-        e,
-      );
-
-      return;
-    }
-
     await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
       data.workspaceId,
       data.connectedAccountId,

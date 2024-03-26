@@ -174,7 +174,6 @@ export class GmailPartialSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
-        'gmail partial-sync',
         workspaceId,
         connectedAccountId,
       );

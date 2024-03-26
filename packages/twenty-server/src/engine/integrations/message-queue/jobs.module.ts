@@ -50,7 +50,10 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheJob } from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
+import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
+import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 
 @Module({
   imports: [
@@ -84,6 +87,7 @@ import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/cr
     ]),
     GmailFullSynV2Module,
     GmailFetchMessageContentFromCacheModule,
+    GmailPartialSyncV2Module,
   ],
   providers: [
     {
@@ -153,8 +157,16 @@ import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/cr
       useClass: GmailFetchMessageContentFromCacheJob,
     },
     {
-      provide: FetchAllMessagesFromCacheCron.name,
-      useClass: FetchAllMessagesFromCacheCron,
+      provide: FetchAllMessagesFromCacheCronJob.name,
+      useClass: FetchAllMessagesFromCacheCronJob,
+    },
+    {
+      provide: GmailFullSyncV2Job.name,
+      useClass: GmailFullSyncV2Job,
+    },
+    {
+      provide: GmailPartialSyncV2Job.name,
+      useClass: GmailPartialSyncV2Job,
     },
   ],
 })

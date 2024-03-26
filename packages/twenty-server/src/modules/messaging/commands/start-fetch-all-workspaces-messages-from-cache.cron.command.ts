@@ -4,12 +4,11 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron';
-import { fetchAllMessagesFromCacheCronPattern } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron.pattern';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
 
 @Command({
   name: 'fetch-all-workspaces-messages-from-cache:cron:start',
-  description: 'Starts a cron job to fetch all workspaces messages',
+  description: 'Starts a cron job to fetch all workspaces messages from cache',
 })
 export class StartFetchAllWorkspacesMessagesFromCacheCronCommand extends CommandRunner {
   constructor(
@@ -21,9 +20,13 @@ export class StartFetchAllWorkspacesMessagesFromCacheCronCommand extends Command
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      FetchAllMessagesFromCacheCron.name,
+      FetchAllMessagesFromCacheCronJob.name,
       undefined,
-      fetchAllMessagesFromCacheCronPattern,
+      {
+        repeat: {
+          every: 5000,
+        },
+      },
     );
   }
 }

@@ -23,7 +23,11 @@ export class StartDataSeedDemoWorkspaceCronCommand extends CommandRunner {
     await this.messageQueueService.addCron<undefined>(
       DataSeedDemoWorkspaceJob.name,
       undefined,
-      dataSeedDemoWorkspaceCronPattern,
+      {
+        repeat: {
+          pattern: dataSeedDemoWorkspaceCronPattern,
+        },
+      },
     );
   }
 }

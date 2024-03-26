@@ -6,10 +6,6 @@ import { EntityManager } from 'typeorm';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -24,6 +20,10 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import {
+  GmailFullSyncV2Job,
+  GmailFullSyncV2JobData,
+} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 
 @Injectable()
 export class GmailPartialSyncV2Service {
@@ -81,9 +81,12 @@ export class GmailPartialSyncV2Service {
       return;
     }
 
-    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
+    if (
+      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING ||
+      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.FAILED
+    ) {
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending, import will be retried later.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
       );
 
       return;
@@ -200,7 +203,7 @@ export class GmailPartialSyncV2Service {
       .finally(async () => {
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannel.id,
-          MessageChannelSyncStatus.SUCCEEDED,
+          MessageChannelSyncStatus.PENDING,
           workspaceId,
         );
       });
@@ -299,12 +302,9 @@ export class GmailPartialSyncV2Service {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullSyncV2JobData>(
+      GmailFullSyncV2Job.name,
       { workspaceId, connectedAccountId },
-      {
-        retryLimit: 2,
-      },
     );
   }
 }

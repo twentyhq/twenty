@@ -5,28 +5,27 @@ import { Repository, In } from 'typeorm';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import {
   GmailFetchMessageContentFromCacheJobData,
   GmailFetchMessageContentFromCacheJob,
 } from 'src/modules/messaging/jobs/gmail-fetch-message-content-from-cache.job';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import {
-  MessageChannelObjectMetadata,
-  MessageChannelSyncStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Injectable()
-export class FetchAllMessagesFromCacheCron
+export class FetchAllMessagesFromCacheCronJob
   implements MessageQueueJob<undefined>
 {
-  private readonly logger = new Logger(FetchAllWorkspacesMessagesJob.name);
+  private readonly logger = new Logger(FetchAllMessagesFromCacheCronJob.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -37,6 +36,8 @@ export class FetchAllMessagesFromCacheCron
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async handle(): Promise<void> {
@@ -44,18 +45,25 @@ export class FetchAllMessagesFromCacheCron
       await this.workspaceRepository.find({
         where: {
           subscriptionStatus: 'active',
-          featureFlags: {
-            key: FeatureFlagKeys.IsFullSyncV2Enabled,
-            value: true,
-          },
         },
         select: ['id'],
       })
     ).map((workspace) => workspace.id);
 
+    const workspacesWithFeatureFlagActive =
+      await this.featureFlagRepository.find({
+        where: {
+          workspaceId: In(workspaceIds),
+          key: FeatureFlagKeys.IsFullSyncV2Enabled,
+          value: true,
+        },
+      });
+
     const dataSources = await this.dataSourceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        workspaceId: In(
+          workspacesWithFeatureFlagActive.map((w) => w.workspaceId),
+        ),
       },
     });
 
@@ -74,9 +82,6 @@ export class FetchAllMessagesFromCacheCron
         await this.messageChannelRepository.getAll(workspaceId);
 
       for (const messageChannel of messageChannels) {
-        if (messageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
-          continue;
-        }
         await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
           GmailFetchMessageContentFromCacheJob.name,
           {

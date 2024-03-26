@@ -186,7 +186,6 @@ export class GmailFullSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
-        'gmail full-sync',
         workspaceId,
         connectedAccountId,
       );

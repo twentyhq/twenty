@@ -99,9 +99,12 @@ export class GmailFullSyncV2Service {
       return;
     }
 
-    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
+    if (
+      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING ||
+      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.FAILED
+    ) {
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending, import will be retried later.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
       );
 
       return;
@@ -151,7 +154,7 @@ export class GmailFullSyncV2Service {
       .finally(async () => {
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannel.id,
-          MessageChannelSyncStatus.SUCCEEDED,
+          MessageChannelSyncStatus.PENDING,
           workspaceId,
         );
 

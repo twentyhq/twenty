@@ -4,7 +4,7 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { FetchAllMessagesFromCacheCron } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
 import { fetchAllMessagesFromCacheCronPattern } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron.pattern';
 
 @Command({
@@ -21,7 +21,7 @@ export class StopFetchAllWorkspacesMessagesFromCacheCronCommand extends CommandR
 
   async run(): Promise<void> {
     await this.messageQueueService.removeCron(
-      FetchAllMessagesFromCacheCron.name,
+      FetchAllMessagesFromCacheCronJob.name,
       fetchAllMessagesFromCacheCronPattern,
     );
   }

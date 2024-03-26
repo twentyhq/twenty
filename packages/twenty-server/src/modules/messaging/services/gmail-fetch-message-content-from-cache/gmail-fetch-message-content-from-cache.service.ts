@@ -120,6 +120,10 @@ export class GmailFetchMessageContentFromCacheService {
       workspaceId,
     );
 
+    this.logger.log(
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} starting...`,
+    );
+
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
@@ -133,7 +137,6 @@ export class GmailFetchMessageContentFromCacheService {
           await this.fetchMessagesByBatchesService.fetchAllMessages(
             messageQueries,
             accessToken,
-            'gmail full-sync',
             workspaceId,
             connectedAccountId,
           );
@@ -213,11 +216,19 @@ export class GmailFetchMessageContentFromCacheService {
             MessageChannelSyncStatus.SUCCEEDED,
             workspaceId,
           );
+
+          this.logger.log(
+            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
+          );
         } else {
           await this.messageChannelRepository.updateSyncStatus(
             gmailMessageChannelId,
             MessageChannelSyncStatus.PENDING,
             workspaceId,
+          );
+
+          this.logger.log(
+            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
           );
         }
       });
