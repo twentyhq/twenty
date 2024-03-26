@@ -5,7 +5,6 @@ import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -19,6 +18,10 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import {
+  TimelineCalendarEvent,
+  TimelineCalendarEventVisibility,
+} from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -46,25 +49,32 @@ export const SettingsAccountsCalendars = () => {
     endOfDay(exampleStartDate),
   ]);
   const exampleDayTime = startOfDay(exampleStartDate).getTime();
-  const exampleCalendarEvent: CalendarEvent = {
+  const exampleCalendarEvent: TimelineCalendarEvent = {
     id: '',
     attendees: [
       {
+        firstName: currentWorkspaceMember?.name.firstName || '',
+        lastName: currentWorkspaceMember?.name.lastName || '',
         displayName: currentWorkspaceMember
           ? [
               currentWorkspaceMember.name.firstName,
               currentWorkspaceMember.name.lastName,
             ].join(' ')
           : '',
-        workspaceMemberId: currentWorkspaceMember?.id ?? '',
+        avatarUrl: currentWorkspaceMember?.avatarUrl || '',
+        handle: '',
       },
     ],
     endsAt: exampleEndDate.toISOString(),
-    externalCreatedAt: new Date().toISOString(),
     isFullDay: false,
     startsAt: exampleStartDate.toISOString(),
+    conferenceSolution: '',
+    conferenceUri: '',
+    description: '',
+    isCanceled: false,
+    location: '',
     title: 'Onboarding call',
-    visibility: 'SHARE_EVERYTHING',
+    visibility: TimelineCalendarEventVisibility.ShareEverything,
   };
 
   return (

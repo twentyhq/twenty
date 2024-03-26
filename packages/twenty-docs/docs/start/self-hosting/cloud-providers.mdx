@@ -15,7 +15,7 @@ Feel free to join our discord if you need assistance.
 - [Azure Container Apps](#azure-container-apps)
 - [Others](#others)
 
-## Azure Container Apps 
+## Azure Container Apps
 
 ### About
 
@@ -261,6 +261,7 @@ resource "azapi_update_resource" "cors" {
 resource "random_uuid" "access_token_secret" {}
 resource "random_uuid" "login_token_secret" {}
 resource "random_uuid" "refresh_token_secret" {}
+resource "random_uuid" "file_token_secret" {}
 
 resource "azurerm_container_app" "twenty_server" {
   name                         = local.server_name
@@ -337,6 +338,10 @@ resource "azurerm_container_app" "twenty_server" {
       env {
         name  = "REFRESH_TOKEN_SECRET"
         value = random_uuid.refresh_token_secret.result
+      }
+      env {
+        name  = "FILE_TOKEN_SECRET"
+        value = random_uuid.file_token_secret.result
       }
     }
   }

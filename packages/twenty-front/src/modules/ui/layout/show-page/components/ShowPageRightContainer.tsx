@@ -138,8 +138,12 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'files' && (
         <Attachments targetableObject={targetableObject} />
       )}
-      {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
-      {activeTabId === 'calendar' && <Calendar />}
+      {activeTabId === 'emails' && (
+        <EmailThreads targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'calendar' && (
+        <Calendar targetableObject={targetableObject} />
+      )}
       {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
     </StyledShowPageRightContainer>
   );

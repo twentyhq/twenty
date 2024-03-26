@@ -60,13 +60,12 @@ export class CreateCompanyAndContactService {
         transactionManager,
       );
 
-    const contactsToCreateFromOtherCompanies = contactsToCreate;
-
-    filterOutContactsFromCompanyOrWorkspace(
-      contactsToCreate,
-      connectedAccountHandle,
-      workspaceMembers,
-    );
+    const contactsToCreateFromOtherCompanies =
+      filterOutContactsFromCompanyOrWorkspace(
+        contactsToCreate,
+        connectedAccountHandle,
+        workspaceMembers,
+      );
 
     const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
       contactsToCreateFromOtherCompanies,

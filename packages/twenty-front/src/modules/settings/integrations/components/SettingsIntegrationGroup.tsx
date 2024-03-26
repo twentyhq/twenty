@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
+import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
-import { SettingsIntegrationCategory } from '~/pages/settings/integrations/types/SettingsIntegrationCategory';
 
 interface SettingsIntegrationGroupProps {
   integrationGroup: SettingsIntegrationCategory;
@@ -33,28 +33,30 @@ const StyledIntegrationsSection = styled.div`
 
 export const SettingsIntegrationGroup = ({
   integrationGroup,
-}: SettingsIntegrationGroupProps) => {
-  const openLinkInTab = (link: string) => {
-    window.open(link);
-  };
-  return (
-    <Section>
-      <StyledIntegrationGroupHeader>
-        <H2Title title={integrationGroup.title} />
-        {integrationGroup.hyperlink && (
-          <StyledGroupLink
-            onClick={() => openLinkInTab(integrationGroup.hyperlink ?? '')}
-          >
-            <div>{integrationGroup.hyperlinkText}</div>
-            <div>→</div>
-          </StyledGroupLink>
-        )}
-      </StyledIntegrationGroupHeader>
-      <StyledIntegrationsSection>
-        {integrationGroup.integrations.map((integration) => {
-          return <SettingsIntegrationComponent integration={integration} />;
-        })}
-      </StyledIntegrationsSection>
-    </Section>
-  );
-};
+}: SettingsIntegrationGroupProps) => (
+  <Section>
+    <StyledIntegrationGroupHeader>
+      <H2Title title={integrationGroup.title} />
+      {integrationGroup.hyperlink && (
+        <StyledGroupLink
+          onClick={() => window.open(integrationGroup.hyperlink ?? '')}
+        >
+          <div>{integrationGroup.hyperlinkText}</div>
+          <div>→</div>
+        </StyledGroupLink>
+      )}
+    </StyledIntegrationGroupHeader>
+    <StyledIntegrationsSection>
+      {integrationGroup.integrations.map((integration) => (
+        <SettingsIntegrationComponent
+          key={[
+            integrationGroup.key,
+            integration.from.key,
+            integration.to?.key,
+          ].join('-')}
+          integration={integration}
+        />
+      ))}
+    </StyledIntegrationsSection>
+  </Section>
+);
