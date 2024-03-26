@@ -11,24 +11,25 @@ sidebar_custom_props:
 3. In your .env file, replace the three "replace_me_with_a_random_string_access" with the three random strings you just generated.
 
 ```
-ACCESS_TOKEN_SECRET=replace_me_with_a_random_string_access 
-LOGIN_TOKEN_SECRET=replace_me_with_a_random_string_login 
+ACCESS_TOKEN_SECRET=replace_me_with_a_random_string_access
+LOGIN_TOKEN_SECRET=replace_me_with_a_random_string_login
 REFRESH_TOKEN_SECRET=replace_me_with_a_random_string_refresh
+FILE_TOKEN_SECRET=replace_me_with_a_random_string_refresh
 ```
 
 4. Create a `docker-compose.yml` file from the example below.
 5. Run the command `docker-compose up -d`
 6. Go to http://localhost:3001 and see your docker instance.
 
-## Troubleshooting 
+## Troubleshooting
 
-### Not able to login 
+### Not able to login
 
-If you encounter errors, (not able to log into the application after inputting an email) after the inital setup, try running `docker exec -it twenty-backend-1 yarn nx database:reset` and see if that solves your issue. 
+If you encounter errors, (not able to log into the application after inputting an email) after the inital setup, try running `docker exec -it twenty-backend-1 yarn nx database:reset` and see if that solves your issue.
 
 ### Cannot connect to server, running behind a reverse proxy
 
-Complete step three and four with : 
+Complete step three and four with :
 
 3. Add `SERVER_URL=https://<your-api-url.com>` to your `.env`
 4. Uncomment `SERVER_URL=${SERVER_URL}` in your `docker-compose.yml`
@@ -76,6 +77,7 @@ services:
       - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
       - LOGIN_TOKEN_SECRET=${LOGIN_TOKEN_SECRET}
       - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - FILE_TOKEN_SECRET=${FILE_TOKEN_SECRET}
       # Uncomment if behind a reverse proxy
       # - SERVER_URL=${SERVER_URL}
     depends_on:
