@@ -1,4 +1,9 @@
-import { createCipheriv, createDecipheriv, createHash } from 'crypto';
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  randomBytes,
+} from 'crypto';
 
 import * as bcrypt from 'bcrypt';
 
@@ -16,41 +21,34 @@ export const compareHash = async (password: string, passwordHash: string) => {
   return bcrypt.compare(password, passwordHash);
 };
 
-export const encryptText = (
-  textToEncrypt: string,
-  key: string,
-  iv: string,
-): string => {
+export const encryptText = (textToEncrypt: string, key: string): string => {
   const keyHash = createHash('sha512')
     .update(key)
     .digest('hex')
     .substring(0, 32);
 
-  const ivHash = createHash('sha512').update(iv).digest('hex').substring(0, 16);
+  const iv = randomBytes(16);
 
-  const cipher = createCipheriv('aes-256-ctr', keyHash, ivHash);
-
-  return Buffer.concat([cipher.update(textToEncrypt), cipher.final()]).toString(
-    'base64',
-  );
-};
-
-export const decryptText = (
-  textToDecrypt: string,
-  key: string,
-  iv: string,
-): string => {
-  const keyHash = createHash('sha512')
-    .update(key)
-    .digest('hex')
-    .substring(0, 32);
-
-  const ivHash = createHash('sha512').update(iv).digest('hex').substring(0, 16);
-
-  const decipher = createDecipheriv('aes-256-ctr', keyHash, ivHash);
+  const cipher = createCipheriv('aes-256-ctr', keyHash, iv);
 
   return Buffer.concat([
-    decipher.update(Buffer.from(textToDecrypt, 'base64')),
-    decipher.final(),
-  ]).toString();
+    iv,
+    cipher.update(textToEncrypt),
+    cipher.final(),
+  ]).toString('base64');
+};
+
+export const decryptText = (textToDecrypt: string, key: string): string => {
+  const textBuffer = Buffer.from(textToDecrypt, 'base64');
+  const iv = textBuffer.subarray(0, 16);
+  const text = textBuffer.subarray(16);
+
+  const keyHash = createHash('sha512')
+    .update(key)
+    .digest('hex')
+    .substring(0, 32);
+
+  const decipher = createDecipheriv('aes-256-ctr', keyHash, iv);
+
+  return Buffer.concat([decipher.update(text), decipher.final()]).toString();
 };
