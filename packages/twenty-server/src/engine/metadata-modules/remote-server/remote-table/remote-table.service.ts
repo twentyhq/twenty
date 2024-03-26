@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
-import { decryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
   RemoteServerType,
   RemoteServerEntity,
@@ -11,7 +10,10 @@ import {
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { EXCLUDED_POSTGRES_SCHEMAS } from 'src/engine/metadata-modules/remote-server/remote-table/utils/excluded-postgres-schemas';
+import {
+  EXCLUDED_POSTGRES_SCHEMAS,
+  buildPostgresUrl,
+} from 'src/engine/metadata-modules/remote-server/remote-table/utils/remote-table-postgres.util';
 
 export class RemoteTableService {
   constructor(
@@ -81,10 +83,12 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
   ) {
     const dataSource = new DataSource({
-      url: this.buildPostgresUrl(remoteServer),
+      url: buildPostgresUrl(
+        this.environmentService.get('LOGIN_TOKEN_SECRET'),
+        remoteServer,
+      ),
       type: 'postgres',
       logging: true,
-      schema: 'public',
     });
 
     await dataSource.initialize();
@@ -104,23 +108,5 @@ export class RemoteTableService {
     await dataSource.destroy();
 
     return remotePostgresTables;
-  }
-
-  private buildPostgresUrl(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
-  ): string {
-    const foreignDataWrapperOptions = remoteServer.foreignDataWrapperOptions;
-    const userMappingOptions = remoteServer.userMappingOptions;
-
-    const secretKey = this.environmentService.get('LOGIN_TOKEN_SECRET');
-    const password = decryptText(
-      userMappingOptions.password,
-      secretKey,
-      secretKey,
-    );
-
-    const url = `postgres://${userMappingOptions.username}:${password}@${foreignDataWrapperOptions.host}:${foreignDataWrapperOptions.port}/${foreignDataWrapperOptions.dbname}`;
-
-    return url;
   }
 }
