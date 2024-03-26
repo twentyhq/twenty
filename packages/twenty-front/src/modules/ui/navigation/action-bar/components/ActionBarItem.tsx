@@ -88,7 +88,6 @@ export const ActionBarItem = ({ item }: ActionBarItemProps) => {
             {item.Icon && <item.Icon size={theme.icon.size.md} />}
             <StyledButtonLabel>{item.label}</StyledButtonLabel>
           </StyledButton>
-          {item.ConfirmationModal}
         </>
       )}
     </>

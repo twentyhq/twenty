@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -16,14 +16,19 @@ const StyledContainerActionBar = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  bottom: 38px;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
+  height: 48px;
 
-  padding: ${({ theme }) => theme.spacing(2)};
-  max-width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: ${({ theme }) => theme.spacing(7)};
+  left: 50%;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: auto;
+
+  transform: translateX(-50%);
+  z-index: 1;
 `;
 
 const StyledLabel = styled.div`
@@ -44,15 +49,22 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
   }
 
   return (
-    <StyledContainerActionBar
-      data-select-disable
-      className="action-bar"
-      ref={wrapperRef}
-    >
-      {selectedIds && <StyledLabel>{selectedIds.length} selected:</StyledLabel>}
-      {actionBarEntries.map((item, index) => (
-        <ActionBarItem key={index} item={item} />
-      ))}
-    </StyledContainerActionBar>
+    <>
+      <StyledContainerActionBar
+        data-select-disable
+        className="action-bar"
+        ref={wrapperRef}
+      >
+        {selectedIds && (
+          <StyledLabel>{selectedIds.length} selected:</StyledLabel>
+        )}
+        {actionBarEntries.map((item, index) => (
+          <ActionBarItem key={index} item={item} />
+        ))}
+      </StyledContainerActionBar>
+      <div data-select-disable className="action-bar">
+        {actionBarEntries[0]?.ConfirmationModal}
+      </div>
+    </>
   );
 };

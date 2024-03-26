@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { isDeleteRecordsModalOpenState } from '@/object-record/record-action-bar/states/IsDeleteRecordsModalOpenState';
 import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -38,7 +39,7 @@ export const useRecordActionBar = ({
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
-    useState(false);
+    useRecoilState(isDeleteRecordsModalOpenState);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
@@ -143,6 +144,7 @@ export const useRecordActionBar = ({
       progress,
       selectedRecordIds,
       isDeleteRecordsModalOpen,
+      setIsDeleteRecordsModalOpen,
     ],
   );
 
