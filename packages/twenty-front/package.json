@@ -7,14 +7,11 @@
     "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
     "start:prod": "NODE_ENV=production vite --host",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 yarn build",
-    "tsc:ci": "yarn tsc --project tsconfig.json",
-    "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
     "tsup": "tsup",
     "storybook:build": "npx storybook build",
     "storybook:modules:build": "STORYBOOK_SCOPE=modules npx nx storybook:build",
     "storybook:pages:build": "STORYBOOK_SCOPE=pages npx nx storybook:build",
-    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs npx nx storybook:build",
-    "chromatic:ci": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes"
+    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs npx nx storybook:build"
   },
   "engines": {
     "node": "^18.17.1",

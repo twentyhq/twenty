@@ -17,18 +17,25 @@
         "command": "nx start --clean"
       }
     },
+    "tsc:ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "tsc"
+      }
+    },
     "tsc": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-front",
-        "command": "tsc --project tsconfig.app.json --watch"
+        "command": "nx tsc:ci --project tsconfig.app.json --watch"
       }
     },
     "tsc:spec": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-front",
-        "command": "tsc --project tsconfig.spec.json"
+        "command": "nx:tsc:ci --project tsconfig.spec.json"
       }
     },
     "build": {
@@ -51,6 +58,13 @@
       "options": {
         "cwd": "packages/twenty-front",
         "command": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
+      }
+    },
+    "lint:ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "nx lint --config .eslintrc-ci.cjs"
       }
     },
     "fmt": {
@@ -187,6 +201,13 @@
       "options": {
         "cwd": "packages/twenty-front",
         "command": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
+      }
+    },
+    "chromatic:ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "nx chromatic --exit-zero-on-changes"
       }
     }
   }
