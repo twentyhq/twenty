@@ -1,4 +1,4 @@
-export enum CalendarChannelVisibilityValue {
+export enum CalendarChannelVisibility {
   Everything = 'SHARE_EVERYTHING',
   Metadata = 'METADATA',
 }
@@ -8,5 +8,5 @@ export type CalendarChannel = {
   handle: string;
   isContactAutoCreationEnabled?: boolean;
   isSyncEnabled?: boolean;
-  visibility: CalendarChannelVisibilityValue;
+  visibility: CalendarChannelVisibility;
 };

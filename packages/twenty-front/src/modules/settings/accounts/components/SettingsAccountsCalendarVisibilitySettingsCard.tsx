@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
-import { CalendarChannelVisibilityValue } from '@/accounts/types/CalendarChannel';
+import { CalendarChannelVisibility } from '@/accounts/types/CalendarChannel';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
-  onChange: (nextValue: CalendarChannelVisibilityValue) => void;
-  value?: CalendarChannelVisibilityValue;
+  onChange: (nextValue: CalendarChannelVisibility) => void;
+  value?: CalendarChannelVisibility;
 };
 
 const StyledCardMedia = styled(SettingsAccountsVisibilitySettingCardMedia)`
@@ -17,20 +17,20 @@ const eventSettingsVisibilityOptions = [
   {
     title: 'Everything',
     description: 'The whole event details will be shared with your team.',
-    value: CalendarChannelVisibilityValue.Everything,
+    value: CalendarChannelVisibility.Everything,
     cardMedia: <StyledCardMedia subject="active" body="active" />,
   },
   {
     title: 'Metadata',
     description: 'Only date & participants will be shared with your team.',
-    value: CalendarChannelVisibilityValue.Metadata,
+    value: CalendarChannelVisibility.Metadata,
     cardMedia: <StyledCardMedia subject="active" body="inactive" />,
   },
 ];
 
 export const SettingsAccountsEventVisibilitySettingsCard = ({
   onChange,
-  value = CalendarChannelVisibilityValue.Everything,
+  value = CalendarChannelVisibility.Everything,
 }: SettingsAccountsEventVisibilitySettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
     options={eventSettingsVisibilityOptions}

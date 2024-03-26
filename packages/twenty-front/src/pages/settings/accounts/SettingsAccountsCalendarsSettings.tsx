@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import {
   CalendarChannel,
-  CalendarChannelVisibilityValue,
+  CalendarChannelVisibility,
 } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -43,7 +43,7 @@ export const SettingsAccountsCalendarsSettings = () => {
     objectNameSingular: CoreObjectNameSingular.CalendarChannel,
   });
 
-  const handleVisibilityChange = (value: CalendarChannelVisibilityValue) => {
+  const handleVisibilityChange = (value: CalendarChannelVisibility) => {
     updateOneRecord({
       idToUpdate: calendarChannelId,
       updateOneRecordInput: {
