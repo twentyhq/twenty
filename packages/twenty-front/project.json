@@ -1,0 +1,179 @@
+{
+  "name": "twenty-front",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "tsc": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "tsc --project tsconfig.app.json --watch"
+      }
+    },
+    "tsc:spec": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "tsc --project tsconfig.spec.json"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "commands": ["tsc", "vite build", "sh ./scripts/inject-runtime-env.sh"],
+        "parallel": false
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "vite preview"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\""
+      }
+    },
+    "fmt:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "jest"
+      }
+    },
+    "test:unit:watch": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "jest --watch"
+      }
+    },
+    "test:unit:coverage": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "jest --coverage"
+      }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "start-storybook -p 6006 --no-open"
+      }
+    },
+    "storybook:modules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=modules nx storybook"
+      }
+    },
+    "storybook:docs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=ui-docs nx storybook"
+      }
+    },
+    "storybook:pages": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=pages nx storybook"
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "test-storybook"
+      }
+    },
+    "storybook:test-slow": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "nx storybook:test --maxWorkers=3"
+      }
+    },
+    "storybook:test-single-worker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "nx storybook:test --maxWorkers=1"
+      }
+    },
+    "storybook:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "nx storybook:test-slow --coverage ; npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage"
+      }
+    },
+    "storybook:modules:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=modules nx storybook:coverage"
+      }
+    },
+    "storybook:docs:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=ui-docs nx storybook:coverage"
+      }
+    },
+    "storybook:pages:coverage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "STORYBOOK_SCOPE=pages nx storybook:coverage"
+      }
+    },
+    "graphql:data:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "dotenv cross-var graphql-codegen -- --config codegen.cjs"
+      }
+    },
+    "graphql:metadata:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "dotenv cross-var graphql-codegen -- --config codegen.metadata.cjs"
+      }
+    },
+    "chromatic": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-front",
+        "command": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
+      }
+    }
+  }
+}
