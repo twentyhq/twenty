@@ -45,13 +45,13 @@ export class CalendarEventFindManyPreQueryHook
     workspaceId: string,
     payload: FindManyResolverArgs,
   ): Promise<void> {
-    if (!payload?.filter?.calendarEventId?.eq) {
-      throw new BadRequestException('calendarEventId filter is required');
+    if (!payload?.filter?.id?.eq) {
+      throw new BadRequestException('id filter is required');
     }
 
     const calendarChannelCalendarEventAssociations =
       await this.calendarChannelEventAssociationRepository.getByCalendarEventIds(
-        payload?.filter?.calendarEventId?.eq,
+        [payload?.filter?.id?.eq],
         workspaceId,
       );
 
