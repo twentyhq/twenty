@@ -10,104 +10,97 @@ describe('validateDefaultValueForType', () => {
 
   // Dynamic default values
   it('should validate uuid dynamic default value for UUID type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.UUID, { value: 'uuid' }),
-    ).toBe(true);
+    expect(validateDefaultValueForType(FieldMetadataType.UUID, 'uuid')).toBe(
+      true,
+    );
   });
 
   it('should validate now dynamic default value for DATE_TIME type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.DATE_TIME, {
-        value: 'now',
-      }),
+      validateDefaultValueForType(FieldMetadataType.DATE_TIME, 'now'),
     ).toBe(true);
   });
 
   it('should return false for mismatched dynamic default value', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.UUID, { value: 'now' }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.UUID, 'now')).toBe(
+      false,
+    );
   });
 
   // Static default values
   it('should validate string default value for TEXT type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.TEXT, { value: "'test'" }),
-    ).toBe(true);
+    expect(validateDefaultValueForType(FieldMetadataType.TEXT, "'test'")).toBe(
+      true,
+    );
   });
 
   it('should return false for invalid string default value for TEXT type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.TEXT, { value: 123 }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.TEXT, 123)).toBe(
+      false,
+    );
   });
 
   it('should validate string default value for PHONE type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PHONE, {
-        value: "'+123456789'",
-      }),
+      validateDefaultValueForType(FieldMetadataType.PHONE, "'+123456789'"),
     ).toBe(true);
   });
 
   it('should return false for invalid string default value for PHONE type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.PHONE, { value: 123 }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.PHONE, 123)).toBe(
+      false,
+    );
   });
 
   it('should validate string default value for EMAIL type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.EMAIL, {
-        value: "'test@example.com'",
-      }),
+      validateDefaultValueForType(
+        FieldMetadataType.EMAIL,
+        "'test@example.com'",
+      ),
     ).toBe(true);
   });
 
   it('should return false for invalid string default value for EMAIL type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.EMAIL, { value: 123 }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.EMAIL, 123)).toBe(
+      false,
+    );
   });
 
   it('should validate number default value for NUMBER type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.NUMBER, { value: 100 }),
-    ).toBe(true);
+    expect(validateDefaultValueForType(FieldMetadataType.NUMBER, 100)).toBe(
+      true,
+    );
   });
 
   it('should return false for invalid number default value for NUMBER type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.NUMBER, { value: '100' }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.NUMBER, '100')).toBe(
+      false,
+    );
   });
 
   it('should validate number default value for PROBABILITY type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, {
-        value: 0.5,
-      }),
+      validateDefaultValueForType(FieldMetadataType.PROBABILITY, 0.5),
     ).toBe(true);
   });
 
   it('should return false for invalid number default value for PROBABILITY type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, {
-        value: '50%',
-      }),
+      validateDefaultValueForType(FieldMetadataType.PROBABILITY, '50%'),
     ).toBe(false);
   });
 
   it('should validate boolean default value for BOOLEAN type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.BOOLEAN, { value: true }),
-    ).toBe(true);
+    expect(validateDefaultValueForType(FieldMetadataType.BOOLEAN, true)).toBe(
+      true,
+    );
   });
 
   it('should return false for invalid boolean default value for BOOLEAN type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.BOOLEAN, { value: 'true' }),
-    ).toBe(false);
+    expect(validateDefaultValueForType(FieldMetadataType.BOOLEAN, 'true')).toBe(
+      false,
+    );
   });
 
   // LINK type
@@ -155,9 +148,7 @@ describe('validateDefaultValueForType', () => {
   // Unknown type
   it('should return false for unknown type', () => {
     expect(
-      validateDefaultValueForType('unknown' as FieldMetadataType, {
-        value: "'test'",
-      }),
+      validateDefaultValueForType('unknown' as FieldMetadataType, "'test'"),
     ).toBe(false);
   });
 });
