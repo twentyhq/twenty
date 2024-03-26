@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import {
   RemoteServerEntity,
@@ -25,7 +24,8 @@ export class RemoteServerService<T extends RemoteServerType> {
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
-    private readonly typeORMService: TypeORMService,
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     private readonly environmentService: EnvironmentService,
     private readonly foreignDataWrapperQueryFactory: ForeignDataWrapperQueryFactory,
   ) {}
@@ -40,7 +40,6 @@ export class RemoteServerService<T extends RemoteServerType> {
       validateObject(remoteServerInput.userMappingOptions);
     }
 
-    const mainDatasource = this.typeORMService.getMainDataSource();
     const foreignDataWrapperId = v4();
 
     let remoteServerToCreate = {
@@ -67,31 +66,37 @@ export class RemoteServerService<T extends RemoteServerType> {
       };
     }
 
-    const createdRemoteServer =
-      await this.remoteServerRepository.create(remoteServerToCreate);
-
-    const foreignDataWrapperQuery =
-      this.foreignDataWrapperQueryFactory.createForeignDataWrapper(
-        createdRemoteServer.foreignDataWrapperId,
-        remoteServerInput.foreignDataWrapperType,
-        remoteServerInput.foreignDataWrapperOptions,
-      );
-
-    await mainDatasource.query(foreignDataWrapperQuery);
-
-    if (remoteServerInput.userMappingOptions) {
-      const userMappingQuery =
-        this.foreignDataWrapperQueryFactory.createUserMapping(
-          createdRemoteServer.foreignDataWrapperId,
-          remoteServerInput.userMappingOptions,
+    return this.metadataDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        const createdRemoteServer = await entityManager.create(
+          RemoteServerEntity,
+          remoteServerToCreate,
         );
 
-      await mainDatasource.query(userMappingQuery);
-    }
+        const foreignDataWrapperQuery =
+          this.foreignDataWrapperQueryFactory.createForeignDataWrapper(
+            createdRemoteServer.foreignDataWrapperId,
+            remoteServerInput.foreignDataWrapperType,
+            remoteServerInput.foreignDataWrapperOptions,
+          );
 
-    await this.remoteServerRepository.save(createdRemoteServer);
+        await entityManager.query(foreignDataWrapperQuery);
 
-    return createdRemoteServer;
+        if (remoteServerInput.userMappingOptions) {
+          const userMappingQuery =
+            this.foreignDataWrapperQueryFactory.createUserMapping(
+              createdRemoteServer.foreignDataWrapperId,
+              remoteServerInput.userMappingOptions,
+            );
+
+          await entityManager.query(userMappingQuery);
+        }
+
+        await entityManager.save(RemoteServerEntity, createdRemoteServer);
+
+        return createdRemoteServer;
+      },
+    );
   }
 
   async deleteOneRemoteServer(
@@ -111,14 +116,16 @@ export class RemoteServerService<T extends RemoteServerType> {
       throw new NotFoundException('Object does not exist');
     }
 
-    const mainDatasource = this.typeORMService.getMainDataSource();
+    return this.metadataDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        await entityManager.query(
+          `DROP SERVER "${remoteServer.foreignDataWrapperId}" CASCADE`,
+        );
+        await entityManager.delete(RemoteServerEntity, id);
 
-    await mainDatasource.query(
-      `DROP SERVER "${remoteServer.foreignDataWrapperId}" CASCADE`,
+        return remoteServer;
+      },
     );
-    await this.remoteServerRepository.delete(id);
-
-    return remoteServer;
   }
 
   public async findOneByIdWithinWorkspace(id: string, workspaceId: string) {

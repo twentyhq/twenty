@@ -16,11 +16,11 @@ export const compareHash = async (password: string, passwordHash: string) => {
   return bcrypt.compare(password, passwordHash);
 };
 
-export const encryptText = async (
+export const encryptText = (
   textToEncrypt: string,
   key: string,
   iv: string,
-): Promise<string> => {
+): string => {
   const keyHash = createHash('sha512')
     .update(key)
     .digest('hex')
@@ -35,11 +35,11 @@ export const encryptText = async (
   );
 };
 
-export const decryptText = async (
+export const decryptText = (
   textToDecrypt: string,
   key: string,
   iv: string,
-) => {
+): string => {
   const keyHash = createHash('sha512')
     .update(key)
     .digest('hex')

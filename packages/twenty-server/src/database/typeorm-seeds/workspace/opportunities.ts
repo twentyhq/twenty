@@ -1,6 +1,16 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
+import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
+
 const tableName = 'opportunity';
+
+export const DEV_SEED_OPPORTUNITY_IDS = {
+  OPPORTUNITY_1: '20202020-be10-412b-a663-16bd3c2228e1',
+  OPPORTUNITY_2: '20202020-0543-4cc2-9f96-95cc699960f2',
+  OPPORTUNITY_3: '20202020-2f89-406f-90ea-180f433b2445',
+  OPPORTUNITY_4: '20202020-35b1-4045-9cde-42f715148954',
+};
 
 export const seedOpportunity = async (
   entityManager: EntityManager,
@@ -24,7 +34,7 @@ export const seedOpportunity = async (
     .orIgnore()
     .values([
       {
-        id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
+        id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_1,
         name: 'Opportunity 1',
         amountAmountMicros: 100000,
         amountCurrencyCode: 'USD',
@@ -32,11 +42,11 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'NEW',
         position: 1,
-        pointOfContactId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
-        companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
+        pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPH,
+        companyId: DEV_SEED_COMPANY_IDS.LINKEDIN,
       },
       {
-        id: '53f66647-0543-4cc2-9f96-95cc699960f2',
+        id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_2,
         name: 'Opportunity 2',
         amountAmountMicros: 2000000,
         amountCurrencyCode: 'USD',
@@ -44,11 +54,11 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'MEETING',
         position: 2,
-        pointOfContactId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
-        companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
+        pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPHER_G,
+        companyId: DEV_SEED_COMPANY_IDS.FACEBOOK,
       },
       {
-        id: '81ab695d-2f89-406f-90ea-180f433b2445',
+        id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_3,
         name: 'Opportunity 3',
         amountAmountMicros: 300000,
         amountCurrencyCode: 'USD',
@@ -56,11 +66,11 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'PROPOSAL',
         position: 3,
-        pointOfContactId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
-        companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
+        pointOfContactId: DEV_SEED_PERSON_IDS.NICHOLAS,
+        companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
       },
       {
-        id: '9b059852-35b1-4045-9cde-42f715148954',
+        id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_4,
         name: 'Opportunity 4',
         amountAmountMicros: 4000000,
         amountCurrencyCode: 'USD',
@@ -68,8 +78,8 @@ export const seedOpportunity = async (
         probability: 0.5,
         stage: 'PROPOSAL',
         position: 4,
-        pointOfContactId: '98406e26-80f1-4dff-b570-a74942528de3',
-        companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
+        pointOfContactId: DEV_SEED_PERSON_IDS.MATTHEW,
+        companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
       },
     ])
     .execute();
