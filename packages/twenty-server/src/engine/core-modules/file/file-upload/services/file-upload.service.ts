@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
 import { JSDOM } from 'jsdom';
 import DOMPurify from 'dompurify';
+import isSvg from 'is-svg';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -34,22 +35,12 @@ export class FileUploadService {
     });
   }
 
-  private _sanitizeFile({
-    file,
-    ext,
-    mimeType,
-  }: {
-    file: Buffer | Uint8Array | string;
-    ext: string;
-    mimeType: string | undefined;
-  }): Buffer | Uint8Array | string {
+  private _sanitizeFile(
+    file: Buffer | Uint8Array | string,
+  ): Buffer | Uint8Array | string {
     const fileString = file.toString();
 
-    if (
-      fileString.includes('svg') &&
-      ext === 'svg' &&
-      mimeType === 'image/svg+xml'
-    ) {
+    if (isSvg(fileString)) {
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
 
@@ -75,7 +66,7 @@ export class FileUploadService {
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
     await this._uploadFile({
-      file: this._sanitizeFile({ file, ext, mimeType }),
+      file: this._sanitizeFile(file),
       filename: name,
       mimeType,
       fileFolder,
