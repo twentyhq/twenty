@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
-    "start": "vite --host",
-    "start:clean": "yarn start --force",
+    "start:prod": "NODE_ENV=production vite --host",
     "tsc:ci": "tsc",
     "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
     "tsup": "tsup",
