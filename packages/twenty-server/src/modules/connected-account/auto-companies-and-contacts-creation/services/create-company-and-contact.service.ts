@@ -119,8 +119,9 @@ export class CreateCompanyAndContactService {
         handle: contact.handle,
         displayName: contact.displayName,
         companyId:
-          contact.companyDomainName &&
-          companiesObject[contact.companyDomainName],
+          contact.companyDomainName && contact.companyDomainName !== ''
+            ? companiesObject[contact.companyDomainName]
+            : undefined,
       }));
 
     await this.createContactService.createContacts(

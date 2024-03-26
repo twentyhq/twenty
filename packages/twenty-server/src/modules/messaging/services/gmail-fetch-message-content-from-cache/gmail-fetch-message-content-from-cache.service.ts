@@ -187,6 +187,30 @@ export class GmailFetchMessageContentFromCacheService {
           workspaceId,
           transactionManager,
         );
+
+        if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannelId,
+            MessageChannelSyncStatus.SUCCEEDED,
+            workspaceId,
+            transactionManager,
+          );
+
+          this.logger.log(
+            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
+          );
+        } else {
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannelId,
+            MessageChannelSyncStatus.PENDING,
+            workspaceId,
+            transactionManager,
+          );
+
+          this.logger.log(
+            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
+          );
+        }
       })
       .catch(async (error) => {
         await this.cacheStorage.setAdd(
@@ -208,29 +232,6 @@ export class GmailFetchMessageContentFromCacheService {
         this.logger.error(
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
-      })
-      .finally(async () => {
-        if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-          await this.messageChannelRepository.updateSyncStatus(
-            gmailMessageChannelId,
-            MessageChannelSyncStatus.SUCCEEDED,
-            workspaceId,
-          );
-
-          this.logger.log(
-            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
-          );
-        } else {
-          await this.messageChannelRepository.updateSyncStatus(
-            gmailMessageChannelId,
-            MessageChannelSyncStatus.PENDING,
-            workspaceId,
-          );
-
-          this.logger.log(
-            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
-          );
-        }
       });
   }
 }

@@ -81,10 +81,7 @@ export class GmailPartialSyncV2Service {
       return;
     }
 
-    if (
-      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING ||
-      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.FAILED
-    ) {
+    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.SUCCEEDED) {
       this.logger.log(
         `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
       );
@@ -188,6 +185,13 @@ export class GmailPartialSyncV2Service {
           workspaceId,
           transactionManager,
         );
+
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncStatus.PENDING,
+          workspaceId,
+          transactionManager,
+        );
       })
       .catch(async (error) => {
         await this.messageChannelRepository.updateSyncStatus(
@@ -198,13 +202,6 @@ export class GmailPartialSyncV2Service {
 
         this.logger.error(
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      })
-      .finally(async () => {
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.PENDING,
-          workspaceId,
         );
       });
   }
@@ -288,7 +285,11 @@ export class GmailPartialSyncV2Service {
         const errorData = error?.response?.data?.error;
 
         if (errorData) {
-          return { history: [], error: errorData };
+          return {
+            history: [],
+            error: errorData,
+            historyId: lastSyncHistoryId,
+          };
         }
 
         throw error;

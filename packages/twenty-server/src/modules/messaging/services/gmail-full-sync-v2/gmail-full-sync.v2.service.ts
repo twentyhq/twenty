@@ -138,6 +138,21 @@ export class GmailFullSyncV2Service {
           workspaceId,
           transactionManager,
         );
+
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncStatus.PENDING,
+          workspaceId,
+          transactionManager,
+        );
+
+        await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
+          GmailFetchMessageContentFromCacheJob.name,
+          {
+            workspaceId,
+            connectedAccountId,
+          },
+        );
       })
       .catch(async (error) => {
         await this.messageChannelRepository.updateSyncStatus(
@@ -149,21 +164,6 @@ export class GmailFullSyncV2Service {
         this.logger.error(
           `Error occurred while fetching message ids from Gmail for connected account ${connectedAccountId} in workspace ${workspaceId}`,
           error,
-        );
-      })
-      .finally(async () => {
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.PENDING,
-          workspaceId,
-        );
-
-        await this.messageQueueService.add<GmailFetchMessageContentFromCacheJobData>(
-          GmailFetchMessageContentFromCacheJob.name,
-          {
-            workspaceId,
-            connectedAccountId,
-          },
         );
       });
   }

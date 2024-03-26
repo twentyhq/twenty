@@ -61,6 +61,10 @@ export class FetchMessagesByBatchesService {
 
     const errors: any = [];
 
+    const sanitizeString = (str: string) => {
+      return str.replace(/\0/g, '');
+    };
+
     const formattedResponse = Promise.all(
       parsedResponses.map(async (message: GmailMessageParsedResponse) => {
         if (message.error) {
@@ -118,7 +122,7 @@ export class FetchMessagesByBatchesService {
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
             participants,
-            text: textWithoutReplyQuotations || '',
+            text: sanitizeString(textWithoutReplyQuotations || ''),
             attachments,
           };
 
