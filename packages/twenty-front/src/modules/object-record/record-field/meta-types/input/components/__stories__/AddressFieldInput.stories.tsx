@@ -9,6 +9,7 @@ import {
   AddressInputProps,
 } from '@/ui/field/input/components/AddressInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 
@@ -50,7 +51,7 @@ const AddressInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'text',
           label: 'Address',
-          type: 'ADDRESS',
+          type: FieldMetadataType.Address,
           iconName: 'IconTag',
           metadata: {
             fieldName: 'Address',
