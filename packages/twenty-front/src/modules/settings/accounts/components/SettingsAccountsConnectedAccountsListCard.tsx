@@ -29,7 +29,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       isLoading={loading}
       RowIcon={IconGoogle}
       RowRightComponent={({ item: account }) => (
-        <SettingsAccountsRowDropdownMenu account={account} />
+        <SettingsAccountsRowDropdownMenu item={account} />
       )}
       hasFooter
       footerButtonLabel="Add account"
