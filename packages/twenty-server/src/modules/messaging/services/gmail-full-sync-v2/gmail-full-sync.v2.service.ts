@@ -149,9 +149,8 @@ export class GmailFullSyncV2Service {
           workspaceId,
         );
 
-        this.logger.error(
-          `Error occurred while fetching message ids from Gmail for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-          error,
+        throw new Error(
+          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       });
   }

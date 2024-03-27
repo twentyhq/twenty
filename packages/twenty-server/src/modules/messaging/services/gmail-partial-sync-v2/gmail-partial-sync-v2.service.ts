@@ -227,7 +227,7 @@ export class GmailPartialSyncV2Service {
           workspaceId,
         );
 
-        this.logger.error(
+        throw new Error(
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       });

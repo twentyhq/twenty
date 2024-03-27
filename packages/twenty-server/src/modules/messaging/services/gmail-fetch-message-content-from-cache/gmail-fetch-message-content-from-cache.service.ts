@@ -214,7 +214,7 @@ export class GmailFetchMessageContentFromCacheService {
           workspaceId,
         );
 
-        this.logger.error(
+        throw new Error(
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
       });
