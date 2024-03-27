@@ -18,7 +18,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/SignInUp',
   component: SignInUp,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.SignIn },
+  args: { routePath: AppPath.SignInUp },
   parameters: {
     msw: {
       handlers: [

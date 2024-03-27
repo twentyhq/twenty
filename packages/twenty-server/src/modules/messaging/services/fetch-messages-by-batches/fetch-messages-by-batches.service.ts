@@ -19,7 +19,6 @@ export class FetchMessagesByBatchesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
-    jobName?: string,
     workspaceId?: string,
     connectedAccountId?: string,
   ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
@@ -32,7 +31,7 @@ export class FetchMessagesByBatchesService {
     let endTime = Date.now();
 
     this.logger.log(
-      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
         queries.length
       } messages in ${endTime - startTime}ms`,
     );
@@ -45,7 +44,7 @@ export class FetchMessagesByBatchesService {
     endTime = Date.now();
 
     this.logger.log(
-      `${jobName} for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
         queries.length
       } messages in ${endTime - startTime}ms`,
     );
@@ -61,6 +60,10 @@ export class FetchMessagesByBatchesService {
     ) as GmailMessageParsedResponse[];
 
     const errors: any = [];
+
+    const sanitizeString = (str: string) => {
+      return str.replace(/\0/g, '');
+    };
 
     const formattedResponse = Promise.all(
       parsedResponses.map(async (message: GmailMessageParsedResponse) => {
@@ -119,7 +122,7 @@ export class FetchMessagesByBatchesService {
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
             participants,
-            text: textWithoutReplyQuotations || '',
+            text: sanitizeString(textWithoutReplyQuotations || ''),
             attachments,
           };
 

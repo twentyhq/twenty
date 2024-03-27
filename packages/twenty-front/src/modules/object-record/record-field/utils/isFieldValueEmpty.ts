@@ -14,7 +14,6 @@ import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFi
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -26,9 +25,11 @@ const isValueEmpty = (value: unknown) => !isDefined(value) || value === '';
 export const isFieldValueEmpty = ({
   fieldDefinition,
   fieldValue,
+  selectOptionValues,
 }: {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
   fieldValue: unknown;
+  selectOptionValues?: string[];
 }) => {
   if (
     isFieldUuid(fieldDefinition) ||
@@ -37,18 +38,18 @@ export const isFieldValueEmpty = ({
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
-    isFieldBoolean(fieldDefinition)
+    isFieldBoolean(fieldDefinition) ||
+    isFieldRelation(fieldDefinition)
     //|| isFieldPhone(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);
   }
 
-  if (isFieldRelation(fieldDefinition)) {
-    return isFieldRelationValue(fieldValue) && isValueEmpty(fieldValue);
-  }
-
   if (isFieldSelect(fieldDefinition)) {
-    return isFieldSelectValue(fieldValue) && !isDefined(fieldValue);
+    return (
+      !isFieldSelectValue(fieldValue, selectOptionValues) ||
+      !isDefined(fieldValue)
+    );
   }
 
   if (isFieldCurrency(fieldDefinition)) {
@@ -82,6 +83,6 @@ export const isFieldValueEmpty = ({
   }
 
   throw new Error(
-    `Entity field type not supported in isEntityFieldEditModeEmptyFamilySelector : ${fieldDefinition.type}}`,
+    `Entity field type not supported in isFieldValueEmpty : ${fieldDefinition.type}}`,
   );
 };

@@ -15,7 +15,6 @@ import { unsavedToDeleteViewFilterIdsComponentState } from '@/views/states/unsav
 import { unsavedToDeleteViewSortIdsComponentState } from '@/views/states/unsavedToDeleteViewSortIdsComponentState';
 import { unsavedToUpsertViewFiltersComponentState } from '@/views/states/unsavedToUpsertViewFiltersComponentState';
 import { unsavedToUpsertViewSortsComponentState } from '@/views/states/unsavedToUpsertViewSortsComponentState';
-import { viewEditModeComponentState } from '@/views/states/viewEditModeComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 
 import { ViewScopeInternalContext } from '../../scopes/scope-internal-context/ViewScopeInternalContext';
@@ -58,10 +57,6 @@ export const useViewStates = (viewComponentId?: string) => {
     ),
     entityCountInCurrentViewState: extractComponentState(
       entityCountInCurrentViewComponentState,
-      componentId,
-    ),
-    viewEditModeState: extractComponentState(
-      viewEditModeComponentState,
       componentId,
     ),
     viewObjectMetadataIdState: extractComponentState(

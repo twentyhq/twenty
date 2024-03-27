@@ -11,9 +11,9 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isDefined } from '~/utils/isDefined';
 
-import { ApolloFactory } from '../services/apollo.factory';
+import { ApolloFactory, Options } from '../services/apollo.factory';
 
-export const useApolloFactory = () => {
+export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
@@ -41,16 +41,17 @@ export const useApolloFactory = () => {
         setTokenPair(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignIn) &&
-          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.SignInUp) &&
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
-          navigate(AppPath.SignIn);
+          navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],
       isDebugMode,
+      // Override options
+      ...options,
     });
 
     return apolloRef.current.getClient();

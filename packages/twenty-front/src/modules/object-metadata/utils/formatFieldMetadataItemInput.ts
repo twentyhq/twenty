@@ -26,9 +26,25 @@ export const formatFieldMetadataItemInput = (
 ) => {
   const defaultOption = input.options?.find((option) => option.isDefault);
 
+  // Check if options has unique values
+  if (input.options !== undefined) {
+    // Compute the values based on the label
+    const values = input.options.map((option) =>
+      getOptionValueFromLabel(option.label),
+    );
+
+    if (new Set(values).size !== input.options.length) {
+      throw new Error(
+        `Options must have unique values, but contains the following duplicates ${values.join(
+          ', ',
+        )}`,
+      );
+    }
+  }
+
   return {
     defaultValue: defaultOption
-      ? getOptionValueFromLabel(defaultOption.label)
+      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
       : undefined,
     description: input.description?.trim() ?? null,
     icon: input.icon,

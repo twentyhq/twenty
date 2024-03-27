@@ -75,6 +75,11 @@ export type FieldAddressMetadata = {
   fieldName: string;
 };
 
+export type FieldRawJsonMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
   | 'FROM_ONE_OBJECT'

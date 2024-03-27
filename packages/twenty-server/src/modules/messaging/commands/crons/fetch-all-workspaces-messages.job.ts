@@ -16,6 +16,14 @@ import {
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  GmailPartialSyncV2Job as GmailPartialSyncV2Job,
+  GmailPartialSyncV2JobData as GmailPartialSyncV2JobData,
+} from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 
 @Injectable()
 export class FetchAllWorkspacesMessagesJob
@@ -32,6 +40,8 @@ export class FetchAllWorkspacesMessagesJob
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async handle(): Promise<void> {
@@ -61,17 +71,33 @@ export class FetchAllWorkspacesMessagesJob
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     try {
+      const isFullSyncV2Enabled = await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsFullSyncV2Enabled,
+        value: true,
+      });
+
       const connectedAccounts =
         await this.connectedAccountRepository.getAll(workspaceId);
 
       for (const connectedAccount of connectedAccounts) {
-        await this.messageQueueService.add<GmailPartialSyncJobData>(
-          GmailPartialSyncJob.name,
-          {
-            workspaceId,
-            connectedAccountId: connectedAccount.id,
-          },
-        );
+        if (isFullSyncV2Enabled) {
+          await this.messageQueueService.add<GmailPartialSyncV2JobData>(
+            GmailPartialSyncV2Job.name,
+            {
+              workspaceId,
+              connectedAccountId: connectedAccount.id,
+            },
+          );
+        } else {
+          await this.messageQueueService.add<GmailPartialSyncJobData>(
+            GmailPartialSyncJob.name,
+            {
+              workspaceId,
+              connectedAccountId: connectedAccount.id,
+            },
+          );
+        }
       }
     } catch (error) {
       this.logger.error(

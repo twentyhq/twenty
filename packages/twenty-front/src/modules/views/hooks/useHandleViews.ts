@@ -12,6 +12,7 @@ import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistVie
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -19,7 +20,8 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useHandleViews = (viewBarComponentId?: string) => {
   const { resetCurrentView } = useResetCurrentView(viewBarComponentId);
 
-  const { currentViewIdState } = useViewStates(viewBarComponentId);
+  const { currentViewIdState, isPersistingViewFieldsState } =
+    useViewStates(viewBarComponentId);
 
   const { getViewFromCache } = useGetViewFromCache();
 
@@ -36,8 +38,8 @@ export const useHandleViews = (viewBarComponentId?: string) => {
   });
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
-
-  const createViewFromCurrent = useRecoilCallback(() => () => {}, []);
+  const { saveCurrentViewFilterAndSorts } =
+    useSaveCurrentViewFiltersAndSorts(viewBarComponentId);
 
   const [_, setSearchParams] = useSearchParams();
 
@@ -48,9 +50,20 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     [deleteOneRecord],
   );
 
-  const createEmptyView = useRecoilCallback(
-    ({ snapshot }) =>
-      async (id: string, name: string) => {
+  const createView = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async ({
+        id,
+        name,
+        icon,
+        kanbanFieldMetadataId,
+        type,
+      }: Partial<
+        Pick<
+          GraphQLView,
+          'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
+        >
+      >) => {
         const currentViewId = getSnapshotValue(snapshot, currentViewIdState);
 
         if (!isDefined(currentViewId)) {
@@ -63,11 +76,17 @@ export const useHandleViews = (viewBarComponentId?: string) => {
           return;
         }
 
+        set(isPersistingViewFieldsState, true);
+
         const newView = await createOneRecord({
           id: id ?? v4(),
-          name: name,
+          name: name ?? view.name,
+          icon: icon ?? view.icon,
+          key: null,
+          kanbanFieldMetadataId:
+            kanbanFieldMetadataId ?? view.kanbanFieldMetadataId,
+          type: type ?? view.type,
           objectMetadataId: view.objectMetadataId,
-          type: view.type,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -75,33 +94,36 @@ export const useHandleViews = (viewBarComponentId?: string) => {
         }
 
         await createViewFieldRecords(view.viewFields, newView);
+        await saveCurrentViewFilterAndSorts(newView.id);
+        set(isPersistingViewFieldsState, false);
       },
     [
       createOneRecord,
       createViewFieldRecords,
       currentViewIdState,
       getViewFromCache,
+      isPersistingViewFieldsState,
+      saveCurrentViewFilterAndSorts,
     ],
   );
 
   const changeViewInUrl = useCallback(
     (viewId: string) => {
-      setSearchParams((previousSearchParams) => {
-        previousSearchParams.set('view', viewId);
-        return previousSearchParams;
+      setSearchParams(() => {
+        const searchParams = new URLSearchParams();
+        searchParams.set('view', viewId);
+        return searchParams;
       });
     },
     [setSearchParams],
   );
 
   const selectView = useRecoilCallback(
-    ({ set }) =>
-      async (viewId: string) => {
-        set(currentViewIdState, viewId);
-        changeViewInUrl(viewId);
-        resetCurrentView();
-      },
-    [changeViewInUrl, currentViewIdState, resetCurrentView],
+    () => async (viewId: string) => {
+      changeViewInUrl(viewId);
+      resetCurrentView();
+    },
+    [changeViewInUrl, resetCurrentView],
   );
 
   const updateCurrentView = useRecoilCallback(
@@ -120,11 +142,23 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     [currentViewIdState, updateOneRecord],
   );
 
+  const updateView = useRecoilCallback(
+    () => async (view: Partial<GraphQLView>) => {
+      if (isDefined(view.id)) {
+        await updateOneRecord({
+          idToUpdate: view.id,
+          updateOneRecordInput: view,
+        });
+      }
+    },
+    [updateOneRecord],
+  );
+
   return {
     selectView,
     updateCurrentView,
+    updateView,
     removeView,
-    createEmptyView,
-    createViewFromCurrent,
+    createView,
   };
 };

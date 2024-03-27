@@ -1,6 +1,5 @@
 import { v4 } from 'uuid';
 
-import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -24,13 +23,19 @@ export const useFieldMetadataItem = () => {
       options?: Omit<FieldMetadataOption, 'id'>[];
       type: FieldMetadataType;
     },
-  ) =>
-    createOneFieldMetadataItem({
-      ...formatFieldMetadataItemInput(input),
-      defaultValue: input.defaultValue,
+  ) => {
+    const formatedInput = formatFieldMetadataItemInput(input);
+    const defaultValue = input.defaultValue
+      ? `'${input.defaultValue}'`
+      : formatedInput.defaultValue ?? undefined;
+
+    return createOneFieldMetadataItem({
+      ...formatedInput,
+      defaultValue,
       objectMetadataId: input.objectMetadataId,
-      type: input.type as FieldType,
+      type: input.type,
     });
+  };
 
   const editMetadataField = (
     input: Pick<Field, 'id' | 'label' | 'icon' | 'description'> & {
