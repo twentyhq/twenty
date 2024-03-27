@@ -1,4 +1,12 @@
 import styled from '@emotion/styled';
+import {
+  IconArchive,
+  IconCheck,
+  IconCheckbox,
+  RecoilScope,
+  TabList,
+  TopBar,
+} from 'twenty-ui';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
@@ -6,13 +14,9 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { TopBar } from '@/ui/layout/top-bar/TopBar';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';
 

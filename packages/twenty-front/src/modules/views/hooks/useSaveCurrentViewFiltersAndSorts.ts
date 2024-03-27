@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
+import { getSnapshotValue } from 'twenty-ui';
 
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';

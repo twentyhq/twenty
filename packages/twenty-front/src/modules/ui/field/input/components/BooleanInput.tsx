@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconCheck, IconX } from '@/ui/display/icon';
+import { IconCheck, IconX } from 'twenty-ui';
 
 const StyledEditableBooleanFieldContainer = styled.div`
   align-items: center;

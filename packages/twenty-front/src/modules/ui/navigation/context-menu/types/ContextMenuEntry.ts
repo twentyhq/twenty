@@ -1,5 +1,4 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
+import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
 export type ContextMenuEntry = {
   label: string;

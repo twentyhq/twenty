@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useSetHotkeyScope } from 'twenty-ui';
 
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -8,7 +9,6 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { RecordIndexPageHeader } from '~/pages/object-record/RecordIndexPageHeader';
 
 const StyledIndexContainer = styled.div`

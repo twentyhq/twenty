@@ -1,6 +1,7 @@
+import { createComponentReadOnlySelector } from 'twenty-ui';
+
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 

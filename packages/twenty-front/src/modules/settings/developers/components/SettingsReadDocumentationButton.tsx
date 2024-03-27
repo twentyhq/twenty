@@ -1,5 +1,4 @@
-import { IconBook2 } from '@/ui/display/icon';
-import { Button } from '@/ui/input/button/components/Button';
+import { Button, IconBook2 } from 'twenty-ui';
 
 export const SettingsReadDocumentationButton = () => {
   return (

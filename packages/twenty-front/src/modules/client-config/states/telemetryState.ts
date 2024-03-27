@@ -1,4 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
+
 import { Telemetry } from '~/generated/graphql';
 
 export const telemetryState = createState<Telemetry>({

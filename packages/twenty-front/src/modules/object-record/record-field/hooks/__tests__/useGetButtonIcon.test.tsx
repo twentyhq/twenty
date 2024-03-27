@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { IconPencil } from 'twenty-ui';
 
 import {
   phoneFieldDefinition,
@@ -10,7 +11,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { IconPencil } from '@/ui/display/icon';
 
 const entityId = 'entityId';
 

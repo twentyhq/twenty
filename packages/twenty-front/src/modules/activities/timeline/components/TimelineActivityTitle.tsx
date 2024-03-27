@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
+import { Checkbox, CheckboxShape, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
-import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 
 const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};

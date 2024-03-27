@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import {
+  DropdownMenuHeader,
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconFileImport,
+  IconTag,
+  MenuItem,
+  MenuItemToggle,
+  useDropdown,
+  useScopedHotkeys,
+} from 'twenty-ui';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
-import {
-  IconBaselineDensitySmall,
-  IconChevronLeft,
-  IconFileImport,
-  IconTag,
-} from '@/ui/display/icon';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';

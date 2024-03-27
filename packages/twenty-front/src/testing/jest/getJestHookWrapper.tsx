@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
-
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 export const getJestHookWrapper = ({
   apolloMocks,

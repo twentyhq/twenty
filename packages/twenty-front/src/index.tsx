@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
+import {
+  DialogManager,
+  DialogManagerScope,
+  IconsProvider,
+  SnackBarProvider,
+  SnackBarProviderScope,
+  ThemeType,
+} from 'twenty-ui';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
@@ -14,13 +22,7 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
-import { IconsProvider } from '@/ui/display/icon/components/IconsProvider';
-import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import { UserProvider } from '@/users/components/UserProvider';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 

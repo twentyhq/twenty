@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
+import { useSnackBar } from 'twenty-ui';
 
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const PromiseRejectionEffect = () => {
   const { enqueueSnackBar } = useSnackBar();

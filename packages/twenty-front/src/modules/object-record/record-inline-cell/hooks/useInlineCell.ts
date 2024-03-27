@@ -1,10 +1,9 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
+import { HotkeyScope, usePreviousHotkeyScope } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';

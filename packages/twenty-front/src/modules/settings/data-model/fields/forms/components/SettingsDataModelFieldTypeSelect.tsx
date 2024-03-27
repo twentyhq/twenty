@@ -1,11 +1,11 @@
 import omit from 'lodash.omit';
+import { Select, SelectOption } from 'twenty-ui';
 
 import {
   SETTINGS_FIELD_TYPE_CONFIGS,
   SettingsFieldTypeConfig,
 } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { Select, SelectOption } from '@/ui/input/components/Select';
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;

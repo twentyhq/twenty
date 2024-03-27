@@ -1,5 +1,6 @@
+import { createComponentReadOnlySelector } from 'twenty-ui';
+
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 
 export const recordBoardVisibleFieldDefinitionsComponentSelector =
   createComponentReadOnlySelector({

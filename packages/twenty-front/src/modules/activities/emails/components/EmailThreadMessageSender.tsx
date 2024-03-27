@@ -1,12 +1,12 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from '@/users/components/Avatar';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledEmailThreadMessageSender = styled.div`
   display: flex;
@@ -57,7 +57,9 @@ export const EmailThreadMessageSender = ({
     shouldUseFullName: true,
   });
 
-  const avatarUrl = person?.avatarUrl ?? workspaceMember?.avatarUrl ?? '';
+  const avatarUrl = getImageAbsoluteURIOrBase64(
+    person?.avatarUrl ?? workspaceMember?.avatarUrl ?? null,
+  );
 
   return (
     <StyledEmailThreadMessageSender>

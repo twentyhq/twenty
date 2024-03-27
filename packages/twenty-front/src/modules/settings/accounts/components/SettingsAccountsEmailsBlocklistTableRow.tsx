@@ -1,8 +1,6 @@
+import { IconButton, IconX, TableCell, TableRow } from 'twenty-ui';
+
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { IconX } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils';
 
 type SettingsAccountsEmailsBlocklistTableRowProps = {

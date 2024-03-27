@@ -1,10 +1,14 @@
-import { IconDotsVertical, IconDownload, IconTrash } from '@/ui/display/icon';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  IconDotsVertical,
+  IconDownload,
+  IconTrash,
+  LightIconButton,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;

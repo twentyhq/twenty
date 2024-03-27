@@ -1,5 +1,4 @@
-import { IconX } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
+import { IconButton, IconX } from 'twenty-ui';
 
 import {
   StyledContainer,

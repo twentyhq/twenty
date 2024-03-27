@@ -7,11 +7,11 @@ import {
   AccordionPanel,
 } from '@chakra-ui/accordion';
 import styled from '@emotion/styled';
+import { IconChevronDown, IconForbid } from 'twenty-ui';
 
 import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Fields } from '@/spreadsheet-import/types';
-import { IconChevronDown, IconForbid } from '@/ui/display/icon';
 
 import { Column, Columns, ColumnType } from '../MatchColumnsStep';
 

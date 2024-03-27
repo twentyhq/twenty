@@ -1,14 +1,16 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
+import {
+  Dropdown,
+  DropdownMenuSeparator,
+  HotkeyScope,
+  IconChevronDown,
+  StyledHeaderDropdownButton,
+} from 'twenty-ui';
 
 import { ObjectFilterDropdownRecordRemoveFilterMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordRemoveFilterMenuItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { IconChevronDown } from '@/ui/display/icon/index';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';

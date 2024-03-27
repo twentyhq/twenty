@@ -1,6 +1,3 @@
-// eslint-disable-next-line
-const path = require('path');
-
 module.exports = {
   extends: [
     'plugin:@nx/react',
@@ -41,15 +38,6 @@ module.exports = {
         project: ['packages/twenty-chrome-extension/tsconfig.*?.json'],
       },
       rules: {},
-    },
-    {
-      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        'storybook/no-uninstalled-addons': [
-          'error',
-          { packageJsonLocation: path.resolve('../../package.json') },
-        ],
-      },
     },
     {
       files: ['.storybook/**/*', '**/*.stories.tsx', '**/*.test.@(ts|tsx)'],

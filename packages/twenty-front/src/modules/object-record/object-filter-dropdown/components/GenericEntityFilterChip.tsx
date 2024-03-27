@@ -1,5 +1,4 @@
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { EntityChip, IconComponent } from 'twenty-ui';
 
 import { Filter } from '../types/Filter';
 

@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { FloatingIconButton, IconComponent } from 'twenty-ui';
 
 const StyledEditButtonContainer = styled(motion.div)`
   position: absolute;

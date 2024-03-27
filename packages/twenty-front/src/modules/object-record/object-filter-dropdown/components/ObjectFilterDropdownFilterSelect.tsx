@@ -1,11 +1,13 @@
 import { useRecoilValue } from 'recoil';
+import {
+  DropdownMenuItemsContainer,
+  MenuItem,
+  useIcons,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 

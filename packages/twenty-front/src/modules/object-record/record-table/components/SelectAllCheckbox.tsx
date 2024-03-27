@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { Checkbox } from 'twenty-ui';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useRecordTable } from '../hooks/useRecordTable';
 

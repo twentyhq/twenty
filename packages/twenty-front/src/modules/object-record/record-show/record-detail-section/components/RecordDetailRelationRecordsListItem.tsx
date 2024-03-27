@@ -1,7 +1,17 @@
 import { useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { LightIconButton, MenuItem } from 'tsup.ui.index';
+import {
+  Dropdown,
+  DropdownMenuItemsContainer,
+  DropdownScope,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
+  LightIconButton,
+  MenuItem,
+  useDropdown,
+} from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,11 +23,6 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { IconDotsVertical, IconTrash, IconUnlink } from '@/ui/display/icon';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;

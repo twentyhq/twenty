@@ -1,4 +1,4 @@
-import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
+import { TextDisplay } from 'twenty-ui';
 
 import { useTextField } from '../../hooks/useTextField';
 

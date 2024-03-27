@@ -1,18 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  IconButton,
+  IconDotsVertical,
+  IconTrash,
+  MenuItem,
+  navigationMemorizedUrlState,
+  useDropdown,
+} from 'twenty-ui';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconDotsVertical, IconTrash } from '@/ui/display/icon/index';
-import { IconButton } from '@/ui/input/button/components/IconButton';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-
-import { Dropdown } from '../../dropdown/components/Dropdown';
-import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
 const StyledContainer = styled.div`
   z-index: 1;

@@ -1,6 +1,7 @@
+import { useAvailableScopeIdOrThrow } from 'twenty-ui';
+
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { getRelationPickerScopedStates } from '@/object-record/relation-picker/utils/getRelationPickerScopedStates';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 export const useRelationPickerScopedStates = (args?: {
   relationPickerScopedId?: string;

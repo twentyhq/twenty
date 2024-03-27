@@ -1,5 +1,4 @@
-import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { ComponentStateKey, createScopeInternalContext } from 'twenty-ui';
 
 import { Sort } from '../../types/Sort';
 

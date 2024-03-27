@@ -1,9 +1,9 @@
 import { expect } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { AppHotkeyScope } from 'twenty-ui';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../useKeyboardShortcutMenu';
 
@@ -11,7 +11,7 @@ const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
 
 const mockGoBackToPreviousHotkeyScope = jest.fn();
 
-jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
+jest.mock('twenty-ui', () => ({
   usePreviousHotkeyScope: () => ({
     setHotkeyScopeAndMemorizePreviousScope:
       mockSetHotkeyScopeAndMemorizePreviousScope,

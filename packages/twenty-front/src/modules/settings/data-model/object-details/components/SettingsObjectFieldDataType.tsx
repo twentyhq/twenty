@@ -1,10 +1,9 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldDataTypeProps = {

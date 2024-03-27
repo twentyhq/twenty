@@ -1,4 +1,4 @@
-import { Status } from '@/ui/display/status/components/Status';
+import { Status } from 'twenty-ui';
 
 type SettingsAccountsSynchronizationStatusProps = {
   synced: boolean;

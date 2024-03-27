@@ -1,5 +1,6 @@
+import { useScopedHotkeys } from 'twenty-ui';
+
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type PageHotkeysEffectProps = {
   onAddButtonClick?: () => void;

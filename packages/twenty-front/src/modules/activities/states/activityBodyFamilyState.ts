@@ -1,4 +1,4 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createFamilyState } from 'twenty-ui';
 
 export const activityBodyFamilyState = createFamilyState<
   string,

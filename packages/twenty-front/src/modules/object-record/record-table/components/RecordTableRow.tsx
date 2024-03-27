@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { ScrollWrapperContext } from 'twenty-ui';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
@@ -9,7 +10,6 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { CheckboxCell } from './CheckboxCell';
 

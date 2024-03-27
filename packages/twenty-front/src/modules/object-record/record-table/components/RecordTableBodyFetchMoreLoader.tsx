@@ -1,11 +1,11 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { GRAY_SCALE } from 'twenty-ui';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 type RecordTableBodyFetchMoreLoaderProps = {
   objectNameSingular: string;

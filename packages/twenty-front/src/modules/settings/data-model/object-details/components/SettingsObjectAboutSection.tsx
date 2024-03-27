@@ -1,19 +1,23 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import {
+  Card,
+  CardContent,
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  H2Title,
+  IconArchive,
+  IconDotsVertical,
+  IconPencil,
+  LightIconButton,
+  MenuItem,
+  Section,
+  useDropdown,
+  useIcons,
+} from 'twenty-ui';
 
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { Section } from '@/ui/layout/section/components/Section';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAboutSectionProps = {
   iconKey?: string;

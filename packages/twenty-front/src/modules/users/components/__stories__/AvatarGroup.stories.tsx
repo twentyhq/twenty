@@ -1,11 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { Avatar, AvatarProps, AvatarSize, AvatarType } from 'twenty-ui';
 
-import {
-  Avatar,
-  AvatarProps,
-  AvatarSize,
-  AvatarType,
-} from '@/users/components/Avatar';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';

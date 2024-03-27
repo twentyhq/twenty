@@ -1,25 +1,24 @@
 import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { v4 } from 'uuid';
-
-import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import {
+  ColorSample,
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from '@/ui/display/icon';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
+  LightIconButton,
+  MAIN_COLOR_NAMES,
+  MenuItem,
+  MenuItemSelectColor,
+  TextInput,
+  useDropdown,
+} from 'twenty-ui';
+import { v4 } from 'uuid';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 

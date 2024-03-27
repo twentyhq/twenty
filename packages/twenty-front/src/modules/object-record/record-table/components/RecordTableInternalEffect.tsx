@@ -1,12 +1,12 @@
 import { Key } from 'ts-key-enum';
-
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   useListenClickOutside,
   useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+  useScopedHotkeys,
+} from 'twenty-ui';
+
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
 type RecordTableInternalEffectProps = {
   recordTableId: string;

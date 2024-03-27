@@ -1,6 +1,6 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
-
 import {
+  IconComponent,
   IconFile,
   IconH1,
   IconH2,
@@ -10,8 +10,8 @@ import {
   IconPhoto,
   IconPilcrow,
   IconTable,
-} from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+} from 'twenty-ui';
+
 import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
 import { blockSchema } from './schema';

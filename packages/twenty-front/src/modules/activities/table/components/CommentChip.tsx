@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconComment } from '@/ui/display/icon';
+import { IconComment } from 'twenty-ui';
 
 export type CommentChipProps = {
   count: number;

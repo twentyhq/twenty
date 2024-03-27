@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useDropdown } from 'twenty-ui';
 
 export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
   filterDefinitionUsedInDropdownType,

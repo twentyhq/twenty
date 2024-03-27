@@ -1,4 +1,4 @@
-import { LightButton } from '@/ui/input/button/components/LightButton';
+import { LightButton } from 'twenty-ui';
 
 type CancelButtonProps = {
   onCancel?: () => void;

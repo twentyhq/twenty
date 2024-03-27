@@ -1,5 +1,6 @@
+import { TextDisplay } from 'twenty-ui';
+
 import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
-import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameField();

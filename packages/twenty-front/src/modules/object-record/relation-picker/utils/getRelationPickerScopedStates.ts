@@ -1,7 +1,8 @@
+import { getScopedStateDeprecated } from 'twenty-ui';
+
 import { relationPickerPreselectedIdScopedState } from '@/object-record/relation-picker/states/relationPickerPreselectedIdScopedState';
 import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { searchQueryScopedState } from '@/object-record/relation-picker/states/searchQueryScopedState';
-import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 
 export const getRelationPickerScopedStates = ({
   relationPickerScopeId,

@@ -1,7 +1,7 @@
+import { H2Title, Section } from 'twenty-ui';
+
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Section } from '@/ui/layout/section/components/Section';
 
 import { SettingsAccountsListCard } from './SettingsAccountsListCard';
 

@@ -1,7 +1,8 @@
+import { Select } from 'twenty-ui';
+
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/accounts/constants/AvailableTimezoneOptions';
 import { detectTimeZone } from '@/settings/accounts/utils/detectTimeZone';
 import { findAvailableTimeZoneOption } from '@/settings/accounts/utils/findAvailableTimeZoneOption';
-import { Select } from '@/ui/input/components/Select';
 
 type SettingsAccountsCalendarTimeZoneSelectProps = {
   value?: string;

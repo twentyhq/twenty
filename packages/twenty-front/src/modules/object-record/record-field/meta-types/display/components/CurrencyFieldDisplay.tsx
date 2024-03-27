@@ -1,4 +1,4 @@
-import { CurrencyDisplay } from '@/ui/field/display/components/CurrencyDisplay';
+import { CurrencyDisplay } from 'twenty-ui';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 

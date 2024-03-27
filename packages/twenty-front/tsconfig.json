@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -10,25 +11,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/modules/*"],
-      "~/*": ["src/*"],
-      "twenty-ui": ["../twenty-ui/src/index.ts"]
+      "~/*": ["src/*"]
     },
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "files": [],
   "include": [],
@@ -39,5 +34,5 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ],
+  ]
 }

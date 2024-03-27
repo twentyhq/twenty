@@ -3,10 +3,10 @@ import { gql } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 import { useSpreadsheetRecordImport } from '../useSpreadsheetRecordImport';
 

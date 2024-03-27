@@ -1,5 +1,6 @@
+import { IconArrowDown, IconArrowUp } from 'twenty-ui';
+
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 

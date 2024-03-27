@@ -1,18 +1,20 @@
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
+import {
+  CreateNewButton,
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  DropdownMenuSkeletonItem,
+  IconComponent,
+  IconPlus,
+  MenuItem,
+  MenuItemSelect,
+  SelectableList,
+  useScopedHotkeys,
+} from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
-import { IconPlus } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 import { EntityForSelect } from '../types/EntityForSelect';

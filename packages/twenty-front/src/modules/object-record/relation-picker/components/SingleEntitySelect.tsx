@@ -1,11 +1,10 @@
 import { useRef } from 'react';
+import { DropdownMenu, useListenClickOutside } from 'twenty-ui';
 
 import {
   SingleEntitySelectMenuItemsWithSearch,
   SingleEntitySelectMenuItemsWithSearchProps,
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 export type SingleEntitySelectProps = {

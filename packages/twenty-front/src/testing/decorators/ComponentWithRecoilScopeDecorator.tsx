@@ -1,6 +1,5 @@
 import { Decorator } from '@storybook/react';
-
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { RecoilScope } from 'twenty-ui';
 
 export const ComponentWithRecoilScopeDecorator: Decorator = (
   Story,

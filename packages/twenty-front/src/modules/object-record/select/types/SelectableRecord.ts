@@ -1,4 +1,4 @@
-import { AvatarType } from '@/users/components/Avatar';
+import { AvatarType } from 'twenty-ui';
 
 export type SelectableRecord = {
   id: string;

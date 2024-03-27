@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { Modal } from 'twenty-ui';
 import { WorkBook } from 'xlsx-ugnis';
-
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { DropZone } from './components/DropZone';
 

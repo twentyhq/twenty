@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconTwentyStarFilled } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
-import { IconTwentyStarFilled } from '@/ui/display/icon/components/IconTwentyStarFilled';
 
 const StyledContainer = styled.div`
   align-items: center;

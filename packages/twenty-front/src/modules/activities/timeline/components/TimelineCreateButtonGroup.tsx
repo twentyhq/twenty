@@ -1,15 +1,16 @@
 import { useSetRecoilState } from 'recoil';
-import { Button, ButtonGroup } from 'tsup.ui.index';
-
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import {
+  Button,
+  ButtonGroup,
   IconCheckbox,
   IconNotes,
   IconPaperclip,
-} from '@/ui/display/icon/index';
+  useTabList,
+} from 'twenty-ui';
+
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageRightContainer';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 export const TimelineCreateButtonGroup = ({
   targetableObject,

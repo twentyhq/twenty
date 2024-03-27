@@ -1,8 +1,8 @@
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
+import { Radio } from 'twenty-ui';
 
 import { RawData } from '@/spreadsheet-import/types';
-import { Radio } from '@/ui/input/components/Radio';
 
 const SELECT_COLUMN_KEY = 'select-row';
 

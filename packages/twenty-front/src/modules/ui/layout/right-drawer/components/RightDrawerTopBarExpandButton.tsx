@@ -1,10 +1,9 @@
 import { useRecoilState } from 'recoil';
-
 import {
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
-} from '@/ui/display/icon';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+  LightIconButton,
+} from 'twenty-ui';
 
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 

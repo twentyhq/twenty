@@ -1,12 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-
-import { useAuth } from '@/auth/hooks/useAuth';
-import { billingState } from '@/client-config/states/billingState.ts';
-import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import {
   IconApps,
   IconAt,
@@ -20,7 +14,13 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { useAuth } from '@/auth/hooks/useAuth';
+import { billingState } from '@/client-config/states/billingState.ts';
+import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';

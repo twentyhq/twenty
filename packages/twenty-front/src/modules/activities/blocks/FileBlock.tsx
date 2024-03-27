@@ -2,8 +2,8 @@ import { ChangeEvent, useRef } from 'react';
 import { createReactBlockSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { Button } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

@@ -82,7 +82,7 @@ jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
     setOnColumnsChange,
   }),
 }));
-jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
+jest.mock('twenty-ui', () => ({
   useSetHotkeyScope: () => setHotkeyScope,
 }));
 

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { AvatarType } from '@/users/components/Avatar';
+import { AvatarType } from 'twenty-ui';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';

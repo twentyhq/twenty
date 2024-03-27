@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @nx/workspace-max-consts-per-file */
+import { SelectOption } from 'twenty-ui';
+
 import { IANA_TIME_ZONES } from '@/settings/accounts/constants/IanaTimeZones';
 import { formatTimeZoneLabel } from '@/settings/accounts/utils/formatTimeZoneLabel';
-import { SelectOption } from '@/ui/input/components/Select';
 
 export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
   Record<string, SelectOption<string>>

@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
 
 export const isSignUpDisabledState = createState<boolean>({
   key: 'isSignUpDisabledState',

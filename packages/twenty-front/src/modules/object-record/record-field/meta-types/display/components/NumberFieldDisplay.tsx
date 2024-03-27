@@ -1,4 +1,4 @@
-import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
+import { NumberDisplay } from 'twenty-ui';
 
 import { useNumberField } from '../../hooks/useNumberField';
 

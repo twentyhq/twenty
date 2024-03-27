@@ -1,8 +1,7 @@
 import { SafeParseSuccess } from 'zod';
 
+import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { CreateObjectInput } from '~/generated-metadata/graphql';
-
-import { settingsCreateObjectInputSchema } from '..//settingsCreateObjectInputSchema';
 
 describe('settingsCreateObjectInputSchema', () => {
   it('validates a valid input and adds name properties', () => {

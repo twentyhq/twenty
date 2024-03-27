@@ -1,4 +1,4 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'twenty-ui';
 
 import { ViewSort } from '../types/ViewSort';
 

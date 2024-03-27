@@ -1,9 +1,9 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { Meta, StoryObj } from '@storybook/react';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { UserProvider } from '@/users/components/UserProvider';
 import { App } from '~/App';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

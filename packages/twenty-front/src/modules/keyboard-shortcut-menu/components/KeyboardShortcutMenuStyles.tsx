@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.primary};

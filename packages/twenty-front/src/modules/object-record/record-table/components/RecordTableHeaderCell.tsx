@@ -1,18 +1,20 @@
 import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import {
+  getSnapshotValue,
+  IconPlus,
+  LightIconButton,
+  scrollLeftState,
+  useIsMobile,
+  useTrackPointer,
+} from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { IconPlus } from '@/ui/display/icon';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';

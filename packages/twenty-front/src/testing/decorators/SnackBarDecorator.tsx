@@ -1,6 +1,5 @@
 import { Decorator } from '@storybook/react';
-
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 export const SnackBarDecorator: Decorator = (Story) => (
   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">

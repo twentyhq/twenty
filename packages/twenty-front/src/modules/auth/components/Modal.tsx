@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
-
-import { Modal as UIModal } from '@/ui/layout/modal/components/Modal';
+import { Modal as UIModal } from 'twenty-ui';
 
 const StyledContent = styled(UIModal.Content)`
   align-items: center;

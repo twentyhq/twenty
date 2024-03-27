@@ -1,12 +1,10 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { IconPicker, TextArea, TextInput } from 'twenty-ui';
 import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
 
 export const settingsDataModelObjectAboutFormSchema =
   objectMetadataItemSchema.pick({

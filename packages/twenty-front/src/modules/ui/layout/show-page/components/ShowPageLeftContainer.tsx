@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { ScrollWrapper, useIsMobile } from 'twenty-ui';
 
 const StyledOuterContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};

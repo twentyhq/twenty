@@ -1,6 +1,5 @@
 import { Decorator } from '@storybook/react';
-
-import { IconsProvider } from '@/ui/display/icon/components/IconsProvider';
+import { IconsProvider } from 'twenty-ui';
 
 export const IconsProviderDecorator: Decorator = (Story) => {
   return (

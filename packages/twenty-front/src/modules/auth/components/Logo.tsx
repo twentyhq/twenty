@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 type LogoProps = {
   workspaceLogo?: string | null;

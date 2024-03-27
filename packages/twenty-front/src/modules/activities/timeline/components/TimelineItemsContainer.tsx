@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { ScrollWrapper } from 'twenty-ui';
 
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { groupActivitiesByMonth } from '../utils/groupActivitiesByMonth';
 

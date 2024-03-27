@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconPlus } from 'twenty-ui';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { IconPlus } from '@/ui/display/icon/index';
 
 const StyledButton = styled.button`
   align-items: center;

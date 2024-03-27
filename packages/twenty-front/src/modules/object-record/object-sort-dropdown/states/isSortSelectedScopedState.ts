@@ -1,4 +1,4 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentState } from 'twenty-ui';
 
 export const isSortSelectedComponentState = createComponentState<boolean>({
   key: 'isSortSelectedComponentState',

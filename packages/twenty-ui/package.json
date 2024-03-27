@@ -1,12 +1,29 @@
 {
   "name": "twenty-ui",
   "version": "0.0.1",
-  "main": "./index.js",
-  "module": "./index.mjs",
-  "typings": "./index.d.ts",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-ui node ../../node_modules/nx/bin/nx.js",
-    "start": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build": "vite build",
+    "lint": "eslint src",
+    "lint:fix": "npx nx lint --fix",
+    "storybook:build": "storybook build",
+    "storybook:dev": "storybook dev -p 6007",
+    "storybook:test": "test-storybook --url=http://localhost:6007",
+    "storybook:test:coverage": "npx nx storybook:test --coverage",
+    "test": "jest",
+    "test:coverage": "npx nx test --coverage"
+  },
+  "nx": {
+    "projectType": "library"
   }
 }

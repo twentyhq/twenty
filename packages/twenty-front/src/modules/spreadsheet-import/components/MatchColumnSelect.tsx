@@ -10,17 +10,19 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import debounce from 'lodash.debounce';
+import {
+  AppTooltip,
+  DropdownMenu,
+  DropdownMenuItemsContainer,
+  DropdownMenuSearchInput,
+  DropdownMenuSeparator,
+  MenuItem,
+  MenuItemSelect,
+  useListenClickOutside,
+} from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 const StyledFloatingDropdown = styled.div`

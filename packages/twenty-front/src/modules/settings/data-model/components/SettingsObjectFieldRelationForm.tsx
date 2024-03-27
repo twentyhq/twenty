@@ -1,12 +1,9 @@
 import styled from '@emotion/styled';
+import { IconPicker, Select, TextInput, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { Field } from '~/generated-metadata/graphql';
 
 import { RELATION_TYPES } from '../constants/RelationTypes';

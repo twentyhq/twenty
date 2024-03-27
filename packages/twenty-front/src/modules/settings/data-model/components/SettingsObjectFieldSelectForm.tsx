@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
-import { v4 } from 'uuid';
-
-import { IconPlus } from '@/ui/display/icon';
-import { LightButton } from '@/ui/input/button/components/LightButton';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardFooter } from '@/ui/layout/card/components/CardFooter';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import {
+  CardContent,
+  CardFooter,
+  DraggableItem,
+  DraggableList,
+  IconPlus,
+  LightButton,
   MAIN_COLOR_NAMES,
   ThemeColor,
-} from '@/ui/theme/constants/MainColorNames';
+} from 'twenty-ui';
+import { v4 } from 'uuid';
+
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';

@@ -5,21 +5,14 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
       "options": {
-        "lintFilePatterns": [
-          "tools/eslint-rules/**/*.ts"
-        ],
+        "lintFilePatterns": ["{projectRoot}/**/*.ts"],
         "fix": true
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "tools/eslint-rules/jest.config.ts"
       }

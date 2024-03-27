@@ -2,9 +2,9 @@ import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
+import { SnackBarProviderScope } from 'twenty-ui';
 
 import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

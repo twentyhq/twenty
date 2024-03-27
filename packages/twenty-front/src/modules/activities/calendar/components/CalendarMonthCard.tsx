@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import styled from '@emotion/styled';
+import { Card } from 'twenty-ui';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { Card } from '@/ui/layout/card/components/Card';
 
 type CalendarMonthCardProps = {
   dayTimes: number[];

@@ -1,10 +1,8 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import {
   IconCalendarEvent,
   IconCheck,
   IconCoins,
+  IconComponent,
   IconKey,
   IconLink,
   IconMail,
@@ -13,10 +11,13 @@ import {
   IconRelationManyToMany,
   IconTag,
   IconTextSize,
+  IconTwentyStar,
   IconUser,
-} from '@/ui/display/icon';
-import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+} from 'twenty-ui';
+
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);

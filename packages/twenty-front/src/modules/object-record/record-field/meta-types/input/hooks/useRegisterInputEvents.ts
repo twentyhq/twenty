@@ -1,7 +1,6 @@
 import { Key } from 'ts-key-enum';
+import { useListenClickOutside, useScopedHotkeys } from 'twenty-ui';
 
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({

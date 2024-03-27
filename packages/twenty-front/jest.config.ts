@@ -1,19 +1,19 @@
-export default {
+import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+
+import { compilerOptions } from './tsconfig.json';
+
+const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
   silent: true,
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
+    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
+    '^.+\\.(t|j)sx?$': '@swc/jest',
   },
-  moduleNameMapper: {
-    '~/(.+)': '<rootDir>/src/$1',
-    '@/(.+)': '<rootDir>/src/modules/$1',
-    'twenty-ui': '<rootDir>/../twenty-ui/src/index.ts',
-    '@testing/(.+)': '<rootDir>/src/testing/$1',
-    '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
-      '<rootDir>/__mocks__/imageMock.js',
-  },
+  transformIgnorePatterns: ['<rootDir>/../../node_modules/'],
+  modulePaths: ['../../node_modules', compilerOptions.baseUrl],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
@@ -40,5 +40,6 @@ export default {
     '__stories__/*',
     'display/icon/index.ts',
   ],
-  // coverageDirectory: '<rootDir>/coverage/',
 };
+
+export default jestConfig;
