@@ -15,6 +15,7 @@ import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standa
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { calendarEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 
 @ObjectMetadata({
   standardId: standardObjectIds.calendarEvent,
@@ -133,14 +134,14 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   conferenceSolution: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.conferenceUri,
-    type: FieldMetadataType.TEXT,
+    standardId: calendarEventStandardFieldIds.conferenceLink,
+    type: FieldMetadataType.LINK,
     label: 'Meet Link',
     description: 'Meet Link',
     icon: 'IconLink',
   })
   @IsNullable()
-  conferenceUri: string;
+  conferenceLink: LinkMetadata;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.recurringEventExternalId,

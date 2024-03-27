@@ -85,7 +85,7 @@ export const CalendarEventDetails = ({
   > = {
     startsAt: { label: 'Start Date' },
     endsAt: { label: 'End Date' },
-    conferenceUri: { label: 'Meet link' },
+    conferenceLink: {},
     location: {},
     description: {},
   };
