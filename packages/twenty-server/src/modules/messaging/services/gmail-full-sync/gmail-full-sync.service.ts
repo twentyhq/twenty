@@ -47,7 +47,7 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly saveMessagesAndCreateContactsService: SaveMessageAndEmitContactCreationEventService,
+    private readonly saveMessagesAndEmitContactCreationEventService: SaveMessageAndEmitContactCreationEventService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -186,7 +186,6 @@ export class GmailFullSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
-        'gmail full-sync',
         workspaceId,
         connectedAccountId,
       );
@@ -200,12 +199,11 @@ export class GmailFullSyncService {
     );
 
     if (messagesToSave.length > 0) {
-      await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+      await this.saveMessagesAndEmitContactCreationEventService.saveMessagesAndEmitContactCreation(
         messagesToSave,
         connectedAccount,
         workspaceId,
         gmailMessageChannelId,
-        'gmail full-sync',
       );
     } else {
       this.logger.log(

@@ -175,6 +175,12 @@ export type CreateRelationInput = {
   toObjectMetadataId: Scalars['String']['input'];
 };
 
+export type CreateRemoteServerInput = {
+  foreignDataWrapperOptions: Scalars['JSON']['input'];
+  foreignDataWrapperType: Scalars['String']['input'];
+  userMappingOptions?: InputMaybe<Scalars['JSON']['input']>;
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']['input']>;
@@ -315,6 +321,12 @@ export type InvalidatePassword = {
   success: Scalars['Boolean']['output'];
 };
 
+export type LinkMetadata = {
+  __typename?: 'LinkMetadata';
+  label: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -329,10 +341,12 @@ export type Mutation = {
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   createOneRelation: Relation;
+  createOneRemoteServer: RemoteServer;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: FieldDeleteResponse;
   deleteOneObject: Object;
   deleteOneRelation: RelationDeleteResponse;
+  deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -392,6 +406,11 @@ export type MutationCreateOneRelationArgs = {
 };
 
 
+export type MutationCreateOneRemoteServerArgs = {
+  input: CreateRemoteServerInput;
+};
+
+
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
@@ -404,6 +423,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneRelationArgs = {
   input: DeleteOneRelationInput;
+};
+
+
+export type MutationDeleteOneRemoteServerArgs = {
+  input: RemoteServerIdInput;
 };
 
 
@@ -545,6 +569,9 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAvailableRemoteTablesByServerId: Array<RemoteTable>;
+  findManyRemoteServersByType: Array<RemoteServer>;
+  findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -582,6 +609,21 @@ export type QueryFieldArgs = {
 export type QueryFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryFindAvailableRemoteTablesByServerIdArgs = {
+  input: RemoteServerIdInput;
+};
+
+
+export type QueryFindManyRemoteServersByTypeArgs = {
+  input: RemoteServerTypeInput;
+};
+
+
+export type QueryFindOneRemoteServerByIdArgs = {
+  input: RemoteServerIdInput;
 };
 
 
@@ -708,6 +750,38 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type RemoteServer = {
+  __typename?: 'RemoteServer';
+  createdAt: Scalars['DateTime']['output'];
+  foreignDataWrapperId: Scalars['ID']['output'];
+  foreignDataWrapperOptions?: Maybe<Scalars['JSON']['output']>;
+  foreignDataWrapperType: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type RemoteServerIdInput = {
+  /** The id of the record. */
+  id: Scalars['ID']['input'];
+};
+
+export type RemoteServerTypeInput = {
+  foreignDataWrapperType: Scalars['String']['input'];
+};
+
+export type RemoteTable = {
+  __typename?: 'RemoteTable';
+  name: Scalars['String']['output'];
+  schema: Scalars['String']['output'];
+  status: RemoteTableStatus;
+};
+
+/** Status of the table */
+export enum RemoteTableStatus {
+  NotSynced = 'NOT_SYNCED',
+  Synced = 'SYNCED'
+}
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
@@ -745,8 +819,8 @@ export type Telemetry = {
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceLink: LinkMetadata;
   conferenceSolution: Scalars['String']['output'];
-  conferenceUri: Scalars['String']['output'];
   description: Scalars['String']['output'];
   endsAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];

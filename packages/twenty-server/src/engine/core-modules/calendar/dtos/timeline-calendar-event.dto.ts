@@ -12,6 +12,15 @@ registerEnumType(TimelineCalendarEventVisibility, {
   description: 'Visibility of the calendar event',
 });
 
+@ObjectType('LinkMetadata')
+export class LinkMetadata {
+  @Field()
+  label: string;
+
+  @Field()
+  url: string;
+}
+
 @ObjectType('TimelineCalendarEvent')
 export class TimelineCalendarEvent {
   @Field(() => ID)
@@ -41,8 +50,8 @@ export class TimelineCalendarEvent {
   @Field()
   conferenceSolution: string;
 
-  @Field()
-  conferenceUri: string;
+  @Field(() => LinkMetadata)
+  conferenceLink: LinkMetadata;
 
   @Field(() => [TimelineCalendarEventAttendee])
   attendees: TimelineCalendarEventAttendee[];

@@ -53,8 +53,6 @@ export class RemoteServerService<T extends RemoteServerType> {
       const encryptedPassword = await encryptText(
         remoteServerInput.userMappingOptions.password,
         key,
-        // TODO: check if we should use a separated IV
-        key,
       );
 
       remoteServerToCreate = {
