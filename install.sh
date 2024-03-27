@@ -10,13 +10,13 @@ if ! docker compose version &>/dev/null; then
   echo -e "\t❌ Docker Compose is not installed or not in PATH (n.b. docker-compose is deprecated)\n\t\tUpdate docker or install docker-compose-plugin\n\t\tOn Linux: sudo apt-get install docker-compose-plugin\n\t\tSee https://docs.docker.com/compose/install/"
   exit 1
 fi
-if ! command -v curl &>/dev/null; then
-  echo -e "\t❌ Curl is not installed or not in PATH.\n\t\tOn macOS: brew install curl\n\t\tOn Linux: sudo apt install curl"
-  exit 1
-fi
 # Check if docker is started
 if ! docker info &>/dev/null; then
   echo -e "\t❌ Docker is not running.\n\t\tPlease start Docker Desktop, Docker or check documentation at https://docs.docker.com/config/daemon/start/"
+  exit 1
+fi
+if ! command -v curl &>/dev/null; then
+  echo -e "\t❌ Curl is not installed or not in PATH.\n\t\tOn macOS: brew install curl\n\t\tOn Linux: sudo apt install curl"
   exit 1
 fi
 
