@@ -6,7 +6,7 @@ import { avatarUrl } from 'src/testing/mock-data/users';
 import { Avatar } from '../Avatar';
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Modules/Users/Avatar',
+  title: 'UI/Display/Avatar',
   component: Avatar,
   decorators: [ComponentDecorator],
   args: { avatarUrl, size: 'md', placeholder: 'L', type: 'rounded' },
