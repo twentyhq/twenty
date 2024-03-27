@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -11,7 +12,6 @@ import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/compo
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -19,30 +19,43 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsCalendarAccountsListCard = () => {
+export const SettingsAccountsCalendarChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
-  const { records: _accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
+  const { records: accounts, loading: accountsLoading } =
+    useFindManyRecords<ConnectedAccount>({
+      objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+      filter: {
+        accountOwnerId: {
+          eq: currentWorkspaceMember?.id,
+        },
       },
-    },
-  });
+    });
+
+  const { records: calendarChannels, loading: calendarChannelsLoading } =
+    useFindManyRecords<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      filter: {
+        connectedAccountId: {
+          in: accounts.map((account) => account.id),
+        },
+      },
+    });
 
   return (
     <SettingsAccountsListCard
-      accounts={mockedConnectedAccounts}
-      isLoading={loading}
-      onRowClick={(account) =>
-        navigate(`/settings/accounts/calendars/${account.id}`)
+      items={calendarChannels}
+      isLoading={accountsLoading || calendarChannelsLoading}
+      onRowClick={(calendarChannel) =>
+        navigate(`/settings/accounts/calendars/${calendarChannel.id}`)
       }
       RowIcon={IconGoogleCalendar}
-      RowRightComponent={({ account: _account }) => (
+      RowRightComponent={({ item: calendarChannel }) => (
         <StyledRowRightContainer>
-          <SettingsAccountsSynchronizationStatus synced />
+          <SettingsAccountsSynchronizationStatus
+            synced={!!calendarChannel.isSyncEnabled}
+          />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}

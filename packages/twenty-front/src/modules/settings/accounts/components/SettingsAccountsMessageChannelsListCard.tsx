@@ -19,7 +19,7 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsEmailsAccountsListCard = () => {
+export const SettingsAccountsMessageChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
@@ -52,13 +52,13 @@ export const SettingsAccountsEmailsAccountsListCard = () => {
 
   return (
     <SettingsAccountsListCard
-      accounts={messageChannelsWithSyncedEmails}
+      items={messageChannelsWithSyncedEmails}
       isLoading={accountsLoading || messageChannelsLoading}
       onRowClick={(messageChannel) =>
         navigate(`/settings/accounts/emails/${messageChannel.id}`)
       }
       RowIcon={IconGmail}
-      RowRightComponent={({ account: messageChannel }) => (
+      RowRightComponent={({ item: messageChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             synced={messageChannel.isSynced}
