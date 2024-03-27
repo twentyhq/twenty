@@ -9,7 +9,7 @@ import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-ru
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CanAccessCalendarEventProvider } from 'src/modules/calendar/query-hooks/calendar-event/providers/can-access-calendar-event.provider';
+import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 
@@ -20,7 +20,7 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
       CalendarChannelEventAssociationObjectMetadata,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventProvider,
+    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventService,
   ) {}
 
   async execute(

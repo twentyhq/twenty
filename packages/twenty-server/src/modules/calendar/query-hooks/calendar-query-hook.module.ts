@@ -7,7 +7,7 @@ import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calen
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { CalendarEventFindManyPreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-many.pre-query.hook';
 import { CalendarEventFindOnePreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-one.pre-query-hook';
-import { CanAccessCalendarEventProvider } from 'src/modules/calendar/query-hooks/calendar-event/providers/can-access-calendar-event.provider';
+import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { CanAccessCalendarEventProvider } from 'src/modules/calendar/query-hooks
     ]),
   ],
   providers: [
-    CanAccessCalendarEventProvider,
+    CanAccessCalendarEventService,
     {
       provide: CalendarEventFindOnePreQueryHook.name,
       useClass: CalendarEventFindOnePreQueryHook,

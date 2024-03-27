@@ -14,7 +14,7 @@ import { WorkspaceMemberRepository } from 'src/modules/workspace-member/reposito
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
-export class CanAccessCalendarEventProvider {
+export class CanAccessCalendarEventService {
   constructor(
     @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
     private readonly calendarChannelRepository: CalendarChannelRepository,

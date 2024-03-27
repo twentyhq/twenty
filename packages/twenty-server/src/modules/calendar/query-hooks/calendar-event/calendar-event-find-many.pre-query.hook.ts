@@ -10,7 +10,7 @@ import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
-import { CanAccessCalendarEventProvider } from 'src/modules/calendar/query-hooks/calendar-event/providers/can-access-calendar-event.provider';
+import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
 
 @Injectable()
 export class CalendarEventFindManyPreQueryHook
@@ -21,7 +21,7 @@ export class CalendarEventFindManyPreQueryHook
       CalendarChannelEventAssociationObjectMetadata,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventProvider,
+    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventService,
   ) {}
 
   async execute(
