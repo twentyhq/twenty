@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { formatInTimeZone } from 'date-fns-tz';
 
+import { SettingsAccountsCalendarDateFormatSelect } from '@/settings/accounts/components/SettingsAccountsCalendarDateFormatSelect';
+import { SettingsAccountsCalendarTimeFormatSelect } from '@/settings/accounts/components/SettingsAccountsCalendarTimeFormatSelect';
 import { SettingsAccountsCalendarTimeZoneSelect } from '@/settings/accounts/components/SettingsAccountsCalendarTimeZoneSelect';
+import { DateFormat } from '@/settings/accounts/constants/DateFormat';
+import { TimeFormat } from '@/settings/accounts/constants/TimeFormat';
 import { detectTimeZone } from '@/settings/accounts/utils/detectTimeZone';
-import { Select } from '@/ui/input/components/Select';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -16,8 +18,11 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
   // TODO: use the user's saved time zone. If undefined, default it with the user's detected time zone.
   const [timeZone, setTimeZone] = useState(detectTimeZone());
 
+  // TODO: use the user's saved date format.
+  const [dateFormat, setDateFormat] = useState(DateFormat.US);
+
   // TODO: use the user's saved time format.
-  const [timeFormat, setTimeFormat] = useState<12 | 24>(24);
+  const [timeFormat, setTimeFormat] = useState(TimeFormat['24h']);
 
   return (
     <StyledContainer>
@@ -25,22 +30,15 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
         value={timeZone}
         onChange={setTimeZone}
       />
-      <Select
-        dropdownId="settings-accounts-calendar-time-format"
-        label="Format"
-        fullWidth
+      <SettingsAccountsCalendarDateFormatSelect
+        value={dateFormat}
+        onChange={setDateFormat}
+        timeZone={timeZone}
+      />
+      <SettingsAccountsCalendarTimeFormatSelect
         value={timeFormat}
-        options={[
-          {
-            label: `24h (${formatInTimeZone(Date.now(), timeZone, 'HH:mm')})`,
-            value: 24,
-          },
-          {
-            label: `12h (${formatInTimeZone(Date.now(), timeZone, 'h:mm aa')})`,
-            value: 12,
-          },
-        ]}
         onChange={setTimeFormat}
+        timeZone={timeZone}
       />
     </StyledContainer>
   );
