@@ -11,8 +11,6 @@ import crypto from 'node:crypto';
 import { Repository } from 'typeorm';
 import { render } from '@react-email/components';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { addMilliseconds } from 'date-fns';
-import ms from 'ms';
 
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { assert } from 'src/utils/assert';
@@ -181,7 +179,6 @@ export class AuthService {
 
   generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
-    user: User,
   ): AuthorizeApp {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -194,7 +191,7 @@ export class AuthService {
       },
     ];
 
-    const { clientId, codeChallenge } = authorizeAppInput;
+    const { clientId } = authorizeAppInput;
 
     const client = apps.find((app) => app.id === clientId);
 
@@ -204,7 +201,7 @@ export class AuthService {
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');
 
-    const expiresAt = addMilliseconds(new Date().getTime(), ms('1m'));
+    // const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
 
     //TODO: DB call to save - (userId, codeChallenge, authorizationCode, expiresAt)
 
