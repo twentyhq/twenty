@@ -20,7 +20,7 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
       CalendarChannelEventAssociationObjectMetadata,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    private readonly canAccessCalendarEventProvider: CanAccessCalendarEventService,
+    private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
   ) {}
 
   async execute(
@@ -42,7 +42,7 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
       throw new NotFoundException();
     }
 
-    await this.canAccessCalendarEventProvider.canAccessCalendarEvent(
+    await this.canAccessCalendarEventService.canAccessCalendarEvent(
       userId,
       workspaceId,
       calendarChannelCalendarEventAssociations,
