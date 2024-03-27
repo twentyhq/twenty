@@ -165,7 +165,6 @@ export const useUpsertActivity = () => {
       await createActivityInDB(activityToCreate);
 
       setActivityIdInDrawer(activityToCreate.id);
-
       setIsActivityInCreateMode(false);
     } else {
       await updateOneActivity?.({

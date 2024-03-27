@@ -75,19 +75,13 @@ export const useInjectIntoActivityTargetsQueries = () => {
       },
     }));
 
-    // const sampleRecord = {
-    //   ...activityTargetsToInject[0],
-    //   activity: {
-    //     __typename: 'Activity',
-    //     id: activityTargetsToInject[0].activity.id,
-    //   },
-    // };
-
     overwriteFindManyActivityTargetsQueryInCache({
       objectRecordsToOverwrite: newActivityTargets,
       queryVariables: findManyActivitiyTargetsQueryVariables,
       queryFields: {
         __typename: true,
+        activity: true,
+        opportunity: true,
         id: true,
       },
     });

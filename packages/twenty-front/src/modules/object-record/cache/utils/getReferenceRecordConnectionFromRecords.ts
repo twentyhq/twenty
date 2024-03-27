@@ -12,10 +12,12 @@ export const getReferenceRecordConnectionFromRecords = <
   apolloClient,
   objectNameSingular,
   records,
+  withPageInfo = true,
 }: {
   apolloClient: ApolloClient<any>;
   objectNameSingular: string;
   records: T[];
+  withPageInfo?: boolean;
 }) => {
   return {
     __typename: getConnectionTypename({ objectNameSingular }),
@@ -28,7 +30,7 @@ export const getReferenceRecordConnectionFromRecords = <
         }),
       };
     }),
-    pageInfo: getEmptyPageInfo(),
-    totalCount: records.length,
+    ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
+    ...(withPageInfo && { totalCount: records.length }),
   } as CachedObjectRecordConnection;
 };

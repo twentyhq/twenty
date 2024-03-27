@@ -27,8 +27,20 @@ export const useMapRecordsToConnection = () => {
       depth: number;
     }): ObjectRecordConnection<T> => {
       if (!isDefined(objectRecords) || !isNonEmptyArray(objectMetadataItems)) {
+        const objectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular === objectNameSingular,
+        );
+
+        if (!objectMetadataItem) {
+          throw new Error(
+            `Could not find object metadata item for object name singular "${objectNameSingular}" in mapConnectionToRecords`,
+          );
+        }
+
         return getRecordConnectionFromRecords({
-          objectNameSingular,
+          objectMetadataItems,
+          objectMetadataItem,
           records: [],
         });
       }
@@ -87,7 +99,8 @@ export const useMapRecordsToConnection = () => {
               if (!isNonEmptyArray(relationRecords)) {
                 (objectRecordDraft as any)[relationField.name] =
                   getRecordConnectionFromRecords({
-                    objectNameSingular: relatedObjectMetadataSingularName,
+                    objectMetadataItems,
+                    objectMetadataItem: relationFieldMetadataItem,
                     records: [],
                   });
               } else {
@@ -106,7 +119,8 @@ export const useMapRecordsToConnection = () => {
       ) as T[];
 
       const newConnection = getRecordConnectionFromRecords({
-        objectNameSingular,
+        objectMetadataItems,
+        objectMetadataItem: currentLevelObjectMetadataItem,
         records: newRecordsWithRelationConnection,
       });
 

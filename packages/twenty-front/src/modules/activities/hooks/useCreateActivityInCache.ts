@@ -2,7 +2,9 @@ import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useInjectIntoActivityTargetsQueries } from '@/activities/hooks/useInjectIntoActivityTargetsQueries';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -26,6 +28,10 @@ export const useCreateActivityInCache = () => {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
+  const objectShowPageTargetableObject = useRecoilValue(
+    objectShowPageTargetableObjectState,
+  );
+
   const { createOneRecordInCache: createOneActivityInCache } =
     useCreateOneRecordInCache<Activity>({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -38,6 +44,9 @@ export const useCreateActivityInCache = () => {
     objectRecordId: currentWorkspaceMember?.id,
     depth: 0,
   });
+
+  const { injectIntoActivityTargetsQueries } =
+    useInjectIntoActivityTargetsQueries();
 
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
@@ -125,6 +134,7 @@ export const useCreateActivityInCache = () => {
             apolloClient: client,
             objectNameSingular: CoreObjectNameSingular.ActivityTarget,
             records: createdActivityTargetsInCache,
+            withPageInfo: false,
           });
 
         modifyActivityFromCache(createdActivityInCache.id, {
@@ -135,15 +145,12 @@ export const useCreateActivityInCache = () => {
           activityId,
           activityTargetsToInject: createdActivityTargetsInCache,
         });
-
-        // attachRelationInBothDirections({
-        //   sourceRecord: createdActivityInCache,
-        //   fieldNameOnSourceRecord: 'activityTargets',
-        //   sourceObjectNameSingular: CoreObjectNameSingular.Activity,
-        //   fieldNameOnTargetRecord: 'activity',
-        //   targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
-        //   targetRecords: createdActivityTargetsInCache,
-        // });
+        if (isDefined(objectShowPageTargetableObject)) {
+          injectIntoActivityTargetsQueries({
+            activityTargetsToInject: createdActivityTargetsInCache,
+            targetableObjects: [objectShowPageTargetableObject],
+          });
+        }
 
         // TODO: should refactor when refactoring make activity connection utils
         set(recordStoreFamilyState(activityId), {
@@ -161,13 +168,15 @@ export const useCreateActivityInCache = () => {
         };
       },
     [
-      createManyActivityTargetsInCache,
       createOneActivityInCache,
       currentWorkspaceMemberRecord,
-      injectIntoActivityTargetInlineCellCache,
-      mapRecordRelationRecordsToRelationConnection,
+      createManyActivityTargetsInCache,
       client,
       modifyActivityFromCache,
+      injectIntoActivityTargetInlineCellCache,
+      objectShowPageTargetableObject,
+      mapRecordRelationRecordsToRelationConnection,
+      injectIntoActivityTargetsQueries,
     ],
   );
 

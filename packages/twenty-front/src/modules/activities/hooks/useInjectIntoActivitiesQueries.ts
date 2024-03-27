@@ -171,8 +171,8 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
-        eagerLoadedRelations: {
-          activityTarget: {
+        queryFields: {
+          activityTargets: {
             id: true,
             __typename: true,
           },

@@ -11,9 +11,7 @@ export const shouldFieldBeQueried = ({
   field,
   depth,
   eagerLoadedRelations,
-  objectRecord,
   queryFields,
-  onlyIdTypename,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
   depth?: number;
@@ -34,10 +32,6 @@ export const shouldFieldBeQueried = ({
     return false;
   }
 
-  if (isDefined(objectRecord) && !isDefined(objectRecord[field.name])) {
-    return false;
-  }
-
   if (
     field.type === 'RELATION' &&
     !isUndefinedOrNull(eagerLoadedRelations) &&
@@ -48,15 +42,6 @@ export const shouldFieldBeQueried = ({
   }
 
   if (isDefined(queryFields) && !queryFields[field.name]) {
-    return false;
-  }
-
-  if (
-    isDefined(onlyIdTypename) &&
-    onlyIdTypename &&
-    field.name !== 'id' &&
-    field.name !== '__typename'
-  ) {
     return false;
   }
 

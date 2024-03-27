@@ -1,5 +1,7 @@
 import { useApolloClient } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
@@ -18,6 +20,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   const apolloClient = useApolloClient();
 
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -25,6 +28,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     queryVariables,
     depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
+    queryFields,
   }: {
     queryVariables: ObjectRecordQueryVariables;
     depth?: number;
@@ -34,13 +38,19 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
-      depth, // TODO: fix this
+      depth,
+      queryFields,
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
-      objectNameSingular: objectMetadataItem.nameSingular,
+      objectMetadataItems: objectMetadataItems,
+      objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
+      queryFields,
     });
+
+    console.log(newObjectRecordConnection);
+    console.log(findManyRecordsQueryForCacheOverwrite);
 
     apolloClient.writeQuery({
       query: findManyRecordsQueryForCacheOverwrite,

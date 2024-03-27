@@ -79,7 +79,8 @@ export const useMapRelationRecordsToRelationConnection = () => {
           if (!isNonEmptyArray(relationRecords)) {
             (objectRecordDraft as any)[relationField.name] =
               getRecordConnectionFromRecords({
-                objectNameSingular: relatedObjectMetadataSingularName,
+                objectMetadataItems,
+                objectMetadataItem: relationFieldMetadataItem,
                 records: [],
               });
           } else {
