@@ -80,15 +80,13 @@ export const ActionBarItem = ({ item }: ActionBarItemProps) => {
           }
         />
       ) : (
-        <>
-          <StyledButton
-            accent={item.accent ?? 'default'}
-            onClick={() => item.onClick?.()}
-          >
-            {item.Icon && <item.Icon size={theme.icon.size.md} />}
-            <StyledButtonLabel>{item.label}</StyledButtonLabel>
-          </StyledButton>
-        </>
+        <StyledButton
+          accent={item.accent ?? 'default'}
+          onClick={() => item.onClick?.()}
+        >
+          {item.Icon && <item.Icon size={theme.icon.size.md} />}
+          <StyledButtonLabel>{item.label}</StyledButtonLabel>
+        </StyledButton>
       )}
     </>
   );
