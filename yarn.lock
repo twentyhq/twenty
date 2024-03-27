@@ -11494,10 +11494,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.14.1":
-  version: 1.14.1
-  resolution: "@remix-run/router@npm:1.14.1"
-  checksum: aa179e96fa7da5bdb86e6887219613cbe47b67d6595564b4f8fe7e80f8980f9c76e120524f0864aa8af46ac0f1a06bcdb4d20058d770c9199e5af599f772c0a9
+"@remix-run/router@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@remix-run/router@npm:1.6.2"
+  checksum: 73da6884e53873e4290abb3978373cafc3f351994273b0663eda5e12c81cb427fc6fe4df1924569d9a214f701d0106cf37122455951e0239d7e6fa35071df558
   languageName: node
   linkType: hard
 
@@ -14925,6 +14925,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-darwin-arm64@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-darwin-arm64@npm:1.4.11"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@swc/core-darwin-x64@npm:1.3.101":
   version: 1.3.101
   resolution: "@swc/core-darwin-x64@npm:1.3.101"
@@ -14935,6 +14942,13 @@ __metadata:
 "@swc/core-darwin-x64@npm:1.3.102":
   version: 1.3.102
   resolution: "@swc/core-darwin-x64@npm:1.3.102"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-darwin-x64@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-darwin-x64@npm:1.4.11"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
@@ -14953,6 +14967,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-arm-gnueabihf@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.4.11"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
 "@swc/core-linux-arm64-gnu@npm:1.3.101":
   version: 1.3.101
   resolution: "@swc/core-linux-arm64-gnu@npm:1.3.101"
@@ -14963,6 +14984,13 @@ __metadata:
 "@swc/core-linux-arm64-gnu@npm:1.3.102":
   version: 1.3.102
   resolution: "@swc/core-linux-arm64-gnu@npm:1.3.102"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-arm64-gnu@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.4.11"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -14981,6 +15009,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-arm64-musl@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-linux-arm64-musl@npm:1.4.11"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@swc/core-linux-x64-gnu@npm:1.3.101":
   version: 1.3.101
   resolution: "@swc/core-linux-x64-gnu@npm:1.3.101"
@@ -14991,6 +15026,13 @@ __metadata:
 "@swc/core-linux-x64-gnu@npm:1.3.102":
   version: 1.3.102
   resolution: "@swc/core-linux-x64-gnu@npm:1.3.102"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@swc/core-linux-x64-gnu@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-linux-x64-gnu@npm:1.4.11"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -15009,6 +15051,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-linux-x64-musl@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-linux-x64-musl@npm:1.4.11"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@swc/core-win32-arm64-msvc@npm:1.3.101":
   version: 1.3.101
   resolution: "@swc/core-win32-arm64-msvc@npm:1.3.101"
@@ -15019,6 +15068,13 @@ __metadata:
 "@swc/core-win32-arm64-msvc@npm:1.3.102":
   version: 1.3.102
   resolution: "@swc/core-win32-arm64-msvc@npm:1.3.102"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-arm64-msvc@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.4.11"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -15037,6 +15093,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@swc/core-win32-ia32-msvc@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.4.11"
+  conditions: os=win32 & cpu=ia32
+  languageName: node
+  linkType: hard
+
 "@swc/core-win32-x64-msvc@npm:1.3.101":
   version: 1.3.101
   resolution: "@swc/core-win32-x64-msvc@npm:1.3.101"
@@ -15048,6 +15111,59 @@ __metadata:
   version: 1.3.102
   resolution: "@swc/core-win32-x64-msvc@npm:1.3.102"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core-win32-x64-msvc@npm:1.4.11":
+  version: 1.4.11
+  resolution: "@swc/core-win32-x64-msvc@npm:1.4.11"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@swc/core@npm:^1.3.107":
+  version: 1.4.11
+  resolution: "@swc/core@npm:1.4.11"
+  dependencies:
+    "@swc/core-darwin-arm64": "npm:1.4.11"
+    "@swc/core-darwin-x64": "npm:1.4.11"
+    "@swc/core-linux-arm-gnueabihf": "npm:1.4.11"
+    "@swc/core-linux-arm64-gnu": "npm:1.4.11"
+    "@swc/core-linux-arm64-musl": "npm:1.4.11"
+    "@swc/core-linux-x64-gnu": "npm:1.4.11"
+    "@swc/core-linux-x64-musl": "npm:1.4.11"
+    "@swc/core-win32-arm64-msvc": "npm:1.4.11"
+    "@swc/core-win32-ia32-msvc": "npm:1.4.11"
+    "@swc/core-win32-x64-msvc": "npm:1.4.11"
+    "@swc/counter": "npm:^0.1.2"
+    "@swc/types": "npm:^0.1.5"
+  peerDependencies:
+    "@swc/helpers": ^0.5.0
+  dependenciesMeta:
+    "@swc/core-darwin-arm64":
+      optional: true
+    "@swc/core-darwin-x64":
+      optional: true
+    "@swc/core-linux-arm-gnueabihf":
+      optional: true
+    "@swc/core-linux-arm64-gnu":
+      optional: true
+    "@swc/core-linux-arm64-musl":
+      optional: true
+    "@swc/core-linux-x64-gnu":
+      optional: true
+    "@swc/core-linux-x64-musl":
+      optional: true
+    "@swc/core-win32-arm64-msvc":
+      optional: true
+    "@swc/core-win32-ia32-msvc":
+      optional: true
+    "@swc/core-win32-x64-msvc":
+      optional: true
+  peerDependenciesMeta:
+    "@swc/helpers":
+      optional: true
+  checksum: 7860541ba95fc15e6abe1993eb87fdfe05aad3418862b3f790f26cf1de1284e387300020ac60a8487404fd4364af2cc7f9e8a3c4dba49a8683c5d08cd4cb95c4
   languageName: node
   linkType: hard
 
@@ -15147,6 +15263,13 @@ __metadata:
   version: 0.1.2
   resolution: "@swc/counter@npm:0.1.2"
   checksum: 18be012107d4ba1f79776c48d83391ca2159103d7d31a59ff52fcc8024db51b71c5f46714a9fb73981739bc8a38dc6f385a046b71cc08f6043f3c47f5c409eab
+  languageName: node
+  linkType: hard
+
+"@swc/counter@npm:^0.1.2":
+  version: 0.1.3
+  resolution: "@swc/counter@npm:0.1.3"
+  checksum: 8424f60f6bf8694cfd2a9bca45845bce29f26105cda8cf19cdb9fd3e78dc6338699e4db77a89ae449260bafa1cc6bec307e81e7fb96dbf7dcfce0eea55151356
   languageName: node
   linkType: hard
 
@@ -17651,6 +17774,17 @@ __metadata:
   peerDependencies:
     vite: ^4 || ^5
   checksum: 8a0c61fd08224a8945f7190a33ff0ab563548200f0841f7d9ef4a41260d9fcd70bc75fcd5cfef2915fe1e81642e36a3c158fa2b48ba6626e19ba7da61330b2c1
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-react-swc@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "@vitejs/plugin-react-swc@npm:3.6.0"
+  dependencies:
+    "@swc/core": "npm:^1.3.107"
+  peerDependencies:
+    vite: ^4 || ^5
+  checksum: aae7c02f390559d0fbfb6285f1ba80917493d2c4979315f62f90fa06fb19b0b40362717fac035cac726575fdb120f66c4094f27bea846e2009686d15bc8637ae
   languageName: node
   linkType: hard
 
@@ -41096,6 +41230,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router-dom@npm:6.11.2"
+  dependencies:
+    "@remix-run/router": "npm:1.6.2"
+    react-router: "npm:6.11.2"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: be7433bc290e56c0dd3e1008d53a76cc9866bf460980658501880876420086f11810ec3355a3abcd79ac537d6a1351eda009fade841c266456d0e8df60967b76
+  languageName: node
+  linkType: hard
+
 "react-router-dom@npm:^5.2.0, react-router-dom@npm:^5.3.4":
   version: 5.3.4
   resolution: "react-router-dom@npm:5.3.4"
@@ -41110,19 +41257,6 @@ __metadata:
   peerDependencies:
     react: ">=15"
   checksum: f04f727e2ed2e9d1d3830af02cc61690ff67b1524c0d18690582bfba0f4d14142ccc88fb6da6befad644fddf086f5ae4c2eb7048c67da8a0b0929c19426421b0
-  languageName: node
-  linkType: hard
-
-"react-router-dom@npm:^6.4.4":
-  version: 6.21.1
-  resolution: "react-router-dom@npm:6.21.1"
-  dependencies:
-    "@remix-run/router": "npm:1.14.1"
-    react-router: "npm:6.21.1"
-  peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 2c2b653de8cc90397e5b057c0d32dd780fe894c4bd36397005da169a7422b31988ebc14ef0da3ac3f2b7286b244f97a141974acaa86c731715816e64c8cd2912
   languageName: node
   linkType: hard
 
@@ -41157,14 +41291,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:6.21.1":
-  version: 6.21.1
-  resolution: "react-router@npm:6.21.1"
+"react-router@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router@npm:6.11.2"
   dependencies:
-    "@remix-run/router": "npm:1.14.1"
+    "@remix-run/router": "npm:1.6.2"
   peerDependencies:
     react: ">=16.8"
-  checksum: 81278cf25a999d7c93a31d540102e3b74b696eb4349779e22bba77b633e4e5f8f91b8c6f7946c9572a1e92f64363724150216f5643a6f9817f8bc1643cb8bdbc
+  checksum: a437606078d6096a6dfa322adf80d00ce153f20cd470ad888088c8da99f44477b963425c53f5461a540b909fc274154292ed80d636482dcdc58a423915ca1433
   languageName: node
   linkType: hard
 
@@ -45944,7 +46078,7 @@ __metadata:
     "@typescript-eslint/experimental-utils": "npm:^5.62.0"
     "@typescript-eslint/parser": "npm:6.21.0"
     "@typescript-eslint/utils": "npm:6.21.0"
-    "@vitejs/plugin-react-swc": "npm:^3.5.0"
+    "@vitejs/plugin-react-swc": "npm:^3.6.0"
     "@vitest/ui": "npm:1.4.0"
     add: "npm:^2.0.6"
     afterframe: "npm:^1.0.2"
@@ -46070,7 +46204,7 @@ __metadata:
     react-loading-skeleton: "npm:^3.3.1"
     react-phone-number-input: "npm:^3.3.4"
     react-responsive: "npm:^9.0.2"
-    react-router-dom: "npm:^6.4.4"
+    react-router-dom: "npm:6.11.2"
     react-textarea-autosize: "npm:^8.4.1"
     react-tooltip: "npm:^5.13.1"
     recoil: "npm:^0.7.7"

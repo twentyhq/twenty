@@ -12,19 +12,21 @@ export default defineConfig({
 
   plugins: [
     react(),
-    tsconfigPaths(),
     svgr(),
+    tsconfigPaths(),
     dts({
       entryRoot: 'src',
-      tsConfigFilePath: path.join(__dirname, 'tsconfig.lib.json'),
+      tsConfigFilePath: path.resolve(__dirname, 'tsconfig.lib.json'),
       skipDiagnostics: true,
     }),
   ],
 
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+  // Make sure src absolute paths are resolved correctly in declaration files.
+  resolve: {
+    alias: {
+      src: path.join(__dirname, 'src'),
+    },
+  },
 
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode

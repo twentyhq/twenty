@@ -6,7 +6,7 @@
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
     "start": "vite --host",
-    "start:clean": "yarn start --force",
+    "start:clean": "npx nx start --force",
     "build": "tsc && vite build && yarn build:inject-runtime-env",
     "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
     "tsc": "tsc --project tsconfig.app.json --watch",
@@ -14,7 +14,7 @@
     "tsc:spec": "tsc --project tsconfig.spec.json",
     "preview": "vite preview",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
-    "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
+    "lint:ci": "npx nx lint --config .eslintrc-ci.cjs",
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
     "test": "jest",
@@ -39,6 +39,9 @@
     "graphql:metadata:generate": "dotenv cross-var graphql-codegen -- --config codegen-metadata.cjs",
     "chromatic": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build",
     "chromatic:ci": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes"
+  },
+  "nx": {
+    "projectType": "application"
   },
   "engines": {
     "node": "^18.17.1",

@@ -30,6 +30,10 @@ module.exports = {
       },
     ],
 
+    'import/no-relative-packages': 'error',
+    'import/no-useless-path-segments': 'error',
+    'import/no-duplicates': 'error',
+
     'prefer-arrow/prefer-arrow-functions': [
       'error',
       {
@@ -108,6 +112,15 @@ module.exports = {
         jest: true,
       },
       rules: {},
+    },
+    {
+      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
+      rules: {
+        'storybook/no-uninstalled-addons': [
+          'error',
+          { packageJsonLocation: 'package.json' },
+        ],
+      },
     },
     {
       files: ['**/constants/*.ts', '**/*.constants.ts'],

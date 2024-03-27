@@ -8,27 +8,22 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["packages/twenty-front/src/modules/*"],
-      "~/*": ["packages/twenty-front/src/*"],
-      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
+      "@/*": ["src/modules/*"],
+      "~/*": ["src/*"]
     },
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "files": [],
   "include": [],
@@ -39,5 +34,5 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ],
+  ]
 }

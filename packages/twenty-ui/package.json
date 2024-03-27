@@ -1,6 +1,10 @@
 {
   "name": "twenty-ui",
   "version": "0.0.1",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

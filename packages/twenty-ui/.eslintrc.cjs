@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = {
   extends: ['../../.eslintrc.js', '../../.eslintrc.react.js'],
   ignorePatterns: ['!**/*'],
@@ -26,15 +24,6 @@ module.exports = {
               },
             ],
           },
-        ],
-      },
-    },
-    {
-      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        'storybook/no-uninstalled-addons': [
-          'error',
-          { packageJsonLocation: path.resolve('../../package.json') },
         ],
       },
     },

@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
+    "outDir": "dist",
     "types": ["node", "@nx/react/typings/image.d.ts", "vite/client"]
   },
   "exclude": [
