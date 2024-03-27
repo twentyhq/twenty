@@ -11,9 +11,6 @@ import {
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -51,8 +48,6 @@ export class GmailFullSyncV2Service {
       MessageChannelMessageAssociationObjectMetadata,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
@@ -165,6 +160,7 @@ export class GmailFullSyncV2Service {
     let pageToken: string | undefined;
     let hasMoreMessages = true;
     let messageIdsToFetch = 0;
+    let firstMessageExternalId;
 
     while (hasMoreMessages) {
       const response = await gmailClient.users.messages.list({
@@ -178,6 +174,10 @@ export class GmailFullSyncV2Service {
         const messageExternalIds = response.data.messages
           .filter((message): message is { id: string } => message.id != null)
           .map((message) => message.id);
+
+        if (!firstMessageExternalId) {
+          firstMessageExternalId = messageExternalIds[0];
+        }
 
         const existingMessageChannelMessageAssociations =
           await this.messageChannelMessageAssociationRepository.getByMessageExternalIdsAndMessageChannelId(
@@ -225,6 +225,14 @@ export class GmailFullSyncV2Service {
     this.logger.log(
       `Fetched all ${messageIdsToFetch} message ids from Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId} and added to cache for import`,
     );
+
+    await this.updateLastSyncExternalId(
+      gmailClient,
+      messageChannelId,
+      firstMessageExternalId,
+      workspaceId,
+      transactionManager,
+    );
   }
 
   public async fetchBlocklistEmails(
@@ -249,5 +257,49 @@ export class GmailFullSyncV2Service {
       : [];
 
     return blocklist.map((blocklist) => blocklist.handle);
+  }
+
+  private async updateLastSyncExternalId(
+    gmailClient: gmail_v1.Gmail,
+    messageChannelId: string,
+    firstMessageExternalId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    if (!firstMessageExternalId) {
+      throw new Error(
+        `No first message found for workspace ${workspaceId} and account ${messageChannelId}, can't update sync external id`,
+      );
+    }
+
+    const firstMessageContent = await gmailClient.users.messages.get({
+      userId: 'me',
+      id: firstMessageExternalId,
+    });
+
+    if (!firstMessageContent?.data) {
+      throw new Error(
+        `No first message content found for message ${firstMessageExternalId} in workspace ${workspaceId}`,
+      );
+    }
+
+    const historyId = firstMessageContent?.data?.historyId;
+
+    if (!historyId) {
+      throw new Error(
+        `No historyId found for message ${firstMessageExternalId} in workspace ${workspaceId}`,
+      );
+    }
+
+    this.logger.log(
+      `Updating last external id: ${historyId} for workspace ${workspaceId} and account ${messageChannelId} succeeded.`,
+    );
+
+    await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
+      messageChannelId,
+      historyId,
+      workspaceId,
+      transactionManager,
+    );
   }
 }

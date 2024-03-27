@@ -181,7 +181,7 @@ export class GmailPartialSyncV2Service {
 
         if (historyId === lastSyncHistoryId || !history?.length) {
           this.logger.log(
-            `Messaging import done with nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
+            `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
           );
 
           await this.messageChannelRepository.updateSyncStatus(

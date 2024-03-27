@@ -71,23 +71,14 @@ export class FetchAllMessagesFromCacheCronJob
   }
 
   private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
-    try {
-      const messageChannels =
-        await this.messageChannelRepository.getAll(workspaceId);
+    const messageChannels =
+      await this.messageChannelRepository.getAll(workspaceId);
 
-      for (const messageChannel of messageChannels) {
-        await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
-          workspaceId,
-          messageChannel.connectedAccountId,
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        `Error while fetching workspace messages for workspace ${workspaceId}`,
+    for (const messageChannel of messageChannels) {
+      await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
+        workspaceId,
+        messageChannel.connectedAccountId,
       );
-      this.logger.error(error);
-
-      return;
     }
   }
 }
