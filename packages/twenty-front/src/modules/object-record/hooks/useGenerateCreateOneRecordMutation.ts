@@ -14,8 +14,10 @@ export const getCreateOneRecordMutationResponseField = (
 
 export const useGenerateCreateOneRecordMutation = ({
   objectMetadataItem,
+  eagerLoadedRelations,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  eagerLoadedRelations?: Record<string, any>;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -34,6 +36,7 @@ export const useGenerateCreateOneRecordMutation = ({
       ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
+        eagerLoadedRelations,
       })}
     }
   `;

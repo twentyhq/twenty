@@ -5,13 +5,17 @@ import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
-import { getCreateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import {
+  getCreateOneRecordMutationResponseField,
+  useGenerateCreateOneRecordMutation,
+} from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
+  eagerLoadedRelations?: Record<string, any>;
 };
 
 type CreateOneRecordOptions = {
@@ -22,12 +26,16 @@ export const useCreateOneRecord = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
+  eagerLoadedRelations,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
-  const { objectMetadataItem, createOneRecordMutation } = useObjectMetadataItem(
-    { objectNameSingular },
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+
+  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
+    objectMetadataItem,
+    eagerLoadedRelations,
+  });
 
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({
