@@ -34,9 +34,7 @@ export const fullNameFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.firstName ?? null,
-            },
+            defaultValue: inferredFieldMetadata.defaultValue?.firstName ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -52,9 +50,7 @@ export const fullNameFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.lastName ?? null,
-            },
+            defaultValue: inferredFieldMetadata.defaultValue?.lastName ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,

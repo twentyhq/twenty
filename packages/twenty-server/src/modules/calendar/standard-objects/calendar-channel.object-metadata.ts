@@ -72,7 +72,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: CalendarChannelVisibility.SHARE_EVERYTHING },
+    defaultValue: `'${CalendarChannelVisibility.SHARE_EVERYTHING}'`,
   })
   visibility: string;
 
@@ -82,7 +82,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
     icon: 'IconUserCircle',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
 
@@ -92,7 +92,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Sync Enabled',
     description: 'Is Sync Enabled',
     icon: 'IconRefresh',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isSyncEnabled: boolean;
 

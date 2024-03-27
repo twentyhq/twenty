@@ -40,7 +40,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: 'share_everything' },
+    defaultValue: "'share_everything'",
   })
   visibility: string;
 
@@ -73,7 +73,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
       { value: 'email', label: 'Email', position: 0, color: 'green' },
       { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
     ],
-    defaultValue: { value: 'email' },
+    defaultValue: "'email'",
   })
   type: string;
 
@@ -83,7 +83,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
     icon: 'IconUserCircle',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
 

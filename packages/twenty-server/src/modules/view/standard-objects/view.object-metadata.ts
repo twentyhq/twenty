@@ -43,7 +43,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'View type',
-    defaultValue: { value: 'table' },
+    defaultValue: "'table'",
   })
   type: string;
 
@@ -53,7 +53,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     label: 'Key',
     description: 'View key',
     options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
-    defaultValue: { value: 'INDEX' },
+    defaultValue: "'INDEX'",
   })
   @IsNullable()
   key: string;
@@ -88,7 +88,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
     description: 'Describes if the view is in compact mode',
-    defaultValue: { value: false },
+    defaultValue: false,
   })
   isCompact: boolean;
 

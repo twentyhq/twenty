@@ -7,7 +7,10 @@ import {
   WorkspaceTableStructure,
   WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import {
+  FieldMetadataDefaultValue,
+  FieldMetadataFunctionDefaultValue,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
@@ -15,9 +18,11 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { serializeTypeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-type-default-value.util';
+import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
+import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -204,29 +209,47 @@ export class DatabaseStructureService {
 
   getPostgresDefault(
     fieldMetadataType: FieldMetadataType,
-    defaultValue: FieldMetadataDefaultValue | null,
+    defaultValue:
+      | FieldMetadataDefaultValue
+      // Old format for default values
+      // TODO: Should be removed once all default values are migrated
+      | { type: FieldMetadataDefaultValueFunctionNames }
+      | null,
   ): string | null | undefined {
     const typeORMType = fieldMetadataTypeToColumnType(
       fieldMetadataType,
     ) as ColumnType;
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (defaultValue && 'type' in defaultValue) {
-      const serializedDefaultValue = serializeTypeDefaultValue(defaultValue);
+    let value: any =
+      // Old formart default values
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'value' in defaultValue
+        ? defaultValue.value
+        : defaultValue;
 
-      // Special case for uuid_generate_v4() default value
-      if (serializedDefaultValue === 'public.uuid_generate_v4()') {
-        return 'uuid_generate_v4()';
-      }
-
-      return serializedDefaultValue;
+    // Old format for default values
+    // TODO: Should be removed once all default values are migrated
+    if (
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'type' in defaultValue
+    ) {
+      return this.computeFunctionDefaultValue(defaultValue.type);
     }
 
-    const value =
-      defaultValue && 'value' in defaultValue ? defaultValue.value : null;
+    if (isFunctionDefaultValue(value)) {
+      return this.computeFunctionDefaultValue(value);
+    }
 
     if (typeof value === 'number') {
       return value.toString();
+    }
+
+    // Remove leading and trailing single quotes for string default values as it's already handled by TypeORM
+    if (typeof value === 'string' && value.match(/^'.*'$/)) {
+      value = value.replace(/^'/, '').replace(/'$/, '');
     }
 
     return mainDataSource.driver.normalizeDefault({
@@ -235,5 +258,18 @@ export class DatabaseStructureService {
       isArray: false,
       // Workaround to use normalizeDefault without a complete ColumnMetadata object
     } as ColumnMetadata);
+  }
+
+  private computeFunctionDefaultValue(
+    value: FieldMetadataFunctionDefaultValue,
+  ) {
+    const serializedDefaultValue = serializeFunctionDefaultValue(value);
+
+    // Special case for uuid_generate_v4() default value
+    if (serializedDefaultValue === 'public.uuid_generate_v4()') {
+      return 'uuid_generate_v4()';
+    }
+
+    return serializedDefaultValue;
   }
 }
