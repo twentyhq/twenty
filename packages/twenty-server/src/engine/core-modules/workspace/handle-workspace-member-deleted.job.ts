@@ -29,7 +29,6 @@ export class HandleWorkspaceMemberDeletedJob
     const { workspaceId, userId } = data;
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: { userId: userId },
-      relations: ['workspace'],
     });
 
     if (userWorkspaces.length <= 1) {
@@ -42,7 +41,6 @@ export class HandleWorkspaceMemberDeletedJob
       where: {
         id: userId,
       },
-      relations: ['defaultWorkspace'],
     });
 
     if (!user) {
