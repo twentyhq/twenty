@@ -47,6 +47,10 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
   imports: [
@@ -62,11 +66,15 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
     ThreadCleanerModule,
     CalendarEventCleanerModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature(
+      [Workspace, UserWorkspace, User, FeatureFlagEntity],
+      'core',
+    ),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,
+    WorkspaceModule,
     RecordPositionBackfillModule,
     GoogleAPIRefreshAccessTokenModule,
     GmailFullSyncModule,
@@ -130,6 +138,10 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
       useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
+    {
+      provide: HandleWorkspaceMemberDeletedJob.name,
+      useClass: HandleWorkspaceMemberDeletedJob,
+    },
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,

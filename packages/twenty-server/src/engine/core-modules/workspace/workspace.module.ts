@@ -13,6 +13,8 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -34,12 +36,17 @@ import { WorkspaceService } from './services/workspace.service';
         WorkspaceManagerModule,
         DataSourceModule,
         TypeORMModule,
+        UserModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
     }),
   ],
   exports: [WorkspaceService],
-  providers: [WorkspaceResolver, WorkspaceService],
+  providers: [
+    WorkspaceResolver,
+    WorkspaceService,
+    WorkspaceWorkspaceMemberListener,
+  ],
 })
 export class WorkspaceModule {}

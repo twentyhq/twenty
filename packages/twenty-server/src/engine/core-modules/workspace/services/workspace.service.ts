@@ -13,6 +13,7 @@ import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/a
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -25,6 +26,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
+    private readonly userService: UserService,
   ) {
     super(workspaceRepository);
   }
@@ -71,117 +73,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       .then((workspaces) => workspaces.map((workspace) => workspace.id));
   }
 
-  private async reassignDefaultWorkspace(
-    currentWorkspaceId: string,
-    user: User,
-    worskpaces: UserWorkspace[],
+  async reassignDefaultWorkspace(
+    workspaceId: string,
+    userId: string,
+    userWorkspaces: UserWorkspace[],
   ) {
-    // We'll filter all user workspaces without the one which its getting removed from
-    const filteredUserWorkspaces = worskpaces.filter(
-      (workspace) => workspace.workspaceId !== currentWorkspaceId,
-    );
+    const anotherUserDefaultWorkspace = userWorkspaces.filter(
+      (userWorkspace) => userWorkspace.workspaceId !== workspaceId,
+    )?.[0];
 
-    // Loop over each workspace in the filteredUserWorkspaces array and check if it currently exists in
-    // the database
-    for (let index = 0; index < filteredUserWorkspaces.length; index++) {
-      const userWorkspace = filteredUserWorkspaces[index];
-
-      const nextWorkspace = await this.workspaceRepository.findOneBy({
-        id: userWorkspace.workspaceId,
-      });
-
-      if (nextWorkspace) {
-        await this.userRepository.save({
-          id: user.id,
-          defaultWorkspace: nextWorkspace,
-          updatedAt: new Date().toISOString(),
-        });
-        break;
-      }
-
-      // if no workspaces are valid then we delete the user
-      if (index === filteredUserWorkspaces.length - 1) {
-        await this.userRepository.delete({ id: user.id });
-      }
-    }
-  }
-
-  /* 
-  async removeWorkspaceMember(workspaceId: string, memberId: string) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
+    if (!anotherUserDefaultWorkspace) {
+      throw new Error(
+        `User ${userId} does not belong to other workspace when it should`,
       );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    // using "SELECT *" here because we will need the corresponding members userId later
-    const [workspaceMember] = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
-    );
-
-    if (!workspaceMember) {
-      throw new NotFoundException('Member not found.');
     }
-
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "id" = '${memberId}'`,
-    );
-
-    const workspaceMemberUser = await this.userRepository.findOne({
-      where: {
-        id: workspaceMember.userId,
+    await this.userRepository.update(
+      { id: userId },
+      {
+        defaultWorkspaceId: anotherUserDefaultWorkspace.workspaceId,
+        updatedAt: new Date().toISOString(),
       },
-      relations: ['defaultWorkspace'],
-    });
-
-    if (!workspaceMemberUser) {
-      throw new NotFoundException('User not found');
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: workspaceMemberUser.id },
-      relations: ['workspace'],
-    });
-
-    // We want to check if we the user has signed up to more than one workspace
-    if (userWorkspaces.length > 1) {
-      // We neeed to check if the workspace that its getting removed from is its default workspace, if it is then
-      // change the default workspace to point to the next workspace available.
-      if (workspaceMemberUser.defaultWorkspace.id === workspaceId) {
-        await this.reassignDefaultWorkspace(
-          workspaceId,
-          workspaceMemberUser,
-          userWorkspaces,
-        );
-      }
-      // if its not the default workspace then simply delete the user-workspace mapping
-      await this.userWorkspaceRepository.delete({
-        userId: workspaceMemberUser.id,
-        workspaceId,
-      });
-    } else {
-      await this.userWorkspaceRepository.delete({
-        userId: workspaceMemberUser.id,
-      });
-
-      // After deleting the user-workspace mapping, we have a condition where we have the users default workspace points to a
-      // workspace which it doesnt have access to. So we delete the user.
-      await this.userRepository.delete({ id: workspaceMemberUser.id });
-    }
-
-    const payload =
-      new ObjectRecordDeleteEvent<WorkspaceMemberObjectMetadata>();
-
-    payload.workspaceId = workspaceId;
-    payload.details = {
-      before: workspaceMember,
-    };
-
-    this.eventEmitter.emit('workspaceMember.deleted', payload);
-
-    return memberId;
+    );
   }
-  */
 }
