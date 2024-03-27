@@ -21,8 +21,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
@@ -51,16 +49,26 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
-  async deleteWorkspace(id: string, shouldDeleteCoreWorkspace = true) {
+  async deleteWorkspace(id: string, shouldDeleteCore = true) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
+
+    const userWorkspaces = await this.userWorkspaceRepository.findBy({
+      workspaceId: id,
+    });
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
     await this.billingService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
-    if (shouldDeleteCoreWorkspace) {
+    if (shouldDeleteCore) {
+      for (const userWorkspace of userWorkspaces) {
+        await this.userService.reassignOrRemoveUserDefaultWorkspace(
+          id,
+          userWorkspace.userId,
+        );
+      }
       await this.workspaceRepository.delete(id);
     }
 
@@ -71,28 +79,5 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return this.workspaceRepository
       .find()
       .then((workspaces) => workspaces.map((workspace) => workspace.id));
-  }
-
-  async reassignDefaultWorkspace(
-    workspaceId: string,
-    userId: string,
-    userWorkspaces: UserWorkspace[],
-  ) {
-    const anotherUserDefaultWorkspace = userWorkspaces.filter(
-      (userWorkspace) => userWorkspace.workspaceId !== workspaceId,
-    )?.[0];
-
-    if (!anotherUserDefaultWorkspace) {
-      throw new Error(
-        `User ${userId} does not belong to other workspace when it should`,
-      );
-    }
-    await this.userRepository.update(
-      { id: userId },
-      {
-        defaultWorkspaceId: anotherUserDefaultWorkspace.workspaceId,
-        updatedAt: new Date().toISOString(),
-      },
-    );
   }
 }

@@ -48,9 +48,6 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
 import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
@@ -72,15 +69,11 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
     ThreadCleanerModule,
     CalendarEventCleanerModule,
     TypeORMModule,
-    TypeOrmModule.forFeature(
-      [Workspace, UserWorkspace, User, FeatureFlagEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     UserModule,
     UserWorkspaceModule,
     WorkspaceDataSourceModule,
-    WorkspaceModule,
     RecordPositionBackfillModule,
     GoogleAPIRefreshAccessTokenModule,
     GmailFullSyncModule,
