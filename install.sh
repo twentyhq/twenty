@@ -1,5 +1,25 @@
 #!/bin/bash
 
+echo "🔧 Checking dependencies..."
+if ! command -v docker &>/dev/null; then
+  echo -e "\t❌ Docker is not installed or not in PATH. Please install Docker first.\n\t\tSee https://docs.docker.com/get-docker/"
+  exit 1
+fi
+# Check if docker compose plugin is installed
+if ! docker compose version &>/dev/null; then
+  echo -e "\t❌ Docker Compose is not installed or not in PATH (n.b. docker-compose is deprecated)\n\t\tUpdate docker or install docker-compose-plugin\n\t\tOn Linux: sudo apt-get install docker-compose-plugin\n\t\tSee https://docs.docker.com/compose/install/"
+  exit 1
+fi
+if ! command -v curl &>/dev/null; then
+  echo -e "\t❌ Curl is not installed or not in PATH.\n\t\tOn macOS: brew install curl\n\t\tOn Linux: sudo apt install curl"
+  exit 1
+fi
+# Check if docker is started
+if ! docker info &>/dev/null; then
+  echo -e "\t❌ Docker is not running.\n\t\tPlease start Docker Desktop, Docker or check documentation at https://docs.docker.com/config/daemon/start/"
+  exit 1
+fi
+
 # Catch errors
 set -e
 function on_exit {
@@ -11,16 +31,6 @@ function on_exit {
 }
 trap on_exit EXIT
 
-echo "🔧 Checking dependencies..."
-if ! command -v docker &>/dev/null; then
-  echo "  ❌ Docker is not installed or not in PATH. Please install Docker first."
-  exit 1
-fi
-if ! command -v curl &>/dev/null; then
-  echo "  ❌ Curl is not installed or not in PATH. Please install Curl first."
-  exit 1
-fi
-
 # Use environment variables VERSION and BRANCH, with defaults if not set
 version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)}
 branch=${BRANCH:-main}
@@ -28,10 +38,22 @@ branch=${BRANCH:-main}
 echo "🚀 Using version $version and branch $branch"
 
 dir_name="twenty"
+function ask_directory {
+  read -p "📁 Enter the directory name to setup the project (default: $dir_name): " answer
+  if [ -n "$answer" ]; then
+    dir_name=$answer
+  fi
+}
+
+ask_directory
 
 while [ -d "$dir_name" ]; do
-  read -p "Directory '$dir_name' already exists. Please enter a new directory name: " user_input
-  dir_name=$user_input
+  read -p "🚫 Directory '$dir_name' already exists. Do you want to overwrite it? (y/N) " answer
+  if [ "$answer" = "y" ]; then
+    break
+  else
+    ask_directory
+  fi
 done
 
 # Create a directory named twenty
@@ -39,11 +61,11 @@ echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
 # Copy the twenty/packages/twenty-docker/prod/docker-compose.yml file in it
-echo "  📄 Copying docker-compose.yml"
+echo "\t• Copying docker-compose.yml"
 curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/docker-compose.yml
 
 # Copy twenty/packages/twenty-docker/prod/.env.example to .env
-echo "  🔧 Setting up .env file"
+echo "\t• Setting up .env file"
 curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
@@ -61,7 +83,26 @@ echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 
-echo "  ✨ .env configuration completed"
+echo "\t• .env configuration completed"
+
+port=3000
+# Check if command nc is available
+if command -v nc &> /dev/null; then
+  # Check if port 3000 is already in use, propose to change it
+  while nc -zv localhost $port &>/dev/null; do
+    read -p "🚫 Port $port is already in use. Do you want to use another port? (Y/n) " answer
+    if [ "$answer" = "n" ]; then
+      continue
+    fi
+    read -p "Enter a new port number: " new_port
+    if [[ $(uname) == "Darwin" ]]; then
+      sed -i '' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+    else
+      sed -i'' "s/$port:$port/$new_port:$port/g" docker-compose.yml
+    fi
+    port=$new_port
+  done
+fi
 
 # Ask user if he wants to start the project
 read -p "🚀 Do you want to start the project now? (Y/n) " answer
@@ -69,15 +110,22 @@ if [ "$answer" = "n" ]; then
   echo "✅ Project setup completed. Run 'docker-compose up -d' to start."
   exit 0
 else
-  echo "  🐳 Starting Docker containers..."
+  echo "🐳 Starting Docker containers..."
   docker compose up -d
-  echo "  🐳 Project started!"
+  # Check if port is listening
+  echo -n "Waiting for server to start..."
+  while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
+    echo -n "."
+    sleep 1
+  done
+  echo ""
+  echo "✅ Server is up and running"
 fi
 
 function ask_open_browser {
   read -p "🌐 Do you want to open the project in your browser? (Y/n) " answer
   if [ "$answer" = "n" ]; then
-    echo "✅ Setup completed. Access your project at http://localhost:3000"
+    echo "✅ Setup completed. Access your project at http://localhost:$port"
     exit 0
   fi
 }
@@ -87,15 +135,15 @@ function ask_open_browser {
 if [[ $(uname) == "Darwin" ]]; then
   ask_open_browser
 
-  open "http://localhost:3000"
+  open "http://localhost:$port"
 # Assuming Linux
 else
   # xdg-open is not installed, we could be running in a non gui environment
   if command -v xdg-open >/dev/null 2>&1; then
     ask_open_browser
 
-    xdg-open "http://localhost:3000"
+    xdg-open "http://localhost:$port"
   else
-    echo "✅ Setup completed. Your project is available at http://localhost:3000"
+    echo "✅ Setup completed. Your project is available at http://localhost:$port"
   fi
 fi
