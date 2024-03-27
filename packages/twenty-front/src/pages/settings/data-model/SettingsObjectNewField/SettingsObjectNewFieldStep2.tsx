@@ -213,7 +213,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   amountMicros: null,
                   currencyCode: validatedFormValues.currency.currencyCode,
                 }
-              : undefined,
+              : validatedFormValues.defaultValue,
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',

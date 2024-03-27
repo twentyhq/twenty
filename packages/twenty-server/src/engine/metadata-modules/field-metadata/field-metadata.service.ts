@@ -301,7 +301,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             existingFieldMetadata.type,
           )
             ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue
+            : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
         // If the name is updated, the targetColumnMap should be updated as well
