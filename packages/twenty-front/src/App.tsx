@@ -8,6 +8,7 @@ import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { DefaultPageTitle } from '~/DefaultPageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import Authorize from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
@@ -186,6 +187,7 @@ export const App = () => {
             }
           />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
+          <Route path={AppPath.Authorize} element={<Authorize />} />
         </Routes>
       </DefaultLayout>
     </>
