@@ -1,7 +1,6 @@
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/gate-decorator.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { FieldMetadataTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -26,7 +25,6 @@ export interface ReflectFieldMetadata {
   > & {
     name: string;
     type: FieldMetadataType;
-    targetColumnMap: FieldMetadataTargetColumnMap<'default'>;
     isNullable: boolean;
     isSystem: boolean;
     isCustom: boolean;

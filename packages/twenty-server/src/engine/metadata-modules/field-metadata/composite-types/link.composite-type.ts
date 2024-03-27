@@ -2,7 +2,6 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 
 export const linkFields = (
   fieldMetadata?: FieldMetadataInterface,
@@ -10,16 +9,6 @@ export const linkFields = (
   const inferredFieldMetadata = fieldMetadata as
     | FieldMetadataInterface<FieldMetadataType.LINK>
     | undefined;
-  const targetColumnMap = inferredFieldMetadata
-    ? generateTargetColumnMap(
-        inferredFieldMetadata.type,
-        inferredFieldMetadata.isCustom ?? false,
-        inferredFieldMetadata.name,
-      )
-    : {
-        label: 'label',
-        url: 'url',
-      };
 
   return [
     {
@@ -28,9 +17,6 @@ export const linkFields = (
       objectMetadataId: FieldMetadataType.LINK.toString(),
       name: 'label',
       label: 'Label',
-      targetColumnMap: {
-        value: targetColumnMap.label,
-      },
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
@@ -46,9 +32,6 @@ export const linkFields = (
       objectMetadataId: FieldMetadataType.LINK.toString(),
       name: 'url',
       label: 'Url',
-      targetColumnMap: {
-        value: targetColumnMap.url,
-      },
       isNullable: true,
       ...(inferredFieldMetadata
         ? {

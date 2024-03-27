@@ -6,7 +6,6 @@ export const fieldNumberMock = {
   type: FieldMetadataType.NUMBER,
   isNullable: false,
   defaultValue: null,
-  targetColumnMap: { value: 'fieldNumber' },
 };
 
 export const fieldStringMock = {
@@ -14,7 +13,6 @@ export const fieldStringMock = {
   type: FieldMetadataType.TEXT,
   isNullable: true,
   defaultValue: null,
-  targetColumnMap: { value: 'fieldString' },
 };
 
 export const fieldLinkMock = {
@@ -22,7 +20,6 @@ export const fieldLinkMock = {
   type: FieldMetadataType.LINK,
   isNullable: false,
   defaultValue: { label: '', url: '' },
-  targetColumnMap: { label: 'fieldLinkLabel', url: 'fieldLinkUrl' },
 };
 
 export const fieldCurrencyMock = {
@@ -30,10 +27,6 @@ export const fieldCurrencyMock = {
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
   defaultValue: null,
-  targetColumnMap: {
-    amountMicros: 'fieldCurrencyAmountMicros',
-    currencyCode: 'fieldCurrencyCurrencyCode',
-  },
 };
 
 export const objectMetadataItemMock: DeepPartial<ObjectMetadataEntity> = {

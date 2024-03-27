@@ -1,7 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
-import isEqual from 'lodash.isequal';
-
 import {
   WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
@@ -26,7 +24,6 @@ import {
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { computeCompositeFieldMetadata } from 'src/engine/workspace-manager/workspace-health/utils/compute-composite-field-metadata.util';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { customNamePrefix } from 'src/engine/utils/compute-custom-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -55,12 +52,6 @@ export class FieldMetadataHealthService {
           compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
 
         if (options.mode === 'metadata' || options.mode === 'all') {
-          const targetColumnMapIssue = this.targetColumnMapCheck(fieldMetadata);
-
-          if (targetColumnMapIssue) {
-            issues.push(targetColumnMapIssue);
-          }
-
           const defaultValueIssues =
             this.defaultValueHealthCheck(fieldMetadata);
 
@@ -128,7 +119,7 @@ export class FieldMetadataHealthService {
     fieldMetadata: FieldMetadataEntity,
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
-    const columnName = fieldMetadata.targetColumnMap.value;
+    const columnName = fieldMetadata.name;
 
     const dataType =
       this.databaseStructureService.getPostgresDataType(fieldMetadata);
@@ -208,13 +199,8 @@ export class FieldMetadataHealthService {
     fieldMetadata: FieldMetadataEntity,
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
-    const columnName = fieldMetadata.targetColumnMap.value;
-    const targetColumnMapIssue = this.targetColumnMapCheck(fieldMetadata);
+    const columnName = fieldMetadata.name;
     const defaultValueIssues = this.defaultValueHealthCheck(fieldMetadata);
-
-    if (targetColumnMapIssue) {
-      issues.push(targetColumnMapIssue);
-    }
 
     if (fieldMetadata.name.startsWith(customNamePrefix)) {
       issues.push({
@@ -267,40 +253,13 @@ export class FieldMetadataHealthService {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID,
         fieldMetadata,
-        message: `Column options of ${fieldMetadata.targetColumnMap?.value} is not valid`,
+        message: `Column options of ${fieldMetadata.name} is not valid`,
       });
     }
 
     issues.push(...defaultValueIssues);
 
     return issues;
-  }
-
-  private targetColumnMapCheck(
-    fieldMetadata: FieldMetadataEntity,
-  ): WorkspaceHealthIssue | null {
-    const targetColumnMap = generateTargetColumnMap(
-      fieldMetadata.type,
-      fieldMetadata.isCustom,
-      fieldMetadata.name,
-    );
-
-    if (
-      !fieldMetadata.targetColumnMap ||
-      !isEqual(targetColumnMap, fieldMetadata.targetColumnMap)
-    ) {
-      return {
-        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
-        fieldMetadata,
-        message: `Column targetColumnMap "${JSON.stringify(
-          fieldMetadata.targetColumnMap,
-        )}" is not the same as the generated one "${JSON.stringify(
-          targetColumnMap,
-        )}"`,
-      };
-    }
-
-    return null;
   }
 
   private defaultValueHealthCheck(

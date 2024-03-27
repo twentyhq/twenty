@@ -17,3 +17,28 @@ export const compositeDefinitions = new Map<
   [FieldMetadataType.CURRENCY, currencyFields],
   [FieldMetadataType.FULL_NAME, fullNameFields],
 ]);
+
+export function getCompositeFieldMetadataCollection(
+  fieldMetadata: FieldMetadataInterface,
+): FieldMetadataInterface[];
+export function getCompositeFieldMetadataCollection(
+  type: FieldMetadataType,
+): FieldMetadataInterface[];
+export function getCompositeFieldMetadataCollection(
+  fieldMetadataOrType: FieldMetadataInterface | FieldMetadataType,
+): FieldMetadataInterface[] {
+  const type =
+    typeof fieldMetadataOrType === 'string'
+      ? fieldMetadataOrType
+      : fieldMetadataOrType.type;
+  const fieldMetadata =
+    typeof fieldMetadataOrType !== 'string' ? fieldMetadataOrType : undefined;
+
+  const compositeDefinition = compositeDefinitions.get(type);
+
+  if (!compositeDefinition) {
+    throw new Error(`Composite definition not found for type ${type}`);
+  }
+
+  return compositeDefinition(fieldMetadata);
+}

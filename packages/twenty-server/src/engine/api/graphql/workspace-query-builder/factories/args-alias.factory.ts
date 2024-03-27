@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 @Injectable()
 export class ArgsAliasFactory {
+  private readonly logger = new Logger(ArgsAliasFactory.name);
+
   create(
     args: Record<string, any>,
     fieldMetadataCollection: FieldMetadataInterface[],
@@ -39,25 +41,8 @@ export class ArgsAliasFactory {
     for (const [key, value] of Object.entries(args)) {
       const fieldMetadata = fieldMetadataMap.get(key);
 
-      // If it's a special complex field, we need to map all columns
-      if (
-        fieldMetadata &&
-        typeof value === 'object' &&
-        value !== null &&
-        Object.values(fieldMetadata.targetColumnMap).length > 1
-      ) {
-        for (const [subKey, subValue] of Object.entries(value)) {
-          const mappedKey = fieldMetadata.targetColumnMap[subKey];
-
-          if (mappedKey) {
-            newArgs[mappedKey] = subValue;
-          }
-        }
-      } else if (fieldMetadata) {
-        // Otherwise we just need to map the value
-        const mappedKey = fieldMetadata.targetColumnMap.value;
-
-        newArgs[mappedKey ?? key] = value;
+      if (fieldMetadata) {
+        newArgs[key] = value;
       } else {
         // Recurse if value is a nested object, otherwise append field or alias
         newArgs[key] = this.createArgsObjectRecursive(value, fieldMetadataMap);

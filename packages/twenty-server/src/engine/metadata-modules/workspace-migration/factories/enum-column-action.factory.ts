@@ -35,7 +35,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
 
     return {
       action: WorkspaceMigrationColumnActionType.CREATE,
-      columnName: fieldMetadata.targetColumnMap.value,
+      columnName: fieldMetadata.name,
       columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
       enum: enumOptions,
       isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
@@ -72,8 +72,8 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
           }),
         ]
       : undefined;
-    const currentColumnName = currentFieldMetadata.targetColumnMap.value;
-    const alteredColumnName = alteredFieldMetadata.targetColumnMap.value;
+    const currentColumnName = currentFieldMetadata.name;
+    const alteredColumnName = alteredFieldMetadata.name;
 
     if (!currentColumnName || !alteredColumnName) {
       this.logger.error(

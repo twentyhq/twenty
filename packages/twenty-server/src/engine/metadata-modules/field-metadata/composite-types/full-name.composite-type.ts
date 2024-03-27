@@ -2,7 +2,6 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 
 export const fullNameFields = (
   fieldMetadata?: FieldMetadataInterface,
@@ -10,16 +9,6 @@ export const fullNameFields = (
   const inferredFieldMetadata = fieldMetadata as
     | FieldMetadataInterface<FieldMetadataType.FULL_NAME>
     | undefined;
-  const targetColumnMap = inferredFieldMetadata
-    ? generateTargetColumnMap(
-        inferredFieldMetadata.type,
-        inferredFieldMetadata.isCustom ?? false,
-        inferredFieldMetadata.name,
-      )
-    : {
-        firstName: 'firstName',
-        lastName: 'lastName',
-      };
 
   return [
     {
@@ -28,9 +17,6 @@ export const fullNameFields = (
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'firstName',
       label: 'First Name',
-      targetColumnMap: {
-        value: targetColumnMap.firstName,
-      },
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
@@ -46,9 +32,6 @@ export const fullNameFields = (
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'lastName',
       label: 'Last Name',
-      targetColumnMap: {
-        value: targetColumnMap.lastName,
-      },
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
