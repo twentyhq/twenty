@@ -9,7 +9,7 @@ import { fullNameObjectDefinition } from 'src/engine/metadata-modules/field-meta
 import { currencyObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { linkObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
-import { addressObjectDefinition } from 'src/engine-metadata/field-metadata/composite-types/address.composite-type';
+import { addressObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
