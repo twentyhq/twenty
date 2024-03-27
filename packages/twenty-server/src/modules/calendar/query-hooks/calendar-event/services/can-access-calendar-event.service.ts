@@ -3,7 +3,9 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import groupBy from 'lodash.groupby';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import {
   CalendarChannelObjectMetadata,
   CalendarChannelVisibility,
@@ -27,7 +29,7 @@ export class CanAccessCalendarEventService {
   public async canAccessCalendarEvent(
     userId: string,
     workspaceId: string,
-    calendarChannelCalendarEventAssociations: any[],
+    calendarChannelCalendarEventAssociations: ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[],
   ) {
     const calendarChannels = await this.calendarChannelRepository.getByIds(
       calendarChannelCalendarEventAssociations.map(
