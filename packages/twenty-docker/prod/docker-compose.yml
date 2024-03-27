@@ -36,7 +36,7 @@ services:
   db:
     image: twentycrm/twenty-postgres:${TAG}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/bitnami/postgresql
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
       #POSTGRES_USER: ${POSTGRES_USER}
