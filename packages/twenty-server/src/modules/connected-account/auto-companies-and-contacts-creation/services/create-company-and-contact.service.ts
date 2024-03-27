@@ -60,13 +60,12 @@ export class CreateCompanyAndContactService {
         transactionManager,
       );
 
-    const contactsToCreateFromOtherCompanies = contactsToCreate;
-
-    filterOutContactsFromCompanyOrWorkspace(
-      contactsToCreate,
-      connectedAccountHandle,
-      workspaceMembers,
-    );
+    const contactsToCreateFromOtherCompanies =
+      filterOutContactsFromCompanyOrWorkspace(
+        contactsToCreate,
+        connectedAccountHandle,
+        workspaceMembers,
+      );
 
     const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(
       contactsToCreateFromOtherCompanies,
@@ -120,8 +119,9 @@ export class CreateCompanyAndContactService {
         handle: contact.handle,
         displayName: contact.displayName,
         companyId:
-          contact.companyDomainName &&
-          companiesObject[contact.companyDomainName],
+          contact.companyDomainName && contact.companyDomainName !== ''
+            ? companiesObject[contact.companyDomainName]
+            : undefined,
       }));
 
     await this.createContactService.createContacts(

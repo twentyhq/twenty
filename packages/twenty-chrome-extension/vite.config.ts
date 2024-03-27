@@ -25,6 +25,7 @@ export default defineConfig(() => {
       rollupOptions: {
         output: { chunkFileNames: 'assets/chunk-[hash].js' },
       },
+      target: 'ES2022',
     },
 
     // Adding this to fix websocket connection error.

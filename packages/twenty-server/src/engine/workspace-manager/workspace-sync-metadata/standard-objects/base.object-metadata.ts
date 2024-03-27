@@ -9,7 +9,7 @@ export abstract class BaseObjectMetadata {
     type: FieldMetadataType.UUID,
     label: 'Id',
     description: 'Id',
-    defaultValue: { type: 'uuid' },
+    defaultValue: 'uuid',
     icon: 'Icon123',
   })
   @IsSystem()
@@ -21,7 +21,7 @@ export abstract class BaseObjectMetadata {
     label: 'Creation date',
     description: 'Creation date',
     icon: 'IconCalendar',
-    defaultValue: { type: 'now' },
+    defaultValue: 'now',
   })
   createdAt: Date;
 
@@ -31,7 +31,7 @@ export abstract class BaseObjectMetadata {
     label: 'Update date',
     description: 'Update date',
     icon: 'IconCalendar',
-    defaultValue: { type: 'now' },
+    defaultValue: 'now',
   })
   @IsSystem()
   updatedAt: Date;

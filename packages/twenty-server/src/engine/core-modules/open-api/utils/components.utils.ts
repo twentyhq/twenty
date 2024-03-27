@@ -173,6 +173,7 @@ export const computeMetadataSchemaComponents = (
               description: { type: 'string' },
               icon: { type: 'string' },
               isCustom: { type: 'boolean' },
+              isRemote: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
               createdAt: { type: 'string' },

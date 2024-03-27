@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -38,9 +37,67 @@ export class MessageService {
     private readonly messageThreadService: MessageThreadService,
   ) {}
 
+  public async saveMessagesWithinTransaction(
+    messages: GmailMessage[],
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    gmailMessageChannelId: string,
+    workspaceId: string,
+    transactionManager: EntityManager,
+  ): Promise<Map<string, string>> {
+    const messageExternalIdsAndIdsMap = new Map<string, string>();
+
+    for (const message of messages) {
+      const existingMessageChannelMessageAssociationsCount =
+        await this.messageChannelMessageAssociationRepository.countByMessageExternalIdsAndMessageChannelId(
+          [message.externalId],
+          gmailMessageChannelId,
+          workspaceId,
+          transactionManager,
+        );
+
+      if (existingMessageChannelMessageAssociationsCount > 0) {
+        continue;
+      }
+
+      // TODO: This does not handle all thread merging use cases and might create orphan threads.
+      const savedOrExistingMessageThreadId =
+        await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
+          message.headerMessageId,
+          message.messageThreadExternalId,
+          workspaceId,
+          transactionManager,
+        );
+
+      const savedOrExistingMessageId =
+        await this.saveMessageOrReturnExistingMessage(
+          message,
+          savedOrExistingMessageThreadId,
+          connectedAccount,
+          workspaceId,
+          transactionManager,
+        );
+
+      messageExternalIdsAndIdsMap.set(
+        message.externalId,
+        savedOrExistingMessageId,
+      );
+
+      await this.messageChannelMessageAssociationRepository.insert(
+        gmailMessageChannelId,
+        savedOrExistingMessageId,
+        message.externalId,
+        savedOrExistingMessageThreadId,
+        message.messageThreadExternalId,
+        workspaceId,
+        transactionManager,
+      );
+    }
+
+    return messageExternalIdsAndIdsMap;
+  }
+
   public async saveMessages(
     messages: GmailMessage[],
-    dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     gmailMessageChannelId: string,
@@ -101,7 +158,6 @@ export class MessageService {
                 message,
                 savedOrExistingMessageThreadId,
                 connectedAccount,
-                dataSourceMetadata,
                 workspaceId,
                 manager,
               );
@@ -136,7 +192,6 @@ export class MessageService {
     message: GmailMessage,
     messageThreadId: string,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {

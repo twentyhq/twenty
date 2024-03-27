@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-drawer/hooks/useOpenCalendarEventRightDrawer';
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
@@ -17,10 +16,11 @@ import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { AvatarGroup } from '@/users/components/AvatarGroup';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
-  calendarEvent: CalendarEvent;
+  calendarEvent: TimelineCalendarEvent;
   className?: string;
 };
 

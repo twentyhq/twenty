@@ -1,4 +1,7 @@
-import { QueueJobOptions } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import {
+  QueueCronJobOptions,
+  QueueJobOptions,
+} from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueJobData } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -18,8 +21,7 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     data: T,
-    pattern: string,
-    options?: QueueJobOptions,
+    options?: QueueCronJobOptions,
   );
   removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
   stop?(): Promise<void>;

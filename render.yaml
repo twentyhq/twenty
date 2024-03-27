@@ -32,6 +32,8 @@ services:
       generateValue: true
     - key: REFRESH_TOKEN_SECRET
       generateValue: true
+    - key: FILE_TOKEN_SECRET
+      generateValue: true
     - key: PG_DATABASE_HOST
       fromService:
         name: twenty_postgres
