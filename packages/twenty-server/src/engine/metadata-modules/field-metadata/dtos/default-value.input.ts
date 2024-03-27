@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsNumberString,
+  IsString,
   Matches,
   ValidateIf,
 } from 'class-validator';
