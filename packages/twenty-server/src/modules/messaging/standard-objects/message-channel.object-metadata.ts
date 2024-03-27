@@ -175,4 +175,17 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   syncStatus: MessageChannelSyncStatus;
+
+  @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.ongoingSyncStartedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Ongoing sync started at',
+    description: 'Ongoing sync started at',
+    icon: 'IconHistory',
+  })
+  @Gate({
+    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
+  })
+  @IsNullable()
+  ongoingSyncStartedAt: string;
 }

@@ -8,7 +8,6 @@ import { GmailFullSyncV2Service } from 'src/modules/messaging/services/gmail-ful
 export type GmailFullSyncV2JobData = {
   workspaceId: string;
   connectedAccountId: string;
-  nextPageToken?: string;
 };
 
 @Injectable()
@@ -24,9 +23,7 @@ export class GmailFullSyncV2Job
 
   async handle(data: GmailFullSyncV2JobData): Promise<void> {
     this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${
-        data.connectedAccountId
-      } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
+      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
 
     try {

@@ -106,9 +106,16 @@ export class MessageChannelRepository {
     const needsToUpdateSyncedAt =
       syncStatus === MessageChannelSyncStatus.SUCCEEDED;
 
+    const needsToUpdateOngoingSyncStartedAt =
+      syncStatus === MessageChannelSyncStatus.ONGOING;
+
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = $1 ${
-        needsToUpdateSyncedAt ? ', "syncedAt" = NOW()' : ''
+        needsToUpdateSyncedAt ? `, "syncedAt" = NOW()` : ''
+      } ${
+        needsToUpdateOngoingSyncStartedAt
+          ? `, "ongoingSyncStartedAt" = NOW()`
+          : `, "ongoingSyncStartedAt" = NULL`
       } WHERE "id" = $2`,
       [syncStatus, id],
       workspaceId,

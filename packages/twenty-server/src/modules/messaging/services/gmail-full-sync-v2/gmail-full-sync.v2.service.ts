@@ -90,10 +90,7 @@ export class GmailFullSyncV2Service {
       return;
     }
 
-    if (
-      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING ||
-      gmailMessageChannel.syncStatus === MessageChannelSyncStatus.FAILED
-    ) {
+    if (gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING) {
       this.logger.log(
         `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
       );
