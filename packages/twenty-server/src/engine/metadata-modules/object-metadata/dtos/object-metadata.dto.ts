@@ -54,6 +54,9 @@ export class ObjectMetadataDTO {
   isCustom: boolean;
 
   @FilterableField()
+  isRemote: boolean;
+
+  @FilterableField()
   isActive: boolean;
 
   @FilterableField()

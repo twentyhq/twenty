@@ -17,11 +17,7 @@ export const buildPostgresUrl = (
   const foreignDataWrapperOptions = remoteServer.foreignDataWrapperOptions;
   const userMappingOptions = remoteServer.userMappingOptions;
 
-  const password = decryptText(
-    userMappingOptions.password,
-    secretKey,
-    secretKey,
-  );
+  const password = decryptText(userMappingOptions.password, secretKey);
 
   const url = `postgres://${userMappingOptions.username}:${password}@${foreignDataWrapperOptions.host}:${foreignDataWrapperOptions.port}/${foreignDataWrapperOptions.dbname}`;
 
