@@ -82,11 +82,6 @@ export const useActivities = ({
     author: true,
   };
 
-  console.log({
-    targetObjectNameSingularToLoadEagerly,
-    eagerLoadedRelations,
-  });
-
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: skipActivities,
@@ -103,7 +98,6 @@ export const useActivities = ({
             }
 
             for (const activity of activities) {
-              console.log({ activity });
               set(recordStoreFamilyState(activity.id), activity);
             }
           },

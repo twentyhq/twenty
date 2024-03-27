@@ -22,6 +22,10 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  GmailFullSyncV2Job,
+  GmailFullSyncV2JobData,
+} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -75,6 +79,12 @@ export class GoogleAPIsService {
       value: true,
     });
 
+    const isFullSyncV2Enabled = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKeys.IsFullSyncV2Enabled,
+      value: true,
+    });
+
     await workspaceDataSource?.transaction(async (manager) => {
       await manager.query(
         `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -107,16 +117,26 @@ export class GoogleAPIsService {
     });
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
-        {
-          workspaceId,
-          connectedAccountId,
-        },
-        {
-          retryLimit: 2,
-        },
-      );
+      if (isFullSyncV2Enabled) {
+        await this.messageQueueService.add<GmailFullSyncV2JobData>(
+          GmailFullSyncV2Job.name,
+          {
+            workspaceId,
+            connectedAccountId,
+          },
+        );
+      } else {
+        await this.messageQueueService.add<GmailFullSyncJobData>(
+          GmailFullSyncJob.name,
+          {
+            workspaceId,
+            connectedAccountId,
+          },
+          {
+            retryLimit: 2,
+          },
+        );
+      }
     }
 
     if (

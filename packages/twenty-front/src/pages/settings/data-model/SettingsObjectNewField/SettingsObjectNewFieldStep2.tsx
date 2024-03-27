@@ -17,6 +17,7 @@ import { SettingsObjectFieldFormSection } from '@/settings/data-model/components
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -254,7 +255,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
-  const excludedFieldTypes = [
+  const excludedFieldTypes: SettingsSupportedFieldType[] = [
     FieldMetadataType.Currency,
     FieldMetadataType.Email,
     FieldMetadataType.FullName,

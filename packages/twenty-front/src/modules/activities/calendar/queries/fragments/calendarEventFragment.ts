@@ -11,6 +11,7 @@ export const calendarEventFragment = gql`
     startsAt
     endsAt
     isFullDay
+    visibility
     attendees {
       ...AttendeeFragment
     }

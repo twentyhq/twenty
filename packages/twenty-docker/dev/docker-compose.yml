@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   twenty-dev:
-    build: 
+    build:
       context: ../../..
       dockerfile: ./packages/twenty-docker/dev/twenty-dev/Dockerfile
     ports:
@@ -21,7 +21,7 @@ services:
     container_name: twenty_postgres
     image: twentycrm/twenty-postgres:latest
     volumes:
-    - twenty_db_data:/var/lib/postgresql/data
+    - twenty_db_data:/bitnami/postgresql
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -37,4 +37,3 @@ volumes:
   twenty_dev_node_modules_front:
   twenty_dev_node_modules_server:
   twenty_dev_node_modules_website:
-

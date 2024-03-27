@@ -15,7 +15,6 @@ export const useInjectIntoTimelineActivitiesQueries = () => {
     activityTargetsToInject: ActivityTarget[];
     timelineTargetableObject: ActivityTargetableObject;
   }) => {
-    console.log('timeline activities query');
     injectActivitiesQueries({
       activitiesFilters: {},
       activitiesOrderByVariables: {

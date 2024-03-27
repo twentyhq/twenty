@@ -1,7 +1,10 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import {
+  FieldMetadataClassValidation,
+  FieldMetadataDefaultValue,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -9,26 +12,27 @@ import {
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueJson,
+  FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
-  FieldMetadataDynamicDefaultValueNow,
-  FieldMetadataDynamicDefaultValueUuid,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const defaultValueValidatorsMap = {
   [FieldMetadataType.UUID]: [
     FieldMetadataDefaultValueString,
-    FieldMetadataDynamicDefaultValueUuid,
+    FieldMetadataDefaultValueUuidFunction,
   ],
   [FieldMetadataType.TEXT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.PHONE]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.EMAIL]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.DATE_TIME]: [
     FieldMetadataDefaultValueDateTime,
-    FieldMetadataDynamicDefaultValueNow,
+    FieldMetadataDefaultValueNowFunction,
   ],
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
@@ -40,7 +44,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
-  [FieldMetadataType.JSON]: [FieldMetadataDefaultValueJson],
+  [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
 };
 
 export const validateDefaultValueForType = (
@@ -54,10 +58,14 @@ export const validateDefaultValueForType = (
   if (!validators) return false;
 
   const isValid = validators.some((validator) => {
+    const conputedDefaultValue = isCompositeFieldMetadataType(type)
+      ? defaultValue
+      : { value: defaultValue };
+
     const defaultValueInstance = plainToInstance<
       any,
-      FieldMetadataDefaultValue
-    >(validator, defaultValue);
+      FieldMetadataClassValidation
+    >(validator, conputedDefaultValue as FieldMetadataClassValidation);
 
     return (
       validateSync(defaultValueInstance, {

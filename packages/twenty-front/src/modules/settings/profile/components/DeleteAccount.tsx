@@ -22,7 +22,7 @@ export const DeleteAccount = () => {
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const deleteAccount = async () => {

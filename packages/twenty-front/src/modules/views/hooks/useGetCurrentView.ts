@@ -9,6 +9,7 @@ import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/
 import { View } from '@/views/types/View';
 import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
 import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
+import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { isDefined } from '~/utils/isDefined';
 
 export const useGetCurrentView = (viewBarComponentId?: string) => {
@@ -49,16 +50,10 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     setIsCurrentViewKeyIndex(currentView?.key === 'INDEX');
   }, [currentView, setIsCurrentViewKeyIndex]);
 
-  const viewsOnCurrentObject = views
-    .filter((view) => view.objectMetadataId === viewObjectMetadataId)
-    .map((view) => ({
-      id: view.id,
-      name: view.name,
-      type: view.type,
-      key: view.key,
-      objectMetadataId: view.objectMetadataId,
-      icon: view.icon,
-    }));
+  const viewsOnCurrentObject = getObjectMetadataItemViews(
+    viewObjectMetadataId ?? '',
+    views,
+  );
 
   const unsavedToUpsertViewFilters = useRecoilValue(
     unsavedToUpsertViewFiltersState,

@@ -8,7 +8,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCacheV2 } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCacheV2';
+import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -22,7 +22,7 @@ export const useInjectIntoActivitiesQueries = () => {
 
   const {
     upsertFindManyRecordsQueryInCache: overwriteFindManyActivitiesInCache,
-  } = useUpsertFindManyRecordsQueryInCacheV2({
+  } = useUpsertFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivity,
   });
 
@@ -59,16 +59,6 @@ export const useInjectIntoActivitiesQueries = () => {
     injectOnlyInIdFilter?: boolean;
   }) => {
     const hasActivityTargets = isNonEmptyArray(targetableObjects);
-
-    console.log({
-      hasActivityTargets,
-      activityToInject,
-      activityTargetsToInject,
-      targetableObjects,
-      activitiesFilters,
-      activitiesOrderByVariables,
-      injectOnlyInIdFilter,
-    });
 
     if (hasActivityTargets) {
       const findManyActivitiyTargetsQueryFilter = getActivityTargetsFilter({
@@ -137,10 +127,6 @@ export const useInjectIntoActivitiesQueries = () => {
 
         newActivities.unshift(newActivity);
       }
-
-      console.log({
-        newActivities,
-      });
 
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,

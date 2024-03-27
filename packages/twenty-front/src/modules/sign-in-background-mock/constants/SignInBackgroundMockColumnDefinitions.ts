@@ -1,6 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
   [
@@ -9,7 +10,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
       label: 'Domain Name',
       size: 100,
-      type: 'TEXT',
+      type: FieldMetadataType.Text,
       metadata: {
         fieldName: 'domainName',
         placeHolder: 'Domain Name',
@@ -25,7 +26,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
       label: 'Employees',
       size: 100,
-      type: 'NUMBER',
+      type: FieldMetadataType.Number,
       metadata: {
         fieldName: 'employees',
         placeHolder: 'Employees',
@@ -41,7 +42,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
       label: 'Name',
       size: 100,
-      type: 'TEXT',
+      type: FieldMetadataType.Text,
       metadata: {
         fieldName: 'name',
         placeHolder: 'Name',
@@ -57,7 +58,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
       label: 'Favorites',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'favorites',
         placeHolder: 'Favorites',
@@ -74,7 +75,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
       label: 'Address',
       size: 100,
-      type: 'TEXT',
+      type: FieldMetadataType.Text,
       metadata: {
         fieldName: 'address',
         placeHolder: 'Address',
@@ -90,7 +91,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',
       label: 'Account Owner',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'accountOwner',
         placeHolder: 'Account Owner',
@@ -107,7 +108,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-68b4-4c8e-af19-738eba2a42a5',
       label: 'People',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'people',
         placeHolder: 'People',
@@ -124,7 +125,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-61af-4ffd-b79b-baed6db8ad11',
       label: 'Attachments',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'attachments',
         placeHolder: 'Attachments',
@@ -141,7 +142,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-4dc2-47c9-bb15-6e6f19ba9e46',
       label: 'Creation date',
       size: 100,
-      type: 'DATE_TIME',
+      type: FieldMetadataType.DateTime,
       metadata: {
         fieldName: 'createdAt',
         placeHolder: 'Creation date',
@@ -157,7 +158,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-9e9f-4235-98b2-c76f3e2d281e',
       label: 'ICP',
       size: 100,
-      type: 'BOOLEAN',
+      type: FieldMetadataType.Boolean,
       metadata: {
         fieldName: 'idealCustomerProfile',
         placeHolder: 'ICP',
@@ -173,7 +174,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-a61d-4b78-b998-3fd88b4f73a1',
       label: 'Linkedin',
       size: 100,
-      type: 'LINK',
+      type: FieldMetadataType.Link,
       metadata: {
         fieldName: 'linkedinLink',
         placeHolder: 'Linkedin',
@@ -189,7 +190,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-e3fc-46ff-b552-3e757843f06e',
       label: 'Opportunities',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'opportunities',
         placeHolder: 'Opportunities',
@@ -206,7 +207,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-46e3-479a-b8f4-77137c74daa6',
       label: 'X',
       size: 100,
-      type: 'LINK',
+      type: FieldMetadataType.Link,
       metadata: {
         fieldName: 'xLink',
         placeHolder: 'X',
@@ -222,7 +223,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-4a2e-4b41-8562-279963e8947e',
       label: 'Activities',
       size: 100,
-      type: 'RELATION',
+      type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'activityTargets',
         placeHolder: 'Activities',
@@ -239,7 +240,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-4a5a-466f-92d9-c3870d9502a9',
       label: 'ARR',
       size: 100,
-      type: 'CURRENCY',
+      type: FieldMetadataType.Currency,
       metadata: {
         fieldName: 'annualRecurringRevenue',
         placeHolder: 'ARR',

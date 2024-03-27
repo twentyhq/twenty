@@ -6,7 +6,7 @@ import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsF
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
-import { useUpsertFindManyRecordsQueryInCacheV2 } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCacheV2';
+import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 // TODO: create a generic hook from this
@@ -25,7 +25,7 @@ export const useInjectIntoActivityTargetsQueries = () => {
   const {
     upsertFindManyRecordsQueryInCache:
       overwriteFindManyActivityTargetsQueryInCache,
-  } = useUpsertFindManyRecordsQueryInCacheV2({
+  } = useUpsertFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 

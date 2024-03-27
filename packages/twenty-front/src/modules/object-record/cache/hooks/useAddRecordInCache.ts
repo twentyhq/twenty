@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { print } from 'graphql';
 import gql from 'graphql-tag';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
@@ -38,11 +37,6 @@ export const useAddRecordInCache = ({
           __typename: `${capitalize(objectMetadataItem.nameSingular)}`,
           ...record,
         };
-
-        console.log({
-          query: print(fragment),
-          cachedObjectRecord,
-        });
 
         apolloClient.writeFragment({
           id: `${capitalize(objectMetadataItem.nameSingular)}:${record.id}`,

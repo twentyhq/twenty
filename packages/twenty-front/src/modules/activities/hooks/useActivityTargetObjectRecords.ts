@@ -33,8 +33,6 @@ export const useActivityTargetObjectRecords = ({
 
   const activityTargetObjectRecords = activityTargets
     .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
-      console.log({ cache: apolloClient.cache.extract(true) });
-
       const activityTargetFromCache = getRecordFromCache<ActivityTarget>(
         activityTarget.id,
         apolloClient.cache,

@@ -43,10 +43,6 @@ export const useGetRecordFromCache = ({
         id: recordId,
       });
 
-      console.log({
-        cacheInGetRecord: cache.extract(true),
-      });
-
       return cache.readFragment<CachedObjectRecord & { __typename: string }>({
         id: cachedRecordId,
         fragment: cacheReadFragment,

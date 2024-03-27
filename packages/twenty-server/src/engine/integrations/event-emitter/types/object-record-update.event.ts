@@ -4,5 +4,6 @@ export class ObjectRecordUpdateEvent<T> extends ObjectRecordBaseEvent {
   details: {
     before: T;
     after: T;
+    diff?: Partial<T>;
   };
 }

@@ -29,7 +29,7 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    if (isSignInPrefilled) {
+    if (isSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }

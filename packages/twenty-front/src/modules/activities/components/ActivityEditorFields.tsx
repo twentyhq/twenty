@@ -66,11 +66,7 @@ export const ActivityEditorFields = ({
   const { mapRecordRelationConnectionsToRelationRecords } =
     useMapRecordRelationConnectionsToRelationRecords();
 
-  const {
-    data: activityFromCache,
-    complete,
-    missing,
-  } = useFragment({
+  const { data: activityFromCache } = useFragment({
     fragment: ActivityFragment,
     fragmentName: 'ActivityFragment',
     from: {
@@ -86,11 +82,6 @@ export const ActivityEditorFields = ({
       objectRecord: activityFromCache,
       depth: 3,
     });
-
-  console.log({
-    activityFromCache,
-    activityFromCacheWithoutConnection,
-  });
 
   const [activityFromStore] = useRecoilState(
     recordStoreFamilyState(activityId),

@@ -1,12 +1,11 @@
 import { DataSource, EntityManager } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { viewPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/view';
-import { companyPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/company';
-import { personPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/person';
-import { pipelineStepPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/pipeline-step';
 import { workspaceMemberPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/workspace-member';
-import { seedDemoOpportunity } from 'src/engine/workspace-manager/demo-objects-prefill-data/opportunity';
+import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { companyPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/company';
+import { personPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/person';
+import { opportunityPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/opportunity';
 
 export const demoObjectsPrefillData = async (
   workspaceDataSource: DataSource,
@@ -14,10 +13,10 @@ export const demoObjectsPrefillData = async (
   objectMetadata: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-    acc[object.nameSingular] = {
+    acc[object.standardId ?? ''] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
-        acc[field.name] = field.id;
+        acc[field.standardId ?? ''] = field.id;
 
         return acc;
       }, {}),
@@ -26,18 +25,15 @@ export const demoObjectsPrefillData = async (
     return acc;
   }, {});
 
-  // TODO: udnerstand why only with this createQueryRunner transaction below works
-  const queryRunner = workspaceDataSource.createQueryRunner();
+  await workspaceDataSource.transaction(
+    async (entityManager: EntityManager) => {
+      await companyPrefillDemoData(entityManager, schemaName);
+      await personPrefillDemoData(entityManager, schemaName);
+      await opportunityPrefillDemoData(entityManager, schemaName);
 
-  await queryRunner.connect();
+      await viewPrefillData(entityManager, schemaName, objectMetadataMap);
 
-  workspaceDataSource.transaction(async (entityManager: EntityManager) => {
-    await companyPrefillData(entityManager, schemaName);
-    await personPrefillData(entityManager, schemaName);
-    await viewPrefillData(entityManager, schemaName, objectMetadataMap);
-    await pipelineStepPrefillData(entityManager, schemaName);
-    await seedDemoOpportunity(entityManager, schemaName);
-
-    await workspaceMemberPrefillData(entityManager, schemaName);
-  });
+      await workspaceMemberPrefillData(entityManager, schemaName);
+    },
+  );
 };

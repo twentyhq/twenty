@@ -2,7 +2,6 @@ import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useAttachRelationInBothDirections } from '@/activities/hooks/useAttachRelationInBothDirections';
 import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
@@ -43,9 +42,6 @@ export const useCreateActivityInCache = () => {
   const { injectIntoActivityTargetInlineCellCache } =
     useInjectIntoActivityTargetInlineCellCache();
 
-  const { attachRelationInBothDirections } =
-    useAttachRelationInBothDirections();
-
   const { mapRecordRelationRecordsToRelationConnection } =
     useMapRelationRecordsToRelationConnection();
 
@@ -59,8 +55,6 @@ export const useCreateActivityInCache = () => {
   });
 
   const client = useApolloClient();
-
-  const cache = client.cache;
 
   const createActivityInCache = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -174,7 +168,6 @@ export const useCreateActivityInCache = () => {
       mapRecordRelationRecordsToRelationConnection,
       client,
       modifyActivityFromCache,
-      attachRelationInBothDirections,
     ],
   );
 

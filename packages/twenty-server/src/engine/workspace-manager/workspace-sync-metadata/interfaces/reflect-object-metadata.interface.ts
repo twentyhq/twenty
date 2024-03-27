@@ -14,5 +14,6 @@ export interface ReflectObjectMetadata extends ObjectMetadataDecoratorParams {
   targetTableName: string;
   isSystem: boolean;
   isCustom: boolean;
+  isRemote: boolean;
   gate?: GateDecoratorParams;
 }

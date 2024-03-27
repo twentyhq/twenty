@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { print } from 'graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
@@ -26,12 +25,12 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     queryVariables,
     depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
-    objectRecordSampleForFindManyQueryGeneration,
   }: {
     queryVariables: ObjectRecordQueryVariables;
     depth?: number;
     objectRecordsToOverwrite: T[];
-    objectRecordSampleForFindManyQueryGeneration?: T;
+    queryFields?: Record<string, any>;
+    eagerLoadedRelations?: Record<string, any>;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
@@ -41,12 +40,6 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     const newObjectRecordConnection = getRecordConnectionFromRecords({
       objectNameSingular: objectMetadataItem.nameSingular,
       records: objectRecordsToOverwrite,
-    });
-
-    console.log({
-      query: print(findManyRecordsQueryForCacheOverwrite),
-      data: newObjectRecordConnection,
-      objectRecordSampleForFindManyQueryGeneration,
     });
 
     apolloClient.writeQuery({

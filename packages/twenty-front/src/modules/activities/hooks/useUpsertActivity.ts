@@ -107,13 +107,6 @@ export const useUpsertActivity = () => {
 
       // Call optimistic effects
       if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
-        console.log('Object show page targetable object is defined');
-
-        console.log({
-          timelineTargetableObject: objectShowPageTargetableObject,
-          activityToInject: activityToCreate,
-          activityTargetsToInject: activityToCreate.activityTargets,
-        });
         // TODO: see here
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,

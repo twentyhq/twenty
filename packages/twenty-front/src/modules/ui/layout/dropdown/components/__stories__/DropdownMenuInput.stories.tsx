@@ -8,7 +8,7 @@ const meta: Meta<typeof DropdownMenuInput> = {
   title: 'UI/Layout/Dropdown/DropdownMenuInput',
   component: DropdownMenuInput,
   decorators: [ComponentDecorator],
-  args: { defaultValue: 'Lorem ipsum' },
+  args: { value: 'Lorem ipsum' },
 };
 
 export default meta;

@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { graphql, HttpResponse } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 
 import { TRACK } from '@/analytics/graphql/queries/track';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
@@ -314,6 +314,16 @@ export const graphqlMocks = {
           },
         },
       });
+    }),
+    http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {
+      return HttpResponse.text(
+        `
+          window.FrontChat = () => {};
+          console.log("This is a mocked script response.");
+          // Additional JavaScript code here
+        `,
+        { status: 200 },
+      );
     }),
   ],
 };

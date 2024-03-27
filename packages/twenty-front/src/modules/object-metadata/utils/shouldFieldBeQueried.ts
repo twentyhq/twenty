@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -22,13 +22,15 @@ export const shouldFieldBeQueried = ({
   queryFields?: Record<string, any>;
   onlyIdTypename?: boolean;
 }): any => {
-  const fieldType = field.type as FieldType;
-
   if (!isUndefined(depth) && depth < 0) {
     return false;
   }
 
-  if (!isUndefined(depth) && depth < 1 && fieldType === 'RELATION') {
+  if (
+    !isUndefined(depth) &&
+    depth < 1 &&
+    field.type === FieldMetadataType.Relation
+  ) {
     return false;
   }
 
@@ -37,7 +39,7 @@ export const shouldFieldBeQueried = ({
   }
 
   if (
-    fieldType === 'RELATION' &&
+    field.type === 'RELATION' &&
     !isUndefinedOrNull(eagerLoadedRelations) &&
     (isUndefinedOrNull(eagerLoadedRelations[field.name]) ||
       !isDefined(eagerLoadedRelations[field.name]))

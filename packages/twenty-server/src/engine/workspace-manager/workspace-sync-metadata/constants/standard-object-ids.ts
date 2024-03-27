@@ -27,7 +27,6 @@ export const standardObjectIds = {
   message: '20202020-3f6b-4425-80ab-e468899ab4b2',
   opportunity: '20202020-9549-49dd-b2b2-883999db8938',
   person: '20202020-e674-48e5-a542-72570eee7213',
-  pipelineStep: '20202020-f9a3-45f3-82e2-28952a8b19bf',
   viewField: '20202020-4d19-4655-95bf-b2a04cf206d4',
   viewFilter: '20202020-6fb6-4631-aded-b7d67e952ec8',
   viewSort: '20202020-e46a-47a8-939a-e5d911f83531',

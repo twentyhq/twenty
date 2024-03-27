@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
 import { SettingsAccountsConnectedAccountsSection } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsSection';
 import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistSection';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
@@ -11,7 +12,6 @@ import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { SettingsAccountLoader } from '~/pages/settings/accounts/SettingsAccountLoader';
 
 export const SettingsAccounts = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
