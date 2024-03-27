@@ -41,12 +41,12 @@ const StyledButton = styled.button`
   }
 `;
 
-type Item = {
+type SettingsAccountsListCardItem = {
   handle: string;
   id: string;
 };
 
-type SettingsAccountsListCardProps<T extends Item> = {
+type SettingsAccountsListCardProps<T extends SettingsAccountsListCardItem> = {
   items: T[];
   hasFooter?: boolean;
   isLoading?: boolean;
@@ -55,7 +55,9 @@ type SettingsAccountsListCardProps<T extends Item> = {
   RowRightComponent: ComponentType<{ item: T }>;
 };
 
-export const SettingsAccountsListCard = <T extends Item>({
+export const SettingsAccountsListCard = <
+  T extends SettingsAccountsListCardItem,
+>({
   items,
   hasFooter,
   isLoading,
