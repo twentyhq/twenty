@@ -27,6 +27,7 @@ import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -83,6 +84,7 @@ export class AuthResolver {
     });
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
@@ -91,6 +93,7 @@ export class AuthResolver {
     return { loginToken };
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
     const user = await this.authService.signUp(signUpInput);

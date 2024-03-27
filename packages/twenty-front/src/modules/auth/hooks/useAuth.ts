@@ -54,11 +54,12 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const handleChallenge = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, captchaToken?: string) => {
       const challengeResult = await challenge({
         variables: {
           email,
           password,
+          captchaToken,
         },
       });
 
@@ -130,8 +131,12 @@ export const useAuth = () => {
   );
 
   const handleCrendentialsSignIn = useCallback(
-    async (email: string, password: string) => {
-      const { loginToken } = await handleChallenge(email, password);
+    async (email: string, password: string, captchaToken?: string) => {
+      const { loginToken } = await handleChallenge(
+        email,
+        password,
+        captchaToken,
+      );
       setIsVerifyPendingState(true);
 
       const { user, workspaceMember, workspace } = await handleVerify(
@@ -185,7 +190,12 @@ export const useAuth = () => {
   );
 
   const handleCredentialsSignUp = useCallback(
-    async (email: string, password: string, workspaceInviteHash?: string) => {
+    async (
+      email: string,
+      password: string,
+      workspaceInviteHash?: string,
+      captchaToken?: string,
+    ) => {
       setIsVerifyPendingState(true);
 
       const signUpResult = await signUp({
@@ -193,6 +203,7 @@ export const useAuth = () => {
           email,
           password,
           workspaceInviteHash,
+          captchaToken,
         },
       });
 

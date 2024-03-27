@@ -3,6 +3,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
@@ -27,6 +28,8 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 
   const setSentryConfig = useSetRecoilState(sentryConfigState);
 
+  const setCaptchaProvider = useSetRecoilState(captchaProviderState);
+
   const { data, loading } = useGetClientConfigQuery();
 
   useEffect(() => {
@@ -47,6 +50,11 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setSentryConfig({
         dsn: data?.clientConfig?.sentry?.dsn,
       });
+
+      setCaptchaProvider({
+        provider: data?.clientConfig.captcha.provider,
+        siteKey: data?.clientConfig.captcha.siteKey,
+      });
     }
   }, [
     data,
@@ -58,6 +66,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setSupportChat,
     setBilling,
     setSentryConfig,
+    setCaptchaProvider,
   ]);
 
   return loading ? <></> : <>{children}</>;

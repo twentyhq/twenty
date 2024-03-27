@@ -10,6 +10,8 @@ import { messageQueueModuleFactory } from 'src/engine/integrations/message-queue
 import { EmailModule } from 'src/engine/integrations/email/email.module';
 import { emailModuleFactory } from 'src/engine/integrations/email/email.module-factory';
 import { CacheStorageModule } from 'src/engine/integrations/cache-storage/cache-storage.module';
+import { CaptchaModule } from 'src/engine/integrations/captcha/captcha.module';
+import { captchaModuleFactory } from 'src/engine/integrations/captcha/captcha.module-factory';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -38,6 +40,10 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     }),
     EmailModule.forRoot({
       useFactory: emailModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    CaptchaModule.forRoot({
+      useFactory: captchaModuleFactory,
       inject: [EnvironmentService],
     }),
     EventEmitterModule.forRoot({

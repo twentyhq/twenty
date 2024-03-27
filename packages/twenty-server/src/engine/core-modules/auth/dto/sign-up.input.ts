@@ -18,4 +18,9 @@ export class SignUpInput {
   @IsString()
   @IsOptional()
   workspaceInviteHash?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  captchaToken?: string;
 }

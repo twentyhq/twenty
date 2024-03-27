@@ -14,6 +14,7 @@ const validationSchema = z
     password: z
       .string()
       .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+    captchaToken: z.string().default(''),
   })
   .required();
 
