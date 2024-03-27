@@ -70,7 +70,7 @@ export class TypeDefinitionsGenerator {
       linkObjectDefinition,
       fullNameObjectDefinition,
       addressObjectDefinition,
-    ];
+    ] satisfies ObjectMetadataInterface[];
 
     this.logger.log(
       `Generating staticObjects: [${staticObjectMetadataCollection

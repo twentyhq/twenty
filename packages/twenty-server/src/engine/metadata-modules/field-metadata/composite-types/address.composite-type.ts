@@ -40,9 +40,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressStreet1 ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressStreet1 ?? undefined,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -58,9 +57,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressStreet2 ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressStreet2 ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -76,9 +74,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressCity ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressCity ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -94,10 +91,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value:
-                inferredFieldMetadata.defaultValue?.addressPostcode ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressPostcode ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -113,9 +108,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressState ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressState ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -131,9 +125,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressCountry ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressCountry ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
@@ -149,9 +142,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressLat ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressLat ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.NUMBER>,
@@ -167,9 +159,8 @@ export const addressFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.addressLng ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.addressLng ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.NUMBER>,
@@ -189,6 +180,7 @@ export const addressObjectDefinition = {
   isActive: true,
   isSystem: true,
   isCustom: false,
+  isRemote: false,
 } satisfies ObjectMetadataInterface;
 
 export type AddressMetadata = {
