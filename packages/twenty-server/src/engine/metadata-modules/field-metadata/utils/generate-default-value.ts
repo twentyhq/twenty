@@ -17,12 +17,12 @@ export function generateDefaultValue(
       };
     case FieldMetadataType.ADDRESS:
       return {
-        addressStreet1: '',
-        addressStreet2: '',
-        addressCity: '',
-        addressState: '',
-        addressCountry: '',
-        addressPostcode: '',
+        addressStreet1: "''",
+        addressStreet2: "''",
+        addressCity: "''",
+        addressState: "''",
+        addressCountry: "''",
+        addressPostcode: "''",
         addressLat: null,
         addressLng: null,
       };
