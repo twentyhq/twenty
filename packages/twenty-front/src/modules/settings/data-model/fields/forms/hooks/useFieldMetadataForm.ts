@@ -31,6 +31,7 @@ export const fieldMetadataFormDefaultValues: FormValues = {
     objectMetadataId: '',
     field: { label: '' },
   },
+  defaultValue: null,
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
 
@@ -38,6 +39,7 @@ const fieldSchema = z.object({
   description: z.string().optional(),
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
+  defaultValue: z.any(),
 });
 
 const currencySchema = fieldSchema.merge(
@@ -124,6 +126,8 @@ export const useFieldMetadataForm = () => {
   const [hasCurrencyFormChanged, setHasCurrencyFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
+  const [hasDefaultValueChanged, setHasDefaultValueFormChanged] =
+    useState(false);
   const [validationResult, setValidationResult] = useState(
     schema.safeParse(formValues),
   );
@@ -169,12 +173,14 @@ export const useFieldMetadataForm = () => {
       currency: initialCurrencyFormValues,
       relation: initialRelationFormValues,
       select: initialSelectFormValues,
+      defaultValue: initalDefaultValue,
       ...initialFieldFormValues
     } = initialFormValues;
     const {
       currency: nextCurrencyFormValues,
       relation: nextRelationFormValues,
       select: nextSelectFormValues,
+      defaultValue: nextDefaultValue,
       ...nextFieldFormValues
     } = nextFormValues;
 
@@ -193,6 +199,10 @@ export const useFieldMetadataForm = () => {
       nextFieldFormValues.type === FieldMetadataType.Select &&
         !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
     );
+    setHasDefaultValueFormChanged(
+      nextFieldFormValues.type === FieldMetadataType.Boolean &&
+        !isDeeplyEqual(initalDefaultValue, nextDefaultValue),
+    );
   };
 
   return {
@@ -203,9 +213,11 @@ export const useFieldMetadataForm = () => {
       hasFieldFormChanged ||
       hasCurrencyFormChanged ||
       hasRelationFormChanged ||
-      hasSelectFormChanged,
+      hasSelectFormChanged ||
+      hasDefaultValueChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasDefaultValueChanged,
     initForm,
     isInitialized,
     isValid: validationResult.success,

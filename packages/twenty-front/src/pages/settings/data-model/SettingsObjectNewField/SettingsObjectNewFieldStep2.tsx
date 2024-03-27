@@ -320,6 +320,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              defaultValue: formValues.defaultValue,
             }}
           />
         </Section>
