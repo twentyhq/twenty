@@ -69,7 +69,10 @@ export const SettingsAccountsCalendars = () => {
     isFullDay: false,
     startsAt: exampleStartDate.toISOString(),
     conferenceSolution: '',
-    conferenceUri: '',
+    conferenceLink: {
+      label: '',
+      url: '',
+    },
     description: '',
     isCanceled: false,
     location: '',
