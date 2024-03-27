@@ -21,11 +21,12 @@ export class WorkspaceWorkspaceMemberListener {
   async handleDeleteEvent(
     payload: ObjectRecordDeleteEvent<WorkspaceMemberObjectMetadata>,
   ) {
-    const userId = payload.userId;
+    const userId = payload.details.before.userId;
 
     if (!userId) {
       return;
     }
+
     await this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
       HandleWorkspaceMemberDeletedJob.name,
       { workspaceId: payload.workspaceId, userId },

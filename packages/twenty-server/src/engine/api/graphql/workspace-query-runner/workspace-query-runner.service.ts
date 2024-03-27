@@ -407,6 +407,17 @@ export class WorkspaceQueryRunnerService {
       args,
       options,
     );
+
+    // TODO START: remove this awful patch and use the Jeremy's ORM when developed
+    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
+      args.id,
+      workspaceId,
+      objectMetadataItem,
+    );
+
+    let before = deletedWorkspaceMember ? deletedWorkspaceMember : undefined;
+    // TODO END
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -423,13 +434,18 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    before = {
+      ...before,
+      ...this.removeNestedProperties(parsedResults?.[0]),
+    };
+
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       details: {
-        before: this.removeNestedProperties(parsedResults?.[0]),
+        before,
       },
     } satisfies ObjectRecordDeleteEvent<any>);
 
@@ -554,5 +570,34 @@ export class WorkspaceQueryRunnerService {
         { retryLimit: 3 },
       );
     });
+  }
+
+  async handleDeleteWorkspaceMember(
+    id: string,
+    workspaceId: string,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    if (objectMetadataItem.nameSingular !== 'workspaceMember') {
+      return;
+    }
+
+    const workspaceMemberResult = await this.executeAndParse<IRecord>(
+      `
+      query {
+        workspaceMemberCollection(filter: {id: {eq: "${id}"}}) {
+          edges {
+            node {
+              userId: userId
+            }
+          }
+        }
+      }
+      `,
+      objectMetadataItem,
+      '',
+      workspaceId,
+    );
+
+    return workspaceMemberResult.edges?.[0]?.node;
   }
 }
