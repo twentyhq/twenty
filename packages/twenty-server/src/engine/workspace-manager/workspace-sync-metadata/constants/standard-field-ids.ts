@@ -169,6 +169,10 @@ export const messageChannelStandardFieldIds = {
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  syncExternalId: '20202020-79d1-41cf-b738-bcf5ed61e256',
+  syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
+  syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
+  ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 
 export const messageParticipantStandardFieldIds = {

@@ -3,28 +3,27 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
+import { GmailFullSyncV2Service } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.service';
 
-export type GmailFullSyncJobData = {
+export type GmailFullSyncV2JobData = {
   workspaceId: string;
   connectedAccountId: string;
-  nextPageToken?: string;
 };
 
 @Injectable()
-export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
-  private readonly logger = new Logger(GmailFullSyncJob.name);
+export class GmailFullSyncV2Job
+  implements MessageQueueJob<GmailFullSyncV2JobData>
+{
+  private readonly logger = new Logger(GmailFullSyncV2Job.name);
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncService: GmailFullSyncService,
+    private readonly gmailFullSyncV2Service: GmailFullSyncV2Service,
   ) {}
 
-  async handle(data: GmailFullSyncJobData): Promise<void> {
+  async handle(data: GmailFullSyncV2JobData): Promise<void> {
     this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${
-        data.connectedAccountId
-      } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
+      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
 
     try {
@@ -41,7 +40,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
       return;
     }
 
-    await this.gmailFullSyncService.fetchConnectedAccountThreads(
+    await this.gmailFullSyncV2Service.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );
