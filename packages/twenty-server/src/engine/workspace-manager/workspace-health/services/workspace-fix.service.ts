@@ -90,6 +90,16 @@ export class WorkspaceFixService {
           filteredIssues,
         );
       }
+      case WorkspaceHealthFixKind.DefaultValue: {
+        const filteredIssues =
+          this.workspaceDefaultValueFixer.filterIssues(issues);
+
+        return this.workspaceDefaultValueFixer.createMetadataUpdates(
+          manager,
+          objectMetadataCollection,
+          filteredIssues,
+        );
+      }
       default: {
         return [];
       }

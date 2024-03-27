@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import { EntityManager } from 'typeorm';
+
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import {
@@ -31,14 +33,65 @@ export class SaveMessageAndEmitContactCreationEventService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  async saveMessagesAndCreateContacts(
+  public async saveMessagesAndEmitContactCreationEventWithinTransaction(
+    messagesToSave: GmailMessage[],
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    workspaceId: string,
+    gmailMessageChannel: ObjectRecord<MessageChannelObjectMetadata>,
+    transactionManager: EntityManager,
+  ) {
+    const messageExternalIdsAndIdsMap =
+      await this.messageService.saveMessagesWithinTransaction(
+        messagesToSave,
+        connectedAccount,
+        gmailMessageChannel.id,
+        workspaceId,
+        transactionManager,
+      );
+
+    const participantsWithMessageId: (ParticipantWithMessageId & {
+      shouldCreateContact: boolean;
+    })[] = messagesToSave.flatMap((message) => {
+      const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+
+      return messageId
+        ? message.participants.map((participant) => ({
+            ...participant,
+            messageId,
+            shouldCreateContact:
+              gmailMessageChannel.isContactAutoCreationEnabled &&
+              message.participants.find((p) => p.role === 'from')?.handle ===
+                connectedAccount.handle,
+          }))
+        : [];
+    });
+
+    await this.messageParticipantRepository.saveMessageParticipants(
+      participantsWithMessageId,
+      workspaceId,
+      transactionManager,
+    );
+
+    if (gmailMessageChannel.isContactAutoCreationEnabled) {
+      const contactsToCreate = participantsWithMessageId.filter(
+        (participant) => participant.shouldCreateContact,
+      );
+
+      this.eventEmitter.emit(`createContacts`, {
+        workspaceId,
+        connectedAccountHandle: connectedAccount.handle,
+        contactsToCreate,
+      });
+    }
+  }
+
+  async saveMessagesAndEmitContactCreation(
     messagesToSave: GmailMessage[],
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
     workspaceId: string,
     gmailMessageChannelId: string,
-    jobName?: string,
   ) {
-    const { dataSource: workspaceDataSource, dataSourceMetadata } =
+    const { dataSource: workspaceDataSource } =
       await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
         workspaceId,
       );
@@ -47,7 +100,6 @@ export class SaveMessageAndEmitContactCreationEventService {
 
     const messageExternalIdsAndIdsMap = await this.messageService.saveMessages(
       messagesToSave,
-      dataSourceMetadata,
       workspaceDataSource,
       connectedAccount,
       gmailMessageChannelId,
@@ -57,7 +109,7 @@ export class SaveMessageAndEmitContactCreationEventService {
     let endTime = Date.now();
 
     this.logger.log(
-      `${jobName} saving messages for workspace ${workspaceId} and account ${
+      `Saving messages for workspace ${workspaceId} and account ${
         connectedAccount.id
       } in ${endTime - startTime}ms`,
     );
@@ -100,13 +152,12 @@ export class SaveMessageAndEmitContactCreationEventService {
       gmailMessageChannel,
       workspaceId,
       connectedAccount,
-      jobName,
     );
 
     endTime = Date.now();
 
     this.logger.log(
-      `${jobName} saving message participants for workspace ${workspaceId} and account in ${
+      `Saving message participants for workspace ${workspaceId} and account in ${
         connectedAccount.id
       } ${endTime - startTime}ms`,
     );
@@ -119,7 +170,6 @@ export class SaveMessageAndEmitContactCreationEventService {
     gmailMessageChannel: ObjectRecord<MessageChannelObjectMetadata>,
     workspaceId: string,
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
-    jobName?: string,
   ) {
     try {
       await this.messageParticipantRepository.saveMessageParticipants(
@@ -140,7 +190,7 @@ export class SaveMessageAndEmitContactCreationEventService {
       }
     } catch (error) {
       this.logger.error(
-        `${jobName} error saving message participants for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        `Error saving message participants for workspace ${workspaceId} and account ${connectedAccount.id}`,
         error,
       );
 

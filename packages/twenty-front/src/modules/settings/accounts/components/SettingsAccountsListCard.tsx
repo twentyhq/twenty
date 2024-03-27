@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -42,44 +41,47 @@ const StyledButton = styled.button`
   }
 `;
 
-type SettingsAccountsListCardProps<
-  Account extends Pick<ConnectedAccount, 'handle' | 'id'>,
-> = {
-  accounts: Account[];
+type SettingsAccountsListCardItem = {
+  handle: string;
+  id: string;
+};
+
+type SettingsAccountsListCardProps<T extends SettingsAccountsListCardItem> = {
+  items: T[];
   hasFooter?: boolean;
   isLoading?: boolean;
-  onRowClick?: (account: Account) => void;
+  onRowClick?: (item: T) => void;
   RowIcon?: IconComponent;
-  RowRightComponent: ComponentType<{ account: Account }>;
+  RowRightComponent: ComponentType<{ item: T }>;
 };
 
 export const SettingsAccountsListCard = <
-  Account extends Pick<ConnectedAccount, 'handle' | 'id'> = ConnectedAccount,
+  T extends SettingsAccountsListCardItem,
 >({
-  accounts,
+  items,
   hasFooter,
   isLoading,
   onRowClick,
   RowIcon = IconGoogle,
   RowRightComponent,
-}: SettingsAccountsListCardProps<Account>) => {
+}: SettingsAccountsListCardProps<T>) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
   if (isLoading === true) return <SettingsAccountsListSkeletonCard />;
 
-  if (!accounts.length) return <SettingsAccountsListEmptyStateCard />;
+  if (!items.length) return <SettingsAccountsListEmptyStateCard />;
 
   return (
     <Card>
-      {accounts.map((account, index) => (
+      {items.map((item, index) => (
         <SettingsAccountRow
-          key={account.id}
+          key={item.id}
           LeftIcon={RowIcon}
-          account={account}
-          rightComponent={<RowRightComponent account={account} />}
-          divider={index < accounts.length - 1}
-          onClick={() => onRowClick?.(account)}
+          account={item}
+          rightComponent={<RowRightComponent item={item} />}
+          divider={index < items.length - 1}
+          onClick={() => onRowClick?.(item)}
         />
       ))}
       {hasFooter && (

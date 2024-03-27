@@ -1,6 +1,6 @@
 **/**/.env
 .DS_Store
-.idea/workspace.xml
+/.idea
 **/**/node_modules/
 
 # yarn is the recommended package manager across the project
