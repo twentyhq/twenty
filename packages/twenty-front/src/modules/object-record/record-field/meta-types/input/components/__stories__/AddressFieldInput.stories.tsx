@@ -38,6 +38,8 @@ const AddressInputWithContext = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onTab,
+  onShiftTab,
 }: AddressInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
@@ -67,6 +69,8 @@ const AddressInputWithContext = ({
           onClickOutside={onClickOutside}
           value={value}
           hotkeyScope=""
+          onTab={onTab}
+          onShiftTab={onShiftTab}
         />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />

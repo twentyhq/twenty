@@ -1,19 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getCountries, getCountryCallingCode } from 'react-phone-number-input';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { hasFlag } from 'country-flag-icons';
-import * as Flags from 'country-flag-icons/react/3x2';
-import { CountryCallingCode } from 'libphonenumber-js';
 
 import { IconChevronDown, IconWorld } from '@/ui/display/icon';
+import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { isDefined } from '~/utils/isDefined';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
-import { CountryPickerDropdownSelect } from './CountryPickerDropdownSelect';
+import { PhoneCountryPickerDropdownSelect } from './PhoneCountryPickerDropdownSelect';
 
 import 'react-phone-number-input/style.css';
 
@@ -57,14 +55,7 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-export type Country = {
-  countryCode: string;
-  countryName: string;
-  callingCode: CountryCallingCode;
-  Flag: Flags.FlagComponent;
-};
-
-export const CountryPickerDropdownButton = ({
+export const PhoneCountryPickerDropdownButton = ({
   value,
   onChange,
 }: {
@@ -82,34 +73,7 @@ export const CountryPickerDropdownButton = ({
     closeDropdown();
   };
 
-  const countries = useMemo<Country[]>(() => {
-    const regionNamesInEnglish = new Intl.DisplayNames(['en'], {
-      type: 'region',
-    });
-
-    const countryCodes = getCountries();
-
-    return countryCodes.reduce<Country[]>((result, countryCode) => {
-      const countryName = regionNamesInEnglish.of(countryCode);
-
-      if (!countryName) return result;
-
-      if (!hasFlag(countryCode)) return result;
-
-      const Flag = Flags[countryCode];
-
-      const callingCode = getCountryCallingCode(countryCode);
-
-      result.push({
-        countryCode,
-        countryName,
-        callingCode,
-        Flag,
-      });
-
-      return result;
-    }, []);
-  }, []);
+  const countries = useCountries();
 
   useEffect(() => {
     const country = countries.find(({ countryCode }) => countryCode === value);
@@ -132,7 +96,7 @@ export const CountryPickerDropdownButton = ({
         </StyledDropdownButtonContainer>
       }
       dropdownComponents={
-        <CountryPickerDropdownSelect
+        <PhoneCountryPickerDropdownSelect
           countries={countries}
           selectedCountry={selectedCountry}
           onChange={handleChange}

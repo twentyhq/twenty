@@ -11,12 +11,16 @@ export type AddressFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onTab?: FieldInputEvent;
+  onShiftTab?: FieldInputEvent;
 };
 
 export const AddressFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onTab,
+  onShiftTab,
 }: AddressFieldInputProps) => {
   const { hotkeyScope, draftValue, setDraftValue } = useAddressField();
 
@@ -39,6 +43,14 @@ export const AddressFieldInput = ({
 
   const handleEnter = (newAddress: FieldAddressDraftValue) => {
     onEnter?.(() => persistField(convertToAddress(newAddress)));
+  };
+
+  const handleTab = (newAddress: FieldAddressDraftValue) => {
+    onTab?.(() => persistField(convertToAddress(newAddress)));
+  };
+
+  const handleShiftTab = (newAddress: FieldAddressDraftValue) => {
+    onShiftTab?.(() => persistField(convertToAddress(newAddress)));
   };
 
   const handleEscape = (newAddress: FieldAddressDraftValue) => {
@@ -65,6 +77,8 @@ export const AddressFieldInput = ({
         onEscape={handleEscape}
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
+        onTab={handleTab}
+        onShiftTab={handleShiftTab}
       />
     </FieldInputOverlay>
   );

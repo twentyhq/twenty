@@ -1,24 +1,16 @@
 import {
   ChangeEvent,
-  FocusEventHandler,
   ForwardedRef,
   forwardRef,
   InputHTMLAttributes,
   useRef,
-  useState,
 } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 
 import { IconAlertCircle } from '@/ui/display/icon';
-import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
-
-import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: inline-flex;
@@ -94,8 +86,6 @@ const StyledTrailingIcon = styled.div`
   justify-content: center;
 `;
 
-const INPUT_TYPE_PASSWORD = 'password';
-
 export type TextInputComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'onChange' | 'onKeyDown'
@@ -123,13 +113,10 @@ const TextInputComponent = (
     fullWidth,
     error,
     required,
-    type,
-    disableHotkeys = false,
     autoFocus,
     placeholder,
     disabled,
     tabIndex,
-    RightIcon,
   }: TextInputComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -139,50 +126,28 @@ const TextInputComponent = (
   const inputRef = useRef<HTMLInputElement>(null);
   const combinedRef = useCombinedRefs(ref, inputRef);
 
-  const {
-    goBackToPreviousHotkeyScope,
-    setHotkeyScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeyScope();
-
-  const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
-    onFocus?.(e);
-    if (!disableHotkeys) {
-      setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
-    }
-  };
-
-  const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
-    onBlur?.(e);
-    if (!disableHotkeys) {
-      goBackToPreviousHotkeyScope();
-    }
-  };
-
-  useScopedHotkeys(
-    [Key.Escape, Key.Enter],
-    () => {
-      inputRef.current?.blur();
-    },
-    InputHotkeyScope.TextInput,
-  );
-
-  const [passwordVisible, setPasswordVisible] = useState(false);
-
-  const handleTogglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+  const handleClick = () => {
+    inputRef.current?.focus();
   };
 
   return (
-    <StyledContainer className={className} fullWidth={fullWidth ?? false}>
-      {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
-      <StyledInputContainer>
+    <StyledContainer
+      className={className}
+      fullWidth={fullWidth ?? false}
+      onClick={handleClick}
+    >
+      {label && (
+        <StyledLabel onClick={handleClick}>
+          {label + (required ? '*' : '')}
+        </StyledLabel>
+      )}
+      <StyledInputContainer onClick={handleClick}>
         <StyledInput
           autoComplete="off"
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          type={passwordVisible ? 'text' : type}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(event.target.value);
           }}
@@ -195,23 +160,6 @@ const TextInputComponent = (
               <IconAlertCircle size={16} color={theme.color.red} />
             </StyledTrailingIcon>
           )}
-          {!error && type === INPUT_TYPE_PASSWORD && (
-            <StyledTrailingIcon
-              onClick={handleTogglePasswordVisibility}
-              data-testid="reveal-password-button"
-            >
-              {passwordVisible ? (
-                <IconEyeOff size={theme.icon.size.md} />
-              ) : (
-                <IconEye size={theme.icon.size.md} />
-              )}
-            </StyledTrailingIcon>
-          )}
-          {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-            <StyledTrailingIcon>
-              <RightIcon size={theme.icon.size.md} />
-            </StyledTrailingIcon>
-          )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
@@ -219,4 +167,4 @@ const TextInputComponent = (
   );
 };
 
-export const TextInput = forwardRef(TextInputComponent);
+export const TextInputRaw = forwardRef(TextInputComponent);
