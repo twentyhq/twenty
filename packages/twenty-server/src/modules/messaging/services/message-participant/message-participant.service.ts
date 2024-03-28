@@ -11,6 +11,7 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { GetEmailPersonIdAndWorkspaceMemberIdMapService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/get-email-person-id-and-workspace-member-id-map.service';
 
 @Injectable()
 export class MessageParticipantService {
@@ -18,6 +19,7 @@ export class MessageParticipantService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
+    private readonly getEmailPersonIdAndWorkspaceMemberIdMapService: GetEmailPersonIdAndWorkspaceMemberIdMapService,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
@@ -78,38 +80,19 @@ export class MessageParticipantService {
 
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds: {
-      id: string;
-      email: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-      [handles],
-      workspaceId,
-      transactionManager,
-    );
+    const emailPersonIdsMap =
+      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailPersonIdMap(
+        handles,
+        workspaceId,
+        transactionManager,
+      );
 
-    const emailPersonIdsMap = new Map(
-      participantPersonIds.map((person) => [person.email, person.id]),
-    );
-
-    const participantWorkspaceMemberIds: {
-      id: string;
-      email: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
-          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
-      [handles],
-      workspaceId,
-      transactionManager,
-    );
-
-    const emailWorkspaceMemberIdsMap = new Map(
-      participantWorkspaceMemberIds.map((workspaceMember) => [
-        workspaceMember.email,
-        workspaceMember.id,
-      ]),
-    );
+    const emailWorkspaceMemberIdsMap =
+      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailWorkspaceMemberIdMap(
+        handles,
+        workspaceId,
+        transactionManager,
+      );
 
     const messageParticipantsToSave = participants.map((participant) => ({
       ...participant,
