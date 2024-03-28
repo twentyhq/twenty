@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from 'twenty-ui';
 
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { CatalogStory } from '~/testing/types';
+import { IconSearch } from 'src/display/icon';
+import { CatalogDecorator } from 'src/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
+import { CatalogStory } from 'src/testing/types';
 
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 
@@ -35,7 +35,8 @@ export const Default: Story = {
         <Story />
       </StyledContainer>
     ),
-    ComponentWithRouterDecorator,
+    ComponentDecorator,
+    RouterDecorator,
   ],
 };
 
@@ -47,7 +48,7 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
       </StyledContainer>
     ),
     CatalogDecorator,
-    MemoryRouterDecorator,
+    RouterDecorator,
   ],
   parameters: {
     pseudo: { hover: ['.hover'] },

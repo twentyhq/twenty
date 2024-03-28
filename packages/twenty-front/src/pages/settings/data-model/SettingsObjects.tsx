@@ -20,6 +20,7 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import {
   SettingsObjectItemTableRow,
   StyledObjectTableRow,
@@ -28,7 +29,6 @@ import { SettingsObjectCoverImage } from '@/settings/data-model/objects/Settings
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/SettingsObjectInactiveMenuDropDown';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};

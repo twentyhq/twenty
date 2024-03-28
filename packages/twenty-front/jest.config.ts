@@ -1,6 +1,4 @@
-import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
-
-import { compilerOptions } from './tsconfig.json';
+import { JestConfigWithTsJest } from 'ts-jest';
 
 const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
@@ -12,8 +10,10 @@ const jestConfig: JestConfigWithTsJest = {
     '^.+\\.(t|j)sx?$': '@swc/jest',
   },
   transformIgnorePatterns: ['<rootDir>/../../node_modules/'],
-  modulePaths: ['../../node_modules', compilerOptions.baseUrl],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  moduleNameMapper: {
+    '^~/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/src/modules/$1',
+  },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {

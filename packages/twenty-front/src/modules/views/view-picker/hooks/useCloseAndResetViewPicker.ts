@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { useDropdown } from 'twenty-ui';
 
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';

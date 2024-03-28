@@ -2,10 +2,9 @@ import styled from '@emotion/styled';
 
 import { IconComponent, Tag } from 'src/display';
 import { Checkbox } from 'src/input/components/Checkbox';
+import { MenuItemLeftContent } from 'src/navigation/menu-item/components/MenuItemLeftContent';
+import { StyledMenuItemBase } from 'src/navigation/menu-item/components/StyledMenuItemBase';
 import { ThemeColor } from 'src/theme/constants/MainColorNames';
-
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;

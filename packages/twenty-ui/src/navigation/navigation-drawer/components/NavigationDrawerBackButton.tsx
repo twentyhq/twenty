@@ -2,7 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronLeft, navigationMemorizedUrlState } from 'twenty-ui';
+
+import { IconChevronLeft } from 'src/display';
+import { navigationMemorizedUrlState } from 'src/navigation/states/navigationMemorizedUrlState';
 
 type NavigationDrawerBackButtonProps = {
   title: string;

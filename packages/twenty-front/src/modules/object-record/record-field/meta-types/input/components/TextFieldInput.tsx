@@ -1,5 +1,4 @@
-import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
-import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
+import { FieldTextAreaOverlay, TextAreaInput } from 'twenty-ui';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';

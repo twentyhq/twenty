@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 
 import { OverflowingTextWithTooltip } from 'src/display';
 import { Checkbox } from 'src/input/components/Checkbox';
-
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;

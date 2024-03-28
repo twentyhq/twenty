@@ -7,16 +7,16 @@ import { DropdownMenuSeparator } from 'src/layout/dropdown/components/DropdownMe
 import { MenuItem } from 'src/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from 'src/navigation/menu-item/components/MenuItemSelectAvatar';
 
-import { Currency } from './CurrencyPickerDropdownButton';
+import { CurrencyOption } from './CurrencyPickerDropdownButton';
 
 export const CurrencyPickerDropdownSelect = ({
   currencies,
   selectedCurrency,
   onChange,
 }: {
-  currencies: Currency[];
-  selectedCurrency?: Currency;
-  onChange: (currency: Currency) => void;
+  currencies: CurrencyOption[];
+  selectedCurrency?: CurrencyOption;
+  onChange: (currency: CurrencyOption) => void;
 }) => {
   const [searchFilter, setSearchFilter] = useState<string>('');
 

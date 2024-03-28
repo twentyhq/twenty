@@ -1,7 +1,9 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
+import { useMemo } from 'react';
+import { CurrencyInput, CurrencyOption, FieldInputOverlay } from 'twenty-ui';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 import { FieldInputEvent } from './DateFieldInput';
@@ -86,11 +88,24 @@ export const CurrencyFieldInput = ({
     });
   };
 
+  const currencyOptions = useMemo<CurrencyOption[]>(
+    () =>
+      Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
+        ([key, { Icon, label }]) => ({
+          value: key,
+          Icon,
+          label,
+        }),
+      ),
+    [],
+  );
+
   return (
     <FieldInputOverlay>
       <CurrencyInput
         value={draftValue?.amount?.toString() ?? ''}
         currencyCode={draftValue?.currencyCode ?? CurrencyCode.USD}
+        currencyOptions={currencyOptions}
         autoFocus
         placeholder="Currency"
         onClickOutside={handleClickOutside}

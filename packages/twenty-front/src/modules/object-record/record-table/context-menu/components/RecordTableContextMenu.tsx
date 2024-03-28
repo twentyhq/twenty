@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
+import { ContextMenu } from 'twenty-ui';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
 
 export const RecordTableContextMenu = ({
   recordTableId,

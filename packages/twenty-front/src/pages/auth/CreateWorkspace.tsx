@@ -4,7 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Key } from 'ts-key-enum';
-import { H2Title, Loader, MainButton, TextInput, useSnackBar } from 'twenty-ui';
+import {
+  FieldTextInput,
+  H2Title,
+  Loader,
+  MainButton,
+  useSnackBar,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -129,7 +135,7 @@ export const CreateWorkspace = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInput
+              <FieldTextInput
                 autoFocus
                 value={value}
                 placeholder="Apple"

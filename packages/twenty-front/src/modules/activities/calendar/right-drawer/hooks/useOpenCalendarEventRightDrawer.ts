@@ -1,16 +1,18 @@
+import { RightDrawerPages } from 'packages/twenty-ui/src/layout/right-drawer/types/RightDrawerPages';
 import { useSetRecoilState } from 'recoil';
-import { useSetHotkeyScope } from 'twenty-ui';
+import {
+  RightDrawerHotkeyScope,
+  useRightDrawer,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
 import { viewableCalendarEventIdState } from '@/activities/calendar/states/viewableCalendarEventIdState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 
 export const useOpenCalendarEventRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const setHotkeyScope = useSetHotkeyScope();
   const setViewableCalendarEventId = useSetRecoilState(
-    viewableCalendarEventIdState,
+    viewableCalendarEventIdState(),
   );
 
   const openCalendarEventRightDrawer = (calendarEventId: string) => {

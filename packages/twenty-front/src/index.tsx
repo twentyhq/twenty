@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import {
+  AppThemeProvider,
   DialogManager,
   DialogManagerScope,
   IconsProvider,
@@ -22,7 +23,6 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
-import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { UserProvider } from '@/users/components/UserProvider';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 

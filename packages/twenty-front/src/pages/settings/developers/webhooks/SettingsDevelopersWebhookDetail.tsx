@@ -4,11 +4,11 @@ import {
   Breadcrumb,
   Button,
   ConfirmationModal,
+  FieldTextInput,
   H2Title,
   IconSettings,
   IconTrash,
   Section,
-  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,7 +16,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -52,7 +52,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
                 title="Endpoint URL"
                 description="We will send POST requests to this endpoint for every new event"
               />
-              <TextInput
+              <FieldTextInput
                 placeholder="URL"
                 value={webhookData.targetUrl}
                 disabled

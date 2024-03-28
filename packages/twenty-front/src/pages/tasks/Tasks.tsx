@@ -3,20 +3,20 @@ import {
   IconArchive,
   IconCheck,
   IconCheckbox,
+  PageContainer,
+  PageHeader,
   RecoilScope,
   TabList,
   TopBar,
 } from 'twenty-ui';
 
+import { RightDrawerContainer } from '@/activities/right-drawer/components/RightDrawerContainer';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
 
 import { TasksEffect } from './TasksEffect';
 
@@ -58,7 +58,7 @@ export const Tasks = () => {
         <PageHeader title="Tasks" Icon={IconCheckbox}>
           <PageAddTaskButton />
         </PageHeader>
-        <PageBody>
+        <RightDrawerContainer>
           <StyledTasksContainer>
             <TopBar
               leftComponent={
@@ -81,7 +81,7 @@ export const Tasks = () => {
             />
             <TaskGroups filterDropdownId={filterDropdownId} />
           </StyledTasksContainer>
-        </PageBody>
+        </RightDrawerContainer>
       </RecoilScope>
     </PageContainer>
   );

@@ -1,12 +1,11 @@
 import { useTheme } from '@emotion/react';
 
 import { IconChevronRight, IconComponent } from 'src/display';
-
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
+import { MenuItemLeftContent } from 'src/navigation/menu-item/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
   StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 export type MenuItemNavigateProps = {
   LeftIcon?: IconComponent;

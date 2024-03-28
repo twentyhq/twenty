@@ -2,8 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from 'src/utilities/hotkey/hooks/useScopedHotkeys';
-import { getSnapshotValue } from 'src/utilities/recoil-scope/utils/getSnapshotValue';
+import { getSnapshotValue, useScopedHotkeys } from 'src/utilities';
 
 import { useSelectableListStates } from './useSelectableListStates';
 

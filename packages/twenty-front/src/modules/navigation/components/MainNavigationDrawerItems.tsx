@@ -5,6 +5,9 @@ import {
   IconCheckbox,
   IconSearch,
   IconSettings,
+  NavigationDrawerItem,
+  NavigationDrawerSection,
+  NavigationDrawerSectionTitle,
   navigationMemorizedUrlState,
   useIsMobile,
 } from 'twenty-ui';
@@ -14,9 +17,6 @@ import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentU
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
 

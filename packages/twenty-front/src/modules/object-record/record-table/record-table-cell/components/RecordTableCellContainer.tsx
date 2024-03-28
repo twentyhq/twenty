@@ -1,7 +1,13 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import { getSnapshotValue, HotkeyScope, IconArrowUpRight } from 'twenty-ui';
+import {
+  contextMenuIsOpenState,
+  contextMenuPositionState,
+  getSnapshotValue,
+  HotkeyScope,
+  IconArrowUpRight,
+} from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -12,8 +18,6 @@ import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/ho
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
-import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';

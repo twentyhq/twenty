@@ -22,10 +22,10 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};

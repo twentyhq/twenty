@@ -2,11 +2,10 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { IconCheck, OverflowingTextWithTooltip } from 'src/display';
-
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 

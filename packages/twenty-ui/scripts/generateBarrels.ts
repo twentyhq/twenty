@@ -1,0 +1,78 @@
+import * as fs from 'fs';
+import path from 'path';
+
+const extensions = ['.ts', '.tsx'];
+const excludedExtensions = [
+  '.test.ts',
+  '.test.tsx',
+  '.spec.ts',
+  '.spec.tsx',
+  '.stories.ts',
+  '.stories.tsx',
+];
+const srcPath = path.resolve('./src');
+
+const getSubDirectoryPaths = (directoryPath: string) =>
+  fs
+    .readdirSync(directoryPath)
+    .map((file) => path.join(directoryPath, file))
+    .filter((path) => fs.statSync(path).isDirectory());
+
+const getDirectoryPathsRecursive = (directoryPath: string): string[] => [
+  directoryPath,
+  ...getSubDirectoryPaths(directoryPath).flatMap(getDirectoryPathsRecursive),
+];
+
+const getFilesPaths = (directoryPath: string) =>
+  fs
+    .readdirSync(directoryPath)
+    .filter(
+      (filePath) =>
+        fs.statSync(path.join(directoryPath, filePath)).isFile() &&
+        !filePath.startsWith('index.') &&
+        extensions.some((extension) => filePath.endsWith(extension)) &&
+        excludedExtensions.every(
+          (excludedExtension) => !filePath.endsWith(excludedExtension),
+        ),
+    );
+
+const moduleDirectories = getSubDirectoryPaths(srcPath);
+
+moduleDirectories.forEach((moduleDirectoryPath) => {
+  const directoryPaths = getDirectoryPathsRecursive(moduleDirectoryPath);
+
+  const moduleExports = directoryPaths
+    .flatMap((directoryPath) => {
+      const directFilesPaths = getFilesPaths(directoryPath);
+
+      return directFilesPaths.map((filePath) => {
+        const fileName = filePath.split('.').slice(0, -1).join('.');
+        return `export * from './${path.relative(
+          moduleDirectoryPath,
+          path.join(directoryPath, fileName),
+        )}';`;
+      });
+    })
+    .sort((a, b) => a.localeCompare(b))
+    .join('\n');
+
+  fs.writeFileSync(
+    path.join(moduleDirectoryPath, 'index.ts'),
+    `${moduleExports}\n`,
+    'utf-8',
+  );
+});
+
+const mainBarrelExports = moduleDirectories
+  .map(
+    (moduleDirectoryPath) =>
+      `export * from './${path.relative(srcPath, moduleDirectoryPath)}';`,
+  )
+  .sort((a, b) => a.localeCompare(b))
+  .join('\n');
+
+fs.writeFileSync(
+  path.join(srcPath, 'index.ts'),
+  `${mainBarrelExports}\n`,
+  'utf-8',
+);

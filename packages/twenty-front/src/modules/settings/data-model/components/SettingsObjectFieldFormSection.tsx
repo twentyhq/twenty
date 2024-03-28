@@ -1,5 +1,11 @@
 import styled from '@emotion/styled';
-import { H2Title, IconPicker, Section, TextArea, TextInput } from 'twenty-ui';
+import {
+  FieldTextInput,
+  H2Title,
+  IconPicker,
+  Section,
+  TextArea,
+} from 'twenty-ui';
 
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 
@@ -43,7 +49,7 @@ export const SettingsObjectFieldFormSection = ({
         onChange={(value) => onChange?.({ icon: value.iconKey })}
         variant="primary"
       />
-      <TextInput
+      <FieldTextInput
         placeholder="Employees"
         value={name}
         onChange={(value) => {

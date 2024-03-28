@@ -6,7 +6,7 @@ import {
   AppTooltip,
   Checkbox,
   CheckboxVariant,
-  TextInput,
+  FieldTextInput,
   Toggle,
 } from 'twenty-ui';
 
@@ -152,7 +152,7 @@ export const generateColumns = <T extends string>(
           }
           default:
             component = (
-              <TextInput
+              <FieldTextInput
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
                   onRowChange({ ...row, [columnKey]: value });

@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "emitDecoratorMetadata": true,
-    "outDir": ""
+    "outDir": "../../dist/out-tsc"
   },
   "files": [
     "../../node_modules/@nx/react/typings/styled-jsx.d.ts",
@@ -17,6 +17,7 @@
   ],
   "include": [
     "vite.config.ts",
+    "src/**/*.d.ts",
     "src/**/*.stories.ts",
     "src/**/*.stories.tsx",
     "src/**/*.stories.mdx",

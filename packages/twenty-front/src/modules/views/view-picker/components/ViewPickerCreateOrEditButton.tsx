@@ -1,6 +1,6 @@
+import { Button } from '@react-email/components';
 import { useRecoilValue } from 'recoil';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { ViewType } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';

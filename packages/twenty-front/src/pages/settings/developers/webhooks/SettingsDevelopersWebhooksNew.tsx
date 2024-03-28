@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Breadcrumb,
+  FieldTextInput,
   H2Title,
   IconSettings,
   Section,
-  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,8 +13,8 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { isURL } from '~/utils/is-url';
 
 export const SettingsDevelopersWebhooksNew = () => {
@@ -69,7 +69,7 @@ export const SettingsDevelopersWebhooksNew = () => {
             title="Endpoint URL"
             description="We will send POST requests to this endpoint for every new event"
           />
-          <TextInput
+          <FieldTextInput
             placeholder="URL"
             value={formValues.targetUrl}
             onKeyDown={(e) => {

@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
+
 import {
-  IconButton,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
-  isNavigationDrawerOpenState,
-} from 'twenty-ui';
+} from 'src/display/icon';
+import { IconButton } from 'src/input';
+import { isNavigationDrawerOpenState } from 'src/navigation/states/isNavigationDrawerOpenState';
 
 const StyledCollapseButton = styled.div`
   align-items: center;

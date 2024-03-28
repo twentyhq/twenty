@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
 
 import { NavigationDrawerCollapseButton } from '../NavigationDrawerCollapseButton';
 

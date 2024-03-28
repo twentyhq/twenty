@@ -1,11 +1,10 @@
 import { IconComponent } from 'src/display';
 import { Toggle, ToggleSize } from 'src/input/components/Toggle';
-
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
+import { MenuItemLeftContent } from 'src/navigation/menu-item/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
   StyledMenuItemRightContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 type MenuItemToggleProps = {
   LeftIcon?: IconComponent;

@@ -75,7 +75,7 @@ export const WithSearchAndClose: Story = {
 
     userEvent.click(iconPickerButton);
 
-    let searchInput = await canvas.findByRole('textbox');
+    const searchInput = await canvas.findByRole('textbox');
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
@@ -95,8 +95,6 @@ export const WithSearchAndClose: Story = {
 
     await sleep(100);
 
-    searchInput = await canvas.findByRole('textbox');
-
-    expect(searchInput).toHaveValue('');
+    expect(canvas.queryByRole('textbox')).toBeNull();
   },
 };

@@ -1,6 +1,5 @@
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { FieldInputOverlay, FieldTextInput } from 'twenty-ui';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useEmailField } from '../../hooks/useEmailField';
 
@@ -55,7 +54,7 @@ export const EmailFieldInput = ({
 
   return (
     <FieldInputOverlay>
-      <TextInput
+      <FieldTextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={draftValue ?? ''}

@@ -8,8 +8,8 @@ import { SnackBarProviderScope } from 'twenty-ui';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
-import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
+import { DefaultLayout } from '~/pages/DefaultLayout';
 import { mockedClient } from '~/testing/mockedClient';
 
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';

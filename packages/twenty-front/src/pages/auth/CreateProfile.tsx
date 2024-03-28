@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
+  FieldTextInput,
   H2Title,
   MainButton,
-  TextInput,
   useScopedHotkeys,
   useSnackBar,
 } from 'twenty-ui';
@@ -164,7 +164,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <FieldTextInput
                   autoFocus
                   label="First Name"
                   value={value}
@@ -184,7 +184,7 @@ export const CreateProfile = () => {
                 field: { onChange, onBlur, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <FieldTextInput
                   label="Last Name"
                   value={value}
                   onBlur={onBlur}

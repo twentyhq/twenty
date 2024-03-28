@@ -1,6 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, IconCopy, IconLink, TextInput, useSnackBar } from 'twenty-ui';
+import {
+  Button,
+  FieldTextInput,
+  IconCopy,
+  IconLink,
+  useSnackBar,
+} from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -27,7 +33,7 @@ export const WorkspaceInviteLink = ({
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput value={inviteLink} disabled fullWidth />
+        <FieldTextInput value={inviteLink} disabled fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconLink}

@@ -1,7 +1,7 @@
 import { formatInTimeZone } from 'date-fns-tz';
+import { Select } from 'twenty-ui';
 
 import { TimeFormat } from '@/settings/accounts/constants/TimeFormat';
-import { Select } from '@/ui/input/components/Select';
 
 type SettingsAccountsCalendarTimeFormatSelectProps = {
   value: TimeFormat;

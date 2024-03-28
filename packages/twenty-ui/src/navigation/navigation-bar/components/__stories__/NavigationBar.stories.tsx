@@ -7,7 +7,7 @@ import {
   IconSettings,
 } from 'src/display/icon';
 import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { NavigationBar } from '../NavigationBar';
 
@@ -29,5 +29,5 @@ export default meta;
 type Story = StoryObj<typeof NavigationBar>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
 };

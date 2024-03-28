@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+
 import {
-  GithubVersionLink,
   IconAt,
   IconBell,
   IconBuildingSkyscraper,
@@ -15,15 +15,12 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui';
+} from 'src/display/icon';
+import { GithubVersionLink } from 'src/navigation/link/components/GithubVersionLink';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
+import { SnackBarDecorator } from 'src/testing/decorators/SnackBarDecorator';
 
-import { Favorites } from '@/favorites/components/Favorites';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-
-import packageJson from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
@@ -33,7 +30,7 @@ import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
   component: NavigationDrawer,
-  decorators: [ComponentWithRouterDecorator, SnackBarDecorator],
+  decorators: [ComponentDecorator, RouterDecorator, SnackBarDecorator],
   parameters: { layout: 'fullscreen' },
   argTypes: { children: { control: false }, footer: { control: false } },
 };
@@ -66,8 +63,6 @@ export const Default: Story = {
           />
         </NavigationDrawerSection>
 
-        <Favorites />
-
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
@@ -94,31 +89,31 @@ export const Submenu: Story = {
           <NavigationDrawerSectionTitle label="User" />
           <NavigationDrawerItem
             label="Profile"
-            to={getSettingsPagePath(SettingsPath.ProfilePage)}
+            to="/settings/profile"
             Icon={IconUserCircle}
             active
           />
           <NavigationDrawerItem
             label="Appearance"
-            to={getSettingsPagePath(SettingsPath.Appearance)}
+            to="/settings/profile/appearance"
             Icon={IconColorSwatch}
           />
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
               label="Accounts"
-              to={getSettingsPagePath(SettingsPath.Accounts)}
+              to="/settings/accounts"
               Icon={IconAt}
             />
             <NavigationDrawerItem
               level={2}
               label="Emails"
-              to={getSettingsPagePath(SettingsPath.AccountsEmails)}
+              to="/settings/accounts/emails"
               Icon={IconMail}
             />
             <NavigationDrawerItem
               level={2}
               label="Calendar"
-              to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
+              to="/settings/accounts/calendars"
               Icon={IconCalendarEvent}
             />
           </NavigationDrawerItemGroup>
@@ -128,12 +123,12 @@ export const Submenu: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to={getSettingsPagePath(SettingsPath.Workspace)}
+            to="/settings/workspace"
             Icon={IconSettings}
           />
           <NavigationDrawerItem
             label="Members"
-            to={getSettingsPagePath(SettingsPath.WorkspaceMembersPage)}
+            to="/settings/workspace-members"
             Icon={IconUsers}
           />
         </NavigationDrawerSection>
@@ -144,6 +139,6 @@ export const Submenu: Story = {
         </NavigationDrawerSection>
       </>
     ),
-    footer: <GithubVersionLink version={packageJson.version} />,
+    footer: <GithubVersionLink version="0.0.1" />,
   },
 };

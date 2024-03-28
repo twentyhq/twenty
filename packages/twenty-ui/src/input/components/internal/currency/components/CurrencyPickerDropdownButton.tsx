@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconChevronDown } from 'src/display';
+import { SelectOption } from 'src/input/components/Select';
 import { Dropdown } from 'src/layout/dropdown/components/Dropdown';
 import { useDropdown } from 'src/layout/dropdown/hooks/useDropdown';
 import { CurrencyCode } from 'src/types/CurrencyCode';
@@ -47,11 +48,7 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-export type Currency = {
-  label: string;
-  value: string;
-  Icon: any;
-};
+export type CurrencyOption = SelectOption<string>;
 
 export const CurrencyPickerDropdownButton = ({
   valueCode,
@@ -59,18 +56,18 @@ export const CurrencyPickerDropdownButton = ({
   currencies,
 }: {
   valueCode: string;
-  onChange: (currency: Currency) => void;
-  currencies: Currency[];
+  onChange: (currency: CurrencyOption) => void;
+  currencies: CurrencyOption[];
 }) => {
   const theme = useTheme();
 
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>();
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyOption>();
 
   const { isDropdownOpen, closeDropdown } = useDropdown(
     CurrencyPickerHotkeyScope.CurrencyPicker,
   );
 
-  const handleChange = (currency: Currency) => {
+  const handleChange = (currency: CurrencyOption) => {
     onChange(currency);
     closeDropdown();
   };

@@ -1,0 +1,31 @@
+import { Meta, StoryObj } from '@storybook/react';
+import { useSetRecoilState } from 'recoil';
+
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+
+import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
+import { contextMenuPositionState } from '../../states/contextMenuPositionState';
+import { ContextMenu } from '../ContextMenu';
+
+const FilledContextMenu = () => {
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
+  setContextMenuPosition({
+    x: 100,
+    y: 10,
+  });
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
+  setContextMenuOpenState(true);
+  return <ContextMenu />;
+};
+
+const meta: Meta<typeof ContextMenu> = {
+  title: 'UI/Navigation/ContextMenu/ContextMenu',
+  component: FilledContextMenu,
+  decorators: [ComponentDecorator],
+  args: { selectedIds: ['TestId'] },
+};
+
+export default meta;
+type Story = StoryObj<typeof ContextMenu>;
+
+export const Default: Story = {};

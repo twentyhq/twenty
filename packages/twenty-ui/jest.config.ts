@@ -2,15 +2,15 @@ import { JestConfigWithTsJest } from 'ts-jest';
 
 const jestConfig: JestConfigWithTsJest = {
   displayName: 'twenty-ui',
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/packages/twenty-ui',
-  coverageReporters: ['text', 'text-summary'],
   setupFilesAfterEnv: ['./setupTests.ts'],
+  transformIgnorePatterns: ['../../node_modules/'],
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
-    '^.+\\.(t|j)sx?$': '@swc/jest',
+    '^.+\\.[tj]sx?$': '@swc/jest',
   },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
 };
 
 export default jestConfig;

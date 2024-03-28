@@ -12,16 +12,16 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsCalendarChannelsListCard } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsListCard';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import {
   TimelineCalendarEvent,
   TimelineCalendarEventVisibility,
 } from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {

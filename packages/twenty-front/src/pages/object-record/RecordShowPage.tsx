@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconBuildingSkyscraper, PageTitle } from 'twenty-ui';
+import {
+  IconBuildingSkyscraper,
+  PageContainer,
+  PageFavoriteButton,
+  PageHeader,
+  PageTitle,
+} from 'twenty-ui';
 
+import { RightDrawerContainer } from '@/activities/right-drawer/components/RightDrawerContainer';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
+import { ShowPageMoreButton } from '@/object-record/record-show/components/ShowPageMoreButton';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { ShowPageAddButton } from '~/pages/object-record/ShowPageAddButton';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordShowPage = () => {
@@ -106,12 +109,12 @@ export const RecordShowPage = () => {
           </>
         )}
       </PageHeader>
-      <PageBody>
+      <RightDrawerContainer>
         <RecordShowContainer
           objectNameSingular={objectNameSingular}
           objectRecordId={objectRecordId}
         />
-      </PageBody>
+      </RightDrawerContainer>
     </PageContainer>
   );
 };

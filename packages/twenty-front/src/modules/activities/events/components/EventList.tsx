@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { ScrollWrapper } from 'twenty-ui';
 
 import { EventsGroup } from '@/activities/events/components/EventsGroup';
 import { Event } from '@/activities/events/types/Event';
 import { groupEventsByMonth } from '@/activities/events/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type EventListProps = {
   targetableObject: ActivityTargetableObject;

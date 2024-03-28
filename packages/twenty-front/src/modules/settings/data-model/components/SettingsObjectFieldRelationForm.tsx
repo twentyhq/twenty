@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconPicker, Select, TextInput, useIcons } from 'twenty-ui';
+import { IconPicker, Select, FieldTextInput, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
@@ -113,7 +113,7 @@ export const SettingsObjectFieldRelationForm = ({
           }
           variant="primary"
         />
-        <TextInput
+        <FieldTextInput
           disabled={disableFieldEdition}
           placeholder="Field name"
           value={values.field.label}

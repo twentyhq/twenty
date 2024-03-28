@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 import { H1Title, H2Title, IconSettings, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;

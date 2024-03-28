@@ -15,7 +15,7 @@ import {
   MAIN_COLOR_NAMES,
   MenuItem,
   MenuItemSelectColor,
-  TextInput,
+  FieldTextInput,
   useDropdown,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -43,7 +43,7 @@ const StyledColorSample = styled(ColorSample)`
   margin-right: 14px;
 `;
 
-const StyledOptionInput = styled(TextInput)`
+const StyledOptionInput = styled(FieldTextInput)`
   flex: 1 0 auto;
   margin-right: ${({ theme }) => theme.spacing(2)};
 

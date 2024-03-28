@@ -1,0 +1,54 @@
+{
+    "name": "twenty-ui",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/twenty-ui/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "lint": {
+            "executor": "@nx/eslint:lint",
+            "options": {
+                "lintFilePatterns": [
+                    "packages/twenty-ui/src/**/*.{ts,tsx}"
+                ]
+            },
+            "configurations": {
+                "fix": {
+                    "fix": true
+                }
+            }
+        },
+        "storybook:dev": {
+            "executor": "@nx/storybook:storybook",
+            "options": {
+                "port": 4400,
+                "configDir": "packages/twenty-ui/.storybook"
+            }
+        },
+        "storybook:test": {
+            "executor": "nx:run-commands",
+            "options": {
+                "command": "npx test-storybook -c packages/twenty-ui/.storybook --url=http://localhost:4400"
+            }
+        },
+        "tsc": {
+            "executor": "nx:run-commands",
+            "options": {
+                "commands": [
+                    "npx tsc --project packages/twenty-ui/tsconfig.lib.json --incremental",
+                    "npx tsc --project packages/twenty-ui/tsconfig.spec.json --incremental",
+                    "npx tsc --project packages/twenty-ui/tsconfig.storybook.json --incremental"
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nx/jest:jest",
+            "outputs": [
+                "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "options": {
+                "jestConfig": "packages/twenty-ui/jest.config.ts"
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
+import { LinkDisplay } from 'twenty-ui';
 
 import { useLinkField } from '../../hooks/useLinkField';
 

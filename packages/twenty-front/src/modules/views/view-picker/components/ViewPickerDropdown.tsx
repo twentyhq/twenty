@@ -1,13 +1,16 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import {
+  Dropdown,
+  IconChevronDown,
+  IconList,
+  MOBILE_VIEWPORT,
+  StyledDropdownButtonContainer,
+  useDropdown,
+  useIcons,
+} from 'twenty-ui';
 
-import { IconChevronDown, IconList } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
@@ -16,7 +19,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 
-import { useViewStates } from '../../hooks/internal/useViewStates';
+import { useViewStates, useViewStates } from '../../hooks/internal/useViewStates';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;

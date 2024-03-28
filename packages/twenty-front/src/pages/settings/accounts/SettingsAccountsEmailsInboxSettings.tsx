@@ -20,8 +20,8 @@ import {
 } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { AppPath } from '@/types/AppPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
   const theme = useTheme();

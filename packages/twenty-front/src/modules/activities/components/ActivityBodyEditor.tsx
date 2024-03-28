@@ -5,7 +5,9 @@ import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
+  BlockEditor,
   isNonTextWritingKey,
+  RightDrawerHotkeyScope,
   usePreviousHotkeyScope,
   useScopedHotkeys,
 } from 'twenty-ui';
@@ -23,8 +25,6 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -118,7 +118,7 @@ export const ActivityBodyEditor = ({
   );
 
   const [canCreateActivity, setCanCreateActivity] = useRecoilState(
-    canCreateActivityState,
+    canCreateActivityState(),
   );
 
   const [uploadFile] = useUploadFileMutation();

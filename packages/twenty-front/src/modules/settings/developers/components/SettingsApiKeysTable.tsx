@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { TableBody, TableHeader, TableHeader, TableRow } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -8,9 +9,6 @@ import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { Table } from '@/spreadsheet-import/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

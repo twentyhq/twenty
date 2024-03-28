@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   Button,
+  ConfirmationModal,
   H1Title,
   H2Title,
   IconCalendarEvent,
@@ -22,8 +23,6 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat.tsx';
 import { AppPath } from '@/types/AppPath.ts';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,

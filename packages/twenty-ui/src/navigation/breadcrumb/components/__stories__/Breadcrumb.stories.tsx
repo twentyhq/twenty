@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { Breadcrumb } from '../Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
   title: 'UI/Navigation/Breadcrumb/Breadcrumb',
   component: Breadcrumb,
-  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
   args: {
     links: [
       { children: 'Objects', href: '/link-1' },

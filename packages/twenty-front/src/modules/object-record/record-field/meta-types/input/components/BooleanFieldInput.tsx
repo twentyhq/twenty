@@ -1,4 +1,4 @@
-import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
+import { BooleanInput } from 'twenty-ui';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useBooleanField } from '../../hooks/useBooleanField';

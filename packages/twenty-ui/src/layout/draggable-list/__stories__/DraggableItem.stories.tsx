@@ -1,5 +1,6 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 
 import { IconBell } from 'src/display';
 import { MenuItemDraggable } from 'src/navigation/menu-item/components/MenuItemDraggable';
@@ -12,7 +13,7 @@ const meta: Meta<typeof DraggableItem> = {
   component: DraggableItem,
   decorators: [
     (Story) => (
-      <DragDropContext onDragEnd={() => jest.fn()}>
+      <DragDropContext onDragEnd={() => fn()}>
         <Droppable droppableId="droppable-id">
           {(_provided) => <Story />}
         </Droppable>

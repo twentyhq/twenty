@@ -1,9 +1,8 @@
 import { useRecoilCallback } from 'recoil';
+import { isRightDrawerOpenState, useRightDrawer } from 'twenty-ui';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
 import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
 export const useEmailThread = () => {
   const { closeRightDrawer } = useRightDrawer();

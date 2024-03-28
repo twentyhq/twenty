@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 
-import { RecoilScopeContext } from 'src/types/RecoilScopeContext';
+import { RecoilScopeContextType } from 'src/utilities/recoil-scope/states/RecoilScopeContextType';
 
 /**
  * @deprecated Use a custom scope instead and desctructure the scope id from the scope context
  */
-export const useRecoilScopeId = (RecoilScopeContext: RecoilScopeContext) => {
+export const useRecoilScopeId = (
+  RecoilScopeContext: RecoilScopeContextType,
+) => {
   const recoilScopeId = useContext(RecoilScopeContext);
 
   if (!recoilScopeId)

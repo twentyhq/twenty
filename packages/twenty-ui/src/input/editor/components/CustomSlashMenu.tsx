@@ -1,0 +1,41 @@
+import { SuggestionMenuProps } from '@blocknote/react';
+import styled from '@emotion/styled';
+
+import { IconComponent } from 'src/display';
+import { DropdownMenu, DropdownMenuItemsContainer } from 'src/layout';
+import { MenuItemSuggestion } from 'src/navigation';
+
+export type SuggestionItem = {
+  title: string;
+  onItemClick: () => void;
+  aliases?: string[];
+  Icon?: IconComponent;
+};
+
+type CustomSlashMenuProps = SuggestionMenuProps<SuggestionItem>;
+
+const StyledSlashMenu = styled.div`
+  * {
+    box-sizing: content-box;
+  }
+`;
+
+export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
+  return (
+    <StyledSlashMenu>
+      <DropdownMenu style={{ zIndex: 2001 }}>
+        <DropdownMenuItemsContainer>
+          {props.items.map((item, index) => (
+            <MenuItemSuggestion
+              key={item.title}
+              onClick={() => item.onItemClick()}
+              text={item.title}
+              LeftIcon={item.Icon}
+              selected={props.selectedIndex === index}
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+      </DropdownMenu>
+    </StyledSlashMenu>
+  );
+};

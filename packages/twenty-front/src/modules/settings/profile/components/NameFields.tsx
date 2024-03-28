@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { TextInput } from 'twenty-ui';
+import { FieldTextInput } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -105,14 +105,14 @@ export const NameFields = ({
 
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <FieldTextInput
         label="First Name"
         value={firstName}
         onChange={setFirstName}
         placeholder="Tim"
         fullWidth
       />
-      <TextInput
+      <FieldTextInput
         label="Last Name"
         value={lastName}
         onChange={setLastName}

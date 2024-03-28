@@ -2,7 +2,6 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig, loadEnv } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 type Checkers = Parameters<typeof checker>[0];
 
@@ -33,7 +32,6 @@ export default defineConfig(({ command, mode }) => {
 
   const plugins = [
     react({ jsxImportSource: '@emotion/react' }),
-    tsconfigPaths(),
     svgr(),
     checker(checkers),
   ];
@@ -43,6 +41,12 @@ export default defineConfig(({ command, mode }) => {
     envPrefix: 'REACT_APP_',
     build: {
       outDir: 'build',
+    },
+    resolve: {
+      alias: {
+        '~': './src',
+        '@': './src/modules',
+      },
     },
     plugins,
     server: {

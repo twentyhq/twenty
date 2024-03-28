@@ -1,13 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { PhoneDisplay } from '../PhoneDisplay'; // Adjust the import path as needed
 
 const meta: Meta = {
   title: 'UI/Input/PhoneInputDisplay/PhoneInputDisplay',
   component: PhoneDisplay,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
   args: {
     value: '+33788901234',
   },

@@ -1,6 +1,5 @@
-import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
+import { FieldInputOverlay, PhoneInput } from 'twenty-ui';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePhoneField } from '../../hooks/usePhoneField';
 
 import { FieldInputEvent } from './DateFieldInput';

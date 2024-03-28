@@ -1,12 +1,11 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
-import { Avatar, CardContent, GRAY_SCALE } from 'twenty-ui';
+import { Avatar, CardContent, GRAY_SCALE, useRightDrawer } from 'twenty-ui';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';

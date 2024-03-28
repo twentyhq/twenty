@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
-import { TextInput } from 'twenty-ui';
+import { FieldTextInput } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
@@ -71,7 +71,7 @@ export const NameField = ({
 
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <FieldTextInput
         label="Name"
         value={displayName}
         onChange={setDisplayName}

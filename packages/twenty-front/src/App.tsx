@@ -1,12 +1,13 @@
+import { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { colorSchemeState, PageTitle } from 'twenty-ui';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { useWorkspaceColorScheme } from '@/workspace-member/hooks/useWorkspaceColorScheme';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
@@ -16,6 +17,7 @@ import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
+import { DefaultLayout } from '~/pages/DefaultLayout';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -50,9 +52,18 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
-  const billing = useRecoilValue(billingState);
+  const billing = useRecoilValue(billingState());
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
+
+  const [colorScheme, setColorScheme] = useRecoilState(colorSchemeState());
+  const { colorScheme: workspaceColorScheme } = useWorkspaceColorScheme();
+
+  useEffect(() => {
+    if (!!workspaceColorScheme && colorScheme !== workspaceColorScheme) {
+      setColorScheme(workspaceColorScheme);
+    }
+  }, [colorScheme, setColorScheme, workspaceColorScheme]);
 
   return (
     <>

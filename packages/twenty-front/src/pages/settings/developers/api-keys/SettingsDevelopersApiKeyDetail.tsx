@@ -8,12 +8,12 @@ import {
   Breadcrumb,
   Button,
   ConfirmationModal,
+  FieldTextInput,
   H2Title,
   IconRepeat,
   IconSettings,
   IconTrash,
   Section,
-  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,13 +22,13 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -180,7 +180,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title title="Name" description="Name of your API key" />
-              <TextInput
+              <FieldTextInput
                 placeholder="E.g. backoffice integration"
                 value={apiKeyData.name}
                 disabled

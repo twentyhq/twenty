@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
-import { useIsMobile } from 'twenty-ui';
+import {
+  RightDrawerTopBar,
+  RightDrawerTopBarCloseButton,
+  RightDrawerTopBarExpandButton,
+  useIsMobile,
+} from 'twenty-ui';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
-import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
-import { RightDrawerTopBarExpandButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarExpandButton';
-import { StyledRightDrawerTopBar } from '@/ui/layout/right-drawer/components/StyledRightDrawerTopBar';
 
 type RightDrawerActivityTopBarProps = { showActionBar?: boolean };
 
@@ -18,12 +20,12 @@ export const RightDrawerActivityTopBar = ({
   const isMobile = useIsMobile();
 
   return (
-    <StyledRightDrawerTopBar>
+    <RightDrawerTopBar>
       <StyledTopBarWrapper>
         <RightDrawerTopBarCloseButton />
         {!isMobile && <RightDrawerTopBarExpandButton />}
       </StyledTopBarWrapper>
       {showActionBar && <ActivityActionBar />}
-    </StyledRightDrawerTopBar>
+    </RightDrawerTopBar>
   );
 };

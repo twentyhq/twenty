@@ -2,9 +2,7 @@
   "name": "twenty-ui",
   "version": "0.0.1",
   "type": "module",
-  "types": "./dist/index.d.ts",
-  "module": "./dist/index.mjs",
-  "main": "./dist/index.js",
+  "main": "./src/index.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -13,17 +11,8 @@
     }
   },
   "scripts": {
-    "build": "vite build",
-    "lint": "eslint src",
-    "lint:fix": "npx nx lint --fix",
-    "storybook:build": "storybook build",
-    "storybook:dev": "storybook dev -p 6007",
-    "storybook:test": "test-storybook --url=http://localhost:6007",
-    "storybook:test:coverage": "npx nx storybook:test --coverage",
-    "test": "jest",
-    "test:coverage": "npx nx test --coverage"
-  },
-  "nx": {
-    "projectType": "library"
+    "build": "npx nx generateBarrels && npx vite build",
+    "generateBarrels": "npx ts-node --esm ./scripts/generateBarrels.ts",
+    "storybook:build": "npx storybook build"
   }
 }

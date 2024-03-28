@@ -2,7 +2,12 @@ import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { IconButton, IconPlus, IconTrash } from 'twenty-ui';
+import {
+  IconButton,
+  IconPlus,
+  IconTrash,
+  isRightDrawerOpenState,
+} from 'twenty-ui';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -26,7 +31,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getChildRelationArray } from '@/object-record/utils/getChildRelationArray';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
-import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledButtonContainer = styled.div`

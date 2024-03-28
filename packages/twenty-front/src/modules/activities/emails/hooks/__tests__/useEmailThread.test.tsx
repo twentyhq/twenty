@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
+import { isRightDrawerOpenState } from 'twenty-ui';
 
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
-import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
 const viewableEmailThreadId = '1234';
 

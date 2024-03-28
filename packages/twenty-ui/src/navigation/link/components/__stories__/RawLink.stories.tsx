@@ -1,14 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { RawLink } from '../RawLink';
 
 const meta: Meta<typeof RawLink> = {
   title: 'UI/Navigation/Link/RawLink',
   component: RawLink,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
   args: {
     className: 'RawLink',
     href: '/test',

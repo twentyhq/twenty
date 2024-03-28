@@ -7,10 +7,10 @@ import { useRecoilState } from 'recoil';
 import {
   ActionLink,
   AnimatedEaseIn,
+  FieldTextInput,
   IconGoogle,
   Loader,
   MainButton,
-  TextInput,
 } from 'twenty-ui';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
@@ -152,7 +152,7 @@ export const SignInUpForm = () => {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <FieldTextInput
                       autoFocus
                       value={value}
                       placeholder="Email"
@@ -191,7 +191,7 @@ export const SignInUpForm = () => {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <FieldTextInput
                       autoFocus
                       value={value}
                       type="password"

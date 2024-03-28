@@ -5,10 +5,10 @@ import {
   TypedDocumentNode,
   useQuery,
 } from '@apollo/client';
+import { useSnackBar } from 'twenty-ui';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CustomResolverQueryResult<
   T extends {

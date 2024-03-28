@@ -1,12 +1,11 @@
 import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Checkbox } from 'twenty-ui';
+import { actionBarOpenState, Checkbox } from 'twenty-ui';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
 const StyledContainer = styled.div`
   align-items: center;

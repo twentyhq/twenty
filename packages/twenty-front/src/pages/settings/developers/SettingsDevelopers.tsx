@@ -1,14 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { Breadcrumb, Button, H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import {
+  Breadcrumb,
+  Button,
+  H2Title,
+  IconPlus,
+  IconSettings,
+  Section,
+} from 'twenty-ui';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledButtonContainer = styled.div`
   display: flex;

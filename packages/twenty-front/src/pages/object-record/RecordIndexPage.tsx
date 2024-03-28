@@ -1,14 +1,13 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useSetHotkeyScope } from 'twenty-ui';
+import { PageContainer, useSetHotkeyScope } from 'twenty-ui';
 
+import { RightDrawerContainer } from '@/activities/right-drawer/components/RightDrawerContainer';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { RecordIndexPageHeader } from '~/pages/object-record/RecordIndexPageHeader';
 
 const StyledIndexContainer = styled.div`
@@ -47,7 +46,7 @@ export const RecordIndexPage = () => {
   return (
     <PageContainer>
       <RecordIndexPageHeader createRecord={handleAddButtonClick} />
-      <PageBody>
+      <RightDrawerContainer>
         <StyledIndexContainer>
           <RecordIndexContainer
             recordIndexId={recordIndexId}
@@ -55,7 +54,7 @@ export const RecordIndexPage = () => {
             createRecord={handleAddButtonClick}
           />
         </StyledIndexContainer>
-      </PageBody>
+      </RightDrawerContainer>
     </PageContainer>
   );
 };

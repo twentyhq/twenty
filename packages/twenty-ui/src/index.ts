@@ -4,6 +4,8 @@ export * from './field';
 export * from './input';
 export * from './layout';
 export * from './navigation';
+export * from './testing';
 export * from './theme';
+export * from './types';
 export * from './utilities';
 export * from './utils';

@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
-import { IconPicker, TextArea, TextInput } from 'twenty-ui';
+import { FieldTextInput, IconPicker, TextArea } from 'twenty-ui';
 import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -86,7 +86,7 @@ export const SettingsDataModelObjectAboutForm = ({
             control={control}
             defaultValue={defaultValue}
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <FieldTextInput
                 label={label}
                 placeholder={placeholder}
                 value={value}

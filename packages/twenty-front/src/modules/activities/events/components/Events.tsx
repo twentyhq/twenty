@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
-
-import { EventList } from '@/activities/events/components/EventList';
-import { useEvents } from '@/activities/events/hooks/useEvents';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
+  AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+  useIsMobile,
+} from 'twenty-ui';
+
+import { EventList } from '@/activities/events/components/EventList';
+import { useEvents } from '@/activities/events/hooks/useEvents';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;

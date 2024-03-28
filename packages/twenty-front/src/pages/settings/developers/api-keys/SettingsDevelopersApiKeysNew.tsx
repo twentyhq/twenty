@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import {
   Breadcrumb,
+  FieldTextInput,
   H2Title,
   IconSettings,
   Section,
   Select,
-  TextInput,
 } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -15,10 +15,10 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -83,7 +83,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         </SettingsHeaderContainer>
         <Section>
           <H2Title title="Name" description="Name of your API key" />
-          <TextInput
+          <FieldTextInput
             placeholder="E.g. backoffice integration"
             value={formValues.name}
             onKeyDown={(e) => {

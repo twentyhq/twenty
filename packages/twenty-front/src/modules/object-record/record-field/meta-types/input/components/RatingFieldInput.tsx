@@ -1,5 +1,6 @@
-import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
-import { RatingInput } from '@/ui/field/input/components/RatingInput';
+import { RatingInput } from 'twenty-ui';
+
+import { RatingValue } from '@/object-record/record-field/meta-types/constants/RatingValues';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRatingField } from '../../hooks/useRatingField';
@@ -19,11 +20,16 @@ export const RatingFieldInput = ({
 
   const persistField = usePersistField();
 
-  const handleChange = (newRating: FieldRatingValue) => {
+  const handleChange = (newRating: RatingValue) => {
     onSubmit?.(() => persistField(newRating));
   };
 
   return (
-    <RatingInput value={rating} onChange={handleChange} readonly={readonly} />
+    <RatingInput
+      availableValues={Object.values(RatingValue)}
+      value={rating as RatingValue}
+      onChange={handleChange}
+      readonly={readonly}
+    />
   );
 };

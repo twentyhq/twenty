@@ -1,14 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { ContactLink } from '../ContactLink';
 
 const meta: Meta<typeof ContactLink> = {
   title: 'UI/Navigation/Link/ContactLink',
   component: ContactLink,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
   args: {
     className: 'ContactLink',
     href: '/test',

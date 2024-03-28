@@ -1,5 +1,8 @@
 import { useRecoilCallback } from 'recoil';
-import { useClickOutsideListener } from 'twenty-ui';
+import {
+  RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  useClickOutsideListener,
+} from 'twenty-ui';
 
 import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
@@ -10,7 +13,6 @@ import { isActivityInCreateModeState } from '@/activities/states/isActivityInCre
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { Activity } from '@/activities/types/Activity';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { isDefined } from '~/utils/isDefined';
 
 export const ActivityEditorEffect = ({

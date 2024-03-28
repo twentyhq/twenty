@@ -22,3 +22,5 @@ coverage
 **/**/logs/**
 
 storybook-static
+
+*.tsbuildinfo

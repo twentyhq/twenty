@@ -10,9 +10,8 @@ import {
   IconPhoto,
   IconPilcrow,
   IconTable,
+  SuggestionItem,
 } from 'twenty-ui';
-
-import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
 import { blockSchema } from './schema';
 

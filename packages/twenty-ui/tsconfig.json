@@ -2,12 +2,14 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,
-    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noEmit": true,
     "jsxImportSource": "@emotion/react",
-    "types": ["vite/client"],
-    "baseUrl": "."
+    "types": ["vite/client", "node"],
+    "paths": {
+      "src/*": ["packages/twenty-ui/src/*"]
+    }
   },
   "files": [],
   "include": [],

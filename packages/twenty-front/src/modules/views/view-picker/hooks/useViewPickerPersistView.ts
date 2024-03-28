@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
+import { getSnapshotValue, getSnapshotValue } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';

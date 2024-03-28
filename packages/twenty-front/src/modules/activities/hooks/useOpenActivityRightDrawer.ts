@@ -1,10 +1,12 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useSetHotkeyScope } from 'twenty-ui';
+import {
+  RightDrawerHotkeyScope,
+  RightDrawerPages,
+  useRightDrawer,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 

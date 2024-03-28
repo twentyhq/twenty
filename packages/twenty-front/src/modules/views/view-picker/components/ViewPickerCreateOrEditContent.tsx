@@ -1,16 +1,19 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import {
+  DropdownMenuHeader,
+  DropdownMenuInput,
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  IconChevronLeft,
+  IconPicker,
+  IconX,
+  Select,
+  useScopedHotkeys,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
-import { IconChevronLeft, IconX } from '@/ui/display/icon';
-import { IconPicker } from '@/ui/input/components/IconPicker';
-import { Select } from '@/ui/input/components/Select';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewType } from '@/views/types/ViewType';
 import { ViewPickerCreateOrEditButton } from '@/views/view-picker/components/ViewPickerCreateOrEditButton';

@@ -1,11 +1,8 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
+import { NavigationDrawerItem, NavigationDrawerItemProps } from 'twenty-ui';
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import {
-  NavigationDrawerItem,
-  NavigationDrawerItemProps,
-} from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 type SettingsNavigationDrawerItemProps = Pick<
   NavigationDrawerItemProps,

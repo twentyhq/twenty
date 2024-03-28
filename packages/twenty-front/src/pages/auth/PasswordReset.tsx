@@ -7,7 +7,12 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { AnimatedEaseIn, MainButton, TextInput, useSnackBar } from 'twenty-ui';
+import {
+  AnimatedEaseIn,
+  FieldTextInput,
+  MainButton,
+  useSnackBar,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
@@ -188,7 +193,7 @@ export const PasswordReset = () => {
               }}
             >
               <StyledInputContainer>
-                <TextInput
+                <FieldTextInput
                   autoFocus
                   value={email}
                   placeholder="Email"
@@ -215,7 +220,7 @@ export const PasswordReset = () => {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <FieldTextInput
                       autoFocus
                       value={value}
                       type="password"

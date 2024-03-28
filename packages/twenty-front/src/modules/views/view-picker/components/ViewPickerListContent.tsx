@@ -1,13 +1,17 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
+import {
+  DropdownMenuItemsContainer,
+  DropdownMenuSeparator,
+  IconLock,
+  IconPencil,
+  IconPlus,
+  MenuItem,
+  useDropdown,
+  useIcons,
+} from 'twenty-ui';
 
-import { IconLock, IconPencil, IconPlus } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';

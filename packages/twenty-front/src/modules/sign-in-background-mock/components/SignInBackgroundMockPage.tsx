@@ -1,14 +1,17 @@
 import styled from '@emotion/styled';
-import { IconBuildingSkyscraper } from 'twenty-ui';
+import {
+  IconBuildingSkyscraper,
+  PageAddButton,
+  PageContainer,
+  PageHeader,
+} from 'twenty-ui';
 
+import { RightDrawerContainer } from '@/activities/right-drawer/components/RightDrawerContainer';
+import { RightDrawerRouter } from '@/activities/right-drawer/components/RightDrawerRouter';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
-import { PageAddButton } from '@/ui/layout/page/PageAddButton';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
+import { PageHotkeysEffect } from '~/pages/PageHotkeysEffect';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -23,13 +26,13 @@ export const SignInBackgroundMockPage = () => {
         <PageHotkeysEffect onAddButtonClick={() => {}} />
         <PageAddButton onClick={() => {}} />
       </PageHeader>
-      <PageBody>
+      <RightDrawerContainer rightDrawerContent={<RightDrawerRouter />}>
         <StyledTableContainer>
           <SignInBackgroundMockContainer />
         </StyledTableContainer>
         <RecordTableActionBar recordTableId="mock" />
         <RecordTableContextMenu recordTableId="mock" />
-      </PageBody>
+      </RightDrawerContainer>
     </PageContainer>
   );
 };

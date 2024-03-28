@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
+import { Section } from '@react-email/components';
+import { H2Title } from 'twenty-ui';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Section } from '@/ui/layout/section/components/Section';
 
 interface SettingsIntegrationGroupProps {
   integrationGroup: SettingsIntegrationCategory;

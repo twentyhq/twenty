@@ -1,6 +1,6 @@
 import { ThemeColor } from 'twenty-ui';
 
-import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { RatingValue } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 import { CurrencyCode } from './CurrencyCode';
@@ -126,7 +126,7 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
-export type FieldRatingValue = (typeof RATING_VALUES)[number];
+export type FieldRatingValue = RatingValue;
 export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;

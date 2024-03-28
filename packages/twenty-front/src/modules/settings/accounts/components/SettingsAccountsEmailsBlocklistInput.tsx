@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { Button, TextInput } from 'twenty-ui';
+import { Button, FieldTextInput } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -36,7 +36,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput
+        <FieldTextInput
           placeholder="eddy@gmail.com, @apple.com"
           value={formValues.email}
           onChange={(value) => {

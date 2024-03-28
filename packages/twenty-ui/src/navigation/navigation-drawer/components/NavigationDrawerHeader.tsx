@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
+import { useIsMobile } from 'src/utilities';
+
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
-import React = require('react');
-import { useIsMobile } from '../../../utilities';
 
 const StyledContainer = styled.div`
   align-items: center;

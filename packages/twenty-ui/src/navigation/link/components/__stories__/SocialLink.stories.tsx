@@ -1,14 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
-import { ComponentWithRouterDecorator } from 'src/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'src/testing/decorators/ComponentDecorator';
+import { RouterDecorator } from 'src/testing/decorators/RouterDecorator';
 
 import { LinkType, SocialLink } from '../SocialLink';
 
 const meta: Meta<typeof SocialLink> = {
   title: 'UI/Navigation/Link/SocialLink',
   component: SocialLink,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator],
   args: {
     href: '/test',
     children: 'Social Link',

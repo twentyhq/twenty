@@ -13,16 +13,15 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { ShowPageLeftContainer } from '@/object-record/record-show/components/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/object-record/record-show/components/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/object-record/record-show/components/ShowPageSummaryCard';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
-import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
-import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
-import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import {
   FieldMetadataType,
   FileFolder,

@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { TextInput } from 'twenty-ui';
+import { FieldTextInput } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 
@@ -7,7 +7,7 @@ export const EmailField = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   return (
-    <TextInput
+    <FieldTextInput
       value={currentUser?.email}
       disabled
       fullWidth

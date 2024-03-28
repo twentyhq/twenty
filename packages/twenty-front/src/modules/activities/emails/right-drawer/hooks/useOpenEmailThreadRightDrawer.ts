@@ -1,8 +1,9 @@
-import { useSetHotkeyScope } from 'twenty-ui';
-
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import {
+  RightDrawerHotkeyScope,
+  RightDrawerPages,
+  useRightDrawer,
+  useSetHotkeyScope,
+} from 'twenty-ui';
 
 export const useOpenEmailThreadRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();

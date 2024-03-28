@@ -8,10 +8,11 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/modules/*"],
-      "~/*": ["src/*"]
+      "@/*": ["packages/twenty-front/src/modules/*"],
+      "~/*": ["packages/twenty-front/src/*"],
+
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
     },
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,

@@ -1,7 +1,7 @@
+import { DoubleTextInput, FieldInputOverlay } from 'twenty-ui';
+
 import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
-import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
-import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 

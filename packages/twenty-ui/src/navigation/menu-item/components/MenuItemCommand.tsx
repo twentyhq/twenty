@@ -2,11 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from 'src/display';
-
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 

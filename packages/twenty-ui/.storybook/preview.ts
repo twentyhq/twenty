@@ -2,10 +2,10 @@ import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { Preview, ReactRenderer } from '@storybook/react';
 
-import { THEME_DARK, THEME_LIGHT } from '../src/theme/index';
+import { RootDecorator } from 'src/testing/decorators/RootDecorator';
+import { THEME_DARK, THEME_LIGHT } from 'src/theme/index';
 
 const preview: Preview = {
-  // TODO: Add toggle for darkTheme.
   decorators: [
     withThemeFromJSXProvider<ReactRenderer>({
       themes: {
@@ -15,6 +15,7 @@ const preview: Preview = {
       defaultTheme: 'light',
       Provider: ThemeProvider,
     }),
+    RootDecorator,
   ],
 };
 

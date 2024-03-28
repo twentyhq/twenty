@@ -1,22 +1,17 @@
 import styled from '@emotion/styled';
-import {
-  ColorSchemePicker,
-  H1Title,
-  H2Title,
-  IconSettings,
-  Section,
-} from 'twenty-ui';
+import { Section } from '@react-email/components';
+import { ColorSchemePicker, H1Title, H2Title, IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { SubMenuTopBarContainer } from '@/settings/components/SubMenuTopBarContainer';
+import { useWorkspaceColorScheme } from '@/workspace-member/hooks/useWorkspaceColorScheme';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
 export const SettingsAppearance = () => {
-  const { colorScheme, setColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useWorkspaceColorScheme();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

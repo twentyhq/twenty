@@ -1,6 +1,5 @@
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { FieldInputOverlay, FieldTextInput } from 'twenty-ui';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useLinkField } from '../../hooks/useLinkField';
 
 import { FieldInputEvent } from './DateFieldInput';
@@ -80,7 +79,7 @@ export const LinkFieldInput = ({
 
   return (
     <FieldInputOverlay>
-      <TextInput
+      <FieldTextInput
         value={draftValue?.url ?? ''}
         autoFocus
         placeholder="URL"

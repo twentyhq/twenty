@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
-import { useClickOutsideListener } from 'twenty-ui';
+import {
+  RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  useClickOutsideListener,
+} from 'twenty-ui';
 
 import { MULTI_OBJECT_RECORD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordClickOutsideListenerId';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 
 export const MultipleObjectRecordOnClickOutsideEffect = ({
   containerRef,

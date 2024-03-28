@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, IconCopy, TextInput, useSnackBar } from 'twenty-ui';
+import { Button, FieldTextInput, IconCopy, useSnackBar } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -21,7 +21,7 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput value={apiKey} fullWidth />
+        <FieldTextInput value={apiKey} fullWidth />
       </StyledLinkContainer>
       <Button
         Icon={IconCopy}

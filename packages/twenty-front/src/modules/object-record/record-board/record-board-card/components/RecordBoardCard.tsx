@@ -6,6 +6,8 @@ import {
   AnimatedEaseInOut,
   Checkbox,
   CheckboxVariant,
+  contextMenuIsOpenState,
+  contextMenuPositionState,
   IconEye,
   LightIconButton,
   ScrollWrapperContext,
@@ -23,8 +25,6 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>

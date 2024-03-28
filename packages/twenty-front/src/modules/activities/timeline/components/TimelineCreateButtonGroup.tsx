@@ -10,7 +10,7 @@ import {
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageRightContainer';
+import { TAB_LIST_COMPONENT_ID } from '@/object-record/record-show/components/ShowPageRightContainer';
 
 export const TimelineCreateButtonGroup = ({
   targetableObject,

@@ -2,9 +2,8 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck, IconComponent } from 'src/display';
-
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import { MenuItemLeftContent } from 'src/navigation/menu-item/components/MenuItemLeftContent';
+import { StyledMenuItemBase } from 'src/navigation/menu-item/components/StyledMenuItemBase';
 
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   selected: boolean;

@@ -1,4 +1,5 @@
-import { DateInput } from '@/ui/field/input/components/DateInput';
+import { DateInput } from 'twenty-ui';
+
 import { Nullable } from '~/types/Nullable';
 
 import { usePersistField } from '../../../hooks/usePersistField';

@@ -1,12 +1,11 @@
 import { useTheme } from '@emotion/react';
 
 import { ColorSample, ColorSampleVariant, IconCheck } from 'src/display';
-import { ThemeColor } from 'src/theme/constants/MainColorNames';
-
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from '../internals/components/StyledMenuItemBase';
+} from 'src/navigation/menu-item/components/StyledMenuItemBase';
+import { ThemeColor } from 'src/theme/constants/MainColorNames';
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
