@@ -13,4 +13,4 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
   providers: [AddPersonIdAndWorkspaceMemberIdService],
   exports: [AddPersonIdAndWorkspaceMemberIdService],
 })
-export class GetEmailPersonIdAndWorkspaceMemberIdMapModule {}
+export class AddPersonIdAndWorkspaceMemberIdModule {}
