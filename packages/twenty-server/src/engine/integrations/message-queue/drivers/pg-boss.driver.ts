@@ -11,7 +11,7 @@ import { MessageQueueDriver } from './interfaces/message-queue-driver.interface'
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
-const DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED = '*/10 * * * *';
+const DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED = '*/1 * * * *';
 
 export class PgBossDriver implements MessageQueueDriver {
   private pgBoss: PgBoss;
