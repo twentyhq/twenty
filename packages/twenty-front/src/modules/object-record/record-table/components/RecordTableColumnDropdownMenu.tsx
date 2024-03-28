@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
+import { useObjectSort } from '@/object-record/object-sort-dropdown/components/useObjectSort';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -68,7 +68,7 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const { toggleSortDropdown } = useObjectSortDropdown();
+  const { availableSortDefinitions, addSortHandler } = useObjectSort();
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
@@ -84,8 +84,14 @@ export const RecordTableColumnDropdownMenu = ({
 
   const handleSortClick = () => {
     closeDropdown();
-    toggleSortDropdown();
+    const sortDefinition = availableSortDefinitions.find(
+      (definition) => definition.fieldMetadataId === column.fieldMetadataId,
+    );
+    if (isDefined(sortDefinition)) {
+      addSortHandler(sortDefinition);
+    }
   };
+
   const setHotkeyScope = useSetHotkeyScope();
 
   const handleFilterClick = () => {

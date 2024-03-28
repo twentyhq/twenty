@@ -1,8 +1,5 @@
-import { useRecoilValue } from 'recoil';
-
-import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
+import { useObjectSort } from '@/object-record/object-sort-dropdown/components/useObjectSort';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
-import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -14,7 +11,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
@@ -33,33 +29,13 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection,
     toggleSortDropdown,
     resetState,
-  } = useObjectSortDropdown();
-
-  const { isSortSelectedState } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
+    isSortSelected,
+    availableSortDefinitions,
+    addSortHandler,
+  } = useObjectSort();
 
   const handleButtonClick = () => {
     toggleSortDropdown();
-  };
-
-  const { availableSortDefinitionsState, onSortSelectState } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
-  const isSortSelected = useRecoilValue(isSortSelectedState);
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
-  );
-  const onSortSelect = useRecoilValue(onSortSelectState);
-
-  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
-    toggleSortDropdown();
-    onSortSelect?.({
-      fieldMetadataId: selectedSortDefinition.fieldMetadataId,
-      direction: selectedSortDirection,
-      definition: selectedSortDefinition,
-    });
   };
 
   const handleDropdownButtonClose = () => {
@@ -112,7 +88,7 @@ export const ObjectSortDropdownButton = ({
                       <MenuItem
                         testId={`select-sort-${index}`}
                         key={index}
-                        onClick={() => handleAddSort(availableSortDefinition)}
+                        onClick={() => addSortHandler(availableSortDefinition)}
                         LeftIcon={getIcon(availableSortDefinition.iconName)}
                         text={availableSortDefinition.label}
                       />
