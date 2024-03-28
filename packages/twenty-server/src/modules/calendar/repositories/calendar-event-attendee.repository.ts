@@ -90,20 +90,56 @@ export class CalendarEventAttendeeRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const handles = calendarEventAttendees.map(
+      (calendarEventAttendee) => calendarEventAttendee.handle,
+    );
+
+    const calendarEventAttendeesPersonIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    const calendarEventAttendeesWorkspaceMemberIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
+        [handles],
+        workspaceId,
+        transactionManager,
+      );
+
+    const calendarEventAttendeesToSave = calendarEventAttendees.map(
+      (attendee) => ({
+        ...attendee,
+        personId: calendarEventAttendeesPersonIds.find(
+          (e) => e.email === attendee.handle,
+        )?.id,
+        workspaceMemberId: calendarEventAttendeesWorkspaceMemberIds.find(
+          (e) => e.email === attendee.handle,
+        )?.id,
+      }),
+    );
+
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(
-        calendarEventAttendees,
+        calendarEventAttendeesToSave,
         {
           calendarEventId: 'uuid',
           handle: 'text',
           displayName: 'text',
           isOrganizer: 'boolean',
           responseStatus: `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
+          personId: 'uuid',
+          workspaceMemberId: 'uuid',
         },
       );
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus", "personId", "workspaceMemberId") VALUES ${valuesString}`,
       flattenedValues,
       workspaceId,
       transactionManager,
