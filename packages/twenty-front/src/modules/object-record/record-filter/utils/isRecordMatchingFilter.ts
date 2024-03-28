@@ -2,6 +2,7 @@ import { isObject } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
   CurrencyFilter,
@@ -179,6 +180,30 @@ export const isRecordMatchingFilter = ({
               value: record[filterKey].lastName,
             }))
         );
+      }
+      case FieldMetadataType.Address: {
+        const addressFilter = filterValue as AddressFilter;
+
+        const keys = [
+          'addressStreet1',
+          'addressStreet2',
+          'addressCity',
+          'addressState',
+          'addressCountry',
+          'addressPostcode',
+        ] as const;
+
+        return keys.some((key) => {
+          const value = addressFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
+        });
       }
       case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({

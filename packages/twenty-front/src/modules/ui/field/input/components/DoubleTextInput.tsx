@@ -13,7 +13,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-import { StyledInput } from './TextInput';
+import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -174,7 +174,7 @@ export const DoubleTextInput = ({
 
   return (
     <StyledContainer ref={containerRef}>
-      <StyledInput
+      <StyledTextInput
         autoComplete="off"
         autoFocus
         onFocus={() => setFocusPosition('left')}
@@ -188,7 +188,7 @@ export const DoubleTextInput = ({
           handleOnPaste(event)
         }
       />
-      <StyledInput
+      <StyledTextInput
         autoComplete="off"
         onFocus={() => setFocusPosition('right')}
         ref={secondValueInputRef}

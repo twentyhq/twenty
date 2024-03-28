@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -10,6 +10,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
@@ -43,6 +44,7 @@ const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-sizing: border-box;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
@@ -88,6 +90,8 @@ export const Select = <Value extends string | number | null>({
   value,
   withSearchInput,
 }: SelectProps<Value>) => {
+  const selectContainerRef = useRef<HTMLDivElement>(null);
+
   const theme = useTheme();
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -108,6 +112,15 @@ export const Select = <Value extends string | number | null>({
   const isDisabled = disabledFromProps || options.length <= 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
+
+  const { useListenClickOutside } = useClickOutsideListener(dropdownId);
+
+  useListenClickOutside({
+    refs: [selectContainerRef],
+    callback: () => {
+      closeDropdown();
+    },
+  });
 
   const selectControl = (
     <StyledControlContainer disabled={isDisabled}>
@@ -133,6 +146,7 @@ export const Select = <Value extends string | number | null>({
       fullWidth={fullWidth}
       tabIndex={0}
       onBlur={onBlur}
+      ref={selectContainerRef}
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (

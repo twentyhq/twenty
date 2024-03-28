@@ -15,6 +15,17 @@ export function generateDefaultValue(
         firstName: "''",
         lastName: "''",
       };
+    case FieldMetadataType.ADDRESS:
+      return {
+        addressStreet1: "''",
+        addressStreet2: "''",
+        addressCity: "''",
+        addressState: "''",
+        addressCountry: "''",
+        addressPostcode: "''",
+        addressLat: null,
+        addressLng: null,
+      };
     case FieldMetadataType.LINK:
       return {
         url: "''",

@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { Country } from '@/ui/input/components/internal/types/Country';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-
-import { Country } from './CountryPickerDropdownButton';
 
 import 'react-phone-number-input/style.css';
 
@@ -27,7 +26,7 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-export const CountryPickerDropdownSelect = ({
+export const PhoneCountryPickerDropdownSelect = ({
   countries,
   selectedCountry,
   onChange,

@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '../contexts/FieldContext';
+import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
 import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
@@ -13,6 +14,7 @@ import { RelationFieldDisplay } from '../meta-types/display/components/RelationF
 import { SelectFieldDisplay } from '../meta-types/display/components/SelectFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { UuidFieldDisplay } from '../meta-types/display/components/UuidFieldDisplay';
+import { isFieldAddress } from '../types/guards/isFieldAddress';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
@@ -55,5 +57,7 @@ export const FieldDisplay = () => {
     <PhoneFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
+  ) : isFieldAddress(fieldDefinition) ? (
+    <AddressFieldDisplay />
   ) : null;
 };

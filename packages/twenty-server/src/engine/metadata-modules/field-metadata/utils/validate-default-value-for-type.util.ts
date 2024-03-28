@@ -8,6 +8,7 @@ import {
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
+  FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
@@ -44,6 +45,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
+  [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
 };
 

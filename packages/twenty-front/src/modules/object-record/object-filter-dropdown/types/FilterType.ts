@@ -8,4 +8,5 @@ export type FilterType =
   | 'FULL_NAME'
   | 'LINK'
   | 'RELATION'
+  | 'ADDRESS'
   | 'SELECT';
