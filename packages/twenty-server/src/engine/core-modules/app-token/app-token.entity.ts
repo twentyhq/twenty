@@ -11,19 +11,22 @@ import {
 } from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
 
+import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+export enum AppTokenType {
+  RefreshToken = 'REFRESH_TOKEN',
+}
 
-import { BeforeCreateOneRefreshToken } from './hooks/before-create-one-refresh-token.hook';
-
-@Entity({ name: 'refreshToken', schema: 'core' })
-@ObjectType('RefreshToken')
-@BeforeCreateOne(BeforeCreateOneRefreshToken)
-export class RefreshToken {
+@Entity({ name: 'appToken', schema: 'core' })
+@ObjectType('AppToken')
+@BeforeCreateOne(BeforeCreateOneAppToken)
+export class AppToken {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens, {
+  @ManyToOne(() => User, (user) => user.appTokens, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
@@ -31,6 +34,22 @@ export class RefreshToken {
 
   @Column()
   userId: string;
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.appTokens, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Workspace;
+
+  @Column({ nullable: true })
+  workspaceId: string;
+
+  @Field()
+  @Column({ nullable: false, type: 'text', default: AppTokenType.RefreshToken })
+  type: AppTokenType;
+
+  @Column({ nullable: true, type: 'text' })
+  value: string;
 
   @Field()
   @Column('timestamp with time zone')

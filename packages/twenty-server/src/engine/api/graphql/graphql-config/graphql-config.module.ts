@@ -11,8 +11,6 @@ const getDynamicModulesFromApps = (): DynamicModule[] => {
 
   const TWENTY_APPS = Reflect.getMetadata('imports', AppsModule);
 
-  console.log(TWENTY_APPS);
-
   return TWENTY_APPS.map((app) => {
     const resolvers = Reflect.getMetadata(TWENTY_APP_METADATA.RESOLVERS, app);
 

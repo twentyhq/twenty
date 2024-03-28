@@ -34,7 +34,10 @@ import {
 } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
@@ -53,8 +56,8 @@ export class TokenService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(RefreshToken, 'core')
-    private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
@@ -103,15 +106,15 @@ export class TokenService {
     const refreshTokenPayload = {
       userId,
       expiresAt,
+      type: AppTokenType.RefreshToken,
     };
     const jwtPayload = {
       sub: userId,
     };
 
-    const refreshToken =
-      this.refreshTokenRepository.create(refreshTokenPayload);
+    const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
 
-    await this.refreshTokenRepository.save(refreshToken);
+    await this.appTokenRepository.save(refreshToken);
 
     return {
       token: this.jwtService.sign(jwtPayload, {
@@ -360,7 +363,7 @@ export class TokenService {
       UnprocessableEntityException,
     );
 
-    const token = await this.refreshTokenRepository.findOneBy({
+    const token = await this.appTokenRepository.findOneBy({
       id: jwtPayload.jti,
     });
 
@@ -379,15 +382,16 @@ export class TokenService {
     ) {
       // Revoke all user refresh tokens
       await Promise.all(
-        user.refreshTokens.map(
-          async ({ id }) =>
-            await this.refreshTokenRepository.update(
+        user.appTokens.map(async ({ id, type }) => {
+          if (type === AppTokenType.RefreshToken) {
+            await this.appTokenRepository.update(
               { id },
               {
                 revokedAt: new Date(),
               },
-            ),
-        ),
+            );
+          }
+        }),
       );
 
       throw new ForbiddenException(
@@ -408,7 +412,7 @@ export class TokenService {
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
-    await this.refreshTokenRepository.update(
+    await this.appTokenRepository.update(
       {
         id,
       },

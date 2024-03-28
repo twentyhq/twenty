@@ -3,9 +3,9 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
-export class RefreshTokenInput {
+export class AppTokenInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  refreshToken: string;
+  appToken: string;
 }

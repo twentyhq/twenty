@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { assert } from 'src/utils/assert';
@@ -34,7 +35,6 @@ import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
-import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { AuthService } from './services/auth.service';
@@ -170,13 +170,13 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  async renewToken(@Args() args: RefreshTokenInput): Promise<AuthTokens> {
-    if (!args.refreshToken) {
+  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+    if (!args.appToken) {
       throw new BadRequestException('Refresh token is mendatory');
     }
 
     const tokens = await this.tokenService.generateTokensFromRefreshToken(
-      args.refreshToken,
+      args.appToken,
     );
 
     return { tokens: tokens };
