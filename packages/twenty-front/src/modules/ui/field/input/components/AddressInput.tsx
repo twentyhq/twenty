@@ -9,7 +9,7 @@ import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetad
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { TextInputRaw } from '@/ui/input/components/TextInputRaw';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAddressContainer = styled.div`
@@ -177,9 +177,13 @@ export const AddressInput = ({
     [onEscape, internalValue],
   );
 
+  const { useListenClickOutside } = useClickOutsideListener('addressInput');
+
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
+      event.stopImmediatePropagation();
+
       onClickOutside?.(event, internalValue);
     },
     enabled: isDefined(onClickOutside),
@@ -188,10 +192,6 @@ export const AddressInput = ({
   useEffect(() => {
     setInternalValue(value);
   }, [value]);
-
-  useEffect(() => {
-    addressStreet1InputRef.current?.focus();
-  }, []);
 
   return (
     <div ref={refs.setFloating} style={floatingStyles}>

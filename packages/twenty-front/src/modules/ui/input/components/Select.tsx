@@ -123,7 +123,7 @@ export const Select = <Value extends string | number | null>({
   });
 
   const selectControl = (
-    <StyledControlContainer disabled={isDisabled} ref={selectContainerRef}>
+    <StyledControlContainer disabled={isDisabled}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
           <selectedOption.Icon
@@ -146,6 +146,7 @@ export const Select = <Value extends string | number | null>({
       fullWidth={fullWidth}
       tabIndex={0}
       onBlur={onBlur}
+      ref={selectContainerRef}
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
