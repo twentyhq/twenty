@@ -184,7 +184,7 @@ export class MessageParticipantRepository {
         messageParticipantsToSave,
         {
           messageId: 'uuid',
-          role: 'text',
+          role: `${dataSourceSchema}."messageParticipant_role_enum"`,
           handle: 'text',
           displayName: 'text',
           personId: 'uuid',
