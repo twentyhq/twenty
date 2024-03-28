@@ -199,6 +199,10 @@ export class AuthService {
       throw new NotFoundException(`Invalid client '${clientId}'`);
     }
 
+    if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
+      throw new NotFoundException(`redirectUrl not found for '${clientId}'`);
+    }
+
     const authorizationCode = crypto.randomBytes(42).toString('hex');
 
     // const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
