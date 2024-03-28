@@ -1,3 +1,4 @@
+version: "3.9"
 name: twenty
 
 services:
@@ -13,7 +14,7 @@ services:
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
 
-      ENABLE_DB_MIGRATIONS: true
+      ENABLE_DB_MIGRATIONS: "true"
 
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
       STORAGE_TYPE: ${STORAGE_TYPE}
