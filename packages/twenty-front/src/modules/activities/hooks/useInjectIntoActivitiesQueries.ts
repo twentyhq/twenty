@@ -131,6 +131,12 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
+        queryFields: {
+          id: true,
+          __typename: true,
+          title: true,
+          body: true,
+        },
       });
     } else {
       const currentFindManyActivitiesQueryVariables = {
@@ -165,6 +171,20 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
+        queryFields: {
+          activityTargets: {
+            id: true,
+            __typename: true,
+          },
+          author: {
+            id: true,
+            __typename: true,
+          },
+          assignee: {
+            id: true,
+            __typename: true,
+          },
+        },
       });
     }
   };

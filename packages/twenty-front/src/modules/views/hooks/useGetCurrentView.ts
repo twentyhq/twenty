@@ -6,7 +6,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
-import { GraphQLView } from '@/views/types/GraphQLView';
+import { View } from '@/views/types/View';
 import { combinedViewFilters } from '@/views/utils/combinedViewFilters';
 import { combinedViewSorts } from '@/views/utils/combinedViewSorts';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
@@ -18,9 +18,7 @@ export const useGetCurrentView = (viewBarComponentId?: string) => {
     viewBarComponentId,
   );
 
-  const { records: views } = usePrefetchedData<GraphQLView>(
-    PrefetchKey.AllViews,
-  );
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const {
     currentViewIdState,

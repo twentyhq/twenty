@@ -6,11 +6,14 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+// TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
   relationFieldDepth = 0,
   relationFieldEagerLoad,
+  queryFields,
+  onlyIdTypenameOnRelations,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   field: Pick<
@@ -19,6 +22,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
   >;
   relationFieldDepth?: number;
   relationFieldEagerLoad?: Record<string, any>;
+  queryFields?: Record<string, any>;
+  onlyIdTypenameOnRelations?: boolean;
 }): any => {
   const fieldType = field.type;
 
@@ -55,12 +60,17 @@ export const mapFieldMetadataToGraphQLQuery = ({
       return '';
     }
 
+    const relationDepth = relationFieldDepth - 1;
+    const relationIsLastDepth = relationDepth === 0;
+
     return `${field.name}
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
   eagerLoadedRelations: relationFieldEagerLoad,
   depth: relationFieldDepth - 1,
+  queryFields,
+  onlyIdTypenameOnThisLevel: relationIsLastDepth && onlyIdTypenameOnRelations,
 })}`;
   } else if (
     fieldType === 'RELATION' &&
@@ -77,6 +87,9 @@ ${mapObjectMetadataToGraphQLQuery({
       return '';
     }
 
+    const relationDepth = relationFieldDepth - 1;
+    const relationIsLastDepth = relationDepth === 0;
+
     return `${field.name}
 {
   edges {
@@ -85,6 +98,9 @@ ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItem: relationMetadataItem,
       eagerLoadedRelations: relationFieldEagerLoad,
       depth: relationFieldDepth - 1,
+      queryFields,
+      onlyIdTypenameOnThisLevel:
+        relationIsLastDepth && onlyIdTypenameOnRelations,
     })}
   }
 }`;

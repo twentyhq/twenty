@@ -8,6 +8,11 @@ export type FieldDefinitionRelationType =
   | 'TO_MANY_OBJECTS'
   | 'TO_ONE_OBJECT';
 
+export type RelationDirections = {
+  from: FieldDefinitionRelationType;
+  to: FieldDefinitionRelationType;
+};
+
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;
   label: string;

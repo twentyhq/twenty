@@ -5,7 +5,6 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { useInjectIntoFindOneRecordQueryCache } from '@/object-record/cache/hooks/useInjectIntoFindOneRecordQueryCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
@@ -18,14 +17,9 @@ export const useAddRecordInCache = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();
 
-  const { injectIntoFindOneRecordQueryCache } =
-    useInjectIntoFindOneRecordQueryCache({
-      objectMetadataItem,
-    });
-
   return useRecoilCallback(
     ({ set }) =>
-      (record: ObjectRecord) => {
+      (record: ObjectRecord, eagerLoadedRelations?: Record<string, any>) => {
         const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -34,6 +28,8 @@ export const useAddRecordInCache = ({
           )} ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
             objectMetadataItem,
+            eagerLoadedRelations,
+            onlyIdTypenameOnRelations: true,
           })}
         `;
 
@@ -49,16 +45,14 @@ export const useAddRecordInCache = ({
         });
 
         // TODO: should we keep this here ? Or should the caller of createOneRecordInCache/createManyRecordsInCache be responsible for this ?
-        injectIntoFindOneRecordQueryCache(cachedObjectRecord);
+        // injectIntoFindOneRecordQueryCache(
+        //   cachedObjectRecord,
+        //   eagerLoadedRelations,
+        // );
 
         // TODO: remove this once we get rid of entityFieldsFamilyState
         set(recordStoreFamilyState(record.id), record);
       },
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      apolloClient,
-      injectIntoFindOneRecordQueryCache,
-    ],
+    [objectMetadataItem, objectMetadataItems, apolloClient],
   );
 };

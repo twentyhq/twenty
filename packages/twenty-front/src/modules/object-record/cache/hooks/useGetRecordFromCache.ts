@@ -46,6 +46,7 @@ export const useGetRecordFromCache = ({
       return cache.readFragment<CachedObjectRecord & { __typename: string }>({
         id: cachedRecordId,
         fragment: cacheReadFragment,
+        returnPartialData: true,
       });
     },
     [objectMetadataItem, objectMetadataItems, apolloClient],

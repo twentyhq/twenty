@@ -141,8 +141,8 @@ export const useExportTableData = ({
     ...usedFindManyParams,
     depth: 0,
     limit: pageSize,
-    onCompleted: (_data, { hasNextPage }) => {
-      setHasNextPage(hasNextPage ?? false);
+    onCompleted: (_data, options) => {
+      setHasNextPage(options?.pageInfo?.hasNextPage ?? false);
     },
   });
 

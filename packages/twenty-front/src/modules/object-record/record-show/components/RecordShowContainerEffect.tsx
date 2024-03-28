@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { Activity } from '@/activities/types/Activity';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
@@ -15,7 +14,7 @@ export const RecordShowContainer = ({
   objectRecordId: string;
   objectNameSingular: string;
 }) => {
-  const { record, loading } = useFindOneRecord({
+  const { record: activity, loading } = useFindOneRecord<Activity>({
     objectRecordId,
     objectNameSingular,
     depth: 3,
@@ -35,14 +34,9 @@ export const RecordShowContainer = ({
     }
   }, [loading, recordLoading, setRecordLoading]);
 
-  const { makeActivityWithoutConnection } = useActivityConnectionUtils();
-
   useEffect(() => {
-    if (!loading && isDefined(record)) {
-      const { activity: activityWithoutConnection } =
-        makeActivityWithoutConnection(record as any);
-
-      setRecordStore(activityWithoutConnection as Activity);
+    if (!loading && isDefined(activity)) {
+      setRecordStore(activity);
     }
-  }, [loading, record, setRecordStore, makeActivityWithoutConnection]);
+  }, [loading, setRecordStore, activity]);
 };

@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -29,7 +28,7 @@ export const useActivities = ({
 }) => {
   const [initialized, setInitialized] = useState(false);
 
-  const { makeActivityWithoutConnection } = useActivityConnectionUtils();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
     activityTargets,
@@ -65,23 +64,38 @@ export const useActivities = ({
     (!skipActivityTargets &&
       (!initializedActivityTargets || !activityTargetsFound));
 
-  const { records: activitiesWithConnection, loading: loadingActivities } =
+  const targetObjectNameSingularToLoadEagerly = Object.fromEntries(
+    objectMetadataItems
+      .filter(
+        (objectMetadataItem) =>
+          objectMetadataItem.isActive && !objectMetadataItem.isSystem,
+      )
+      .map((objectMetadataItem) => [objectMetadataItem.nameSingular, true]),
+  );
+
+  const eagerLoadedRelations: Record<string, any> = {
+    activityTargets: {
+      activity: true,
+      ...targetObjectNameSingularToLoadEagerly,
+    },
+    assignee: true,
+    author: true,
+  };
+
+  const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: skipActivities,
       objectNameSingular: CoreObjectNameSingular.Activity,
-      depth: 1,
+      depth: 3,
+      eagerLoadedRelations,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(
         ({ set }) =>
-          (data) => {
+          (activities) => {
             if (!initialized) {
               setInitialized(true);
             }
-
-            const activities = getRecordsFromRecordConnection({
-              recordConnection: data,
-            });
 
             for (const activity of activities) {
               set(recordStoreFamilyState(activity.id), activity);
@@ -92,11 +106,6 @@ export const useActivities = ({
     });
 
   const loading = loadingActivities || loadingActivityTargets;
-
-  // TODO: fix connection in relation => automatically change to an array
-  const activities: Activity[] = activitiesWithConnection
-    ?.map(makeActivityWithoutConnection as any)
-    .map(({ activity }: any) => activity);
 
   const noActivities =
     (!activityTargetsFound && !skipActivityTargets && initialized) ||

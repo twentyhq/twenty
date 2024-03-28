@@ -1,3 +1,4 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
@@ -5,21 +6,34 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
-  objectNameSingular,
+  objectMetadataItems,
+  objectMetadataItem,
   records,
+  queryFields,
+  withPageInfo = true,
 }: {
-  objectNameSingular: string;
+  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'namePlural' | 'nameSingular'
+  >;
   records: T[];
+  queryFields?: Record<string, any>;
+  withPageInfo?: boolean;
 }) => {
   return {
-    __typename: getConnectionTypename({ objectNameSingular }),
+    __typename: getConnectionTypename({
+      objectNameSingular: objectMetadataItem.nameSingular,
+    }),
     edges: records.map((record) => {
       return getRecordEdgeFromRecord({
-        objectNameSingular,
+        objectMetadataItems,
+        objectMetadataItem,
+        queryFields,
         record,
       });
     }),
-    pageInfo: getEmptyPageInfo(),
-    totalCount: records.length,
+    ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
+    ...(withPageInfo && { totalCount: records.length }),
   } as ObjectRecordConnection<T>;
 };

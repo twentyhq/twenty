@@ -18,10 +18,11 @@ export const useInjectIntoFindOneRecordQueryCache = ({
     T extends ObjectRecord = ObjectRecord,
   >(
     record: T,
+    eagerLoadedRelations?: Record<string, any>,
   ) => {
     const findOneRecordQueryForCacheInjection = generateFindOneRecordQuery({
       objectMetadataItem,
-      depth: 1,
+      eagerLoadedRelations,
     });
 
     apolloClient.writeQuery({

@@ -29,7 +29,7 @@ export const useInjectIntoActivityTargetsQueries = () => {
     objectMetadataItem: objectMetadataItemActivityTarget,
   });
 
-  const injectActivityTargetsQueries = ({
+  const injectIntoActivityTargetsQueries = ({
     activityTargetsToInject,
     targetableObjects,
   }: {
@@ -67,16 +67,27 @@ export const useInjectIntoActivityTargetsQueries = () => {
     const newActivityTargets = [
       ...existingActivityTargetsWithoutDuplicates,
       ...activityTargetsToInject,
-    ];
+    ].map((activityTarget) => ({
+      ...activityTarget,
+      activity: {
+        __typename: 'Activity',
+        id: activityTarget.activity.id,
+      },
+    }));
 
     overwriteFindManyActivityTargetsQueryInCache({
       objectRecordsToOverwrite: newActivityTargets,
       queryVariables: findManyActivitiyTargetsQueryVariables,
-      depth: 2,
+      queryFields: {
+        __typename: true,
+        activity: true,
+        opportunity: true,
+        id: true,
+      },
     });
   };
 
   return {
-    injectActivityTargetsQueries,
+    injectIntoActivityTargetsQueries,
   };
 };

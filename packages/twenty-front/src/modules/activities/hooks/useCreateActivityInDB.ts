@@ -1,6 +1,5 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -10,6 +9,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
+    eagerLoadedRelations: {},
   });
 
   const { createManyRecords: createManyActivityTargets } =
@@ -17,16 +17,10 @@ export const useCreateActivityInDB = () => {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const { makeActivityWithConnection } = useActivityConnectionUtils();
-
   const createActivityInDB = async (activityToCreate: ActivityForEditor) => {
-    const { activityWithConnection } = makeActivityWithConnection(
-      activityToCreate as any, // TODO: fix type
-    );
-
     await createOneActivity?.(
       {
-        ...activityWithConnection,
+        ...activityToCreate,
         updatedAt: new Date().toISOString(),
       },
       {

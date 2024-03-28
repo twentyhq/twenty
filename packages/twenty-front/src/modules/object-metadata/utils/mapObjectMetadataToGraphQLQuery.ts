@@ -9,19 +9,34 @@ export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItem,
   depth = 1,
   eagerLoadedRelations,
+  queryFields,
+  onlyIdTypenameOnRelations,
+  onlyIdTypenameOnThisLevel,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
   depth?: number;
   eagerLoadedRelations?: Record<string, any>;
+  queryFields?: Record<string, any>;
+  onlyIdTypenameOnRelations?: boolean;
+  onlyIdTypenameOnThisLevel?: boolean;
 }): any => {
+  const fieldsThatShouldBeQueried =
+    objectMetadataItem?.fields
+      .filter((field) => field.isActive)
+      .filter((field) =>
+        shouldFieldBeQueried({
+          field,
+          depth,
+          eagerLoadedRelations,
+          queryFields,
+          onlyIdTypename: onlyIdTypenameOnThisLevel,
+        }),
+      ) ?? [];
+
   return `{
 __typename
-${(objectMetadataItem?.fields ?? [])
-  .filter((field) => field.isActive)
-  .filter((field) =>
-    shouldFieldBeQueried({ field, depth, eagerLoadedRelations }),
-  )
+${fieldsThatShouldBeQueried
   .map((field) =>
     mapFieldMetadataToGraphQLQuery({
       objectMetadataItems,
@@ -30,6 +45,9 @@ ${(objectMetadataItem?.fields ?? [])
       relationFieldEagerLoad: isUndefined(eagerLoadedRelations)
         ? undefined
         : eagerLoadedRelations[field.name] ?? undefined,
+
+      queryFields: queryFields?.[field.name],
+      onlyIdTypenameOnRelations,
     }),
   )
   .join('\n')}

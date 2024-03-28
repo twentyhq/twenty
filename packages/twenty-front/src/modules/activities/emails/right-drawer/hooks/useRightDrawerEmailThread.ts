@@ -40,7 +40,6 @@ export const useRightDrawerEmailThread = () => {
       receivedAt: 'AscNullsLast',
     },
     skip: !viewableEmailThreadId,
-    useRecordsWithoutConnection: true,
   });
 
   const fetchMoreMessages = useCallback(() => {

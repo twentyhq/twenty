@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
@@ -8,11 +9,11 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const makeActivityTargetsToCreateFromTargetableObjects = ({
   targetableObjects,
-  activityId,
+  activity,
   targetObjectRecords,
 }: {
   targetableObjects: ActivityTargetableObject[];
-  activityId: string;
+  activity: Activity;
   targetObjectRecords: ObjectRecord[];
 }): Partial<ActivityTarget>[] => {
   const activityTargetableObjects = targetableObjects
@@ -34,7 +35,8 @@ export const makeActivityTargetsToCreateFromTargetableObjects = ({
       const activityTarget = {
         [targetableObject.targetObjectNameSingular]: relatedObjectRecord,
         [targetableObjectFieldIdName]: targetableObject.id,
-        activityId,
+        activity,
+        activityId: activity.id,
         id: v4(),
         updatedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),

@@ -34,7 +34,14 @@ export const useInjectIntoActivityTargetInlineCellCache = () => {
     overwriteFindManyActivityTargetsQueryInCache({
       queryVariables: activityTargetInlineCellQueryVariables,
       objectRecordsToOverwrite: activityTargetsToInject,
-      depth: 2,
+      queryFields: {
+        id: true,
+        __typename: true,
+        activity: {
+          id: true,
+          __typename: true,
+        },
+      },
     });
   };
 

@@ -27,6 +27,7 @@ export const useModifyRecordFromCache = ({
     cache.modify<CachedObjectRecord>({
       id: cachedRecordId,
       fields: fieldModifiers,
+      optimistic: true,
     });
   };
 };
