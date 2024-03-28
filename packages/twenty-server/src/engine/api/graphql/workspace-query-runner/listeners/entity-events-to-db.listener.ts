@@ -49,6 +49,10 @@ export class EntityEventsToDbListener {
     payload: ObjectRecordCreateEvent<any>,
     operation: string,
   ) {
+    if (payload.objectMetadata.isSystem) {
+      return;
+    }
+
     const isEventObjectEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
         workspaceId: payload.workspaceId,
@@ -60,10 +64,6 @@ export class EntityEventsToDbListener {
       !isEventObjectEnabledFeatureFlag ||
       !isEventObjectEnabledFeatureFlag.value
     ) {
-      return;
-    }
-
-    if (payload.objectMetadata.isSystem) {
       return;
     }
 
