@@ -164,6 +164,7 @@ const TextInputComponent = (
       inputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,
+    { enabled: !disableHotkeys },
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);
