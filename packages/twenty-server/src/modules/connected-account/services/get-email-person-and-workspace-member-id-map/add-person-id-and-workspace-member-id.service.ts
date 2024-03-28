@@ -8,14 +8,14 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
 @Injectable()
-export class GetEmailPersonIdAndWorkspaceMemberIdMapService {
+export class AddPersonIdAndWorkspaceMemberIdService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
   ) {}
 
-  public async getEmailPersonIdMap(
+  private async getEmailPersonIdMap(
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -29,7 +29,7 @@ export class GetEmailPersonIdAndWorkspaceMemberIdMapService {
     return new Map(personIds.map((person) => [person.email, person.id]));
   }
 
-  public async getEmailWorkspaceMemberIdMap(
+  private async getEmailWorkspaceMemberIdMap(
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -55,5 +55,36 @@ export class GetEmailPersonIdAndWorkspaceMemberIdMapService {
         workspaceMember.id,
       ]),
     );
+  }
+
+  public async addPersonIdAndWorkspaceMemberId<T extends { handle: string }>(
+    objects: T[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<
+    (T & {
+      personId: string | null;
+      workspaceMemberId: string | null;
+    })[]
+  > {
+    const handles = objects.map((object) => object.handle);
+
+    const personIdMap = await this.getEmailPersonIdMap(
+      handles,
+      workspaceId,
+      transactionManager,
+    );
+
+    const workspaceMemberIdMap = await this.getEmailWorkspaceMemberIdMap(
+      handles,
+      workspaceId,
+      transactionManager,
+    );
+
+    return objects.map((object) => ({
+      ...object,
+      personId: personIdMap.get(object.handle) || null,
+      workspaceMemberId: workspaceMemberIdMap.get(object.handle) || null,
+    }));
   }
 }

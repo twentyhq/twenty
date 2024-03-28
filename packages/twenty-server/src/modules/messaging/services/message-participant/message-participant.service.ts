@@ -11,7 +11,7 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import { GetEmailPersonIdAndWorkspaceMemberIdMapService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/get-email-person-id-and-workspace-member-id-map.service';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/add-person-id-and-workspace-member-id.service';
 
 @Injectable()
 export class MessageParticipantService {
@@ -19,7 +19,7 @@ export class MessageParticipantService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
-    private readonly getEmailPersonIdAndWorkspaceMemberIdMapService: GetEmailPersonIdAndWorkspaceMemberIdMapService,
+    private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
@@ -78,27 +78,12 @@ export class MessageParticipantService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const handles = participants.map((participant) => participant.handle);
-
-    const emailPersonIdMap =
-      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailPersonIdMap(
-        handles,
+    const messageParticipantsToSave =
+      await this.addPersonIdAndWorkspaceMemberIdService.addPersonIdAndWorkspaceMemberId(
+        participants,
         workspaceId,
         transactionManager,
       );
-
-    const emailWorkspaceMemberIdMap =
-      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailWorkspaceMemberIdMap(
-        handles,
-        workspaceId,
-        transactionManager,
-      );
-
-    const messageParticipantsToSave = participants.map((participant) => ({
-      ...participant,
-      personId: emailPersonIdMap.get(participant.handle),
-      workspaceMemberId: emailWorkspaceMemberIdMap.get(participant.handle),
-    }));
 
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(

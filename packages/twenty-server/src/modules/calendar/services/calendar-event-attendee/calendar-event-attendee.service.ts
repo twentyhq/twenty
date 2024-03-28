@@ -11,7 +11,7 @@ import {
   CalendarEventAttendee,
   CalendarEventAttendeeWithId,
 } from 'src/modules/calendar/types/calendar-event';
-import { GetEmailPersonIdAndWorkspaceMemberIdMapService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/get-email-person-id-and-workspace-member-id-map.service';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/add-person-id-and-workspace-member-id.service';
 
 @Injectable()
 export class CalendarEventAttendeeService {
@@ -19,7 +19,7 @@ export class CalendarEventAttendeeService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
-    private readonly getEmailPersonIdAndWorkspaceMemberIdMapService: GetEmailPersonIdAndWorkspaceMemberIdMapService,
+    private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
   ) {}
 
   public async updateCalendarEventAttendeesAfterContactCreation(
@@ -80,31 +80,12 @@ export class CalendarEventAttendeeService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const handles = calendarEventAttendees.map(
-      (calendarEventAttendee) => calendarEventAttendee.handle,
-    );
-
-    const emailPersonIdMap =
-      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailPersonIdMap(
-        handles,
+    const calendarEventAttendeesToSave =
+      await this.addPersonIdAndWorkspaceMemberIdService.addPersonIdAndWorkspaceMemberId(
+        calendarEventAttendees,
         workspaceId,
         transactionManager,
       );
-
-    const emailWorkspaceMemberIdMap =
-      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailWorkspaceMemberIdMap(
-        handles,
-        workspaceId,
-        transactionManager,
-      );
-
-    const calendarEventAttendeesToSave = calendarEventAttendees.map(
-      (attendee) => ({
-        ...attendee,
-        personId: emailPersonIdMap.get(attendee.handle),
-        workspaceMemberId: emailWorkspaceMemberIdMap.get(attendee.handle),
-      }),
-    );
 
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(
