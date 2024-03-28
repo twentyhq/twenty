@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 
 const typeOrmTypeMapping = new Map<string, FieldMetadataType>([
   ['uuid', FieldMetadataType.UUID],
-  ['timestamp', FieldMetadataType.DATE_TIME],
+  ['timestamptz', FieldMetadataType.DATE_TIME],
   // Add more types here if we need to support more than id, and createdAt/updatedAt/deletedAt
 ]);
 
