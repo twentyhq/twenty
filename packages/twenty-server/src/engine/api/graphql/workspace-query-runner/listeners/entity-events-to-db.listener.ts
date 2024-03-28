@@ -63,6 +63,10 @@ export class EntityEventsToDbListener {
       return;
     }
 
+    if (payload.objectMetadata.isSystem) {
+      return;
+    }
+
     this.messageQueueService.add<SaveEventToDbJobData>(SaveEventToDbJob.name, {
       workspaceId: payload.workspaceId,
       userId: payload.userId,
