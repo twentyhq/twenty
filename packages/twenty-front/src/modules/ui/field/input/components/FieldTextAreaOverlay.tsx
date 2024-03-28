@@ -8,6 +8,7 @@ const StyledFieldTextAreaOverlay = styled.div`
   height: 32px;
   margin: -1px;
   width: 100%;
+  align-items: center;
 `;
 
 export const FieldTextAreaOverlay = StyledFieldTextAreaOverlay;

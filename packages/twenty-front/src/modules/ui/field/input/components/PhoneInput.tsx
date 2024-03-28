@@ -15,7 +15,9 @@ const StyledContainer = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+
+  width:100%;
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
