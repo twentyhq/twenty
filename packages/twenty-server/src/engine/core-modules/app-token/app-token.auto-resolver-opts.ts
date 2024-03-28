@@ -4,13 +4,11 @@ import {
   ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { CreateAppTokenInput } from 'src/engine/core-modules/app-token/dtos/create-app-token.input';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 
-import { RefreshToken } from './refresh-token.entity';
-
-import { CreateRefreshTokenInput } from './dtos/create-refresh-token.input';
-
-export const refreshTokenAutoResolverOpts: AutoResolverOpts<
+export const appTokenAutoResolverOpts: AutoResolverOpts<
   any,
   any,
   unknown,
@@ -19,9 +17,9 @@ export const refreshTokenAutoResolverOpts: AutoResolverOpts<
   PagingStrategies
 >[] = [
   {
-    EntityClass: RefreshToken,
-    DTOClass: RefreshToken,
-    CreateDTOClass: CreateRefreshTokenInput,
+    EntityClass: AppToken,
+    DTOClass: AppToken,
+    CreateDTOClass: CreateAppTokenInput,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {

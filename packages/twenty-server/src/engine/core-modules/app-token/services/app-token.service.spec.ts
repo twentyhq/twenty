@@ -1,25 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
-import { RefreshTokenService } from './refresh-token.service';
-
-describe('RefreshTokenService', () => {
-  let service: RefreshTokenService;
+describe('AppTokenService', () => {
+  let service: AppTokenService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        RefreshTokenService,
+        AppTokenService,
         {
-          provide: getRepositoryToken(RefreshToken),
+          provide: getRepositoryToken(AppToken),
           useValue: {},
         },
       ],
     }).compile();
 
-    service = module.get<RefreshTokenService>(RefreshTokenService);
+    service = module.get<AppTokenService>(AppTokenService);
   });
 
   it('should be defined', () => {

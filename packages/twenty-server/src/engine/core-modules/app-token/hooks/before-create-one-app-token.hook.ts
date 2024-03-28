@@ -4,9 +4,9 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { v4 as uuidv4 } from 'uuid';
 
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
-export class BeforeCreateOneRefreshToken<T extends RefreshToken>
+export class BeforeCreateOneAppToken<T extends AppToken>
   implements BeforeCreateOneHook<T, any>
 {
   async run(
