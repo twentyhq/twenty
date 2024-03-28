@@ -10,8 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
-import { BeforeCreateOneAppToken } from 'packages/twenty-server/src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 
+import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export enum AppTokenType {

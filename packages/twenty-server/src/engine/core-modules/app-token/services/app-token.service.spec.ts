@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { AppTokenService } from 'packages/twenty-server/src/engine/core-modules/app-token/services/app-token.service';
-
+import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 describe('AppTokenService', () => {

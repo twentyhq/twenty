@@ -3,9 +3,9 @@ import {
   PagingStrategies,
   ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
-import { AppToken } from 'packages/twenty-server/src/engine/core-modules/app-token/app-token.entity';
-import { CreateAppTokenInput } from 'packages/twenty-server/src/engine/core-modules/app-token/dtos/create-app-token.input';
 
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { CreateAppTokenInput } from 'src/engine/core-modules/app-token/dtos/create-app-token.input';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 
 export const appTokenAutoResolverOpts: AutoResolverOpts<

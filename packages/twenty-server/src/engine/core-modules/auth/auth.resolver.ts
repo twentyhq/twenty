@@ -9,8 +9,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { AppTokenInput } from 'packages/twenty-server/src/engine/core-modules/auth/dto/app-token.input';
 
+import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { assert } from 'src/utils/assert';
