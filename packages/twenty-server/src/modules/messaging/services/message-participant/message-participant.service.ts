@@ -80,14 +80,14 @@ export class MessageParticipantService {
 
     const handles = participants.map((participant) => participant.handle);
 
-    const emailPersonIdsMap =
+    const emailPersonIdMap =
       await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailPersonIdMap(
         handles,
         workspaceId,
         transactionManager,
       );
 
-    const emailWorkspaceMemberIdsMap =
+    const emailWorkspaceMemberIdMap =
       await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailWorkspaceMemberIdMap(
         handles,
         workspaceId,
@@ -96,8 +96,8 @@ export class MessageParticipantService {
 
     const messageParticipantsToSave = participants.map((participant) => ({
       ...participant,
-      personId: emailPersonIdsMap.get(participant.handle),
-      workspaceMemberId: emailWorkspaceMemberIdsMap.get(participant.handle),
+      personId: emailPersonIdMap.get(participant.handle),
+      workspaceMemberId: emailWorkspaceMemberIdMap.get(participant.handle),
     }));
 
     const { flattenedValues, valuesString } =

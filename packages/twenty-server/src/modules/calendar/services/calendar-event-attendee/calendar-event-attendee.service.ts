@@ -11,6 +11,7 @@ import {
   CalendarEventAttendee,
   CalendarEventAttendeeWithId,
 } from 'src/modules/calendar/types/calendar-event';
+import { GetEmailPersonIdAndWorkspaceMemberIdMapService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/get-email-person-id-and-workspace-member-id-map.service';
 
 @Injectable()
 export class CalendarEventAttendeeService {
@@ -18,6 +19,7 @@ export class CalendarEventAttendeeService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
+    private readonly getEmailPersonIdAndWorkspaceMemberIdMapService: GetEmailPersonIdAndWorkspaceMemberIdMapService,
   ) {}
 
   public async updateCalendarEventAttendeesAfterContactCreation(
@@ -82,47 +84,25 @@ export class CalendarEventAttendeeService {
       (calendarEventAttendee) => calendarEventAttendee.handle,
     );
 
-    const calendarEventAttendeesPersonIds: {
-      id: string;
-      email: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-      [handles],
-      workspaceId,
-      transactionManager,
-    );
+    const emailPersonIdMap =
+      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailPersonIdMap(
+        handles,
+        workspaceId,
+        transactionManager,
+      );
 
-    const emailsPersonIdsMap = new Map(
-      calendarEventAttendeesPersonIds.map((person) => [
-        person.email,
-        person.id,
-      ]),
-    );
-
-    const calendarEventAttendeesWorkspaceMemberIds: {
-      id: string;
-      email: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
-          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
-          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
-      [handles],
-      workspaceId,
-      transactionManager,
-    );
-
-    const emailsWorkspaceMemberIdsMap = new Map(
-      calendarEventAttendeesWorkspaceMemberIds.map((workspaceMember) => [
-        workspaceMember.email,
-        workspaceMember.id,
-      ]),
-    );
+    const emailWorkspaceMemberIdMap =
+      await this.getEmailPersonIdAndWorkspaceMemberIdMapService.getEmailWorkspaceMemberIdMap(
+        handles,
+        workspaceId,
+        transactionManager,
+      );
 
     const calendarEventAttendeesToSave = calendarEventAttendees.map(
       (attendee) => ({
         ...attendee,
-        personId: emailsPersonIdsMap.get(attendee.handle),
-        workspaceMemberId: emailsWorkspaceMemberIdsMap.get(attendee.handle),
+        personId: emailPersonIdMap.get(attendee.handle),
+        workspaceMemberId: emailWorkspaceMemberIdMap.get(attendee.handle),
       }),
     );
 
