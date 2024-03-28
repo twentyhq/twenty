@@ -25,6 +25,18 @@ export const generateEmptyFieldValue = (
         lastName: '',
       };
     }
+    case FieldMetadataType.Address: {
+      return {
+        addressStreet1: '',
+        addressStreet2: '',
+        addressCity: '',
+        addressState: '',
+        addressCountry: '',
+        addressPostcode: '',
+        addressLat: null,
+        addressLng: null,
+      };
+    }
     case FieldMetadataType.DateTime: {
       return null;
     }
