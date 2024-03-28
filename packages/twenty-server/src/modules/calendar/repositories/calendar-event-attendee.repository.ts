@@ -104,6 +104,13 @@ export class CalendarEventAttendeeRepository {
       transactionManager,
     );
 
+    const emailsPersonIdsMap = new Map(
+      calendarEventAttendeesPersonIds.map((person) => [
+        person.email,
+        person.id,
+      ]),
+    );
+
     const calendarEventAttendeesWorkspaceMemberIds: {
       id: string;
       email: string;
@@ -116,15 +123,18 @@ export class CalendarEventAttendeeRepository {
       transactionManager,
     );
 
+    const emailsWorkspaceMemberIdsMap = new Map(
+      calendarEventAttendeesWorkspaceMemberIds.map((workspaceMember) => [
+        workspaceMember.email,
+        workspaceMember.id,
+      ]),
+    );
+
     const calendarEventAttendeesToSave = calendarEventAttendees.map(
       (attendee) => ({
         ...attendee,
-        personId: calendarEventAttendeesPersonIds.find(
-          (e) => e.email === attendee.handle,
-        )?.id,
-        workspaceMemberId: calendarEventAttendeesWorkspaceMemberIds.find(
-          (e) => e.email === attendee.handle,
-        )?.id,
+        personId: emailsPersonIdsMap.get(attendee.handle),
+        workspaceMemberId: emailsWorkspaceMemberIdsMap.get(attendee.handle),
       }),
     );
 
