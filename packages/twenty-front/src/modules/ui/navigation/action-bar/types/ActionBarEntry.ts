@@ -7,4 +7,5 @@ export type ActionBarEntry = {
   accent?: MenuItemAccent;
   onClick?: () => void;
   subActions?: ActionBarEntry[];
+  ConfirmationModal?: JSX.Element;
 };

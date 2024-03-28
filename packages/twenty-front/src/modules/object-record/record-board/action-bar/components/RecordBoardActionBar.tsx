@@ -18,5 +18,5 @@ export const RecordBoardActionBar = ({
     return null;
   }
 
-  return <ActionBar />;
+  return <ActionBar selectedIds={selectedRecordIds} />;
 };

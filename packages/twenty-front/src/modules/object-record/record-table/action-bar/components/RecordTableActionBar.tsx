@@ -16,5 +16,5 @@ export const RecordTableActionBar = ({
     return null;
   }
 
-  return <ActionBar />;
+  return <ActionBar selectedIds={selectedRowIds} />;
 };
