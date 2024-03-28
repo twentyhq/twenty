@@ -7,7 +7,7 @@ import { HttpModule } from '@nestjs/axios';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -48,7 +48,7 @@ const jwtModule = JwtModule.registerAsync({
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
-      [Workspace, User, RefreshToken, FeatureFlagEntity],
+      [Workspace, User, AppToken, FeatureFlagEntity],
       'core',
     ),
     HttpModule,

@@ -13,7 +13,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 
 const coreObjectNames = [
   'featureFlag',
-  'refreshToken',
+  'appToken',
   'workspace',
   'user',
   'event',
