@@ -1,8 +1,8 @@
+import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -17,7 +17,7 @@ import { RecordDetailRelationSection } from '@/object-record/record-show/record-
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
-import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
+import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
@@ -89,13 +89,7 @@ export const RecordShowContainer = ({
 
     const avatarUrl = result?.data?.uploadImage;
 
-    if (!avatarUrl) {
-      return;
-    }
-    if (isUndefinedOrNull(updateOneRecord)) {
-      return;
-    }
-    if (!recordFromStore) {
+    if (!avatarUrl || isUndefinedOrNull(updateOneRecord) || !recordFromStore) {
       return;
     }
 
@@ -110,21 +104,19 @@ export const RecordShowContainer = ({
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldMetadataItemAvailable(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem) &&
         fieldMetadataItem.id !== labelIdentifierFieldMetadata?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-  const inlineFieldMetadataItems = availableFieldMetadataItems.filter(
+  const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
+    availableFieldMetadataItems,
     (fieldMetadataItem) =>
-      fieldMetadataItem.type !== FieldMetadataType.Relation,
-  );
-
-  const relationFieldMetadataItems = availableFieldMetadataItems.filter(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.type === FieldMetadataType.Relation,
+      fieldMetadataItem.type === FieldMetadataType.Relation
+        ? 'relationFieldMetadataItems'
+        : 'inlineFieldMetadataItems',
   );
 
   return (
@@ -197,40 +189,25 @@ export const RecordShowContainer = ({
                 objectRecordId={objectRecordId}
                 objectNameSingular={objectNameSingular}
               />
-              {relationFieldMetadataItems
-                .filter((item) => {
-                  const relationObjectMetadataItem = item.toRelationMetadata
-                    ? item.toRelationMetadata.fromObjectMetadata
-                    : item.fromRelationMetadata?.toObjectMetadata;
-
-                  if (!relationObjectMetadataItem) {
-                    return false;
-                  }
-
-                  return isObjectMetadataAvailableForRelation(
-                    relationObjectMetadataItem,
-                  );
-                })
-                .map((fieldMetadataItem, index) => (
-                  <FieldContext.Provider
-                    key={objectRecordId + fieldMetadataItem.id}
-                    value={{
-                      entityId: objectRecordId,
-                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition:
-                        formatFieldMetadataItemAsColumnDefinition({
-                          field: fieldMetadataItem,
-                          position: index,
-                          objectMetadataItem,
-                        }),
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordDetailRelationSection />
-                  </FieldContext.Provider>
-                ))}
+              {relationFieldMetadataItems.map((fieldMetadataItem, index) => (
+                <FieldContext.Provider
+                  key={objectRecordId + fieldMetadataItem.id}
+                  value={{
+                    entityId: objectRecordId,
+                    recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                    isLabelIdentifier: false,
+                    fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                      field: fieldMetadataItem,
+                      position: index,
+                      objectMetadataItem,
+                    }),
+                    useUpdateRecord: useUpdateOneObjectRecordMutation,
+                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  }}
+                >
+                  <RecordDetailRelationSection />
+                </FieldContext.Provider>
+              ))}
             </>
           )}
         </ShowPageLeftContainer>

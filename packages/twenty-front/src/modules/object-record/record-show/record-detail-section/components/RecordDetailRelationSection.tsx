@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
@@ -42,7 +42,7 @@ export const RecordDetailRelationSection = () => {
   const record = useRecoilValue(recordStoreFamilyState(entityId));
 
   const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
+    useObjectMetadataItemOnly({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
