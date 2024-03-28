@@ -10,7 +10,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/apps/workspace-member/standard-objects/workspace-member.object-metadata';
 import { assert } from 'src/utils/assert';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {

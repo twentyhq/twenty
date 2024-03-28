@@ -5,7 +5,7 @@ import mockUser from 'test/mock-data/user.json';
 import mockWorkspace from 'test/mock-data/workspace.json';
 import { RequestHandler } from 'express';
 
-import { AppModule } from 'src/app.module';
+import { MainModule } from 'src/main.module';
 
 interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
@@ -28,7 +28,7 @@ export const createApp = async (
   } = {},
 ): Promise<[NestExpressApplication, TestingModule]> => {
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
-    imports: [AppModule],
+    imports: [MainModule],
   });
 
   if (!!config.moduleBuilderHook) {

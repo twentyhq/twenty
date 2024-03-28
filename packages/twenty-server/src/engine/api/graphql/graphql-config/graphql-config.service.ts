@@ -13,7 +13,6 @@ import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 import * as Sentry from '@sentry/node';
 
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
@@ -25,6 +24,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
+import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 
 import { CreateContextFactory } from './factories/create-context.factory';
 
@@ -67,7 +67,7 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       context: (context) => this.createContextFactory.create(context),
       autoSchemaFile: true,
-      include: [CoreEngineModule],
+      include: [GraphQLConfigModule],
       conditionalSchema: async (context) => {
         let user: User | undefined;
         let workspace: Workspace | undefined;

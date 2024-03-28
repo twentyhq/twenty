@@ -9,7 +9,7 @@ import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import '@sentry/tracing';
 
-import { AppModule } from './app.module';
+import { MainModule } from './main.module';
 
 import { generateFrontConfig } from './utils/generate-front-config';
 import { settings } from './engine/constants/settings';
@@ -18,7 +18,7 @@ import { EnvironmentService } from './engine/integrations/environment/environmen
 
 const bootstrap = async () => {
   const environmentService = new EnvironmentService(new ConfigService());
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(MainModule, {
     cors: true,
     bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
     rawBody: true,
@@ -31,7 +31,7 @@ const bootstrap = async () => {
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 
   // Apply class-validator container so that we can use injection in validators
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  useContainer(app.select(MainModule), { fallbackOnErrors: true });
 
   // Use our logger
   app.useLogger(logger);
