@@ -10,6 +10,7 @@ import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEff
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
@@ -33,6 +34,7 @@ export const ViewBar = ({
   onCurrentViewChange,
 }: ViewBarProps) => {
   const { objectNamePlural } = useParams();
+  const { hasFiltersQueryParams } = useFiltersFromQueryParams();
 
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';

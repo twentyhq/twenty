@@ -9,7 +9,8 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
-import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
+import { useViewStates, useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
@@ -106,6 +107,7 @@ export const ViewBarDetails = ({
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
+  const { hasFiltersQueryParams } = useFiltersFromQueryParams();
   const canPersistView = useRecoilValue(canPersistViewSelector());
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
@@ -115,6 +117,7 @@ export const ViewBarDetails = ({
   );
 
   const { resetCurrentView } = useResetCurrentView();
+  const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const handleCancelClick = () => {
     resetCurrentView();
@@ -177,7 +180,7 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canPersistView && (
+      {canResetView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}
