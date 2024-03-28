@@ -1,0 +1,18 @@
+import { Module } from '@nestjs/common';
+
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { AppToken } from 'packages/twenty-server/src/engine/core-modules/app-token/app-token.entity';
+import { appTokenAutoResolverOpts } from 'packages/twenty-server/src/engine/core-modules/app-token/app-token.auto-resolver-opts';
+import { AppTokenService } from 'packages/twenty-server/src/engine/core-modules/app-token/services/app-token.service';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [NestjsQueryTypeOrmModule.forFeature([AppToken], 'core')],
+      services: [AppTokenService],
+      resolvers: appTokenAutoResolverOpts,
+    }),
+  ],
+})
+export class AppTokenModule {}

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { RefreshTokenModule } from 'src/engine/core-modules/refresh-token/refresh-token.module';
+import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
@@ -25,7 +25,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     FeatureFlagModule,
     FileModule,
     OpenApiModule,
-    RefreshTokenModule,
+    AppTokenModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
     UserModule,
