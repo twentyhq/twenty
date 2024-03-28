@@ -2,17 +2,21 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "declaration": true,
-    "types": ["node", "vite/client"]
+    "types": ["node", "@nx/react/typings/image.d.ts", "vite/client"]
   },
-  "include": ["src/**/*.ts"],
   "exclude": [
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
     "**/*.stories.ts",
-    "**/*.stories.js",
-    "**/*.stories.jsx",
     "**/*.stories.tsx"
+  ],
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ]
 }
