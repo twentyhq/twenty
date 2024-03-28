@@ -14,6 +14,7 @@ import {
   IconSortDescending,
 } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -116,6 +117,17 @@ export const RecordTableColumnDropdownMenu = ({
 
   return (
     <DropdownMenuItemsContainer>
+      <MenuItem
+        LeftIcon={IconFilter}
+        onClick={handleFilterClick}
+        text="Filter"
+      />
+      <MenuItem
+        LeftIcon={IconSortDescending}
+        onClick={handleSortClick}
+        text="Sort"
+      />
+      <DropdownMenuSeparator />
       {canMoveLeft && (
         <MenuItem
           LeftIcon={IconArrowLeft}
@@ -134,16 +146,6 @@ export const RecordTableColumnDropdownMenu = ({
         LeftIcon={IconEyeOff}
         onClick={handleColumnVisibility}
         text="Hide"
-      />
-      <MenuItem
-        LeftIcon={IconFilter}
-        onClick={handleFilterClick}
-        text="Filter"
-      />
-      <MenuItem
-        LeftIcon={IconSortDescending}
-        onClick={handleSortClick}
-        text="Sort"
       />
     </DropdownMenuItemsContainer>
   );
