@@ -94,23 +94,27 @@ export class CalendarEventAttendeeRepository {
       (calendarEventAttendee) => calendarEventAttendee.handle,
     );
 
-    const calendarEventAttendeesPersonIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
-      );
+    const calendarEventAttendeesPersonIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
 
-    const calendarEventAttendeesWorkspaceMemberIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+    const calendarEventAttendeesWorkspaceMemberIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
           JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
-      );
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
 
     const calendarEventAttendeesToSave = calendarEventAttendees.map(
       (attendee) => ({
