@@ -7,7 +7,10 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import { CalendarEventAttendeeWithId } from 'src/modules/calendar/types/calendar-event';
+import {
+  CalendarEventAttendee,
+  CalendarEventAttendeeWithId,
+} from 'src/modules/calendar/types/calendar-event';
 
 @Injectable()
 export class CalendarEventAttendeeService {
@@ -57,6 +60,88 @@ export class CalendarEventAttendeeService {
       `UPDATE ${dataSourceSchema}."calendarEventAttendee" AS "calendarEventAttendee" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
       WHERE "calendarEventAttendee"."id" = "data"."id"`,
+      flattenedValues,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async saveCalendarEventAttendees(
+    calendarEventAttendees: CalendarEventAttendee[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    if (calendarEventAttendees.length === 0) {
+      return;
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const handles = calendarEventAttendees.map(
+      (calendarEventAttendee) => calendarEventAttendee.handle,
+    );
+
+    const calendarEventAttendeesPersonIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
+
+    const emailsPersonIdsMap = new Map(
+      calendarEventAttendeesPersonIds.map((person) => [
+        person.email,
+        person.id,
+      ]),
+    );
+
+    const calendarEventAttendeesWorkspaceMemberIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+          JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
+
+    const emailsWorkspaceMemberIdsMap = new Map(
+      calendarEventAttendeesWorkspaceMemberIds.map((workspaceMember) => [
+        workspaceMember.email,
+        workspaceMember.id,
+      ]),
+    );
+
+    const calendarEventAttendeesToSave = calendarEventAttendees.map(
+      (attendee) => ({
+        ...attendee,
+        personId: emailsPersonIdsMap.get(attendee.handle),
+        workspaceMemberId: emailsWorkspaceMemberIdsMap.get(attendee.handle),
+      }),
+    );
+
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        calendarEventAttendeesToSave,
+        {
+          calendarEventId: 'uuid',
+          handle: 'text',
+          displayName: 'text',
+          isOrganizer: 'boolean',
+          responseStatus: `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
+          personId: 'uuid',
+          workspaceMemberId: 'uuid',
+        },
+      );
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus", "personId", "workspaceMemberId") VALUES ${valuesString}`,
       flattenedValues,
       workspaceId,
       transactionManager,
