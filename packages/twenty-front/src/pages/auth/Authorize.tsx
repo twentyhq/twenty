@@ -19,12 +19,12 @@ const StyledContainer = styled.div`
 `;
 
 const StyledAppsContainer = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(4)};
-`
+  justify-content: center;
+`;
 
 const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -96,9 +96,19 @@ const Authorize = () => {
     <StyledContainer>
       <StyledCardWrapper>
         <StyledAppsContainer>
-          <img src='/images/integrations/twenty-logo.svg' alt='twenty-icon' height={40} width={40} />
-          <img src='/images/integrations/link-apps.svg' alt='link-icon' height={60} width={60} />
-          <img src={app?.logo} alt='app-icon' height={40} width={40} />
+          <img
+            src="/images/integrations/twenty-logo.svg"
+            alt="twenty-icon"
+            height={40}
+            width={40}
+          />
+          <img
+            src="/images/integrations/link-apps.svg"
+            alt="link-icon"
+            height={60}
+            width={60}
+          />
+          <img src={app?.logo} alt="app-icon" height={40} width={40} />
         </StyledAppsContainer>
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
