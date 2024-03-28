@@ -150,6 +150,20 @@
         ],
         "parallel": false
       }
+    },
+    "database:generate": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+          "nx database:migrate",
+          "nx command-no-deps -- workspace:seed:dev",
+          "nx typeorm -- migration:generate src/database/typeorm/core/migrations/newMigration -d src/database/typeorm/metadata/metadata.datasource"
+        ],
+        "parallel": false
+      }
     }
   }
 }

@@ -83,10 +83,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
         } name: '${incompleteWorkspace.displayName}'`,
       );
       if (!options.dryRun) {
-        await this.workspaceService.deleteWorkspace(
-          incompleteWorkspace.id,
-          false,
-        );
+        await this.workspaceService.solfDeleteWorkspace(incompleteWorkspace.id);
       }
     }
   }

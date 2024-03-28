@@ -113,4 +113,46 @@ export class UserService extends TypeOrmQueryService<User> {
 
     return user;
   }
+
+  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
+    await this.userWorkspaceRepository.delete({
+      userId,
+      workspaceId,
+    });
+    await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
+  }
+
+  private async reassignOrRemoveUserDefaultWorkspace(
+    workspaceId: string,
+    userId: string,
+  ) {
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: userId },
+    });
+
+    if (userWorkspaces.length === 0) {
+      await this.userRepository.delete({ id: userId });
+
+      return;
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new Error(`User ${userId} not found in workspace ${workspaceId}`);
+    }
+
+    if (user.defaultWorkspaceId === workspaceId) {
+      await this.userRepository.update(
+        { id: userId },
+        {
+          defaultWorkspaceId: userWorkspaces[0].workspaceId,
+        },
+      );
+    }
+  }
 }

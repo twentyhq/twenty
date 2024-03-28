@@ -25,6 +25,7 @@
     "types": ["jest", "node"],
     "paths": {
       "src/*": ["packages/twenty-server/src/*"],
+      "test/*": ["packages/twenty-server/test/*"],
       "twenty-emails": ["packages/twenty-emails/src/index.ts"]
     }
   },

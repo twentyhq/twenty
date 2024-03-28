@@ -47,6 +47,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
 import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
@@ -139,6 +140,10 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
       useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
+    {
+      provide: HandleWorkspaceMemberDeletedJob.name,
+      useClass: HandleWorkspaceMemberDeletedJob,
+    },
     {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,

@@ -7,6 +7,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -35,6 +36,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: UserWorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: UserService,
           useValue: {},
         },
         {
