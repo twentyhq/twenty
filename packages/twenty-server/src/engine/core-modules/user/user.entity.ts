@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -85,10 +85,10 @@ export class User {
   @Column({ nullable: true })
   passwordResetTokenExpiresAt: Date;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
+  @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
-  refreshTokens: RefreshToken[];
+  appTokens: AppToken[];
 
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;

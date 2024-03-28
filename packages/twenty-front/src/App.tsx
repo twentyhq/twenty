@@ -39,6 +39,7 @@ import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelope
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
+import { SettingsIntegrationNewDatabase } from '~/pages/settings/integrations/SettingsIntegrationNewDatabase';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
@@ -177,6 +178,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.IntegrationDetail}
                   element={<SettingsIntegrationDetail />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationNewDatabase}
+                  element={<SettingsIntegrationNewDatabase />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
