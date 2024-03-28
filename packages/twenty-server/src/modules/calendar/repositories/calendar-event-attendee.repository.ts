@@ -78,38 +78,6 @@ export class CalendarEventAttendeeRepository {
     );
   }
 
-  public async saveCalendarEventAttendees(
-    calendarEventAttendees: CalendarEventAttendee[],
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<void> {
-    if (calendarEventAttendees.length === 0) {
-      return;
-    }
-
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(
-        calendarEventAttendees,
-        {
-          calendarEventId: 'uuid',
-          handle: 'text',
-          displayName: 'text',
-          isOrganizer: 'boolean',
-          responseStatus: `${dataSourceSchema}."calendarEventAttendee_responsestatus_enum"`,
-        },
-      );
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEventAttendee" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus") VALUES ${valuesString}`,
-      flattenedValues,
-      workspaceId,
-      transactionManager,
-    );
-  }
-
   public async updateCalendarEventAttendees(
     calendarEventAttendees: CalendarEventAttendee[],
     iCalUIDCalendarEventIdMap: Map<string, string>,
