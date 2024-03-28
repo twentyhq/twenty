@@ -66,10 +66,8 @@ export const ViewPickerDropdown = () => {
   const CurrentViewIcon = getIcon(currentViewWithCombinedFiltersAndSorts?.icon);
 
   const handleClickOutside = async () => {
-    if (isViewsListDropdownOpen && viewPickerMode !== 'list') {
-      if (viewPickerMode !== 'create') {
-        await handleUpdate();
-      }
+    if (isViewsListDropdownOpen && viewPickerMode === 'edit') {
+      await handleUpdate();
     }
     setViewPickerMode('list');
   };
