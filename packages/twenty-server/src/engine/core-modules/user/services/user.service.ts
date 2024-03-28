@@ -114,15 +114,18 @@ export class UserService extends TypeOrmQueryService<User> {
     return user;
   }
 
-  async reassignOrRemoveUserDefaultWorkspace(
-    workspaceId: string,
-    userId: string,
-  ) {
+  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
     await this.userWorkspaceRepository.delete({
       userId,
       workspaceId,
     });
+    await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
+  }
 
+  private async reassignOrRemoveUserDefaultWorkspace(
+    workspaceId: string,
+    userId: string,
+  ) {
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: { userId: userId },
     });
@@ -148,7 +151,6 @@ export class UserService extends TypeOrmQueryService<User> {
         { id: userId },
         {
           defaultWorkspaceId: userWorkspaces[0].workspaceId,
-          updatedAt: new Date().toISOString(),
         },
       );
     }

@@ -17,9 +17,6 @@ export class HandleWorkspaceMemberDeletedJob
   async handle(data: HandleWorkspaceMemberDeletedJobData): Promise<void> {
     const { workspaceId, userId } = data;
 
-    await this.userService.reassignOrRemoveUserDefaultWorkspace(
-      workspaceId,
-      userId,
-    );
+    await this.userService.handleRemoveWorkspaceMember(workspaceId, userId);
   }
 }

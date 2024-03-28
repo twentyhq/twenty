@@ -49,28 +49,33 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
-  async deleteWorkspace(id: string, shouldDeleteCore = true) {
+  async solfDeleteWorkspace(id: string) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
-
-    const userWorkspaces = await this.userWorkspaceRepository.findBy({
-      workspaceId: id,
-    });
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
     await this.billingService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
-    if (shouldDeleteCore) {
-      for (const userWorkspace of userWorkspaces) {
-        await this.userService.reassignOrRemoveUserDefaultWorkspace(
-          id,
-          userWorkspace.userId,
-        );
-      }
-      await this.workspaceRepository.delete(id);
+
+    return workspace;
+  }
+
+  async deleteWorkspace(id: string) {
+    const userWorkspaces = await this.userWorkspaceRepository.findBy({
+      workspaceId: id,
+    });
+
+    const workspace = await this.solfDeleteWorkspace(id);
+
+    for (const userWorkspace of userWorkspaces) {
+      await this.userService.handleRemoveWorkspaceMember(
+        id,
+        userWorkspace.userId,
+      );
     }
+    await this.workspaceRepository.delete(id);
 
     return workspace;
   }

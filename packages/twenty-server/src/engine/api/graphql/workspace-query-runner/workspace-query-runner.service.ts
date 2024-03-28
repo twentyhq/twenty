@@ -408,14 +408,12 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO START: remove this awful patch and use the Jeremy's ORM when developed
+    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
     const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
       args.id,
       workspaceId,
       objectMetadataItem,
     );
-
-    let before = deletedWorkspaceMember ? deletedWorkspaceMember : undefined;
     // TODO END
 
     const result = await this.execute(query, workspaceId);
@@ -434,18 +432,14 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    before = {
-      ...before,
-      ...this.removeNestedProperties(parsedResults?.[0]),
-    };
-
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       details: {
-        before,
+        ...(deletedWorkspaceMember ?? {}),
+        ...this.removeNestedProperties(parsedResults?.[0]),
       },
     } satisfies ObjectRecordDeleteEvent<any>);
 
