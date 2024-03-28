@@ -29,6 +29,10 @@ jobs:
         run: yarn
       - name: Server / Run linter
         run: yarn nx lint twenty-server
+      - name: Server / Run check migrations
+        run: |
+          yarn nx database:generate twenty-server || exit 0
+          exit 1
       - name: Server / Run jest tests
         run: yarn nx test:unit twenty-server
       - name: Server / Build
