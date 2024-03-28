@@ -44,15 +44,15 @@ export class Workspace {
   inviteHash?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
