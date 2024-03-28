@@ -1,11 +1,10 @@
-version: '3.8'
 name: twenty
 
 services:
   server:
     image: twentycrm/twenty:${TAG}
     volumes:
-      - server-local-data:/app/.local-storage
+      - server-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
     ports:
       - "3000:3000"
     environment:
@@ -17,8 +16,10 @@ services:
       ENABLE_DB_MIGRATIONS: true
 
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
-      STORAGE_TYPE: local
-      STORAGE_LOCAL_PATH: .local-storage
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
+      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
+      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
@@ -27,7 +28,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail http://localhost:3000/healthz | jq -e '.status == \"ok\"' > /dev/null || exit 1"]
+      test: curl --fail http://localhost:3000/healthz
       interval: 5s
       timeout: 5s
       retries: 10
@@ -39,10 +40,8 @@ services:
       - db-data:/bitnami/postgresql
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
-      #POSTGRES_USER: ${POSTGRES_USER}
-      #POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U twenty -d default"]
+      test: pg_isready -U twenty -d default
       interval: 5s
       timeout: 5s
       retries: 10

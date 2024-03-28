@@ -1,19 +1,14 @@
 import { ComponentType } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsListSkeletonCard } from '@/settings/accounts/components/SettingsAccountsListSkeletonCard';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
+import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 import { IconPlus } from '@/ui/display/icon';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 
-import { SettingsAccountRow } from './SettingsAccountsRow';
+import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooter = styled(CardFooter)`
   align-items: center;
@@ -41,58 +36,54 @@ const StyledButton = styled.button`
   }
 `;
 
-type SettingsAccountsListCardItem = {
-  handle: string;
-  id: string;
-};
-
-type SettingsAccountsListCardProps<T extends SettingsAccountsListCardItem> = {
-  items: T[];
+type SettingsListCardProps<ListItem extends { id: string }> = {
+  items: ListItem[];
+  getItemLabel: (item: ListItem) => string;
   hasFooter?: boolean;
   isLoading?: boolean;
-  onRowClick?: (item: T) => void;
-  RowIcon?: IconComponent;
-  RowRightComponent: ComponentType<{ item: T }>;
+  onRowClick?: (item: ListItem) => void;
+  RowIcon: IconComponent;
+  RowRightComponent: ComponentType<{ item: ListItem }>;
+  footerButtonLabel?: string;
+  onFooterButtonClick?: () => void;
 };
 
-export const SettingsAccountsListCard = <
-  T extends SettingsAccountsListCardItem,
+export const SettingsListCard = <
+  ListItem extends { id: string } = {
+    id: string;
+  },
 >({
   items,
+  getItemLabel,
   hasFooter,
   isLoading,
   onRowClick,
-  RowIcon = IconGoogle,
+  RowIcon,
   RowRightComponent,
-}: SettingsAccountsListCardProps<T>) => {
+  onFooterButtonClick,
+  footerButtonLabel,
+}: SettingsListCardProps<ListItem>) => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
-  if (isLoading === true) return <SettingsAccountsListSkeletonCard />;
-
-  if (!items.length) return <SettingsAccountsListEmptyStateCard />;
+  if (isLoading === true) return <SettingsListSkeletonCard />;
 
   return (
     <Card>
       {items.map((item, index) => (
-        <SettingsAccountRow
+        <SettingsListItemCardContent
           key={item.id}
           LeftIcon={RowIcon}
-          account={item}
+          label={getItemLabel(item)}
           rightComponent={<RowRightComponent item={item} />}
           divider={index < items.length - 1}
           onClick={() => onRowClick?.(item)}
         />
       ))}
       {hasFooter && (
-        <StyledFooter>
-          <StyledButton
-            onClick={() =>
-              navigate(getSettingsPagePath(SettingsPath.NewAccount))
-            }
-          >
+        <StyledFooter divider={!!items.length}>
+          <StyledButton onClick={onFooterButtonClick}>
             <IconPlus size={theme.icon.size.md} />
-            Add account
+            {footerButtonLabel}
           </StyledButton>
         </StyledFooter>
       )}
