@@ -9,6 +9,7 @@ import {
   ParticipantWithId,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/types/gmail-message';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 
 @Injectable()
 export class MessageParticipantRepository {
@@ -139,48 +140,63 @@ export class MessageParticipantRepository {
 
     const handles = participants.map((participant) => participant.handle);
 
-    const participantPersonIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
-      );
+    const participantPersonIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, email FROM ${dataSourceSchema}."person" WHERE "email" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
 
-    const participantWorkspaceMemberIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
+    const emailPersonIdsMap = new Map(
+      participantPersonIds.map((person) => [person.email, person.id]),
+    );
+
+    const participantWorkspaceMemberIds: {
+      id: string;
+      email: string;
+    }[] = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT "workspaceMember"."id", "connectedAccount"."handle" AS email FROM ${dataSourceSchema}."workspaceMember"
           JOIN ${dataSourceSchema}."connectedAccount" ON ${dataSourceSchema}."workspaceMember"."id" = ${dataSourceSchema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceSchema}."connectedAccount"."handle" = ANY($1)`,
-        [handles],
-        workspaceId,
-        transactionManager,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
+
+    const emailWorkspaceMemberIdsMap = new Map(
+      participantWorkspaceMemberIds.map((workspaceMember) => [
+        workspaceMember.email,
+        workspaceMember.id,
+      ]),
+    );
+
+    const messageParticipantsToSave = participants.map((participant) => ({
+      ...participant,
+      personId: emailPersonIdsMap.get(participant.handle),
+      workspaceMemberId: emailWorkspaceMemberIdsMap.get(participant.handle),
+    }));
+
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        messageParticipantsToSave,
+        {
+          messageId: 'uuid',
+          role: 'text',
+          handle: 'text',
+          displayName: 'text',
+          personId: 'uuid',
+          workspaceMemberId: 'uuid',
+        },
       );
-
-    const messageParticipantsToSave = participants.map((participant) => [
-      participant.messageId,
-      participant.role,
-      participant.handle,
-      participant.displayName,
-      participantPersonIds.find((e) => e.email === participant.handle)?.id,
-      participantWorkspaceMemberIds.find((e) => e.email === participant.handle)
-        ?.id,
-    ]);
-
-    const valuesString = messageParticipantsToSave
-      .map(
-        (_, index) =>
-          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${
-            index * 6 + 4
-          }, $${index * 6 + 5}, $${index * 6 + 6})`,
-      )
-      .join(', ');
 
     if (messageParticipantsToSave.length === 0) return;
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
-      messageParticipantsToSave.flat(),
+      flattenedValues,
       workspaceId,
       transactionManager,
     );
