@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { animate } from 'framer-motion';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 
 import { BACKGROUND } from '@/ui/layout/animated-placeholder/constants/Background';
 import { DARK_BACKGROUND } from '@/ui/layout/animated-placeholder/constants/DarkBackground';

@@ -6,18 +6,31 @@
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "packages/twenty-ui/dist"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "options": {
+        "lintFilePatterns": [
+          "packages/twenty-ui/src/**/*.{ts,tsx}"
+        ]
+      },
+      "configurations": {
+        "fix": {
+          "fix": true
+        }
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "packages/twenty-ui/jest.config.ts"
       }
