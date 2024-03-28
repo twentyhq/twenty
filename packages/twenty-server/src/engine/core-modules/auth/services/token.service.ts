@@ -287,7 +287,7 @@ export class TokenService {
   async verifyAuthorizationCode(
     exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ): Promise<ExchangeAuthCode> {
-    const { authorizationCode, codeVerifier } = exchangeAuthCodeInput;
+    const { authorizationCode, codeVerifier, clientSecret } = exchangeAuthCodeInput;
 
     assert(
       authorizationCode,
@@ -295,32 +295,40 @@ export class TokenService {
       NotFoundException,
     );
 
-    assert(codeVerifier, 'code verifier not found', NotFoundException);
+    assert(!codeVerifier || !clientSecret, 'client secret or code verifier not found', NotFoundException);
 
-    // TODO: replace this with call to stateless table
+    if (clientSecret) {
+      // TODO: replace this with call to third party apps table
 
-    // assert(authObj, 'Authorization code does not exist', NotFoundException);
+      // assert(client.secret, 'client secret code does not exist', ForbiddenException);
+    }
 
-    // assert(
-    //   authObj.expiresAt.getTime() <= Date.now(),
-    //   'Authorization code expired.',
-    //   NotFoundException,
-    // );
+    if (codeVerifier) {
+      // TODO: replace this with call to stateless table
 
-    // const codeChallenge = crypto
-    //   .createHash('sha256')
-    //   .update(codeVerifier)
-    //   .digest()
-    //   .toString('base64')
-    //   .replace(/\+/g, '-')
-    //   .replace(/\//g, '_')
-    //   .replace(/=/g, '');
+      // assert(authObj, 'Authorization code does not exist', ForbiddenException);
 
-    // assert(
-    //   authObj.codeChallenge !== codeChallenge,
-    //   'code verifier doesnt match the challenge',
-    //   ForbiddenException,
-    // );
+      // assert(
+      //   authObj.expiresAt.getTime() <= Date.now(),
+      //   'Authorization code expired.',
+      //   NotFoundException,
+      // );
+
+      // const codeChallenge = crypto
+      //   .createHash('sha256')
+      //   .update(codeVerifier)
+      //   .digest()
+      //   .toString('base64')
+      //   .replace(/\+/g, '-')
+      //   .replace(/\//g, '_')
+      //   .replace(/=/g, '');
+
+      // assert(
+      //   authObj.codeChallenge !== codeChallenge,
+      //   'code verifier doesnt match the challenge',
+      //   ForbiddenException,
+      // );
+    };
 
     const user = await this.userRepository.findOne({
       where: { id: DEV_SEED_USER_IDS.TIM }, // TODO: replace this id with corresponding authenticated user id mappeed to authorization code
