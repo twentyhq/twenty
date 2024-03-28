@@ -179,6 +179,11 @@ export const mockedCompaniesData: Array<MockedCompany> = [
   },
 ];
 
+export const mockedDuplicateCompanyData: MockedCompany = {
+  ...mockedCompaniesData[0],
+  id: '8b40856a-2ec9-4c03-8bc0-c032c89e1824',
+};
+
 export const mockedEmptyCompanyData = {
   id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
   name: '',

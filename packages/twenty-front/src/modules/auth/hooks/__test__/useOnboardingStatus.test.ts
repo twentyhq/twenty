@@ -18,9 +18,12 @@ const billing = {
   isBillingEnabled: true,
 };
 const currentWorkspace = {
-  displayName: 'testing',
+  activationStatus: 'active',
   id: '1',
   allowImpersonation: true,
+  currentBillingSubscription: {
+    status: 'trialing',
+  },
 };
 const currentWorkspaceMember = {
   id: '1',
@@ -104,7 +107,13 @@ describe('useOnboardingStatus', () => {
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
       });
-      setCurrentWorkspaceMember(currentWorkspaceMember);
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
     });
 
     expect(result.current.onboardingStatus).toBe('canceled');
@@ -119,25 +128,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentWorkspace({
         ...currentWorkspace,
-        displayName: '',
-        subscriptionStatus: 'active',
-      });
-    });
-
-    expect(result.current.onboardingStatus).toBe(
-      'ongoing_workspace_activation',
-    );
-  });
-
-  it('should return "ongoing_workspace_activation"', async () => {
-    const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentWorkspace } = result.current;
-
-    act(() => {
-      setTokenPair(tokenPair);
-      setBilling(billing);
-      setCurrentWorkspace({
-        ...currentWorkspace,
+        activationStatus: 'inactive',
         subscriptionStatus: 'active',
       });
     });
@@ -195,5 +186,92 @@ describe('useOnboardingStatus', () => {
     });
 
     expect(result.current.onboardingStatus).toBe('completed');
+  });
+
+  it('should return "past_due"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'past_due',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('past_due');
+  });
+
+  it('should return "unpaid"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'unpaid',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('unpaid');
+  });
+
+  it('should return "completed_without_subscription"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'trialing',
+        currentBillingSubscription: null,
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe(
+      'completed_without_subscription',
+    );
   });
 });

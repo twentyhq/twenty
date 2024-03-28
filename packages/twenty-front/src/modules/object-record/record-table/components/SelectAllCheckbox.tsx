@@ -13,14 +13,13 @@ const StyledContainer = styled.div`
   height: 32px;
 
   justify-content: center;
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const SelectAllCheckbox = () => {
-  const { getAllRowsSelectedStatusSelector } = useRecordTableStates();
+  const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
-  const allRowsSelectedStatus = useRecoilValue(
-    getAllRowsSelectedStatusSelector(),
-  );
+  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
   const { selectAllRows } = useRecordTable();
 
   const checked = allRowsSelectedStatus === 'all';

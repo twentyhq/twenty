@@ -1,13 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
 
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
+import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
@@ -21,10 +28,6 @@ const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
   width: 200px;
-`;
-
-const StyledFooterNote = styled(FooterNote)`
-  max-width: 280px;
 `;
 
 const StyledForm = styled.form`
@@ -43,24 +46,21 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const [authProviders] = useRecoilState(authProvidersState);
+  const [showErrors, setShowErrors] = useState(false);
+  const { handleResetPassword } = useHandleResetPassword();
+  const workspace = useWorkspaceFromInviteHash();
+  const { signInWithGoogle } = useSignInWithGoogle();
+  const { form } = useSignInUpForm();
+
   const {
-    authProviders,
-    signInWithGoogle,
+    isInviteMode,
     signInUpStep,
     signInUpMode,
-    showErrors,
-    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
-    form: {
-      control,
-      watch,
-      handleSubmit,
-      formState: { isSubmitting },
-    },
-    workspace,
-  } = useSignInUp();
+  } = useSignInUp(form);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -72,7 +72,7 @@ export const SignInUpForm = () => {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
-        handleSubmit(submitCredentials)();
+        form.handleSubmit(submitCredentials)();
       }
     }
   };
@@ -86,22 +86,25 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in'
-      : isSubmitting
-        ? 'Creating workspace'
-        : 'Sign up';
-  }, [signInUpMode, signInUpStep, isSubmitting]);
+    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+  }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
-    if (signInUpMode === SignInUpMode.Invite) {
+    if (isInviteMode) {
       return `Join ${workspace?.displayName ?? ''} team`;
+    }
+
+    if (
+      signInUpStep === SignInUpStep.Init ||
+      signInUpStep === SignInUpStep.Email
+    ) {
+      return 'Welcome to Twenty';
     }
 
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in to Twenty'
       : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName]);
+  }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
 
@@ -141,7 +144,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="email"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -180,7 +183,7 @@ export const SignInUpForm = () => {
             >
               <Controller
                 name="password"
-                control={control}
+                control={form.control}
                 render={({
                   field: { onChange, onBlur, value },
                   fieldState: { error },
@@ -218,24 +221,32 @@ export const SignInUpForm = () => {
                 return;
               }
               setShowErrors(true);
-              handleSubmit(submitCredentials)();
+              form.handleSubmit(submitCredentials)();
             }}
-            Icon={() => isSubmitting && <Loader />}
+            Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
               SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
-                  ? !watch('email')
-                  : !watch('email') || !watch('password') || isSubmitting
+                  ? !form.watch('email')
+                  : !form.watch('email') ||
+                    !form.watch('password') ||
+                    form.formState.isSubmitting
             }
             fullWidth
           />
         </StyledForm>
       </StyledContentContainer>
-      <StyledFooterNote>
-        By using Twenty, you agree to the Terms of Service and Data Processing
-        Agreement.
-      </StyledFooterNote>
+      {signInUpStep === SignInUpStep.Password && (
+        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
+          Forgot your password?
+        </ActionLink>
+      )}
+      {signInUpStep === SignInUpStep.Init && (
+        <FooterNote>
+          By using Twenty, you agree to the Terms of Service and Privacy Policy.
+        </FooterNote>
+      )}
     </>
   );
 };

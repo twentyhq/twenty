@@ -1,13 +1,19 @@
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
+import { Activity } from '@/activities/types/Activity';
+import { isDefined } from '~/utils/isDefined';
 
-export interface ActivityGroup {
+export type ActivityForActivityGroup = Pick<Activity, 'id' | 'createdAt'>;
+
+export type ActivityGroup = {
   month: number;
   year: number;
-  items: ActivityForDrawer[];
-}
+  items: ActivityForActivityGroup[];
+};
 
-export const groupActivitiesByMonth = (activities: ActivityForDrawer[]) => {
+export const groupActivitiesByMonth = (
+  activities: ActivityForActivityGroup[],
+) => {
   const acitivityGroups: ActivityGroup[] = [];
+
   for (const activity of activities) {
     const d = new Date(activity.createdAt);
     const month = d.getMonth();
@@ -16,7 +22,7 @@ export const groupActivitiesByMonth = (activities: ActivityForDrawer[]) => {
     const matchingGroup = acitivityGroups.find(
       (x) => x.year === year && x.month === month,
     );
-    if (matchingGroup) {
+    if (isDefined(matchingGroup)) {
       matchingGroup.items.push(activity);
     } else {
       acitivityGroups.push({

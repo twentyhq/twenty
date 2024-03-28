@@ -11,6 +11,8 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
@@ -35,7 +37,7 @@ const StyledColumnHeaderCell = styled.th<{
     `;
   }};
   ${({ isResizing, theme }) => {
-    if (isResizing) {
+    if (isResizing === true) {
       return `&:after {
         background-color: ${theme.color.blue};
         bottom: 0;
@@ -70,9 +72,7 @@ const StyledColumnHeadContainer = styled.div`
 `;
 
 const StyledHeaderIcon = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin: ${({ theme }) => theme.spacing(1, 1, 1, 1.5)};
 `;
 
 export const RecordTableHeaderCell = ({
@@ -82,14 +82,13 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
 }) => {
-  const { getResizeFieldOffsetState, getTableColumnsState } =
-    useRecordTableStates();
+  const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    getResizeFieldOffsetState(),
+    resizeFieldOffsetState,
   );
 
-  const tableColumns = useRecoilValue(getTableColumnsState());
+  const tableColumns = useRecoilValue(tableColumnsState);
   const tableColumnsByKey = useMemo(
     () =>
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
@@ -124,7 +123,7 @@ export const RecordTableHeaderCell = ({
 
         const resizeFieldOffset = getSnapshotValue(
           snapshot,
-          getResizeFieldOffsetState(),
+          resizeFieldOffsetState,
         );
 
         const nextWidth = Math.round(
@@ -134,7 +133,7 @@ export const RecordTableHeaderCell = ({
           ),
         );
 
-        set(getResizeFieldOffsetState(), 0);
+        set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
 
@@ -150,7 +149,7 @@ export const RecordTableHeaderCell = ({
       },
     [
       resizedFieldKey,
-      getResizeFieldOffsetState,
+      resizeFieldOffsetState,
       tableColumnsByKey,
       tableColumns,
       handleColumnsChange,
@@ -164,6 +163,12 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
+  const isMobile = useIsMobile();
+  const scrollLeft = useRecoilValue(scrollLeftState);
+
+  const disableColumnResize =
+    column.isLabelIdentifier && isMobile && scrollLeft > 0;
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -174,17 +179,16 @@ export const RecordTableHeaderCell = ({
           24,
         COLUMN_MIN_WIDTH,
       )}
+      onMouseEnter={() => setIconVisibility(true)}
+      onMouseLeave={() => setIconVisibility(false)}
     >
-      <StyledColumnHeadContainer
-        onMouseEnter={() => setIconVisibility(true)}
-        onMouseLeave={() => setIconVisibility(false)}
-      >
+      <StyledColumnHeadContainer>
         {column.isLabelIdentifier ? (
           <ColumnHead column={column} />
         ) : (
           <ColumnHeadWithDropdown column={column} />
         )}
-        {iconVisibility && !!column.isLabelIdentifier && (
+        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}
@@ -195,13 +199,15 @@ export const RecordTableHeaderCell = ({
           </StyledHeaderIcon>
         )}
       </StyledColumnHeadContainer>
-      <StyledResizeHandler
-        className="cursor-col-resize"
-        role="separator"
-        onPointerDown={() => {
-          setResizedFieldKey(column.fieldMetadataId);
-        }}
-      />
+      {!disableColumnResize && (
+        <StyledResizeHandler
+          className="cursor-col-resize"
+          role="separator"
+          onPointerDown={() => {
+            setResizedFieldKey(column.fieldMetadataId);
+          }}
+        />
+      )}
     </StyledColumnHeaderCell>
   );
 };

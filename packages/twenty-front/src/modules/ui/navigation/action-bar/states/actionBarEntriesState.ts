@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
 import { ActionBarEntry } from '../types/ActionBarEntry';
 
-export const actionBarEntriesState = atom<ActionBarEntry[]>({
+export const actionBarEntriesState = createState<ActionBarEntry[]>({
   key: 'actionBarEntriesState',
-  default: [],
+  defaultValue: [],
 });

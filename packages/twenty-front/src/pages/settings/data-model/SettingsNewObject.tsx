@@ -1,49 +1,60 @@
-import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
+import {
+  SettingsDataModelObjectAboutForm,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
+import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { IconSettings } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+
+const newObjectFormSchema = settingsDataModelObjectAboutFormSchema;
+
+type SettingsDataModelNewObjectFormValues = z.infer<typeof newObjectFormSchema>;
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createObjectMetadataItem: createObject } =
-    useObjectMetadataItemForSettings();
+  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
-  const [customFormValues, setCustomFormValues] = useState<{
-    description?: string;
-    icon: string;
-    labelPlural: string;
-    labelSingular: string;
-  }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
+  const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
-  const canSave =
-    !!customFormValues.labelPlural && !!customFormValues.labelSingular;
+  const formConfig = useForm<SettingsDataModelNewObjectFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(newObjectFormSchema),
+  });
+
+  const canSave = formConfig.formState.isValid;
 
   const handleSave = async () => {
+    const formValues = formConfig.getValues();
+
     try {
-      const createdObject = await createObject({
-        labelPlural: customFormValues.labelPlural,
-        labelSingular: customFormValues.labelSingular,
-        description: customFormValues.description,
-        icon: customFormValues.icon,
-      });
+      const { data: response } = await createOneObjectMetadataItem(
+        settingsCreateObjectInputSchema.parse(formValues),
+      );
 
       navigate(
-        createdObject.data?.createOneObject.isActive
-          ? `/settings/objects/${getObjectSlug(
-              createdObject.data.createOneObject,
+        response
+          ? `${settingsObjectsPagePath}/${getObjectSlug(
+              response.createOneObject,
             )}`
-          : '/settings/objects',
+          : settingsObjectsPagePath,
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
@@ -53,36 +64,35 @@ export const SettingsNewObject = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              { children: 'New' },
-            ]}
-          />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate('/settings/objects');
-            }}
-            onSave={handleSave}
-          />
-        </SettingsHeaderContainer>
-        <SettingsObjectFormSection
-          icon={customFormValues.icon}
-          singularName={customFormValues.labelSingular}
-          pluralName={customFormValues.labelPlural}
-          description={customFormValues.description}
-          onChange={(formValues) => {
-            setCustomFormValues((previousValues) => ({
-              ...previousValues,
-              ...formValues,
-            }));
-          }}
-        />
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                {
+                  children: 'Objects',
+                  href: settingsObjectsPagePath,
+                },
+                { children: 'New' },
+              ]}
+            />
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(settingsObjectsPagePath)}
+              onSave={handleSave}
+            />
+          </SettingsHeaderContainer>
+          <Section>
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
+            <SettingsDataModelObjectAboutForm />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

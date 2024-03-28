@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -11,11 +10,12 @@ import { RecordIndexTableContainer } from '@/object-record/record-index/componen
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
+import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -46,10 +46,9 @@ export const RecordIndexContainer = ({
   recordIndexId,
   objectNamePlural,
 }: RecordIndexContainerProps) => {
-  const [recordIndexViewType, setRecordIndexViewType] = useState<
-    ViewType | undefined
-  >(undefined);
-
+  const [recordIndexViewType, setRecordIndexViewType] = useRecoilState(
+    recordIndexViewTypeState,
+  );
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
@@ -58,13 +57,16 @@ export const RecordIndexContainer = ({
     objectNameSingular,
   });
 
-  const { columnDefinitions } =
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setRecordIndexFilters = useSetRecoilState(recordIndexFiltersState);
   const setRecordIndexSorts = useSetRecoilState(recordIndexSortsState);
   const setRecordIndexIsCompactModeActive = useSetRecoilState(
     recordIndexIsCompactModeActiveState,
+  );
+  const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
+    recordIndexKanbanFieldMetadataIdState,
   );
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
@@ -113,21 +115,27 @@ export const RecordIndexContainer = ({
               viewType={recordIndexViewType ?? ViewType.Table}
             />
           }
-          optionsDropdownScopeId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
-          onViewFieldsChange={onViewFieldsChange}
-          onViewFiltersChange={(viewFilters) => {
-            setTableFilters(mapViewFiltersToFilters(viewFilters));
-            setRecordIndexFilters(mapViewFiltersToFilters(viewFilters));
-          }}
-          onViewSortsChange={(viewSorts) => {
-            setTableSorts(mapViewSortsToSorts(viewSorts));
-            setRecordIndexSorts(mapViewSortsToSorts(viewSorts));
-          }}
-          onViewTypeChange={(viewType: ViewType) => {
-            setRecordIndexViewType(viewType);
-          }}
-          onViewCompactModeChange={(isCompactModeActive: boolean) => {
-            setRecordIndexIsCompactModeActive(isCompactModeActive);
+          onCurrentViewChange={(view) => {
+            if (!view) {
+              return;
+            }
+
+            onViewFieldsChange(view.viewFields);
+            setTableFilters(
+              mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+            );
+            setRecordIndexFilters(
+              mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+            );
+            setTableSorts(mapViewSortsToSorts(view.viewSorts, sortDefinitions));
+            setRecordIndexSorts(
+              mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+            );
+            setRecordIndexViewType(view.type);
+            setRecordIndexViewKanbanFieldMetadataIdState(
+              view.kanbanFieldMetadataId,
+            );
+            setRecordIndexIsCompactModeActive(view.isCompact);
           }}
         />
         <RecordIndexViewBarEffect

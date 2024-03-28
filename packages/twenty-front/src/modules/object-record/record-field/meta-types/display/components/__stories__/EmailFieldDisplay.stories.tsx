@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useEmailField } from '@/object-record/record-field/meta-types/hooks/useEmailField';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-import { FieldContext } from '../../../../contexts/FieldContext';
-import { useEmailField } from '../../../hooks/useEmailField';
 import { EmailFieldDisplay } from '../EmailFieldDisplay';
 
 const EmailFieldValueSetterEffect = ({ value }: { value: string }) => {
@@ -21,6 +22,7 @@ const EmailFieldValueSetterEffect = ({ value }: { value: string }) => {
 const meta: Meta = {
   title: 'UI/Data/Field/Display/EmailFieldDisplay',
   decorators: [
+    MemoryRouterDecorator,
     (Story, { args }) => (
       <FieldContext.Provider
         value={{
@@ -29,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'email',
             label: 'Email',
-            type: 'EMAIL',
+            type: FieldMetadataType.Email,
             iconName: 'IconLink',
             metadata: {
               fieldName: 'Email',
@@ -39,10 +41,8 @@ const meta: Meta = {
           hotkeyScope: 'hotkey-scope',
         }}
       >
-        <MemoryRouter>
-          <EmailFieldValueSetterEffect value={args.value} />
-          <Story />
-        </MemoryRouter>
+        <EmailFieldValueSetterEffect value={args.value} />
+        <Story />
       </FieldContext.Provider>
     ),
     ComponentDecorator,

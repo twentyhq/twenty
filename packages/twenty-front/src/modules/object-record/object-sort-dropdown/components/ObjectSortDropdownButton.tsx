@@ -1,4 +1,7 @@
+import { useRecoilValue } from 'recoil';
+
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/useObjectSortDropdown';
+import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
@@ -11,7 +14,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -33,7 +35,7 @@ export const ObjectSortDropdownButton = ({
     resetState,
   } = useObjectSortDropdown();
 
-  const { isSortSelected } = useSortDropdown({
+  const { isSortSelectedState } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
 
@@ -41,9 +43,15 @@ export const ObjectSortDropdownButton = ({
     toggleSortDropdown();
   };
 
-  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
+  const { availableSortDefinitionsState, onSortSelectState } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
+
+  const isSortSelected = useRecoilValue(isSortSelectedState);
+  const availableSortDefinitions = useRecoilValue(
+    availableSortDefinitionsState,
+  );
+  const onSortSelect = useRecoilValue(onSortSelectState);
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleSortDropdown();
@@ -63,7 +71,7 @@ export const ObjectSortDropdownButton = ({
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <Dropdown
-        dropdownId={ObjectSortDropdownId}
+        dropdownId={OBJECT_SORT_DROPDOWN_ID}
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8 }}
         clickableComponent={

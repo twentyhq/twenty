@@ -11,7 +11,7 @@ import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingText
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;

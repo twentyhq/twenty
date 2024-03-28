@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
+import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { groupActivitiesByMonth } from '../utils/groupActivitiesByMonth';
@@ -23,14 +24,12 @@ const StyledTimelineContainer = styled.div`
 
 const StyledScrollWrapper = styled(ScrollWrapper)``;
 
-export type TimelineItemsContainerProps = {
-  activities: ActivityForDrawer[];
-};
+export const TimelineItemsContainer = () => {
+  const timelineActivitiesForGroup = useRecoilValue(
+    timelineActivitiesForGroupState,
+  );
 
-export const TimelineItemsContainer = ({
-  activities,
-}: TimelineItemsContainerProps) => {
-  const groupedActivities = groupActivitiesByMonth(activities);
+  const groupedActivities = groupActivitiesByMonth(timelineActivitiesForGroup);
 
   return (
     <StyledScrollWrapper>

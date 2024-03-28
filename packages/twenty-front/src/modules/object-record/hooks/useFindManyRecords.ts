@@ -14,6 +14,7 @@ import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -34,7 +35,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   depth,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
-    onCompleted?: (data: ObjectRecordConnection<T>) => void;
+    onCompleted?: (
+      data: ObjectRecordConnection<T>,
+      pageInfo: ObjectRecordConnection<T>['pageInfo'],
+    ) => void;
     skip?: boolean;
     useRecordsWithoutConnection?: boolean;
     depth?: number;
@@ -77,15 +81,13 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       orderBy,
     },
     onCompleted: (data) => {
-      onCompleted?.(data[objectMetadataItem.namePlural]);
+      const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
-      if (data?.[objectMetadataItem.namePlural]) {
-        setLastCursor(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '',
-        );
-        setHasNextPage(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false,
-        );
+      onCompleted?.(data[objectMetadataItem.namePlural], pageInfo);
+
+      if (isDefined(data?.[objectMetadataItem.namePlural])) {
+        setLastCursor(pageInfo.endCursor ?? '');
+        setHasNextPage(pageInfo.hasNextPage ?? false);
       }
     },
     onError: (error) => {
@@ -128,25 +130,26 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               ]);
             }
 
-            if (data?.[objectMetadataItem.namePlural]) {
-              setLastCursor(
-                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .endCursor ?? '',
-              );
-              setHasNextPage(
-                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .hasNextPage ?? false,
-              );
+            const pageInfo =
+              fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
+            if (isDefined(data?.[objectMetadataItem.namePlural])) {
+              setLastCursor(pageInfo.endCursor ?? '');
+              setHasNextPage(pageInfo.hasNextPage ?? false);
             }
 
-            onCompleted?.({
-              __typename: `${capitalize(
-                objectMetadataItem.nameSingular,
-              )}Connection`,
-              edges: newEdges,
-              pageInfo:
-                fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
-            });
+            onCompleted?.(
+              {
+                __typename: `${capitalize(
+                  objectMetadataItem.nameSingular,
+                )}Connection`,
+                edges: newEdges,
+                pageInfo:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                totalCount:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
+              },
+              pageInfo,
+            );
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {
@@ -156,6 +159,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 edges: newEdges,
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                totalCount:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
             } as ObjectRecordQueryResult<T>);
           },
@@ -224,6 +229,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   return {
     objectMetadataItem,
     records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
+    totalCount: data?.[objectMetadataItem.namePlural].totalCount || 0,
     loading,
     error,
     fetchMoreRecords,

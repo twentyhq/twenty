@@ -5,7 +5,11 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 export const useSetRowSelectedState = (recordTableId?: string) => {
   const { isRowSelectedFamilyState } = useRecordTableStates(recordTableId);
 
-  return useRecoilCallback(({ set }) => (rowId: string, selected: boolean) => {
-    set(isRowSelectedFamilyState(rowId), selected);
-  });
+  return useRecoilCallback(
+    ({ set }) =>
+      (rowId: string, selected: boolean) => {
+        set(isRowSelectedFamilyState(rowId), selected);
+      },
+    [isRowSelectedFamilyState],
+  );
 };

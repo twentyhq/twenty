@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { hoverBackground } from '@/ui/theme/constants/effects';
+import { HOVER_BACKGROUND } from '@/ui/theme/constants/HoverBackground';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -16,10 +16,6 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   align-items: center;
 
-  background: ${({ isKeySelected, theme }) =>
-    isKeySelected
-      ? theme.background.transparent.light
-      : theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
 
@@ -36,7 +32,7 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  ${hoverBackground};
+  ${HOVER_BACKGROUND};
 
   ${({ theme, accent }) => {
     switch (accent) {
@@ -108,10 +104,10 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isMenuOpen: boolean;
 }>`
   & .hoverable-buttons {
-    opacity: ${({ isMenuOpen }) => (isMenuOpen ? 1 : 0)};
     pointer-events: none;
     position: fixed;
     right: ${({ theme }) => theme.spacing(2)};
+    opacity: 0;
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 

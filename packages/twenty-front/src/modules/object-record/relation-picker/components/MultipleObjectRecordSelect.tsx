@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
-import { MultiObjectRecordSelectSelectableListId } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
+import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import {
   ObjectRecordForSelect,
   SelectedObjectRecordId,
@@ -19,6 +19,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { isDefined } from '~/utils/isDefined';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -140,7 +141,7 @@ export const MultipleObjectRecordSelect = ({
           ) : (
             <>
               <SelectableList
-                selectableListId={MultiObjectRecordSelectSelectableListId}
+                selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={selectableItemIds}
                 hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 onEnter={(recordId) => {
@@ -152,7 +153,7 @@ export const MultipleObjectRecordSelect = ({
                     (entity) => entity.record.id === recordId,
                   );
 
-                  if (correspondingRecordForSelect) {
+                  if (isDefined(correspondingRecordForSelect)) {
                     handleSelectChange(
                       correspondingRecordForSelect,
                       !recordIsSelected,

@@ -2,10 +2,11 @@ import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -44,9 +45,9 @@ export const RightDrawer = () => {
     isRightDrawerOpenState,
   );
 
-  const [isRightDrawerExpanded] = useRecoilState(isRightDrawerExpandedState);
+  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
 
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
+  const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
   const { closeRightDrawer } = useRightDrawer();
 
@@ -58,7 +59,20 @@ export const RightDrawer = () => {
 
   useListenClickOutside({
     refs: [rightDrawerRef],
-    callback: () => closeRightDrawer(),
+    callback: useRecoilCallback(
+      ({ snapshot, set }) =>
+        (event) => {
+          const isRightDrawerOpen = snapshot
+            .getLoadable(isRightDrawerOpenState)
+            .getValue();
+
+          if (isRightDrawerOpen) {
+            set(rightDrawerCloseEventState, event);
+            closeRightDrawer();
+          }
+        },
+      [closeRightDrawer],
+    ),
     mode: ClickOutsideMode.comparePixels,
   });
 

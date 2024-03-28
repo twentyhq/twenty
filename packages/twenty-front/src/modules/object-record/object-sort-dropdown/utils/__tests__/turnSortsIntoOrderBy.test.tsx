@@ -9,21 +9,10 @@ const sortDefinition: SortDefinition = {
 };
 
 describe('turnSortsIntoOrderBy', () => {
-  it('should sort by createdAt if no sorts and createdAt field exists', () => {
+  it('should sort by recordPosition if no sorts', () => {
     const fields = [{ id: 'field1', name: 'createdAt' }];
     expect(turnSortsIntoOrderBy([], fields)).toEqual({
-      createdAt: 'DescNullsFirst',
-    });
-  });
-
-  it('should return empty OrderByField if no sorts and no createdAt field', () => {
-    expect(turnSortsIntoOrderBy([], [])).toEqual({});
-  });
-
-  it('should sort by first field if no sorts and createdAt field do not exists', () => {
-    const fields = [{ id: 'field1', name: 'field1' }];
-    expect(turnSortsIntoOrderBy([], fields)).toEqual({
-      field1: 'DescNullsFirst',
+      position: 'AscNullsFirst',
     });
   });
 
@@ -38,6 +27,7 @@ describe('turnSortsIntoOrderBy', () => {
     const fields = [{ id: 'field1', name: 'field1' }];
     expect(turnSortsIntoOrderBy(sorts, fields)).toEqual({
       field1: 'AscNullsFirst',
+      position: 'AscNullsFirst',
     });
   });
 
@@ -61,10 +51,11 @@ describe('turnSortsIntoOrderBy', () => {
     expect(turnSortsIntoOrderBy(sorts, fields)).toEqual({
       field1: 'AscNullsFirst',
       field2: 'DescNullsLast',
+      position: 'AscNullsFirst',
     });
   });
 
-  it('should throw error if field not found', () => {
+  it('should ignore if field not found', () => {
     const sorts: Sort[] = [
       {
         fieldMetadataId: 'invalidField',
@@ -72,8 +63,8 @@ describe('turnSortsIntoOrderBy', () => {
         definition: sortDefinition,
       },
     ];
-    expect(() => turnSortsIntoOrderBy(sorts, [])).toThrow(
-      'Could not find field invalidField in metadata object',
-    );
+    expect(turnSortsIntoOrderBy(sorts, [])).toEqual({
+      position: 'AscNullsFirst',
+    });
   });
 });

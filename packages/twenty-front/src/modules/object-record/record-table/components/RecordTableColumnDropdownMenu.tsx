@@ -17,6 +17,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { isDefined } from '~/utils/isDefined';
 
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -28,9 +29,10 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const { getVisibleTableColumnsSelector } = useRecordTableStates();
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+
   const secondVisibleColumn = visibleTableColumns[1];
   const canMoveLeft =
     column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId;
@@ -70,11 +72,16 @@ export const RecordTableColumnDropdownMenu = ({
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
-    availableFilterDefinitions,
+    availableFilterDefinitionsState,
     selectFilter,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     setSelectedFilter,
   } = useFilterDropdown({ filterDropdownId: 'view-filter' });
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+
   const handleSortClick = () => {
     closeDropdown();
     toggleSortDropdown();
@@ -83,10 +90,12 @@ export const RecordTableColumnDropdownMenu = ({
 
   const handleFilterClick = () => {
     closeDropdown();
+
     const filterDefinition = availableFilterDefinitions.find(
       (definition) => definition.fieldMetadataId === column.fieldMetadataId,
     );
-    if (filterDefinition) {
+
+    if (isDefined(filterDefinition)) {
       selectFilter?.({
         fieldMetadataId: column.fieldMetadataId,
         value: '',

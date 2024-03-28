@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { isDefined } from '~/utils/isDefined';
+
 import { FloatingButtonPosition, FloatingButtonProps } from './FloatingButton';
 
 const StyledFloatingButtonGroupContainer = styled.div`
@@ -40,7 +42,7 @@ export const FloatingButtonGroup = ({
         applyBlur: false,
       };
 
-      if (size) {
+      if (isDefined(size)) {
         additionalProps.size = size;
       }
 

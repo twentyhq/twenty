@@ -2,11 +2,11 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
-export const StyledInput = styled.input`
+export const StyledTextInput = styled.input`
   margin: 0;
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
   width: 100%;
 `;
 
@@ -60,7 +60,7 @@ export const TextInput = ({
   });
 
   return (
-    <StyledInput
+    <StyledTextInput
       autoComplete="off"
       ref={wrapperRef}
       placeholder={placeholder}

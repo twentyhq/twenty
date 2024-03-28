@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';

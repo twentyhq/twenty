@@ -7,7 +7,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
+import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
@@ -18,6 +18,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -27,7 +28,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: string;
     expirationDate: number | null;
   }>({
-    expirationDate: ExpirationDates[0].value,
+    expirationDate: EXPIRATION_DATES[0].value,
     name: '',
   });
 
@@ -54,7 +55,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         expiresAt: expiresAt,
       },
     });
-    if (tokenData.data?.generateApiKeyToken) {
+    if (isDefined(tokenData.data?.generateApiKeyToken)) {
       setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyToken.token);
       navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }
@@ -83,6 +84,11 @@ export const SettingsDevelopersApiKeysNew = () => {
           <TextInput
             placeholder="E.g. backoffice integration"
             value={formValues.name}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSave();
+              }
+            }}
             onChange={(value) => {
               setFormValues((prevState) => ({
                 ...prevState,
@@ -99,7 +105,7 @@ export const SettingsDevelopersApiKeysNew = () => {
           />
           <Select
             dropdownId="object-field-type-select"
-            options={ExpirationDates}
+            options={EXPIRATION_DATES}
             value={formValues.expirationDate}
             onChange={(value) => {
               setFormValues((prevState) => ({

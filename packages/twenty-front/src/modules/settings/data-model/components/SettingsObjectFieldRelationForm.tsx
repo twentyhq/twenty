@@ -9,7 +9,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Field } from '~/generated-metadata/graphql';
 
-import { relationTypes } from '../constants/relationTypes';
+import { RELATION_TYPES } from '../constants/RelationTypes';
 import { RelationType } from '../types/RelationType';
 
 export type SettingsObjectFieldRelationFormValues = {
@@ -42,7 +42,6 @@ const StyledInputsLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledInputsContainer = styled.div`
@@ -75,7 +74,7 @@ export const SettingsObjectFieldRelationForm = ({
           fullWidth
           disabled={disableRelationEdition}
           value={values.type}
-          options={Object.entries(relationTypes)
+          options={Object.entries(RELATION_TYPES)
             .filter(([value]) => 'ONE_TO_ONE' !== value)
             .map(([value, { label, Icon }]) => ({
               label,

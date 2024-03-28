@@ -5,6 +5,7 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from '~/utils/isDefined';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
   objectNameSingular,
@@ -22,7 +23,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectMetadataItem,
   });
 
-  const createManyRecordsInCache = async (data: Partial<T>[]) => {
+  const createManyRecordsInCache = (data: Partial<T>[]) => {
     const recordsWithId = data.map((record) => ({
       ...record,
       id: (record.id as string) ?? v4(),
@@ -34,7 +35,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
       const generatedCachedObjectRecord =
         generateObjectRecordOptimisticResponse<T>(record);
 
-      if (generatedCachedObjectRecord) {
+      if (isDefined(generatedCachedObjectRecord)) {
         addRecordInCache(generatedCachedObjectRecord);
 
         createdRecordsInCache.push(generatedCachedObjectRecord);

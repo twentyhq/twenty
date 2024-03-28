@@ -11,11 +11,12 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`
   display: flex;
@@ -46,7 +47,7 @@ export const Attachments = ({
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) onUploadFile?.(e.target.files[0]);
+    if (isDefined(e.target.files)) onUploadFile?.(e.target.files[0]);
   };
 
   const handleUploadFileClick = () => {
@@ -66,14 +67,16 @@ export const Attachments = ({
             onUploadFile={onUploadFile}
           />
         ) : (
-          <StyledEmptyContainer>
+          <AnimatedPlaceholderEmptyContainer>
             <AnimatedPlaceholder type="noFile" />
-            <StyledEmptyTextContainer>
-              <StyledEmptyTitle>No Files</StyledEmptyTitle>
-              <StyledEmptySubTitle>
+            <AnimatedPlaceholderEmptyTextContainer>
+              <AnimatedPlaceholderEmptyTitle>
+                No Files
+              </AnimatedPlaceholderEmptyTitle>
+              <AnimatedPlaceholderEmptySubTitle>
                 There are no associated files with this record.
-              </StyledEmptySubTitle>
-            </StyledEmptyTextContainer>
+              </AnimatedPlaceholderEmptySubTitle>
+            </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
               ref={inputFileRef}
               onChange={handleFileChange}
@@ -85,7 +88,7 @@ export const Attachments = ({
               variant="secondary"
               onClick={handleUploadFileClick}
             />
-          </StyledEmptyContainer>
+          </AnimatedPlaceholderEmptyContainer>
         )}
       </StyledDropZoneContainer>
     );

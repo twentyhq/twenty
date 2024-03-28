@@ -27,7 +27,7 @@ describe('useInternalHotkeyScopeManagement', () => {
         const { dropdownHotkeyScopeState } = useDropdownStates({
           dropdownScopeId,
         });
-        const dropdownHotkeyScope = useRecoilValue(dropdownHotkeyScopeState());
+        const dropdownHotkeyScope = useRecoilValue(dropdownHotkeyScopeState);
         return { dropdownHotkeyScope };
       },
       {

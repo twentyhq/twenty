@@ -1,14 +1,15 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { useTimelineActivities } from '@/activities/timeline/hooks/useTimelineActivities';
+import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -31,11 +32,11 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { activities, initialized } = useTimelineActivities({
-    targetableObject,
-  });
+  const { initialized, noActivities } = useRecoilValue(
+    timelineActivitiesNetworkingState,
+  );
 
-  const showEmptyState = initialized && activities.length === 0;
+  const showEmptyState = noActivities;
 
   const showLoadingState = !initialized;
 
@@ -46,22 +47,24 @@ export const Timeline = ({
 
   if (showEmptyState) {
     return (
-      <StyledEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
-        <StyledEmptyTextContainer>
-          <StyledEmptyTitle>Add your first Activity</StyledEmptyTitle>
-          <StyledEmptySubTitle>
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            Add your first Activity
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
             There are no activities associated with this record.{' '}
-          </StyledEmptySubTitle>
-        </StyledEmptyTextContainer>
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
         <TimelineCreateButtonGroup targetableObject={targetableObject} />
-      </StyledEmptyContainer>
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities} />
+      <TimelineItemsContainer />
     </StyledMainContainer>
   );
 };

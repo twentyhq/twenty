@@ -1,112 +1,154 @@
 import { ApolloCache } from '@apollo/client';
 
+import { getRelationDefinition } from '@/apollo/optimistic-effect/utils/getRelationDefinition';
 import { isObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isObjectRecordConnection';
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { coreObjectNamesToDeleteOnRelationDetach } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
+import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
 export const triggerUpdateRelationsOptimisticEffect = ({
   cache,
-  objectMetadataItem,
-  previousRecord,
-  nextRecord,
-  getRelationMetadata,
+  sourceObjectMetadataItem,
+  currentSourceRecord,
+  updatedSourceRecord,
+  objectMetadataItems,
 }: {
   cache: ApolloCache<unknown>;
-  objectMetadataItem: ObjectMetadataItem;
-  previousRecord: CachedObjectRecord | null;
-  nextRecord: CachedObjectRecord | null;
-  getRelationMetadata: ReturnType<typeof useGetRelationMetadata>;
-}) =>
-  // Optimistically update relation records
-  objectMetadataItem.fields.forEach((fieldMetadataItem) => {
-    if (nextRecord && !(fieldMetadataItem.name in nextRecord)) return;
+  sourceObjectMetadataItem: ObjectMetadataItem;
+  currentSourceRecord: CachedObjectRecord | null;
+  updatedSourceRecord: CachedObjectRecord | null;
+  objectMetadataItems: ObjectMetadataItem[];
+}) => {
+  return sourceObjectMetadataItem.fields.forEach(
+    (fieldMetadataItemOnSourceRecord) => {
+      const notARelationField =
+        fieldMetadataItemOnSourceRecord.type !== FieldMetadataType.Relation;
 
-    const relationMetadata = getRelationMetadata({
-      fieldMetadataItem,
-    });
+      if (notARelationField) {
+        return;
+      }
 
-    if (!relationMetadata) return;
+      const fieldDoesNotExist =
+        isDefined(updatedSourceRecord) &&
+        !(fieldMetadataItemOnSourceRecord.name in updatedSourceRecord);
 
-    const {
-      // Object metadata for the related record
-      relationObjectMetadataItem,
-      // Field on the related record
-      relationFieldMetadataItem,
-    } = relationMetadata;
+      if (fieldDoesNotExist) {
+        return;
+      }
 
-    const previousFieldValue:
-      | ObjectRecordConnection
-      | CachedObjectRecord
-      | null = previousRecord?.[fieldMetadataItem.name];
-    const nextFieldValue: ObjectRecordConnection | CachedObjectRecord | null =
-      nextRecord?.[fieldMetadataItem.name];
+      const relationDefinition = getRelationDefinition({
+        fieldMetadataItemOnSourceRecord,
+        objectMetadataItems,
+      });
+      if (!relationDefinition) {
+        return;
+      }
 
-    if (isDeeplyEqual(previousFieldValue, nextFieldValue)) return;
+      const { targetObjectMetadataItem, fieldMetadataItemOnTargetRecord } =
+        relationDefinition;
 
-    const isPreviousFieldValueRecordConnection = isObjectRecordConnection(
-      relationObjectMetadataItem.nameSingular,
-      previousFieldValue,
-    );
-    const relationRecordsToDetach = isPreviousFieldValueRecordConnection
-      ? previousFieldValue.edges.map(({ node }) => node as CachedObjectRecord)
-      : [previousFieldValue].filter(isDefined);
+      const currentFieldValueOnSourceRecord:
+        | ObjectRecordConnection
+        | CachedObjectRecord
+        | null = currentSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
-    const isNextFieldValueRecordConnection = isObjectRecordConnection(
-      relationObjectMetadataItem.nameSingular,
-      nextFieldValue,
-    );
-    const relationRecordsToAttach = isNextFieldValueRecordConnection
-      ? nextFieldValue.edges.map(({ node }) => node as CachedObjectRecord)
-      : [nextFieldValue].filter(isDefined);
+      const updatedFieldValueOnSourceRecord:
+        | ObjectRecordConnection
+        | CachedObjectRecord
+        | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
-    if (previousRecord && relationRecordsToDetach.length) {
-      const shouldDeleteRelationRecord =
-        coreObjectNamesToDeleteOnRelationDetach.includes(
-          relationObjectMetadataItem.nameSingular as CoreObjectNameSingular,
+      if (
+        isDeeplyEqual(
+          currentFieldValueOnSourceRecord,
+          updatedFieldValueOnSourceRecord,
+        )
+      ) {
+        return;
+      }
+
+      // TODO: replace this by a relation type check, if it's one to many,
+      //   it's an object record connection (we can still check it though as a safeguard)
+      const currentFieldValueOnSourceRecordIsARecordConnection =
+        isObjectRecordConnection(
+          targetObjectMetadataItem.nameSingular,
+          currentFieldValueOnSourceRecord,
         );
 
-      if (shouldDeleteRelationRecord) {
-        triggerDeleteRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem: relationObjectMetadataItem,
-          records: relationRecordsToDetach,
-          getRelationMetadata,
-        });
-      } else {
-        relationRecordsToDetach.forEach((relationRecordToDetach) => {
-          triggerDetachRelationOptimisticEffect({
-            cache,
-            objectNameSingular: objectMetadataItem.nameSingular,
-            recordId: previousRecord.id,
-            relationFieldName: relationFieldMetadataItem.name,
-            relationObjectMetadataNameSingular:
-              relationObjectMetadataItem.nameSingular,
-            relationRecordId: relationRecordToDetach.id,
-          });
-        });
-      }
-    }
+      const targetRecordsToDetachFrom =
+        currentFieldValueOnSourceRecordIsARecordConnection
+          ? currentFieldValueOnSourceRecord.edges.map(
+              ({ node }) => node as CachedObjectRecord,
+            )
+          : [currentFieldValueOnSourceRecord].filter(isDefined);
 
-    if (nextRecord && relationRecordsToAttach.length) {
-      relationRecordsToAttach.forEach((relationRecordToAttach) =>
-        triggerAttachRelationOptimisticEffect({
-          cache,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          recordId: nextRecord.id,
-          relationFieldName: relationFieldMetadataItem.name,
-          relationObjectMetadataNameSingular:
-            relationObjectMetadataItem.nameSingular,
-          relationRecordId: relationRecordToAttach.id,
-        }),
-      );
-    }
-  });
+      const updatedFieldValueOnSourceRecordIsARecordConnection =
+        isObjectRecordConnection(
+          targetObjectMetadataItem.nameSingular,
+          updatedFieldValueOnSourceRecord,
+        );
+
+      const targetRecordsToAttachTo =
+        updatedFieldValueOnSourceRecordIsARecordConnection
+          ? updatedFieldValueOnSourceRecord.edges.map(
+              ({ node }) => node as CachedObjectRecord,
+            )
+          : [updatedFieldValueOnSourceRecord].filter(isDefined);
+
+      const shouldDetachSourceFromAllTargets =
+        isDefined(currentSourceRecord) && targetRecordsToDetachFrom.length > 0;
+
+      if (shouldDetachSourceFromAllTargets) {
+        // TODO: see if we can de-hardcode this, put cascade delete in relation metadata item
+        //   Instead of hardcoding it here
+        const shouldCascadeDeleteTargetRecords =
+          CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH.includes(
+            targetObjectMetadataItem.nameSingular as CoreObjectNameSingular,
+          );
+
+        if (shouldCascadeDeleteTargetRecords) {
+          triggerDeleteRecordsOptimisticEffect({
+            cache,
+            objectMetadataItem: targetObjectMetadataItem,
+            recordsToDelete: targetRecordsToDetachFrom,
+            objectMetadataItems,
+          });
+        } else {
+          targetRecordsToDetachFrom.forEach((targetRecordToDetachFrom) => {
+            triggerDetachRelationOptimisticEffect({
+              cache,
+              sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
+              sourceRecordId: currentSourceRecord.id,
+              fieldNameOnTargetRecord: fieldMetadataItemOnTargetRecord.name,
+              targetObjectNameSingular: targetObjectMetadataItem.nameSingular,
+              targetRecordId: targetRecordToDetachFrom.id,
+            });
+          });
+        }
+      }
+
+      const shouldAttachSourceToAllTargets =
+        isDefined(updatedSourceRecord) && targetRecordsToAttachTo.length > 0;
+
+      if (shouldAttachSourceToAllTargets) {
+        targetRecordsToAttachTo.forEach((targetRecordToAttachTo) =>
+          triggerAttachRelationOptimisticEffect({
+            cache,
+            sourceObjectNameSingular: sourceObjectMetadataItem.nameSingular,
+            sourceRecordId: updatedSourceRecord.id,
+            fieldNameOnTargetRecord: fieldMetadataItemOnTargetRecord.name,
+            targetObjectNameSingular: targetObjectMetadataItem.nameSingular,
+            targetRecordId: targetRecordToAttachTo.id,
+          }),
+        );
+      }
+    },
+  );
+};

@@ -60,7 +60,7 @@ export const RecordShowPage = () => {
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
 
-    if (isFavorite && record) {
+    if (isFavorite && isDefined(record)) {
       deleteFavorite(correspondingFavorite.id);
     } else {
       createFavorite(record, objectNameSingular);
@@ -75,7 +75,7 @@ export const RecordShowPage = () => {
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : labelIdentifierFieldValue;
+      : `${labelIdentifierFieldValue}`;
 
   return (
     <PageContainer>
@@ -94,10 +94,9 @@ export const RecordShowPage = () => {
             />
             <ShowPageAddButton
               key="add"
-              entity={{
+              activityTargetObject={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
-                targetObjectRecord: record,
               }}
             />
             <ShowPageMoreButton

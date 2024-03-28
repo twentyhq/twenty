@@ -1,27 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { z } from 'zod';
+import { useCallback, useState } from 'react';
+import { SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 
-import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { billingState } from '@/client-config/states/billingState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
+import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
-import { PASSWORD_REGEX } from '../../utils/passwordRegex';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
-  Invite = 'invite',
 }
 
 export enum SignInUpStep {
@@ -30,72 +23,37 @@ export enum SignInUpStep {
   Password = 'password',
 }
 
-const validationSchema = z
-  .object({
-    exist: z.boolean(),
-    email: z.string().trim().email('Email must be a valid email'),
-    password: z
-      .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
-  })
-  .required();
-
-type Form = z.infer<typeof validationSchema>;
-
-export const useSignInUp = () => {
-  const navigate = useNavigate();
+export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
+
   const isMatchingLocation = useIsMatchingLocation();
 
-  const [authProviders] = useRecoilState(authProvidersState);
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
-  const billing = useRecoilValue(billingState);
-
   const workspaceInviteHash = useParams().workspaceInviteHash;
+
+  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
+
+  const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
+
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
-  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    if (isMatchingLocation(AppPath.Invite)) {
-      return SignInUpMode.Invite;
-    }
 
-    return isMatchingLocation(AppPath.SignIn)
+  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
+    return isMatchingLocation(AppPath.SignInUp)
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
-  const [showErrors, setShowErrors] = useState(false);
-
-  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
-    variables: { inviteHash: workspaceInviteHash || '' },
-  });
-
-  const form = useForm<Form>({
-    mode: 'onChange',
-    defaultValues: {
-      exist: false,
-    },
-    resolver: zodResolver(validationSchema),
-  });
-
-  useEffect(() => {
-    if (isSignInPrefilled) {
-      form.setValue('email', 'tim@apple.dev');
-      form.setValue('password', 'Applecar2025');
-    }
-  }, [form, isSignInPrefilled]);
 
   const {
     signInWithCredentials,
     signUpWithCredentials,
-    signInWithGoogle,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
-      isMatchingLocation(AppPath.SignIn)
+      isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
@@ -127,8 +85,11 @@ export const useSignInUp = () => {
           throw new Error('Email and password are required');
         }
 
-        const { workspace: currentWorkspace } =
-          signInUpMode === SignInUpMode.SignIn
+        const {
+          workspace: currentWorkspace,
+          workspaceMember: currentWorkspaceMember,
+        } =
+          signInUpMode === SignInUpMode.SignIn && !isInviteMode
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
@@ -139,19 +100,7 @@ export const useSignInUp = () => {
                 workspaceInviteHash,
               );
 
-        if (
-          billing?.isBillingEnabled &&
-          currentWorkspace.subscriptionStatus !== 'active'
-        ) {
-          navigate(AppPath.PlanRequired);
-          return;
-        }
-        if (currentWorkspace.displayName) {
-          navigate(AppPath.Index);
-          return;
-        }
-
-        navigate(AppPath.CreateWorkspace);
+        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',
@@ -160,18 +109,14 @@ export const useSignInUp = () => {
     },
     [
       signInUpMode,
+      isInviteMode,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      billing?.isBillingEnabled,
-      navigate,
+      navigateAfterSignInUp,
       enqueueSnackBar,
     ],
   );
-
-  const goBackToEmailStep = useCallback(() => {
-    setSignInUpStep(SignInUpStep.Email);
-  }, [setSignInUpStep]);
 
   useScopedHotkeys(
     'enter',
@@ -189,21 +134,21 @@ export const useSignInUp = () => {
       }
     },
     PageHotkeyScope.SignInUp,
-    [continueWithEmail],
+    [
+      continueWithEmail,
+      signInUpStep,
+      continueWithCredentials,
+      form,
+      submitCredentials,
+    ],
   );
 
   return {
-    authProviders,
-    signInWithGoogle: () => signInWithGoogle(workspaceInviteHash),
+    isInviteMode,
     signInUpStep,
     signInUpMode,
-    showErrors,
-    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
-    goBackToEmailStep,
     submitCredentials,
-    form,
-    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
   };
 };

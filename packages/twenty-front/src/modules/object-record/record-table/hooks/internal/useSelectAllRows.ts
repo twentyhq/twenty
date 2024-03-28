@@ -5,8 +5,8 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 export const useSelectAllRows = (recordTableId?: string) => {
   const {
-    getAllRowsSelectedStatusSelector,
-    getTableRowIdsState,
+    allRowsSelectedStatusSelector,
+    tableRowIdsState,
     isRowSelectedFamilyState,
   } = useRecordTableStates(recordTableId);
 
@@ -15,10 +15,10 @@ export const useSelectAllRows = (recordTableId?: string) => {
       () => {
         const allRowsSelectedStatus = getSnapshotValue(
           snapshot,
-          getAllRowsSelectedStatusSelector(),
+          allRowsSelectedStatusSelector(),
         );
 
-        const tableRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
+        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         if (
           allRowsSelectedStatus === 'none' ||
@@ -33,11 +33,7 @@ export const useSelectAllRows = (recordTableId?: string) => {
           }
         }
       },
-    [
-      getAllRowsSelectedStatusSelector,
-      getTableRowIdsState,
-      isRowSelectedFamilyState,
-    ],
+    [allRowsSelectedStatusSelector, tableRowIdsState, isRowSelectedFamilyState],
   );
 
   return {

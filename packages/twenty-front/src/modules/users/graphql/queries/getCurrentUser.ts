@@ -28,11 +28,24 @@ export const GET_CURRENT_USER = gql`
         inviteHash
         allowImpersonation
         subscriptionStatus
+        activationStatus
         featureFlags {
           id
           key
           value
           workspaceId
+        }
+        currentBillingSubscription {
+          status
+          interval
+        }
+      }
+      workspaces {
+        workspace {
+          id
+          displayName
+          logo
+          domainName
         }
       }
     }

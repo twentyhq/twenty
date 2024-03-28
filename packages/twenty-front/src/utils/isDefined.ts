@@ -1,3 +1,4 @@
-export const isDefined = <T>(
-  value: T | undefined | null,
-): value is NonNullable<T> => value !== undefined && value !== null;
+import { isNull, isUndefined } from '@sniptt/guards';
+
+export const isDefined = <T>(value: T): value is NonNullable<T> =>
+  !isUndefined(value) && !isNull(value);

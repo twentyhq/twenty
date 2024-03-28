@@ -1,6 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const currentMobileNavigationDrawerState = atom<'main' | 'settings'>({
+export const currentMobileNavigationDrawerState = createState<
+  'main' | 'settings'
+>({
   key: 'currentMobileNavigationDrawerState',
-  default: 'main',
+  defaultValue: 'main',
 });

@@ -3,8 +3,9 @@ import { getPageTitleFromPath } from '../title-utils';
 describe('title-utils', () => {
   it('should return the correct title for a given path', () => {
     expect(getPageTitleFromPath('/verify')).toBe('Verify');
-    expect(getPageTitleFromPath('/sign-in')).toBe('Sign In');
-    expect(getPageTitleFromPath('/sign-up')).toBe('Sign Up');
+    expect(getPageTitleFromPath('/welcome')).toBe(
+      'Sign in or Create an account',
+    );
     expect(getPageTitleFromPath('/invite/:workspaceInviteHash')).toBe('Invite');
     expect(getPageTitleFromPath('/create/workspace')).toBe('Create Workspace');
     expect(getPageTitleFromPath('/create/profile')).toBe('Create Profile');

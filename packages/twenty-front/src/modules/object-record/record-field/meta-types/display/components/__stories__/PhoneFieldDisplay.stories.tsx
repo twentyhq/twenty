@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { usePhoneField } from '@/object-record/record-field/meta-types/hooks/usePhoneField';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
-import { FieldContext } from '../../../../contexts/FieldContext';
-import { usePhoneField } from '../../../hooks/usePhoneField';
 import { PhoneFieldDisplay } from '../PhoneFieldDisplay';
 
 const PhoneFieldValueSetterEffect = ({ value }: { value: string }) => {
@@ -21,6 +22,7 @@ const PhoneFieldValueSetterEffect = ({ value }: { value: string }) => {
 const meta: Meta = {
   title: 'UI/Data/Field/Display/PhoneFieldDisplay',
   decorators: [
+    MemoryRouterDecorator,
     (Story, { args }) => (
       <FieldContext.Provider
         value={{
@@ -29,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'phone',
             label: 'Phone',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             iconName: 'IconPhone',
             metadata: {
               fieldName: 'phone',
@@ -41,10 +43,8 @@ const meta: Meta = {
           useUpdateRecord: () => [() => undefined, {}],
         }}
       >
-        <MemoryRouter>
-          <PhoneFieldValueSetterEffect value={args.value} />
-          <Story />
-        </MemoryRouter>
+        <PhoneFieldValueSetterEffect value={args.value} />
+        <Story />
       </FieldContext.Provider>
     ),
     ComponentDecorator,

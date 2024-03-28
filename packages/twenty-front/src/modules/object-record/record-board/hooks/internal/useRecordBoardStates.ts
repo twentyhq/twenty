@@ -1,24 +1,25 @@
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { isFirstRecordBoardColumnFamilyStateScopeMap } from '@/object-record/record-board/states/isFirstRecordBoardColumnFamilyStateScopeMap';
-import { isLastRecordBoardColumnFamilyStateScopeMap } from '@/object-record/record-board/states/isLastRecordBoardColumnFamilyStateScopeMap';
-import { isRecordBoardCardSelectedFamilyStateScopeMap } from '@/object-record/record-board/states/isRecordBoardCardSelectedFamilyStateScopeMap';
-import { isRecordBoardCompactModeActiveStateScopeMap } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveStateScopeMap';
-import { isRecordBoardFetchingRecordsStateScopeMap } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsStateScopeMap';
-import { onRecordBoardFetchMoreVisibilityChangeStateScopeMap } from '@/object-record/record-board/states/onRecordBoardFetchMoreVisibilityChangeStateScopeMap';
-import { recordBoardColumnIdsStateScopeMap } from '@/object-record/record-board/states/recordBoardColumnIdsStateScopeMap';
-import { recordBoardFieldDefinitionsStateScopeMap } from '@/object-record/record-board/states/recordBoardFieldDefinitionsStateScopeMap';
-import { recordBoardFiltersStateScopeMap } from '@/object-record/record-board/states/recordBoardFiltersStateScopeMap';
-import { recordBoardObjectSingularNameStateScopeMap } from '@/object-record/record-board/states/recordBoardObjectSingularNameStateScopeMap';
-import { recordBoardRecordIdsByColumnIdFamilyStateScopeMap } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdFamilyStateScopeMap';
-import { recordBoardSortsStateScopeMap } from '@/object-record/record-board/states/recordBoardSortsStateScopeMap';
-import { recordBoardColumnsFamilySelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardColumnsFamilySelectorScopeMap';
-import { recordBoardSelectedRecordIdsSelectorScopeMap } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsSelectorScopeMap';
-import { recordBoardVisibleFieldDefinitionsScopedSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsScopedSelector';
+import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isFirstRecordBoardColumnComponentFamilyState';
+import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { isRecordBoardFetchingRecordsComponentState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsComponentState';
+import { onRecordBoardFetchMoreVisibilityChangeComponentState } from '@/object-record/record-board/states/onRecordBoardFetchMoreVisibilityChangeComponentState';
+import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
+import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
+import { recordBoardFiltersComponentState } from '@/object-record/record-board/states/recordBoardFiltersComponentState';
+import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
+import { recordBoardObjectSingularNameComponentState } from '@/object-record/record-board/states/recordBoardObjectSingularNameComponentState';
+import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
+import { recordBoardSortsComponentState } from '@/object-record/record-board/states/recordBoardSortsComponentState';
+import { recordBoardColumnsComponentFamilySelector } from '@/object-record/record-board/states/selectors/recordBoardColumnsComponentFamilySelector';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { getSelectorReadOnly } from '@/ui/utilities/recoil-scope/utils/getSelectorReadOnly';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
+import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useRecordBoardStates = (recordBoardId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
@@ -28,59 +29,69 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
 
   return {
     scopeId,
-    getObjectSingularNameState: getState(
-      recordBoardObjectSingularNameStateScopeMap,
+    objectSingularNameState: extractComponentState(
+      recordBoardObjectSingularNameComponentState,
       scopeId,
     ),
-    getIsFetchingRecordState: getState(
-      isRecordBoardFetchingRecordsStateScopeMap,
+    kanbanFieldMetadataNameState: extractComponentState(
+      recordBoardKanbanFieldMetadataNameComponentState,
       scopeId,
     ),
-    getColumnIdsState: getState(recordBoardColumnIdsStateScopeMap, scopeId),
-    isFirstColumnFamilyState: getFamilyState(
-      isFirstRecordBoardColumnFamilyStateScopeMap,
+    isFetchingRecordState: extractComponentState(
+      isRecordBoardFetchingRecordsComponentState,
       scopeId,
     ),
-    isLastColumnFamilyState: getFamilyState(
-      isLastRecordBoardColumnFamilyStateScopeMap,
+    columnIdsState: extractComponentState(
+      recordBoardColumnIdsComponentState,
       scopeId,
     ),
-    columnsFamilySelector: getFamilyState(
-      recordBoardColumnsFamilySelectorScopeMap,
+    isFirstColumnFamilyState: extractComponentFamilyState(
+      isFirstRecordBoardColumnComponentFamilyState,
       scopeId,
     ),
-
-    getFiltersState: getState(recordBoardFiltersStateScopeMap, scopeId),
-    getSortsState: getState(recordBoardSortsStateScopeMap, scopeId),
-    getFieldDefinitionsState: getState(
-      recordBoardFieldDefinitionsStateScopeMap,
+    isLastColumnFamilyState: extractComponentFamilyState(
+      isLastRecordBoardColumnComponentFamilyState,
       scopeId,
     ),
-    getVisibleFieldDefinitionsState: getSelectorReadOnly(
-      recordBoardVisibleFieldDefinitionsScopedSelector,
+    columnsFamilySelector: extractComponentFamilyState(
+      recordBoardColumnsComponentFamilySelector,
       scopeId,
     ),
 
-    recordIdsByColumnIdFamilyState: getFamilyState(
-      recordBoardRecordIdsByColumnIdFamilyStateScopeMap,
+    filtersState: extractComponentState(
+      recordBoardFiltersComponentState,
       scopeId,
     ),
-    isRecordBoardCardSelectedFamilyState: getFamilyState(
-      isRecordBoardCardSelectedFamilyStateScopeMap,
+    sortsState: extractComponentState(recordBoardSortsComponentState, scopeId),
+    fieldDefinitionsState: extractComponentState(
+      recordBoardFieldDefinitionsComponentState,
       scopeId,
     ),
-    getSelectedRecordIdsSelector: getSelectorReadOnly(
-      recordBoardSelectedRecordIdsSelectorScopeMap,
-      scopeId,
-    ),
-
-    getIsCompactModeActiveState: getState(
-      isRecordBoardCompactModeActiveStateScopeMap,
+    visibleFieldDefinitionsState: extractComponentReadOnlySelector(
+      recordBoardVisibleFieldDefinitionsComponentSelector,
       scopeId,
     ),
 
-    getOnFetchMoreVisibilityChangeState: getState(
-      onRecordBoardFetchMoreVisibilityChangeStateScopeMap,
+    recordIdsByColumnIdFamilyState: extractComponentFamilyState(
+      recordBoardRecordIdsByColumnIdComponentFamilyState,
+      scopeId,
+    ),
+    isRecordBoardCardSelectedFamilyState: extractComponentFamilyState(
+      isRecordBoardCardSelectedComponentFamilyState,
+      scopeId,
+    ),
+    selectedRecordIdsSelector: extractComponentReadOnlySelector(
+      recordBoardSelectedRecordIdsComponentSelector,
+      scopeId,
+    ),
+
+    isCompactModeActiveState: extractComponentState(
+      isRecordBoardCompactModeActiveComponentState,
+      scopeId,
+    ),
+
+    onFetchMoreVisibilityChangeState: extractComponentState(
+      onRecordBoardFetchMoreVisibilityChangeComponentState,
       scopeId,
     ),
   };

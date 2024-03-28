@@ -17,12 +17,19 @@ export const getObjectRecordIdentifier = ({
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
     case CoreObjectNameSingular.WorkspaceMember: {
-      const workspaceMember = record as WorkspaceMember;
+      const workspaceMember = record as Partial<WorkspaceMember> & {
+        id: string;
+      };
+
+      const name = workspaceMember.name
+        ? `${workspaceMember.name?.firstName ?? ''} ${
+            workspaceMember.name?.lastName ?? ''
+          }`
+        : '';
 
       return {
         id: workspaceMember.id,
-        name:
-          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
+        name,
         avatarUrl: workspaceMember.avatarUrl ?? undefined,
         avatarType: 'rounded',
       };
@@ -55,9 +62,9 @@ export const getObjectRecordIdentifier = ({
   // TODO: This is a temporary solution before we seed imageIdentifierFieldMetadataId in the database
   const avatarUrl =
     (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-      ? getLogoUrlFromDomainName(record['domainName'] ?? '')
+      ? getLogoUrlFromDomainName(record.domainName ?? '')
       : objectMetadataItem.nameSingular === CoreObjectNameSingular.Person
-        ? record['avatarUrl'] ?? ''
+        ? record.avatarUrl ?? ''
         : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
@@ -67,9 +74,10 @@ export const getObjectRecordIdentifier = ({
   const isWorkspaceMemberObjectMetadata =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
 
-  const linkToShowPage = isWorkspaceMemberObjectMetadata
-    ? ''
-    : `${basePathToShowPage}${record.id}`;
+  const linkToShowPage =
+    isWorkspaceMemberObjectMetadata || !record.id
+      ? ''
+      : `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,

@@ -5,7 +5,7 @@ import {
   ColorSampleVariant,
 } from '@/ui/display/color/components/ColorSample';
 import { IconCheck } from '@/ui/display/icon';
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import {
   StyledMenuItemLabel,

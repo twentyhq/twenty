@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { Comment } from '@/activities/comment/Comment';
-import { Activity } from '@/activities/types/Activity';
 import { Comment as CommentType } from '@/activities/types/Comment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -28,7 +27,6 @@ const StyledThreadItemListContainer = styled.div`
 
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(8)};
-  padding-bottom: ${({ theme }) => theme.spacing(32)};
   padding-left: ${({ theme }) => theme.spacing(12)};
   width: 100%;
 `;
@@ -51,12 +49,12 @@ const StyledThreadCommentTitle = styled.div`
 `;
 
 type ActivityCommentsProps = {
-  activity: Pick<Activity, 'id'>;
+  activityId: string;
   scrollableContainerRef: React.RefObject<HTMLDivElement>;
 };
 
 export const ActivityComments = ({
-  activity,
+  activityId,
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
   const { createOneRecord: createOneComment } = useCreateOneRecord({
@@ -67,9 +65,10 @@ export const ActivityComments = ({
 
   const { records: comments } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Comment,
+    skip: !isNonEmptyString(activityId),
     filter: {
       activityId: {
-        eq: activity?.id ?? '',
+        eq: activityId,
       },
     },
   });
@@ -87,7 +86,7 @@ export const ActivityComments = ({
       id: v4(),
       authorId: currentWorkspaceMember?.id ?? '',
       author: currentWorkspaceMember,
-      activityId: activity?.id ?? '',
+      activityId: activityId,
       body: commentText,
       createdAt: new Date().toISOString(),
     });

@@ -1,8 +1,7 @@
-import { atom } from 'recoil';
-
+import { createState } from '@/ui/utilities/state/utils/createState';
 import { Sentry } from '~/generated/graphql';
 
-export const sentryConfigState = atom<Sentry | null>({
+export const sentryConfigState = createState<Sentry | null>({
   key: 'sentryConfigState',
-  default: null,
+  defaultValue: null,
 });

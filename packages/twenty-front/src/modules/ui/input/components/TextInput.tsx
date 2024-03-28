@@ -20,20 +20,6 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-export type TextInputComponentProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'onKeyDown'
-> & {
-  className?: string;
-  label?: string;
-  onChange?: (text: string) => void;
-  fullWidth?: boolean;
-  disableHotkeys?: boolean;
-  error?: string;
-  RightIcon?: IconComponent;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-};
-
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: inline-flex;
   flex-direction: column;
@@ -45,7 +31,6 @@ const StyledLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledInputContainer = styled.div`
@@ -60,15 +45,15 @@ const StyledInput = styled.input<Pick<TextInputComponentProps, 'fullWidth'>>`
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-right: none;
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
-
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  height: 32px;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
-
   width: 100%;
 
   &::placeholder,
@@ -110,6 +95,21 @@ const StyledTrailingIcon = styled.div`
 `;
 
 const INPUT_TYPE_PASSWORD = 'password';
+
+export type TextInputComponentProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'onKeyDown'
+> & {
+  className?: string;
+  label?: string;
+  onChange?: (text: string) => void;
+  fullWidth?: boolean;
+  disableHotkeys?: boolean;
+  error?: string;
+  RightIcon?: IconComponent;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
+};
 
 const TextInputComponent = (
   {
@@ -164,6 +164,7 @@ const TextInputComponent = (
       inputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,
+    { enabled: !disableHotkeys },
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);

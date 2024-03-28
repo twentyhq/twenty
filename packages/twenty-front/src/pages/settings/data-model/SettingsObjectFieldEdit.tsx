@@ -1,5 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -12,8 +14,10 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
-import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
+import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
+import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
+import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -26,6 +30,12 @@ import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
+
+const StyledSettingsObjectFieldTypeSelect = styled(
+  SettingsDataModelFieldTypeSelect,
+)`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
 
 const canPersistFieldMetadataItemUpdate = (
   fieldMetadataItem: FieldMetadataItem,
@@ -97,17 +107,22 @@ export const SettingsObjectFieldEdit = () => {
 
     const selectOptions = activeMetadataField.options?.map((option) => ({
       ...option,
-      isDefault: defaultValue === option.value,
+      isDefault: defaultValue === `'${option.value}'`,
     }));
     selectOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
+    const fieldType = activeMetadataField.type;
+    const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
+
+    if (!isFieldTypeSupported) return;
+
     initForm({
       icon: activeMetadataField.icon ?? undefined,
       label: activeMetadataField.label,
       description: activeMetadataField.description ?? undefined,
-      type: activeMetadataField.type,
+      type: fieldType,
       ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
       relation: {
         field: {
@@ -146,12 +161,12 @@ export const SettingsObjectFieldEdit = () => {
     try {
       if (
         validatedFormValues.type === FieldMetadataType.Relation &&
-        relationFieldMetadataItem?.id &&
+        isNonEmptyString(relationFieldMetadataItem?.id) &&
         hasRelationFormChanged
       ) {
         await editMetadataField({
           icon: validatedFormValues.relation.field.icon,
-          id: relationFieldMetadataItem.id,
+          id: relationFieldMetadataItem?.id,
           label: validatedFormValues.relation.field.label,
         });
       }
@@ -209,29 +224,40 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           disabled={!activeMetadataField.isCustom}
-          disableNameEdition
           name={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}
           onChange={handleFormChange}
         />
-        <SettingsObjectFieldTypeSelectSection
-          disableCurrencyForm
-          fieldMetadata={{
-            icon: formValues.icon,
-            label: formValues.label || 'Employees',
-            id: activeMetadataField.id,
-          }}
-          objectMetadataId={activeObjectMetadataItem.id}
-          onChange={handleFormChange}
-          relationFieldMetadata={relationFieldMetadataItem}
-          values={{
-            type: formValues.type,
-            currency: formValues.currency,
-            relation: formValues.relation,
-            select: formValues.select,
-          }}
-        />
+        <Section>
+          <H2Title
+            title="Type and values"
+            description="The field's type and values."
+          />
+          <StyledSettingsObjectFieldTypeSelect
+            disabled
+            onChange={handleFormChange}
+            value={formValues.type}
+          />
+          <SettingsDataModelFieldSettingsFormCard
+            disableCurrencyForm
+            fieldMetadataItem={{
+              icon: formValues.icon,
+              id: activeMetadataField.id,
+              label: formValues.label,
+              name: activeMetadataField.name,
+              type: formValues.type,
+            }}
+            objectMetadataItem={activeObjectMetadataItem}
+            onChange={handleFormChange}
+            relationFieldMetadataItem={relationFieldMetadataItem}
+            values={{
+              currency: formValues.currency,
+              relation: formValues.relation,
+              select: formValues.select,
+            }}
+          />
+        </Section>
         {!isLabelIdentifier && (
           <Section>
             <H2Title title="Danger zone" description="Disable this field" />

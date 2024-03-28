@@ -3,68 +3,30 @@ import { gql } from '@apollo/client';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
-  query FindOneperson($objectRecordId: UUID!) {
+  query FindOnePerson($objectRecordId: UUID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
-      id
-      opportunities {
-        edges {
-          node {
-            id
+      __typename
+          xLink {
+            label
+            url
           }
-        }
-      }
-      xLink {
-        label
-        url
-      }
-      id
-      pointOfContactForOpportunities {
-        edges {
-          node {
-            id
+          id
+          createdAt
+          city
+          email
+          jobTitle
+          name {
+            firstName
+            lastName
           }
-        }
-      }
-      createdAt
-      company {
-        id
-      }
-      city
-      email
-      activityTargets {
-        edges {
-          node {
-            id
+          phone
+          linkedinLink {
+            label
+            url
           }
-        }
-      }
-      jobTitle
-      favorites {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      attachments {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        label
-        url
-      }
-      updatedAt
-      avatarUrl
-      companyId
+          updatedAt
+          avatarUrl
+          companyId
     }
   }
 `;

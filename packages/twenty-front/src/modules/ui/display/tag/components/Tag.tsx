@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
 const StyledTag = styled.h3<{

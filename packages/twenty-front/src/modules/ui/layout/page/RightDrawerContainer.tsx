@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 import { PagePanel } from './PagePanel';
 

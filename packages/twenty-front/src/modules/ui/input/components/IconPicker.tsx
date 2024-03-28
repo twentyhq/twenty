@@ -14,7 +14,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { arrayToChunks } from '~/utils/array/array-to-chunks';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
@@ -30,6 +30,7 @@ type IconPickerProps = {
   onOpen?: () => void;
   variant?: IconButtonVariant;
   className?: string;
+  disableBlur?: boolean;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -86,6 +87,7 @@ export const IconPicker = ({
   onClose,
   onOpen,
   variant = 'secondary',
+  disableBlur = false,
   className,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
@@ -148,6 +150,7 @@ export const IconPicker = ({
           />
         }
         dropdownMenuWidth={176}
+        disableBlur={disableBlur}
         dropdownComponents={
           <SelectableList
             selectableListId="icon-list"

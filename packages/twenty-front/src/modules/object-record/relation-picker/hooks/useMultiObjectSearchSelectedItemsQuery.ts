@@ -69,7 +69,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
 
   const multiSelectQueryForSelectedIds =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
+      targetObjectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
     });
 
   const {

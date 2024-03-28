@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
@@ -16,6 +16,7 @@ import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGe
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
+import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
@@ -39,10 +40,10 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
+  eagerLoadedRelations?: Record<string, any>,
 ) => {
-  const isCurrentWorkspaceActive = useRecoilValue(
-    isCurrentWorkspaceActiveSelector,
-  );
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -54,7 +55,7 @@ export const useObjectMetadataItem = (
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!isCurrentWorkspaceActive) {
+  if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
@@ -88,6 +89,14 @@ export const useObjectMetadataItem = (
 
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const findManyRecordsQuery = generateFindManyRecordsQuery({
+    objectMetadataItem,
+    depth,
+    eagerLoadedRelations,
+  });
+
+  const generateFindDuplicateRecordsQuery =
+    useGenerateFindDuplicateRecordsQuery();
+  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
     objectMetadataItem,
     depth,
   });
@@ -137,6 +146,7 @@ export const useObjectMetadataItem = (
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,
+    findDuplicateRecordsQuery,
     findOneRecordQuery,
     createOneRecordMutation,
     updateOneRecordMutation,

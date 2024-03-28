@@ -4,21 +4,23 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
-  StyledEmptyContainer,
-  StyledEmptySubTitle,
-  StyledEmptyTextContainer,
-  StyledEmptyTitle,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -57,13 +59,13 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
+  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
-    getIsRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
@@ -76,11 +78,11 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  const { persistViewFields } = useViewFields(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
-  const objectLabel = foundObjectMetadataItem?.nameSingular;
+  const objectLabel = foundObjectMetadataItem?.labelSingular;
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
@@ -92,11 +94,16 @@ export const RecordTableWithWrappers = ({
                 <RecordTable
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
-                  onColumnsChange={useRecoilCallback(() => (columns) => {
-                    persistViewFields(
-                      mapColumnDefinitionsToViewFields(columns),
-                    );
-                  })}
+                  onColumnsChange={useRecoilCallback(
+                    () => (columns) => {
+                      saveViewFields(
+                        mapColumnDefinitionsToViewFields(
+                          columns as ColumnDefinition<FieldMetadata>[],
+                        ),
+                      );
+                    },
+                    [saveViewFields],
+                  )}
                   createRecord={createRecord}
                 />
                 <DragSelect
@@ -110,23 +117,23 @@ export const RecordTableWithWrappers = ({
                 tableBodyRef={tableBodyRef}
               />
               {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <StyledEmptyContainer>
+                <AnimatedPlaceholderEmptyContainer>
                   <AnimatedPlaceholder type="noRecord" />
-                  <StyledEmptyTextContainer>
-                    <StyledEmptyTitle>
+                  <AnimatedPlaceholderEmptyTextContainer>
+                    <AnimatedPlaceholderEmptyTitle>
                       Add your first {objectLabel}
-                    </StyledEmptyTitle>
-                    <StyledEmptySubTitle>
+                    </AnimatedPlaceholderEmptyTitle>
+                    <AnimatedPlaceholderEmptySubTitle>
                       Use our API or add your first {objectLabel} manually
-                    </StyledEmptySubTitle>
-                  </StyledEmptyTextContainer>
+                    </AnimatedPlaceholderEmptySubTitle>
+                  </AnimatedPlaceholderEmptyTextContainer>
                   <Button
                     Icon={IconPlus}
                     title={`Add a ${objectLabel}`}
                     variant={'secondary'}
                     onClick={createRecord}
                   />
-                </StyledEmptyContainer>
+                </AnimatedPlaceholderEmptyContainer>
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>

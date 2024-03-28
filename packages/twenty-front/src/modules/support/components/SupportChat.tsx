@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -9,6 +10,7 @@ import { IconHelpCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -24,9 +26,9 @@ const insertScript = ({
   onLoad?: (...args: any[]) => void;
 }) => {
   const script = document.createElement('script');
-  if (src) script.src = src;
-  if (innerHTML) script.innerHTML = innerHTML;
-  if (onLoad) script.onload = onLoad;
+  if (isNonEmptyString(src)) script.src = src;
+  if (isNonEmptyString(innerHTML)) script.innerHTML = innerHTML;
+  if (isDefined(onLoad)) script.onload = onLoad;
   document.body.appendChild(script);
 };
 
@@ -43,26 +45,32 @@ export const SupportChat = () => {
       currentWorkspaceMember: Pick<WorkspaceMember, 'name'>,
     ) => {
       const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
-      const script = document.querySelector(`script[src="${url}"]`);
+      let script = document.querySelector(`script[src="${url}"]`);
 
-      if (!script) {
-        insertScript({
-          src: url,
-          onLoad: () => {
-            window.FrontChat?.('init', {
-              chatId,
-              useDefaultLauncher: false,
-              email: currentUser.email,
-              name:
-                currentWorkspaceMember.name.firstName +
-                ' ' +
-                currentWorkspaceMember.name.lastName,
-              userHash: currentUser?.supportUserHash,
-            });
-            setIsFrontChatLoaded(true);
-          },
-        });
+      // This function only gets called when front chat is not loaded
+      // If the script is already defined, but front chat is not loaded
+      // then there was an error loading the script; reload the script
+      if (isDefined(script)) {
+        script.parentNode?.removeChild(script);
+        script = null;
       }
+
+      insertScript({
+        src: url,
+        onLoad: () => {
+          window.FrontChat?.('init', {
+            chatId,
+            useDefaultLauncher: false,
+            email: currentUser.email,
+            name:
+              currentWorkspaceMember.name.firstName +
+              ' ' +
+              currentWorkspaceMember.name.lastName,
+            userHash: currentUser?.supportUserHash,
+          });
+          setIsFrontChatLoaded(true);
+        },
+      });
     },
     [],
   );
@@ -70,9 +78,9 @@ export const SupportChat = () => {
   useEffect(() => {
     if (
       supportChat?.supportDriver === 'front' &&
-      supportChat.supportFrontChatId &&
-      currentUser?.email &&
-      currentWorkspaceMember &&
+      isNonEmptyString(supportChat.supportFrontChatId) &&
+      isNonEmptyString(currentUser?.email) &&
+      isDefined(currentWorkspaceMember) &&
       !isFrontChatLoaded
     ) {
       configureFront(

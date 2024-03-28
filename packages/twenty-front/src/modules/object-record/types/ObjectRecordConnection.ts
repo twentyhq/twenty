@@ -11,4 +11,5 @@ export type ObjectRecordConnection<T extends ObjectRecord = ObjectRecord> = {
     startCursor?: Nullable<string>;
     endCursor?: Nullable<string>;
   };
+  totalCount: number;
 };

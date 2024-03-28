@@ -8,10 +8,10 @@ import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 export const useRecordTableMoveFocus = (recordTableId?: string) => {
   const {
     scopeId,
-    getSoftFocusPositionState,
-    getNumberOfTableRowsState,
-    getNumberOfTableColumnsSelector,
-    getSelectedRowIdsSelector,
+    softFocusPositionState,
+    numberOfTableRowsState,
+    numberOfTableColumnsSelector,
+    selectedRowIdsSelector,
   } = useRecordTableStates(recordTableId);
 
   const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
@@ -21,7 +21,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
       () => {
         const softFocusPosition = getSnapshotValue(
           snapshot,
-          getSoftFocusPositionState(),
+          softFocusPositionState,
         );
 
         let newRowNumber = softFocusPosition.row - 1;
@@ -35,7 +35,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           row: newRowNumber,
         });
       },
-    [getSoftFocusPositionState, setSoftFocusPosition],
+    [softFocusPositionState, setSoftFocusPosition],
   );
 
   const moveDown = useRecoilCallback(
@@ -43,12 +43,12 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
       () => {
         const softFocusPosition = getSnapshotValue(
           snapshot,
-          getSoftFocusPositionState(),
+          softFocusPositionState,
         );
 
         const numberOfTableRows = getSnapshotValue(
           snapshot,
-          getNumberOfTableRowsState(),
+          numberOfTableRowsState,
         );
 
         let newRowNumber = softFocusPosition.row + 1;
@@ -62,11 +62,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           row: newRowNumber,
         });
       },
-    [
-      getNumberOfTableRowsState,
-      setSoftFocusPosition,
-      getSoftFocusPositionState,
-    ],
+    [numberOfTableRowsState, setSoftFocusPosition, softFocusPositionState],
   );
 
   const moveRight = useRecoilCallback(
@@ -74,17 +70,17 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
       () => {
         const softFocusPosition = getSnapshotValue(
           snapshot,
-          getSoftFocusPositionState(),
+          softFocusPositionState,
         );
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          getNumberOfTableColumnsSelector(),
+          numberOfTableColumnsSelector(),
         );
 
         const numberOfTableRows = getSnapshotValue(
           snapshot,
-          getNumberOfTableRowsState(),
+          numberOfTableRowsState,
         );
         const currentColumnNumber = softFocusPosition.column;
         const currentRowNumber = softFocusPosition.row;
@@ -117,9 +113,9 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
         }
       },
     [
-      getSoftFocusPositionState,
-      getNumberOfTableColumnsSelector,
-      getNumberOfTableRowsState,
+      softFocusPositionState,
+      numberOfTableColumnsSelector,
+      numberOfTableRowsState,
       setSoftFocusPosition,
     ],
   );
@@ -129,12 +125,12 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
       () => {
         const softFocusPosition = getSnapshotValue(
           snapshot,
-          getSoftFocusPositionState(),
+          softFocusPositionState,
         );
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          getNumberOfTableColumnsSelector(),
+          numberOfTableColumnsSelector(),
         );
 
         const currentColumnNumber = softFocusPosition.column;
@@ -165,8 +161,8 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
         }
       },
     [
-      getNumberOfTableColumnsSelector,
-      getSoftFocusPositionState,
+      numberOfTableColumnsSelector,
+      softFocusPositionState,
       setSoftFocusPosition,
     ],
   );
@@ -178,6 +174,6 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
     moveRight,
     moveUp,
     setSoftFocusPosition,
-    getSelectedRowIdsSelector,
+    selectedRowIdsSelector,
   };
 };

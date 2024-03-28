@@ -6,9 +6,11 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   IconClick,
+  IconFileExport,
   IconHeart,
   IconHeartOff,
   IconMail,
@@ -19,6 +21,7 @@ import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionB
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -44,29 +47,40 @@ export const useRecordActionBar = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
-    if (selectedRecordIds.length > 1) {
-      return;
-    }
+  const handleFavoriteButtonClick = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        if (selectedRecordIds.length > 1) {
+          return;
+        }
 
-    const selectedRecordId = selectedRecordIds[0];
-    const selectedRecord = snapshot
-      .getLoadable(recordStoreFamilyState(selectedRecordId))
-      .getValue();
+        const selectedRecordId = selectedRecordIds[0];
+        const selectedRecord = snapshot
+          .getLoadable(recordStoreFamilyState(selectedRecordId))
+          .getValue();
 
-    const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === selectedRecordId,
-    );
+        const foundFavorite = favorites?.find(
+          (favorite) => favorite.recordId === selectedRecordId,
+        );
 
-    const isFavorite = !!selectedRecordId && !!foundFavorite;
+        const isFavorite = !!selectedRecordId && !!foundFavorite;
 
-    if (isFavorite) {
-      deleteFavorite(foundFavorite.id);
-    } else if (selectedRecord) {
-      createFavorite(selectedRecord, objectMetadataItem.nameSingular);
-    }
-    callback?.();
-  });
+        if (isFavorite) {
+          deleteFavorite(foundFavorite.id);
+        } else if (isDefined(selectedRecord)) {
+          createFavorite(selectedRecord, objectMetadataItem.nameSingular);
+        }
+        callback?.();
+      },
+    [
+      callback,
+      createFavorite,
+      deleteFavorite,
+      favorites,
+      objectMetadataItem.nameSingular,
+      selectedRecordIds,
+    ],
+  );
 
   const handleDeleteClick = useCallback(async () => {
     callback?.();
@@ -82,16 +96,29 @@ export const useRecordActionBar = ({
     );
   }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
+  const { progress, download } = useExportTableData({
+    delayMs: 100,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    recordIndexId: objectMetadataItem.namePlural,
+  });
+
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: 'Delete',
+        label: `Delete (${selectedRecordIds.length})`,
         Icon: IconTrash,
         accent: 'danger',
         onClick: () => handleDeleteClick(),
       },
+      {
+        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        Icon: IconFileExport,
+        accent: 'default',
+        onClick: () => download(),
+      },
     ],
-    [handleDeleteClick],
+    [handleDeleteClick, download, progress, selectedRecordIds],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(

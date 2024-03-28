@@ -1,10 +1,12 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
+import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -21,6 +23,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -105,23 +108,24 @@ export const CommandMenu = () => {
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-  const [search, setSearch] = useState('');
+  const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
+    commandMenuSearchState,
+  );
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+    setCommandMenuSearch(event.target.value);
   };
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
       closeKeyboardShortcutMenu();
-      setSearch('');
       toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu, setSearch],
+    [toggleCommandMenu],
   );
 
   useScopedHotkeys(
@@ -136,10 +140,12 @@ export const CommandMenu = () => {
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Person,
-    filter: search
+    filter: commandMenuSearch
       ? makeOrFilterVariables([
-          { name: { firstName: { ilike: `%${search}%` } } },
-          { name: { firstName: { ilike: `%${search}%` } } },
+          { name: { firstName: { ilike: `%${commandMenuSearch}%` } } },
+          { name: { lastName: { ilike: `%${commandMenuSearch}%` } } },
+          { email: { ilike: `%${commandMenuSearch}%` } },
+          { phone: { ilike: `%${commandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
@@ -148,9 +154,9 @@ export const CommandMenu = () => {
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Company,
-    filter: search
+    filter: commandMenuSearch
       ? {
-          name: { ilike: `%${search}%` },
+          name: { ilike: `%${commandMenuSearch}%` },
         }
       : undefined,
     limit: 3,
@@ -159,10 +165,10 @@ export const CommandMenu = () => {
   const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Activity,
-    filter: search
+    filter: commandMenuSearch
       ? makeOrFilterVariables([
-          { title: { ilike: `%${search}%` } },
-          { body: { ilike: `%${search}%` } },
+          { title: { ilike: `%${commandMenuSearch}%` } },
+          { body: { ilike: `%${commandMenuSearch}%` } },
         ])
       : undefined,
     limit: 3,
@@ -190,11 +196,11 @@ export const CommandMenu = () => {
 
   const activityCommands = useMemo(
     () =>
-      activities.map(({ id, title }) => ({
-        id,
-        label: title ?? '',
+      activities.map((activity) => ({
+        id: activity.id,
+        label: activity.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(id),
+        onCommandClick: () => openActivityRightDrawer(activity.id),
       })),
     [activities, openActivityRightDrawer],
   );
@@ -214,7 +220,7 @@ export const CommandMenu = () => {
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
-    if (cmd.label) {
+    if (isNonEmptyString(cmd.label)) {
       return cmd.label.toLowerCase().includes(search.toLowerCase());
     }
     return false;
@@ -222,15 +228,17 @@ export const CommandMenu = () => {
 
   const matchingNavigateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (search.length > 0
-        ? checkInShortcuts(cmd, search) || checkInLabels(cmd, search)
+      (commandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, commandMenuSearch) ||
+          checkInLabels(cmd, commandMenuSearch)
         : true) && cmd.type === CommandType.Navigate,
   );
 
   const matchingCreateCommand = commandMenuCommands.filter(
     (cmd) =>
-      (search.length > 0
-        ? checkInShortcuts(cmd, search) || checkInLabels(cmd, search)
+      (commandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, commandMenuSearch) ||
+          checkInLabels(cmd, commandMenuSearch)
         : true) && cmd.type === CommandType.Create,
   );
 
@@ -252,7 +260,7 @@ export const CommandMenu = () => {
         <StyledDialog ref={commandMenuRef}>
           <StyledInput
             autoFocus
-            value={search}
+            value={commandMenuSearch}
             placeholder="Search"
             onChange={handleSearchChange}
           />
@@ -270,7 +278,7 @@ export const CommandMenu = () => {
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
 
-                    if (command) {
+                    if (isDefined(command)) {
                       const { to, onCommandClick } = command;
                       onItemClick(onCommandClick, to);
                     }

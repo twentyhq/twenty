@@ -5,44 +5,56 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const triggerDetachRelationOptimisticEffect = ({
   cache,
-  objectNameSingular,
-  recordId,
-  relationObjectMetadataNameSingular,
-  relationFieldName,
-  relationRecordId,
+  sourceObjectNameSingular,
+  sourceRecordId,
+  targetObjectNameSingular,
+  fieldNameOnTargetRecord,
+  targetRecordId,
 }: {
   cache: ApolloCache<unknown>;
-  objectNameSingular: string;
-  recordId: string;
-  relationObjectMetadataNameSingular: string;
-  relationFieldName: string;
-  relationRecordId: string;
+  sourceObjectNameSingular: string;
+  sourceRecordId: string;
+  targetObjectNameSingular: string;
+  fieldNameOnTargetRecord: string;
+  targetRecordId: string;
 }) => {
-  const relationRecordTypeName = capitalize(relationObjectMetadataNameSingular);
+  const targetRecordTypeName = capitalize(targetObjectNameSingular);
+
+  const targetRecordCacheId = cache.identify({
+    id: targetRecordId,
+    __typename: targetRecordTypeName,
+  });
 
   cache.modify<StoreObject>({
-    id: cache.identify({
-      id: relationRecordId,
-      __typename: relationRecordTypeName,
-    }),
+    id: targetRecordCacheId,
     fields: {
-      [relationFieldName]: (cachedFieldValue, { isReference, readField }) => {
-        // To many objects => remove record from previous relation field list
-        if (
-          isCachedObjectRecordConnection(objectNameSingular, cachedFieldValue)
-        ) {
-          const nextEdges = cachedFieldValue.edges.filter(
-            ({ node }) => readField('id', node) !== recordId,
+      [fieldNameOnTargetRecord]: (
+        targetRecordFieldValue,
+        { isReference, readField },
+      ) => {
+        const isRecordConnection = isCachedObjectRecordConnection(
+          sourceObjectNameSingular,
+          targetRecordFieldValue,
+        );
+
+        if (isRecordConnection) {
+          const nextEdges = targetRecordFieldValue.edges.filter(
+            ({ node }) => readField('id', node) !== sourceRecordId,
           );
-          return { ...cachedFieldValue, edges: nextEdges };
+
+          return {
+            ...targetRecordFieldValue,
+            edges: nextEdges,
+          };
         }
 
-        // To one object => detach previous relation record
-        if (isReference(cachedFieldValue)) {
+        const isSingleReference = isReference(targetRecordFieldValue);
+
+        if (isSingleReference) {
           return null;
         }
 
-        return cachedFieldValue;
+        return targetRecordFieldValue;
       },
     },
   });

@@ -5,66 +5,28 @@ export { responseData } from './useUpdateOneRecord';
 export const query = gql`
   mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: ID!) {
     executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
-      id
-      opportunities {
-        edges {
-          node {
-            id
-          }
+      __typename
+        xLink {
+          label
+          url
         }
-      }
-      xLink {
-        label
-        url
-      }
-      id
-      pointOfContactForOpportunities {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      createdAt
-      company {
         id
-      }
-      city
-      email
-      activityTargets {
-        edges {
-          node {
-            id
-          }
+        createdAt
+        city
+        email
+        jobTitle
+        name {
+          firstName
+          lastName
         }
-      }
-      jobTitle
-      favorites {
-        edges {
-          node {
-            id
-          }
+        phone
+        linkedinLink {
+          label
+          url
         }
-      }
-      attachments {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        label
-        url
-      }
-      updatedAt
-      avatarUrl
-      companyId
+        updatedAt
+        avatarUrl
+        companyId
     }
   }
 `;

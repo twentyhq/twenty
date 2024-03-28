@@ -1,5 +1,13 @@
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { Field, Relation } from '~/generated-metadata/graphql';
+
+export type FieldMetadataItemOption = {
+  color: ThemeColor;
+  id: string;
+  label: string;
+  position: number;
+  value: string;
+};
 
 export type FieldMetadataItem = Omit<
   Field,
@@ -26,12 +34,6 @@ export type FieldMetadataItem = Omit<
         >;
       })
     | null;
-  defaultValue?: unknown;
-  options?: {
-    color: ThemeColor;
-    id: string;
-    label: string;
-    position: number;
-    value: string;
-  }[];
+  defaultValue?: any;
+  options?: FieldMetadataItemOption[];
 };

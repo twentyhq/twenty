@@ -71,6 +71,15 @@ export type FullNameFilter = {
   lastName?: StringFilter;
 };
 
+export type AddressFilter = {
+  addressStreet1?: StringFilter;
+  addressStreet2?: StringFilter;
+  addressCity?: StringFilter;
+  addressState?: StringFilter;
+  addressCountry?: StringFilter;
+  addressPostcode?: StringFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -79,7 +88,9 @@ export type LeafFilter =
   | CurrencyFilter
   | URLFilter
   | FullNameFilter
-  | BooleanFilter;
+  | BooleanFilter
+  | AddressFilter
+  | undefined;
 
 export type AndObjectRecordFilter = {
   and?: ObjectRecordQueryFilter[];

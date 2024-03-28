@@ -5,66 +5,28 @@ import { Person } from '@/people/types/Person';
 export const query = gql`
   mutation CreatePeople($data: [PersonCreateInput!]!) {
     createPeople(data: $data) {
-      id
-      opportunities {
-        edges {
-          node {
-            id
-          }
+      __typename
+        xLink {
+          label
+          url
         }
-      }
-      xLink {
-        label
-        url
-      }
-      id
-      pointOfContactForOpportunities {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      createdAt
-      company {
         id
-      }
-      city
-      email
-      activityTargets {
-        edges {
-          node {
-            id
-          }
+        createdAt
+        city
+        email
+        jobTitle
+        name {
+          firstName
+          lastName
         }
-      }
-      jobTitle
-      favorites {
-        edges {
-          node {
-            id
-          }
+        phone
+        linkedinLink {
+          label
+          url
         }
-      }
-      attachments {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        label
-        url
-      }
-      updatedAt
-      avatarUrl
-      companyId
+        updatedAt
+        avatarUrl
+        companyId
     }
   }
 `;
@@ -80,32 +42,15 @@ const data = [
 export const variables = { data };
 
 export const responseData = {
-  opportunities: {
-    edges: [],
-  },
+  __typeName: '',
   xLink: {
     label: '',
     url: '',
   },
-  pointOfContactForOpportunities: {
-    edges: [],
-  },
   createdAt: '',
-  company: {
-    id: '',
-  },
   city: '',
   email: '',
-  activityTargets: {
-    edges: [],
-  },
   jobTitle: '',
-  favorites: {
-    edges: [],
-  },
-  attachments: {
-    edges: [],
-  },
   name: {
     firstName: '',
     lastName: '',

@@ -1,17 +1,36 @@
 import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
-export const requestSchema = async (z: ZObject, bundle: Bundle) => {
-  const options = {
-    url: `${process.env.SERVER_BASE_URL}/open-api`,
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${bundle.authData.apiKey}`,
-    },
-  } satisfies HttpRequestOptions;
+import { Schema } from '../utils/data.types';
 
-  return z.request(options).then((response) => response.json);
+export const requestSchema = async (
+  z: ZObject,
+  bundle: Bundle,
+): Promise<Schema> => {
+  const query = `query GetObjects {
+    objects(paging: {first: 1000}, filter: {isActive: {is:true}}) {
+      edges {
+        node {
+          nameSingular
+          namePlural
+          labelSingular
+          fields(paging: {first: 1000}, filter: {isActive: {is:true}}) {
+            edges {
+              node {
+                type
+                name
+                label
+                description
+                isNullable
+                defaultValue
+              }
+            }
+          }
+        }
+      }
+    }
+  }`;
+  const endpoint = 'metadata';
+  return await requestDb(z, bundle, query, endpoint);
 };
 
 const requestDb = async (

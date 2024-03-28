@@ -3,12 +3,13 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
 
-const formattedDate = new Date();
+const formattedDate = new Date(2022, 1, 1);
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   const { setFieldValue } = useDateTimeField();
@@ -44,7 +45,7 @@ const DateFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'date',
           label: 'Date',
-          type: 'DATE_TIME',
+          type: FieldMetadataType.DateTime,
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',
@@ -94,7 +95,14 @@ export default meta;
 
 type Story = StoryObj<typeof DateFieldInputWithContext>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const div = await canvas.findByText('Feb 1, 2022');
+
+    await expect(div.innerText).toContain('Feb 1, 2022');
+  },
+};
 
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {

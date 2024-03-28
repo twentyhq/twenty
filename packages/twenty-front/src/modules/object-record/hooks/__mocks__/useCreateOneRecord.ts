@@ -3,66 +3,28 @@ import { gql } from '@apollo/client';
 export const query = gql`
   mutation CreateOnePerson($input: PersonCreateInput!) {
     createPerson(data: $input) {
-      id
-      opportunities {
-        edges {
-          node {
-            id
-          }
+      __typename
+        xLink {
+          label
+          url
         }
-      }
-      xLink {
-        label
-        url
-      }
-      id
-      pointOfContactForOpportunities {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      createdAt
-      company {
         id
-      }
-      city
-      email
-      activityTargets {
-        edges {
-          node {
-            id
-          }
+        createdAt
+        city
+        email
+        jobTitle
+        name {
+          firstName
+          lastName
         }
-      }
-      jobTitle
-      favorites {
-        edges {
-          node {
-            id
-          }
+        phone
+        linkedinLink {
+          label
+          url
         }
-      }
-      attachments {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        label
-        url
-      }
-      updatedAt
-      avatarUrl
-      companyId
+        updatedAt
+        avatarUrl
+        companyId
     }
   }
 `;

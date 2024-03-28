@@ -1,8 +1,13 @@
+import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilCallback } from 'recoil';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
+import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
+import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { grayScale } from '@/ui/theme/constants/colors';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
@@ -73,19 +78,23 @@ const StyledReceivedAt = styled.div`
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
+export type EmailThreadVisibility = 'metadata' | 'subject' | 'share_everything';
+
 type EmailThreadPreviewProps = {
   divider?: boolean;
   thread: TimelineThread;
-  onClick: () => void;
-  visibility: 'metadata' | 'subject' | 'share_everything';
 };
 
 export const EmailThreadPreview = ({
   divider,
   thread,
-  onClick,
-  visibility,
 }: EmailThreadPreviewProps) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const { openEmailThread } = useEmailThread();
+
+  const visibility = thread.visibility as EmailThreadVisibility;
+
   const senderNames =
     thread.firstParticipant.displayName +
     (thread?.lastTwoParticipants?.[0]?.displayName
@@ -104,9 +113,39 @@ export const EmailThreadPreview = ({
           false,
         ];
 
+  const { isSameEventThanRightDrawerClose } = useRightDrawer();
+
+  const handleThreadClick = useRecoilCallback(
+    ({ snapshot }) =>
+      (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        const clickJustTriggeredEmailDrawerClose =
+          isSameEventThanRightDrawerClose(event.nativeEvent);
+
+        const emailThreadIdWhenEmailThreadWasClosed = snapshot
+          .getLoadable(emailThreadIdWhenEmailThreadWasClosedState)
+          .getValue();
+
+        const canOpen =
+          thread.visibility === 'share_everything' &&
+          (!clickJustTriggeredEmailDrawerClose ||
+            emailThreadIdWhenEmailThreadWasClosed !== thread.id);
+
+        if (canOpen) {
+          openEmailThread(thread.id);
+        }
+      },
+    [
+      isSameEventThanRightDrawerClose,
+      openEmailThread,
+      thread.id,
+      thread.visibility,
+    ],
+  );
+
   return (
     <StyledCardContent
-      onClick={() => onClick()}
+      ref={cardRef}
+      onClick={(event) => handleThreadClick(event)}
       divider={divider}
       visibility={visibility}
     >
@@ -129,8 +168,8 @@ export const EmailThreadPreview = ({
               avatarUrl={finalAvatarUrl}
               placeholder={finalDisplayedName}
               type="rounded"
-              color={isCountIcon ? grayScale.gray50 : undefined}
-              backgroundColor={isCountIcon ? grayScale.gray10 : undefined}
+              color={isCountIcon ? GRAY_SCALE.gray50 : undefined}
+              backgroundColor={isCountIcon ? GRAY_SCALE.gray10 : undefined}
             />
           )}
         </StyledParticipantsContainer>

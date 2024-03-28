@@ -1,15 +1,18 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
+import { Events } from '@/activities/events/components/Events';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
+  IconCalendarEvent,
   IconCheckbox,
   IconMail,
   IconNotes,
@@ -42,7 +45,10 @@ const StyledTabListContainer = styled.div`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
-  targetableObject: ActivityTargetableObject;
+  targetableObject: Pick<
+    ActivityTargetableObject,
+    'targetObjectNameSingular' | 'id'
+  >;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -56,15 +62,11 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
 
-  const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(getActiveTabIdState());
-
-  const { objectMetadataItem: targetableObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: targetableObject.targetObjectNameSingular,
-    });
+  const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
 
   const shouldDisplayEmailsTab =
     (emails &&
@@ -96,14 +98,25 @@ export const ShowPageRightContainer = ({
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
-      disabled: targetableObjectMetadataItem.isCustom,
     },
     {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
       hide: !shouldDisplayEmailsTab,
-      disabled: !isMessagingEnabled,
+    },
+    {
+      id: 'calendar',
+      title: 'Calendar',
+      Icon: IconCalendarEvent,
+      hide: !shouldDisplayCalendarTab,
+    },
+    {
+      id: 'logs',
+      title: 'Logs',
+      Icon: IconTimelineEvent,
+      hide: !shouldDisplayLogTab,
+      hasBetaPill: true,
     },
   ];
 
@@ -113,7 +126,10 @@ export const ShowPageRightContainer = ({
         <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
-        <Timeline targetableObject={targetableObject} />
+        <>
+          <TimelineQueryEffect targetableObject={targetableObject} />
+          <Timeline targetableObject={targetableObject} />
+        </>
       )}
       {activeTabId === 'tasks' && (
         <ObjectTasks targetableObject={targetableObject} />
@@ -122,7 +138,13 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'files' && (
         <Attachments targetableObject={targetableObject} />
       )}
-      {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
+      {activeTabId === 'emails' && (
+        <EmailThreads targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'calendar' && (
+        <Calendar targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
     </StyledShowPageRightContainer>
   );
 };
