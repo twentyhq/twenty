@@ -5,6 +5,7 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useEmailField } from '../../hooks/useEmailField';
 
 import { FieldInputEvent } from './DateFieldInput';
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 export type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -67,6 +68,7 @@ export const EmailFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
+      <LightCopyIconButton copyText={draftValue ?? ''}/>
     </FieldInputOverlay>
   );
 };

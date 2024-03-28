@@ -2,6 +2,7 @@ import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useNumberField } from '../../hooks/useNumberField';
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
@@ -57,6 +58,7 @@ export const NumberFieldInput = ({
 
   return (
     <FieldInputOverlay>
+      <LightCopyIconButton copyText={draftValue ?? ''}/>
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
