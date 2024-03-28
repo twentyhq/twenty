@@ -1,0 +1,14 @@
+{
+  "name": "twenty",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": ".",
+        "commands": ["nx start twenty-server", "nx start twenty-front"],
+        "parallel": true
+      }
+    }
+  }
+}
