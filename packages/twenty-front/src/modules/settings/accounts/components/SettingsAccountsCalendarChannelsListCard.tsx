@@ -1,17 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { LightIconButton } from 'tsup.ui.index';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsListCard } from '@/settings/accounts/components/SettingsAccountsListCard';
+import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { IconChevronRight } from '@/ui/display/icon';
-import { IconGmail } from '@/ui/display/icon/components/IconGmail';
+import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;
@@ -19,7 +20,7 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsAccountsEmailsAccountsListCard = () => {
+export const SettingsAccountsCalendarChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
 
@@ -33,9 +34,10 @@ export const SettingsAccountsEmailsAccountsListCard = () => {
       },
     });
 
-  const { records: messageChannels, loading: messageChannelsLoading } =
-    useFindManyRecords<MessageChannel>({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
+  const { records: calendarChannels, loading: calendarChannelsLoading } =
+    useFindManyRecords<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      skip: !accounts.length,
       filter: {
         connectedAccountId: {
           in: accounts.map((account) => account.id),
@@ -43,25 +45,23 @@ export const SettingsAccountsEmailsAccountsListCard = () => {
       },
     });
 
-  const messageChannelsWithSyncedEmails = messageChannels.map(
-    (messageChannel) => ({
-      ...messageChannel,
-      isSynced: true,
-    }),
-  );
+  if (!calendarChannels.length) {
+    return <SettingsAccountsListEmptyStateCard />;
+  }
 
   return (
-    <SettingsAccountsListCard
-      accounts={messageChannelsWithSyncedEmails}
-      isLoading={accountsLoading || messageChannelsLoading}
-      onRowClick={(messageChannel) =>
-        navigate(`/settings/accounts/emails/${messageChannel.id}`)
+    <SettingsListCard
+      items={calendarChannels}
+      getItemLabel={(calendarChannel) => calendarChannel.handle}
+      isLoading={accountsLoading || calendarChannelsLoading}
+      onRowClick={(calendarChannel) =>
+        navigate(`/settings/accounts/calendars/${calendarChannel.id}`)
       }
-      RowIcon={IconGmail}
-      RowRightComponent={({ account: messageChannel }) => (
+      RowIcon={IconGoogleCalendar}
+      RowRightComponent={({ item: calendarChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
-            synced={messageChannel.isSynced}
+            synced={!!calendarChannel.isSyncEnabled}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

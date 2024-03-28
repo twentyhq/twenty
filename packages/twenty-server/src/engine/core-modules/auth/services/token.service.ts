@@ -41,6 +41,9 @@ import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 @Injectable()
 export class TokenService {
@@ -278,6 +281,71 @@ export class TokenService {
         accessToken: token,
         refreshToken,
       },
+    };
+  }
+
+  async verifyAuthorizationCode(
+    exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ): Promise<ExchangeAuthCode> {
+    const { authorizationCode, codeVerifier } = exchangeAuthCodeInput;
+
+    assert(
+      authorizationCode,
+      'Authorization code not found',
+      NotFoundException,
+    );
+
+    assert(codeVerifier, 'code verifier not found', NotFoundException);
+
+    // TODO: replace this with call to stateless table
+
+    // assert(authObj, 'Authorization code does not exist', NotFoundException);
+
+    // assert(
+    //   authObj.expiresAt.getTime() <= Date.now(),
+    //   'Authorization code expired.',
+    //   NotFoundException,
+    // );
+
+    // const codeChallenge = crypto
+    //   .createHash('sha256')
+    //   .update(codeVerifier)
+    //   .digest()
+    //   .toString('base64')
+    //   .replace(/\+/g, '-')
+    //   .replace(/\//g, '_')
+    //   .replace(/=/g, '');
+
+    // assert(
+    //   authObj.codeChallenge !== codeChallenge,
+    //   'code verifier doesnt match the challenge',
+    //   ForbiddenException,
+    // );
+
+    const user = await this.userRepository.findOne({
+      where: { id: DEV_SEED_USER_IDS.TIM }, // TODO: replace this id with corresponding authenticated user id mappeed to authorization code
+      relations: ['defaultWorkspace'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User is not found');
+    }
+
+    if (!user.defaultWorkspace) {
+      throw new NotFoundException('User does not have a default workspace');
+    }
+
+    const accessToken = await this.generateAccessToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+    const refreshToken = await this.generateRefreshToken(user.id);
+    const loginToken = await this.generateLoginToken(user.email);
+
+    return {
+      accessToken,
+      refreshToken,
+      loginToken,
     };
   }
 
