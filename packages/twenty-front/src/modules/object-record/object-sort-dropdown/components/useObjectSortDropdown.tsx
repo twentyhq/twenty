@@ -5,7 +5,7 @@ import isSortDirectionMenuUnfoldedState from '@/object-record/object-sort-dropdo
 import selectedSortDirectionState from '@/object-record/object-sort-dropdown/states/selectedSortDirectionState';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
+import { OBJECT_SORT_DROPDOWN_ID } from '../constants/ObjectSortDropdownId';
 
 export const useObjectSortDropdown = () => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
@@ -18,9 +18,9 @@ export const useObjectSortDropdown = () => {
   const resetState = useCallback(() => {
     setIsSortDirectionMenuUnfolded(false);
     setSelectedSortDirection('asc');
-  }, []);
+  }, [setIsSortDirectionMenuUnfolded, setSelectedSortDirection]);
 
-  const { toggleDropdown } = useDropdown(ObjectSortDropdownId);
+  const { toggleDropdown } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const toggleSortDropdown = () => {
     toggleDropdown();
