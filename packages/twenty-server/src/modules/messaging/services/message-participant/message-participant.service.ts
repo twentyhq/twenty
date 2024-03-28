@@ -11,7 +11,7 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/add-person-id-and-workspace-member-id.service';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 
 @Injectable()
 export class MessageParticipantService {

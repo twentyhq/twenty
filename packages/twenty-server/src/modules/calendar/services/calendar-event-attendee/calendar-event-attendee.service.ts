@@ -11,7 +11,7 @@ import {
   CalendarEventAttendee,
   CalendarEventAttendeeWithId,
 } from 'src/modules/calendar/types/calendar-event';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/get-email-person-and-workspace-member-id-map/add-person-id-and-workspace-member-id.service';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 
 @Injectable()
 export class CalendarEventAttendeeService {
