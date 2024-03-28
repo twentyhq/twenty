@@ -15,6 +15,7 @@ import { ViewPickerCreateOrEditContentEffect } from '@/views/view-picker/compone
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
 
@@ -49,6 +50,8 @@ export const ViewPickerDropdown = () => {
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
+  const { handleUpdate } = useViewPickerPersistView();
+
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );
@@ -62,13 +65,20 @@ export const ViewPickerDropdown = () => {
   const { getIcon } = useIcons();
   const CurrentViewIcon = getIcon(currentViewWithCombinedFiltersAndSorts?.icon);
 
+  const handleClickOutside = async () => {
+    if (isViewsListDropdownOpen && viewPickerMode === 'edit') {
+      await handleUpdate();
+    }
+    setViewPickerMode('list');
+  };
+
   return (
     <Dropdown
       dropdownId={VIEW_PICKER_DROPDOWN_ID}
       dropdownHotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
       dropdownOffset={{ x: 0, y: 8 }}
       dropdownMenuWidth={200}
-      onClickOutside={() => setViewPickerMode('list')}
+      onClickOutside={handleClickOutside}
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsListDropdownOpen}>
           {currentViewWithCombinedFiltersAndSorts && CurrentViewIcon ? (
