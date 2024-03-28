@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { EventRepository } from 'src/apps/event/repositiories/event.repository';
-import { EventObjectMetadata } from 'src/apps/event/standard-objects/event.object-metadata';
-import { WorkspaceMemberRepository } from 'src/apps/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberObjectMetadata } from 'src/apps/workspace-member/standard-objects/workspace-member.object-metadata';
+import { EventRepository } from 'src/modules/event/repositiories/event.repository';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 export type SaveEventToDbJobData = {
   workspaceId: string;

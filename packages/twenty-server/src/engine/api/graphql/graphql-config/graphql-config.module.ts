@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
-import { AppsModule } from 'src/apps/apps.module';
+import { AppsModule } from 'src/modules/apps.module';
 import { graphQLFactories } from 'src/engine/api/graphql/graphql-config/factories';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { TWENTY_APP_METADATA } from 'src/engine/twenty-app/twenty-app.metadata';

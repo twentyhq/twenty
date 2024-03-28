@@ -12,11 +12,11 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
-} from 'src/apps/messaging/jobs/gmail-full-sync.job';
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import {
   GoogleCalendarFullSyncJob,
   GoogleCalendarFullSyncJobData,
-} from 'src/apps/calendar/jobs/google-calendar-full-sync.job';
+} from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
@@ -25,7 +25,7 @@ import {
 import {
   GmailFullSyncV2Job,
   GmailFullSyncV2JobData,
-} from 'src/apps/messaging/jobs/gmail-full-sync-v2.job';
+} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 
 @Injectable()
 export class GoogleAPIsService {

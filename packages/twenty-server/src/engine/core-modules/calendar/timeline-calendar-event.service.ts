@@ -11,7 +11,7 @@ import {
 import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarEventAttendeeObjectMetadata } from 'src/apps/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 
 type TimelineCalendarEventAttendeeWithPersonInformation =
   ObjectRecord<CalendarEventAttendeeObjectMetadata> & {

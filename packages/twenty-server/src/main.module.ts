@@ -9,7 +9,7 @@ import { join } from 'path';
 import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 
 import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
-import { AppsModule } from 'src/apps/apps.module';
+import { AppsModule } from 'src/modules/apps.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
