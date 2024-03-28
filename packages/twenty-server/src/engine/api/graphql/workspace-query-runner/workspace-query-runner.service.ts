@@ -438,8 +438,10 @@ export class WorkspaceQueryRunnerService {
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       details: {
-        ...(deletedWorkspaceMember ?? {}),
-        ...this.removeNestedProperties(parsedResults?.[0]),
+        before: {
+          ...(deletedWorkspaceMember ?? {}),
+          ...this.removeNestedProperties(parsedResults?.[0]),
+        },
       },
     } satisfies ObjectRecordDeleteEvent<any>);
 
