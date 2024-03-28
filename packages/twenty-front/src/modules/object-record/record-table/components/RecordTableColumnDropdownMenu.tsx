@@ -75,7 +75,6 @@ export const RecordTableColumnDropdownMenu = ({
     availableFilterDefinitionsState,
     selectFilter,
     setIsObjectFilterDropdownOperandSelectUnfolded,
-    setSelectedFilter,
   } = useFilterDropdown({ filterDropdownId: 'view-filter' });
 
   const availableFilterDefinitions = useRecoilValue(
