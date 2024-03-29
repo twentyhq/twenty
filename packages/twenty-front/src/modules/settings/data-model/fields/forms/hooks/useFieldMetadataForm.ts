@@ -18,6 +18,7 @@ type FormValues = {
   description?: string;
   icon: string;
   label: string;
+  defaultValue: any;
   type: SettingsSupportedFieldType;
 } & SettingsDataModelFieldSettingsFormValues;
 
