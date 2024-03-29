@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { SaveConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
+import { SaveOrUpdateConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
@@ -49,7 +49,7 @@ export class GoogleAPIsService {
   providerName = 'google';
 
   async saveConnectedAccount(
-    saveConnectedAccountInput: SaveConnectedAccountInput,
+    saveConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
   ) {
     const {
       handle,
@@ -133,7 +133,7 @@ export class GoogleAPIsService {
   }
 
   async updateConnectedAccount(
-    saveConnectedAccountInput: SaveConnectedAccountInput,
+    updateConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
   ) {
     const {
       handle,
@@ -141,7 +141,7 @@ export class GoogleAPIsService {
       accessToken,
       refreshToken,
       workspaceMemberId,
-    } = saveConnectedAccountInput;
+    } = updateConnectedAccountInput;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
