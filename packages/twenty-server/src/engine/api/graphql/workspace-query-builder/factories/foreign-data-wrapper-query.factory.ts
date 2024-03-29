@@ -25,7 +25,7 @@ export class ForeignDataWrapperQueryFactory {
     foreignDataWrapperId: string,
     userMappingOptions: UserMappingOptions,
   ) {
-    return `CREATE USER MAPPING IF NOT EXISTS FOR ${userMappingOptions.username} SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
+    return `CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
   }
 
   private buildNameAndOptionsFromType(
