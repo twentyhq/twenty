@@ -41,7 +41,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
   const { saveCurrentViewFilterAndSorts } =
     useSaveCurrentViewFiltersAndSorts(viewBarComponentId);
 
-  const [_, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const removeView = useRecoilCallback(
     () => async (viewId: string) => {
