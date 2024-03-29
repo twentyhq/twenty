@@ -32,8 +32,6 @@ export const SettingsAccountsRowDropdownMenu = ({
 
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
-  console.log('account', account);
-
   return (
     <Dropdown
       dropdownId={dropdownId}
