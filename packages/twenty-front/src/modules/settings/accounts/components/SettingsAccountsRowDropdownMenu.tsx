@@ -13,12 +13,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
-  item: Pick<ConnectedAccount, 'id' | 'messageChannels'>;
+  account: ConnectedAccount;
   className?: string;
 };
 
 export const SettingsAccountsRowDropdownMenu = ({
-  item: account,
+  account,
   className,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
@@ -31,6 +31,8 @@ export const SettingsAccountsRowDropdownMenu = ({
   });
 
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+
+  console.log('account', account);
 
   return (
     <Dropdown
@@ -54,14 +56,16 @@ export const SettingsAccountsRowDropdownMenu = ({
                 closeDropdown();
               }}
             />
-            <MenuItem
-              LeftIcon={IconRefresh}
-              text="Reconnect"
-              onClick={() => {
-                triggerGoogleApisOAuth();
-                closeDropdown();
-              }}
-            />
+            {account.authFailedAt && (
+              <MenuItem
+                LeftIcon={IconRefresh}
+                text="Reconnect"
+                onClick={() => {
+                  triggerGoogleApisOAuth();
+                  closeDropdown();
+                }}
+              />
+            )}
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}

@@ -41,7 +41,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
           {account.authFailedAt && (
             <Status color="red" text="Sync failed" weight="medium" />
           )}
-          <SettingsAccountsRowDropdownMenu item={account} />
+          <SettingsAccountsRowDropdownMenu account={account} />
         </StyledRowRightContainer>
       )}
       hasFooter
