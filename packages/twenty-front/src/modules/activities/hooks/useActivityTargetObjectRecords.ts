@@ -55,7 +55,7 @@ export const useActivityTargetObjectRecords = ({
       );
 
       if (!correspondingObjectMetadataItem) {
-        throw new Error(`Cannot find activityTarget object metadata item.`);
+        return undefined;
       }
 
       const targetObjectRecord =

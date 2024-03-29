@@ -105,10 +105,17 @@ export const useUpsertActivity = () => {
       }
 
       if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
+        const activityTargetsToInject = activityToCreate.activityTargets.filter(
+          (activityTarget) =>
+            activityTarget[
+              `${objectShowPageTargetableObject.targetObjectNameSingular}Id`
+            ] === objectShowPageTargetableObject.id,
+        );
+
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
           activityToInject: activityToCreate,
-          activityTargetsToInject: activityToCreate.activityTargets,
+          activityTargetsToInject,
         });
 
         const injectOnlyInIdFilterForTaskQueries =
@@ -122,7 +129,7 @@ export const useUpsertActivity = () => {
             activitiesFilters: currentCompletedTaskQueryVariables?.filter,
             activitiesOrderByVariables:
               currentCompletedTaskQueryVariables?.orderBy,
-            activityTargetsToInject: activityToCreate.activityTargets,
+            activityTargetsToInject,
             activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForTaskQueries,
@@ -135,7 +142,7 @@ export const useUpsertActivity = () => {
               currentIncompleteTaskQueryVariables?.filter ?? {},
             activitiesOrderByVariables:
               currentIncompleteTaskQueryVariables?.orderBy ?? {},
-            activityTargetsToInject: activityToCreate.activityTargets,
+            activityTargetsToInject,
             activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForTaskQueries,
@@ -146,7 +153,7 @@ export const useUpsertActivity = () => {
           injectActivitiesQueries({
             activitiesFilters: currentNotesQueryVariables?.filter,
             activitiesOrderByVariables: currentNotesQueryVariables?.orderBy,
-            activityTargetsToInject: activityToCreate.activityTargets,
+            activityTargetsToInject,
             activityToInject: activityToCreate,
             targetableObjects: [objectShowPageTargetableObject],
             injectOnlyInIdFilter: injectOnlyInIdFilterForNotesQueries,
@@ -154,7 +161,7 @@ export const useUpsertActivity = () => {
         }
 
         injectIntoActivityTargetsQueries({
-          activityTargetsToInject: activityToCreate.activityTargets,
+          activityTargetsToInject,
           targetableObjects: [objectShowPageTargetableObject],
         });
       }

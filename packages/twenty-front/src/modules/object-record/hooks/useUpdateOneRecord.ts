@@ -72,6 +72,7 @@ export const useUpdateOneRecord = <
 
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
+
     const updatedRecord = await apolloClient.mutate({
       mutation: updateOneRecordMutation,
       variables: {

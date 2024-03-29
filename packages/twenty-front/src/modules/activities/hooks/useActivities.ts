@@ -39,13 +39,17 @@ export const useActivities = ({
     skip: skipActivityTargets || skip,
   });
 
-  const activityIds = activityTargets
-    ? [
-        ...activityTargets
-          .map((activityTarget) => activityTarget.activityId)
-          .filter(isNonEmptyString),
-      ].sort(sortByAscString)
-    : [];
+  const activityIds = [
+    ...new Set(
+      activityTargets
+        ? [
+            ...activityTargets
+              .map((activityTarget) => activityTarget.activityId)
+              .filter(isNonEmptyString),
+          ].sort(sortByAscString)
+        : [],
+    ),
+  ];
 
   const activityTargetsFound =
     initializedActivityTargets && isNonEmptyArray(activityTargets);

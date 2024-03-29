@@ -67,7 +67,6 @@ export const useCreateOneRecord = <
     const optimisticallyCreatedRecord =
       generateObjectRecordOptimisticResponse<CreatedObjectRecord>({
         ...inputWithNestedConnections,
-        ...sanitizedCreateOneRecordInput,
       });
 
     const mutationResponseField =

@@ -1,7 +1,6 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -40,9 +39,6 @@ export const useCreateActivityInCache = () => {
     depth: 0,
   });
 
-  const { injectIntoActivityTargetInlineCellCache } =
-    useInjectIntoActivityTargetInlineCellCache();
-
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -80,7 +76,7 @@ export const useCreateActivityInCache = () => {
         });
 
         if (isUndefinedOrNull(createdActivityInCache)) {
-          return;
+          throw new Error('Failed to create activity in cache');
         }
 
         const targetObjectRecords = targetableObjects

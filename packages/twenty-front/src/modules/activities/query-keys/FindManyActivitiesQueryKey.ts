@@ -23,13 +23,14 @@ export const FIND_MANY_ACTIVITIES_QUERY_KEY: QueryKey = {
         name: true,
         __typename: true,
       },
+      comments: true,
+      attachments: true,
       body: true,
       title: true,
       completedAt: true,
       dueAt: true,
       reminderAt: true,
       type: true,
-
       activityTargets: true,
     };
   },

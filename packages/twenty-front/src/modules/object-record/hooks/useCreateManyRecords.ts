@@ -23,9 +23,12 @@ export const useCreateManyRecords = <
   const apolloClient = useApolloClient();
 
   const { objectMetadataItem, createManyRecordsMutation } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+    useObjectMetadataItem(
+      {
+        objectNameSingular,
+      },
+      1,
+    );
 
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({
@@ -59,15 +62,13 @@ export const useCreateManyRecords = <
       },
     );
 
-    const optimisticallyCreatedRecords = sanitizedCreateManyRecordsInput.map(
-      (record) =>
-        generateObjectRecordOptimisticResponse<CreatedObjectRecord>(record),
+    const optimisticallyCreatedRecords = recordsToCreate.map((record) =>
+      generateObjectRecordOptimisticResponse<CreatedObjectRecord>(record),
     );
 
     const mutationResponseField = getCreateManyRecordsMutationResponseField(
       objectMetadataItem.namePlural,
     );
-
     const createdObjects = await apolloClient.mutate({
       mutation: createManyRecordsMutation,
       variables: {

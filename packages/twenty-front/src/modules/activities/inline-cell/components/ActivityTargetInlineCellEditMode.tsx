@@ -1,21 +1,23 @@
 import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useRecoilState } from 'recoil';
+import { isNonEmptyArray, isNull } from '@sniptt/guards';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
-import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
+import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 
@@ -63,12 +65,18 @@ export const ActivityTargetInlineCellEditMode = ({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const { injectIntoActivityTargetInlineCellCache } =
-    useInjectIntoActivityTargetInlineCellCache();
-
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({
       objectMetadataItem: objectMetadataItemActivityTarget,
+    });
+
+  const setActivityFromStore = useSetRecoilState(
+    recordStoreFamilyState(activity.id),
+  );
+
+  const { createManyRecordsInCache: createManyActivityTargetsInCache } =
+    useCreateManyRecordsInCache<ActivityTarget>({
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
   const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
@@ -107,6 +115,9 @@ export const ActivityTargetInlineCellEditMode = ({
             activity,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
+            [getActivityTargetObjectFieldName({
+              nameSingular: selectedRecord.objectMetadataItem.nameSingular,
+            })]: selectedRecord.record,
             [getActivityTargetObjectFieldIdName({
               nameSingular: selectedRecord.objectMetadataItem.nameSingular,
             })]: selectedRecord.recordIdentifier.id,
@@ -128,12 +139,9 @@ export const ActivityTargetInlineCellEditMode = ({
       );
     }
 
-    // injectIntoActivityTargetInlineCellCache({
-    //   activityId: activity.id,
-    //   activityTargetsToInject: activityTargetsAfterUpdate,
-    // });
-
     if (isActivityInCreateMode) {
+      createManyActivityTargetsInCache(activityTargetsToCreate);
+      console.log(activityTargetsToCreate);
       upsertActivity({
         activity,
         input: {
@@ -154,6 +162,17 @@ export const ActivityTargetInlineCellEditMode = ({
         );
       }
     }
+
+    setActivityFromStore((currentActivity) => {
+      if (isNull(currentActivity)) {
+        return null;
+      }
+
+      return {
+        ...currentActivity,
+        activityTargets: activityTargetsAfterUpdate,
+      };
+    });
   };
 
   const handleCancel = () => {
