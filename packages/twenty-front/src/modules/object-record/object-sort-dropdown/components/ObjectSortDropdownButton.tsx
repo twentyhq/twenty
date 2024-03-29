@@ -1,5 +1,5 @@
-import { useObjectSort } from '@/object-record/object-sort-dropdown/components/useObjectSort';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
+import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -31,8 +31,8 @@ export const ObjectSortDropdownButton = ({
     resetState,
     isSortSelected,
     availableSortDefinitions,
-    addSortHandler,
-  } = useObjectSort();
+    handleAddSort,
+  } = useObjectSortDropdown();
 
   const handleButtonClick = () => {
     toggleSortDropdown();
@@ -88,7 +88,7 @@ export const ObjectSortDropdownButton = ({
                       <MenuItem
                         testId={`select-sort-${index}`}
                         key={index}
-                        onClick={() => addSortHandler(availableSortDefinition)}
+                        onClick={() => handleAddSort(availableSortDefinition)}
                         LeftIcon={getIcon(availableSortDefinition.iconName)}
                         text={availableSortDefinition.label}
                       />

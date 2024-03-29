@@ -12,7 +12,8 @@ import {
   VIEW_SORT_DROPDOWN_ID,
 } from '../constants/ObjectSortDropdownId';
 
-export const useObjectSort = () => {
+// TODO: merge this with useSortDropdown
+export const useObjectSortDropdown = () => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useRecoilState(isSortDirectionMenuUnfoldedState);
 
@@ -53,7 +54,7 @@ export const useObjectSort = () => {
   );
   const onSortSelect = useRecoilValue(onSortSelectState);
 
-  const addSortHandler = (selectedSortDefinition: SortDefinition) => {
+  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     closeSortDropdown();
     onSortSelect?.({
       fieldMetadataId: selectedSortDefinition.fieldMetadataId,
@@ -71,6 +72,6 @@ export const useObjectSort = () => {
     resetState,
     isSortSelected,
     availableSortDefinitions,
-    addSortHandler,
+    handleAddSort,
   };
 };

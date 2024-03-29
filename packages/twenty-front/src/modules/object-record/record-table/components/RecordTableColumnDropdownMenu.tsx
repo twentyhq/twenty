@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useObjectSort } from '@/object-record/object-sort-dropdown/components/useObjectSort';
+import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -68,7 +68,9 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const { availableSortDefinitions, addSortHandler } = useObjectSort();
+  const { availableSortDefinitions, handleAddSort: addSortHandler } =
+    useObjectSortDropdown();
+
   const {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
