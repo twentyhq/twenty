@@ -16,7 +16,7 @@ const excludedDirectories = [
   '__stories__',
   'internal',
 ];
-const srcPath = path.resolve('./src');
+const srcPath = path.resolve('packages/twenty-ui/src');
 
 const getSubDirectoryPaths = (directoryPath: string) =>
   fs
