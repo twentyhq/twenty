@@ -51,43 +51,6 @@ export class GoogleAPIsAuthController {
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      provider: 'google',
-      accessToken,
-      refreshToken,
-    });
-
-    return res.redirect(
-      `${this.environmentService.get('FRONT_BASE_URL')}/settings/accounts`,
-    );
-  }
-
-  @Get('update-access-token')
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
-  async googleAuthUpdateAccessToken(
-    @Req() req: GoogleAPIsRequest,
-    @Res() res: Response,
-  ) {
-    const { user } = req;
-
-    const { email, accessToken, refreshToken, transientToken } = user;
-
-    const { workspaceMemberId, workspaceId } =
-      await this.tokenService.verifyTransientToken(transientToken);
-
-    const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
-
-    if (demoWorkspaceIds.includes(workspaceId)) {
-      throw new Error('Cannot connect Google account to demo workspace');
-    }
-
-    if (!workspaceId) {
-      throw new Error('Workspace not found');
-    }
-
-    await this.googleAPIsService.updateConnectedAccount({
-      handle: email,
-      workspaceMemberId: workspaceMemberId,
-      workspaceId: workspaceId,
       accessToken,
       refreshToken,
     });

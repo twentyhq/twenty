@@ -51,7 +51,6 @@ export class GoogleGmailAuthController {
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      provider: 'gmail',
       accessToken,
       refreshToken,
     });

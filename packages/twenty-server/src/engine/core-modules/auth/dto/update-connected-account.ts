@@ -7,16 +7,6 @@ export class UpdateConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  handle: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  workspaceMemberId: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
   workspaceId: string;
 
   @Field(() => String)
@@ -28,4 +18,9 @@ export class UpdateConnectedAccountInput {
   @IsNotEmpty()
   @IsString()
   refreshToken: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  connectedAccountId: string;
 }

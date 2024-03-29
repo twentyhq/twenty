@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
@@ -11,7 +6,7 @@ import { Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { SaveConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
+import { SaveOrUpdateConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
@@ -49,8 +44,37 @@ export class GoogleAPIsService {
 
   providerName = 'google';
 
+  async saveOrUpdateConnectedAccount(
+    saveOrUpdateConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
+  ) {
+    const { handle, workspaceId, workspaceMemberId } =
+      saveOrUpdateConnectedAccountInput;
+
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    const connectedAccount = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
+      [handle, this.providerName, workspaceMemberId],
+    );
+
+    if (connectedAccount.length > 0) {
+      await this.updateConnectedAccount({
+        ...saveOrUpdateConnectedAccountInput,
+        connectedAccountId: connectedAccount[0].id,
+      });
+    } else {
+      await this.saveConnectedAccount(saveOrUpdateConnectedAccountInput);
+    }
+  }
+
   async saveConnectedAccount(
-    saveConnectedAccountInput: SaveConnectedAccountInput,
+    saveConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
   ) {
     const {
       handle,
@@ -67,15 +91,6 @@ export class GoogleAPIsService {
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const connectedAccount = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
-      [handle, this.providerName, workspaceMemberId],
-    );
-
-    if (connectedAccount.length > 0) {
-      throw new ConflictException('Connected account already exists');
-    }
 
     const connectedAccountId = v4();
 
@@ -136,13 +151,8 @@ export class GoogleAPIsService {
   async updateConnectedAccount(
     updateConnectedAccountInput: UpdateConnectedAccountInput,
   ) {
-    const {
-      handle,
-      workspaceId,
-      accessToken,
-      refreshToken,
-      workspaceMemberId,
-    } = updateConnectedAccountInput;
+    const { workspaceId, accessToken, refreshToken, connectedAccountId } =
+      updateConnectedAccountInput;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -151,17 +161,6 @@ export class GoogleAPIsService {
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const connectedAccount = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
-      [handle, this.providerName, workspaceMemberId],
-    );
-
-    if (connectedAccount.length === 0) {
-      throw new NotFoundException('Connected account not found');
-    }
-
-    const connectedAccountId = connectedAccount[0].id;
 
     await workspaceDataSource?.transaction(async (manager) => {
       await manager.query(
