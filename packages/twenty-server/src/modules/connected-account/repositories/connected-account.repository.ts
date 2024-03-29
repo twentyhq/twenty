@@ -150,4 +150,20 @@ export class ConnectedAccountRepository {
       transactionManager,
     );
   }
+
+  public async updateAuthFailedAt(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "authFailedAt" = NOW() WHERE "id" = $1`,
+      [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }
