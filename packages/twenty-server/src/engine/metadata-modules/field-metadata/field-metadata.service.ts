@@ -122,12 +122,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...fieldMetadataInput,
         targetColumnMap: generateTargetColumnMap(
           fieldMetadataInput.type,
-          true,
+          !fieldMetadataInput.isRemoteCreation,
           fieldMetadataInput.name,
         ),
         isNullable: generateNullable(
           fieldMetadataInput.type,
           fieldMetadataInput.isNullable,
+          fieldMetadataInput.isRemoteCreation,
         ),
         defaultValue:
           fieldMetadataInput.defaultValue ??
@@ -142,24 +143,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         isCustom: true,
       });
 
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`create-${createdFieldMetadata.name}`),
-        fieldMetadataInput.workspaceId,
-        [
-          {
-            name: computeObjectTargetTable(objectMetadata),
-            action: 'alter',
-            columns: this.workspaceMigrationFactory.createColumnActions(
-              WorkspaceMigrationColumnActionType.CREATE,
-              createdFieldMetadata,
-            ),
-          } satisfies WorkspaceMigrationTableAction,
-        ],
-      );
+      if (!fieldMetadataInput.isRemoteCreation) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`create-${createdFieldMetadata.name}`),
+          fieldMetadataInput.workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: 'alter',
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.CREATE,
+                createdFieldMetadata,
+              ),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        fieldMetadataInput.workspaceId,
-      );
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          fieldMetadataInput.workspaceId,
+        );
+      }
 
       // TODO: Move viewField creation to a cdc scheduler
       const dataSourceMetadata =
