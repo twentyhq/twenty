@@ -28,6 +28,7 @@ import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-obj
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 
 @Injectable()
 export class GoogleCalendarFullSyncService {
@@ -55,6 +56,7 @@ export class GoogleCalendarFullSyncService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
   ) {}
 
   public async startGoogleCalendarFullSync(
@@ -265,7 +267,7 @@ export class GoogleCalendarFullSyncService {
 
           startTime = Date.now();
 
-          await this.calendarEventAttendeesRepository.saveCalendarEventAttendees(
+          await this.calendarEventAttendeesService.saveCalendarEventAttendees(
             attendeesToSave,
             workspaceId,
             transactionManager,

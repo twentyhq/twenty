@@ -20,6 +20,18 @@ if ! command -v curl &>/dev/null; then
   exit 1
 fi
 
+# Check if docker compose version is >= 2
+if [ "$(docker compose version --short | cut -d' ' -f3 | cut -d'.' -f1)" -lt 2 ]; then
+  echo -e "\t❌ Docker Compose is outdated. Please update Docker Compose to version 2 or higher.\n\t\tSee https://docs.docker.com/compose/install/linux/"
+  exit 1
+fi
+# Check if docker-compose is installed, if so issue a warning if version is < 2
+if command -v docker-compose &>/dev/null; then
+  if [ "$(docker-compose version --short | cut -d' ' -f3 | cut -d'.' -f1)" -lt 2 ]; then
+    echo -e "\n\t⚠️ 'docker-compose' is installed but outdated. Make sure to use 'docker compose' or to upgrade 'docker-compose' to version 2.\n\t\tSee https://docs.docker.com/compose/install/standalone/\n"
+  fi
+fi
+
 # Catch errors
 set -e
 function on_exit {
@@ -78,10 +90,13 @@ else
 fi
 
 # Generate random strings for secrets
+echo "# === Randomly generated secrets ===" >>.env
 echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
 echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+echo "" >>.env
+echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
 
 echo -e "\t• .env configuration completed"
 
@@ -113,11 +128,14 @@ else
   echo "🐳 Starting Docker containers..."
   docker compose up -d
   # Check if port is listening
-  echo -n "Waiting for server to be healthy..."
+  echo "Waiting for server to be healthy, it might take a few minutes while we initialize the database..."
+  # Tail logs of the server until it's ready
+  docker compose logs -f server &
+  pid=$!
   while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
-    echo -n "."
     sleep 1
   done
+  kill $pid
   echo ""
   echo "✅ Server is up and running"
 fi

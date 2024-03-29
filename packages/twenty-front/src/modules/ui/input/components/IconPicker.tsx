@@ -101,35 +101,47 @@ export const IconPicker = ({
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
   const matchingSearchIconKeys = useMemo(() => {
-    const filteredIconKeys = icons
-      ? Object.keys(icons).filter((iconKey) => {
-          if (searchString === '') {
-            return true;
-          }
+    if (icons == null) return [];
+    const scoreIconMatch = (iconKey: string, searchString: string) => {
+      const iconLabel = convertIconKeyToLabel(iconKey)
+        .toLowerCase()
+        .replace('icon ', '')
+        .replace(/\s/g, '');
 
-          const isMatchingSearchString = [
-            iconKey,
-            convertIconKeyToLabel(iconKey),
-          ].some((label) =>
-            label.toLowerCase().includes(searchString.toLowerCase()),
-          );
+      const searchLower = searchString
+        .toLowerCase()
+        .trimEnd()
+        .replace(/\s/g, '');
 
-          return isMatchingSearchString;
-        })
-      : [];
+      if (iconKey === searchString || iconLabel === searchString) return 100;
+      if (iconKey.startsWith(searchLower) || iconLabel.startsWith(searchLower))
+        return 75;
+      if (iconKey.includes(searchLower) || iconLabel.includes(searchLower))
+        return 50;
+
+      return 0;
+    };
+    const scoredIcons = Object.keys(icons).map((iconKey) => ({
+      iconKey,
+      score: scoreIconMatch(iconKey, searchString),
+    }));
+
+    const filteredAndSortedIconKeys = scoredIcons
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ iconKey }) => iconKey);
 
     const isSelectedIconMatchingFilter =
-      selectedIconKey && filteredIconKeys.includes(selectedIconKey);
+      selectedIconKey && filteredAndSortedIconKeys.includes(selectedIconKey);
 
-    const uniqueFilteredIconKeys = [
-      ...new Set(
-        selectedIconKey && isSelectedIconMatchingFilter
-          ? [selectedIconKey, ...filteredIconKeys]
-          : filteredIconKeys,
-      ),
-    ];
-
-    return uniqueFilteredIconKeys.slice(0, 25);
+    return isSelectedIconMatchingFilter
+      ? [
+          selectedIconKey,
+          ...filteredAndSortedIconKeys.filter(
+            (iconKey) => iconKey !== selectedIconKey,
+          ),
+        ].slice(0, 25)
+      : filteredAndSortedIconKeys.slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
   const iconKeys2d = useMemo(

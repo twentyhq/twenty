@@ -117,9 +117,9 @@ export class FieldMetadataEntity<
   )
   toRelationMetadata: RelationMetadataEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

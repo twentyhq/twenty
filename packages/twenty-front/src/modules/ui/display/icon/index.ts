@@ -80,6 +80,7 @@ export {
   IconHeartOff,
   IconHelpCircle,
   IconHierarchy2,
+  IconInbox,
   IconInfoCircle,
   IconKey,
   IconLanguage,
