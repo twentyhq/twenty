@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -12,8 +14,12 @@ export const ObjectFilterDropdownFilterSelect = () => {
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
-    availableFilterDefinitions,
+    availableFilterDefinitionsState,
   } = useFilterDropdown();
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
 
   const { getIcon } = useIcons();
 

@@ -48,7 +48,7 @@ EOF
 echo_header $BLUE "                    DATABASE SETUP"
 
 PG_MAIN_VERSION=15
-PG_GRAPHQL_VERSION=1.3.0
+PG_GRAPHQL_VERSION=1.5.1
 TARGETARCH=$(dpkg --print-architecture)
 
 # Install PostgresSQL

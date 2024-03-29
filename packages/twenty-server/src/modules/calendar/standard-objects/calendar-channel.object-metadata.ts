@@ -1,9 +1,9 @@
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
-import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { calendarChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -72,7 +72,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: CalendarChannelVisibility.SHARE_EVERYTHING },
+    defaultValue: `'${CalendarChannelVisibility.SHARE_EVERYTHING}'`,
   })
   visibility: string;
 
@@ -82,7 +82,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
     icon: 'IconUserCircle',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
 
@@ -92,7 +92,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Sync Enabled',
     description: 'Is Sync Enabled',
     icon: 'IconRefresh',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isSyncEnabled: boolean;
 

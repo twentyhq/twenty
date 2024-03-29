@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
@@ -96,7 +95,7 @@ export const SettingsDataModelFieldPreview = ({
             entityId,
             isLabelIdentifier,
             fieldDefinition: {
-              type: parseFieldType(fieldMetadataItem.type),
+              type: fieldMetadataItem.type,
               iconName: 'FieldIcon',
               fieldMetadataId: fieldMetadataItem.id || '',
               label: fieldMetadataItem.label,

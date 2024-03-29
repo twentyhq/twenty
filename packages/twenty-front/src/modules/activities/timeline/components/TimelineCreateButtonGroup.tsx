@@ -16,8 +16,8 @@ export const TimelineCreateButtonGroup = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const setActiveTabId = useSetRecoilState(getActiveTabIdState());
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const setActiveTabId = useSetRecoilState(activeTabIdState);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 

@@ -17,11 +17,9 @@ const StyledContainer = styled.div`
 `;
 
 export const SelectAllCheckbox = () => {
-  const { getAllRowsSelectedStatusSelector } = useRecordTableStates();
+  const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
-  const allRowsSelectedStatus = useRecoilValue(
-    getAllRowsSelectedStatusSelector(),
-  );
+  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
   const { selectAllRows, resetTableRowSelection, setAllRowSelectedState } =
     useRecordTable();
 

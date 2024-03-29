@@ -8,7 +8,7 @@ import {
   TableUnique,
 } from 'typeorm';
 
-import { WorkspaceMigrationService } from 'src/engine-metadata/workspace-migration/workspace-migration.service';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   WorkspaceMigrationTableAction,
@@ -18,8 +18,8 @@ import {
   WorkspaceMigrationColumnCreateRelation,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
-} from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { WorkspaceCacheVersionService } from 'src/engine-metadata/workspace-cache-version/workspace-cache-version.service';
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 

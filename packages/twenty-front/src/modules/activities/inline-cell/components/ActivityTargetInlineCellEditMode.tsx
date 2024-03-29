@@ -34,9 +34,7 @@ export const ActivityTargetInlineCellEditMode = ({
   activity,
   activityTargetWithTargetRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
-  const [isActivityInCreateMode] = useRecoilState(
-    isActivityInCreateModeState(),
-  );
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
   const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({

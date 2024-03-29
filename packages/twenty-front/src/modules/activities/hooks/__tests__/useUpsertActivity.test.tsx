@@ -105,7 +105,7 @@ describe('useUpsertActivity', () => {
       () => {
         const res = useUpsertActivity();
         const setIsActivityInCreateMode = useSetRecoilState(
-          isActivityInCreateModeState(),
+          isActivityInCreateModeState,
         );
 
         return { ...res, setIsActivityInCreateMode };
@@ -134,7 +134,7 @@ describe('useUpsertActivity', () => {
       () => {
         const res = useUpsertActivity();
         const setIsActivityInCreateMode = useSetRecoilState(
-          isActivityInCreateModeState(),
+          isActivityInCreateModeState,
         );
         const setObjectShowPageTargetableObject = useSetRecoilState(
           objectShowPageTargetableObjectState,

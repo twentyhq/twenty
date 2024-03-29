@@ -5,8 +5,8 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
 import { WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 
-import { WorkspaceMigrationEntity } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceNullableFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-nullable.fixer';
 import { WorkspaceDefaultValueFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-default-value.fixer';
 import { WorkspaceTypeFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-type.fixer';
@@ -85,6 +85,16 @@ export class WorkspaceFixService {
           this.workspaceTargetColumnMapFixer.filterIssues(issues);
 
         return this.workspaceTargetColumnMapFixer.createMetadataUpdates(
+          manager,
+          objectMetadataCollection,
+          filteredIssues,
+        );
+      }
+      case WorkspaceHealthFixKind.DefaultValue: {
+        const filteredIssues =
+          this.workspaceDefaultValueFixer.filterIssues(issues);
+
+        return this.workspaceDefaultValueFixer.createMetadataUpdates(
           manager,
           objectMetadataCollection,
           filteredIssues,

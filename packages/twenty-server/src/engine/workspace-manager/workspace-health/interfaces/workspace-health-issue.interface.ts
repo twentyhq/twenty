@@ -1,8 +1,8 @@
 import { WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceHealthIssueType {
   MISSING_TABLE = 'MISSING_TABLE',

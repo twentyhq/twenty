@@ -18,7 +18,7 @@ import { isDefined } from '~/utils/isDefined';
 const Wrapper = getJestHookWrapper({
   apolloMocks: [],
   onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(objectMetadataItemsState(), getObjectMetadataItemsMock());
+    snapshot.set(objectMetadataItemsState, getObjectMetadataItemsMock());
   },
 });
 

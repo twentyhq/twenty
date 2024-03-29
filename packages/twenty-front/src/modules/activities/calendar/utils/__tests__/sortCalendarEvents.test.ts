@@ -14,13 +14,13 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts non-intersecting events by ascending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusOneHour,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusOneHour.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusTwoHours,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusTwoHours.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -36,13 +36,13 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts intersecting events by start date ascending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusTwoHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusTwoHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusOneHour.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -58,13 +58,13 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts events with same start date by end date ascending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusTwoHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusTwoHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDate,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -80,13 +80,13 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts events with same end date by start date ascending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusOneHour.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -102,11 +102,11 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts events without end date by start date ascending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
+      startsAt: someDatePlusOneHour.toISOString(),
       isFullDay: true,
     };
 
@@ -122,11 +122,11 @@ describe('sortCalendarEventsAsc', () => {
   it('returns 0 for full day events with the same start date', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
     const eventB = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
 
@@ -142,12 +142,12 @@ describe('sortCalendarEventsAsc', () => {
   it('sorts the full day event last for two events with the same start date if one is full day', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusOneHour,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusOneHour.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
 
@@ -165,13 +165,13 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts non-intersecting events by descending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusOneHour,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusOneHour.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusTwoHours,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusTwoHours.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -187,13 +187,13 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts intersecting events by start date descending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusTwoHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusTwoHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusOneHour.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -209,13 +209,13 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts events with same start date by end date descending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusTwoHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusTwoHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDate,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -231,13 +231,13 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts events with same end date by start date descending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
-      endsAt: someDatePlusThreeHours,
+      startsAt: someDatePlusOneHour.toISOString(),
+      endsAt: someDatePlusThreeHours.toISOString(),
       isFullDay: false,
     };
 
@@ -253,11 +253,11 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts events without end date by start date descending order', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
     const eventB = {
-      startsAt: someDatePlusOneHour,
+      startsAt: someDatePlusOneHour.toISOString(),
       isFullDay: true,
     };
 
@@ -273,11 +273,11 @@ describe('sortCalendarEventsDesc', () => {
   it('returns 0 for full day events with the same start date', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
     const eventB = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
 
@@ -293,12 +293,12 @@ describe('sortCalendarEventsDesc', () => {
   it('sorts the full day event first for two events with the same start date if one is full day', () => {
     // Given
     const eventA = {
-      startsAt: someDate,
-      endsAt: someDatePlusOneHour,
+      startsAt: someDate.toISOString(),
+      endsAt: someDatePlusOneHour.toISOString(),
       isFullDay: false,
     };
     const eventB = {
-      startsAt: someDate,
+      startsAt: someDate.toISOString(),
       isFullDay: true,
     };
 

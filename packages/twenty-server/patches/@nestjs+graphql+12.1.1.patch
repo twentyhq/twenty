@@ -1,0 +1,41 @@
+diff --git a/dist/schema-builder/graphql-schema.factory.js b/dist/schema-builder/graphql-schema.factory.js
+index f349a6e..425815c 100644
+--- a/dist/schema-builder/graphql-schema.factory.js
++++ b/dist/schema-builder/graphql-schema.factory.js
+@@ -32,6 +32,7 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+         else {
+             options = scalarsOrOptions;
+         }
++        this.typeDefinitionsGenerator.clearTypeDefinitionStorage();
+         lazy_metadata_storage_1.LazyMetadataStorage.load(resolvers);
+         type_metadata_storage_1.TypeMetadataStorage.compile(options.orphanedTypes);
+         this.typeDefinitionsGenerator.generate(options);
+diff --git a/dist/schema-builder/storages/type-definitions.storage.js b/dist/schema-builder/storages/type-definitions.storage.js
+index a19dee7..466ee86 100644
+--- a/dist/schema-builder/storages/type-definitions.storage.js
++++ b/dist/schema-builder/storages/type-definitions.storage.js
+@@ -81,6 +81,10 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
+         }
+         return;
+     }
++    clear() {
++        this.inputTypeDefinitionsLinks = null;
++        this.outputTypeDefinitionsLinks = null;
++    }
+ };
+ exports.TypeDefinitionsStorage = TypeDefinitionsStorage;
+ exports.TypeDefinitionsStorage = TypeDefinitionsStorage = tslib_1.__decorate([
+diff --git a/dist/schema-builder/type-definitions.generator.js b/dist/schema-builder/type-definitions.generator.js
+index d5423f1..701a3b2 100644
+--- a/dist/schema-builder/type-definitions.generator.js
++++ b/dist/schema-builder/type-definitions.generator.js
+@@ -26,6 +26,9 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+         this.generateObjectTypeDefs(options);
+         this.generateInputTypeDefs(options);
+     }
++    clearTypeDefinitionStorage() {
++        this.typeDefinitionsStorage.clear();
++    }
+     generateInputTypeDefs(options) {
+         const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
+         const inputTypeDefs = metadata.map((metadata) => this.inputTypeDefinitionFactory.create(metadata, options));

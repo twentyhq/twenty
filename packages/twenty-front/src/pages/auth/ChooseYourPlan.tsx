@@ -10,7 +10,7 @@ import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
 import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts';
 import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import {
@@ -43,7 +43,7 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 export const ChooseYourPlan = () => {
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
 
   const [planSelected, setPlanSelected] = useState('month');
 

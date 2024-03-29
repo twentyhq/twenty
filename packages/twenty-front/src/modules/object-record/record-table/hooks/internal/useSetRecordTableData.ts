@@ -15,8 +15,8 @@ export const useSetRecordTableData = ({
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
   const {
-    getTableRowIdsState,
-    getNumberOfTableRowsState,
+    tableRowIdsState,
+    numberOfTableRowsState,
     isRowSelectedFamilyState,
     isAllRowSelectedFamilyState,
   } = useRecordTableStates(recordTableId);
@@ -34,7 +34,7 @@ export const useSetRecordTableData = ({
             set(recordStoreFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
+        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
         const allRowSelected = getSnapshotValue(
           snapshot,
@@ -44,7 +44,7 @@ export const useSetRecordTableData = ({
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(getTableRowIdsState(), entityIds);
+          set(tableRowIdsState(), entityIds);
         }
 
         if (allRowSelected) {
@@ -53,12 +53,12 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(getNumberOfTableRowsState(), totalCount);
+        set(numberOfTableRowsState(), totalCount);
         onEntityCountChange(totalCount);
       },
     [
-      getNumberOfTableRowsState,
-      getTableRowIdsState,
+      numberOfTableRowsState,
+      tableRowIdsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
       isAllRowSelectedFamilyState,

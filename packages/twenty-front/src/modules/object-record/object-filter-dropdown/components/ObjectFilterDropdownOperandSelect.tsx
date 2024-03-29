@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -9,13 +11,23 @@ import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const ObjectFilterDropdownOperandSelect = () => {
   const {
-    filterDefinitionUsedInDropdown,
+    filterDefinitionUsedInDropdownState,
     setSelectedOperandInDropdown,
-    isObjectFilterDropdownOperandSelectUnfolded,
+    isObjectFilterDropdownOperandSelectUnfoldedState,
     setIsObjectFilterDropdownOperandSelectUnfolded,
-    selectedFilter,
+    selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
+
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+
+  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+  );
+
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,

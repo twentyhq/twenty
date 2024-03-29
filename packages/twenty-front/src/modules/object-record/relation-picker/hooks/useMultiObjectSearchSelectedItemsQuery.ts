@@ -26,7 +26,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataItemsUsedInSelectedIdsQuery = objectMetadataItems.filter(
     ({ nameSingular }) => {
@@ -69,7 +69,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
 
   const multiSelectQueryForSelectedIds =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
+      targetObjectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
     });
 
   const {

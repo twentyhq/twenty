@@ -74,7 +74,7 @@ describe('formatFieldMetadataItemInput', () => {
           value: 'OPTION_2',
         },
       ],
-      defaultValue: 'OPTION_1',
+      defaultValue: "'OPTION_1'",
     };
 
     const result = formatFieldMetadataItemInput(input);

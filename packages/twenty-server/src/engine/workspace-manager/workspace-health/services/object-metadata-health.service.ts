@@ -6,7 +6,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';

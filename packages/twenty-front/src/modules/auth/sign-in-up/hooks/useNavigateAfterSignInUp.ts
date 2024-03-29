@@ -9,7 +9,7 @@ import { WorkspaceMember } from '~/generated/graphql.tsx';
 
 export const useNavigateAfterSignInUp = () => {
   const navigate = useNavigate();
-  const billing = useRecoilValue(billingState());
+  const billing = useRecoilValue(billingState);
   const navigateAfterSignInUp = useCallback(
     (
       currentWorkspace: CurrentWorkspace,

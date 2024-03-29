@@ -66,9 +66,32 @@ export type AuthTokens = {
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']['output']>;
-  billingUrl: Scalars['String']['output'];
+  billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
 };
+
+export type BillingSubscription = {
+  __typename?: 'BillingSubscription';
+  id: Scalars['ID']['output'];
+  interval?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+};
+
+export type BillingSubscriptionFilter = {
+  and?: InputMaybe<Array<BillingSubscriptionFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  or?: InputMaybe<Array<BillingSubscriptionFilter>>;
+};
+
+export type BillingSubscriptionSort = {
+  direction: SortDirection;
+  field: BillingSubscriptionSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingSubscriptionSortFields {
+  Id = 'id'
+}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
@@ -150,6 +173,12 @@ export type CreateRelationInput = {
   toLabel: Scalars['String']['input'];
   toName: Scalars['String']['input'];
   toObjectMetadataId: Scalars['String']['input'];
+};
+
+export type CreateRemoteServerInput = {
+  foreignDataWrapperOptions: Scalars['JSON']['input'];
+  foreignDataWrapperType: Scalars['String']['input'];
+  userMappingOptions?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type CursorPaging = {
@@ -236,6 +265,7 @@ export type FieldDeleteResponse = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
@@ -249,6 +279,7 @@ export enum FieldMetadataType {
   Position = 'POSITION',
   Probability = 'PROBABILITY',
   Rating = 'RATING',
+  RawJson = 'RAW_JSON',
   Relation = 'RELATION',
   Select = 'SELECT',
   Text = 'TEXT',
@@ -291,6 +322,12 @@ export type InvalidatePassword = {
   success: Scalars['Boolean']['output'];
 };
 
+export type LinkMetadata = {
+  __typename?: 'LinkMetadata';
+  label: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -301,15 +338,16 @@ export type Mutation = {
   activateWorkspace: Workspace;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
-  createEvent: Analytics;
   createOneField: Field;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
   createOneRelation: Relation;
+  createOneRemoteServer: RemoteServer;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: FieldDeleteResponse;
   deleteOneObject: Object;
   deleteOneRelation: RelationDeleteResponse;
+  deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -318,6 +356,8 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  track: Analytics;
+  updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
   updateOneObject: Object;
   updatePasswordViaResetToken: InvalidatePassword;
@@ -347,12 +387,6 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
-export type MutationCreateEventArgs = {
-  data: Scalars['JSON']['input'];
-  type: Scalars['String']['input'];
-};
-
-
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -373,6 +407,11 @@ export type MutationCreateOneRelationArgs = {
 };
 
 
+export type MutationCreateOneRemoteServerArgs = {
+  input: CreateRemoteServerInput;
+};
+
+
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
 };
@@ -385,6 +424,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneRelationArgs = {
   input: DeleteOneRelationInput;
+};
+
+
+export type MutationDeleteOneRemoteServerArgs = {
+  input: RemoteServerIdInput;
 };
 
 
@@ -418,6 +462,12 @@ export type MutationSignUpArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationTrackArgs = {
+  data: Scalars['JSON']['input'];
+  type: Scalars['String']['input'];
 };
 
 
@@ -520,8 +570,13 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAvailableRemoteTablesByServerId: Array<RemoteTable>;
+  findManyRemoteServersByType: Array<RemoteServer>;
+  findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
+  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
@@ -558,6 +613,21 @@ export type QueryFieldsArgs = {
 };
 
 
+export type QueryFindAvailableRemoteTablesByServerIdArgs = {
+  input: RemoteServerIdInput;
+};
+
+
+export type QueryFindManyRemoteServersByTypeArgs = {
+  input: RemoteServerTypeInput;
+};
+
+
+export type QueryFindOneRemoteServerByIdArgs = {
+  input: RemoteServerIdInput;
+};
+
+
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
 };
@@ -565,6 +635,20 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetProductPricesArgs = {
   product: Scalars['String']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
+  companyId: Scalars['ID']['input'];
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+};
+
+
+export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
+  page: Scalars['Int']['input'];
+  pageSize: Scalars['Int']['input'];
+  personId: Scalars['ID']['input'];
 };
 
 
@@ -631,6 +715,23 @@ export type RelationConnection = {
   pageInfo: PageInfo;
 };
 
+export type RelationDefinition = {
+  __typename?: 'RelationDefinition';
+  direction: RelationDefinitionType;
+  sourceFieldMetadata: Field;
+  sourceObjectMetadata: Object;
+  targetFieldMetadata: Field;
+  targetObjectMetadata: Object;
+};
+
+/** Relation definition type */
+export enum RelationDefinitionType {
+  ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
+
 export type RelationDeleteResponse = {
   __typename?: 'RelationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']['output']>;
@@ -650,6 +751,38 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type RemoteServer = {
+  __typename?: 'RemoteServer';
+  createdAt: Scalars['DateTime']['output'];
+  foreignDataWrapperId: Scalars['ID']['output'];
+  foreignDataWrapperOptions?: Maybe<Scalars['JSON']['output']>;
+  foreignDataWrapperType: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type RemoteServerIdInput = {
+  /** The id of the record. */
+  id: Scalars['ID']['input'];
+};
+
+export type RemoteServerTypeInput = {
+  foreignDataWrapperType: Scalars['String']['input'];
+};
+
+export type RemoteTable = {
+  __typename?: 'RemoteTable';
+  name: Scalars['String']['output'];
+  schema: Scalars['String']['output'];
+  status: RemoteTableStatus;
+};
+
+/** Status of the table */
+export enum RemoteTableStatus {
+  NotSynced = 'NOT_SYNCED',
+  Synced = 'SYNCED'
+}
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
@@ -657,7 +790,7 @@ export type Sentry = {
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
-  url: Scalars['String']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 /** Sort Directions */
@@ -682,6 +815,45 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean']['output'];
   enabled: Scalars['Boolean']['output'];
+};
+
+export type TimelineCalendarEvent = {
+  __typename?: 'TimelineCalendarEvent';
+  attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceLink: LinkMetadata;
+  conferenceSolution: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  endsAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  isCanceled: Scalars['Boolean']['output'];
+  isFullDay: Scalars['Boolean']['output'];
+  location: Scalars['String']['output'];
+  startsAt: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+  visibility: TimelineCalendarEventVisibility;
+};
+
+export type TimelineCalendarEventAttendee = {
+  __typename?: 'TimelineCalendarEventAttendee';
+  avatarUrl: Scalars['String']['output'];
+  displayName: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  handle: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  personId?: Maybe<Scalars['ID']['output']>;
+  workspaceMemberId?: Maybe<Scalars['ID']['output']>;
+};
+
+/** Visibility of the calendar event */
+export enum TimelineCalendarEventVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
+
+export type TimelineCalendarEventsWithTotal = {
+  __typename?: 'TimelineCalendarEventsWithTotal';
+  timelineCalendarEvents: Array<TimelineCalendarEvent>;
+  totalNumberOfCalendarEvents: Scalars['Int']['output'];
 };
 
 export type TimelineThread = {
@@ -718,6 +890,12 @@ export type TimelineThreadsWithTotal = {
 export type TransientToken = {
   __typename?: 'TransientToken';
   transientToken: AuthToken;
+};
+
+export type UpdateBillingEntity = {
+  __typename?: 'UpdateBillingEntity';
+  /** Boolean that confirms query was successful */
+  success: Scalars['Boolean']['output'];
 };
 
 export type UpdateFieldInput = {
@@ -831,7 +1009,9 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: Scalars['String']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
+  billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
+  currentBillingSubscription?: Maybe<BillingSubscription>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;
@@ -841,6 +1021,12 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']['output']>;
   subscriptionStatus: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+
+export type WorkspaceBillingSubscriptionsArgs = {
+  filter?: BillingSubscriptionFilter;
+  sorting?: Array<BillingSubscriptionSort>;
 };
 
 
@@ -886,6 +1072,7 @@ export type Field = {
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   options?: Maybe<Scalars['JSON']['output']>;
+  relationDefinition?: Maybe<RelationDefinition>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime']['output'];

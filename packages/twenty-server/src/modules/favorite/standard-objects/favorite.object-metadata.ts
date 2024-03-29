@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { favoriteStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
@@ -29,7 +29,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     label: 'Position',
     description: 'Favorite position',
     icon: 'IconList',
-    defaultValue: { value: 0 },
+    defaultValue: 0,
   })
   position: number;
 

@@ -28,8 +28,7 @@ const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
   min-width: 32px;
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen &&
-    `position: relative;
-    right: 0;
+    `
     width: 32px;
     border-right: none !important;
     background-color: ${theme.background.primary};
@@ -56,16 +55,15 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
-    useRecordTableStates();
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const scrollWrapper = useScrollWrapperScopedRef();
   const isTableWiderThanScreen =
     (scrollWrapper.current?.clientWidth ?? 0) <
     (scrollWrapper.current?.scrollWidth ?? 0);
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const theme = useTheme();
 

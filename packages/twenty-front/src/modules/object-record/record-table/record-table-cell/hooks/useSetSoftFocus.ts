@@ -10,7 +10,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 export const useSetSoftFocus = () => {
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
-  const { getIsSoftFocusActiveState } = useRecordTableStates();
+  const { isSoftFocusActiveState } = useRecordTableStates();
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -19,10 +19,10 @@ export const useSetSoftFocus = () => {
       (newPosition: TableCellPosition) => {
         setSoftFocusPosition(newPosition);
 
-        set(getIsSoftFocusActiveState(), true);
+        set(isSoftFocusActiveState, true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },
-    [setSoftFocusPosition, getIsSoftFocusActiveState, setHotkeyScope],
+    [setSoftFocusPosition, isSoftFocusActiveState, setHotkeyScope],
   );
 };

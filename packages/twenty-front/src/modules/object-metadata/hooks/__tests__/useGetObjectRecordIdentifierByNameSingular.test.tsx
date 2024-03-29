@@ -17,7 +17,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
         record: any;
         objectNameSingular: string;
       }) => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
         setMetadataItems(mockObjectMetadataItems);
 

@@ -24,12 +24,8 @@ export const MenuItemToggle = ({
   onToggleChange,
   toggleSize,
 }: MenuItemToggleProps) => {
-  const handleOnClick = () => {
-    onToggleChange?.(!toggled);
-  };
-
   return (
-    <StyledMenuItemBase className={className} onClick={handleOnClick}>
+    <StyledMenuItemBase className={className}>
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       <StyledMenuItemRightContent>
         <Toggle

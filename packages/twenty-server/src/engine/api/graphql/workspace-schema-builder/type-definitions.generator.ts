@@ -1,14 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { customTableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/custom-table-default-column.util';
-import { fullNameObjectDefinition } from 'src/engine-metadata/field-metadata/composite-types/full-name.composite-type';
-import { currencyObjectDefinition } from 'src/engine-metadata/field-metadata/composite-types/currency.composite-type';
-import { linkObjectDefinition } from 'src/engine-metadata/field-metadata/composite-types/link.composite-type';
+import { fullNameObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { currencyObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { linkObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
+import { addressObjectDefinition } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
@@ -68,7 +69,8 @@ export class TypeDefinitionsGenerator {
       currencyObjectDefinition,
       linkObjectDefinition,
       fullNameObjectDefinition,
-    ];
+      addressObjectDefinition,
+    ] satisfies ObjectMetadataInterface[];
 
     this.logger.log(
       `Generating staticObjects: [${staticObjectMetadataCollection

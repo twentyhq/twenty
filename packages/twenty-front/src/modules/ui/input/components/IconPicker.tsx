@@ -30,6 +30,7 @@ type IconPickerProps = {
   onOpen?: () => void;
   variant?: IconButtonVariant;
   className?: string;
+  disableBlur?: boolean;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -86,6 +87,7 @@ export const IconPicker = ({
   onClose,
   onOpen,
   variant = 'secondary',
+  disableBlur = false,
   className,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
@@ -148,6 +150,7 @@ export const IconPicker = ({
           />
         }
         dropdownMenuWidth={176}
+        disableBlur={disableBlur}
         dropdownComponents={
           <SelectableList
             selectableListId="icon-list"

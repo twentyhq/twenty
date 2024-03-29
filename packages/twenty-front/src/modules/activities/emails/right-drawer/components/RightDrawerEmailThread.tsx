@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
+import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
-import { EmailThreadFetchMoreLoader } from '@/activities/emails/components/EmailThreadFetchMoreLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
-import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/state/lastViewableEmailThreadIdState';
+import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
@@ -34,7 +34,7 @@ export const RightDrawerEmailThread = () => {
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {
-          set(emailThreadIdWhenEmailThreadWasClosedState(), thread.id);
+          set(emailThreadIdWhenEmailThreadWasClosedState, thread.id);
         },
       [thread],
     ),
@@ -62,7 +62,7 @@ export const RightDrawerEmailThread = () => {
               sentAt={message.receivedAt}
             />
           ))}
-          <EmailThreadFetchMoreLoader
+          <FetchMoreLoader
             loading={loading}
             onLastRowVisible={fetchMoreMessages}
           />

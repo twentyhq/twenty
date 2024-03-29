@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PG_MAIN_VERSION=15
-PG_GRAPHQL_VERSION=1.3.0
+PG_GRAPHQL_VERSION=1.5.1
 
 current_directory=$(pwd)
 

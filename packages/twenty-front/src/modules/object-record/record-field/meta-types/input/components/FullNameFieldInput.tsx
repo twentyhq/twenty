@@ -66,6 +66,10 @@ export const FullNameFieldInput = ({
     setDraftValue(convertToFullName(newDoubleText));
   };
 
+  const handlePaste = (newDoubleText: FieldDoubleText) => {
+    setDraftValue(convertToFullName(newDoubleText));
+  };
+
   return (
     <FieldInputOverlay>
       <DoubleTextInput
@@ -82,6 +86,7 @@ export const FullNameFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
+        onPaste={handlePaste}
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />

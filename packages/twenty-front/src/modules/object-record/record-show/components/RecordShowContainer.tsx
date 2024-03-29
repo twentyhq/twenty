@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -147,10 +146,9 @@ export const RecordShowContainer = ({
                         objectRecordId + labelIdentifierFieldMetadata?.id,
                       isLabelIdentifier: false,
                       fieldDefinition: {
-                        type: parseFieldType(
+                        type:
                           labelIdentifierFieldMetadata?.type ||
-                            FieldMetadataType.Text,
-                        ),
+                          FieldMetadataType.Text,
                         iconName: '',
                         fieldMetadataId: labelIdentifierFieldMetadata?.id ?? '',
                         label: labelIdentifierFieldMetadata?.label || '',

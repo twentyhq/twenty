@@ -1,8 +1,8 @@
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
-import { RelationMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/relation-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-metadata.interface';
 
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
   deduceRelationDirection,
   RelationDirection,

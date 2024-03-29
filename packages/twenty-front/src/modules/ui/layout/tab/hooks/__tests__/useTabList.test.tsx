@@ -8,12 +8,11 @@ describe('useTabList', () => {
   it('Should update the activeTabId state', async () => {
     const { result } = renderHook(
       () => {
-        const { getActiveTabIdState, setActiveTabId } =
+        const { activeTabIdState, setActiveTabId } =
           useTabList('TEST_TAB_LIST_ID');
-        const activeTabId = useRecoilValue(getActiveTabIdState());
+        const activeTabId = useRecoilValue(activeTabIdState);
 
         return {
-          getActiveTabIdState: getActiveTabIdState,
           activeTabId,
           setActiveTabId: setActiveTabId,
         };
@@ -22,7 +21,6 @@ describe('useTabList', () => {
         wrapper: RecoilRoot,
       },
     );
-    expect(result.current.getActiveTabIdState).toBeInstanceOf(Function);
     expect(result.current.setActiveTabId).toBeInstanceOf(Function);
     expect(result.current.activeTabId).toBeNull();
 

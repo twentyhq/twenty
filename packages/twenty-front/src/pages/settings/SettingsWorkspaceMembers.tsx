@@ -42,8 +42,8 @@ export const SettingsWorkspaceMembers = () => {
   const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);

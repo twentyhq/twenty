@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
+import { Events } from '@/activities/events/components/Events';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
@@ -61,10 +62,12 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(getActiveTabIdState());
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
+
   const shouldDisplayEmailsTab =
     (emails &&
       targetableObject.targetObjectNameSingular ===
@@ -101,13 +104,19 @@ export const ShowPageRightContainer = ({
       title: 'Emails',
       Icon: IconMail,
       hide: !shouldDisplayEmailsTab,
-      hasBetaPill: true,
     },
     {
       id: 'calendar',
       title: 'Calendar',
       Icon: IconCalendarEvent,
       hide: !shouldDisplayCalendarTab,
+    },
+    {
+      id: 'logs',
+      title: 'Logs',
+      Icon: IconTimelineEvent,
+      hide: !shouldDisplayLogTab,
+      hasBetaPill: true,
     },
   ];
 
@@ -129,8 +138,13 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'files' && (
         <Attachments targetableObject={targetableObject} />
       )}
-      {activeTabId === 'emails' && <EmailThreads entity={targetableObject} />}
-      {activeTabId === 'calendar' && <Calendar />}
+      {activeTabId === 'emails' && (
+        <EmailThreads targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'calendar' && (
+        <Calendar targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
     </StyledShowPageRightContainer>
   );
 };

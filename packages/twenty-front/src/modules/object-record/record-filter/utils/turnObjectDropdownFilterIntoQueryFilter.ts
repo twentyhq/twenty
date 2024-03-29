@@ -35,13 +35,11 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     );
 
     if (!correspondingField) {
-      throw new Error(
-        `Could not find field ${rawUIFilter.fieldMetadataId} in metadata object`,
-      );
+      continue;
     }
 
     if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
-      return undefined;
+      continue;
     }
 
     switch (rawUIFilter.definition.type) {

@@ -38,13 +38,13 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const onboardingStatus = useOnboardingStatus();
-      const setBilling = useSetRecoilState(billingState());
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState());
+      const setBilling = useSetRecoilState(billingState);
+      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentWorkspaceMember = useSetRecoilState(
-        currentWorkspaceMemberState(),
+        currentWorkspaceMemberState,
       );
-      const setTokenPair = useSetRecoilState(tokenPairState());
-      const setVerifyPending = useSetRecoilState(isVerifyPendingState());
+      const setTokenPair = useSetRecoilState(tokenPairState);
+      const setVerifyPending = useSetRecoilState(isVerifyPendingState);
 
       return {
         onboardingStatus,

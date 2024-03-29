@@ -28,10 +28,10 @@ describe('useOpenCreateActivityDrawer', () => {
     const { result } = renderHook(
       () => {
         const openActivityRightDrawer = useOpenCreateActivityDrawer();
-        const viewableActivityId = useRecoilValue(viewableActivityIdState());
-        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState());
+        const viewableActivityId = useRecoilValue(viewableActivityIdState);
+        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState(),
+          objectMetadataItemsState,
         );
         return {
           openActivityRightDrawer,
