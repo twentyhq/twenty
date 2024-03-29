@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { timelineCalendarEventWithTotalFragment } from '@/activities/calendar/queries/fragments/calendarEventFragmentWithTotalFragment';
+import { timelineCalendarEventWithTotalFragment } from '@/activities/calendar/queries/fragments/timelineCalendarEventWithTotalFragment';
 
 export const getTimelineCalendarEventsFromPersonId = gql`
   query GetTimelineCalendarEventsFromPersonId(

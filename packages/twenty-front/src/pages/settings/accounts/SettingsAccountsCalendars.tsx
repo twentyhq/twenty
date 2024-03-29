@@ -1,13 +1,14 @@
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsCalendarAccountsListCard } from '@/settings/accounts/components/SettingsAccountsCalendarAccountsListCard';
+import { SettingsAccountsCalendarChannelsListCard } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsListCard';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -21,15 +22,23 @@ import {
   TimelineCalendarEvent,
   TimelineCalendarEventVisibility,
 } from '~/generated-metadata/graphql';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsCalendars = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { records: _accounts } = useFindManyRecords<ConnectedAccount>({
+  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
     filter: {
       accountOwnerId: {
         eq: currentWorkspaceMember?.id,
+      },
+    },
+  });
+
+  const { records: calendarChannels } = useFindManyRecords<CalendarChannel>({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+    filter: {
+      connectedAccountId: {
+        in: accounts.map((account) => account.id),
       },
     },
   });
@@ -60,7 +69,10 @@ export const SettingsAccountsCalendars = () => {
     isFullDay: false,
     startsAt: exampleStartDate.toISOString(),
     conferenceSolution: '',
-    conferenceUri: '',
+    conferenceLink: {
+      label: '',
+      url: '',
+    },
     description: '',
     isCanceled: false,
     location: '',
@@ -85,10 +97,9 @@ export const SettingsAccountsCalendars = () => {
             title="Calendar settings"
             description="Sync your calendars and set your preferences"
           />
-          <SettingsAccountsCalendarAccountsListCard />
+          <SettingsAccountsCalendarChannelsListCard />
         </Section>
-        {/* TODO: retrieve connected accounts data from back-end when the Calendar feature is ready. */}
-        {!!mockedConnectedAccounts.length && (
+        {!!calendarChannels.length && (
           <>
             <Section>
               <H2Title

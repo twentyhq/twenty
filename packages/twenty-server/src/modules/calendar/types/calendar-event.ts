@@ -9,7 +9,11 @@ export type CalendarEvent = Omit<
   | 'calendarChannelEventAssociations'
   | 'calendarEventAttendees'
   | 'eventAttendees'
->;
+  | 'conferenceLink'
+> & {
+  conferenceLinkLabel: string;
+  conferenceLinkUrl: string;
+};
 
 export type CalendarEventAttendee = Omit<
   ObjectRecord<CalendarEventAttendeeObjectMetadata>,

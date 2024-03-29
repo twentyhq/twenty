@@ -86,12 +86,12 @@ export class WorkspaceMigrationEntity {
   @Column({ default: false })
   isCustom: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   appliedAt?: Date;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

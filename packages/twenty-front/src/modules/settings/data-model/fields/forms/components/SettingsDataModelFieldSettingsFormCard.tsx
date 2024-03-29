@@ -68,6 +68,7 @@ const previewableTypes = [
   FieldMetadataType.Rating,
   FieldMetadataType.Relation,
   FieldMetadataType.Text,
+  FieldMetadataType.Address,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({

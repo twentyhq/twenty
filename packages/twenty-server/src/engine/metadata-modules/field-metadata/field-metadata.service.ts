@@ -208,6 +208,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       view[0].id
     }')`,
         );
+        await workspaceQueryRunner.commitTransaction();
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();
         throw error;

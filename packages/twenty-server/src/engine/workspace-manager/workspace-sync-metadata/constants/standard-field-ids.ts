@@ -94,7 +94,7 @@ export const calendarEventStandardFieldIds = {
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
   iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
-  conferenceUri: '20202020-0fc5-490a-871a-2df8a45ab46c',
+  conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',
@@ -169,6 +169,10 @@ export const messageChannelStandardFieldIds = {
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  syncExternalId: '20202020-79d1-41cf-b738-bcf5ed61e256',
+  syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
+  syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
+  ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 
 export const messageParticipantStandardFieldIds = {

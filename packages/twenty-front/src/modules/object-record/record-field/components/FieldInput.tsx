@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { AddressFieldInput } from '@/object-record/record-field/meta-types/input/components/AddressFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
@@ -19,6 +20,7 @@ import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInpu
 import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
+import { isFieldAddress } from '../types/guards/isFieldAddress';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDateTime } from '../types/guards/isFieldDateTime';
@@ -127,6 +129,14 @@ export const FieldInput = ({
         <RatingFieldInput onSubmit={onSubmit} />
       ) : isFieldSelect(fieldDefinition) ? (
         <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+      ) : isFieldAddress(fieldDefinition) ? (
+        <AddressFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
       ) : (
         <></>
       )}
