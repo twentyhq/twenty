@@ -34,7 +34,7 @@ export const useSetRecordTableData = ({
             set(recordStoreFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState());
+        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         const allRowSelected = getSnapshotValue(
           snapshot,
@@ -44,7 +44,7 @@ export const useSetRecordTableData = ({
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(tableRowIdsState(), entityIds);
+          set(tableRowIdsState, entityIds);
         }
 
         if (allRowSelected) {
@@ -53,7 +53,7 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(numberOfTableRowsState(), totalCount);
+        set(numberOfTableRowsState, totalCount);
         onEntityCountChange(totalCount);
       },
     [

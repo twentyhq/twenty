@@ -49,33 +49,33 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (columns: ColumnDefinition<FieldMetadata>[]) => {
         const availableTableColumns = getSnapshotValue(
           snapshot,
-          availableTableColumnsState(),
+          availableTableColumnsState,
         );
 
         if (isDeeplyEqual(availableTableColumns, columns)) {
           return;
         }
-        set(availableTableColumnsState(), columns);
+        set(availableTableColumnsState, columns);
       },
     [availableTableColumnsState],
   );
 
-  const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState());
+  const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
 
-  const setTableFilters = useSetRecoilState(tableFiltersState());
+  const setTableFilters = useSetRecoilState(tableFiltersState);
 
-  const setTableSorts = useSetRecoilState(tableSortsState());
+  const setTableSorts = useSetRecoilState(tableSortsState);
 
-  const setTableColumns = useSetRecoilState(tableColumnsState());
+  const setTableColumns = useSetRecoilState(tableColumnsState);
 
-  const setOnColumnsChange = useSetRecoilState(onColumnsChangeState());
+  const setOnColumnsChange = useSetRecoilState(onColumnsChangeState);
 
   const setIsRecordTableInitialLoading = useSetRecoilState(
-    isRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
   const setRecordTableLastRowVisible = useSetRecoilState(
-    tableLastRowVisibleState(),
+    tableLastRowVisibleState,
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -83,7 +83,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (columns: ColumnDefinition<FieldMetadata>[]) => {
         const onColumnsChange = getSnapshotValue(
           snapshot,
-          onColumnsChangeState(),
+          onColumnsChangeState,
         );
 
         onColumnsChange?.(columns);
@@ -96,7 +96,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (count: number) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
-          onEntityCountChangeState(),
+          onEntityCountChangeState,
         );
 
         onEntityCountChange?.(count);
@@ -129,7 +129,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     const setHotkeyScope = useSetHotkeyScope();
 
     const setIsSoftFocusUsingMouseState = useSetRecoilState(
-      isSoftFocusUsingMouseState(),
+      isSoftFocusUsingMouseState,
     );
 
     useScopedHotkeys(

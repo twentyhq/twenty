@@ -53,11 +53,11 @@ export const ObjectSortDropdownButton = ({
     sortDropdownId: sortDropdownId,
   });
 
-  const isSortSelected = useRecoilValue(isSortSelectedState());
+  const isSortSelected = useRecoilValue(isSortSelectedState);
   const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState(),
+    availableSortDefinitionsState,
   );
-  const onSortSelect = useRecoilValue(onSortSelectState());
+  const onSortSelect = useRecoilValue(onSortSelectState);
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
