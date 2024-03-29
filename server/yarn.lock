@@ -49,10 +49,10 @@
   resolved "https://registry.npmjs.org/@antfu/ni/-/ni-0.21.4.tgz"
   integrity sha512-O0Uv9LbLDSoEg26fnMDdDRiPwFJnQSoD4WnrflDwKCJm8Cx/0mV4cGxwBLXan5mGIrpK4Dd7vizf4rQm0QCEAA==
 
-"@apollo/cache-control-types@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.npmjs.org/@apollo/cache-control-types/-/cache-control-types-1.0.2.tgz"
-  integrity sha512-Por80co1eUm4ATsvjCOoS/tIR8PHxqVjsA6z76I6Vw0rFn4cgyVElQcmQDIZiYsy41k8e5xkrMRECkM2WR8pNw==
+"@apollo/cache-control-types@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
+  integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
 
 "@apollo/protobufjs@1.2.6":
   version "1.2.6"
@@ -91,12 +91,12 @@
     "@types/long" "^4.0.0"
     long "^4.0.0"
 
-"@apollo/server-gateway-interface@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/@apollo/server-gateway-interface/-/server-gateway-interface-1.1.0.tgz"
-  integrity sha512-0rhG++QtGfr4YhhIHgxZ9BdMFthaPY6LbhI9Au90osbfLMiZ7f8dmZsEX1mp7O1h8MJwCu6Dp0I/KcGbSvfUGA==
+"@apollo/server-gateway-interface@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@apollo/server-gateway-interface/-/server-gateway-interface-1.1.1.tgz#a79632aa921edefcd532589943f6b97c96fa4d3c"
+  integrity sha512-pGwCl/po6+rxRmDMFgozKQo2pbsSwE91TpsDBAOgf74CRDPXHHtM88wbwjab0wMMZh95QfR45GGyDIdhY24bkQ==
   dependencies:
-    "@apollo/usage-reporting-protobuf" "^4.0.0"
+    "@apollo/usage-reporting-protobuf" "^4.1.1"
     "@apollo/utils.fetcher" "^2.0.0"
     "@apollo/utils.keyvaluecache" "^2.1.0"
     "@apollo/utils.logger" "^2.0.0"
@@ -108,14 +108,14 @@
   dependencies:
     "@apollographql/graphql-playground-html" "1.6.29"
 
-"@apollo/server@^4.7.3":
-  version "4.7.3"
-  resolved "https://registry.npmjs.org/@apollo/server/-/server-4.7.3.tgz"
-  integrity sha512-eFCzHHheNHfVALjYJjIghV7kSgO49ZFr8+4g2CKOLShoDmLplQ3blyL5NsONyC0Z5l8kqm62V8yXGoxy2eNGfw==
+"@apollo/server@^4.9.3":
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.9.3.tgz#d51fa1745a7e9f3b1d687c6df40256744aaa977a"
+  integrity sha512-U56Sx/UmzR3Es344hQ/Ptf2EJrH+kV4ZPoLmgGjWoiwf2wYQ/pRSvkSXgjOvoyE34wSa8Gh7f92ljfLfY+6q1w==
   dependencies:
-    "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/server-gateway-interface" "^1.1.0"
-    "@apollo/usage-reporting-protobuf" "^4.1.0"
+    "@apollo/cache-control-types" "^1.0.3"
+    "@apollo/server-gateway-interface" "^1.1.1"
+    "@apollo/usage-reporting-protobuf" "^4.1.1"
     "@apollo/utils.createhash" "^2.0.0"
     "@apollo/utils.fetcher" "^2.0.0"
     "@apollo/utils.isnodelike" "^2.0.0"
@@ -140,10 +140,10 @@
     uuid "^9.0.0"
     whatwg-mimetype "^3.0.0"
 
-"@apollo/usage-reporting-protobuf@^4.0.0", "@apollo/usage-reporting-protobuf@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/@apollo/usage-reporting-protobuf/-/usage-reporting-protobuf-4.1.0.tgz"
-  integrity sha512-hXouMuw5pQVkzi8dgMybmr6Y11+eRmMQVoB5TF0HyTwAg9SOq/v3OCuiYqcVUKdBcskU9Msp+XvjAk0GKpWCwQ==
+"@apollo/usage-reporting-protobuf@^4.0.0", "@apollo/usage-reporting-protobuf@^4.1.0", "@apollo/usage-reporting-protobuf@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@apollo/usage-reporting-protobuf/-/usage-reporting-protobuf-4.1.1.tgz#407c3d18c7fbed7a264f3b9a3812620b93499de1"
+  integrity sha512-u40dIUePHaSKVshcedO7Wp+mPiZsaU6xjv9J+VyxpoU/zL6Jle+9zWeG98tr/+SZ0nZ4OXhrbb8SNr0rAPpIDA==
   dependencies:
     "@apollo/protobufjs" "1.2.7"
 

@@ -31,7 +31,7 @@
     "typeorm:migrate": "yarn typeorm migration:run -- -d ./src/metadata/metadata.datasource.ts"
   },
   "dependencies": {
-    "@apollo/server": "^4.7.3",
+    "@apollo/server": "^4.9.3",
     "@aws-sdk/client-s3": "^3.363.0",
     "@aws-sdk/credential-providers": "^3.363.0",
     "@casl/ability": "^6.5.0",
