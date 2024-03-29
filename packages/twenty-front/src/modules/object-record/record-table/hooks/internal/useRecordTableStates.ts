@@ -49,7 +49,6 @@ export const useRecordTableStates = (recordTableId?: string) => {
       tableColumnsComponentState,
       scopeId,
     ),
-
     onColumnsChangeState: extractComponentState(
       onColumnsChangeComponentState,
       scopeId,

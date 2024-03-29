@@ -111,9 +111,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
-  const setRowSelectedState = useSetRowSelectedState(recordTableId);
+  const setRowSelected = useSetRowSelectedState(recordTableId);
 
-  const setAllRowSelectedState = useSetAllRowSelectedState(recordTableId);
+  const setAllRowSelected = useSetAllRowSelectedState(recordTableId);
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
@@ -199,7 +199,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableData,
     setTableColumns,
     leaveTableFocus,
-    setRowSelectedState,
+    setRowSelected,
     resetTableRowSelection,
     upsertRecordTableItem,
     moveDown,
@@ -214,6 +214,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setSoftFocusPosition,
     isSomeCellInEditModeState,
     selectedRowIdsSelector,
-    setAllRowSelectedState,
+    setAllRowSelected,
   };
 };
