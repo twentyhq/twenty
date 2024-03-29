@@ -15,7 +15,7 @@ export class CreateFieldInput extends OmitType(
   @Field()
   objectMetadataId: string;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
   isRemoteCreation?: boolean;
 }

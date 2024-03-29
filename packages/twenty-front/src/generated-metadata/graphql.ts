@@ -117,7 +117,7 @@ export type CreateFieldInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   isCustom?: InputMaybe<Scalars['Boolean']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
-  isRemoteCreation?: Scalars['Boolean']['input'];
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']['input']>;
   isSystem?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];

@@ -176,7 +176,7 @@ export class RemoteTableService {
     } as CreateObjectInput);
 
     for (const column of remoteTableColumns) {
-      await this.fieldMetadataService.createOne({
+      const field = await this.fieldMetadataService.createOne({
         name: column.column_name,
         label: capitalize(snakeCase(column.column_name)).replace(/_/g, ' '),
         description: 'Field of remote',
@@ -187,6 +187,12 @@ export class RemoteTableService {
         isRemoteCreation: true,
         isNullable: true,
       } as CreateFieldInput);
+
+      if (column.column_name === 'id') {
+        await this.objectMetadataService.updateOne(objectMetadata.id, {
+          labelIdentifierFieldMetadataId: field.id,
+        });
+      }
     }
   }
 
