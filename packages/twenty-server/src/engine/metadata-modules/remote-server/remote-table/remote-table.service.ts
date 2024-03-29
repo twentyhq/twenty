@@ -24,6 +24,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { RemotePostgresTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.service';
 import { snakeCase } from 'src/utils/snake-case';
 import { capitalize } from 'src/utils/capitalize';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 export class RemoteTableService {
   constructor(
@@ -34,6 +35,7 @@ export class RemoteTableService {
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
@@ -102,23 +104,29 @@ export class RemoteTableService {
 
     switch (input.status) {
       case RemoteTableStatus.SYNCED:
-        return this.buildForeignTableAndMetadata(
+        await this.buildForeignTableAndMetadata(
           input,
           remoteServer,
           workspaceId,
           workspaceDataSource,
           dataSourcesMetatada[0],
         );
+        break;
       case RemoteTableStatus.NOT_SYNCED:
-        return this.removeForeignTableAndMetadata(
+        await this.removeForeignTableAndMetadata(
           input,
           workspaceId,
           workspaceDataSource,
           dataSourcesMetatada[0].schema,
         );
+        break;
       default:
         throw new Error('Unsupported remote table status');
     }
+
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+    return input;
   }
 
   private async buildForeignTableAndMetadata(
@@ -140,6 +148,13 @@ export class RemoteTableService {
     const foreignTableColumns = remoteTableColumns
       .map((column) => `"${column.column_name}" ${column.data_type}`)
       .join(', ');
+
+    await workspaceDataSource.query(
+      `CREATE FOREIGN TABLE ${localSchema}."${input.name}Remote" (${foreignTableColumns}) SERVER "${remoteServer.foreignDataWrapperId}" OPTIONS (schema_name '${input.schema}', table_name '${input.name}')`,
+    );
+    await workspaceDataSource.query(
+      `COMMENT ON FOREIGN TABLE ${localSchema}."${input.name}Remote" IS e'@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})'`,
+    );
 
     // Should be done in a transaction. To be discussed
     const objectMetadata = await this.objectMetadataService.createOne({
@@ -173,15 +188,6 @@ export class RemoteTableService {
         isNullable: true,
       } as CreateFieldInput);
     }
-
-    await workspaceDataSource.query(
-      `CREATE FOREIGN TABLE ${localSchema}."${input.name}Remote" (${foreignTableColumns}) SERVER "${remoteServer.foreignDataWrapperId}" OPTIONS (schema_name '${input.schema}', table_name '${input.name}')`,
-    );
-    await workspaceDataSource.query(
-      `COMMENT ON FOREIGN TABLE ${localSchema}."${input.name}Remote" IS e'@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})'`,
-    );
-
-    return input;
   }
 
   private async removeForeignTableAndMetadata(
@@ -205,8 +211,6 @@ export class RemoteTableService {
     await workspaceDataSource.query(
       `DROP FOREIGN TABLE ${localSchema}."${input.name}Remote"`,
     );
-
-    return input;
   }
 
   private async fetchTableColumnsSchema(

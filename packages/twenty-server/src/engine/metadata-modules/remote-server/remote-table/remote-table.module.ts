@@ -9,6 +9,7 @@ import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/re
 import { RemotePostgresTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.module';
 import { RemoteTableResolver } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.resolver';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     ObjectMetadataModule,
     FieldMetadataModule,
     RemotePostgresTableModule,
+    WorkspaceCacheVersionModule,
   ],
   providers: [RemoteTableService, RemoteTableResolver],
 })

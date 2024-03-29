@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { DataSource } from 'typeorm';
 
 import {
@@ -12,6 +14,7 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
+@Injectable()
 export class RemotePostgresTableService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,

@@ -194,17 +194,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
-    // DROP TABLE
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`delete-${objectMetadata.nameSingular}`),
-      workspaceId,
-      [
-        {
-          name: computeObjectTargetTable(objectMetadata),
-          action: 'drop',
-        },
-      ],
-    );
+    if (!objectMetadata.isRemote) {
+      // DROP TABLE
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`delete-${objectMetadata.nameSingular}`),
+        workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(objectMetadata),
+            action: 'drop',
+          },
+        ],
+      );
+    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
