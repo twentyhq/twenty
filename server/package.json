@@ -68,7 +68,7 @@
     "dataloader": "^2.2.2",
     "date-fns": "^2.30.0",
     "file-type": "16.5.4",
-    "graphql": "16.8.0",
+    "graphql": "16.8.1",
     "graphql-fields": "^2.0.3",
     "graphql-subscriptions": "2.0.0",
     "graphql-type-json": "^0.3.2",
@@ -144,7 +144,7 @@
     "typescript": "^4.9.4"
   },
   "resolutions": {
-    "graphql": "16.8.0"
+    "graphql": "16.8.1"
   },
   "prisma": {
     "schema": "src/database/schema.prisma",
