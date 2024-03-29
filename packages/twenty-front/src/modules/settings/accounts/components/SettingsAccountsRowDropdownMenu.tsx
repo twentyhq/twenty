@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { IconDotsVertical, IconMail, IconTrash } from 'twenty-ui';
+import { IconDotsVertical, IconMail, IconRefresh, IconTrash } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -29,6 +30,8 @@ export const SettingsAccountsRowDropdownMenu = ({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
 
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -48,6 +51,14 @@ export const SettingsAccountsRowDropdownMenu = ({
                 navigate(
                   `/settings/accounts/emails/${account.messageChannels.edges[0].node.id}`,
                 );
+                closeDropdown();
+              }}
+            />
+            <MenuItem
+              LeftIcon={IconRefresh}
+              text="Reconnect"
+              onClick={() => {
+                triggerGoogleApisOAuth();
                 closeDropdown();
               }}
             />

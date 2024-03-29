@@ -17,5 +17,5 @@ export const useTriggerGoogleApisOAuth = () => {
     window.location.href = `${authServerUrl}/auth/google-gmail?transientToken=${token}`;
   }, [generateTransientToken]);
 
-  return triggerGoogleApisOAuth;
+  return { triggerGoogleApisOAuth };
 };

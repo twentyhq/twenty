@@ -8,6 +8,7 @@ import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import { Status } from '@/ui/display/status/components/Status';
 
 import { SettingsListCard } from '../../components/SettingsListCard';
 
@@ -41,7 +42,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       RowIcon={IconGoogle}
       RowRightComponent={({ item: account }) => (
         <>
-          {account.authFailedAt && <StyledPill label="Sync failed" />}
+          {account.authFailedAt && <Status color="red" text="Sync failed" />}
           <SettingsAccountsRowDropdownMenu item={account} />
         </>
       )}

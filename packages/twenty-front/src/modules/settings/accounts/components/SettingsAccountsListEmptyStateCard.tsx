@@ -25,7 +25,7 @@ type SettingsAccountsListEmptyStateCardProps = {
 export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
-  const triggerGoogleApisOAuth = useTriggerGoogleApisOAuth();
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
   return (
     <Card>
