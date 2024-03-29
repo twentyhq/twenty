@@ -31,7 +31,9 @@ import { App } from './App';
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') ?? document.body,
+);
 
 root.render(
   <RecoilRoot>

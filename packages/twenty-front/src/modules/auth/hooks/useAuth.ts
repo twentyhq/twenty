@@ -108,7 +108,8 @@ export const useAuth = () => {
           .filter(
             ({ workspace }) => workspace !== null && workspace !== undefined,
           )
-          .map((validWorkspace) => validWorkspace.workspace!);
+          .map((validWorkspace) => validWorkspace.workspace)
+          .filter(isDefined);
 
         setWorkspaces(validWorkspaces);
       }
