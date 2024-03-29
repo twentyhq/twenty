@@ -82,6 +82,15 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   lastSyncHistoryId: string;
 
   @FieldMetadata({
+    standardId: connectedAccountStandardFieldIds.authFailedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Auth failed at',
+    description: 'Auth failed at',
+    icon: 'IconX',
+  })
+  authFailedAt: Date;
+
+  @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.messageChannels,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel',
