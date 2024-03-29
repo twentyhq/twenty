@@ -113,7 +113,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setRowSelected = useSetRowSelectedState(recordTableId);
 
-  const setAllRowSelected = useSetHasUserSelectedAllRows(recordTableId);
+  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
@@ -214,6 +214,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setSoftFocusPosition,
     isSomeCellInEditModeState,
     selectedRowIdsSelector,
-    setAllRowSelected,
+    setHasUserSelectedAllRows,
   };
 };
