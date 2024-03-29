@@ -1,6 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { Pill } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
@@ -11,15 +9,6 @@ import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Status } from '@/ui/display/status/components/Status';
 
 import { SettingsListCard } from '../../components/SettingsListCard';
-
-const StyledPill = styled(Pill)`
-  background-color: ${({ theme }) => theme.background.danger};
-  color: ${({ theme }) => theme.font.color.danger};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: ${({ theme }) => theme.spacing(5)};
-`;
 
 export const SettingsAccountsConnectedAccountsListCard = ({
   accounts,
