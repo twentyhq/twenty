@@ -29,7 +29,7 @@
     "date-fns": "^2.30.0",
     "deep-equal": "^2.2.2",
     "framer-motion": "^10.12.17",
-    "graphql": "^16.6.0",
+    "graphql": "^16.8.1",
     "hex-rgb": "^5.0.0",
     "immer": "^10.0.2",
     "js-cookie": "^3.0.5",
