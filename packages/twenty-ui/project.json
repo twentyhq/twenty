@@ -8,7 +8,7 @@
       "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/twenty-ui/dist"
+        "outputPath": "{projectRoot}/dist"
       }
     },
     "lint": {
@@ -28,9 +28,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "packages/twenty-ui/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }
   },

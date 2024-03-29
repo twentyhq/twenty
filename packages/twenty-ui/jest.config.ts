@@ -1,11 +1,23 @@
-/* eslint-disable */
-export default {
+import { JestConfigWithTsJest } from 'ts-jest';
+
+const jestConfig: JestConfigWithTsJest = {
   displayName: 'twenty-ui',
   preset: '../../jest.preset.js',
-  testEnvironment: 'node',
+  setupFilesAfterEnv: ['./setupTests.ts'],
+  transformIgnorePatterns: ['../../node_modules/'],
   transform: {
-    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.[tj]sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: { syntax: 'typescript', tsx: true },
+          transform: { react: { runtime: 'automatic' } },
+        },
+      },
+    ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/packages/twenty-ui',
 };
+
+export default jestConfig;

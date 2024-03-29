@@ -39,6 +39,15 @@
         "{workspaceRoot}/.eslintrc.js",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     }
   },
   "installation": {
