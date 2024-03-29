@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { SaveOrUpdateConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
+import { SaveConnectedAccountInput } from 'src/engine/core-modules/auth/dto/save-connected-account';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
@@ -31,6 +31,7 @@ import {
   GmailFullSyncV2Job,
   GmailFullSyncV2JobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+import { UpdateConnectedAccountInput } from 'src/engine/core-modules/auth/dto/update-connected-account';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -49,7 +50,7 @@ export class GoogleAPIsService {
   providerName = 'google';
 
   async saveConnectedAccount(
-    saveConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
+    saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
     const {
       handle,
@@ -133,7 +134,7 @@ export class GoogleAPIsService {
   }
 
   async updateConnectedAccount(
-    updateConnectedAccountInput: SaveOrUpdateConnectedAccountInput,
+    updateConnectedAccountInput: UpdateConnectedAccountInput,
   ) {
     const {
       handle,
