@@ -15,7 +15,7 @@ export const USER_GUIDE_INDEX = {
   Objects: [
     { title: 'Objects', url: 'objects' },
     { title: 'Fields', url: 'fields' },
-    { title: 'Views, Sort and Filter', url: 'views' },
+    { title: 'Views, Sort and Filter', url: 'views-sort-filter' },
     { title: 'Table Views', url: 'table-views' },
     { title: 'Kanban Views', url: 'kanban-views' },
     { title: 'Import/Export Data', url: 'import-export-data' },
