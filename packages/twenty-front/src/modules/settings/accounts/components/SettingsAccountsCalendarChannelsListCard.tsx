@@ -56,7 +56,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
     return <SettingsAccountsListEmptyStateCard />;
   }
 
-  const calendarChannelsWithSyncedEmails: (CalendarChannel & {
+  const calendarChannelsWithSyncStatus: (CalendarChannel & {
     connectedAccount: ConnectedAccount;
   } & SettingsAccountsSynchronizationStatusProps)[] = calendarChannels.map(
     (calendarChannel) => ({
@@ -71,7 +71,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
 
   return (
     <SettingsListCard
-      items={calendarChannelsWithSyncedEmails}
+      items={calendarChannelsWithSyncStatus}
       getItemLabel={(calendarChannel) => calendarChannel.handle}
       isLoading={accountsLoading || calendarChannelsLoading}
       onRowClick={(calendarChannel) =>
