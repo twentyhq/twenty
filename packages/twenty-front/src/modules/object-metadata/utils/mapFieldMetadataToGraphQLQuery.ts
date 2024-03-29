@@ -107,6 +107,18 @@ ${mapObjectMetadataToGraphQLQuery({
   firstName
   lastName
 }`;
+  } else if (fieldType === 'ADDRESS') {
+    return `${field.name}
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}`;
   }
 
   return '';

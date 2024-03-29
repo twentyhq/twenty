@@ -1,6 +1,9 @@
 import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 
-import { QueueJobOptions } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import {
+  QueueCronJobOptions,
+  QueueJobOptions,
+} from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { MessageQueueJobData } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -37,10 +40,9 @@ export class MessageQueueService implements OnModuleDestroy {
   addCron<T extends MessageQueueJobData | undefined>(
     jobName: string,
     data: T,
-    pattern: string,
-    options?: QueueJobOptions,
+    options?: QueueCronJobOptions,
   ): Promise<void> {
-    return this.driver.addCron(this.queueName, jobName, data, pattern, options);
+    return this.driver.addCron(this.queueName, jobName, data, options);
   }
 
   removeCron(jobName: string, pattern: string): Promise<void> {

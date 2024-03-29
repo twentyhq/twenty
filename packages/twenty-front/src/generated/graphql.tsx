@@ -179,6 +179,7 @@ export type FieldDeleteResponse = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
@@ -233,6 +234,12 @@ export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type LinkMetadata = {
+  __typename?: 'LinkMetadata';
+  label: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type LoginToken = {
@@ -547,6 +554,29 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type RemoteServer = {
+  __typename?: 'RemoteServer';
+  createdAt: Scalars['DateTime'];
+  foreignDataWrapperId: Scalars['ID'];
+  foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
+  foreignDataWrapperType: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RemoteTable = {
+  __typename?: 'RemoteTable';
+  name: Scalars['String'];
+  schema: Scalars['String'];
+  status: RemoteTableStatus;
+};
+
+/** Status of the table */
+export enum RemoteTableStatus {
+  NotSynced = 'NOT_SYNCED',
+  Synced = 'SYNCED'
+}
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']>;
@@ -584,8 +614,8 @@ export type Telemetry = {
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceLink: LinkMetadata;
   conferenceSolution: Scalars['String'];
-  conferenceUri: Scalars['String'];
   description: Scalars['String'];
   endsAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -831,6 +861,7 @@ export type Object = {
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
@@ -876,11 +907,11 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type AttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type TimelineCalendarEventAttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-export type CalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
@@ -889,7 +920,7 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['ID'];
@@ -898,7 +929,7 @@ export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
@@ -1125,8 +1156,8 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
-export const AttendeeFragmentFragmentDoc = gql`
-    fragment AttendeeFragment on TimelineCalendarEventAttendee {
+export const TimelineCalendarEventAttendeeFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventAttendeeFragment on TimelineCalendarEventAttendee {
   personId
   workspaceMemberId
   firstName
@@ -1136,8 +1167,8 @@ export const AttendeeFragmentFragmentDoc = gql`
   handle
 }
     `;
-export const CalendarEventFragmentFragmentDoc = gql`
-    fragment CalendarEventFragment on TimelineCalendarEvent {
+export const TimelineCalendarEventFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
   id
   title
   description
@@ -1145,19 +1176,20 @@ export const CalendarEventFragmentFragmentDoc = gql`
   startsAt
   endsAt
   isFullDay
+  visibility
   attendees {
-    ...AttendeeFragment
+    ...TimelineCalendarEventAttendeeFragment
   }
 }
-    ${AttendeeFragmentFragmentDoc}`;
+    ${TimelineCalendarEventAttendeeFragmentFragmentDoc}`;
 export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
     fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
   totalNumberOfCalendarEvents
   timelineCalendarEvents {
-    ...CalendarEventFragment
+    ...TimelineCalendarEventFragment
   }
 }
-    ${CalendarEventFragmentFragmentDoc}`;
+    ${TimelineCalendarEventFragmentFragmentDoc}`;
 export const ParticipantFragmentFragmentDoc = gql`
     fragment ParticipantFragment on TimelineThreadParticipant {
   personId

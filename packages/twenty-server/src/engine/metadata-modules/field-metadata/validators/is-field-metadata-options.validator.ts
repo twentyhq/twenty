@@ -14,6 +14,8 @@ import { validateOptionsForType } from 'src/engine/metadata-modules/field-metada
 @Injectable()
 @ValidatorConstraint({ name: 'isFieldMetadataOptions', async: true })
 export class IsFieldMetadataOptions {
+  private validationErrors: string[] = [];
+
   constructor(private readonly fieldMetadataService: FieldMetadataService) {}
 
   async validate(
@@ -42,10 +44,20 @@ export class IsFieldMetadataOptions {
       type = fieldMetadata.type;
     }
 
-    return validateOptionsForType(type, value);
+    try {
+      return validateOptionsForType(type, value);
+    } catch (err) {
+      this.validationErrors.push(err.message);
+
+      return false;
+    }
   }
 
   defaultMessage(): string {
+    if (this.validationErrors.length > 0) {
+      return this.validationErrors.join(', ');
+    }
+
     return 'FieldMetadataOptions is not valid';
   }
 }

@@ -136,12 +136,13 @@ export class CalendarEventRepository {
         location: 'text',
         iCalUID: 'text',
         conferenceSolution: 'text',
-        conferenceUri: 'text',
+        conferenceLinkLabel: 'text',
+        conferenceLinkUrl: 'text',
         recurringEventExternalId: 'text',
       });
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceLinkLabel", "conferenceLinkUrl", "recurringEventExternalId") VALUES ${valuesString}`,
       flattenedValues,
       workspaceId,
       transactionManager,
@@ -173,7 +174,8 @@ export class CalendarEventRepository {
         location: 'text',
         iCalUID: 'text',
         conferenceSolution: 'text',
-        conferenceUri: 'text',
+        conferenceLinkLabel: 'text',
+        conferenceLinkUrl: 'text',
         recurringEventExternalId: 'text',
       });
 
@@ -189,10 +191,11 @@ export class CalendarEventRepository {
       "description" = "newData"."description",
       "location" = "newData"."location",
       "conferenceSolution" = "newData"."conferenceSolution",
-      "conferenceUri" = "newData"."conferenceUri",
+      "conferenceLinkLabel" = "newData"."conferenceLinkLabel",
+      "conferenceLinkUrl" = "newData"."conferenceLinkUrl",
       "recurringEventExternalId" = "newData"."recurringEventExternalId"
       FROM (VALUES ${valuesString})
-      AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId")
+      AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceLinkLabel", "conferenceLinkUrl", "recurringEventExternalId")
       WHERE "calendarEvent"."iCalUID" = "newData"."iCalUID"`,
       flattenedValues,
       workspaceId,

@@ -19,6 +19,7 @@ export enum FeatureFlagKeys {
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IsFullSyncV2Enabled = 'IS_FULL_SYNC_V2_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
@@ -46,9 +47,9 @@ export class FeatureFlagEntity {
   @Column({ nullable: false })
   value: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

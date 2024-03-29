@@ -8,6 +8,7 @@ import {
   IconKey,
   IconLink,
   IconMail,
+  IconMap,
   IconNumbers,
   IconPhone,
   IconRelationManyToMany,
@@ -100,5 +101,19 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'Full Name',
     Icon: IconUser,
     defaultValue: { firstName: 'John', lastName: 'Doe' },
+  },
+  [FieldMetadataType.Address]: {
+    label: 'Address',
+    Icon: IconMap,
+    defaultValue: {
+      addressStreet1: '456 Oak Street',
+      addressStreet2: 'Unit 3B',
+      addressCity: 'Springfield',
+      addressState: 'California',
+      addressCountry: 'United States',
+      addressPostcode: '90210',
+      addressLat: 34.0522,
+      addressLng: -118.2437,
+    },
   },
 };
