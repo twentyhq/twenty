@@ -18,7 +18,6 @@ export const shouldFieldBeQueried = ({
   eagerLoadedRelations?: Record<string, boolean>;
   objectRecord?: ObjectRecord;
   queryFields?: Record<string, any>;
-  onlyIdTypename?: boolean;
 }): any => {
   if (!isUndefined(depth) && depth < 0) {
     return false;

@@ -1,10 +1,12 @@
+import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
-import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,21 +26,18 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
     objectMetadataItem,
   });
 
-  const { mapRecordRelationRecordsToRelationConnection } =
-    useMapRelationRecordsToRelationConnection();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const createManyRecordsInCache = (
     recordsToCreate: Partial<T>[],
-    eagerLoadedRelations?: Record<string, any>,
+    queryFields?: Record<string, any>,
   ) => {
     const recordsWithId = recordsToCreate
       .map((record) => {
-        return mapRecordRelationRecordsToRelationConnection({
-          objectRecord: {
-            ...record,
-            id: (record.id as string) ?? v4(),
-          },
-          objectNameSingular,
+        return getRecordNodeFromRecord({
+          record: { ...record, id: record.id ?? v4() },
+          objectMetadataItem,
+          objectMetadataItems,
         });
       })
       .filter(isDefined);
@@ -50,7 +49,7 @@ export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
         generateObjectRecordOptimisticResponse<T>(record);
 
       if (isDefined(generatedCachedObjectRecord)) {
-        addRecordInCache(generatedCachedObjectRecord, eagerLoadedRelations);
+        addRecordInCache(generatedCachedObjectRecord, queryFields);
 
         createdRecordsInCache.push(generatedCachedObjectRecord);
       }

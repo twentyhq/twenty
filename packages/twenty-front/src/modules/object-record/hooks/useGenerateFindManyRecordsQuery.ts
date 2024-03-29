@@ -14,6 +14,7 @@ export const useGenerateFindManyRecordsQuery = () => {
     depth,
     eagerLoadedRelations,
     queryFields,
+    computeReferences = false,
   }: {
     objectMetadataItem: Pick<
       ObjectMetadataItem,
@@ -22,6 +23,7 @@ export const useGenerateFindManyRecordsQuery = () => {
     depth?: number;
     eagerLoadedRelations?: Record<string, any>;
     queryFields?: Record<string, any>;
+    computeReferences?: boolean;
   }) => gql`
     query FindMany${capitalize(
       objectMetadataItem.namePlural,
@@ -40,6 +42,7 @@ export const useGenerateFindManyRecordsQuery = () => {
             depth,
             eagerLoadedRelations,
             queryFields,
+            computeReferences,
           })}
           cursor
         }

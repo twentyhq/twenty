@@ -1,7 +1,11 @@
+import { useRecoilValue } from 'recoil';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAddRecordInCache } from '@/object-record/cache/hooks/useAddRecordInCache';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
-import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type useCreateOneRecordInCacheProps = {
@@ -14,6 +18,11 @@ export const useCreateOneRecordInCache = <T>({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectMetadataItem,
+  });
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { generateObjectRecordOptimisticResponse } =
     useGenerateObjectRecordOptimisticResponse({
@@ -24,30 +33,29 @@ export const useCreateOneRecordInCache = <T>({
     objectMetadataItem,
   });
 
-  const { mapRecordRelationRecordsToRelationConnection } =
-    useMapRelationRecordsToRelationConnection();
-
   const createOneRecordInCache = (
     recordToCreate: ObjectRecord,
-    eagerLoadedRelations?: Record<string, any>,
+    queryFields?: Record<string, any>,
   ) => {
-    const recordToCreateWithNestedConnections =
-      mapRecordRelationRecordsToRelationConnection({
-        objectRecord: recordToCreate,
-        objectNameSingular,
-      });
+    const recordToCreateWithNestedConnections = getRecordNodeFromRecord({
+      record: recordToCreate,
+      objectMetadataItem,
+      objectMetadataItems,
+      depth: 1,
+    });
 
     if (!recordToCreateWithNestedConnections) {
-      throw new Error('Record to create with nested connections is undefined');
+      return null;
     }
 
     const generatedCachedObjectRecord = generateObjectRecordOptimisticResponse(
       recordToCreateWithNestedConnections,
     );
 
-    addRecordInCache(generatedCachedObjectRecord, eagerLoadedRelations);
+    addRecordInCache(generatedCachedObjectRecord, queryFields);
+    const record = getRecordFromCache(generatedCachedObjectRecord.id);
 
-    return generatedCachedObjectRecord as T;
+    return record as T;
   };
 
   return {

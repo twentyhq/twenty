@@ -128,10 +128,10 @@ export const ActivityTargetInlineCellEditMode = ({
       );
     }
 
-    injectIntoActivityTargetInlineCellCache({
-      activityId: activity.id,
-      activityTargetsToInject: activityTargetsAfterUpdate,
-    });
+    // injectIntoActivityTargetInlineCellCache({
+    //   activityId: activity.id,
+    //   activityTargetsToInject: activityTargetsAfterUpdate,
+    // });
 
     if (isActivityInCreateMode) {
       upsertActivity({
@@ -142,9 +142,7 @@ export const ActivityTargetInlineCellEditMode = ({
       });
     } else {
       if (activityTargetsToCreate.length > 0) {
-        await createManyActivityTargets(activityTargetsToCreate, {
-          skipOptimisticEffect: true,
-        });
+        await createManyActivityTargets(activityTargetsToCreate);
       }
 
       if (activityTargetsToDelete.length > 0) {
@@ -153,9 +151,6 @@ export const ActivityTargetInlineCellEditMode = ({
             (activityTargetObjectRecord) =>
               activityTargetObjectRecord.activityTarget.id,
           ),
-          {
-            skipOptimisticEffect: true,
-          },
         );
       }
     }

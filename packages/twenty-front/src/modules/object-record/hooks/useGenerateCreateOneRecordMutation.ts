@@ -15,9 +15,11 @@ export const getCreateOneRecordMutationResponseField = (
 export const useGenerateCreateOneRecordMutation = ({
   objectMetadataItem,
   eagerLoadedRelations,
+  depth = 1,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   eagerLoadedRelations?: Record<string, any>;
+  depth?: number;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -37,6 +39,7 @@ export const useGenerateCreateOneRecordMutation = ({
         objectMetadataItems,
         objectMetadataItem,
         eagerLoadedRelations,
+        depth,
       })}
     }
   `;

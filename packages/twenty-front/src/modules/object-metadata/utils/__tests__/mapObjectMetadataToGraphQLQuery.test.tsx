@@ -276,4 +276,50 @@ avatarUrl
 companyId
 }`);
   });
+
+  it('should load only specified query fields', async () => {
+    const res = mapObjectMetadataToGraphQLQuery({
+      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      queryFields: { company: true, id: true, name: true },
+      depth: 1,
+    });
+    expect(formatGQLString(res)).toEqual(`{
+__typename
+id
+company
+{
+__typename
+xLink
+{
+  label
+  url
+}
+linkedinLink
+{
+  label
+  url
+}
+domainName
+annualRecurringRevenue
+{
+  amountMicros
+  currencyCode
+}
+createdAt
+address
+updatedAt
+name
+accountOwnerId
+employees
+id
+idealCustomerProfile
+}
+name
+{
+  firstName
+  lastName
+}
+}`);
+  });
 });

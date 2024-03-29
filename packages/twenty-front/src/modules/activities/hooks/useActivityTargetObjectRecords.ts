@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY } from '@/activities/query-keys/FindManyActivityTargetsQueryKey';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
@@ -36,6 +37,9 @@ export const useActivityTargetObjectRecords = ({
       const activityTargetFromCache = getRecordFromCache<ActivityTarget>(
         activityTarget.id,
         apolloClient.cache,
+        FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.fieldsFactory?.(
+          objectMetadataItems,
+        ),
       );
 
       if (!isDefined(activityTargetFromCache)) {
@@ -51,9 +55,7 @@ export const useActivityTargetObjectRecords = ({
       );
 
       if (!correspondingObjectMetadataItem) {
-        throw new Error(
-          `Cannot find target object record on activity target, this shouldn't happen, make sure the request for activities eagerly loads for the target objects on activity target relation.`,
-        );
+        throw new Error(`Cannot find activityTarget object metadata item.`);
       }
 
       const targetObjectRecord =

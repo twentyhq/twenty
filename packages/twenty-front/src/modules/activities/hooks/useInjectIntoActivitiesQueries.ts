@@ -1,10 +1,14 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 
+import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
+import { FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY } from '@/activities/query-keys/FindManyActivityTargetsQueryKey';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useReadFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useReadFindManyRecordsQueryInCache';
@@ -42,6 +46,7 @@ export const useInjectIntoActivitiesQueries = () => {
   } = useReadFindManyRecordsQueryInCache({
     objectMetadataItem: objectMetadataItemActivity,
   });
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const injectActivitiesQueries = ({
     activityToInject,
@@ -100,6 +105,9 @@ export const useInjectIntoActivitiesQueries = () => {
 
       const existingActivities = readFindManyActivitiesQueryInCache({
         queryVariables: currentFindManyActivitiesQueryVariables,
+        depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
+        queryFields:
+          FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
       });
 
       const nextActivityIds = [
@@ -131,12 +139,10 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
-        queryFields: {
-          id: true,
-          __typename: true,
-          title: true,
-          body: true,
-        },
+        depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
+        queryFields:
+          FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
+        computeReferences: true,
       });
     } else {
       const currentFindManyActivitiesQueryVariables = {
@@ -148,6 +154,9 @@ export const useInjectIntoActivitiesQueries = () => {
 
       const existingActivities = readFindManyActivitiesQueryInCache({
         queryVariables: currentFindManyActivitiesQueryVariables,
+        depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
+        queryFields:
+          FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
       });
 
       const nextFindManyActivitiesQueryVariables = {
@@ -171,20 +180,11 @@ export const useInjectIntoActivitiesQueries = () => {
       overwriteFindManyActivitiesInCache({
         objectRecordsToOverwrite: newActivities,
         queryVariables: nextFindManyActivitiesQueryVariables,
-        queryFields: {
-          activityTargets: {
-            id: true,
-            __typename: true,
-          },
-          author: {
-            id: true,
-            __typename: true,
-          },
-          assignee: {
-            id: true,
-            __typename: true,
-          },
-        },
+        queryFields:
+          FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.fieldsFactory?.(
+            objectMetadataItems,
+          ),
+        computeReferences: true,
       });
     }
   };

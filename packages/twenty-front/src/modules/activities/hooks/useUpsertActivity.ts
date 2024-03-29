@@ -71,7 +71,6 @@ export const useUpsertActivity = () => {
     input: Partial<Activity>;
   }) => {
     setIsUpsertingActivityInDB(true);
-
     if (isActivityInCreateMode) {
       const activityToCreate: Activity = {
         ...activity,
@@ -105,9 +104,7 @@ export const useUpsertActivity = () => {
         });
       }
 
-      // Call optimistic effects
       if (weAreOnObjectShowPage && isDefined(objectShowPageTargetableObject)) {
-        // TODO: see here
         injectIntoTimelineActivitiesQueries({
           timelineTargetableObject: objectShowPageTargetableObject,
           activityToInject: activityToCreate,

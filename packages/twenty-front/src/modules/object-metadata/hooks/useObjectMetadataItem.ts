@@ -41,6 +41,8 @@ export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
   eagerLoadedRelations?: Record<string, any>,
+  queryFields?: Record<string, any>,
+  computeReferences = false,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -92,6 +94,7 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
     depth,
     eagerLoadedRelations,
+    queryFields,
   });
 
   const generateFindDuplicateRecordsQuery =
@@ -109,14 +112,18 @@ export const useObjectMetadataItem = (
 
   const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
+    depth,
+    computeReferences,
   });
 
   const deleteOneRecordMutation = generateDeleteOneRecordMutation({

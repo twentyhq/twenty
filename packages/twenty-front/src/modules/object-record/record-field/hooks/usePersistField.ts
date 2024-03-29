@@ -102,6 +102,19 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
+          if (fieldIsRelation) {
+            updateRecord?.({
+              variables: {
+                where: { id: entityId },
+                updateOneRecordInput: {
+                  [fieldName]: valueToPersist,
+                  [`${fieldName}Id`]: valueToPersist?.id,
+                },
+              },
+            });
+            return;
+          }
+
           updateRecord?.({
             variables: {
               where: { id: entityId },

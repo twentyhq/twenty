@@ -11,6 +11,9 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   records,
   queryFields,
   withPageInfo = true,
+  computeReferences = false,
+  isRootLevel = true,
+  depth = 1,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<
@@ -20,6 +23,9 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   records: T[];
   queryFields?: Record<string, any>;
   withPageInfo?: boolean;
+  isRootLevel?: boolean;
+  computeReferences?: boolean;
+  depth?: number;
 }) => {
   return {
     __typename: getConnectionTypename({
@@ -31,6 +37,9 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
         objectMetadataItem,
         queryFields,
         record,
+        isRootLevel,
+        computeReferences,
+        depth,
       });
     }),
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),

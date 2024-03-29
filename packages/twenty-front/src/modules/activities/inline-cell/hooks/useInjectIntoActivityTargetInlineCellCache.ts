@@ -1,5 +1,9 @@
+import { useRecoilValue } from 'recoil';
+
+import { FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY } from '@/activities/query-keys/FindManyActivityTargetsQueryKey';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 
@@ -8,6 +12,8 @@ export const useInjectIntoActivityTargetInlineCellCache = () => {
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const {
     upsertFindManyRecordsQueryInCache:
@@ -30,18 +36,15 @@ export const useInjectIntoActivityTargetInlineCellCache = () => {
         },
       },
     };
-
     overwriteFindManyActivityTargetsQueryInCache({
       queryVariables: activityTargetInlineCellQueryVariables,
       objectRecordsToOverwrite: activityTargetsToInject,
-      queryFields: {
-        id: true,
-        __typename: true,
-        activity: {
-          id: true,
-          __typename: true,
-        },
-      },
+      depth: FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.depth,
+      queryFields:
+        FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.fieldsFactory?.(
+          objectMetadataItems,
+        ),
+      computeReferences: true,
     });
   };
 

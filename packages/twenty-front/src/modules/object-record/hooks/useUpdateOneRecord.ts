@@ -4,8 +4,8 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
-import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
@@ -29,8 +29,6 @@ export const useUpdateOneRecord = <
     });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { mapRecordRelationRecordsToRelationConnection } =
-    useMapRelationRecordsToRelationConnection();
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -41,14 +39,24 @@ export const useUpdateOneRecord = <
   }) => {
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
-    const updateOneRecordInputWithNestedConnections =
-      mapRecordRelationRecordsToRelationConnection({
-        objectRecord: updateOneRecordInput,
-        objectNameSingular,
-      });
+    const cachedRecordWithNestedConnections = getRecordNodeFromRecord({
+      record: cachedRecord,
+      objectMetadataItem,
+      objectMetadataItems,
+      depth: 1,
+      computeReferences: false,
+    });
+
+    const updateOneRecordInputWithNestedConnections = getRecordNodeFromRecord({
+      record: { ...updateOneRecordInput, id: idToUpdate },
+      objectMetadataItem,
+      objectMetadataItems,
+      depth: 1,
+      computeReferences: false,
+    });
 
     if (!updateOneRecordInputWithNestedConnections) {
-      throw new Error('Record to update with nested connections is undefined');
+      return null;
     }
 
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
@@ -57,14 +65,13 @@ export const useUpdateOneRecord = <
     });
 
     const optimisticallyUpdatedRecord = generateObjectRecordOptimisticResponse({
-      ...(cachedRecord ?? {}),
-      ...sanitizedUpdateOneRecordInput,
+      ...(cachedRecordWithNestedConnections ?? {}),
+      ...updateOneRecordInputWithNestedConnections,
       id: idToUpdate,
     });
 
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
-
     const updatedRecord = await apolloClient.mutate({
       mutation: updateOneRecordMutation,
       variables: {

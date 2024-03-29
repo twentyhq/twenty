@@ -25,7 +25,6 @@ export const TimelineQueryEffect = ({
 
   useEffect(() => {
     setTimelineTargetableObject(targetableObject);
-    console.log('targetableObject', targetableObject);
   }, [targetableObject, setTimelineTargetableObject]);
 
   const { activities, initialized, noActivities } = useActivities({

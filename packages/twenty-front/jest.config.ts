@@ -1,6 +1,6 @@
 export default {
   // to enable logs, comment out the following line
-  silent: true,
+  silent: false,
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   testEnvironment: 'jsdom',
   transform: {

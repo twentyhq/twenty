@@ -29,17 +29,20 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
     queryFields,
+    computeReferences = false,
   }: {
     queryVariables: ObjectRecordQueryVariables;
     depth?: number;
     objectRecordsToOverwrite: T[];
     queryFields?: Record<string, any>;
     eagerLoadedRelations?: Record<string, any>;
+    computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
       depth,
       queryFields,
+      computeReferences,
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
@@ -47,10 +50,8 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
       queryFields,
+      computeReferences,
     });
-
-    console.log(newObjectRecordConnection);
-    console.log(findManyRecordsQueryForCacheOverwrite);
 
     apolloClient.writeQuery({
       query: findManyRecordsQueryForCacheOverwrite,

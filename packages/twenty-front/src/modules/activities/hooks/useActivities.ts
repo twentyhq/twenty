@@ -3,10 +3,10 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
+import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
@@ -64,30 +64,13 @@ export const useActivities = ({
     (!skipActivityTargets &&
       (!initializedActivityTargets || !activityTargetsFound));
 
-  const targetObjectNameSingularToLoadEagerly = Object.fromEntries(
-    objectMetadataItems
-      .filter(
-        (objectMetadataItem) =>
-          objectMetadataItem.isActive && !objectMetadataItem.isSystem,
-      )
-      .map((objectMetadataItem) => [objectMetadataItem.nameSingular, true]),
-  );
-
-  const eagerLoadedRelations: Record<string, any> = {
-    activityTargets: {
-      activity: true,
-      ...targetObjectNameSingularToLoadEagerly,
-    },
-    assignee: true,
-    author: true,
-  };
-
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: skipActivities,
-      objectNameSingular: CoreObjectNameSingular.Activity,
-      depth: 3,
-      eagerLoadedRelations,
+      objectNameSingular: FIND_MANY_ACTIVITIES_QUERY_KEY.objectNameSingular,
+      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
+      queryFields:
+        FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(

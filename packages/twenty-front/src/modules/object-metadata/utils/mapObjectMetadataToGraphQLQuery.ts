@@ -10,16 +10,16 @@ export const mapObjectMetadataToGraphQLQuery = ({
   depth = 1,
   eagerLoadedRelations,
   queryFields,
-  onlyIdTypenameOnRelations,
-  onlyIdTypenameOnThisLevel,
+  computeReferences = false,
+  isRootLevel = true,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
   depth?: number;
   eagerLoadedRelations?: Record<string, any>;
   queryFields?: Record<string, any>;
-  onlyIdTypenameOnRelations?: boolean;
-  onlyIdTypenameOnThisLevel?: boolean;
+  computeReferences?: boolean;
+  isRootLevel?: boolean;
 }): any => {
   const fieldsThatShouldBeQueried =
     objectMetadataItem?.fields
@@ -30,9 +30,15 @@ export const mapObjectMetadataToGraphQLQuery = ({
           depth,
           eagerLoadedRelations,
           queryFields,
-          onlyIdTypename: onlyIdTypenameOnThisLevel,
         }),
       ) ?? [];
+
+  if (!isRootLevel && computeReferences) {
+    return `{
+      __typename
+      __ref
+    }`;
+  }
 
   return `{
 __typename
@@ -46,8 +52,11 @@ ${fieldsThatShouldBeQueried
         ? undefined
         : eagerLoadedRelations[field.name] ?? undefined,
 
-      queryFields: queryFields?.[field.name],
-      onlyIdTypenameOnRelations,
+      queryFields:
+        typeof queryFields?.[field.name] === 'boolean'
+          ? undefined
+          : queryFields?.[field.name],
+      computeReferences,
     }),
   )
   .join('\n')}
