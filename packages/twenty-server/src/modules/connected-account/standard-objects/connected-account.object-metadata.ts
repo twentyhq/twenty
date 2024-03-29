@@ -8,6 +8,7 @@ import { connectedAccountStandardFieldIds } from 'src/engine/workspace-manager/w
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
+import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -88,6 +89,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     description: 'Auth failed at',
     icon: 'IconX',
   })
+  @IsNullable()
   authFailedAt: Date;
 
   @FieldMetadata({
