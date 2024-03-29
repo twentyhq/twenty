@@ -164,7 +164,7 @@ export class GoogleAPIsService {
 
     await workspaceDataSource?.transaction(async (manager) => {
       await manager.query(
-        `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2 WHERE "id" = $3`,
+        `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2, "authFailedAt" = NULL WHERE "id" = $3`,
         [accessToken, refreshToken, connectedAccountId],
       );
     });
