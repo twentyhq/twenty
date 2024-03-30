@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useMapRecordRelationConnectionsToRelationRecords } from '@/object-record/hooks/useMapRecordRelationConnectionsToRelationRecords';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
@@ -25,9 +25,6 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     depth,
   );
 
-  const { mapRecordRelationConnectionsToRelationRecords } =
-    useMapRecordRelationConnectionsToRelationRecords();
-
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: T },
     { objectRecordId: string }
@@ -35,12 +32,9 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     skip: !objectMetadataItem || !objectRecordId || skip,
     variables: { objectRecordId },
     onCompleted: (data) => {
-      const recordWithoutConnection =
-        mapRecordRelationConnectionsToRelationRecords<T>({
-          objectRecord: data[objectNameSingular],
-          objectNameSingular,
-          depth: 5,
-        });
+      const recordWithoutConnection = getRecordFromRecordNode({
+        recordNode: { ...data[objectNameSingular] },
+      });
 
       if (isDefined(recordWithoutConnection)) {
         onCompleted?.(recordWithoutConnection);
@@ -50,12 +44,12 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
 
   const recordWithoutConnection = useMemo(
     () =>
-      mapRecordRelationConnectionsToRelationRecords<T>({
-        objectRecord: data?.[objectNameSingular],
-        objectNameSingular,
-        depth: 5,
-      }),
-    [data, mapRecordRelationConnectionsToRelationRecords, objectNameSingular],
+      data?.[objectNameSingular]
+        ? getRecordFromRecordNode({
+            recordNode: data?.[objectNameSingular],
+          })
+        : undefined,
+    [data, objectNameSingular],
   );
 
   return {

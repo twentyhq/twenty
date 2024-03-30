@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 
@@ -15,8 +15,6 @@ export const useFindManyRecordsForMultipleMetadataItems = ({
   skip: boolean;
   depth?: number;
 }) => {
-  const mapConnectionToRecords = useMapConnectionToRecords();
-
   const findManyQuery = useGenerateFindManyRecordsForMultipleMetadataItemsQuery(
     {
       targetObjectMetadataItems: objectMetadataItems,
@@ -34,10 +32,8 @@ export const useFindManyRecordsForMultipleMetadataItems = ({
   const resultWithoutConnection = Object.fromEntries(
     Object.entries(data ?? {}).map(([namePlural, objectRecordConnection]) => [
       namePlural,
-      mapConnectionToRecords({
-        objectRecordConnection: objectRecordConnection,
-        depth: 5,
-        objectNamePlural: namePlural,
+      getRecordsFromRecordConnection({
+        recordConnection: objectRecordConnection,
       }),
     ]),
   );

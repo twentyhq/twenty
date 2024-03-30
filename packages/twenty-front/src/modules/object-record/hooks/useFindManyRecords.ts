@@ -7,7 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
@@ -45,8 +45,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     depth?: number;
     queryFields?: Record<string, any>;
   }) => {
-  const mapConnectionToRecords = useMapConnectionToRecords();
-
   const findManyQueryStateIdentifier =
     objectNameSingular +
     JSON.stringify(filter) +
@@ -92,10 +90,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
       const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
 
-      const records = mapConnectionToRecords({
-        objectRecordConnection: data?.[objectMetadataItem.namePlural],
-        objectNameSingular,
-        depth: 5,
+      const records = getRecordsFromRecordConnection({
+        recordConnection: data?.[objectMetadataItem.namePlural],
       }) as T[];
 
       onCompleted?.(records, {
@@ -156,13 +152,11 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
               setHasNextPage(pageInfo.hasNextPage ?? false);
             }
 
-            const records = mapConnectionToRecords({
-              objectRecordConnection: {
+            const records = getRecordsFromRecordConnection({
+              recordConnection: {
                 edges: newEdges,
                 pageInfo,
               },
-              objectNameSingular,
-              depth: 5,
             }) as T[];
 
             onCompleted?.(records, {
@@ -214,26 +208,19 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     setLastCursor,
     setHasNextPage,
     enqueueSnackBar,
-    mapConnectionToRecords,
-    objectNameSingular,
   ]);
 
   const totalCount = data?.[objectMetadataItem.namePlural].totalCount ?? 0;
 
   const records = useMemo(
     () =>
-      mapConnectionToRecords({
-        objectRecordConnection: data?.[objectMetadataItem.namePlural],
-        objectNameSingular,
-        depth: 5,
-      }) as T[],
+      data?.[objectMetadataItem.namePlural]
+        ? getRecordsFromRecordConnection({
+            recordConnection: data?.[objectMetadataItem.namePlural],
+          })
+        : ([] as T[]),
 
-    [
-      data,
-      objectNameSingular,
-      objectMetadataItem.namePlural,
-      mapConnectionToRecords,
-    ],
+    [data, objectMetadataItem.namePlural],
   );
 
   return {

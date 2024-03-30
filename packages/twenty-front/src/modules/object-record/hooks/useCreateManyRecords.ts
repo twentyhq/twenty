@@ -6,8 +6,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
-import { useMapRelationRecordsToRelationConnection } from '@/object-record/hooks/useMapRelationRecordsToRelationConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
@@ -35,9 +35,6 @@ export const useCreateManyRecords = <
       objectMetadataItem,
     });
 
-  const { mapRecordRelationRecordsToRelationConnection } =
-    useMapRelationRecordsToRelationConnection();
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const createManyRecords = async (
@@ -46,12 +43,15 @@ export const useCreateManyRecords = <
   ) => {
     const sanitizedCreateManyRecordsInput = recordsToCreate.map(
       (recordToCreate) => {
-        const input = mapRecordRelationRecordsToRelationConnection({
-          objectRecord: recordToCreate,
-          objectNameSingular,
-        });
+        const idForCreation = recordToCreate?.id ?? v4();
 
-        const idForCreation = input?.id ?? v4();
+        const input = getRecordNodeFromRecord({
+          record: { ...recordToCreate, id: idForCreation },
+          objectMetadataItem,
+          objectMetadataItems,
+          depth: 1,
+          computeReferences: false,
+        });
 
         const sanitizedRecordInput = sanitizeRecordInput({
           objectMetadataItem,
