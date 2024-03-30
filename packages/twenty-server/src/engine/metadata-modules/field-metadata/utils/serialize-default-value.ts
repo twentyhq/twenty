@@ -2,7 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 
 import { FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
-import { serializeTypeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-type-default-value.util';
+import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
+import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 
 export const serializeDefaultValue = (
   defaultValue?: FieldMetadataDefaultSerializableValue,
@@ -11,13 +12,10 @@ export const serializeDefaultValue = (
     return null;
   }
 
-  // Dynamic default values
-  if (
-    !Array.isArray(defaultValue) &&
-    typeof defaultValue === 'object' &&
-    'type' in defaultValue
-  ) {
-    const serializedTypeDefaultValue = serializeTypeDefaultValue(defaultValue);
+  // Function default values
+  if (isFunctionDefaultValue(defaultValue)) {
+    const serializedTypeDefaultValue =
+      serializeFunctionDefaultValue(defaultValue);
 
     if (!serializedTypeDefaultValue) {
       throw new BadRequestException('Invalid default value');
@@ -27,8 +25,8 @@ export const serializeDefaultValue = (
   }
 
   // Static default values
-  if (typeof defaultValue === 'string') {
-    return `'${defaultValue}'`;
+  if (typeof defaultValue === 'string' && defaultValue.startsWith("'")) {
+    return defaultValue;
   }
 
   if (typeof defaultValue === 'number') {
@@ -51,5 +49,5 @@ export const serializeDefaultValue = (
     return `'${JSON.stringify(defaultValue)}'`;
   }
 
-  throw new BadRequestException('Invalid default value');
+  throw new BadRequestException(`Invalid default value "${defaultValue}"`);
 };

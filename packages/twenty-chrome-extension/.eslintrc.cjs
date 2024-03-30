@@ -10,7 +10,7 @@ module.exports = {
     '../../.eslintrc.js',
   ],
   plugins: ['react-hooks', 'react-refresh'],
-  ignorePatterns: ['!**/*', 'node_modules', 'dist'],
+  ignorePatterns: ['!**/*', 'node_modules', 'dist', 'src/generated/*.tsx'],
   rules: {
     '@nx/workspace-effect-components': 'error',
     '@nx/workspace-no-hardcoded-colors': 'error',

@@ -38,6 +38,7 @@ export const GET_CURRENT_USER = gql`
         currentCacheVersion
         currentBillingSubscription {
           status
+          interval
         }
       }
       workspaces {

@@ -8,6 +8,7 @@ import { onRecordBoardFetchMoreVisibilityChangeComponentState } from '@/object-r
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
 import { recordBoardFiltersComponentState } from '@/object-record/record-board/states/recordBoardFiltersComponentState';
+import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { recordBoardObjectSingularNameComponentState } from '@/object-record/record-board/states/recordBoardObjectSingularNameComponentState';
 import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
 import { recordBoardSortsComponentState } from '@/object-record/record-board/states/recordBoardSortsComponentState';
@@ -30,6 +31,10 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     scopeId,
     objectSingularNameState: extractComponentState(
       recordBoardObjectSingularNameComponentState,
+      scopeId,
+    ),
+    kanbanFieldMetadataNameState: extractComponentState(
+      recordBoardKanbanFieldMetadataNameComponentState,
       scopeId,
     ),
     isFetchingRecordState: extractComponentState(

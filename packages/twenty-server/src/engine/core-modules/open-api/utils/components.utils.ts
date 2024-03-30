@@ -57,6 +57,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.LINK:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.ADDRESS:
         itemProperty = {
           type: 'object',
           properties: Object.keys(field.targetColumnMap).reduce(
@@ -69,7 +70,7 @@ const getSchemaComponentsProperties = (
           ),
         };
         break;
-      case FieldMetadataType.JSON:
+      case FieldMetadataType.RAW_JSON:
         type: 'object';
         break;
       default:
@@ -173,6 +174,7 @@ export const computeMetadataSchemaComponents = (
               description: { type: 'string' },
               icon: { type: 'string' },
               isCustom: { type: 'boolean' },
+              isRemote: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
               createdAt: { type: 'string' },

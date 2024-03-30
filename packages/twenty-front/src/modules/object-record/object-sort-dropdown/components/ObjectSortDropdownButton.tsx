@@ -38,10 +38,6 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { isSortSelectedState } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
   const { toggleDropdown } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
@@ -49,7 +45,11 @@ export const ObjectSortDropdownButton = ({
     resetState();
   };
 
-  const { availableSortDefinitionsState, onSortSelectState } = useSortDropdown({
+  const {
+    availableSortDefinitionsState,
+    onSortSelectState,
+    isSortSelectedState,
+  } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
 

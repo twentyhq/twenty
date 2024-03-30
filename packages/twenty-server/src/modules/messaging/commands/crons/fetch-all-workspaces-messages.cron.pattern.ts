@@ -1,1 +1,1 @@
-export const fetchAllWorkspacesMessagesCronPattern = '*/10 * * * *';
+export const fetchAllWorkspacesMessagesCronPattern = '*/5 * * * *';

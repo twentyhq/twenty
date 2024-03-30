@@ -8,4 +8,4 @@ export * from './string-filter.input-type';
 export * from './time-filter.input-type';
 export * from './uuid-filter.input-type';
 export * from './boolean-filter.input-type';
-export * from './json-filter.input-type';
+export * from './raw-json-filter.input-type';

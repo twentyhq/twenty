@@ -36,7 +36,9 @@ export enum FieldMetadataType {
   MULTI_SELECT = 'MULTI_SELECT',
   RELATION = 'RELATION',
   POSITION = 'POSITION',
+  ADDRESS = 'ADDRESS',
   JSON = 'JSON',
+  RAW_JSON = 'RAW_JSON',
 }
 
 @Entity('fieldMetadata')
@@ -115,9 +117,9 @@ export class FieldMetadataEntity<
   )
   toRelationMetadata: RelationMetadataEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

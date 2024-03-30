@@ -69,6 +69,17 @@ export type FieldRatingMetadata = {
   fieldName: string;
 };
 
+export type FieldAddressMetadata = {
+  objectMetadataNameSingular?: string;
+  placeHolder: string;
+  fieldName: string;
+};
+
+export type FieldRawJsonMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
   | 'FROM_ONE_OBJECT'
@@ -104,7 +115,8 @@ export type FieldMetadata =
   | FieldRelationMetadata
   | FieldSelectMetadata
   | FieldTextMetadata
-  | FieldUuidMetadata;
+  | FieldUuidMetadata
+  | FieldAddressMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -120,6 +132,16 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
+export type FieldAddressValue = {
+  addressStreet1: string;
+  addressStreet2: string | null;
+  addressCity: string | null;
+  addressState: string | null;
+  addressPostcode: string | null;
+  addressCountry: string | null;
+  addressLat: number | null;
+  addressLng: number | null;
+};
 export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 

@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useEmailField } from '@/object-record/record-field/meta-types/hooks/useEmailField';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -30,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'email',
             label: 'Email',
-            type: 'EMAIL',
+            type: FieldMetadataType.Email,
             iconName: 'IconLink',
             metadata: {
               fieldName: 'Email',

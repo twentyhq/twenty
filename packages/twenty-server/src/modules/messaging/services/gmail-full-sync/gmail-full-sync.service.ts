@@ -17,7 +17,7 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmail-search-filter.util';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { SaveMessagesAndCreateContactsService } from 'src/modules/messaging/services/save-message-and-create-contact/save-messages-and-create-contacts.service';
+import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -47,7 +47,7 @@ export class GmailFullSyncService {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly saveMessagesAndCreateContactsService: SaveMessagesAndCreateContactsService,
+    private readonly saveMessagesAndEmitContactCreationEventService: SaveMessageAndEmitContactCreationEventService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
@@ -186,7 +186,6 @@ export class GmailFullSyncService {
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
-        'gmail full-sync',
         workspaceId,
         connectedAccountId,
       );
@@ -200,17 +199,18 @@ export class GmailFullSyncService {
     );
 
     if (messagesToSave.length > 0) {
-      await this.saveMessagesAndCreateContactsService.saveMessagesAndCreateContacts(
+      await this.saveMessagesAndEmitContactCreationEventService.saveMessagesAndEmitContactCreation(
         messagesToSave,
         connectedAccount,
         workspaceId,
         gmailMessageChannelId,
-        'gmail full-sync',
       );
     } else {
       this.logger.log(
         `gmail full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
+
+      return;
     }
 
     if (errors.length) {

@@ -94,7 +94,7 @@ export const calendarEventStandardFieldIds = {
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
   iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
-  conferenceUri: '20202020-0fc5-490a-871a-2df8a45ab46c',
+  conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',
@@ -169,6 +169,10 @@ export const messageChannelStandardFieldIds = {
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  syncExternalId: '20202020-79d1-41cf-b738-bcf5ed61e256',
+  syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
+  syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
+  ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 
 export const messageParticipantStandardFieldIds = {
@@ -203,7 +207,6 @@ export const opportunityStandardFieldIds = {
   probability: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
-  pipelineStep: '20202020-cc8c-4ae7-8d83-25c3addaec5a',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
@@ -230,13 +233,6 @@ export const personStandardFieldIds = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventAttendees: '20202020-52ee-45e9-a702-b64b3753e3a9',
   events: '20202020-a43e-4873-9c23-e522de906ce5',
-};
-
-export const pipelineStepStandardFieldIds = {
-  name: '20202020-e10a-4119-9466-97873e86fa47',
-  color: '20202020-4a09-4088-90b8-ce1c72730f43',
-  position: '20202020-44e8-4520-af64-4a3cb37fa0c5',
-  opportunities: '20202020-0442-482a-867f-6d8fd4145ed1',
 };
 
 export const viewFieldStandardFieldIds = {
@@ -267,6 +263,7 @@ export const viewStandardFieldIds = {
   type: '20202020-dd11-4607-9ec7-c57217262a7f',
   key: '20202020-298e-49fa-9f4a-7b416b110443',
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
+  kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
@@ -305,4 +302,5 @@ export const customObjectStandardFieldIds = {
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
+  events: '20202020-a508-4334-9724-5c2bf1b05998',
 };

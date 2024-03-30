@@ -94,10 +94,17 @@ export const SignInUpForm = () => {
       return `Join ${workspace?.displayName ?? ''} team`;
     }
 
+    if (
+      signInUpStep === SignInUpStep.Init ||
+      signInUpStep === SignInUpStep.Email
+    ) {
+      return 'Welcome to Twenty';
+    }
+
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in to Twenty'
       : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName, isInviteMode]);
+  }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
 
@@ -230,14 +237,14 @@ export const SignInUpForm = () => {
           />
         </StyledForm>
       </StyledContentContainer>
-      {signInUpStep === SignInUpStep.Password ? (
+      {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
         </ActionLink>
-      ) : (
+      )}
+      {signInUpStep === SignInUpStep.Init && (
         <FooterNote>
-          By using Twenty, you agree to the Terms of Service and Data Processing
-          Agreement.
+          By using Twenty, you agree to the Terms of Service and Privacy Policy.
         </FooterNote>
       )}
     </>

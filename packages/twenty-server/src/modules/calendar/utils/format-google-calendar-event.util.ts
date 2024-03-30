@@ -37,7 +37,8 @@ export const formatGoogleCalendarEvent = (
     iCalUID: event.iCalUID ?? '',
     conferenceSolution:
       event.conferenceData?.conferenceSolution?.key?.type ?? '',
-    conferenceUri: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
+    conferenceLinkLabel: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
+    conferenceLinkUrl: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     recurringEventExternalId: event.recurringEventId ?? '',
     attendees:
       event.attendees?.map((attendee) => ({

@@ -12,30 +12,72 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataDefaultValueFunctionNames,
+  fieldMetadataDefaultValueFunctionName,
+} from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
-import { AbstractWorkspaceFixer } from './abstract-workspace.fixer';
+import {
+  AbstractWorkspaceFixer,
+  CompareEntity,
+} from './abstract-workspace.fixer';
+
+type WorkspaceDefaultValueFixerType =
+  | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT
+  | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID;
 
 @Injectable()
-export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT> {
+export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<WorkspaceDefaultValueFixerType> {
   constructor(
     private readonly workspaceMigrationFieldFactory: WorkspaceMigrationFieldFactory,
   ) {
-    super(WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT);
+    super(
+      WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
+      WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+    );
   }
 
   async createWorkspaceMigrations(
     manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
-    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceDefaultValueFixerType>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     if (issues.length <= 0) {
       return [];
     }
+    const splittedIssues = this.splitIssuesByType(issues);
+    const issueNeedingMigration =
+      splittedIssues[WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT] ??
+      [];
 
-    return this.fixColumnDefaultValueIssues(objectMetadataCollection, issues);
+    return this.fixColumnDefaultValueConflictIssues(
+      objectMetadataCollection,
+      issueNeedingMigration as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
+    );
   }
 
-  private async fixColumnDefaultValueIssues(
+  async createMetadataUpdates(
+    manager: EntityManager,
+    objectMetadataCollection: ObjectMetadataEntity[],
+    issues: WorkspaceHealthColumnIssue<WorkspaceDefaultValueFixerType>[],
+  ): Promise<CompareEntity<FieldMetadataEntity>[]> {
+    if (issues.length <= 0) {
+      return [];
+    }
+
+    const splittedIssues = this.splitIssuesByType(issues);
+    const issueNeedingMetadataUpdate =
+      splittedIssues[WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID] ??
+      [];
+
+    return this.fixColumnDefaultValueNotValidIssues(
+      manager,
+      issueNeedingMetadataUpdate as WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID>[],
+    );
+  }
+
+  private async fixColumnDefaultValueConflictIssues(
     objectMetadataCollection: ObjectMetadataEntity[],
     issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT>[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
@@ -61,6 +103,90 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
     );
   }
 
+  private async fixColumnDefaultValueNotValidIssues(
+    manager: EntityManager,
+    issues: WorkspaceHealthColumnIssue<WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID>[],
+  ): Promise<CompareEntity<FieldMetadataEntity>[]> {
+    const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
+    const updatedEntities: CompareEntity<FieldMetadataEntity>[] = [];
+
+    for (const issue of issues) {
+      const currentDefaultValue:
+        | FieldMetadataDefaultValue<'default'>
+        // Old format for default values
+        // TODO: Remove this after all workspaces are migrated
+        | { type: FieldMetadataDefaultValueFunctionNames }
+        | null = issue.fieldMetadata.defaultValue;
+      let alteredDefaultValue: FieldMetadataDefaultValue<'default'> | null =
+        null;
+
+      // Check if it's an old function default value
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      if (currentDefaultValue && 'type' in currentDefaultValue) {
+        alteredDefaultValue =
+          currentDefaultValue.type as FieldMetadataDefaultValueFunctionNames;
+      }
+
+      // Check if it's an old string default value
+      if (currentDefaultValue) {
+        for (const key of Object.keys(currentDefaultValue)) {
+          if (key === 'type') {
+            continue;
+          }
+
+          const value = currentDefaultValue[key];
+
+          const newValue =
+            typeof value === 'string' &&
+            !value.startsWith("'") &&
+            !Object.values(fieldMetadataDefaultValueFunctionName).includes(
+              value as FieldMetadataDefaultValueFunctionNames,
+            )
+              ? `'${value}'`
+              : value;
+
+          alteredDefaultValue = {
+            ...(currentDefaultValue as any),
+            ...(alteredDefaultValue as any),
+            [key]: newValue,
+          };
+        }
+      }
+
+      // Old formart default values
+      if (
+        alteredDefaultValue &&
+        typeof alteredDefaultValue === 'object' &&
+        'value' in alteredDefaultValue
+      ) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        alteredDefaultValue = alteredDefaultValue.value;
+      }
+
+      if (alteredDefaultValue === null) {
+        continue;
+      }
+
+      await fieldMetadataRepository.update(issue.fieldMetadata.id, {
+        defaultValue: alteredDefaultValue,
+      });
+      const alteredEntity = await fieldMetadataRepository.findOne({
+        where: {
+          id: issue.fieldMetadata.id,
+        },
+      });
+
+      updatedEntities.push({
+        current: issue.fieldMetadata,
+        altered: alteredEntity as FieldMetadataEntity | null,
+      });
+    }
+
+    return updatedEntities;
+  }
+
   private computeFieldMetadataDefaultValueFromColumnDefault(
     columnDefault: string | undefined,
   ): FieldMetadataDefaultValue<'default'> {
@@ -73,29 +199,29 @@ export class WorkspaceDefaultValueFixer extends AbstractWorkspaceFixer<Workspace
     }
 
     if (!isNaN(Number(columnDefault))) {
-      return { value: +columnDefault };
+      return +columnDefault;
     }
 
     if (columnDefault === 'true') {
-      return { value: true };
+      return true;
     }
 
     if (columnDefault === 'false') {
-      return { value: false };
+      return false;
     }
 
     if (columnDefault === '') {
-      return { value: '' };
+      return "''";
     }
 
     if (columnDefault === 'now()') {
-      return { type: 'now' };
+      return 'now';
     }
 
     if (columnDefault.startsWith('public.uuid_generate_v4')) {
-      return { type: 'uuid' };
+      return 'uuid';
     }
 
-    return { value: columnDefault };
+    return columnDefault;
   }
 }

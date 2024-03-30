@@ -20,7 +20,6 @@ import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-obje
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -52,7 +51,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.address,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.ADDRESS,
     label: 'Address',
     description: 'The company address',
     icon: 'IconMap',
@@ -107,7 +106,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     description:
       'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
     icon: 'IconTarget',
-    defaultValue: { value: false },
+    defaultValue: false,
   })
   idealCustomerProfile: boolean;
 
@@ -222,9 +221,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  @Gate({
-    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
-  })
   @IsSystem()
   events: EventObjectMetadata[];
 }

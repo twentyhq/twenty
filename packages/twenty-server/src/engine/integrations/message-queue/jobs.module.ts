@@ -18,7 +18,7 @@ import { EnvironmentModule } from 'src/engine/integrations/environment/environme
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
 import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
-import { CreateCompaniesAndContactsModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company-and-contact/create-company-and-contact.module';
+import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
@@ -45,12 +45,21 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
+import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
+import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
+import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 
 @Module({
   imports: [
     BillingModule,
     DataSourceModule,
-    CreateCompaniesAndContactsModule,
+    AutoCompaniesAndContactsCreationModule,
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
@@ -74,7 +83,11 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
+      EventObjectMetadata,
     ]),
+    GmailFullSynV2Module,
+    GmailFetchMessageContentFromCacheModule,
+    GmailPartialSyncV2Module,
   ],
   providers: [
     {
@@ -128,12 +141,32 @@ import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
     {
+      provide: HandleWorkspaceMemberDeletedJob.name,
+      useClass: HandleWorkspaceMemberDeletedJob,
+    },
+    {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
     },
     {
+      provide: CreateCompanyAndContactJob.name,
+      useClass: CreateCompanyAndContactJob,
+    },
+    {
       provide: SaveEventToDbJob.name,
       useClass: SaveEventToDbJob,
+    },
+    {
+      provide: FetchAllMessagesFromCacheCronJob.name,
+      useClass: FetchAllMessagesFromCacheCronJob,
+    },
+    {
+      provide: GmailFullSyncV2Job.name,
+      useClass: GmailFullSyncV2Job,
+    },
+    {
+      provide: GmailPartialSyncV2Job.name,
+      useClass: GmailPartialSyncV2Job,
     },
   ],
 })

@@ -15,6 +15,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -44,16 +45,21 @@ export class Workspace {
   inviteHash?: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
+    cascade: true,
+  })
+  appTokens: AppToken[];
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: User[];

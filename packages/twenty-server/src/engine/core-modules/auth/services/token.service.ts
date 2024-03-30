@@ -34,13 +34,19 @@ import {
 } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 @Injectable()
 export class TokenService {
@@ -50,8 +56,8 @@ export class TokenService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(RefreshToken, 'core')
-    private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
@@ -100,15 +106,15 @@ export class TokenService {
     const refreshTokenPayload = {
       userId,
       expiresAt,
+      type: AppTokenType.RefreshToken,
     };
     const jwtPayload = {
       sub: userId,
     };
 
-    const refreshToken =
-      this.refreshTokenRepository.create(refreshTokenPayload);
+    const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
 
-    await this.refreshTokenRepository.save(refreshToken);
+    await this.appTokenRepository.save(refreshToken);
 
     return {
       token: this.jwtService.sign(jwtPayload, {
@@ -281,6 +287,71 @@ export class TokenService {
     };
   }
 
+  async verifyAuthorizationCode(
+    exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ): Promise<ExchangeAuthCode> {
+    const { authorizationCode, codeVerifier } = exchangeAuthCodeInput;
+
+    assert(
+      authorizationCode,
+      'Authorization code not found',
+      NotFoundException,
+    );
+
+    assert(codeVerifier, 'code verifier not found', NotFoundException);
+
+    // TODO: replace this with call to stateless table
+
+    // assert(authObj, 'Authorization code does not exist', NotFoundException);
+
+    // assert(
+    //   authObj.expiresAt.getTime() <= Date.now(),
+    //   'Authorization code expired.',
+    //   NotFoundException,
+    // );
+
+    // const codeChallenge = crypto
+    //   .createHash('sha256')
+    //   .update(codeVerifier)
+    //   .digest()
+    //   .toString('base64')
+    //   .replace(/\+/g, '-')
+    //   .replace(/\//g, '_')
+    //   .replace(/=/g, '');
+
+    // assert(
+    //   authObj.codeChallenge !== codeChallenge,
+    //   'code verifier doesnt match the challenge',
+    //   ForbiddenException,
+    // );
+
+    const user = await this.userRepository.findOne({
+      where: { id: DEV_SEED_USER_IDS.TIM }, // TODO: replace this id with corresponding authenticated user id mappeed to authorization code
+      relations: ['defaultWorkspace'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User is not found');
+    }
+
+    if (!user.defaultWorkspace) {
+      throw new NotFoundException('User does not have a default workspace');
+    }
+
+    const accessToken = await this.generateAccessToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+    const refreshToken = await this.generateRefreshToken(user.id);
+    const loginToken = await this.generateLoginToken(user.email);
+
+    return {
+      accessToken,
+      refreshToken,
+      loginToken,
+    };
+  }
+
   async verifyRefreshToken(refreshToken: string) {
     const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
     const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
@@ -292,7 +363,7 @@ export class TokenService {
       UnprocessableEntityException,
     );
 
-    const token = await this.refreshTokenRepository.findOneBy({
+    const token = await this.appTokenRepository.findOneBy({
       id: jwtPayload.jti,
     });
 
@@ -311,15 +382,16 @@ export class TokenService {
     ) {
       // Revoke all user refresh tokens
       await Promise.all(
-        user.refreshTokens.map(
-          async ({ id }) =>
-            await this.refreshTokenRepository.update(
+        user.appTokens.map(async ({ id, type }) => {
+          if (type === AppTokenType.RefreshToken) {
+            await this.appTokenRepository.update(
               { id },
               {
                 revokedAt: new Date(),
               },
-            ),
-        ),
+            );
+          }
+        }),
       );
 
       throw new ForbiddenException(
@@ -340,7 +412,7 @@ export class TokenService {
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
-    await this.refreshTokenRepository.update(
+    await this.appTokenRepository.update(
       {
         id,
       },
