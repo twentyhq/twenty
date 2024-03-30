@@ -37,7 +37,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
   if (!isRootLevel && computeReferences) {
     return {
-      __typename: nodeTypeName,
       __ref: `${nodeTypeName}:${record.id}`,
     };
   }
@@ -119,7 +118,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             return [
               fieldName,
               {
-                __typename: typeName,
                 __ref: `${typeName}:${value.id}`,
               },
             ];

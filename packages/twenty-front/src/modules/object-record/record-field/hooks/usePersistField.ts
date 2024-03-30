@@ -108,7 +108,7 @@ export const usePersistField = () => {
                 where: { id: entityId },
                 updateOneRecordInput: {
                   [fieldName]: valueToPersist,
-                  [`${fieldName}Id`]: valueToPersist?.id,
+                  [`${fieldName}Id`]: valueToPersist?.id ?? null,
                 },
               },
             });

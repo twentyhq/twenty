@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { CachedObjectRecordConnection } from '@/apollo/types/CachedObjectRecordConnection';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const isCachedObjectRecordConnection = (
+export const isObjectRecordConnectionWithRefs = (
   objectNameSingular: string,
   storeValue: StoreValue,
 ): storeValue is CachedObjectRecordConnection => {

@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const triggerDetachRelationOptimisticEffect = ({
@@ -32,7 +32,7 @@ export const triggerDetachRelationOptimisticEffect = ({
         targetRecordFieldValue,
         { isReference, readField },
       ) => {
-        const isRecordConnection = isCachedObjectRecordConnection(
+        const isRecordConnection = isObjectRecordConnectionWithRefs(
           sourceObjectNameSingular,
           targetRecordFieldValue,
         );
