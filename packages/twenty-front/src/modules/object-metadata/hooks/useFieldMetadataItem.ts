@@ -54,7 +54,7 @@ export const useFieldMetadataItem = () => {
         : input.defaultValue
       : formatedInput.defaultValue ?? undefined;
 
-    updateOneFieldMetadataItem({
+    return updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
       updatePayload: formatFieldMetadataItemInput({
         ...input,
