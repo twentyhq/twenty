@@ -1,10 +1,9 @@
 export enum AppPath {
   // Not logged-in
   Verify = '/verify',
-  SignInUp = 'welcome',
+  SignInUp = '/welcome',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
-  Authorize = '/authorize',
 
   // Onboarding
   CreateWorkspace = '/create/workspace',
@@ -25,6 +24,8 @@ export enum AppPath {
 
   // Impersonate
   Impersonate = '/impersonate/:userId',
+
+  Authorize = '/authorize',
 
   // 404 page not found
   NotFoundWildcard = '*',
