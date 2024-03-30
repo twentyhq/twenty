@@ -50,11 +50,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  SIGN_IN_PREFILLED: boolean = false;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
   IS_BILLING_ENABLED: boolean = false;
 
   @IsString()
@@ -150,6 +145,38 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @IsOptional()
   FRONT_AUTH_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_PASSWORD_ENABLED: boolean = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED === true)
+  SIGN_IN_PREFILLED: boolean = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_MICROSOFT_ENABLED: boolean = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED === true)
+  AUTH_MICROSOFT_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED === true)
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED === true)
+  AUTH_MICROSOFT_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED === true)
+  AUTH_MICROSOFT_CALLBACK_URL: string;
 
   @CastToBoolean()
   @IsOptional()

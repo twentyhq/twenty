@@ -22,6 +22,7 @@ import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.ser
 import { GoogleGmailAuthController } from 'src/engine/core-modules/auth/controllers/google-gmail-auth.controller';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -56,6 +57,7 @@ const jwtModule = JwtModule.registerAsync({
   ],
   controllers: [
     GoogleAuthController,
+    MicrosoftAuthController,
     GoogleAPIsAuthController,
     GoogleGmailAuthController,
     VerifyAuthController,

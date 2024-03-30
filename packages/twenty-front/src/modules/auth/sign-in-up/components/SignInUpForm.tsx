@@ -8,9 +8,11 @@ import { useRecoilState } from 'recoil';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
+import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import { IconMicrosoft } from '@/ui/display/icon/components/IconMicrosoft';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -51,6 +53,7 @@ export const SignInUpForm = () => {
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
+  const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { form } = useSignInUpForm();
 
   const {
@@ -121,6 +124,18 @@ export const SignInUpForm = () => {
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
+              fullWidth
+            />
+            <HorizontalSeparator />
+          </>
+        )}
+
+        {authProviders.microsoft && (
+          <>
+            <MainButton
+              Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+              title="Continue with Microsoft"
+              onClick={signInWithMicrosoft}
               fullWidth
             />
             <HorizontalSeparator />

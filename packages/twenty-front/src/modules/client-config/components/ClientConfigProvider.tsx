@@ -35,6 +35,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
         google: data?.clientConfig.authProviders.google,
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
+        microsoft: data?.clientConfig.authProviders.microsoft,
       });
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
