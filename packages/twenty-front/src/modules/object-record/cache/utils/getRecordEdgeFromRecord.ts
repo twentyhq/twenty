@@ -24,9 +24,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
   record: T;
 }) => {
   return {
-    __typename: getEdgeTypename({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    }),
+    __typename: getEdgeTypename(objectMetadataItem.nameSingular),
     node: {
       ...getRecordNodeFromRecord({
         objectMetadataItems,

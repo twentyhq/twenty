@@ -1,7 +1,9 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
+import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -31,14 +33,12 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
     return null;
   }
 
-  const nodeTypeName = getNodeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const nodeTypeName = getNodeTypename(objectMetadataItem.nameSingular);
 
   if (!isRootLevel && computeReferences) {
     return {
       __ref: `${nodeTypeName}:${record.id}`,
-    };
+    } as unknown as CachedObjectRecord<T>; // Todo Fix typing
   }
 
   const nestedRecord = Object.fromEntries(
@@ -109,10 +109,9 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             return undefined;
           }
 
-          const typeName = getNodeTypename({
-            objectNameSingular:
-              field.relationDefinition?.targetObjectMetadata.nameSingular,
-          });
+          const typeName = getObjectTypename(
+            field.relationDefinition?.targetObjectMetadata.nameSingular,
+          );
 
           if (computeReferences) {
             return [
@@ -138,9 +137,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   ) as T; // Todo fix typing once we have investigated apollo edges / nodes removal
 
   return {
-    __typename: getNodeTypename({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    }),
+    __typename: getNodeTypename(objectMetadataItem.nameSingular),
     ...nestedRecord,
   };
 };

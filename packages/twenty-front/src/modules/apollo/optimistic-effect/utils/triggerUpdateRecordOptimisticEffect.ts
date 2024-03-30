@@ -27,10 +27,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
   updatedRecord: CachedObjectRecord;
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = getEdgeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   triggerUpdateRelationsOptimisticEffect({
     cache,
     sourceObjectMetadataItem: objectMetadataItem,
@@ -103,7 +99,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
             if (isDefined(updatedRecordNodeReference)) {
               rootQueryNextEdges.push({
-                __typename: objectEdgeTypeName,
+                __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                 node: updatedRecordNodeReference,
                 cursor: '',
               });

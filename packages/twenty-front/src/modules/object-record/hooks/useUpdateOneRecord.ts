@@ -3,7 +3,6 @@ import { useApolloClient } from '@apollo/client';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -11,22 +10,21 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
+  queryFields?: Record<string, any>;
+  depth?: number;
 };
 
 export const useUpdateOneRecord = <
   UpdatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
+  queryFields,
+  depth = 1,
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({ objectNameSingular }, 1);
-
-  const { generateObjectRecordOptimisticResponse } =
-    useGenerateObjectRecordOptimisticResponse({
-      objectMetadataItem,
-    });
+    useObjectMetadataItem({ objectNameSingular }, depth, queryFields);
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -37,37 +35,50 @@ export const useUpdateOneRecord = <
     idToUpdate: string;
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
   }) => {
+    const sanitizedInput = {
+      ...sanitizeRecordInput({
+        objectMetadataItem,
+        recordInput: updateOneRecordInput,
+      }),
+      id: idToUpdate,
+    };
+
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
-    const cachedRecordWithNestedConnections = getRecordNodeFromRecord({
+    const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
       record: cachedRecord,
       objectMetadataItem,
       objectMetadataItems,
-      depth: 1,
-      computeReferences: false,
+      depth,
+      queryFields,
+      computeReferences: true,
     });
 
-    const updateOneRecordInputWithNestedConnections = getRecordNodeFromRecord({
-      record: { ...updateOneRecordInput, id: idToUpdate },
-      objectMetadataItem,
-      objectMetadataItems,
-      depth: 1,
-      computeReferences: false,
-    });
+    const optimisticRecord = {
+      ...cachedRecord,
+      ...sanitizedInput,
+    };
 
-    if (!updateOneRecordInputWithNestedConnections) {
+    const optimisticRecordWithConnection =
+      getRecordNodeFromRecord<ObjectRecord>({
+        record: optimisticRecord,
+        objectMetadataItem,
+        objectMetadataItems,
+        depth,
+        queryFields,
+        computeReferences: true,
+      });
+
+    if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
       return null;
     }
 
-    const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
+    triggerUpdateRecordOptimisticEffect({
+      cache: apolloClient.cache,
       objectMetadataItem,
-      recordInput: updateOneRecordInputWithNestedConnections,
-    });
-
-    const optimisticallyUpdatedRecord = generateObjectRecordOptimisticResponse({
-      ...(cachedRecordWithNestedConnections ?? {}),
-      ...updateOneRecordInputWithNestedConnections,
-      id: idToUpdate,
+      currentRecord: cachedRecordWithConnection,
+      updatedRecord: optimisticRecordWithConnection,
+      objectMetadataItems,
     });
 
     const mutationResponseField =
@@ -77,10 +88,7 @@ export const useUpdateOneRecord = <
       mutation: updateOneRecordMutation,
       variables: {
         idToUpdate,
-        input: sanitizedUpdateOneRecordInput,
-      },
-      optimisticResponse: {
-        [mutationResponseField]: optimisticallyUpdatedRecord,
+        input: sanitizedInput,
       },
       update: (cache, { data }) => {
         const record = data?.[mutationResponseField];

@@ -30,7 +30,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
 
   if (!isRootLevel && computeReferences) {
     return `{
-      __typename
       __ref
     }`;
   }

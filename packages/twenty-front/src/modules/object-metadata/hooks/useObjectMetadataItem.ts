@@ -11,7 +11,6 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
@@ -84,10 +83,6 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const modifyRecordFromCache = useModifyRecordFromCache({
-    objectMetadataItem,
-  });
-
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
@@ -149,7 +144,6 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,
-    modifyRecordFromCache,
     findManyRecordsQuery,
     findDuplicateRecordsQuery,
     findOneRecordQuery,

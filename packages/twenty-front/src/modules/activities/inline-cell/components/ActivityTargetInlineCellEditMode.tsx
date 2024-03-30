@@ -12,14 +12,14 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGenerateObjectRecordOptimisticResponse } from '@/object-record/cache/hooks/useGenerateObjectRecordOptimisticResponse';
+import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 const StyledSelectContainer = styled.div`
   left: 0px;
@@ -65,11 +65,6 @@ export const ActivityTargetInlineCellEditMode = ({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const { generateObjectRecordOptimisticResponse } =
-    useGenerateObjectRecordOptimisticResponse({
-      objectMetadataItem: objectMetadataItemActivityTarget,
-    });
-
   const setActivityFromStore = useSetRecoilState(
     recordStoreFamilyState(activity.id),
   );
@@ -108,8 +103,9 @@ export const ActivityTargetInlineCellEditMode = ({
 
     const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
       (selectedRecord) => {
-        const emptyActivityTarget =
-          generateObjectRecordOptimisticResponse<ActivityTarget>({
+        const emptyActivityTarget = prefillRecord<ActivityTarget>({
+          objectMetadataItem: objectMetadataItemActivityTarget,
+          input: {
             id: v4(),
             activityId: activity.id,
             activity,
@@ -121,7 +117,8 @@ export const ActivityTargetInlineCellEditMode = ({
             [getActivityTargetObjectFieldIdName({
               nameSingular: selectedRecord.objectMetadataItem.nameSingular,
             })]: selectedRecord.recordIdentifier.id,
-          });
+          },
+        });
 
         return emptyActivityTarget;
       },

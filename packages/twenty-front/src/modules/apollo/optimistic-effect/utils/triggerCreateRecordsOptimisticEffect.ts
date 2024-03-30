@@ -24,10 +24,6 @@ export const triggerCreateRecordsOptimisticEffect = ({
   recordsToCreate: CachedObjectRecord[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = getEdgeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   recordsToCreate.forEach((record) =>
     triggerUpdateRelationsOptimisticEffect({
       cache,
@@ -97,7 +93,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
               if (recordToCreateReference && !recordAlreadyInCache) {
                 nextRootQueryCachedRecordEdges.unshift({
-                  __typename: objectEdgeTypeName,
+                  __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                   node: recordToCreateReference,
                   cursor: '',
                 });

@@ -5,18 +5,24 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useAddRecordInCache = ({
+export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const getRecordFromCache = useGetRecordFromCache({
+    objectMetadataItem,
+  });
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();
 
-  return (record: ObjectRecord, queryFields?: Record<string, any>) => {
+  return (record: ObjectRecord) => {
     const fragment = gql`
           fragment Create${capitalize(
             objectMetadataItem.nameSingular,
@@ -25,14 +31,25 @@ export const useAddRecordInCache = ({
           )} ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
             objectMetadataItem,
-            queryFields,
             computeReferences: true,
           })}
         `;
 
+    const prefilledRecord = prefillRecord({
+      objectMetadataItem,
+      input: record,
+      depth: 1,
+    });
+
+    const recordToCreateWithNestedConnections = getRecordNodeFromRecord({
+      record: prefilledRecord,
+      objectMetadataItem,
+      objectMetadataItems,
+    });
+
     const cachedObjectRecord = {
       __typename: `${capitalize(objectMetadataItem.nameSingular)}`,
-      ...record,
+      ...recordToCreateWithNestedConnections,
     };
 
     apolloClient.writeFragment({
@@ -40,5 +57,6 @@ export const useAddRecordInCache = ({
       fragment,
       data: cachedObjectRecord,
     });
+    return getRecordFromCache(record.id) as T;
   };
 };

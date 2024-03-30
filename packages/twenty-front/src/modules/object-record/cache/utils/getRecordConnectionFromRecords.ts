@@ -28,9 +28,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   depth?: number;
 }) => {
   return {
-    __typename: getConnectionTypename({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    }),
+    __typename: getConnectionTypename(objectMetadataItem.nameSingular),
     edges: records.map((record) => {
       return getRecordEdgeFromRecord({
         objectMetadataItems,
