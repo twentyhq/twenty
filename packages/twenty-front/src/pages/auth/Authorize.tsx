@@ -112,7 +112,12 @@ const Authorize = () => {
         </StyledAppsContainer>
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
-          <MainButton title="Cancel" variant="secondary" fullWidth />
+          <MainButton
+            title="Cancel"
+            variant="secondary"
+            onClick={() => navigate(AppPath.Index)}
+            fullWidth
+          />
           <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
         </StyledButtonContainer>
       </StyledCardWrapper>

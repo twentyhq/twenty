@@ -1,4 +1,5 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
+import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -63,11 +64,7 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
-type DefaultLayoutProps = {
-  children: ReactNode;
-};
-
-export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
+export const DefaultLayout = () => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -125,12 +122,16 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
                 <SignInBackgroundMockPage />
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal>{children}</AuthModal>
+                    <AuthModal>
+                      <Outlet />
+                    </AuthModal>
                   </LayoutGroup>
                 </AnimatePresence>
               </>
             ) : (
-              <AppErrorBoundary>{children}</AppErrorBoundary>
+              <AppErrorBoundary>
+                <Outlet />
+              </AppErrorBoundary>
             )}
           </StyledMainContainer>
         </StyledPageContainer>

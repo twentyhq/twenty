@@ -5,6 +5,7 @@ import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { BlankLayout } from '@/ui/layout/page/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
@@ -60,8 +61,8 @@ export const App = () => {
       <PageTitle title={pageTitle} />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
-      <DefaultLayout>
-        <Routes>
+      <Routes>
+        <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -200,9 +201,11 @@ export const App = () => {
             }
           />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
+        </Route>
+        <Route element={<BlankLayout />}>
           <Route path={AppPath.Authorize} element={<Authorize />} />
-        </Routes>
-      </DefaultLayout>
+        </Route>
+      </Routes>
     </>
   );
 };
