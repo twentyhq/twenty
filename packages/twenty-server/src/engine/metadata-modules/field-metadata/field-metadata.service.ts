@@ -300,10 +300,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await fieldMetadataRepository.update(id, {
         ...updatableFieldInput,
         defaultValue:
-          // Todo: we need to handle default value for all field types. Right now we are only allowing update for SELECt
-          existingFieldMetadata.type !== FieldMetadataType.SELECT
+          // Todo: we handle default value for all field types.
+          ![FieldMetadataType.SELECT, FieldMetadataType.BOOLEAN].includes(
+            existingFieldMetadata.type,
+          )
             ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue
+            : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
         // If the name is updated, the targetColumnMap should be updated as well
