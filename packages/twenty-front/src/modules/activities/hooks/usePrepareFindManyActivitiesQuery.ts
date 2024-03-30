@@ -104,8 +104,6 @@ export const usePrepareFindManyActivitiesQuery = () => {
       return a.createdAt > b.createdAt ? -1 : 1;
     });
 
-    console.log('filteredActivities', filteredActivities);
-
     upsertFindManyActivitiesInCache({
       objectRecordsToOverwrite: filteredActivities,
       queryVariables: {

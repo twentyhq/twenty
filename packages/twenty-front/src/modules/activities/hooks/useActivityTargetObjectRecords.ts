@@ -11,11 +11,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
-export const useActivityTargetObjectRecords = ({
-  activity,
-}: {
-  activity: Activity;
-}) => {
+export const useActivityTargetObjectRecords = (activity: Activity) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const activityTargets = activity.activityTargets ?? [];
@@ -67,7 +63,6 @@ export const useActivityTargetObjectRecords = ({
         activityTarget: activityTargetFromCache ?? activityTarget,
         targetObject: targetObjectRecord ?? undefined,
         targetObjectMetadataItem: correspondingObjectMetadataItem,
-        targetObjectNameSingular: correspondingObjectMetadataItem.nameSingular,
       };
     })
     .filter(isDefined);

@@ -1,5 +1,4 @@
 import { isUndefined } from '@sniptt/guards';
-import { v4 } from 'uuid';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -15,7 +14,7 @@ export const prefillRecord = <T extends ObjectRecord>({
   input: Record<string, unknown>;
   depth?: number;
 }) => {
-  const record = Object.fromEntries(
+  return Object.fromEntries(
     objectMetadataItem.fields
       .filter(
         (fieldMetadataItem) =>
@@ -24,12 +23,6 @@ export const prefillRecord = <T extends ObjectRecord>({
       .map((fieldMetadataItem) => {
         const inputValue = input[fieldMetadataItem.name];
 
-        if (
-          isUndefined(inputValue) &&
-          ['id', 'createdAt', 'updatedAt'].includes(fieldMetadataItem.name)
-        ) {
-          return undefined;
-        }
         return [
           fieldMetadataItem.name,
           isUndefined(inputValue)
@@ -38,12 +31,5 @@ export const prefillRecord = <T extends ObjectRecord>({
         ];
       })
       .filter(isDefined),
-  );
-
-  return {
-    id: v4(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...record,
-  } as T;
+  ) as T;
 };

@@ -4,6 +4,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
@@ -40,7 +41,6 @@ export const useUpdateOneRecord = <
         objectMetadataItem,
         recordInput: updateOneRecordInput,
       }),
-      id: idToUpdate,
     };
 
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
@@ -57,6 +57,7 @@ export const useUpdateOneRecord = <
     const optimisticRecord = {
       ...cachedRecord,
       ...sanitizedInput,
+      ...{ id: idToUpdate },
     };
 
     const optimisticRecordWithConnection =
@@ -72,6 +73,13 @@ export const useUpdateOneRecord = <
     if (!optimisticRecordWithConnection || !cachedRecordWithConnection) {
       return null;
     }
+
+    updateRecordFromCache({
+      objectMetadataItems,
+      objectMetadataItem,
+      cache: apolloClient.cache,
+      record: optimisticRecord,
+    });
 
     triggerUpdateRecordOptimisticEffect({
       cache: apolloClient.cache,

@@ -88,7 +88,7 @@ const StyledSeperator = styled.div`
 
 const StyledAddFilterContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
-  z-index: 10;
+  z-index: 5;
 `;
 
 export const ViewBarDetails = ({

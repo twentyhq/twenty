@@ -18,9 +18,8 @@ type ActivityTargetsInlineCellProps = {
 export const ActivityTargetsInlineCell = ({
   activity,
 }: ActivityTargetsInlineCellProps) => {
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
-    activity,
-  });
+  const { activityTargetObjectRecords } =
+    useActivityTargetObjectRecords(activity);
   const { closeInlineCell } = useInlineCell();
 
   useScopedHotkeys(

@@ -40,7 +40,7 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({
-      objectNameSingular: activityTarget.targetObjectNameSingular,
+      objectNameSingular: activityTarget.targetObjectMetadataItem.nameSingular,
       id: activityTarget.targetObject.id,
     }),
   );

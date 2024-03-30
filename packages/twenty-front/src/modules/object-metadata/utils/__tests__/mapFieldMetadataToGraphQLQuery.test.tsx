@@ -239,11 +239,26 @@ idealCustomerProfile
 }`);
   });
 
-  it('should return queryFields relations', async () => {
+  it('should return GraphQL fields based on queryFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       depth: 2,
-      queryFields: { accountOwner: true, people: true },
+      queryFields: {
+        accountOwner: true,
+        people: true,
+        xLink: true,
+        linkedinLink: true,
+        domainName: true,
+        annualRecurringRevenue: true,
+        createdAt: true,
+        address: true,
+        updatedAt: true,
+        name: true,
+        accountOwnerId: true,
+        employees: true,
+        id: true,
+        idealCustomerProfile: true,
+      },
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,

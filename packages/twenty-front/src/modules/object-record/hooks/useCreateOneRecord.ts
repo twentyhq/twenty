@@ -11,7 +11,6 @@ import {
   useGenerateCreateOneRecordMutation,
 } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
 
@@ -57,12 +56,6 @@ export const useCreateOneRecord = <
       id: idForCreation,
     };
 
-    const prefilledRecordInput = prefillRecord({
-      objectMetadataItem,
-      input: sanitizedInput,
-      depth: 0,
-    });
-
     const recordCreatedInCache = createOneRecordInCache({
       ...input,
       id: idForCreation,
@@ -83,7 +76,7 @@ export const useCreateOneRecord = <
     const createdObject = await apolloClient.mutate({
       mutation: createOneRecordMutation,
       variables: {
-        input: prefilledRecordInput,
+        input: sanitizedInput,
       },
       update: (cache, { data }) => {
         const record = data?.[mutationResponseField];

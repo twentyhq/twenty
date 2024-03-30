@@ -11,7 +11,6 @@ import {
   useGenerateCreateManyRecordMutation,
 } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
 
@@ -65,15 +64,6 @@ export const useCreateManyRecords = <
       },
     );
 
-    const prefilledRecordInputs = sanitizedCreateManyRecordsInput.map(
-      (recordToCreate) =>
-        prefillRecord({
-          objectMetadataItem,
-          input: recordToCreate,
-          depth: 0,
-        }),
-    );
-
     const recordsCreatedInCache = [];
 
     for (const recordToCreate of sanitizedCreateManyRecordsInput) {
@@ -100,7 +90,7 @@ export const useCreateManyRecords = <
     const createdObjects = await apolloClient.mutate({
       mutation: createManyRecordsMutation,
       variables: {
-        data: prefilledRecordInputs,
+        data: sanitizedCreateManyRecordsInput,
       },
       update: (cache, { data }) => {
         const records = data?.[mutationResponseField];

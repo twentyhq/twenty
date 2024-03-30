@@ -213,11 +213,25 @@ companyId
 }`);
   });
 
-  it('should queryFields only specified relations', async () => {
+  it('should query  only specified queryFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      queryFields: { company: true },
+      queryFields: {
+        company: true,
+        xLink: true,
+        id: true,
+        createdAt: true,
+        city: true,
+        email: true,
+        jobTitle: true,
+        name: true,
+        phone: true,
+        linkedinLink: true,
+        updatedAt: true,
+        avatarUrl: true,
+        companyId: true,
+      },
       depth: 1,
     });
     expect(formatGQLString(res)).toEqual(`{
