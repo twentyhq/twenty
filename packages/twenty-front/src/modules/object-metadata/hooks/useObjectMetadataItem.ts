@@ -40,7 +40,6 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
-  eagerLoadedRelations?: Record<string, any>,
   queryFields?: Record<string, any>,
   computeReferences = false,
 ) => {
@@ -93,7 +92,6 @@ export const useObjectMetadataItem = (
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
-    eagerLoadedRelations,
     queryFields,
   });
 

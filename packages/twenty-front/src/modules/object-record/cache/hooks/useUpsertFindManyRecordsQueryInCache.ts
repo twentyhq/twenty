@@ -35,7 +35,6 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     depth?: number;
     objectRecordsToOverwrite: T[];
     queryFields?: Record<string, any>;
-    eagerLoadedRelations?: Record<string, any>;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({

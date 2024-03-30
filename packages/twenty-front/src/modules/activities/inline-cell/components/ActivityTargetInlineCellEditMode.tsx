@@ -141,7 +141,6 @@ export const ActivityTargetInlineCellEditMode = ({
 
     if (isActivityInCreateMode) {
       createManyActivityTargetsInCache(activityTargetsToCreate);
-      console.log(activityTargetsToCreate);
       upsertActivity({
         activity,
         input: {

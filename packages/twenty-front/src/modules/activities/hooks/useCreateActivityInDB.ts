@@ -9,7 +9,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
-    eagerLoadedRelations: {},
   });
 
   const { createManyRecords: createManyActivityTargets } =

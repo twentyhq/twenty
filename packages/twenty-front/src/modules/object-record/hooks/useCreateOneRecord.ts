@@ -15,7 +15,7 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
-  eagerLoadedRelations?: Record<string, any>;
+  queryFields?: Record<string, any>;
 };
 
 type CreateOneRecordOptions = {
@@ -26,7 +26,7 @@ export const useCreateOneRecord = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  eagerLoadedRelations,
+  queryFields,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
@@ -34,7 +34,7 @@ export const useCreateOneRecord = <
 
   const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
-    eagerLoadedRelations,
+    queryFields,
   });
 
   const { generateObjectRecordOptimisticResponse } =

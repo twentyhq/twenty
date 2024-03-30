@@ -213,11 +213,11 @@ companyId
 }`);
   });
 
-  it('should eager load only specified relations', async () => {
+  it('should queryFields only specified relations', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      eagerLoadedRelations: { company: true },
+      queryFields: { company: true },
       depth: 1,
     });
     expect(formatGQLString(res)).toEqual(`{

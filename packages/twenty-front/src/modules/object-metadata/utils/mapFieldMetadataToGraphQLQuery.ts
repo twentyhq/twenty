@@ -10,8 +10,7 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationFieldDepth = 0,
-  relationFieldEagerLoad,
+  depth = 0,
   queryFields,
   computeReferences = false,
 }: {
@@ -20,8 +19,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataItem,
     'name' | 'type' | 'toRelationMetadata' | 'fromRelationMetadata'
   >;
-  relationFieldDepth?: number;
-  relationFieldEagerLoad?: Record<string, any>;
+  depth?: number;
   queryFields?: Record<string, any>;
   computeReferences?: boolean;
 }): any => {
@@ -48,7 +46,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   } else if (
     fieldType === 'RELATION' &&
     field.toRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    relationFieldDepth > 0
+    depth > 0
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -64,8 +62,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  eagerLoadedRelations: relationFieldEagerLoad,
-  depth: relationFieldDepth - 1,
+  depth: depth - 1,
   queryFields,
   computeReferences: computeReferences,
   isRootLevel: false,
@@ -73,7 +70,7 @@ ${mapObjectMetadataToGraphQLQuery({
   } else if (
     fieldType === 'RELATION' &&
     field.fromRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    relationFieldDepth > 0
+    depth > 0
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -91,8 +88,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      eagerLoadedRelations: relationFieldEagerLoad,
-      depth: relationFieldDepth - 1,
+      depth: depth - 1,
       queryFields,
       computeReferences,
       isRootLevel: false,

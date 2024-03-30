@@ -32,7 +32,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   skip,
   depth = 1,
   queryFields,
-  eagerLoadedRelations,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
     onCompleted?: (
@@ -45,7 +44,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     skip?: boolean;
     depth?: number;
     queryFields?: Record<string, any>;
-    eagerLoadedRelations?: Record<string, any>;
   }) => {
   const mapConnectionToRecords = useMapConnectionToRecords();
 
@@ -72,7 +70,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       objectNameSingular,
     },
     depth,
-    eagerLoadedRelations,
     queryFields,
   );
 

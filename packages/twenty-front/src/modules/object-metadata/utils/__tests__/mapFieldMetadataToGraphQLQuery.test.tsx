@@ -239,11 +239,11 @@ idealCustomerProfile
 }`);
   });
 
-  it('should return eagerLoaded relations', async () => {
+  it('should return queryFields relations', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationFieldDepth: 2,
-      relationFieldEagerLoad: { accountOwner: true, people: true },
+      depth: 2,
+      queryFields: { accountOwner: true, people: true },
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,

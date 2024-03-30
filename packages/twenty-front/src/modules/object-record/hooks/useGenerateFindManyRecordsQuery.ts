@@ -12,7 +12,6 @@ export const useGenerateFindManyRecordsQuery = () => {
   return ({
     objectMetadataItem,
     depth,
-    eagerLoadedRelations,
     queryFields,
     computeReferences = false,
   }: {
@@ -21,7 +20,6 @@ export const useGenerateFindManyRecordsQuery = () => {
       'fields' | 'nameSingular' | 'namePlural'
     >;
     depth?: number;
-    eagerLoadedRelations?: Record<string, any>;
     queryFields?: Record<string, any>;
     computeReferences?: boolean;
   }) => gql`
@@ -40,7 +38,6 @@ export const useGenerateFindManyRecordsQuery = () => {
             objectMetadataItems,
             objectMetadataItem,
             depth,
-            eagerLoadedRelations,
             queryFields,
             computeReferences,
           })}

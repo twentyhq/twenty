@@ -12,11 +12,9 @@ export const useGenerateFindOneRecordQuery = () => {
   return ({
     objectMetadataItem,
     depth,
-    eagerLoadedRelations,
   }: {
     objectMetadataItem: Pick<ObjectMetadataItem, 'fields' | 'nameSingular'>;
     depth?: number;
-    eagerLoadedRelations?: Record<string, any>;
   }) => {
     return gql`
       query FindOne${capitalize(
@@ -30,7 +28,6 @@ export const useGenerateFindOneRecordQuery = () => {
           objectMetadataItems,
           objectMetadataItem,
           depth,
-          eagerLoadedRelations,
         })}
       }
   `;
