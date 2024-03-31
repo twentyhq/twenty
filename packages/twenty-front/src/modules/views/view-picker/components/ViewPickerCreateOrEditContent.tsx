@@ -140,6 +140,7 @@ export const ViewPickerCreateOrEditContent = () => {
         {viewPickerMode === 'create' && (
           <StyledSelectContainer>
             <Select
+              disableBlur
               label="View type"
               fullWidth
               value={viewPickerType}

@@ -129,7 +129,7 @@ const StyledButton = styled.button<
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
               color: ${!disabled
-                ? theme.font.color.secondary
+                ? theme.font.color.tertiary
                 : theme.font.color.extraLight};
               &:hover {
                 background: ${!disabled
