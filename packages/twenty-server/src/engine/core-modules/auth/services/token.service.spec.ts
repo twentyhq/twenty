@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { EmailService } from 'src/engine/integrations/email/email.service';
@@ -39,7 +39,7 @@ describe('TokenService', () => {
           useValue: {},
         },
         {
-          provide: getRepositoryToken(RefreshToken, 'core'),
+          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
         },
         {

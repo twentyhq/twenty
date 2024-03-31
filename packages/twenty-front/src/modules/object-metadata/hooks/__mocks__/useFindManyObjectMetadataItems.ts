@@ -17,6 +17,7 @@ export const query = gql`
           description
           icon
           isCustom
+          isRemote
           isActive
           isSystem
           createdAt

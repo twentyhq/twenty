@@ -94,7 +94,7 @@ export const calendarEventStandardFieldIds = {
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
   iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
-  conferenceUri: '20202020-0fc5-490a-871a-2df8a45ab46c',
+  conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
   eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',

@@ -303,6 +303,8 @@ export class EnvironmentVariables {
   CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
+
+  CHROME_EXTENSION_REDIRECT_URL: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

@@ -28,6 +28,10 @@ export const useFindManyParams = (
     objectMetadataItem?.fields ?? [],
   );
 
+  if (objectMetadataItem?.isRemote) {
+    return { objectNameSingular, filter };
+  }
+
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     objectMetadataItem?.fields ?? [],

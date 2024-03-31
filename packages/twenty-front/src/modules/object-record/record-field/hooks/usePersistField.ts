@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
+import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
@@ -82,6 +84,10 @@ export const usePersistField = () => {
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
 
+        const fieldIsAddress =
+          isFieldAddress(fieldDefinition) &&
+          isFieldAddressValue(valueToPersist);
+
         if (
           fieldIsRelation ||
           fieldIsText ||
@@ -94,7 +100,8 @@ export const usePersistField = () => {
           fieldIsLink ||
           fieldIsCurrency ||
           fieldIsFullName ||
-          fieldIsSelect
+          fieldIsSelect ||
+          fieldIsAddress
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(

@@ -13,6 +13,7 @@ export default {
     '@testing/(.+)': '<rootDir>/src/testing/$1',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
+    '\\.css$': '<rootDir>/__mocks__/styleMock.js',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {

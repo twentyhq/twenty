@@ -17,7 +17,7 @@ export const useFieldMetadataItem = () => {
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const createMetadataField = (
-    input: Pick<Field, 'label' | 'icon' | 'description'> & {
+    input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
       defaultValue?: unknown;
       objectMetadataId: string;
       options?: Omit<FieldMetadataOption, 'id'>[];
@@ -26,7 +26,9 @@ export const useFieldMetadataItem = () => {
   ) => {
     const formatedInput = formatFieldMetadataItemInput(input);
     const defaultValue = input.defaultValue
-      ? `'${input.defaultValue}'`
+      ? typeof input.defaultValue == 'string'
+        ? `'${input.defaultValue}'`
+        : input.defaultValue
       : formatedInput.defaultValue ?? undefined;
 
     return createOneFieldMetadataItem({
@@ -38,14 +40,25 @@ export const useFieldMetadataItem = () => {
   };
 
   const editMetadataField = (
-    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'> & {
+    input: Pick<
+      Field,
+      'id' | 'label' | 'icon' | 'description' | 'defaultValue'
+    > & {
       options?: FieldMetadataOption[];
     },
-  ) =>
-    updateOneFieldMetadataItem({
+  ) => {
+    const formatedInput = formatFieldMetadataItemInput(input);
+    const defaultValue = input.defaultValue
+      ? typeof input.defaultValue == 'string'
+        ? `'${input.defaultValue}'`
+        : input.defaultValue
+      : formatedInput.defaultValue ?? undefined;
+
+    return updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
       updatePayload: formatFieldMetadataItemInput({
         ...input,
+        defaultValue,
         // In Edit mode, all options need an id,
         // so we generate an id for newly created options.
         options: input.options?.map((option) =>
@@ -53,6 +66,7 @@ export const useFieldMetadataItem = () => {
         ),
       }),
     });
+  };
 
   const activateMetadataField = (metadataField: FieldMetadataItem) =>
     updateOneFieldMetadataItem({

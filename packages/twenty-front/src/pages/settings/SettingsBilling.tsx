@@ -6,24 +6,24 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
-import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage.tsx';
+import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SupportChat } from '@/support/components/SupportChat.tsx';
+import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath.ts';
 import { IconCalendarEvent, IconCircleX } from '@/ui/display/icon';
 import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
-import { Info } from '@/ui/display/info/components/Info.tsx';
-import { H1Title } from '@/ui/display/typography/components/H1Title.tsx';
-import { H2Title } from '@/ui/display/typography/components/H2Title.tsx';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts';
-import { Button } from '@/ui/input/button/components/Button.tsx';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal.tsx';
+import { Info } from '@/ui/display/info/components/Info';
+import { H1Title } from '@/ui/display/typography/components/H1Title';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Button } from '@/ui/input/button/components/Button';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section.tsx';
+import { Section } from '@/ui/layout/section/components/Section';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
-} from '~/generated/graphql.tsx';
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledH1Title = styled(H1Title)`

@@ -68,7 +68,7 @@ export const RecordTableWithWrappers = ({
     isRecordTableInitialLoadingState,
   );
 
-  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+  const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
 
@@ -109,7 +109,7 @@ export const RecordTableWithWrappers = ({
                 <DragSelect
                   dragSelectable={tableBodyRef}
                   onDragSelectionStart={resetTableRowSelection}
-                  onDragSelectionChange={setRowSelectedState}
+                  onDragSelectionChange={setRowSelected}
                 />
               </div>
               <RecordTableInternalEffect

@@ -38090,6 +38090,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"overlayscrollbars-react@npm:^0.5.4":
+  version: 0.5.4
+  resolution: "overlayscrollbars-react@npm:0.5.4"
+  peerDependencies:
+    overlayscrollbars: ^2.0.0
+    react: ">=16.8.0"
+  checksum: 71efe2a3775b26d1bc7c7e4cd8cf7ea7a977864fb1286cecc3ea6e83bf56fb2c104c9860de5ad6e472598be4f010d3e125b282a2a61190f3a8eb449f85e46a5e
+  languageName: node
+  linkType: hard
+
+"overlayscrollbars@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "overlayscrollbars@npm:2.6.1"
+  checksum: fc20c787bc842a522f2498ef4a23cbd1e3849c98961bf87b6482366b0cbc325848c0e6f99deec7d035114f4f55f4efcc67939752f55742389c3ec16f2502fd1e
+  languageName: node
+  linkType: hard
+
 "override-require@npm:^1.1.1":
   version: 1.1.1
   resolution: "override-require@npm:1.1.1"
@@ -46106,6 +46123,8 @@ __metadata:
     nodemailer: "npm:^6.9.8"
     nx: "npm:17.2.8"
     openapi-types: "npm:^12.1.3"
+    overlayscrollbars: "npm:^2.6.1"
+    overlayscrollbars-react: "npm:^0.5.4"
     passport: "npm:^0.7.0"
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"
