@@ -66,6 +66,8 @@ export const useCreateActivityInCache = () => {
 
         const createdActivityInCache = createOneActivityInCache({
           id: activityId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
           author: currentWorkspaceMemberRecord,
           authorId: currentWorkspaceMemberRecord?.id,
           assignee: customAssignee ?? currentWorkspaceMemberRecord,

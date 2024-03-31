@@ -24,6 +24,10 @@ export const sanitizeRecordInput = ({
 
         if (!fieldMetadataItem) return undefined;
 
+        if (!fieldMetadataItem.isNullable && fieldValue == null) {
+          return undefined;
+        }
+
         if (
           fieldMetadataItem.type === FieldMetadataType.Relation &&
           isFieldRelationValue(fieldValue)
