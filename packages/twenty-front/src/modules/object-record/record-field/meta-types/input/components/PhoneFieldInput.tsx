@@ -1,10 +1,10 @@
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePhoneField } from '../../hooks/usePhoneField';
 
 import { FieldInputEvent } from './DateFieldInput';
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 export type PhoneFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -70,7 +70,7 @@ export const PhoneFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-      <LightCopyIconButton copyText={draftValue ?? ''}/>
+      <LightCopyIconButton copyText={draftValue ?? ''} />
     </FieldInputOverlay>
   );
 };

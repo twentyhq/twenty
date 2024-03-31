@@ -28,14 +28,18 @@ export const useRegisterInputEvents = <T>({
     callback: (event) => {
       const target = event.target as HTMLElement;
       const classAttribute = target.getAttribute('class');
-      if (classAttribute!==null && (classAttribute === "tabler-icon tabler-icon-copy" || classAttribute.includes("copy-button"))) {
+      if (
+        classAttribute !== null &&
+        (classAttribute === 'tabler-icon tabler-icon-copy' ||
+          classAttribute.includes('copy-button'))
+      ) {
         return;
       }
-       event.stopImmediatePropagation();
-       onClickOutside?.(event, inputValue);
+      event.stopImmediatePropagation();
+      onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
-   });
+  });
 
   useScopedHotkeys(
     'enter',

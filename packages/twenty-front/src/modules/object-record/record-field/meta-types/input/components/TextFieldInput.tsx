@@ -1,3 +1,4 @@
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
@@ -5,7 +6,6 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
 import { FieldInputEvent } from './DateFieldInput';
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 export type TextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -68,7 +68,7 @@ export const TextFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-      <LightCopyIconButton copyText={draftValue ?? ''}/>
+      <LightCopyIconButton copyText={draftValue ?? ''} />
     </FieldTextAreaOverlay>
   );
 };

@@ -1,3 +1,4 @@
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -5,7 +6,6 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useEmailField } from '../../hooks/useEmailField';
 
 import { FieldInputEvent } from './DateFieldInput';
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 export type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -68,7 +68,7 @@ export const EmailFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-      <LightCopyIconButton copyText={draftValue ?? ''}/>
+      <LightCopyIconButton copyText={draftValue ?? ''} />
     </FieldInputOverlay>
   );
 };

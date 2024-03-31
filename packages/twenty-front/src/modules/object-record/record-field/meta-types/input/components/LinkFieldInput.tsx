@@ -1,11 +1,10 @@
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useLinkField } from '../../hooks/useLinkField';
 
 import { FieldInputEvent } from './DateFieldInput';
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-
 
 export type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -94,7 +93,7 @@ export const LinkFieldInput = ({
         onShiftTab={handleShiftTab}
         onChange={handleChange}
       />
-      <LightCopyIconButton copyText={draftValue?.url ?? ''}/>
+      <LightCopyIconButton copyText={draftValue?.url ?? ''} />
     </FieldInputOverlay>
   );
 };
