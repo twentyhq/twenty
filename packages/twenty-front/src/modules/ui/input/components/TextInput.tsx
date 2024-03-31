@@ -20,20 +20,6 @@ import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-export type TextInputComponentProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'onKeyDown'
-> & {
-  className?: string;
-  label?: string;
-  onChange?: (text: string) => void;
-  fullWidth?: boolean;
-  disableHotkeys?: boolean;
-  error?: string;
-  RightIcon?: IconComponent;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-};
-
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: inline-flex;
   flex-direction: column;
@@ -110,6 +96,21 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
+export type TextInputComponentProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'onKeyDown'
+> & {
+  className?: string;
+  label?: string;
+  onChange?: (text: string) => void;
+  fullWidth?: boolean;
+  disableHotkeys?: boolean;
+  error?: string;
+  RightIcon?: IconComponent;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
+};
+
 const TextInputComponent = (
   {
     className,
@@ -163,6 +164,7 @@ const TextInputComponent = (
       inputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,
+    { enabled: !disableHotkeys },
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);

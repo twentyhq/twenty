@@ -1,8 +1,8 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { messageStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -55,7 +55,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
       { value: 'incoming', label: 'Incoming', position: 0, color: 'green' },
       { value: 'outgoing', label: 'Outgoing', position: 1, color: 'blue' },
     ],
-    defaultValue: { value: 'incoming' },
+    defaultValue: "'incoming'",
   })
   direction: string;
 

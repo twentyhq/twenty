@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldNumberValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   canBeCastAsIntegerOrNull,
   castAsIntegerOrNull,
@@ -17,7 +18,7 @@ import { isFieldNumber } from '../../types/guards/isFieldNumber';
 export const useNumberField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('NUMBER', isFieldNumber, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Number, isFieldNumber, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

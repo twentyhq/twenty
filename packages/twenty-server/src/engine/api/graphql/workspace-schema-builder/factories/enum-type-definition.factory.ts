@@ -3,15 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/object-metadata.interface';
-import { FieldMetadataInterface } from 'src/engine-metadata/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
-} from 'src/engine-metadata/field-metadata/dtos/options.input';
-import { isEnumFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-enum-field-metadata-type.util';
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 export interface EnumTypeDefinition {
   target: string;

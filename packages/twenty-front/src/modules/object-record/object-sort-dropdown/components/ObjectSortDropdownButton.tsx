@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
@@ -37,10 +38,6 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { isSortSelected } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
   const { toggleDropdown } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
@@ -48,9 +45,19 @@ export const ObjectSortDropdownButton = ({
     resetState();
   };
 
-  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
+  const {
+    availableSortDefinitionsState,
+    onSortSelectState,
+    isSortSelectedState,
+  } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
+
+  const isSortSelected = useRecoilValue(isSortSelectedState);
+  const availableSortDefinitions = useRecoilValue(
+    availableSortDefinitionsState,
+  );
+  const onSortSelect = useRecoilValue(onSortSelectState);
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();

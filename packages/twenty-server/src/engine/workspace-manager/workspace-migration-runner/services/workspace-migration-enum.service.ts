@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner } from 'typeorm';
 
-import { WorkspaceMigrationColumnAlter } from 'src/engine-metadata/workspace-migration/workspace-migration.entity';
-import { serializeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-default-value';
+import { WorkspaceMigrationColumnAlter } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 
 @Injectable()
 export class WorkspaceMigrationEnumService {
@@ -13,6 +13,20 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
+    // Rename column name
+    if (
+      migrationColumn.currentColumnDefinition.columnName !==
+      migrationColumn.alteredColumnDefinition.columnName
+    ) {
+      await this.renameColumn(
+        queryRunner,
+        schemaName,
+        tableName,
+        migrationColumn.currentColumnDefinition.columnName,
+        migrationColumn.alteredColumnDefinition.columnName,
+      );
+    }
+
     const columnDefinition = migrationColumn.alteredColumnDefinition;
     const oldEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum`;
     const newEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum_new`;
@@ -80,6 +94,19 @@ export class WorkspaceMigrationEnumService {
       oldEnumTypeName,
       newEnumTypeName,
     );
+  }
+
+  private async renameColumn(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    oldColumnName: string,
+    newColumnName: string,
+  ) {
+    await queryRunner.query(`
+      ALTER TABLE "${schemaName}"."${tableName}"
+      RENAME COLUMN "${oldColumnName}" TO "${newColumnName}"
+    `);
   }
 
   private async createNewEnumType(

@@ -9,7 +9,10 @@ const StyledDropdownMenu = styled.div<{
       ? 'none'
       : 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'};
 
-  background: ${({ theme }) => theme.background.transparent.forBackdropFilter};
+  background: ${({ theme, disableBlur }) =>
+    disableBlur
+      ? theme.background.primary
+      : theme.background.transparent.secondary};
 
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};

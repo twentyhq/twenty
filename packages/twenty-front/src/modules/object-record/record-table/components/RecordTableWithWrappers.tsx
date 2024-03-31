@@ -20,7 +20,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -59,16 +59,16 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
+  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
-    getIsRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
-  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+  const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
 
@@ -78,7 +78,7 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  const { persistViewFields } = useViewFields(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
@@ -96,20 +96,20 @@ export const RecordTableWithWrappers = ({
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={useRecoilCallback(
                     () => (columns) => {
-                      persistViewFields(
+                      saveViewFields(
                         mapColumnDefinitionsToViewFields(
                           columns as ColumnDefinition<FieldMetadata>[],
                         ),
                       );
                     },
-                    [persistViewFields],
+                    [saveViewFields],
                   )}
                   createRecord={createRecord}
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
                   onDragSelectionStart={resetTableRowSelection}
-                  onDragSelectionChange={setRowSelectedState}
+                  onDragSelectionChange={setRowSelected}
                 />
               </div>
               <RecordTableInternalEffect

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
@@ -28,7 +29,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'number',
             label: 'Number',
-            type: 'NUMBER',
+            type: FieldMetadataType.Number,
             iconName: 'Icon123',
             metadata: {
               fieldName: 'Number',

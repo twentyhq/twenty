@@ -5,6 +5,7 @@ import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButto
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -14,7 +15,12 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 export const useRelationField = () => {
   const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
   const button = useGetButtonIcon();
-  assertFieldMetadata('RELATION', isFieldRelation, fieldDefinition);
+
+  assertFieldMetadata(
+    FieldMetadataType.Relation,
+    isFieldRelation,
+    fieldDefinition,
+  );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -18,6 +18,7 @@ import { SettingsObjectFieldFormSection } from '@/settings/data-model/components
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -212,7 +213,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   amountMicros: null,
                   currencyCode: validatedFormValues.currency.currencyCode,
                 }
-              : undefined,
+              : validatedFormValues.defaultValue,
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
@@ -259,7 +260,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
-  const excludedFieldTypes = [
+  const excludedFieldTypes: SettingsSupportedFieldType[] = [
     FieldMetadataType.Currency,
     FieldMetadataType.Email,
     FieldMetadataType.FullName,
@@ -319,6 +320,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              defaultValue: formValues.defaultValue,
             }}
           />
         </Section>

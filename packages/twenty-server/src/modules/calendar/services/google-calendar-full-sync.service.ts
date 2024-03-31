@@ -1,25 +1,34 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
 
-import { ConnectedAccountService } from 'src/modules/connected-account/repositories/connected-account/connected-account.service';
-import { BlocklistService } from 'src/modules/connected-account/repositories/blocklist/blocklist.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
-} from 'src/engine/modules/feature-flag/feature-flag.entity';
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
 import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
-import { CalendarChannelEventAssociationService } from 'src/modules/calendar/repositories/calendar-channel-event-association/calendar-channel-event-association.service';
-import { CalendarChannelService } from 'src/modules/calendar/repositories/calendar-channel/calendar-channel.service';
+import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
+import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CalendarEventService } from 'src/modules/calendar/repositories/calendar-event/calendar-event.service';
+import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
 import { GoogleCalendarFullSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
-import { CalendarEventAttendeeService } from 'src/modules/calendar/repositories/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
+import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
+import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 
 @Injectable()
 export class GoogleCalendarFullSyncService {
@@ -29,15 +38,25 @@ export class GoogleCalendarFullSyncService {
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
     @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly connectedAccountService: ConnectedAccountService,
-    private readonly calendarEventService: CalendarEventService,
-    private readonly calendarChannelService: CalendarChannelService,
-    private readonly calendarChannelEventAssociationService: CalendarChannelEventAssociationService,
-    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
-    private readonly blocklistService: BlocklistService,
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(CalendarEventObjectMetadata)
+    private readonly calendarEventRepository: CalendarEventRepository,
+    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    private readonly calendarChannelRepository: CalendarChannelRepository,
+    @InjectObjectMetadataRepository(
+      CalendarChannelEventAssociationObjectMetadata,
+    )
+    private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
+    @InjectObjectMetadataRepository(CalendarEventAttendeeObjectMetadata)
+    private readonly calendarEventAttendeesRepository: CalendarEventAttendeeRepository,
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
   ) {}
 
   public async startGoogleCalendarFullSync(
@@ -45,7 +64,7 @@ export class GoogleCalendarFullSyncService {
     connectedAccountId: string,
     pageToken?: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountService.getById(
+    const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
     );
@@ -64,10 +83,14 @@ export class GoogleCalendarFullSyncService {
     }
 
     const calendarChannel =
-      await this.calendarChannelService.getFirstByConnectedAccountIdOrFail(
+      await this.calendarChannelRepository.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
+
+    if (!calendarChannel) {
+      return;
+    }
 
     const calendarChannelId = calendarChannel.id;
 
@@ -87,13 +110,14 @@ export class GoogleCalendarFullSyncService {
       isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
 
     const blocklist = isBlocklistEnabled
-      ? await this.blocklistService.getByWorkspaceMemberId(
+      ? await this.blocklistRepository.getByWorkspaceMemberId(
           workspaceMemberId,
           workspaceId,
         )
       : [];
 
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
+
     let startTime = Date.now();
 
     const googleCalendarEvents = await googleCalendarClient.events.list({
@@ -130,7 +154,7 @@ export class GoogleCalendarFullSyncService {
     startTime = Date.now();
 
     const existingCalendarChannelEventAssociations =
-      await this.calendarChannelEventAssociationService.getByEventExternalIdsAndCalendarChannelId(
+      await this.calendarChannelEventAssociationRepository.getByEventExternalIdsAndCalendarChannelId(
         eventExternalIds,
         calendarChannelId,
         workspaceId,
@@ -180,7 +204,7 @@ export class GoogleCalendarFullSyncService {
     );
 
     const iCalUIDCalendarEventIdMap =
-      await this.calendarEventService.getICalUIDCalendarEventIdMap(
+      await this.calendarEventRepository.getICalUIDCalendarEventIdMap(
         eventsToUpdate.map((event) => event.iCalUID),
         workspaceId,
       );
@@ -191,38 +215,104 @@ export class GoogleCalendarFullSyncService {
           workspaceId,
         );
 
-      dataSourceMetadata?.transaction(async (transactionManager) => {
-        this.calendarEventService.saveCalendarEvents(
-          eventsToSave,
-          workspaceId,
-          transactionManager,
-        );
+      try {
+        dataSourceMetadata?.transaction(async (transactionManager) => {
+          startTime = Date.now();
 
-        this.calendarEventService.updateCalendarEvents(
-          eventsToUpdate,
-          workspaceId,
-          transactionManager,
-        );
+          await this.calendarEventRepository.saveCalendarEvents(
+            eventsToSave,
+            workspaceId,
+            transactionManager,
+          );
 
-        this.calendarChannelEventAssociationService.saveCalendarChannelEventAssociations(
-          calendarChannelEventAssociationsToSave,
-          workspaceId,
-          transactionManager,
-        );
+          endTime = Date.now();
 
-        this.calendarEventAttendeesService.saveCalendarEventAttendees(
-          attendeesToSave,
-          workspaceId,
-          transactionManager,
-        );
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving events in ${
+              endTime - startTime
+            }ms.`,
+          );
 
-        this.calendarEventAttendeesService.updateCalendarEventAttendees(
-          attendeesToUpdate,
-          iCalUIDCalendarEventIdMap,
-          workspaceId,
-          transactionManager,
+          startTime = Date.now();
+
+          await this.calendarEventRepository.updateCalendarEvents(
+            eventsToUpdate,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating events in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarChannelEventAssociationRepository.saveCalendarChannelEventAssociations(
+            calendarChannelEventAssociationsToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving calendar channel event associations in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarEventAttendeesService.saveCalendarEventAttendees(
+            attendeesToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
+            attendeesToUpdate,
+            iCalUIDCalendarEventIdMap,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+        });
+
+        if (calendarChannel.isContactAutoCreationEnabled) {
+          const contactsToCreate = attendeesToSave;
+
+          this.eventEmitter.emit(`createContacts`, {
+            workspaceId,
+            connectedAccountHandle: connectedAccount.handle,
+            contactsToCreate,
+          });
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error during google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}`,
         );
-      });
+      }
     } else {
       this.logger.log(
         `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
@@ -237,11 +327,11 @@ export class GoogleCalendarFullSyncService {
 
     startTime = Date.now();
 
-    // await this.calendarChannelService.updateSyncCursor(
-    //   nextSyncToken,
-    //   connectedAccount.id,
-    //   workspaceId,
-    // );
+    await this.calendarChannelRepository.updateSyncCursor(
+      nextSyncToken,
+      calendarChannel.id,
+      workspaceId,
+    );
 
     endTime = Date.now();
 

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" viewBox="0 0 512 144">
+  <rect width="539" height="143" x="-13.5" y=".5" fill="url(#a)" fill-opacity=".05" rx="7.5"/>
+  <rect width="539" height="143" x="-13.5" y=".5" fill="url(#b)" rx="7.5"/>
+  <rect width="539" height="143" x="-13.5" y=".5" stroke="#EBEBEB" rx="7.5"/>
+  <defs>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="matrix(270 0 0 487.572 256 72)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCFCFC" stop-opacity="0"/>
+      <stop offset="1" stop-color="#F8F8F8" stop-opacity=".9"/>
+    </radialGradient>
+    <pattern id="a" width=".044" height=".167" patternContentUnits="objectBoundingBox">
+      <use xlink:href="#c" transform="scale(.00035 .0013)"/>
+    </pattern>
+    <image xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFaSURBVHgB7d2xDcAgDABBO/vvTETLCvfX0aKX5c47rvO8d0DfhFYAuALAFQCuAHAFgCsAXAHgCgBXALgCwBUArgBwBYArAFwB4AoAVwC4AsAVAK4AcAWAKwBcAeAKAFcAuALAFQCuAHAFgCsAXAHgCgBXALgCwBUArgBwBYArAFwB4AoAVwC4AsAVAK4AcAWAKwBcAeAKAFcAuALAFQCuAHAFgCsAXAHgCgBXALgCwBUArgBw92L2mbCaALgCwBUAbsf17j7kXzQBcAWAKwBcAeAKAFcAuALAFQCuAHAFgCsAXAHgCgBXALgCwBUArgBwBYArAFwB4AoAVwC4AsAVAK4AcAWAKwBcAeAKAFcAuALAFQCuAHAFgCsAXAHgCgBXALgCwBUArgBwBYArAFwB4AoAVwC4AsAVAK4AcAWAKwBcAeAKAFcAuALAFQCuAHAFgCsAXAHgCgD3A+UEA/3CEUcsAAAAAElFTkSuQmCC" id="c" width="128" height="128"/>
+  </defs>
+</svg>

@@ -1,5 +1,6 @@
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
 import { FieldMetadata } from './FieldMetadata';
-import { FieldType } from './FieldType';
 
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
@@ -14,7 +15,7 @@ export type FieldDefinition<T extends FieldMetadata> = {
   disableTooltip?: boolean;
   labelWidth?: number;
   iconName: string;
-  type: FieldType;
+  type: FieldMetadataType;
   metadata: T;
   infoTooltipContent?: string;
 };

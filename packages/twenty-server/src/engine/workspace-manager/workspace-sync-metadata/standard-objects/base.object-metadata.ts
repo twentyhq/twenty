@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { baseObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -9,7 +9,7 @@ export abstract class BaseObjectMetadata {
     type: FieldMetadataType.UUID,
     label: 'Id',
     description: 'Id',
-    defaultValue: { type: 'uuid' },
+    defaultValue: 'uuid',
     icon: 'Icon123',
   })
   @IsSystem()
@@ -21,7 +21,7 @@ export abstract class BaseObjectMetadata {
     label: 'Creation date',
     description: 'Creation date',
     icon: 'IconCalendar',
-    defaultValue: { type: 'now' },
+    defaultValue: 'now',
   })
   createdAt: Date;
 
@@ -31,7 +31,7 @@ export abstract class BaseObjectMetadata {
     label: 'Update date',
     description: 'Update date',
     icon: 'IconCalendar',
-    defaultValue: { type: 'now' },
+    defaultValue: 'now',
   })
   @IsSystem()
   updatedAt: Date;

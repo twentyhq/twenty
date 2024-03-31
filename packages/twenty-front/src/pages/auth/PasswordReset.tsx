@@ -66,15 +66,6 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledFooterContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  text-align: center;
-  max-width: 280px;
-`;
-
 export const PasswordReset = () => {
   const { enqueueSnackBar } = useSnackBar();
 
@@ -107,7 +98,7 @@ export const PasswordReset = () => {
         variant: 'error',
       });
       if (!isLoggedIn) {
-        navigate(AppPath.SignIn);
+        navigate(AppPath.SignInUp);
       } else {
         navigate(AppPath.Index);
       }
@@ -253,10 +244,6 @@ export const PasswordReset = () => {
           </StyledForm>
         )}
       </StyledContentContainer>
-      <StyledFooterContainer>
-        By using Twenty, you agree to the Terms of Service and Data Processing
-        Agreement.
-      </StyledFooterContainer>
     </StyledMainContainer>
   );
 };

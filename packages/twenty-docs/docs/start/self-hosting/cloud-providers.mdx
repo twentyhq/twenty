@@ -15,7 +15,7 @@ Feel free to join our discord if you need assistance.
 - [Azure Container Apps](#azure-container-apps)
 - [Others](#others)
 
-## Azure Container Apps 
+## Azure Container Apps
 
 ### About
 
@@ -36,7 +36,7 @@ The file shares are used to store uploaded images and files through the UI, and 
 3. Run `terraform plan -out tfplan`
 4. Run `terraform apply tfplan`
 5. Connect to server `az containerapp exec --name twenty-server -g twenty-crm-rg`
-6. Initialize the database from the server `yarn database:init`
+6. Initialize the database from the server `yarn database:init:prod`
 7. Go to https://your-twenty-front-fqdn - located in the portal
 
 #### Production docker containers
@@ -229,14 +229,6 @@ resource "azurerm_container_app" "twenty_front" {
         name  = "REACT_APP_SERVER_BASE_URL"
         value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}"
       }
-      env {
-        name  = "REACT_APP_SERVER_AUTH_URL"
-        value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}/auth"
-      }
-      env {
-        name  = "REACT_APP_SERVER_FILES_URL"
-        value = "https://${azurerm_container_app.twenty_server.ingress[0].fqdn}/files"
-      }
     }
   }
 }
@@ -269,6 +261,7 @@ resource "azapi_update_resource" "cors" {
 resource "random_uuid" "access_token_secret" {}
 resource "random_uuid" "login_token_secret" {}
 resource "random_uuid" "refresh_token_secret" {}
+resource "random_uuid" "file_token_secret" {}
 
 resource "azurerm_container_app" "twenty_server" {
   name                         = local.server_name
@@ -345,6 +338,10 @@ resource "azurerm_container_app" "twenty_server" {
       env {
         name  = "REFRESH_TOKEN_SECRET"
         value = random_uuid.refresh_token_secret.result
+      }
+      env {
+        name  = "FILE_TOKEN_SECRET"
+        value = random_uuid.file_token_secret.result
       }
     }
   }

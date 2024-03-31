@@ -2,9 +2,9 @@ import { createComponentState } from '@/ui/utilities/state/component-state/utils
 
 import { Sort } from '../types/Sort';
 
-export const onSortSelectScopedState = createComponentState<
+export const onSortSelectComponentState = createComponentState<
   ((sort: Sort) => void) | undefined
 >({
-  key: 'onSortSelectScopedState',
+  key: 'onSortSelectComponentState',
   defaultValue: undefined,
 });

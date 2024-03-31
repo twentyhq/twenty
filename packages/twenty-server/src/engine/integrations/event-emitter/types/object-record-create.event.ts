@@ -1,12 +1,7 @@
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 
-export type CreatedObjectMetadata = {
-  nameSingular: string;
-  isCustom: boolean;
-};
-
-export class ObjectRecordCreateEvent<T extends BaseObjectMetadata> {
-  workspaceId: string;
-  createdRecord: T;
-  createdObjectMetadata: CreatedObjectMetadata;
+export class ObjectRecordCreateEvent<T> extends ObjectRecordBaseEvent {
+  details: {
+    after: T;
+  };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
@@ -17,6 +17,7 @@ import {
   IconPuzzle,
   IconTrash,
 } from '@/ui/display/icon';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
@@ -34,8 +35,10 @@ export const useRecordActionBar = ({
   selectedRecordIds,
   callback,
 }: useRecordActionBarProps) => {
-  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState());
-  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState());
+  const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
+  const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
+  const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    useState(false);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
@@ -109,7 +112,23 @@ export const useRecordActionBar = ({
         label: 'Delete',
         Icon: IconTrash,
         accent: 'danger',
-        onClick: () => handleDeleteClick(),
+        onClick: () => setIsDeleteRecordsModalOpen(true),
+        ConfirmationModal: (
+          <ConfirmationModal
+            isOpen={isDeleteRecordsModalOpen}
+            setIsOpen={setIsDeleteRecordsModalOpen}
+            title={`Delete ${selectedRecordIds.length} ${
+              selectedRecordIds.length === 1 ? `record` : 'records'
+            }`}
+            subtitle={`This action cannot be undone. This will permanently delete ${
+              selectedRecordIds.length === 1 ? 'this record' : 'these records'
+            }`}
+            onConfirmClick={() => handleDeleteClick()}
+            deleteButtonText={`Delete ${
+              selectedRecordIds.length > 1 ? 'Records' : 'Record'
+            }`}
+          />
+        ),
       },
       {
         label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
@@ -118,7 +137,14 @@ export const useRecordActionBar = ({
         onClick: () => download(),
       },
     ],
-    [handleDeleteClick, download, progress],
+    [
+      handleDeleteClick,
+      download,
+      progress,
+      selectedRecordIds,
+      isDeleteRecordsModalOpen,
+      setIsDeleteRecordsModalOpen,
+    ],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(

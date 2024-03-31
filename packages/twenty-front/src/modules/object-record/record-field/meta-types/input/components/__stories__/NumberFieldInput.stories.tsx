@@ -3,6 +3,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useNumberField } from '../../../hooks/useNumberField';
@@ -45,7 +46,7 @@ const NumberFieldInputWithContext = ({
           fieldMetadataId: 'number',
           label: 'Number',
           iconName: 'Icon123',
-          type: 'NUMBER',
+          type: FieldMetadataType.Number,
           metadata: {
             fieldName: 'number',
             placeHolder: 'Enter number',

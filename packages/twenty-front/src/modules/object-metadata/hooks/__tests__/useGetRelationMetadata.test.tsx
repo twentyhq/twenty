@@ -31,7 +31,7 @@ describe('useGetRelationMetadata', () => {
 
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
 
         useEffect(() => {
           setMetadataItems(objectMetadataItems);

@@ -1,4 +1,4 @@
-import { SettingsAccountsEmailsAccountsListCard } from '@/settings/accounts/components/SettingsAccountsEmailsAccountsListCard';
+import { SettingsAccountsMessageChannelsListCard } from '@/settings/accounts/components/SettingsAccountsMessageChannelsListCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -20,7 +20,7 @@ export const SettingsAccountsEmails = () => (
           title="Emails sync"
           description="Sync your inboxes and set your privacy settings"
         />
-        <SettingsAccountsEmailsAccountsListCard />
+        <SettingsAccountsMessageChannelsListCard />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>

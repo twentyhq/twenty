@@ -29,6 +29,12 @@ prod-docs-build:
 prod-docs-run:
 	@docker run -d -p 3000:3000 --name twenty-docs twenty-docs
 
+prod-build:
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty/Dockerfile --tag twenty . && cd -
+
+prod-run:
+	@docker run -d -p 3000:3000 --name twenty twenty
+
 prod-front-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-front/Dockerfile --tag twenty-front . && cd -
 

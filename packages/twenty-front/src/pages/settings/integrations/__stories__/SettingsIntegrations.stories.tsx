@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import {
   PageDecorator,
@@ -13,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Integrations/SettingsIntegrations',
   component: SettingsIntegrations,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/integrations' },
+  args: { routePath: getSettingsPagePath(SettingsPath.Integrations) },
   parameters: {
     msw: graphqlMocks,
   },

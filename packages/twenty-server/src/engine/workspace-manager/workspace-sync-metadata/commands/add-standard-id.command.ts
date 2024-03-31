@@ -1,16 +1,20 @@
 import { Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine-metadata/object-metadata/object-metadata.entity';
-import { FieldMetadataEntity } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+
+interface RunCommandOptions {
+  workspaceId?: string;
+}
 
 @Command({
   name: 'workspace:add-standard-id',
@@ -28,8 +32,9 @@ export class AddStandardIdCommand extends CommandRunner {
     super();
   }
 
-  async run(): Promise<void> {
+  async run(_passedParam: string[], options: RunCommandOptions): Promise<void> {
     const queryRunner = this.metadataDataSource.createQueryRunner();
+    const workspaceId = options.workspaceId;
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -50,6 +55,10 @@ export class AddStandardIdCommand extends CommandRunner {
           {
             IS_BLOCKLIST_ENABLED: true,
             IS_CALENDAR_ENABLED: true,
+            IS_EVENT_OBJECT_ENABLED: true,
+            IS_AIRTABLE_INTEGRATION_ENABLED: true,
+            IS_POSTGRESQL_INTEGRATION_ENABLED: true,
+            IS_FULL_SYNC_V2_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -61,6 +70,10 @@ export class AddStandardIdCommand extends CommandRunner {
         {
           IS_BLOCKLIST_ENABLED: true,
           IS_CALENDAR_ENABLED: true,
+          IS_EVENT_OBJECT_ENABLED: true,
+          IS_AIRTABLE_INTEGRATION_ENABLED: true,
+          IS_POSTGRESQL_INTEGRATION_ENABLED: true,
+          IS_FULL_SYNC_V2_ENABLED: false,
         },
       );
 
@@ -79,6 +92,7 @@ export class AddStandardIdCommand extends CommandRunner {
         await objectMetadataRepository.find({
           where: {
             fields: { isCustom: false },
+            workspaceId: workspaceId,
           },
           relations: ['fields'],
         });
@@ -86,6 +100,7 @@ export class AddStandardIdCommand extends CommandRunner {
         originalObjectMetadataCollection.filter(
           (metadata) => metadata.isCustom,
         );
+
       const standardObjectMetadataMap = new Map(
         standardObjectMetadataCollection.map((metadata) => [
           metadata.nameSingular,
@@ -111,10 +126,7 @@ export class AddStandardIdCommand extends CommandRunner {
           customObjectMetadataCollection,
         );
 
-        if (
-          !originalObjectMetadata.isCustom &&
-          !originalObjectMetadata.standardId
-        ) {
+        if (!originalObjectMetadata.isCustom) {
           updateObjectMetadataCollection.push({
             id: originalObjectMetadata.id,
             standardId: computedStandardObjectMetadata.standardId,
@@ -127,7 +139,7 @@ export class AddStandardIdCommand extends CommandRunner {
               (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 
-          if (!standardFieldMetadata || fieldMetadata.standardId) {
+          if (!standardFieldMetadata) {
             continue;
           }
 
@@ -149,5 +161,14 @@ export class AddStandardIdCommand extends CommandRunner {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description: 'workspace id',
+    required: false,
+  })
+  parseWorkspaceId(value: string): string {
+    return value;
   }
 }

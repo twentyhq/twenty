@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import companiesDemo from './companies-demo.json';
 
-export const companyPrefillData = async (
+export const companyPrefillDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
@@ -12,7 +12,7 @@ export const companyPrefillData = async (
     .into(`${schemaName}.company`, [
       'name',
       'domainName',
-      'address',
+      'addressAddressCity',
       'employees',
       'linkedinLinkUrl',
       'position',

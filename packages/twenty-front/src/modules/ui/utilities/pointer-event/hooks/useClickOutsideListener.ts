@@ -34,7 +34,7 @@ export const useClickOutsideListener = (componentId: string) => {
             callback(event);
 
             const additionalCallbacks = snapshot
-              .getLoadable(getClickOutsideListenerCallbacksState())
+              .getLoadable(getClickOutsideListenerCallbacksState)
               .getValue();
 
             additionalCallbacks.forEach((additionalCallback) => {
@@ -51,7 +51,7 @@ export const useClickOutsideListener = (componentId: string) => {
   const toggleClickOutsideListener = useRecoilCallback(
     ({ set }) =>
       (activated: boolean) => {
-        set(getClickOutsideListenerIsActivatedState(), activated);
+        set(getClickOutsideListenerIsActivatedState, activated);
       },
     [getClickOutsideListenerIsActivatedState],
   );
@@ -60,7 +60,7 @@ export const useClickOutsideListener = (componentId: string) => {
     ({ set, snapshot }) =>
       ({ callbackFunction, callbackId }: ClickOutsideListenerCallback) => {
         const existingCallbacks = snapshot
-          .getLoadable(getClickOutsideListenerCallbacksState())
+          .getLoadable(getClickOutsideListenerCallbacksState)
           .getValue();
 
         const existingCallbackWithSameId = existingCallbacks.find(
@@ -74,7 +74,7 @@ export const useClickOutsideListener = (componentId: string) => {
           });
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             existingCallbacksWithNewCallback,
           );
         } else {
@@ -95,7 +95,7 @@ export const useClickOutsideListener = (componentId: string) => {
           };
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             existingCallbacksWithOverwrittenCallback,
           );
         }
@@ -107,7 +107,7 @@ export const useClickOutsideListener = (componentId: string) => {
     ({ set, snapshot }) =>
       ({ callbackId }: { callbackId: string }) => {
         const existingCallbacks = snapshot
-          .getLoadable(getClickOutsideListenerCallbacksState())
+          .getLoadable(getClickOutsideListenerCallbacksState)
           .getValue();
 
         const indexOfCallbackToUnsubscribe = existingCallbacks.findIndex(
@@ -121,7 +121,7 @@ export const useClickOutsideListener = (componentId: string) => {
             existingCallbacks.toSpliced(indexOfCallbackToUnsubscribe, 1);
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             newCallbacksWithoutCallbackToUnsubscribe,
           );
         }

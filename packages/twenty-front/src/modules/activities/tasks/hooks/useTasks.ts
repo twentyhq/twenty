@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
@@ -23,9 +23,11 @@ export const useTasks = ({
   targetableObjects,
   filterDropdownId,
 }: UseTasksProps) => {
-  const { selectedFilter } = useFilterDropdown({
+  const { selectedFilterState } = useFilterDropdown({
     filterDropdownId,
   });
+
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const assigneeIdFilter = useMemo(
     () =>

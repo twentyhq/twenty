@@ -55,11 +55,11 @@ describe('useCloseRecordTableCell', () => {
     const { result } = renderHook(
       () => {
         const {
-          getCurrentTableCellInEditModePositionState,
+          currentTableCellInEditModePositionState,
           isTableCellInEditModeFamilyState,
         } = useRecordTableStates();
         const currentTableCellInEditModePosition = useRecoilValue(
-          getCurrentTableCellInEditModePositionState(),
+          currentTableCellInEditModePositionState,
         );
         const isTableCellInEditMode = useRecoilValue(
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),

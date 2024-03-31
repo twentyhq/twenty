@@ -33,9 +33,9 @@ const insertScript = ({
 };
 
 export const SupportChat = () => {
-  const currentUser = useRecoilValue(currentUserState());
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
-  const supportChat = useRecoilValue(supportChatState());
+  const currentUser = useRecoilValue(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
 
   const configureFront = useCallback(
@@ -45,26 +45,32 @@ export const SupportChat = () => {
       currentWorkspaceMember: Pick<WorkspaceMember, 'name'>,
     ) => {
       const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
-      const script = document.querySelector(`script[src="${url}"]`);
+      let script = document.querySelector(`script[src="${url}"]`);
 
-      if (!script) {
-        insertScript({
-          src: url,
-          onLoad: () => {
-            window.FrontChat?.('init', {
-              chatId,
-              useDefaultLauncher: false,
-              email: currentUser.email,
-              name:
-                currentWorkspaceMember.name.firstName +
-                ' ' +
-                currentWorkspaceMember.name.lastName,
-              userHash: currentUser?.supportUserHash,
-            });
-            setIsFrontChatLoaded(true);
-          },
-        });
+      // This function only gets called when front chat is not loaded
+      // If the script is already defined, but front chat is not loaded
+      // then there was an error loading the script; reload the script
+      if (isDefined(script)) {
+        script.parentNode?.removeChild(script);
+        script = null;
       }
+
+      insertScript({
+        src: url,
+        onLoad: () => {
+          window.FrontChat?.('init', {
+            chatId,
+            useDefaultLauncher: false,
+            email: currentUser.email,
+            name:
+              currentWorkspaceMember.name.firstName +
+              ' ' +
+              currentWorkspaceMember.name.lastName,
+            userHash: currentUser?.supportUserHash,
+          });
+          setIsFrontChatLoaded(true);
+        },
+      });
     },
     [],
   );

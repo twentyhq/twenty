@@ -18,16 +18,20 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { getTableFiltersState, getTableSortsState } =
+  const { tableFiltersState, tableSortsState } =
     useRecordTableStates(recordTableId);
 
-  const tableFilters = useRecoilValue(getTableFiltersState());
-  const tableSorts = useRecoilValue(getTableSortsState());
+  const tableFilters = useRecoilValue(tableFiltersState);
+  const tableSorts = useRecoilValue(tableSortsState);
 
   const filter = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
   );
+
+  if (objectMetadataItem?.isRemote) {
+    return { objectNameSingular, filter };
+  }
 
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
@@ -40,9 +44,9 @@ export const useFindManyParams = (
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-  const { getTableLastRowVisibleState } = useRecordTableStates();
-  const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const { tableLastRowVisibleState } = useRecordTableStates();
+  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
   const {

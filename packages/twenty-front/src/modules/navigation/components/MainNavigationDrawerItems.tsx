@@ -7,8 +7,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import {
-  IconBell,
   IconCheckbox,
+  IconInbox,
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
@@ -24,13 +24,11 @@ export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
-  const currentUserDueTaskCount = useRecoilValue(
-    currentUserDueTaskCountState(),
-  );
+  const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
   const navigate = useNavigate();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState(),
+    navigationMemorizedUrlState,
   );
 
   return (
@@ -44,9 +42,9 @@ export const MainNavigationDrawerItems = () => {
             keyboard={['⌘', 'K']}
           />
           <NavigationDrawerItem
-            label="Notifications"
+            label="Inbox"
             to="/inbox"
-            Icon={IconBell}
+            Icon={IconInbox}
             soon
           />
           <NavigationDrawerItem

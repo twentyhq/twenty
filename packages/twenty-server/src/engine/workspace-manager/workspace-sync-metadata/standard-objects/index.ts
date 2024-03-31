@@ -17,7 +17,6 @@ import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-obje
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { PipelineStepObjectMetadata } from 'src/modules/pipeline-step/standard-objects/pipeline-step.object-metadata';
 import { ViewFieldObjectMetadata } from 'src/modules/view/standard-objects/view-field.object-metadata';
 import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view-filter.object-metadata';
 import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
@@ -25,6 +24,7 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
@@ -35,10 +35,10 @@ export const standardObjectMetadataDefinitions = [
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,
+  EventObjectMetadata,
   FavoriteObjectMetadata,
   OpportunityObjectMetadata,
   PersonObjectMetadata,
-  PipelineStepObjectMetadata,
   ViewFieldObjectMetadata,
   ViewFilterObjectMetadata,
   ViewSortObjectMetadata,
