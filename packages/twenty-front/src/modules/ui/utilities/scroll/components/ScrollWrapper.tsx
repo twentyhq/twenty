@@ -42,8 +42,8 @@ export const ScrollWrapper = ({
     ({ set }) =>
       (overlayScroll: OverlayScrollbars) => {
         const target = overlayScroll.elements().scrollOffsetElement;
-        set(scrollTopState(), target.scrollTop);
-        set(scrollLeftState(), target.scrollLeft);
+        set(scrollTopState, target.scrollTop);
+        set(scrollLeftState, target.scrollLeft);
       },
     [],
   );
