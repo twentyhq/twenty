@@ -1,7 +1,13 @@
-import { createContext, RefObject, useRef } from 'react';
+import { createContext, RefObject, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
+import { OverlayScrollbars } from 'overlayscrollbars';
+import { useOverlayScrollbars } from 'overlayscrollbars-react';
+import { useRecoilCallback } from 'recoil';
 
-import { useListenScroll } from '../hooks/useListenScroll';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
+
+import 'overlayscrollbars/overlayscrollbars.css';
 
 export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
   current: null,
@@ -10,11 +16,9 @@ export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
 const StyledScrollWrapper = styled.div`
   display: flex;
   height: 100%;
-  overflow: auto;
-  scrollbar-gutter: stable;
   width: 100%;
 
-  &.scrolling::-webkit-scrollbar-thumb {
+  .os-scrollbar-handle {
     background-color: ${({ theme }) => theme.border.color.medium};
   }
 `;
@@ -22,14 +26,46 @@ const StyledScrollWrapper = styled.div`
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
+  hideY?: boolean;
+  hideX?: boolean;
 };
 
-export const ScrollWrapper = ({ children, className }: ScrollWrapperProps) => {
+export const ScrollWrapper = ({
+  children,
+  className,
+  hideX,
+  hideY,
+}: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
 
-  useListenScroll({
-    scrollableRef,
+  const handleScroll = useRecoilCallback(
+    ({ set }) =>
+      (overlayScroll: OverlayScrollbars) => {
+        const target = overlayScroll.elements().scrollOffsetElement;
+        set(scrollTopState, target.scrollTop);
+        set(scrollLeftState, target.scrollLeft);
+      },
+    [],
+  );
+
+  const [initialize] = useOverlayScrollbars({
+    options: {
+      scrollbars: { autoHide: 'scroll' },
+      overflow: {
+        y: hideY ? 'hidden' : undefined,
+        x: hideX ? 'hidden' : undefined,
+      },
+    },
+    events: {
+      scroll: handleScroll,
+    },
   });
+
+  useEffect(() => {
+    if (scrollableRef?.current !== null) {
+      initialize(scrollableRef.current);
+    }
+  }, [initialize, scrollableRef]);
 
   return (
     <ScrollWrapperContext.Provider value={scrollableRef}>

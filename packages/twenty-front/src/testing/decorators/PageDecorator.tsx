@@ -50,11 +50,11 @@ export const PageDecorator: Decorator<{
                 <HelmetProvider>
                   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                     <ObjectMetadataItemsProvider>
-                      <DefaultLayout>
-                        <Routes>
+                      <Routes>
+                        <Route element={<DefaultLayout />}>
                           <Route path={args.routePath} element={<Story />} />
-                        </Routes>
-                      </DefaultLayout>
+                        </Route>
+                      </Routes>
                     </ObjectMetadataItemsProvider>
                   </SnackBarProviderScope>
                 </HelmetProvider>

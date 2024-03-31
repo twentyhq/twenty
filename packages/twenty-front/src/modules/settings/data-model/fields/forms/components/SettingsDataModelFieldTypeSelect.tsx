@@ -6,12 +6,19 @@ import {
 } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;
   disabled?: boolean;
   excludedFieldTypes?: SettingsSupportedFieldType[];
-  onChange?: ({ type }: { type: SettingsSupportedFieldType }) => void;
+  onChange?: ({
+    type,
+    defaultValue,
+  }: {
+    type: SettingsSupportedFieldType;
+    defaultValue: any;
+  }) => void;
   value?: SettingsSupportedFieldType;
 };
 
@@ -41,7 +48,12 @@ export const SettingsDataModelFieldTypeSelect = ({
       disabled={disabled}
       dropdownId="object-field-type-select"
       value={value}
-      onChange={(value) => onChange?.({ type: value })}
+      onChange={(value) =>
+        onChange?.({
+          type: value,
+          defaultValue: value === FieldMetadataType.Boolean ? false : undefined,
+        })
+      }
       options={fieldTypeOptions}
     />
   );

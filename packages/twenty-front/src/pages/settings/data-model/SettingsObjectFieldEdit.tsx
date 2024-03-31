@@ -83,6 +83,7 @@ export const SettingsObjectFieldEdit = () => {
     formValues,
     handleFormChange,
     hasFieldFormChanged,
+    hasDefaultValueChanged,
     hasFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
@@ -132,6 +133,7 @@ export const SettingsObjectFieldEdit = () => {
         objectMetadataId: relationObjectMetadataItem?.id || '',
         type: relationType || RelationMetadataType.OneToMany,
       },
+      defaultValue: activeMetadataField.defaultValue,
       ...(selectOptions?.length ? { select: selectOptions } : {}),
     });
   }, [
@@ -170,13 +172,17 @@ export const SettingsObjectFieldEdit = () => {
           label: validatedFormValues.relation.field.label,
         });
       }
-
-      if (hasFieldFormChanged || hasSelectFormChanged) {
+      if (
+        hasFieldFormChanged ||
+        hasSelectFormChanged ||
+        hasDefaultValueChanged
+      ) {
         await editMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           id: activeMetadataField.id,
           label: validatedFormValues.label,
+          defaultValue: validatedFormValues.defaultValue,
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
@@ -255,6 +261,7 @@ export const SettingsObjectFieldEdit = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              defaultValue: formValues.defaultValue,
             }}
           />
         </Section>
