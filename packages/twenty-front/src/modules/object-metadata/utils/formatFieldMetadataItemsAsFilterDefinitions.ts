@@ -18,6 +18,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Number,
         FieldMetadataType.Link,
         FieldMetadataType.FullName,
+        FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.Currency,
@@ -52,24 +53,32 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
     field.toRelationMetadata?.fromObjectMetadata.namePlural,
   relationObjectMetadataNameSingular:
     field.toRelationMetadata?.fromObjectMetadata.nameSingular,
-  type:
-    field.type === FieldMetadataType.DateTime
-      ? 'DATE_TIME'
-      : field.type === FieldMetadataType.Link
-        ? 'LINK'
-        : field.type === FieldMetadataType.FullName
-          ? 'FULL_NAME'
-          : field.type === FieldMetadataType.Number
-            ? 'NUMBER'
-            : field.type === FieldMetadataType.Currency
-              ? 'CURRENCY'
-              : field.type === FieldMetadataType.Email
-                ? 'TEXT'
-                : field.type === FieldMetadataType.Phone
-                  ? 'TEXT'
-                  : field.type === FieldMetadataType.Relation
-                    ? 'RELATION'
-                    : field.type === FieldMetadataType.Select
-                      ? 'SELECT'
-                      : 'TEXT',
+  type: getFilterType(field.type),
 });
+
+const getFilterType = (fieldType: FieldMetadataType) => {
+  switch (fieldType) {
+    case FieldMetadataType.DateTime:
+      return 'DATE_TIME';
+    case FieldMetadataType.Link:
+      return 'LINK';
+    case FieldMetadataType.FullName:
+      return 'FULL_NAME';
+    case FieldMetadataType.Number:
+      return 'NUMBER';
+    case FieldMetadataType.Currency:
+      return 'CURRENCY';
+    case FieldMetadataType.Email:
+      return 'EMAIL';
+    case FieldMetadataType.Phone:
+      return 'PHONE';
+    case FieldMetadataType.Relation:
+      return 'RELATION';
+    case FieldMetadataType.Select:
+      return 'SELECT';
+    case FieldMetadataType.Address:
+      return 'ADDRESS';
+    default:
+      return 'TEXT';
+  }
+};

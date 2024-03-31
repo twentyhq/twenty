@@ -4,7 +4,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EntityManager } from 'typeorm';
 
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import {
   GmailMessage,
   ParticipantWithMessageId,
@@ -15,7 +14,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageService } from 'src/modules/messaging/services/message/message.service';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 
 @Injectable()
 export class SaveMessageAndEmitContactCreationEventService {
@@ -27,10 +26,9 @@ export class SaveMessageAndEmitContactCreationEventService {
     private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
-    private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   public async saveMessagesAndEmitContactCreationEventWithinTransaction(
@@ -66,7 +64,7 @@ export class SaveMessageAndEmitContactCreationEventService {
         : [];
     });
 
-    await this.messageParticipantRepository.saveMessageParticipants(
+    await this.messageParticipantService.saveMessageParticipants(
       participantsWithMessageId,
       workspaceId,
       transactionManager,
@@ -172,7 +170,7 @@ export class SaveMessageAndEmitContactCreationEventService {
     connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
   ) {
     try {
-      await this.messageParticipantRepository.saveMessageParticipants(
+      await this.messageParticipantService.saveMessageParticipants(
         participantsWithMessageId,
         workspaceId,
       );

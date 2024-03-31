@@ -7,8 +7,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import {
-  IconBell,
   IconCheckbox,
+  IconInbox,
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
@@ -42,9 +42,9 @@ export const MainNavigationDrawerItems = () => {
             keyboard={['⌘', 'K']}
           />
           <NavigationDrawerItem
-            label="Notifications"
+            label="Inbox"
             to="/inbox"
-            Icon={IconBell}
+            Icon={IconInbox}
             soon
           />
           <NavigationDrawerItem

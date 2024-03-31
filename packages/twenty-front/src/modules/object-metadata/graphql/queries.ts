@@ -17,6 +17,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           description
           icon
           isCustom
+          isRemote
           isActive
           isSystem
           createdAt

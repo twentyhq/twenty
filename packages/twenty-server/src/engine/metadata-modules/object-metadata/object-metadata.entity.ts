@@ -101,9 +101,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   })
   dataSource: DataSourceEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

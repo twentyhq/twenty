@@ -122,12 +122,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...fieldMetadataInput,
         targetColumnMap: generateTargetColumnMap(
           fieldMetadataInput.type,
-          true,
+          !fieldMetadataInput.isRemoteCreation,
           fieldMetadataInput.name,
         ),
         isNullable: generateNullable(
           fieldMetadataInput.type,
           fieldMetadataInput.isNullable,
+          fieldMetadataInput.isRemoteCreation,
         ),
         defaultValue:
           fieldMetadataInput.defaultValue ??
@@ -142,24 +143,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         isCustom: true,
       });
 
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`create-${createdFieldMetadata.name}`),
-        fieldMetadataInput.workspaceId,
-        [
-          {
-            name: computeObjectTargetTable(objectMetadata),
-            action: 'alter',
-            columns: this.workspaceMigrationFactory.createColumnActions(
-              WorkspaceMigrationColumnActionType.CREATE,
-              createdFieldMetadata,
-            ),
-          } satisfies WorkspaceMigrationTableAction,
-        ],
-      );
+      if (!fieldMetadataInput.isRemoteCreation) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`create-${createdFieldMetadata.name}`),
+          fieldMetadataInput.workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: 'alter',
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.CREATE,
+                createdFieldMetadata,
+              ),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
 
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        fieldMetadataInput.workspaceId,
-      );
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          fieldMetadataInput.workspaceId,
+        );
+      }
 
       // TODO: Move viewField creation to a cdc scheduler
       const dataSourceMetadata =
@@ -208,6 +211,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       view[0].id
     }')`,
         );
+        await workspaceQueryRunner.commitTransaction();
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();
         throw error;
@@ -296,10 +300,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await fieldMetadataRepository.update(id, {
         ...updatableFieldInput,
         defaultValue:
-          // Todo: we need to handle default value for all field types. Right now we are only allowing update for SELECt
-          existingFieldMetadata.type !== FieldMetadataType.SELECT
+          // Todo: we handle default value for all field types.
+          ![FieldMetadataType.SELECT, FieldMetadataType.BOOLEAN].includes(
+            existingFieldMetadata.type,
+          )
             ? existingFieldMetadata.defaultValue
-            : updatableFieldInput.defaultValue
+            : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
         // If the name is updated, the targetColumnMap should be updated as well
