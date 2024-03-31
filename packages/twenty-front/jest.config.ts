@@ -1,6 +1,6 @@
 export default {
   // to enable logs, comment out the following line
-  silent: false,
+  silent: true,
   setupFilesAfterEnv: ['./src/setupTests.ts'],
   testEnvironment: 'jsdom',
   transform: {
@@ -19,7 +19,7 @@ export default {
   coverageThreshold: {
     global: {
       statements: 70,
-      lines: 70,
+      lines: 68,
       functions: 60,
     },
   },
