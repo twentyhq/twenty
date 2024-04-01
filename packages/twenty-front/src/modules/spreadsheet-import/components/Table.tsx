@@ -126,6 +126,8 @@ export const Table = <Data,>({
 }: TableProps<Data>) => {
   const { rtl } = useSpreadsheetImportInternal();
 
+  if (!rows?.length || !columns?.length) return null;
+
   return (
     <StyledDataGrid
       direction={rtl ? 'rtl' : 'ltr'}
