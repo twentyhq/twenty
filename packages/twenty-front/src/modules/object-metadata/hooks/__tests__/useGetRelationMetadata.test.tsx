@@ -7,15 +7,9 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
-    </MockedProvider>
+    <MockedProvider addTypename={false}>{children}</MockedProvider>
   </RecoilRoot>
 );
 
