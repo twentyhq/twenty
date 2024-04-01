@@ -5,10 +5,10 @@ import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataCont
 
 export const useApolloMetadataClient = () => {
   const apolloMetadataClient = useContext(ApolloMetadataClientContext);
-  const apolloCLient = useApolloClient();
+  const apolloClient = useApolloClient();
 
   if (process.env.NODE_ENV === 'test') {
-    return apolloCLient;
+    return apolloClient;
   }
 
   return apolloMetadataClient;
