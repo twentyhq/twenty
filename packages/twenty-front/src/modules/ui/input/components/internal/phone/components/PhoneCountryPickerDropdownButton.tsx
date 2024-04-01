@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconChevronDown, IconWorld } from 'twenty-ui';
 
-import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

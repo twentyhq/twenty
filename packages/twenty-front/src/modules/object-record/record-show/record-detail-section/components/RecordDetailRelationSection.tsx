@@ -2,6 +2,7 @@ import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
+import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -19,7 +20,6 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { IconForbid, IconPencil, IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -51,16 +51,17 @@ export const RecordDetailRelationSection = () => {
   );
 
   const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | null
+    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
   >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
 
+  // TODO: use new relation type
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
-      ? [fieldValue]
-      : fieldValue?.edges.map(({ node }: { node: ObjectRecord }) => node) ?? [];
+      ? [fieldValue as ObjectRecord]
+      : (fieldValue as ObjectRecord[]) ?? [];
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;

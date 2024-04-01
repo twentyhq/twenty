@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { IconMail } from 'twenty-ui';
 
-import { IconMail } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 

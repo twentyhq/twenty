@@ -30,7 +30,9 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
     const operationType = (operation.query.definitions[0] as any).operation;
     const headers = operation.getContext().headers;
 
-    const [queryName, query] = parseQuery(operation.query.loc!.source.body);
+    const [queryName, query] = parseQuery(
+      operation.query.loc?.source.body ?? '',
+    );
 
     if (operationType === 'subscription') {
       const date = new Date().toLocaleTimeString();

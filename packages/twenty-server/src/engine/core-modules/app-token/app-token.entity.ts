@@ -52,20 +52,20 @@ export class AppToken {
   value: string;
 
   @Field()
-  @Column('timestamp with time zone')
+  @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  @Column('timestamp with time zone', { nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
-  @Column('timestamp with time zone', { nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   revokedAt: Date | null;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

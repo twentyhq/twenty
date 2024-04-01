@@ -56,15 +56,15 @@ export class User {
   canImpersonate: boolean;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 
   @Field(() => Workspace, { nullable: false })
@@ -82,7 +82,7 @@ export class User {
   passwordResetToken: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   passwordResetTokenExpiresAt: Date;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {

@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconArrowRight } from '@/ui/display/icon';
+import { IconArrowRight } from 'twenty-ui';
 
 type EventUpdatePropertyProps = {
   propertyName: string;

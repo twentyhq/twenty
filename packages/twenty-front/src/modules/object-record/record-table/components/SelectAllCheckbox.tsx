@@ -20,13 +20,20 @@ export const SelectAllCheckbox = () => {
   const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
   const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
-  const { selectAllRows } = useRecordTable();
+  const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
+    useRecordTable();
 
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  const onChange = () => {
-    selectAllRows();
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setHasUserSelectedAllRows(true);
+      selectAllRows();
+    } else {
+      setHasUserSelectedAllRows(false);
+      resetTableRowSelection();
+    }
   };
 
   return (

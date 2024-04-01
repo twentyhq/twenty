@@ -1,12 +1,12 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -24,10 +24,6 @@ export const triggerCreateRecordsOptimisticEffect = ({
   recordsToCreate: CachedObjectRecord[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = getEdgeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   recordsToCreate.forEach((record) =>
     triggerUpdateRelationsOptimisticEffect({
       cache,
@@ -49,7 +45,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
           toReference,
         },
       ) => {
-        const shouldSkip = !isCachedObjectRecordConnection(
+        const shouldSkip = !isObjectRecordConnectionWithRefs(
           objectMetadataItem.nameSingular,
           rootQueryCachedResponse,
         );
@@ -97,7 +93,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
               if (recordToCreateReference && !recordAlreadyInCache) {
                 nextRootQueryCachedRecordEdges.unshift({
-                  __typename: objectEdgeTypeName,
+                  __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                   node: recordToCreateReference,
                   cursor: '',
                 });

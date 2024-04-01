@@ -1,6 +1,3 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import {
   IconCalendarEvent,
   IconCheck,
@@ -15,7 +12,11 @@ import {
   IconTag,
   IconTextSize,
   IconUser,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

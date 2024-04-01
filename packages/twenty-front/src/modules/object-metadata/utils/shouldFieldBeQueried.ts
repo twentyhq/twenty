@@ -1,17 +1,20 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const shouldFieldBeQueried = ({
   field,
   depth,
-  eagerLoadedRelations,
+  queryFields,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
   depth?: number;
-  eagerLoadedRelations?: Record<string, boolean>;
+  objectRecord?: ObjectRecord;
+  queryFields?: Record<string, any>;
 }): any => {
   if (!isUndefined(depth) && depth < 0) {
     return false;
@@ -25,12 +28,7 @@ export const shouldFieldBeQueried = ({
     return false;
   }
 
-  if (
-    field.type === FieldMetadataType.Relation &&
-    !isUndefined(eagerLoadedRelations) &&
-    (isUndefined(eagerLoadedRelations[field.name]) ||
-      !eagerLoadedRelations[field.name])
-  ) {
+  if (isDefined(queryFields) && !queryFields[field.name]) {
     return false;
   }
 

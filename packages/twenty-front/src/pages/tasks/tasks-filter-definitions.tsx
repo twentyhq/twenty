@@ -1,6 +1,7 @@
+import { IconUserCircle } from 'twenty-ui';
+
 import { Activity } from '@/activities/types/Activity';
 import { FilterDefinitionByEntity } from '@/object-record/object-filter-dropdown/types/FilterDefinitionByEntity';
-import { IconUserCircle } from '@/ui/display/icon';
 
 export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {

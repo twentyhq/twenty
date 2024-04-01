@@ -1,8 +1,7 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconComment } from '@/ui/display/icon';
+import { IconComment } from 'twenty-ui';
 
 const StyledCommentIcon = styled.div`
   align-items: center;
