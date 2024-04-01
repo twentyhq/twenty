@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { MockedProvider, MockLink } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
@@ -26,11 +26,9 @@ const mocks = [
   },
 ];
 
-const mockLink = new MockLink(mocks);
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false} link={mockLink}>
+    <MockedProvider mocks={mocks} addTypename={false}>
       {children}
     </MockedProvider>
   </RecoilRoot>
