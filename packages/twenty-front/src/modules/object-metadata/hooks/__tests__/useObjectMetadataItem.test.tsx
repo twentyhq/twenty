@@ -5,15 +5,9 @@ import { RecoilRoot } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
-    </MockedProvider>
+    <MockedProvider addTypename={false}>{children}</MockedProvider>
   </RecoilRoot>
 );
 

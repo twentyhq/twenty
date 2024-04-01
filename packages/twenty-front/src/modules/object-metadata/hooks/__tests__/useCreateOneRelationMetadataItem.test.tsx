@@ -1,12 +1,11 @@
 import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider, MockLink } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { RelationMetadataType } from '~/generated/graphql';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
@@ -27,12 +26,12 @@ const mocks = [
   },
 ];
 
+const mockLink = new MockLink(mocks);
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+    <MockedProvider mocks={mocks} addTypename={false} link={mockLink}>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );
