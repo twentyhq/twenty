@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
+import { IconBrandGithub } from 'twenty-ui';
 
-import { IconBrandGithub } from '@/ui/display/icon';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 
 import packageJson from '../../../../../../package.json';

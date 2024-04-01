@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { LightIconButton } from 'tsup.ui.index';
+import { IconChevronRight } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
@@ -11,7 +12,6 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconChevronRight } from '@/ui/display/icon';
 import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 
 const StyledRowRightContainer = styled.div`

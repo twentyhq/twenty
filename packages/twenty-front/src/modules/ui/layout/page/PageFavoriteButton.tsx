@@ -1,4 +1,5 @@
-import { IconHeart } from '@/ui/display/icon';
+import { IconHeart } from 'twenty-ui';
+
 import { IconButton } from '@/ui/input/button/components/IconButton';
 
 type PageFavoriteButtonProps = {

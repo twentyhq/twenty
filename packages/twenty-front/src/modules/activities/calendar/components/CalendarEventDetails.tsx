@@ -1,5 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconCalendarEvent } from 'twenty-ui';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
@@ -14,7 +15,6 @@ import {
   ChipSize,
   ChipVariant,
 } from '@/ui/display/chip/components/Chip';
-import { IconCalendarEvent } from '@/ui/display/icon';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 

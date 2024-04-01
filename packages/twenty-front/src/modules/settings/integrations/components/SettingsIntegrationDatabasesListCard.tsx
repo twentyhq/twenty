@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconChevronRight } from '@/ui/display/icon';
 import { Status } from '@/ui/display/status/components/Status';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
