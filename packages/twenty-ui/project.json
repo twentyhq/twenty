@@ -4,13 +4,6 @@
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
   "targets": {
-    "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "packages/twenty-ui/dist"
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
@@ -28,9 +21,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "packages/twenty-ui/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts"
       }
     }
   },

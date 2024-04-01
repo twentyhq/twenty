@@ -1,11 +1,13 @@
-/* eslint-disable */
 export default {
   displayName: 'twenty-ui',
   preset: '../../jest.preset.js',
-  testEnvironment: 'node',
+  setupFilesAfterEnv: ['./setupTests.ts'],
+  testEnvironment: 'jsdom',
+  transformIgnorePatterns: ['../../node_modules/'],
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/packages/twenty-ui',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  coverageDirectory: './coverage',
 };

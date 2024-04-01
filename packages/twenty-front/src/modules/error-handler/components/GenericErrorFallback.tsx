@@ -1,7 +1,7 @@
 import { FallbackProps } from 'react-error-boundary';
-import { Button } from 'tsup.ui.index';
 import { IconRefresh } from 'twenty-ui';
 
+import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
   AnimatedPlaceholderEmptyContainer,

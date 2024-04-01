@@ -7,11 +7,10 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/modules/*"],
-      "~/*": ["src/*"],
-      "twenty-ui": ["../twenty-ui/src/index.ts"]
+      "@/*": ["packages/twenty-front/src/modules/*"],
+      "~/*": ["packages/twenty-front/src/*"],
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
     },
 
     /* Bundler mode */
@@ -39,5 +38,6 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }
