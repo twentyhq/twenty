@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Reference } from '@apollo/client';
+import { Reference, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
+import { IconSettings } from 'twenty-ui';
 
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -20,7 +21,6 @@ import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/f
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -51,6 +51,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
+  const cache = useApolloClient().cache;
 
   const {
     formValues,
@@ -84,38 +85,35 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const { objectMetadataItem: viewObjectMetadataItem } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.View,
+    });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
-
+    onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
 
-      setObjectViews(data.edges.map(({ node }) => node));
+      setObjectViews(views);
     },
   });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
-
+    onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
 
-      setRelationObjectViews(data.edges.map(({ node }) => node));
+      setRelationObjectViews(views);
     },
   });
 
@@ -162,47 +160,58 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
 
-          modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
-                'edges',
-                viewFieldsRef,
-              );
+          modifyRecordFromCache({
+            objectMetadataItem: viewObjectMetadataItem,
+            cache: cache,
+            fieldModifiers: {
+              viewFields: (viewFieldsRef, { readField }) => {
+                const edges = readField<{ node: Reference }[]>(
+                  'edges',
+                  viewFieldsRef,
+                );
 
-              if (!edges) return viewFieldsRef;
+                if (!edges) return viewFieldsRef;
 
-              return {
-                ...viewFieldsRef,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
+                return {
+                  ...viewFieldsRef,
+                  edges: [...edges, { node: viewFieldToCreate }],
+                };
+              },
             },
+            recordId: view.id,
           });
-        });
-        relationObjectViews.forEach(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId:
-              validatedFormValues.relation.type === 'MANY_TO_ONE'
-                ? createdRelation.data?.createOneRelation.fromFieldMetadataId
-                : createdRelation.data?.createOneRelation.toFieldMetadataId,
-            position: relationObjectMetadataItem?.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-          modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
-                'edges',
-                viewFieldsRef,
-              );
 
-              if (!edges) return viewFieldsRef;
+          relationObjectViews.forEach(async (view) => {
+            const viewFieldToCreate = {
+              viewId: view.id,
+              fieldMetadataId:
+                validatedFormValues.relation.type === 'MANY_TO_ONE'
+                  ? createdRelation.data?.createOneRelation.fromFieldMetadataId
+                  : createdRelation.data?.createOneRelation.toFieldMetadataId,
+              position: relationObjectMetadataItem?.fields.length,
+              isVisible: true,
+              size: 100,
+            };
+            modifyRecordFromCache({
+              objectMetadataItem: viewObjectMetadataItem,
+              cache: cache,
+              fieldModifiers: {
+                viewFields: (viewFieldsRef, { readField }) => {
+                  const edges = readField<{ node: Reference }[]>(
+                    'edges',
+                    viewFieldsRef,
+                  );
 
-              return {
-                ...viewFieldsRef,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
-            },
+                  if (!edges) return viewFieldsRef;
+
+                  return {
+                    ...viewFieldsRef,
+                    edges: [...edges, { node: viewFieldToCreate }],
+                  };
+                },
+              },
+              recordId: view.id,
+            });
           });
         });
       } else {
@@ -234,20 +243,25 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
 
-          modifyViewFromCache(view.id, {
-            viewFields: (cachedViewFieldsConnection, { readField }) => {
-              const edges = readField<CachedObjectRecordEdge[]>(
-                'edges',
-                cachedViewFieldsConnection,
-              );
+          modifyRecordFromCache({
+            objectMetadataItem: viewObjectMetadataItem,
+            cache: cache,
+            fieldModifiers: {
+              viewFields: (cachedViewFieldsConnection, { readField }) => {
+                const edges = readField<CachedObjectRecordEdge[]>(
+                  'edges',
+                  cachedViewFieldsConnection,
+                );
 
-              if (!edges) return cachedViewFieldsConnection;
+                if (!edges) return cachedViewFieldsConnection;
 
-              return {
-                ...cachedViewFieldsConnection,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
+                return {
+                  ...cachedViewFieldsConnection,
+                  edges: [...edges, { node: viewFieldToCreate }],
+                };
+              },
             },
+            recordId: view.id,
           });
         });
       }

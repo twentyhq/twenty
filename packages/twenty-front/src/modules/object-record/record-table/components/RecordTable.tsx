@@ -81,7 +81,7 @@ const StyledTable = styled.table<{
     z-index: 6;
   }
 
-  thead th:nth-child(n + 3) {
+  thead th:nth-of-type(n + 3) {
     top: 0;
     z-index: 5;
     position: sticky;

@@ -43,7 +43,13 @@
   --category-icon-background-color: #ebebeb;
   --category-icon-border-color: #d6d6d6;
   --level-1-color: #B3B3B3;
-  
+
+  --dark-docsearch-hit-title-color: #444950;
+  --dark-docsearch-hit-mark-color: #11181c;
+  --dark-docsearch-hit-general-color: #969faf;
+  --light-docsearch-hit-title-color: #bec3c9;
+  --light-docsearch-hit-mark-color: #ffffff;
+  --light-docsearch-hit-general-color: #7f8497;
 }
 
 .markdown > h1 {
@@ -193,6 +199,38 @@ li.coming-soon a::after {
   color: white;
 }
 
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-title {
+  color: var(--dark-docsearch-hit-title-color) !important;
+}
+
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] mark {
+  color: var(--dark-docsearch-hit-mark-color) !important;
+}
+
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-action,
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-icon,
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-path,
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-text,
+[data-theme='dark'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-Tree {
+  color: var(--dark-docsearch-hit-general-color) !important;
+}
+
+
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-title {
+  color: var(--light-docsearch-hit-title-color) !important;
+}
+
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] mark {
+  color: var(--light-docsearch-hit-mark-color) !important;
+}
+
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-action,
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-icon,
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-path,
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-text,
+[data-theme='light'] ul > .DocSearch-Hit[aria-selected='true'] .DocSearch-Hit-Tree {
+  color: var(--light-docsearch-hit-general-color) !important;
+}
 
 [data-theme='light'] .menu__list-item--level1 > .menu__link--active > .icon-and-text {
   color: initial;

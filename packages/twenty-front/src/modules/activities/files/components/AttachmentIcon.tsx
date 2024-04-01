@@ -1,7 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { AttachmentType } from '@/activities/files/types/Attachment';
 import {
   IconFile,
   IconFileText,
@@ -11,7 +9,9 @@ import {
   IconPresentation,
   IconTable,
   IconVideo,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { AttachmentType } from '@/activities/files/types/Attachment';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 const StyledIconContainer = styled.div<{ background: string }>`

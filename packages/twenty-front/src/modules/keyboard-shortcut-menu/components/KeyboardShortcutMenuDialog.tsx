@@ -1,4 +1,5 @@
-import { IconX } from '@/ui/display/icon';
+import { IconX } from 'twenty-ui';
+
 import { IconButton } from '@/ui/input/button/components/IconButton';
 
 import {

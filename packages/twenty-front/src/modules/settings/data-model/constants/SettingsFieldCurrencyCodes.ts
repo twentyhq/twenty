@@ -1,4 +1,3 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   IconCurrencyDollar,
   IconCurrencyEuro,
@@ -6,7 +5,9 @@ import {
   IconCurrencyPound,
   IconCurrencyYen,
   IconCurrencyYuan,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export const SETTINGS_FIELD_CURRENCY_CODES: Record<

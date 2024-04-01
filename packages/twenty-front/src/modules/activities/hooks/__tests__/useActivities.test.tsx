@@ -21,7 +21,6 @@ const mockActivityTarget = {
 
 const mockActivity = {
   __typename: 'Activity',
-  activityTargets: [],
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
   completedAt: '2021-08-03T19:20:06.000Z',
@@ -29,7 +28,6 @@ const mockActivity = {
   title: 'title',
   authorId: '1',
   body: 'body',
-  comments: [],
   dueAt: '2021-08-03T19:20:06.000Z',
   type: 'type',
   assigneeId: '1',
@@ -66,9 +64,7 @@ const mocks: MockedResponse[] = [
                 __typename
                 updatedAt
                 createdAt
-                personId
                 activityId
-                companyId
                 id
               }
               cursor

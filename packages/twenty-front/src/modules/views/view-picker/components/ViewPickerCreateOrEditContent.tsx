@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { IconChevronLeft, IconX } from 'twenty-ui';
 
-import { IconChevronLeft, IconX } from '@/ui/display/icon';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';

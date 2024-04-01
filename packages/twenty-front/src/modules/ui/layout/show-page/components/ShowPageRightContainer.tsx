@@ -1,5 +1,13 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import {
+  IconCalendarEvent,
+  IconCheckbox,
+  IconMail,
+  IconNotes,
+  IconPaperclip,
+  IconTimelineEvent,
+} from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
@@ -11,14 +19,6 @@ import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import {
-  IconCalendarEvent,
-  IconCheckbox,
-  IconMail,
-  IconNotes,
-  IconPaperclip,
-  IconTimelineEvent,
-} from '@/ui/display/icon';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';

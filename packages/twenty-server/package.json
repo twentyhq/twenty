@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",
-    "@nx/js": "17.2.8",
+    "@nx/js": "18.1.3",
     "@types/lodash.differencewith": "^4.5.9",
     "@types/lodash.isempty": "^4.4.7",
     "@types/lodash.isequal": "^4.5.8",
