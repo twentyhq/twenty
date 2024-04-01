@@ -1,0 +1,24 @@
+name: 'Test Docker Compose'
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Run compose
+      run: |
+        # change image to localbuild using yq
+        yq eval 'del(.services.server.image)' -i docker-compose.yml
+        yq eval '.services.server.build.context = "../../../"' -i docker-compose.yml
+        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/prod/twenty/Dockerfile"' -i docker-compose.yml
+
+        yq eval 'del(.services.db.image)' -i docker-compose.yml
+        yq eval '.services.db.build.context = "../../../"' -i docker-compose.yml
+        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/prod/twenty-postgres/Dockerfile"' -i docker-compose.yml
+
+        cat docker-compose.yml
+      working-directory: ./packages/twenty-docker/prod/
