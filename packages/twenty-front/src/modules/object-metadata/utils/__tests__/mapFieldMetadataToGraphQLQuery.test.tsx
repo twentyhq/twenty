@@ -40,7 +40,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should not return relation if depth is < 1', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationFieldDepth: 0,
+      depth: 0,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
@@ -51,7 +51,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return relation if it matches depth', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationFieldDepth: 1,
+      depth: 1,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
@@ -88,7 +88,7 @@ idealCustomerProfile
   it('should return relation with all sub relations if it matches depth', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationFieldDepth: 2,
+      depth: 2,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
@@ -239,11 +239,26 @@ idealCustomerProfile
 }`);
   });
 
-  it('should return eagerLoaded relations', async () => {
+  it('should return GraphQL fields based on queryFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationFieldDepth: 2,
-      relationFieldEagerLoad: { accountOwner: true, people: true },
+      depth: 2,
+      queryFields: {
+        accountOwner: true,
+        people: true,
+        xLink: true,
+        linkedinLink: true,
+        domainName: true,
+        annualRecurringRevenue: true,
+        createdAt: true,
+        address: true,
+        updatedAt: true,
+        name: true,
+        accountOwnerId: true,
+        employees: true,
+        id: true,
+        idealCustomerProfile: true,
+      },
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,

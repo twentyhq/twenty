@@ -78,9 +78,7 @@ export const TaskRow = ({ task }: { task: Activity }) => {
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
-    activityId: task.id,
-  });
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(task);
 
   return (
     <StyledContainer

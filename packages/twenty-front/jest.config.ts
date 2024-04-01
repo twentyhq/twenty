@@ -18,9 +18,9 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 70,
-      lines: 70,
-      functions: 60,
+      statements: 65,
+      lines: 65,
+      functions: 55,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

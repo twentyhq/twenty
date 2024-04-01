@@ -3,6 +3,7 @@ import { isString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sanitizeLink } from '@/object-record/utils/sanitizeLinkRecordInput';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -12,7 +13,7 @@ export const sanitizeRecordInput = ({
   recordInput,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  recordInput: Record<string, unknown>;
+  recordInput: Partial<ObjectRecord>;
 }) => {
   const filteredResultRecord = Object.fromEntries(
     Object.entries(recordInput)
@@ -22,6 +23,10 @@ export const sanitizeRecordInput = ({
         );
 
         if (!fieldMetadataItem) return undefined;
+
+        if (!fieldMetadataItem.isNullable && fieldValue == null) {
+          return undefined;
+        }
 
         if (
           fieldMetadataItem.type === FieldMetadataType.Relation &&

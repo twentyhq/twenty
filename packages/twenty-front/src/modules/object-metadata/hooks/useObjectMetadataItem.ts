@@ -11,7 +11,6 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
@@ -40,7 +39,8 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
-  eagerLoadedRelations?: Record<string, any>,
+  queryFields?: Record<string, any>,
+  computeReferences = false,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -83,15 +83,11 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const modifyRecordFromCache = useModifyRecordFromCache({
-    objectMetadataItem,
-  });
-
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
-    eagerLoadedRelations,
+    queryFields,
   });
 
   const generateFindDuplicateRecordsQuery =
@@ -109,14 +105,18 @@ export const useObjectMetadataItem = (
 
   const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
+    depth,
+    computeReferences,
   });
 
   const deleteOneRecordMutation = generateDeleteOneRecordMutation({
@@ -144,7 +144,6 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,
-    modifyRecordFromCache,
     findManyRecordsQuery,
     findDuplicateRecordsQuery,
     findOneRecordQuery,

@@ -1,4 +1,5 @@
 import { ClipboardEvent, useCallback, useMemo } from 'react';
+import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
@@ -16,7 +17,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -47,7 +48,7 @@ export const ActivityBodyEditor = ({
   fillTitleFromBody,
 }: ActivityBodyEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
-
+  const cache = useApolloClient().cache;
   const activity = activityInStore as Activity | null;
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
@@ -67,9 +68,6 @@ export const ActivityBodyEditor = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
-  const modifyActivityFromCache = useModifyRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -172,10 +170,15 @@ export const ActivityBodyEditor = ({
           };
         });
 
-        modifyActivityFromCache(activityId, {
-          body: () => {
-            return newStringifiedBody;
+        modifyRecordFromCache({
+          recordId: activityId,
+          fieldModifiers: {
+            body: () => {
+              return newStringifiedBody;
+            },
           },
+          cache,
+          objectMetadataItem: objectMetadataItemActivity,
         });
 
         const activityTitleHasBeenSet = snapshot
@@ -198,16 +201,27 @@ export const ActivityBodyEditor = ({
             };
           });
 
-          modifyActivityFromCache(activityId, {
-            title: () => {
-              return newTitleFromBody;
+          modifyRecordFromCache({
+            recordId: activityId,
+            fieldModifiers: {
+              title: () => {
+                return newTitleFromBody;
+              },
             },
+            cache,
+            objectMetadataItem: objectMetadataItemActivity,
           });
         }
 
         handlePersistBody(newStringifiedBody);
       },
-    [activityId, fillTitleFromBody, modifyActivityFromCache, handlePersistBody],
+    [
+      activityId,
+      cache,
+      objectMetadataItemActivity,
+      fillTitleFromBody,
+      handlePersistBody,
+    ],
   );
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);

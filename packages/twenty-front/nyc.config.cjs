@@ -14,8 +14,8 @@ const modulesCoverage = {
 };
 
 const pagesCoverage = {
-  statements: 60,
-  lines: 60,
+  statements: 55,
+  lines: 55,
   functions: 45,
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };

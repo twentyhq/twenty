@@ -51,16 +51,17 @@ export const RecordDetailRelationSection = () => {
   );
 
   const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | null
+    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
   >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
 
+  // TODO: use new relation type
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const isFromManyObjects = relationType === 'FROM_MANY_OBJECTS';
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
-      ? [fieldValue]
-      : fieldValue?.edges.map(({ node }: { node: ObjectRecord }) => node) ?? [];
+      ? [fieldValue as ObjectRecord]
+      : (fieldValue as ObjectRecord[]) ?? [];
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
