@@ -1,4 +1,5 @@
-import { IconApps } from '@/ui/display/icon';
+import { IconApps } from 'twenty-ui';
+
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { createState } from '@/ui/utilities/state/utils/createState';
 

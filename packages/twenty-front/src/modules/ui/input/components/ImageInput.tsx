@@ -1,13 +1,8 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconFileUpload, IconTrash, IconUpload, IconX } from 'twenty-ui';
 
-import {
-  IconFileUpload,
-  IconTrash,
-  IconUpload,
-  IconX,
-} from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { isDefined } from '~/utils/isDefined';
 

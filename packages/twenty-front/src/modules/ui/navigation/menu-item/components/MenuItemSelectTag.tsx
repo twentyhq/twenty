@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { Tag } from 'tsup.ui.index';
+import { IconCheck } from 'twenty-ui';
 
-import { IconCheck } from '@/ui/display/icon';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
