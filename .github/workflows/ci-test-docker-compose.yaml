@@ -20,5 +20,18 @@ jobs:
         yq eval '.services.db.build.context = "../../../"' -i docker-compose.yml
         yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/prod/twenty-postgres/Dockerfile"' -i docker-compose.yml
 
-        cat docker-compose.yml
+        docker-compose up -d
+
+        docker-compose logs &
+        pid = $!
+
+        count=0
+        while ! curl -s http://localhost:3000;
+            do sleep 1;
+            count=$((count+1));
+            if [ $count -gt 300 ]; then
+                echo "Failed to start server"
+                exit 1
+            fi
+        done
       working-directory: ./packages/twenty-docker/prod/
