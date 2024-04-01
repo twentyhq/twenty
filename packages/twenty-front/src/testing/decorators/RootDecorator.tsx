@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
+import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientProvider';
 
 import { InitializeHotkeyStorybookHookEffect } from '../InitializeHotkeyStorybookHook';
 import { mockedApolloClient } from '../mockedApolloClient';
@@ -10,10 +10,10 @@ import { mockedApolloClient } from '../mockedApolloClient';
 export const RootDecorator: Decorator = (Story) => (
   <RecoilRoot>
     <ApolloProvider client={mockedApolloClient}>
-      <ApolloProvider client={mockedMetadataApolloClient}>
+      <ApolloMetadataClientMockedProvider>
         <InitializeHotkeyStorybookHookEffect />
         <Story />
-      </ApolloProvider>
+      </ApolloMetadataClientMockedProvider>
     </ApolloProvider>
   </RecoilRoot>
 );

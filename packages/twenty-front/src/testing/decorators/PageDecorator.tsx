@@ -5,12 +5,12 @@ import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloMetadataClientProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
 
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
@@ -38,7 +38,7 @@ export const PageDecorator: Decorator<{
 }> = (Story, { args }) => (
   <RecoilRoot>
     <ApolloProvider client={mockedApolloClient}>
-      <ApolloProvider client={mockedMetadataApolloClient}>
+      <ApolloMetadataClientMockedProvider>
         <UserProvider>
           <ClientConfigProvider>
             <MemoryRouter
@@ -62,7 +62,7 @@ export const PageDecorator: Decorator<{
             </MemoryRouter>
           </ClientConfigProvider>
         </UserProvider>
-      </ApolloProvider>
+      </ApolloMetadataClientMockedProvider>
     </ApolloProvider>
   </RecoilRoot>
 );
