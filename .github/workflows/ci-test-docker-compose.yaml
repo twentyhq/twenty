@@ -19,6 +19,7 @@ jobs:
         yq eval 'del(.services.server.image)' -i docker-compose.yml
         yq eval '.services.server.build.context = "../../../"' -i docker-compose.yml
         yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/prod/twenty/Dockerfile"' -i docker-compose.yml
+        yq eval '.services.server.restart = "no"' -i docker-compose.yml
 
         yq eval 'del(.services.db.image)' -i docker-compose.yml
         yq eval '.services.db.build.context = "../../../"' -i docker-compose.yml
