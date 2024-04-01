@@ -75,6 +75,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.MultiSelect: {
       throw new Error('Not implemented yet');
     }
+    case FieldMetadataType.RawJson: {
+      return null;
+    }
     default: {
       throw new Error('Unhandled FieldMetadataType');
     }

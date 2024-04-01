@@ -146,3 +146,4 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;
+export type FieldJsonValue = string;
