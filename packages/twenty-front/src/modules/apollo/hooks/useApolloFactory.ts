@@ -1,8 +1,9 @@
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
+import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
@@ -21,6 +22,8 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const [, setPreviousUrl] = useRecoilState(previousUrlState);
+  const location = useLocation();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
@@ -45,6 +48,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
+          setPreviousUrl(`${location.pathname}${location.search}`);
           navigate(AppPath.SignInUp);
         }
       },
@@ -56,7 +60,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
     return apolloRef.current.getClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTokenPair, isDebugMode]);
+  }, [setTokenPair, isDebugMode, setPreviousUrl]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
