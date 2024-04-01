@@ -11,6 +11,7 @@ jobs:
 
     - name: Run compose
       run: |
+        echo "Patching docker-compose.yml..."
         # change image to localbuild using yq
         yq eval 'del(.services.server.image)' -i docker-compose.yml
         yq eval '.services.server.build.context = "../../../"' -i docker-compose.yml
@@ -20,11 +21,22 @@ jobs:
         yq eval '.services.db.build.context = "../../../"' -i docker-compose.yml
         yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/prod/twenty-postgres/Dockerfile"' -i docker-compose.yml
 
-        docker-compose up -d
+        echo "Setting up .env file..."
+        cp .env.example .env
+        echo "Generating secrets..."
+        echo "# === Randomly generated secrets ===" >>.env
+        echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
 
+        echo "Starting server..."
+        docker-compose up -d
         docker-compose logs &
         pid = $!
 
+        echo "Waiting for server to start..."
         count=0
         while ! curl -s http://localhost:3000;
             do sleep 1;
