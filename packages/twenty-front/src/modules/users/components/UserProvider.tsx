@@ -5,9 +5,10 @@ import { useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Workspaces, workspacesState } from '@/auth/states/workspaces';
+import { workspacesState } from '@/auth/states/workspaces';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { User } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
@@ -21,32 +22,34 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     currentWorkspaceMemberState,
   );
 
-  const { loading: queryLoading, data: queryData } = useQuery(GET_CURRENT_USER);
+  const { loading: queryLoading, data: queryData } = useQuery<{
+    currentUser: User;
+  }>(GET_CURRENT_USER);
 
   useEffect(() => {
     if (!queryLoading) {
       setIsLoading(false);
     }
-    if (isDefined(queryData?.currentUser)) {
-      setCurrentUser(queryData.currentUser);
-      setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
-    }
-    if (isDefined(queryData?.currentUser?.workspaceMember)) {
-      const workspaceMember = queryData.currentUser.workspaceMember;
+
+    if (!isDefined(queryData?.currentUser)) return;
+
+    setCurrentUser(queryData.currentUser);
+    setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
+
+    const { workspaceMember, workspaces: userWorkspaces } =
+      queryData.currentUser;
+
+    if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }
-    if (isDefined(queryData?.currentUser?.workspaces)) {
-      const validWorkspaces = queryData.currentUser.workspaces.filter(
-        (obj: any) => obj.workspace !== null && obj.workspace !== undefined,
-      );
-      const workspaces: Workspaces[] = [];
-      validWorkspaces.forEach((validWorkspace: any) => {
-        const workspace = validWorkspace.workspace! as Workspaces;
-        workspaces.push(workspace);
-      });
+
+    if (isDefined(userWorkspaces)) {
+      const workspaces = userWorkspaces
+        .map(({ workspace }) => workspace)
+        .filter(isDefined);
 
       setWorkspaces(workspaces);
     }
