@@ -1,4 +1,5 @@
 import { ApolloCache } from '@apollo/client/cache';
+import { print } from 'graphql';
 import gql from 'graphql-tag';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -50,6 +51,12 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   if (isUndefinedOrNull(recordWithConnection)) {
     return;
   }
+
+  console.log({
+    id: cachedRecordId,
+    fragment: print(cacheWriteFragment),
+    recordWithConnection,
+  });
 
   cache.writeFragment<T & { __typename: string }>({
     id: cachedRecordId,
