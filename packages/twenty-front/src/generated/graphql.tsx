@@ -58,6 +58,11 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
+export type AuthorizeApp = {
+  __typename?: 'AuthorizeApp';
+  redirectUrl: Scalars['String'];
+};
+
 export type Billing = {
   __typename?: 'Billing';
   billingFreeTrialDurationInDays?: Maybe<Scalars['Float']>;
@@ -105,6 +110,12 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CreateRemoteServerInput = {
+  foreignDataWrapperOptions: Scalars['JSON'];
+  foreignDataWrapperType: Scalars['String'];
+  userMappingOptions?: InputMaybe<Scalars['JSON']>;
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -125,6 +136,13 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type ExchangeAuthCode = {
+  __typename?: 'ExchangeAuthCode';
+  accessToken: AuthToken;
+  loginToken: AuthToken;
+  refreshToken: AuthToken;
 };
 
 export type FeatureFlag = {
@@ -250,12 +268,15 @@ export type LoginToken = {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
+  authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
+  createOneRemoteServer: RemoteServer;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
+  deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -282,6 +303,12 @@ export type MutationActivateWorkspaceArgs = {
 };
 
 
+export type MutationAuthorizeAppArgs = {
+  clientId: Scalars['String'];
+  codeChallenge: Scalars['String'];
+};
+
+
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -294,8 +321,18 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOneRemoteServerArgs = {
+  input: CreateRemoteServerInput;
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRemoteServerArgs = {
+  input: RemoteServerIdInput;
 };
 
 
@@ -425,6 +462,9 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  exchangeAuthorizationCode: ExchangeAuthCode;
+  findManyRemoteServersByType: Array<RemoteServer>;
+  findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -449,6 +489,22 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryExchangeAuthorizationCodeArgs = {
+  authorizationCode: Scalars['String'];
+  codeVerifier: Scalars['String'];
+};
+
+
+export type QueryFindManyRemoteServersByTypeArgs = {
+  input: RemoteServerTypeInput;
+};
+
+
+export type QueryFindOneRemoteServerByIdArgs = {
+  input: RemoteServerIdInput;
 };
 
 
@@ -564,6 +620,14 @@ export type RemoteServer = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type RemoteServerIdInput = {
+  /** The id of the record. */
+  id: Scalars['ID'];
+};
+
+export type RemoteServerTypeInput = {
+  foreignDataWrapperType: Scalars['String'];
+};
 export type RemoteTable = {
   __typename?: 'RemoteTable';
   name: Scalars['String'];
@@ -968,6 +1032,14 @@ export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'An
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
 export type AuthTokensFragmentFragment = { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
+
+export type AuthorizeAppMutationVariables = Exact<{
+  clientId: Scalars['String'];
+  codeChallenge: Scalars['String'];
+}>;
+
+
+export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
 
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1492,6 +1564,40 @@ export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackM
 export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
 export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
 export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
+export const AuthorizeAppDocument = gql`
+    mutation authorizeApp($clientId: String!, $codeChallenge: String!) {
+  authorizeApp(clientId: $clientId, codeChallenge: $codeChallenge) {
+    redirectUrl
+  }
+}
+    `;
+export type AuthorizeAppMutationFn = Apollo.MutationFunction<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
+
+/**
+ * __useAuthorizeAppMutation__
+ *
+ * To run a mutation, you first call `useAuthorizeAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthorizeAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authorizeAppMutation, { data, loading, error }] = useAuthorizeAppMutation({
+ *   variables: {
+ *      clientId: // value for 'clientId'
+ *      codeChallenge: // value for 'codeChallenge'
+ *   },
+ * });
+ */
+export function useAuthorizeAppMutation(baseOptions?: Apollo.MutationHookOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AuthorizeAppMutation, AuthorizeAppMutationVariables>(AuthorizeAppDocument, options);
+      }
+export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMutation>;
+export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
+export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
 export const ChallengeDocument = gql`
     mutation Challenge($email: String!, $password: String!) {
   challenge(email: $email, password: $password) {

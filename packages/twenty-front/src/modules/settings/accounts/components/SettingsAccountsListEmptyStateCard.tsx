@@ -1,13 +1,11 @@
-import { useCallback } from 'react';
 import styled from '@emotion/styled';
 
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardHeader } from '@/ui/layout/card/components/CardHeader';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useGenerateTransientTokenMutation } from '~/generated/graphql';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -27,18 +25,7 @@ type SettingsAccountsListEmptyStateCardProps = {
 export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
-  const [generateTransientToken] = useGenerateTransientTokenMutation();
-
-  const handleGmailLogin = useCallback(async () => {
-    const authServerUrl = REACT_APP_SERVER_BASE_URL;
-
-    const transientToken = await generateTransientToken();
-
-    const token =
-      transientToken.data?.generateTransientToken.transientToken.token;
-
-    window.location.href = `${authServerUrl}/auth/google-gmail?transientToken=${token}`;
-  }, [generateTransientToken]);
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
   return (
     <Card>
@@ -48,7 +35,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconGoogle}
           title="Connect with Google"
           variant="secondary"
-          onClick={handleGmailLogin}
+          onClick={triggerGoogleApisOAuth}
         />
       </StyledBody>
     </Card>

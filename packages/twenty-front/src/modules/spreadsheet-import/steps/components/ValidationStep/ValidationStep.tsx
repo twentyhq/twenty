@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid
 import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
+import { IconTrash } from 'twenty-ui';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -9,7 +10,6 @@ import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { IconTrash } from '@/ui/display/icon';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';

@@ -24,12 +24,12 @@ export const USER_GUIDE_INDEX = {
     { title: 'Emails', url: 'emails' },
     { title: 'Notes', url: 'notes' },
     { title: 'Tasks', url: 'tasks' },
-    { title: 'Integrations', url: 'integrations'},
-    { title: 'API and Webhooks', url: 'api-webhooks'},
+    { title: 'Integrations', url: 'integrations' },
+    { title: 'API and Webhooks', url: 'api-webhooks' },
   ],
   Other: [
-    { title: 'Glossary', url: 'glossary'},
-    { title: 'Tips', url: 'tips'},
-    { title: 'Github', url: 'github'},
+    { title: 'Glossary', url: 'glossary' },
+    { title: 'Tips', url: 'tips' },
+    { title: 'Github', url: 'github' },
   ],
 };

@@ -2,11 +2,11 @@ import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconCheckbox, IconNotes } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
 import {

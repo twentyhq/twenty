@@ -1,7 +1,6 @@
 import { ApolloCache } from '@apollo/client';
 
 import { getRelationDefinition } from '@/apollo/optimistic-effect/utils/getRelationDefinition';
-import { isObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isObjectRecordConnection';
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
@@ -9,6 +8,7 @@ import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo/types/coreObjectNamesToDeleteOnRelationDetach';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

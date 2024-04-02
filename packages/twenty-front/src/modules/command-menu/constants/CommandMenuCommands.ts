@@ -4,7 +4,7 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
 
 import { Command, CommandType } from '../types/Command';
 

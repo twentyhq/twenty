@@ -1,4 +1,11 @@
 import { useRecoilValue } from 'recoil';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
@@ -6,13 +13,6 @@ import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hook
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconEyeOff,
-  IconFilter,
-  IconSortDescending,
-} from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';

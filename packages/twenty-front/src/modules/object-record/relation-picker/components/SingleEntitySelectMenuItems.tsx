@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
+import { IconPlus } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
-import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';

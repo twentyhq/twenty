@@ -13,6 +13,12 @@ const meta: Meta<typeof Calendar> = {
     container: { width: 728 },
     msw: graphqlMocks,
   },
+  args: {
+    targetableObject: {
+      id: '1',
+      targetObjectNameSingular: 'Person',
+    },
+  },
 };
 
 export default meta;
