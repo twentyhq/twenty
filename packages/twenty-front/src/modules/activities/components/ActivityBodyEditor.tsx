@@ -1,7 +1,6 @@
 import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
-import styled from '@emotion/styled';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -32,11 +31,6 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getFileType } from '../files/utils/getFileType';
 
 import '@blocknote/react/style.css';
-
-const StyledBlockNoteStyledContainer = styled.div`
-  height: 100%;
-  width: 100%;
-`;
 
 type ActivityBodyEditorProps = {
   activityId: string;
@@ -388,14 +382,12 @@ export const ActivityBodyEditor = ({
   };
 
   return (
-    <StyledBlockNoteStyledContainer onClick={() => editor.focus()}>
-      <BlockEditor
-        onFocus={handleBlockEditorFocus}
-        onBlur={handlerBlockEditorBlur}
-        onPaste={handleImagePaste}
-        onChange={handleEditorChange}
-        editor={editor}
-      />
-    </StyledBlockNoteStyledContainer>
+    <BlockEditor
+      onFocus={handleBlockEditorFocus}
+      onBlur={handlerBlockEditorBlur}
+      onPaste={handleImagePaste}
+      onChange={handleEditorChange}
+      editor={editor}
+    />
   );
 };
