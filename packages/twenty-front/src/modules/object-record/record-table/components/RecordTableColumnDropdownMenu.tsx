@@ -7,18 +7,12 @@ import {
   IconSortDescending,
 } from 'twenty-ui';
 
-import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { isDefined } from '~/utils/isDefined';
 
 import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -30,7 +24,11 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
+  const {
+    visibleTableColumnsSelector,
+    onToggleColumnFilterState,
+    onToggleColumnSortState,
+  } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
@@ -68,59 +66,19 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const { availableSortDefinitions, handleAddSort: addSortHandler } =
-    useObjectSortDropdown();
-
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-    availableFilterDefinitionsState,
-    selectFilter,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-  } = useFilterDropdown({ filterDropdownId: 'view-filter' });
-
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
-  );
+  const onToggleColumnFilter = useRecoilValue(onToggleColumnFilterState);
+  const onToggleColumnSort = useRecoilValue(onToggleColumnSortState);
 
   const handleSortClick = () => {
     closeDropdown();
-    const sortDefinition = availableSortDefinitions.find(
-      (definition) => definition.fieldMetadataId === column.fieldMetadataId,
-    );
-    if (isDefined(sortDefinition)) {
-      addSortHandler(sortDefinition);
-    }
-  };
 
-  const setHotkeyScope = useSetHotkeyScope();
+    onToggleColumnSort?.(column.fieldMetadataId);
+  };
 
   const handleFilterClick = () => {
     closeDropdown();
 
-    const filterDefinition = availableFilterDefinitions.find(
-      (definition) => definition.fieldMetadataId === column.fieldMetadataId,
-    );
-
-    if (isDefined(filterDefinition)) {
-      selectFilter?.({
-        fieldMetadataId: column.fieldMetadataId,
-        value: '',
-        operand: getOperandsForFilterType(filterDefinition.type)?.[0],
-        displayValue: '',
-        definition: filterDefinition,
-      });
-      setIsObjectFilterDropdownOperandSelectUnfolded(false);
-      setFilterDefinitionUsedInDropdown(filterDefinition);
-      if (filterDefinition.type === 'RELATION') {
-        setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-      }
-      setSelectedOperandInDropdown(
-        getOperandsForFilterType(filterDefinition.type)?.[0],
-      );
-      setObjectFilterDropdownSearchInput('');
-    }
+    onToggleColumnFilter?.(column.fieldMetadataId);
   };
 
   return (

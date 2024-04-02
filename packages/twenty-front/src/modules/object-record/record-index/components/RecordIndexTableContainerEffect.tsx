@@ -23,6 +23,7 @@ export const RecordIndexTableContainerEffect = ({
     setOnEntityCountChange,
     resetTableRowSelection,
     selectedRowIdsSelector,
+    setOnToggleColumnFilter,
   } = useRecordTable({
     recordTableId,
   });
@@ -48,6 +49,14 @@ export const RecordIndexTableContainerEffect = ({
     selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
   });
+
+  // TODO: import relevant stuff from view here :
+
+  const handleToggleColumnFilter = () => {};
+
+  useEffect(() => {
+    setOnToggleColumnFilter(() => handleToggleColumnFilter());
+  }, [setOnToggleColumnFilter]);
 
   useEffect(() => {
     setActionBarEntries?.();
