@@ -1,4 +1,5 @@
 import {
+  Icon123,
   IconCalendarEvent,
   IconCheck,
   IconCoins,
@@ -102,6 +103,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'Full Name',
     Icon: IconUser,
     defaultValue: { firstName: 'John', lastName: 'Doe' },
+  },
+  [FieldMetadataType.Json]: {
+    label: 'JSON',
+    Icon: Icon123,
+    defaultValue: { key: 'value' },
   },
   [FieldMetadataType.Address]: {
     label: 'Address',
