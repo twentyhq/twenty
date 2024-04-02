@@ -23,6 +23,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
+import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -156,22 +157,39 @@ export class DatabaseStructureService {
     return results.length >= 1;
   }
 
-  getPostgresDataType(fieldMetadata: FieldMetadataEntity): string {
+  getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
     const typeORMType = fieldMetadataTypeToColumnType(fieldMetadata.type);
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    // Compute enum name to compare data type properly
-    if (typeORMType === 'enum') {
-      const objectName = fieldMetadata.object?.nameSingular;
-      const prefix = fieldMetadata.isCustom ? '_' : '';
-      const fieldName = fieldMetadata.name;
+    const normalizer = (type: FieldMetadataType, columnName: string) => {
+      // Compute enum name to compare data type properly
+      if (typeORMType === 'enum') {
+        const objectName = fieldMetadata.object?.nameSingular;
+        const prefix = fieldMetadata.isCustom ? '_' : '';
 
-      return `${objectName}_${prefix}${fieldName}_enum`;
+        return `${objectName}_${prefix}${columnName}_enum`;
+      }
+
+      return mainDataSource.driver.normalizeType({
+        type: typeORMType,
+      });
+    };
+
+    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+
+      if (!compositeType) {
+        throw new Error(
+          `Composite type definition not found for ${fieldMetadata.type}`,
+        );
+      }
+
+      return compositeType.properties.map((compositeProperty) =>
+        normalizer(compositeProperty.type, compositeProperty.name),
+      );
     }
 
-    return mainDataSource.driver.normalizeType({
-      type: typeORMType,
-    });
+    return [normalizer(fieldMetadata.type, fieldMetadata.name)];
   }
 
   getFieldMetadataTypeFromPostgresDataType(
