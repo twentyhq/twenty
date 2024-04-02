@@ -120,7 +120,7 @@ export const FooterDesktop = () => {
       >
         <div>
           <span style={{ fontFamily: 'Inter, sans-serif' }}>©</span>
-          2023 Twenty PBC
+          {new Date().getFullYear()} Twenty PBC
         </div>
         <div
           style={{
