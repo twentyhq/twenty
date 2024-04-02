@@ -1,6 +1,6 @@
 import { ObjectType, ID, Field, registerEnumType } from '@nestjs/graphql';
 
-import { TimelineCalendarEventAttendee } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-attendee.dto';
+import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
 
 export enum TimelineCalendarEventVisibility {
   METADATA = 'METADATA',
@@ -53,8 +53,8 @@ export class TimelineCalendarEvent {
   @Field(() => LinkMetadata)
   conferenceLink: LinkMetadata;
 
-  @Field(() => [TimelineCalendarEventAttendee])
-  attendees: TimelineCalendarEventAttendee[];
+  @Field(() => [TimelineCalendarEventParticipant])
+  participants: TimelineCalendarEventParticipant[];
 
   @Field(() => TimelineCalendarEventVisibility)
   visibility: TimelineCalendarEventVisibility;

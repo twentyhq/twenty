@@ -18,9 +18,9 @@ import { MessageParticipantRepository } from 'src/modules/messaging/repositories
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
-import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
-import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
+import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 
 @Injectable()
@@ -36,9 +36,9 @@ export class CreateCompanyAndContactService {
     private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
-    @InjectObjectMetadataRepository(CalendarEventAttendeeObjectMetadata)
-    private readonly calendarEventAttendeeRepository: CalendarEventAttendeeRepository,
-    private readonly calendarEventAttendeeService: CalendarEventAttendeeService,
+    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
+    private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
+    private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
   async createCompaniesAndContacts(
@@ -162,14 +162,14 @@ export class CreateCompanyAndContactService {
           transactionManager,
         );
 
-        const calendarEventAttendeesWithoutPersonIdAndWorkspaceMemberId =
-          await this.calendarEventAttendeeRepository.getWithoutPersonIdAndWorkspaceMemberId(
+        const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
+          await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
             workspaceId,
             transactionManager,
           );
 
-        await this.calendarEventAttendeeService.updateCalendarEventAttendeesAfterContactCreation(
-          calendarEventAttendeesWithoutPersonIdAndWorkspaceMemberId,
+        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
+          calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );

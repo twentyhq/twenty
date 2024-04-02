@@ -115,7 +115,7 @@ export const CalendarEventRow = ({
     : format(startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
-  const isCurrentWorkspaceMemberAttending = calendarEvent.attendees?.some(
+  const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
   const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
@@ -154,19 +154,19 @@ export const CalendarEventRow = ({
           </StyledVisibilityCard>
         )}
       </StyledLabels>
-      {!!calendarEvent.attendees?.length && (
+      {!!calendarEvent.participants?.length && (
         <AvatarGroup
-          avatars={calendarEvent.attendees.map((attendee) => (
+          avatars={calendarEvent.participants.map((participant) => (
             <Avatar
-              key={[attendee.workspaceMemberId, attendee.displayName]
+              key={[participant.workspaceMemberId, participant.displayName]
                 .filter(isDefined)
                 .join('-')}
               avatarUrl={
-                attendee.workspaceMemberId === currentWorkspaceMember?.id
+                participant.workspaceMemberId === currentWorkspaceMember?.id
                   ? currentWorkspaceMember?.avatarUrl
                   : undefined
               }
-              placeholder={attendee.displayName}
+              placeholder={participant.displayName}
               type="rounded"
             />
           ))}

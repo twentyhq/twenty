@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { calendarEventAttendeeStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { calendarEventParticipantStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
@@ -11,7 +11,7 @@ import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objec
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
-export enum CalendarEventAttendeeResponseStatus {
+export enum CalendarEventParticipantResponseStatus {
   NEEDS_ACTION = 'NEEDS_ACTION',
   DECLINED = 'DECLINED',
   TENTATIVE = 'TENTATIVE',
@@ -19,20 +19,20 @@ export enum CalendarEventAttendeeResponseStatus {
 }
 
 @ObjectMetadata({
-  standardId: standardObjectIds.calendarEventAttendee,
-  namePlural: 'calendarEventAttendees',
-  labelSingular: 'Calendar event attendee',
-  labelPlural: 'Calendar event attendees',
-  description: 'Calendar event attendees',
+  standardId: standardObjectIds.calendarEventParticipant,
+  namePlural: 'calendarEventParticipants',
+  labelSingular: 'Calendar event participant',
+  labelPlural: 'Calendar event participants',
+  description: 'Calendar event participants',
   icon: 'IconCalendar',
 })
 @IsSystem()
 @Gate({
   featureFlag: 'IS_CALENDAR_ENABLED',
 })
-export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
+export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.calendarEvent,
+    standardId: calendarEventParticipantStandardFieldIds.calendarEvent,
     type: FieldMetadataType.RELATION,
     label: 'Event ID',
     description: 'Event ID',
@@ -42,7 +42,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   calendarEvent: CalendarEventObjectMetadata;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.handle,
+    standardId: calendarEventParticipantStandardFieldIds.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -51,7 +51,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.displayName,
+    standardId: calendarEventParticipantStandardFieldIds.displayName,
     type: FieldMetadataType.TEXT,
     label: 'Display Name',
     description: 'Display Name',
@@ -60,7 +60,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   displayName: string;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.isOrganizer,
+    standardId: calendarEventParticipantStandardFieldIds.isOrganizer,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Organizer',
     description: 'Is Organizer',
@@ -70,43 +70,43 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   isOrganizer: boolean;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.responseStatus,
+    standardId: calendarEventParticipantStandardFieldIds.responseStatus,
     type: FieldMetadataType.SELECT,
     label: 'Response Status',
     description: 'Response Status',
     icon: 'IconUser',
     options: [
       {
-        value: CalendarEventAttendeeResponseStatus.NEEDS_ACTION,
+        value: CalendarEventParticipantResponseStatus.NEEDS_ACTION,
         label: 'Needs Action',
         position: 0,
         color: 'orange',
       },
       {
-        value: CalendarEventAttendeeResponseStatus.DECLINED,
+        value: CalendarEventParticipantResponseStatus.DECLINED,
         label: 'Declined',
         position: 1,
         color: 'red',
       },
       {
-        value: CalendarEventAttendeeResponseStatus.TENTATIVE,
+        value: CalendarEventParticipantResponseStatus.TENTATIVE,
         label: 'Tentative',
         position: 2,
         color: 'yellow',
       },
       {
-        value: CalendarEventAttendeeResponseStatus.ACCEPTED,
+        value: CalendarEventParticipantResponseStatus.ACCEPTED,
         label: 'Accepted',
         position: 3,
         color: 'green',
       },
     ],
-    defaultValue: `'${CalendarEventAttendeeResponseStatus.NEEDS_ACTION}'`,
+    defaultValue: `'${CalendarEventParticipantResponseStatus.NEEDS_ACTION}'`,
   })
   responseStatus: string;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.person,
+    standardId: calendarEventParticipantStandardFieldIds.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Person',
@@ -117,7 +117,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: calendarEventAttendeeStandardFieldIds.workspaceMember,
+    standardId: calendarEventParticipantStandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Workspace Member',

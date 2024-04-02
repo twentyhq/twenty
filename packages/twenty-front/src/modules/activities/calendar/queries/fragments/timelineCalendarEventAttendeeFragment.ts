@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const timelineCalendarEventAttendeeFragment = gql`
-  fragment TimelineCalendarEventAttendeeFragment on TimelineCalendarEventAttendee {
+export const timelineCalendarEventParticipantFragment = gql`
+  fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
     personId
     workspaceMemberId
     firstName
