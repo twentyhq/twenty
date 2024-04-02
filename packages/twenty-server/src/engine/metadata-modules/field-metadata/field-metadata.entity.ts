@@ -37,7 +37,6 @@ export enum FieldMetadataType {
   RELATION = 'RELATION',
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
-  JSON = 'JSON',
   RAW_JSON = 'RAW_JSON',
 }
 
