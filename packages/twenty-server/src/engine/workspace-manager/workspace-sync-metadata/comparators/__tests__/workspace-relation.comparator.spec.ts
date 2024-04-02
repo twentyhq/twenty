@@ -9,13 +9,11 @@ describe('WorkspaceRelationComparator', () => {
     comparator = new WorkspaceRelationComparator();
   });
 
-  function createMockRelationMetadata(values: any) {
-    return {
-      fromObjectMetadataId: 'object-1',
-      fromFieldMetadataId: 'field-1',
-      ...values,
-    };
-  }
+  const createMockRelationMetadata = (values: any) => ({
+    fromObjectMetadataId: 'object-1',
+    fromFieldMetadataId: 'field-1',
+    ...values,
+  });
 
   it('should generate CREATE action for new relations', () => {
     const original = [];

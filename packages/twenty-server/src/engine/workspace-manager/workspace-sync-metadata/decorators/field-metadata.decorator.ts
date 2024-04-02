@@ -11,10 +11,11 @@ import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
-export function FieldMetadata<T extends FieldMetadataType>(
-  params: FieldMetadataDecoratorParams<T>,
-): PropertyDecorator {
-  return (target: object, fieldKey: string) => {
+export const FieldMetadata =
+  <T extends FieldMetadataType>(
+    params: FieldMetadataDecoratorParams<T>,
+  ): PropertyDecorator =>
+  (target: object, fieldKey: string) => {
     const existingFieldMetadata =
       TypedReflect.getMetadata('fieldMetadataMap', target.constructor) ?? {};
     const isNullable =
@@ -61,15 +62,14 @@ export function FieldMetadata<T extends FieldMetadataType>(
       target.constructor,
     );
   };
-}
 
-function generateFieldMetadata<T extends FieldMetadataType>(
+const generateFieldMetadata = <T extends FieldMetadataType>(
   params: FieldMetadataDecoratorParams<T>,
   fieldKey: string,
   isNullable: boolean,
   isSystem: boolean,
   gate: GateDecoratorParams | undefined = undefined,
-): ReflectFieldMetadata[string] {
+): ReflectFieldMetadata[string] => {
   const targetColumnMap = generateTargetColumnMap(params.type, false, fieldKey);
   const defaultValue = (params.defaultValue ??
     generateDefaultValue(
@@ -89,4 +89,4 @@ function generateFieldMetadata<T extends FieldMetadataType>(
     defaultValue,
     gate,
   };
-}
+};

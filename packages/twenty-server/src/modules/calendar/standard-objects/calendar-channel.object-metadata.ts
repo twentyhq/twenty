@@ -4,8 +4,8 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { calendarChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { CALENDAR_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -21,7 +21,7 @@ export enum CalendarChannelVisibility {
 }
 
 @ObjectMetadata({
-  standardId: standardObjectIds.calendarChannel,
+  standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
   labelSingular: 'Calendar Channel',
   labelPlural: 'Calendar Channels',
@@ -34,7 +34,7 @@ export enum CalendarChannelVisibility {
 })
 export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.connectedAccount,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: FieldMetadataType.RELATION,
     label: 'Connected Account',
     description: 'Connected Account',
@@ -44,7 +44,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   connectedAccount: ConnectedAccountObjectMetadata;
 
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.handle,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -53,7 +53,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.visibility,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
@@ -77,7 +77,8 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   visibility: string;
 
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.isContactAutoCreationEnabled,
+    standardId:
+      CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
@@ -87,7 +88,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.isSyncEnabled,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
     description: 'Is Sync Enabled',
@@ -97,7 +98,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   isSyncEnabled: boolean;
 
   @FieldMetadata({
-    standardId: calendarChannelStandardFieldIds.syncCursor,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: 'Sync Cursor',
     description:
@@ -108,7 +109,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId:
-      calendarChannelStandardFieldIds.calendarChannelEventAssociations,
+      CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Channel Event Associations',
     description: 'Calendar Channel Event Associations',

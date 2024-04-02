@@ -36,7 +36,7 @@ export const parseResult = (obj: any): any => {
   const result: any = {};
 
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       if (typeof obj[key] === 'object' && obj[key] !== null) {
         result[key] = parseResult(obj[key]);
       } else if (key === '__typename') {

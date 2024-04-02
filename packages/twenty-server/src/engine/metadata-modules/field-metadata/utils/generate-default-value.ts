@@ -2,9 +2,9 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export function generateDefaultValue(
+export const generateDefaultValue = (
   type: FieldMetadataType,
-): FieldMetadataDefaultValue {
+): FieldMetadataDefaultValue => {
   switch (type) {
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
@@ -39,4 +39,4 @@ export function generateDefaultValue(
     default:
       return null;
   }
-}
+};

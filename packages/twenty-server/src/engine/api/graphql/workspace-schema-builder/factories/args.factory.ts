@@ -24,7 +24,7 @@ export class ArgsFactory {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
 
     for (const key in args) {
-      if (!args.hasOwnProperty(key)) {
+      if (!Object.prototype.hasOwnProperty.call(args, key)) {
         continue;
       }
       const arg = args[key];

@@ -4,13 +4,9 @@ import { IntValueNode, Kind } from 'graphql/language';
 export const TimeScalarType = new GraphQLScalarType({
   name: 'Time',
   description: 'Time custom scalar type',
-  serialize(value: Date): number {
-    return value.getTime();
-  },
-  parseValue(value: number): Date {
-    return new Date(value);
-  },
-  parseLiteral(ast): Date {
+  serialize: (value: Date): number => value.getTime(),
+  parseValue: (value: number): Date => new Date(value),
+  parseLiteral: (ast): Date => {
     if (ast.kind === Kind.INT) {
       const intAst = ast as IntValueNode;
 

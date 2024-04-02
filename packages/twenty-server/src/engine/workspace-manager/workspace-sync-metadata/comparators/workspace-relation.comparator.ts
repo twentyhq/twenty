@@ -27,9 +27,8 @@ export class WorkspaceRelationComparator {
     const standardRelationMetadataMap = transformMetadataForComparison(
       standardRelationMetadataCollection,
       {
-        keyFactory(relationMetadata) {
-          return `${relationMetadata.fromObjectMetadataId}->${relationMetadata.fromFieldMetadataId}`;
-        },
+        keyFactory: (relationMetadata) =>
+          `${relationMetadata.fromObjectMetadataId}->${relationMetadata.fromFieldMetadataId}`,
       },
     );
 
@@ -40,9 +39,8 @@ export class WorkspaceRelationComparator {
       {
         shouldIgnoreProperty: (property) =>
           relationPropertiesToIgnore.includes(property),
-        keyFactory(relationMetadata) {
-          return `${relationMetadata.fromObjectMetadataId}->${relationMetadata.fromFieldMetadataId}`;
-        },
+        keyFactory: (relationMetadata) =>
+          `${relationMetadata.fromObjectMetadataId}->${relationMetadata.fromFieldMetadataId}`,
       },
     );
 
@@ -68,7 +66,7 @@ export class WorkspaceRelationComparator {
             });
           }
           break;
-        case 'CHANGE':
+        case 'CHANGE': {
           const fieldName = difference.path[0];
           const property = difference.path[difference.path.length - 1];
 
@@ -101,6 +99,7 @@ export class WorkspaceRelationComparator {
             },
           });
           break;
+        }
       }
     }
 

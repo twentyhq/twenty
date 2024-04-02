@@ -7,7 +7,7 @@ const range = {
   end: 5,
 };
 
-export function generateRatingOptions(): FieldMetadataDefaultOption[] {
+export const generateRatingOptions = (): FieldMetadataDefaultOption[] => {
   const options: FieldMetadataDefaultOption[] = [];
 
   for (let i = range.start; i <= range.end; i++) {
@@ -20,4 +20,4 @@ export function generateRatingOptions(): FieldMetadataDefaultOption[] {
   }
 
   return options;
-}
+};

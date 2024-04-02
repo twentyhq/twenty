@@ -1,11 +1,8 @@
 import { createHash } from 'crypto';
 
-export function createDeterministicUuid(uuid: string): string;
-export function createDeterministicUuid(uuids: string[]): string;
-
-export function createDeterministicUuid(
-  uuidOrUuids: string[] | string,
-): string {
+export const createDeterministicUuid = (
+  uuidOrUuids: string | string[],
+): string => {
   const inputForHash = Array.isArray(uuidOrUuids)
     ? uuidOrUuids.join('-')
     : uuidOrUuids;
@@ -15,7 +12,7 @@ export function createDeterministicUuid(
     4,
     7,
   )}-8${hash.substring(7, 10)}-${hash.substring(10, 22)}`;
-}
+};
 
 type UuidPair = {
   objectId: string;

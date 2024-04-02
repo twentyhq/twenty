@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { messageParticipantStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -11,7 +11,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.messageParticipant,
+  standardId: STANDARD_OBJECT_IDS.messageParticipant,
   namePlural: 'messageParticipants',
   labelSingular: 'Message Participant',
   labelPlural: 'Message Participants',
@@ -21,7 +21,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 @IsSystem()
 export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.message,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.message,
     type: FieldMetadataType.RELATION,
     label: 'Message',
     description: 'Message',
@@ -31,7 +31,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   message: MessageObjectMetadata;
 
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.role,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
     label: 'Role',
     description: 'Role',
@@ -47,7 +47,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   role: string;
 
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.handle,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -56,7 +56,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.displayName,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: 'Display Name',
     description: 'Display Name',
@@ -65,7 +65,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   displayName: string;
 
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.person,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Person',
@@ -76,7 +76,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: messageParticipantStandardFieldIds.workspaceMember,
+    standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Workspace member',

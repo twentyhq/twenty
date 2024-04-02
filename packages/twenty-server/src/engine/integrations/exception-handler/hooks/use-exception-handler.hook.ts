@@ -31,19 +31,19 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
 ): Plugin<PluginContext> => {
   const eventIdKey = options.eventIdKey === null ? null : 'exceptionEventId';
 
-  function addEventId(
+  const addEventId = (
     err: GraphQLError,
     eventId: string | undefined | null,
-  ): GraphQLError {
+  ): GraphQLError => {
     if (eventIdKey !== null && eventId) {
       err.extensions[eventIdKey] = eventId;
     }
 
     return err;
-  }
+  };
 
   return {
-    async onExecute({ args }) {
+    onExecute: async ({ args }) => {
       const exceptionHandlerService = options.exceptionHandlerService;
       const rootOperation = args.document.definitions.find(
         (o) => o.kind === Kind.OPERATION_DEFINITION,
@@ -57,7 +57,7 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
         'Anonymous Operation';
 
       return {
-        onExecuteDone(payload) {
+        onExecuteDone: async (payload) => {
           const handleResult: OnExecuteDoneHookResultOnNextHook<object> = ({
             result,
             setResult,

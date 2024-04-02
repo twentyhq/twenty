@@ -3,8 +3,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { viewStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -16,7 +16,7 @@ import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view
 import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.view,
+  standardId: STANDARD_OBJECT_IDS.view,
   namePlural: 'views',
   labelSingular: 'View',
   labelPlural: 'Views',
@@ -26,7 +26,7 @@ import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-s
 @IsSystem()
 export class ViewObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: viewStandardFieldIds.name,
+    standardId: VIEW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'View name',
@@ -34,7 +34,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.objectMetadataId,
+    standardId: VIEW_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Object Metadata Id',
     description: 'View target object',
@@ -42,7 +42,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   objectMetadataId: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.type,
+    standardId: VIEW_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'View type',
@@ -51,7 +51,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.key,
+    standardId: VIEW_STANDARD_FIELD_IDS.key,
     type: FieldMetadataType.SELECT,
     label: 'Key',
     description: 'View key',
@@ -62,7 +62,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   key: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.icon,
+    standardId: VIEW_STANDARD_FIELD_IDS.icon,
     type: FieldMetadataType.TEXT,
     label: 'Icon',
     description: 'View icon',
@@ -70,7 +70,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   icon: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.kanbanFieldMetadataId,
+    standardId: VIEW_STANDARD_FIELD_IDS.kanbanFieldMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'kanbanfieldMetadataId',
     description: 'View Kanban column field',
@@ -78,7 +78,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   kanbanFieldMetadataId: string;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.position,
+    standardId: VIEW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'View position',
@@ -87,7 +87,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   position: number;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.isCompact,
+    standardId: VIEW_STANDARD_FIELD_IDS.isCompact,
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
     description: 'Describes if the view is in compact mode',
@@ -96,7 +96,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   isCompact: boolean;
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.viewFields,
+    standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
     type: FieldMetadataType.RELATION,
     label: 'View Fields',
     description: 'View Fields',
@@ -111,7 +111,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   viewFields: ViewFieldObjectMetadata[];
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.viewFilters,
+    standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
     type: FieldMetadataType.RELATION,
     label: 'View Filters',
     description: 'View Filters',
@@ -126,7 +126,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   viewFilters: ViewFilterObjectMetadata[];
 
   @FieldMetadata({
-    standardId: viewStandardFieldIds.viewSorts,
+    standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
     type: FieldMetadataType.RELATION,
     label: 'View Sorts',
     description: 'View Sorts',

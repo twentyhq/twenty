@@ -52,7 +52,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
-        instance.update.hasOwnProperty('isActive') &&
+        Object.prototype.hasOwnProperty.call(instance.update, 'isActive') &&
         instance.update.isActive !== undefined
       ) {
         return {

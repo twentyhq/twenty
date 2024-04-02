@@ -7,7 +7,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 const environmentService = new EnvironmentService(new ConfigService());
 
-export function generateFrontConfig(): void {
+export const generateFrontConfig = (): void => {
   const configObject = {
     window: {
       _env_: {
@@ -29,4 +29,4 @@ export function generateFrontConfig(): void {
   }
 
   fs.writeFileSync(path.join(distPath, 'env-config.js'), configString, 'utf8');
-}
+};

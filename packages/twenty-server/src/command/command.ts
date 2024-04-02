@@ -9,7 +9,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 import { CommandModule } from './command.module';
 
-async function bootstrap() {
+const bootstrap = async () => {
   const errorHandler = (err: Error) => {
     loggerService.error(err?.message, err?.name);
 
@@ -36,5 +36,6 @@ async function bootstrap() {
   await CommandFactory.runApplication(app);
 
   app.close();
-}
+};
+
 bootstrap();

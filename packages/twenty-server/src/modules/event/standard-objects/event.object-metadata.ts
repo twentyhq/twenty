@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { eventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -14,7 +14,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.event,
+  standardId: STANDARD_OBJECT_IDS.event,
   namePlural: 'events',
   labelSingular: 'Event',
   labelPlural: 'Events',
@@ -24,7 +24,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 @IsSystem()
 export class EventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: eventStandardFieldIds.properties,
+    standardId: EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name/type',
@@ -33,7 +33,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.properties,
+    standardId: EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -43,7 +43,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.workspaceMember,
+    standardId: EVENT_STANDARD_FIELD_IDS.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Event workspace member',
@@ -54,7 +54,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   workspaceMember: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.person,
+    standardId: EVENT_STANDARD_FIELD_IDS.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Event person',
@@ -65,7 +65,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.company,
+    standardId: EVENT_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Event company',
@@ -76,7 +76,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.opportunity,
+    standardId: EVENT_STANDARD_FIELD_IDS.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Events opportunity',
@@ -87,7 +87,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
   opportunity: OpportunityObjectMetadata;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: eventStandardFieldIds.custom,
+    standardId: EVENT_STANDARD_FIELD_IDS.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Event ${oppositeObjectMetadata.labelSingular}`,

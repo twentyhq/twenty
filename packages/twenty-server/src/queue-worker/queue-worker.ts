@@ -16,7 +16,7 @@ import { getJobClassName } from 'src/engine/integrations/message-queue/utils/get
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
-async function bootstrap() {
+const bootstrap = async () => {
   let exceptionHandlerService: ExceptionHandlerService | undefined;
   let loggerService: LoggerService | undefined;
 
@@ -64,5 +64,6 @@ async function bootstrap() {
 
     throw err;
   }
-}
+};
+
 bootstrap();

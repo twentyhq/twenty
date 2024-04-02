@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { calendarEventParticipantStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -19,7 +19,7 @@ export enum CalendarEventParticipantResponseStatus {
 }
 
 @ObjectMetadata({
-  standardId: standardObjectIds.calendarEventParticipant,
+  standardId: STANDARD_OBJECT_IDS.calendarEventParticipant,
   namePlural: 'calendarEventParticipants',
   labelSingular: 'Calendar event participant',
   labelPlural: 'Calendar event participants',
@@ -32,7 +32,7 @@ export enum CalendarEventParticipantResponseStatus {
 })
 export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.calendarEvent,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.calendarEvent,
     type: FieldMetadataType.RELATION,
     label: 'Event ID',
     description: 'Event ID',
@@ -42,7 +42,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   calendarEvent: CalendarEventObjectMetadata;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.handle,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -51,7 +51,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.displayName,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.displayName,
     type: FieldMetadataType.TEXT,
     label: 'Display Name',
     description: 'Display Name',
@@ -60,7 +60,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   displayName: string;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.isOrganizer,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.isOrganizer,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Organizer',
     description: 'Is Organizer',
@@ -70,7 +70,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   isOrganizer: boolean;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.responseStatus,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.responseStatus,
     type: FieldMetadataType.SELECT,
     label: 'Response Status',
     description: 'Response Status',
@@ -106,7 +106,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   responseStatus: string;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.person,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Person',
@@ -117,7 +117,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: calendarEventParticipantStandardFieldIds.workspaceMember,
+    standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Workspace Member',

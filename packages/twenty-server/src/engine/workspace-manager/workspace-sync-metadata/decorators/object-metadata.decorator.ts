@@ -3,10 +3,9 @@ import { ObjectMetadataDecoratorParams } from 'src/engine/workspace-manager/work
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
-export function ObjectMetadata(
-  params: ObjectMetadataDecoratorParams,
-): ClassDecorator {
-  return (target) => {
+export const ObjectMetadata =
+  (params: ObjectMetadataDecoratorParams): ClassDecorator =>
+  (target) => {
     const isSystem = TypedReflect.getMetadata('isSystem', target) ?? false;
     const gate = TypedReflect.getMetadata('gate', target);
     const objectName = convertClassNameToObjectMetadataName(target.name);
@@ -27,4 +26,3 @@ export function ObjectMetadata(
       target,
     );
   };
-}

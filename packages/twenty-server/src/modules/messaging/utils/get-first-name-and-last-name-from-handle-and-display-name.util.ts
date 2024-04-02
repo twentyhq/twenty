@@ -1,9 +1,9 @@
 import { capitalize } from 'src/utils/capitalize';
 
-export function getFirstNameAndLastNameFromHandleAndDisplayName(
+export const getFirstNameAndLastNameFromHandleAndDisplayName = (
   handle: string,
   displayName: string,
-): { firstName: string; lastName: string } {
+): { firstName: string; lastName: string } => {
   const firstName = displayName.split(' ')[0];
   const lastName = displayName.split(' ')[1];
 
@@ -15,4 +15,4 @@ export function getFirstNameAndLastNameFromHandleAndDisplayName(
     firstName: capitalize(firstName || firstNameFromHandle || ''),
     lastName: capitalize(lastName || lastNameFromHandle || ''),
   };
-}
+};

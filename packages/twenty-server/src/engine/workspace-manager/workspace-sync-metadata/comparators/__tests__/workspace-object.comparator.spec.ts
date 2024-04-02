@@ -10,15 +10,13 @@ describe('WorkspaceObjectComparator', () => {
     comparator = new WorkspaceObjectComparator();
   });
 
-  function createMockObjectMetadata(values: any) {
-    return {
-      nameSingular: 'TestObject',
-      namePlural: 'TestObjects',
-      labelSingular: 'Test Object',
-      labelPlural: 'Test Objects',
-      ...values,
-    };
-  }
+  const createMockObjectMetadata = (values: any) => ({
+    nameSingular: 'TestObject',
+    namePlural: 'TestObjects',
+    labelSingular: 'Test Object',
+    labelPlural: 'Test Objects',
+    ...values,
+  });
 
   it('should generate CREATE action for new objects', () => {
     const standardObjectMetadata = createMockObjectMetadata({

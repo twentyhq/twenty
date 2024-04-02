@@ -12,11 +12,11 @@ import { createCustomColumnName } from 'src/engine/utils/create-custom-column-na
  * @param type string
  * @returns FieldMetadataTargetColumnMap
  */
-export function generateTargetColumnMap(
+export const generateTargetColumnMap = (
   type: FieldMetadataType,
   isCustomField: boolean,
   fieldName: string,
-): FieldMetadataTargetColumnMap {
+): FieldMetadataTargetColumnMap => {
   const columnName = isCustomField
     ? createCustomColumnName(fieldName)
     : fieldName;
@@ -70,4 +70,4 @@ export function generateTargetColumnMap(
     default:
       throw new BadRequestException(`Unknown type ${type}`);
   }
-}
+};

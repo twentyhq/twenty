@@ -64,7 +64,7 @@ export class FetchByBatchesService {
   createBatchBody(queries: BatchQueries, boundary: string): string {
     let batchBody: string[] = [];
 
-    queries.forEach(function (call) {
+    queries.forEach((call) => {
       const method = 'GET';
       const uri = call.uri;
 
@@ -96,7 +96,7 @@ export class FetchByBatchesService {
       '--' + boundary,
     );
 
-    responseLines.forEach(function (response) {
+    responseLines.forEach((response) => {
       const startJson = response.indexOf('{');
       const endJson = response.lastIndexOf('}');
 

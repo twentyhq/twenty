@@ -4,33 +4,41 @@ type TransformToString<T, Keys extends keyof T> = {
   [P in keyof T]: P extends Keys ? string : T[P];
 };
 
-// Overload for an array of T
-export function transformMetadataForComparison<T, Keys extends keyof T>(
-  fieldMetadataCollection: T[],
-  options: {
-    shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
-    propertiesToStringify?: readonly Keys[];
-    keyFactory: (datum: T) => string;
-  },
-): Record<string, TransformToString<T, Keys>>;
+type TransformMetadataForComparisonFn = {
+  // Overload for an array of T
+  <T, Keys extends keyof T>(
+    fieldMetadataCollection: T[],
+    options: {
+      shouldIgnoreProperty?: (
+        property: string,
+        originalMetadata?: T,
+      ) => boolean;
+      propertiesToStringify?: readonly Keys[];
+      keyFactory: (datum: T) => string;
+    },
+  ): Record<string, TransformToString<T, Keys>>;
 
-// Overload for a single T object
-export function transformMetadataForComparison<T, Keys extends keyof T>(
-  fieldMetadataCollection: T,
-  options: {
-    shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
-    propertiesToStringify?: readonly Keys[];
-  },
-): TransformToString<T, Keys>;
+  // Overload for a single T object
+  <T, Keys extends keyof T>(
+    fieldMetadataCollection: T,
+    options: {
+      shouldIgnoreProperty?: (
+        property: string,
+        originalMetadata?: T,
+      ) => boolean;
+      propertiesToStringify?: readonly Keys[];
+    },
+  ): TransformToString<T, Keys>;
+};
 
-export function transformMetadataForComparison<T, Keys extends keyof T>(
+export const transformMetadataForComparison = (<T, Keys extends keyof T>(
   metadata: T[] | T,
   options: {
     shouldIgnoreProperty?: (property: string, originalMetadata?: T) => boolean;
     propertiesToStringify?: readonly Keys[];
     keyFactory?: (datum: T) => string;
   },
-): Record<string, TransformToString<T, Keys>> | TransformToString<T, Keys> {
+): Record<string, TransformToString<T, Keys>> | TransformToString<T, Keys> => {
   const propertiesToStringify = (options.propertiesToStringify ??
     []) as readonly string[];
 
@@ -77,7 +85,7 @@ export function transformMetadataForComparison<T, Keys extends keyof T>(
       },
       {},
     );
-  } else {
-    return transformProperties(metadata);
   }
-}
+
+  return transformProperties(metadata);
+}) as TransformMetadataForComparisonFn;
