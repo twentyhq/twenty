@@ -24,14 +24,14 @@ const StyledHeartIcon = styled(HeartIcon)`
 `;
 
 interface ThankYouProps {
-  authorId: string;
+  username: string;
 }
 
-export const ThankYou = ({ authorId }: ThankYouProps) => {
+export const ThankYou = ({ username }: ThankYouProps) => {
   return (
     <CardContainer>
       <StyledTitle>
-        Thank you @{authorId} <StyledHeartIcon color="#333333" size="18px" />
+        Thank you @{username} <StyledHeartIcon color="#333333" size="18px" />
       </StyledTitle>
     </CardContainer>
   );
