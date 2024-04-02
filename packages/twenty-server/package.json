@@ -23,6 +23,7 @@
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
+    "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
     "lodash.differencewith": "^4.5.0",
     "lodash.uniq": "^4.5.0",

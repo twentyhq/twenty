@@ -45780,6 +45780,7 @@ __metadata:
     cache-manager-redis-yet: "npm:^4.1.2"
     class-validator: "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch"
     graphql-middleware: "npm:^6.1.35"
+    jsdom: "npm:~22.1.0"
     jwt-decode: "npm:^4.0.0"
     lodash.differencewith: "npm:^4.5.0"
     lodash.uniq: "npm:^4.5.0"
