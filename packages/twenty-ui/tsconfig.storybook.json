@@ -5,13 +5,11 @@
     "outDir": ""
   },
   "include": [
-    "src/**/*.stories.ts",
-    "src/**/*.stories.js",
-    "src/**/*.stories.jsx",
-    "src/**/*.stories.tsx",
-    "src/**/*.stories.mdx",
-    ".storybook/*.js",
     ".storybook/*.ts",
-    ".storybook/*.tsx"
+    ".storybook/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.stories.mdx",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx"
   ]
 }

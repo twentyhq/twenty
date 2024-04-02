@@ -16,12 +16,14 @@
       "options": {
         "eslintConfig": "{projectRoot}/.eslintrc.cjs",
         "ignorePath": "{workspaceRoot}/.gitignore",
-        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"]
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ]
       },
       "configurations": {
-        "fix": {
-          "fix": true
-        }
+        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"] },
+        "fix": { "fix": true }
       }
     },
     "test": {

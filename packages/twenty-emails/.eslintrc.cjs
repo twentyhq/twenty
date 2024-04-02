@@ -7,6 +7,9 @@ module.exports = {
       parserOptions: {
         project: ['packages/twenty-emails/tsconfig.{json,*.json}'],
       },
+      rules: {
+        '@nx/dependency-checks': 'error',
+      },
     },
   ],
 };
