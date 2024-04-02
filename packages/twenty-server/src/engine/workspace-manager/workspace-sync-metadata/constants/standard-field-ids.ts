@@ -72,7 +72,7 @@ export const calendarChannelStandardFieldIds = {
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
 };
 
-export const calendarEventAttendeeStandardFieldIds = {
+export const calendarEventParticipantStandardFieldIds = {
   calendarEvent: '20202020-fe3a-401c-b889-af4f4657a861',
   handle: '20202020-8692-4580-8210-9e09cbd031a7',
   displayName: '20202020-ee1e-4f9f-8ac1-5c0b2f69691e',
@@ -97,7 +97,7 @@ export const calendarEventStandardFieldIds = {
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
-  eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',
+  eventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
 export const commentStandardFieldIds = {
@@ -232,7 +232,7 @@ export const personStandardFieldIds = {
   favorites: '20202020-4073-4117-9cf1-203bcdc91cbd',
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
-  calendarEventAttendees: '20202020-52ee-45e9-a702-b64b3753e3a9',
+  calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   events: '20202020-a43e-4873-9c23-e522de906ce5',
 };
 
@@ -293,7 +293,7 @@ export const workspaceMemberStandardFieldIds = {
   connectedAccounts: '20202020-e322-4bde-a525-727079b4a100',
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
-  calendarEventAttendees: '20202020-0dbc-4841-9ce1-3e793b5b3512',
+  calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
   events: '20202020-e15b-47b8-94fe-8200e3c66615',
 };
 
