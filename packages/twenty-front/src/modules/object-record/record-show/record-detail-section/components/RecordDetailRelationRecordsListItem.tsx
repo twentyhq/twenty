@@ -1,23 +1,42 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
-import { IconDotsVertical, IconTrash, IconUnlink } from 'twenty-ui';
+import {
+  IconChevronDown,
+  IconDotsVertical,
+  IconTrash,
+  IconUnlink,
+} from 'twenty-ui';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord.ts';
+import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
+import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -40,11 +59,26 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
   }
 `;
 
+const StyledClickableZone = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex: 1 0 auto;
+  height: 100%;
+  justify-content: flex-end;
+`;
+
+const MotionIconChevronDown = motion(IconChevronDown);
+
 type RecordDetailRelationRecordsListItemProps = {
+  isExpanded: boolean;
+  onClick: (relationRecordId: string) => void;
   relationRecord: ObjectRecord;
 };
 
 export const RecordDetailRelationRecordsListItem = ({
+  isExpanded,
+  onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -57,17 +91,38 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
+    useObjectMetadataItemOnly({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
+
   const persistField = usePersistField();
+
+  const {
+    called: hasFetchedRelationRecord,
+    findOneRecord: findOneRelationRecord,
+  } = useLazyFindOneRecord({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
-
   const { deleteOneRecord: deleteOneRelationRecord } = useDeleteOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
+
+  const isAccountOwnerRelation =
+    relationObjectMetadataNameSingular ===
+    CoreObjectNameSingular.WorkspaceMember;
+
+  const availableRelationFieldMetadataItems = relationObjectMetadataItem.fields
+    .filter(
+      (fieldMetadataItem) =>
+        isFieldCellSupported(fieldMetadataItem) &&
+        fieldMetadataItem.id !==
+          relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
+        fieldMetadataItem.id !== relationFieldMetadataId,
+    )
+    .sort();
 
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
@@ -100,17 +155,58 @@ export const RecordDetailRelationRecordsListItem = ({
     await deleteOneRelationRecord(relationRecord.id);
   };
 
-  const isAccountOwnerRelation =
-    relationObjectMetadataNameSingular ===
-    CoreObjectNameSingular.WorkspaceMember;
+  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRelationRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
+  const { setRecords } = useSetRecordInStore();
+
+  const handleClick = () => onClick(relationRecord.id);
+
+  const AnimatedIconChevronDown = useCallback<IconComponent>(
+    (props) => (
+      <MotionIconChevronDown
+        className={props.className}
+        color={props.color}
+        size={props.size}
+        stroke={props.stroke}
+        initial={{ rotate: isExpanded ? 0 : -180 }}
+        animate={{ rotate: isExpanded ? -180 : 0 }}
+      />
+    ),
+    [isExpanded],
+  );
 
   return (
-    <StyledListItem isDropdownOpen={isDropdownOpen}>
-      <RecordChip
-        record={relationRecord}
-        objectNameSingular={relationObjectMetadataItem.nameSingular}
-      />
-      {
+    <>
+      <StyledListItem isDropdownOpen={isDropdownOpen}>
+        <RecordChip
+          record={relationRecord}
+          objectNameSingular={relationObjectMetadataItem.nameSingular}
+        />
+        <StyledClickableZone
+          onClick={handleClick}
+          onMouseOver={() =>
+            !hasFetchedRelationRecord &&
+            findOneRelationRecord({
+              objectRecordId: relationRecord.id,
+              onCompleted: (record) => setRecords([record]),
+            })
+          }
+        >
+          <LightIconButton
+            className="displayOnHover"
+            Icon={AnimatedIconChevronDown}
+            accent="tertiary"
+          />
+        </StyledClickableZone>
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
             dropdownId={dropdownScopeId}
@@ -139,12 +235,38 @@ export const RecordDetailRelationRecordsListItem = ({
                 )}
               </DropdownMenuItemsContainer>
             }
-            dropdownHotkeyScope={{
-              scope: dropdownScopeId,
-            }}
+            dropdownHotkeyScope={{ scope: dropdownScopeId }}
           />
         </DropdownScope>
-      }
-    </StyledListItem>
+      </StyledListItem>
+      <AnimatedEaseInOut isOpen={isExpanded}>
+        <PropertyBox>
+          {availableRelationFieldMetadataItems.map(
+            (fieldMetadataItem, index) => (
+              <FieldContext.Provider
+                key={fieldMetadataItem.id}
+                value={{
+                  entityId: relationRecord.id,
+                  maxWidth: 200,
+                  recoilScopeId: `${relationRecord.id}-${fieldMetadataItem.id}`,
+                  isLabelIdentifier: false,
+                  fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                    field: fieldMetadataItem,
+                    position: index,
+                    objectMetadataItem: relationObjectMetadataItem,
+                    showLabel: true,
+                    labelWidth: 90,
+                  }),
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                }}
+              >
+                <RecordInlineCell />
+              </FieldContext.Provider>
+            ),
+          )}
+        </PropertyBox>
+      </AnimatedEaseInOut>
+    </>
   );
 };
