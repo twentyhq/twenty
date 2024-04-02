@@ -118,21 +118,6 @@ module.exports = {
       },
     },
     {
-      files: ['*.stories.@(ts|tsx|js|jsx)'],
-      rules: {
-        '@typescript-eslint/no-non-null-assertion': 'off',
-      },
-    },
-    {
-      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
-      rules: {
-        'storybook/no-uninstalled-addons': [
-          'error',
-          { packageJsonLocation: '../../package.json' },
-        ],
-      },
-    },
-    {
       files: ['**/constants/*.ts', '**/*.constants.ts'],
       rules: {
         '@typescript-eslint/naming-convention': [
