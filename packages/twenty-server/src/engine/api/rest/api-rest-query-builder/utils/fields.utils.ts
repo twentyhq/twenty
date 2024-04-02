@@ -50,7 +50,7 @@ export const checkFields = (
       throw new BadRequestException(
         `field '${fieldName}' does not exist in '${computeObjectTargetTable(
           objectMetadata,
-        )}' object ${JSON.stringify({ fieldMetadataNames, fieldNames })}`,
+        )}' object`,
       );
     }
   }
