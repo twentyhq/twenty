@@ -47,9 +47,7 @@ const Contributors = async () => {
       <Background />
       <ContentContainer>
         <Header />
-        <div>
-          <AvatarGrid users={fitlerContributors as Contributor[]} />
-        </div>
+        <AvatarGrid users={fitlerContributors as Contributor[]} />
       </ContentContainer>
     </>
   );
