@@ -34,7 +34,7 @@ const StyledContainer = styled(motion.div)`
   z-index: 100;
 `;
 
-const StyledRightDrawer = styled(motion.div)`
+const StyledRightDrawer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -122,15 +122,7 @@ export const RightDrawer = () => {
         duration: theme.animation.duration.normal,
       }}
     >
-      <StyledRightDrawer
-        ref={rightDrawerRef}
-        initial="closed"
-        animate={isRightDrawerOpen ? 'normal' : 'closed'}
-        variants={variants}
-        transition={{
-          duration: theme.animation.duration.normal,
-        }}
-      >
+      <StyledRightDrawer ref={rightDrawerRef}>
         {isRightDrawerOpen && <RightDrawerRouter />}
       </StyledRightDrawer>
     </StyledContainer>
