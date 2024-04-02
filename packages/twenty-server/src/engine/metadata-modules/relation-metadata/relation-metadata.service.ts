@@ -78,11 +78,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         isCustom,
         toId,
       ),
-      this.createForeignKeyFieldMetadata(
-        relationMetadataInput,
-        baseColumnName,
-        foreignKeyColumnName,
-      ),
+      this.createForeignKeyFieldMetadata(relationMetadataInput, baseColumnName),
     ]);
 
     const createdRelationMetadata = await super.createOne({
@@ -240,7 +236,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   private createForeignKeyFieldMetadata(
     relationMetadataInput: CreateRelationInput,
     baseColumnName: string,
-    foreignKeyColumnName: string,
   ) {
     return {
       name: baseColumnName,
