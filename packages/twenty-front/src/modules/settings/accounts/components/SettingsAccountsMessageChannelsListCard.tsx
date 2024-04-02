@@ -10,7 +10,10 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
+import {
+  SettingsAccountsSynchronizationStatus,
+  SettingsAccountsSynchronizationStatusProps,
+} from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 
@@ -35,7 +38,11 @@ export const SettingsAccountsMessageChannelsListCard = () => {
     });
 
   const { records: messageChannels, loading: messageChannelsLoading } =
-    useFindManyRecords<MessageChannel>({
+    useFindManyRecords<
+      MessageChannel & {
+        connectedAccount: ConnectedAccount;
+      }
+    >({
       objectNameSingular: CoreObjectNameSingular.MessageChannel,
       filter: {
         connectedAccountId: {
@@ -44,10 +51,14 @@ export const SettingsAccountsMessageChannelsListCard = () => {
       },
     });
 
-  const messageChannelsWithSyncedEmails = messageChannels.map(
+  const messageChannelsWithSyncedEmails: (MessageChannel & {
+    connectedAccount: ConnectedAccount;
+  } & SettingsAccountsSynchronizationStatusProps)[] = messageChannels.map(
     (messageChannel) => ({
       ...messageChannel,
-      isSynced: true,
+      syncStatus: messageChannel.connectedAccount?.authFailedAt
+        ? 'failed'
+        : 'synced',
     }),
   );
 
@@ -67,7 +78,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
       RowRightComponent={({ item: messageChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
-            synced={messageChannel.isSynced}
+            syncStatus={messageChannel.syncStatus}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

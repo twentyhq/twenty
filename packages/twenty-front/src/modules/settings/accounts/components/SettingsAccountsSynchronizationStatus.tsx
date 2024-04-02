@@ -1,15 +1,27 @@
 import { Status } from '@/ui/display/status/components/Status';
 
-type SettingsAccountsSynchronizationStatusProps = {
-  synced: boolean;
+export type SettingsAccountsSynchronizationStatusProps = {
+  syncStatus: 'synced' | 'failed' | 'notSynced';
 };
 
 export const SettingsAccountsSynchronizationStatus = ({
-  synced,
+  syncStatus,
 }: SettingsAccountsSynchronizationStatusProps) => (
   <Status
-    color={synced ? 'green' : 'gray'}
-    text={synced ? 'Synced' : 'Not Synced'}
+    color={
+      syncStatus === 'synced'
+        ? 'green'
+        : syncStatus === 'failed'
+          ? 'red'
+          : 'gray'
+    }
+    text={
+      syncStatus === 'synced'
+        ? 'Synced'
+        : syncStatus === 'failed'
+          ? 'Sync failed'
+          : 'Not synced'
+    }
     weight="medium"
   />
 );

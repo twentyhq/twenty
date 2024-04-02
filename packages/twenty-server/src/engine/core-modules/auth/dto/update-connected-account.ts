@@ -3,17 +3,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
-export class SaveOrUpdateConnectedAccountInput {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  handle: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  workspaceMemberId: string;
-
+export class UpdateConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
@@ -28,4 +18,9 @@ export class SaveOrUpdateConnectedAccountInput {
   @IsNotEmpty()
   @IsString()
   refreshToken: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  connectedAccountId: string;
 }
